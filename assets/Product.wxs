@@ -62,23 +62,25 @@
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <!-- Prerequisite check for Windows Universal C runtime -->
-    <Property Id="UCRTINSTALLED" Secure="yes">
-      <DirectorySearch Id="Windows_System32_search1" Path="[WindowsFolder]System32" Depth="0">
-        <FileSearch Name="ucrtbase.dll"/>
+    <Property Id="Universal_CRuntime_Installed" Secure="yes">
+      <DirectorySearch Id="WindowsDirectory" Path="[WindowsFolder]">
+        <DirectorySearch Id="System32" Path="System32">
+          <FileSearch Id="ucrtbase" Name="ucrtbase.dll"/>
+        </DirectorySearch>
       </DirectorySearch>
     </Property>	
     <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=50410">
-      <![CDATA[Installed OR UCRTINSTALLED]]>
+      <![CDATA[Installed OR Universal_CRuntime_Installed]]>
     </Condition>
 
      <!-- Prerequisite check for Visual Studio 2015 C++ redistributables -->
-     <Property Id="VCRUNTIMEINSTALLED" Secure="yes">
-      <DirectorySearch Id="Windows_System32_search2" Path="[WindowsFolder]System32" Depth="0">
-        <FileSearch Name="vcruntime140.dll"/>
-      </DirectorySearch>
+     <Property Id="Visual_CPP_Runtime_Installed" Secure="yes">
+      <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
+        <FileSearch Id="vcruntime140" Name="vcruntime140.dll"/>
+      </DirectorySearchRef>
     </Property>	
     <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=48145">
-      <![CDATA[Installed OR VCRUNTIMEINSTALLED]]>
+      <![CDATA[Installed OR Visual_CPP_Runtime_Installed]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
