@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.Commands
         // LoadWithPartialName is deprecated, so we have to write the closest approximation possible.
         // However, this does give us a massive usability improvement, as users can just say
         // Add-Type -AssemblyName Forms (instead of System.Windows.Forms)
-        // This is  just long, not unmaintainable.
+        // This is just long, not unmaintainable.
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         private Assembly LoadAssemblyHelper(string assemblyName)
         {

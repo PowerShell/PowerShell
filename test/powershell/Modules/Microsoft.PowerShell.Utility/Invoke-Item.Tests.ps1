@@ -213,7 +213,7 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
             $startTime = [Datetime]::Now
             while (-not (test-path $renamedtestfilepath))
             {
-                Start-Sleep -Milliseconds  100
+                Start-Sleep -Milliseconds 100
                 if (([Datetime]::Now - $startTime) -ge [timespan]"00:00:05") { throw "Timeout exception" }
             }
         } | Should Not throw

@@ -1550,7 +1550,7 @@ namespace System.Management.Automation
         ///                                                 query is run using ManagementObjectSearcher Class.
         ///     - to WMIClass                           -   returns ManagementClass represented by the
         ///                                                 string representation of valueToConvert.
-        ///     - to ADSI                               -   returns DirectoryEntry  represented by the
+        ///     - to ADSI                               -   returns DirectoryEntry represented by the
         ///                                                 string representation of valueToConvert.
         ///     - to ADSISearcher                       -   return DirectorySearcher represented by the
         ///                                                 string representation of valueToConvert.
@@ -2314,7 +2314,7 @@ namespace System.Management.Automation
                                                     IFormatProvider formatProvider,
                                                     TypeTable backupTable)
         {
-            typeConversion.WriteLine("Standard type conversion to  DirectoryEntry.");
+            typeConversion.WriteLine("Standard type conversion to DirectoryEntry.");
 
             string valueToConvertString;
             try
@@ -3340,7 +3340,7 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
             }
 
-            // Check if the result is a defined enum..otherwise throw  an error
+            // Check if the result is a defined enum..otherwise throw an error
             // valueToConvert is the user supplied value. Use that in the error message.
             EnumSingleTypeConverter.ThrowForUndefinedEnum("UndefinedIntegerToEnum", result, valueToConvert, resultType);
 

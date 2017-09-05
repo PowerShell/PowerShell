@@ -219,7 +219,7 @@ namespace System.Management.Automation
             };
         }
 
-        #endregion  ctor
+        #endregion ctor
 
         internal bool IsDashQuestion()
         {

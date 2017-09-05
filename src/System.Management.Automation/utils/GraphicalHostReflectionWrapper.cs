@@ -26,7 +26,7 @@ namespace System.Management.Automation.Internal
     internal class GraphicalHostReflectionWrapper
     {
         /// <summary>
-        /// Initialized in GetGraphicalHostReflectionWrapper with the  Microsoft.PowerShell.GraphicalHost.dll assembly.
+        /// Initialized in GetGraphicalHostReflectionWrapper with the Microsoft.PowerShell.GraphicalHost.dll assembly.
         /// </summary>
         private Assembly _graphicalHostAssembly;
 

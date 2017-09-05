@@ -3157,7 +3157,7 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region  Private Methods
+        #region Private Methods
 
         private void GenerateInternalMembersFromBase()
         {
@@ -4700,7 +4700,7 @@ namespace System.Management.Automation
             private PSMemberInfoInternalCollection<S> _allMembers;
 
             /// <summary>
-            /// Constructs this instance to enumerate over  members
+            /// Constructs this instance to enumerate over members
             /// </summary>
             /// <param name="integratingCollection">members we are enumerating</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)

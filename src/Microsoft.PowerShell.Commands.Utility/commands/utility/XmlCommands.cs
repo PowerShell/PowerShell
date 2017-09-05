@@ -525,7 +525,7 @@ namespace Microsoft.PowerShell.Commands
         private CustomSerialization _serializer;
 
         /// <summary>
-        ///Memory Stream used for  serialization
+        /// Memory Stream used for serialization
         /// </summary>
         private MemoryStream _ms;
 

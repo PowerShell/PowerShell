@@ -536,7 +536,7 @@ namespace System.Management.Automation
                 }
                 catch (System.NotSupportedException)
                 {
-                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in  win8:948569
+                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in win8:948569
                 }
             }
             catch (Exception exception)

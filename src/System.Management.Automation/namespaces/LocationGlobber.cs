@@ -1932,7 +1932,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <returns>
-        /// A  provider specific relative path to the root of the drive.
+        /// A provider specific relative path to the root of the drive.
         /// </returns>
         ///
         /// <remarks>
@@ -2172,7 +2172,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <param name="path">
-        /// The relative path to add to the absolute path in the  drive.
+        /// The relative path to add to the absolute path in the drive.
         /// </param>
         ///
         /// <param name="escapeCurrentLocation">

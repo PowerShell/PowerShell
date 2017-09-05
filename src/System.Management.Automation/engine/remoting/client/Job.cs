@@ -558,7 +558,7 @@ namespace System.Management.Automation
         public string Command { get; }
 
         /// <summary>
-        /// Status of the  command execution.
+        /// Status of the command execution.
         /// </summary>
         public JobStateInfo JobStateInfo { get; private set; } = new JobStateInfo(JobState.NotStarted);
 
@@ -1923,7 +1923,7 @@ namespace System.Management.Automation
             return returnJobList;
         } // GetResultForHelper
 
-        #endregion  internal methods
+        #endregion internal methods
 
         #region Connection Support
 

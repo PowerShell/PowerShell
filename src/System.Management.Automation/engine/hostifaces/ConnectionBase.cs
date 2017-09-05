@@ -843,7 +843,7 @@ namespace System.Management.Automation.Runspaces
         /// list of pipelines in execution</param>
         ///
         /// <exception cref="InvalidRunspaceStateException">
-        /// Thrown if the runspace  is not in the Opened state.
+        /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
         /// </exception>
         ///

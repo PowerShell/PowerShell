@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return (len < displayCells) ? len : displayCells;
         }
 
-        #region  Helpers
+        #region Helpers
 
         /// <summary>
         /// Given a string and a number of display cells, it computes how many

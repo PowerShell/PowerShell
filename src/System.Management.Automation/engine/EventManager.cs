@@ -1013,7 +1013,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from  ProcessNewEvent to actually process the event.
+        /// Called from ProcessNewEvent to actually process the event.
         /// </summary>
         private void ProcessNewEventImplementation(PSEventArgs newEvent, bool processSynchronously)
         {
@@ -2129,7 +2129,7 @@ namespace System.Management.Automation
         internal bool AutoUnregister { get; private set; }
 
         /// <summary>
-        /// Indicate how many new  should be added to the action queue.
+        /// Indicate how many new should be added to the action queue.
         /// e.g. NumberOfTimesToBeInvoked = 3 means that this subscriber only responses to
         /// the first triggered event. So three new actions will be added to the action
         /// queue, and the following events will be ignored.

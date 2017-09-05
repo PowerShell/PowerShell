@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
         } // GetItem
 
         /// <summary>
-        /// Sets a session state item  to a given value
+        /// Sets a session state item to a given value
         /// </summary>
         ///
         /// <param name="name">

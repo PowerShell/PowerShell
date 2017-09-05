@@ -3122,7 +3122,7 @@ namespace System.Management.Automation
             }
 
             var productAttribute = assembly.GetCustomAttribute<AssemblyProductAttribute>();
-            if (productAttribute != null && string.Equals(productAttribute.Product, "Microsoft® .NET Framework", StringComparison.OrdinalIgnoreCase))
+            if (productAttribute != null && string.Equals(productAttribute.Product, "MicrosoftÂ® .NET Framework", StringComparison.OrdinalIgnoreCase))
             {
                 disallowReflection = true;
             }
@@ -4548,7 +4548,7 @@ namespace System.Management.Automation
             return returnValue;
         }
 
-        #endregion  virtual
+        #endregion virtual
     }
     /// <summary>
     /// Base class for all adapters that adapt only properties and retain 

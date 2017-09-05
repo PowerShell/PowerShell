@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the ProcessRecord method for update-typeData  command
+        /// This method implements the ProcessRecord method for update-typeData command
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for update-typeData  command
+        /// This method implements the EndProcessing method for update-typeData command
         /// </summary>
         protected override void EndProcessing()
         {
@@ -913,7 +913,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method implements the ProcessRecord method for update-FormatData  command
+        /// This method implements the ProcessRecord method for update-FormatData command
         /// </summary>
         protected override void ProcessRecord()
         {

@@ -1813,7 +1813,7 @@ namespace Microsoft.PowerShell
                     // 1. host independent profile meant for all users
                     // 2. host specific profile meant for all users
                     // 3. host independent profile of the current user
-                    // 4. host specific profile  of the current user
+                    // 4. host specific profile of the current user
 
                     var sw = new Stopwatch();
                     sw.Start();
@@ -2897,7 +2897,7 @@ namespace Microsoft.PowerShell
                 base(message)
             {
             }
-#if !CORECLR // ApplicationException & System.Runtime.Serialization.SerializationInfo  are Not In CoreCLR
+#if !CORECLR // ApplicationException & System.Runtime.Serialization.SerializationInfo are Not In CoreCLR
             protected
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,

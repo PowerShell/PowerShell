@@ -664,7 +664,7 @@ namespace System.Management.Automation
         ///
         private void Init(CmdletInfo cmdletInformation)
         {
-            Diagnostics.Assert(cmdletInformation != null, "Constructor should throw exception if LookupCommand returned  null.");
+            Diagnostics.Assert(cmdletInformation != null, "Constructor should throw exception if LookupCommand returned null.");
 
             Cmdlet newCmdlet = null;
             Exception initError = null;

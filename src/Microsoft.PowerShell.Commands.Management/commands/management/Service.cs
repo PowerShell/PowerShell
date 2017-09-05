@@ -1519,7 +1519,7 @@ namespace Microsoft.PowerShell.Commands
         /// Paused).  If it is already in that state, do nothing.  If it is not, do the
         /// appropriate action to bring about the desired result (start/stop/suspend the
         /// service) and issue an error if this cannot be achieved.
-        ///  Status can be  Paused ,  Running  and  Stopped
+        ///  Status can be Paused ,  Running and Stopped
         /// </summary>
         [Parameter]
         [ValidateSetAttribute(new string[] { "Running", "Stopped", "Paused" })]

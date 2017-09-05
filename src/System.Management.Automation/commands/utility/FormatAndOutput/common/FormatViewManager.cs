@@ -95,9 +95,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     FormattingCommandLineParameters parameters)
         {
             ViewDefinition view = null;
-            const string findViewType = "FINDING VIEW  TYPE: {0}";
+            const string findViewType = "FINDING VIEW TYPE: {0}";
             const string findViewShapeType = "FINDING VIEW {0} TYPE: {1}";
-            const string findViewNameType = "FINDING VIEW NAME: {0}  TYPE: {1}";
+            const string findViewNameType = "FINDING VIEW NAME: {0} TYPE: {1}";
             const string viewFound = "An applicable view has been found";
             const string viewNotFound = "No applicable view has been found";
             try

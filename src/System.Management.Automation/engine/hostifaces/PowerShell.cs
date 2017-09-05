@@ -3924,7 +3924,7 @@ namespace System.Management.Automation
                     case PSInvocationState.Failed:
                     case PSInvocationState.Stopped:
                         // if the current state is already completed..then no need to process state
-                        // change requests. This will happen if another thread  calls BeginStop
+                        // change requests. This will happen if another thread calls BeginStop
                         return;
                     case PSInvocationState.Running:
                         if (stateInfo.State == PSInvocationState.Running)

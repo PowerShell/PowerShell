@@ -1360,7 +1360,7 @@ namespace Microsoft.PowerShell.Commands
             ObjectQuery objquery = new ObjectQuery();
             StringBuilder sb = new StringBuilder("select * from ");
             sb.Append(ComputerWMIHelper.WMI_Class_SystemRestore);
-            sb.Append(" where  description = '");
+            sb.Append(" where description = '");
             sb.Append(description.Replace("'", "\\'"));
             sb.Append("'");
             objquery.QueryString = sb.ToString();
@@ -1510,7 +1510,7 @@ namespace Microsoft.PowerShell.Commands
                         //  sequenceList = new List<int>();
                         StringBuilder sb = new StringBuilder("select * from ");
                         sb.Append(ComputerWMIHelper.WMI_Class_SystemRestore);
-                        sb.Append(" where  SequenceNumber = ");
+                        sb.Append(" where SequenceNumber = ");
                         for (int i = 0; i <= RestorePoint.Length - 1; i++)
                         {
                             sb.Append(RestorePoint[i]);
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Restarts  the computer
+    /// Restarts the computer
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]

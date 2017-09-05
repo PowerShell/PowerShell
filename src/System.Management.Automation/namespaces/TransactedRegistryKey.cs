@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         // MSDN defines the following limits for registry key names & values:
         // Key Name: 255 characters
-        // Value name:  Win9x: 255  NT: 16,383 Unicode characters, or 260 ANSI chars
+        // Value name:  Win9x: 255 NT: 16,383 Unicode characters, or 260 ANSI chars
         // Value: either 1 MB or current available memory, depending on registry format.
         private const int MaxKeyLength = 255;
         private const int MaxValueNameLength = 16383;

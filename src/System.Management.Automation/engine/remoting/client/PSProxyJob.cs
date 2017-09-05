@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
                         if (!(parameter.Value is bool) || !(bool)parameter.Value)
                         {
                             // If the AsJob Parameter has been passed and explicitly set to false, we should
-                            // not proceed  with the operation. This is an error.
+                            // not proceed with the operation. This is an error.
                             throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.JobProxyAsJobMustBeTrue);
                         }
                         found = true;
