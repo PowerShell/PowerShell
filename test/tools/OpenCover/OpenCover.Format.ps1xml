@@ -121,5 +121,26 @@
     </TableControl>
    </View>
 
+   <View>
+    <Name>FileCoverageTable</Name>
+    <ViewSelectedBy>
+     <TypeName>FileCoverage</TypeName>
+    </ViewSelectedBy>
+    <TableControl>
+     <TableHeaders>
+      <TableColumnHeader><Label>Coverage</Label></TableColumnHeader>
+      <TableColumnHeader><Label>Path</Label></TableColumnHeader>
+     </TableHeaders>
+     <TableRowEntries>
+      <TableRowEntry>
+       <TableColumnItems>
+        <TableColumnItem><PropertyName>Coverage</PropertyName></TableColumnItem>
+        <TableColumnItem><PropertyName>Path</PropertyName></TableColumnItem>
+       </TableColumnItems>
+      </TableRowEntry>
+     </TableRowEntries>
+    </TableControl>
+   </View>
+
    </ViewDefinitions>
 </Configuration>
