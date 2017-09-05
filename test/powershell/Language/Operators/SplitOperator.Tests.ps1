@@ -107,12 +107,15 @@ Describe "Split Operator" -Tags CI {
 
     Context "Binary split operator options" {
         BeforeAll {
-            $testText = "a12a`nb34b`nc56c`nd78d"
-            # Add '%' - now second line doesn't start with 'b'.
-            $testText2 = "a12a`n%b34b`nc56c`nd78d"
+            # Add '%' in testText2 in order to second line doesn't start with 'b'.
+            $testCases = @(
+                @{ Name = '`n';   testText = "a12a`nb34b`nc56c`nd78d";       testText2 = "a12a`n%b34b`nc56c`nd78d";       newLine = "`n" }
+                @{ Name = '`r`n'; testText = "a12a`r`nb34b`r`nc56c`r`nd78d"; testText2 = "a12a`r`n%b34b`r`nc56c`r`nd78d"; newLine = "`r`n" }
+                )
         }
 
-        It "Binary split operator has no Singleline and no Multiline by default" {
+        It "Binary split operator has no Singleline and no Multiline by default (new line = '<Name>')" -TestCases $testCases {
+            param($testText, $testText2, $newLine)
             # Multiline isn't default
             $res = $testText -split '^b'
             $res.count | Should Be 1
@@ -122,40 +125,43 @@ Describe "Split Operator" -Tags CI {
             $res.count | Should Be 1
         }
 
-        It "Binary split operator works with Singleline" {
+        It "Binary split operator works with Singleline (new line = '<Name>')" -TestCases $testCases {
+            param($testText, $testText2, $newLine)
             $res = $testText -split 'b.+c', 0, 'Singleline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n"
-            $res[1] | Should Be "`nd78d"
+            $res[0] | Should Be "a12a$($newLine)"
+            $res[1] | Should Be "$($newLine)d78d"
 
             $res = $testText2 -split 'b.+c', 0, 'Singleline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n%"
-            $res[1] | Should Be "`nd78d"
+            $res[0] | Should Be "a12a$($newLine)%"
+            $res[1] | Should Be "$($newLine)d78d"
         }
 
-        It "Binary split operator works with Multiline" {
+        It "Binary split operator works with Multiline (new line = '<Name>')" -TestCases $testCases {
+            param($testText, $testText2, $newLine)
             $res = $testText -split '^b', 0, 'Multiline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n"
-            $res[1] | Should Be "34b`nc56c`nd78d"
+            $res[0] | Should Be "a12a$($newLine)"
+            $res[1] | Should Be "34b$($newLine)c56c$($newLine)d78d"
         }
 
-        It "Binary split operator works with Singleline,Multiline" {
+        It "Binary split operator works with Singleline,Multiline (new line = '<Name>')" -TestCases $testCases {
+            param($testText, $testText2, $newLine)
             $res = $testText -split 'b.+c', 0, 'Singleline,Multiline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n"
-            $res[1] | Should Be "`nd78d"
+            $res[0] | Should Be "a12a$($newLine)"
+            $res[1] | Should Be "$($newLine)d78d"
 
             $res = $testText2 -split 'b.+c', 0, 'Singleline,Multiline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n%"
-            $res[1] | Should Be "`nd78d"
+            $res[0] | Should Be "a12a$($newLine)%"
+            $res[1] | Should Be "$($newLine)d78d"
 
             $res = $testText -split '^b.+c', 0, 'Singleline,Multiline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n"
-            $res[1] | Should Be "`nd78d"
+            $res[0] | Should Be "a12a$($newLine)"
+            $res[1] | Should Be "$($newLine)d78d"
 
             $res = $testText2 -split '^b.+c', 0, 'Singleline,Multiline'
             $res.count | Should Be 1
