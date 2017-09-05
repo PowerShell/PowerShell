@@ -104,6 +104,18 @@ Some general guidelines:
 * Use `dict.TryGetValue` instead of `dict.Contains` and `dict[<key>]` when retrieving value from a `Dictionary`.
   In this way you can avoid hashing the key twice.
 
+## Security Considerations
+
+Security is an important aspect of PowerShell and we need to be very careful about changes that may introduce security risks.
+Reviewers of a PR should be sensitive to changes that may affect security.
+Some security related keywords may serve as good indicators,
+such as `crypto`, `encryption`, `decryption`, `certificate`, `authenticate`, `ssl/tls` and `protected data`.
+
+When facing a PR with such changes,
+the reviewers should request a designated security Subject Matter Expert (SME) to review the PR.
+Currently, @PaulHigin and @TravisEz13 are our security SMEs.
+See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area experts.
+
 ## Best Practices
 
 * Avoid hard-coding anything unless it's absolutely necessary.
