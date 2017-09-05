@@ -1,9 +1,11 @@
-# Docker image file that describes an Centos7 image with PowerShell installed from Microsoft YUM Repo
+# Docker image file that describes an OpenSUSE 42.1 (AKA leap 42.1) image with PowerShell installed from PowerShell Release
+FROM opensuse:42.2
 
-FROM amazonlinux:latest
-
-ARG POWERSHELL_VERSION=6.0.0-beta.6
-ARG IMAGE_NAME=microsoft/powershell:amazonlinux
+ARG POWERSHELL_VERSION=6.0.0_beta.6
+ARG POWERSHELL_RELEASE=v6.0.0-beta.6
+ARG FORK=PowerShell
+ARG POWERSHELL_PACKAGE=powershell-$POWERSHELL_VERSION-1.suse.42.1.x86_64.rpm
+ARG IMAGE_NAME=microsoft/powershell:opensuse42.2
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
       readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" \
@@ -22,24 +24,21 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
+# Update, Install packages to generate localedef and CURL which is used by RPM
+# add the Microsoft key as trusted to install packgages using RPM
+# Install PowerShell then clean up
+RUN zypper --non-interactive update --skip-interactive \
+    && zypper --non-interactive install \
+        glibc-locale \
+        glibc-i18ndata \
+        curl \
+    && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
+    && zypper --non-interactive install https://github.com/$FORK/PowerShell/releases/download/$POWERSHELL_RELEASE/$POWERSHELL_PACKAGE \
+    && zypper --non-interactive clean --all
+
 # Setup the locale
 ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
-# Install dependencies and clean up
-RUN yum install -y \       
-        curl \
-        libuuid.x86_64 \
-    && yum clean all
-
-# Download and configure Microsoft Repository config file
-RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
-
-# Install latest powershell from Microsoft YUM Repo
-RUN yum install -y \
-        powershell
-
-# Use PowerShell as the default shell
-# Use array to avoid Docker prepending /bin/sh -c
 CMD [ "powershell" ]
