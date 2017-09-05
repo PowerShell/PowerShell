@@ -955,3 +955,8 @@ microsoft.com
  - ./tools/install-powershell.readme.md
 includeide
 sed
+ - docs/dev-process/coding-guidelines.md
+interop
+PaulHigin
+SMEs
+TravisEz13
