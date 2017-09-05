@@ -29,7 +29,8 @@ Describe "Windows Installer" -Tags "Scenario" {
 
     It "Download link '<downloadLink>' for '<Name>' is reachable" -TestCases $downloadLinks -Test {
         Param ([string]$downloadLink)
-        (Invoke-WebRequest $universalCRuntimeDownloadLink.Replace("https://", 'http://')) | Should Not Be $null
+        # Because an outdated link 'https://www.microsoft.com/download/details.aspx?id=504100000' would still return a 200 reponse (due to a redirection to an error page), it only checks that it returns something
+        (Invoke-WebRequest $universalCRuntimeDownloadLink -UseBasicParsing) | Should Not Be $null
     }
 	
 }
