@@ -471,13 +471,11 @@ Fix steps:
 
         try {
             Push-Location $Native
-            if ($Runtime -eq "linux-arm")
-            {
+            if ($Runtime -eq "linux-arm") {
                 Start-NativeExecution { cmake -D CMAKE_TOOLCHAIN_FILE=./arm.toolchain.cmake . }
                 Start-NativeExecution { make -j }
             }
-            else
-            {
+            else {
                 Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
                 Start-NativeExecution { make -j }
                 Start-NativeExecution { ctest --verbose }
@@ -667,7 +665,7 @@ function New-PSOptions {
             }
         }
 
-        # We plan to release packages targetting win7-x64 and win7-x86 RIDs, 
+        # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
         # which supports all supported windows platforms.
         # So we, will change the RID to win7-<arch>
         if ($Environment.IsWindows) {
@@ -953,7 +951,7 @@ function Start-PSPester {
             if ($PassThru.IsPresent)
             {
                 $passThruFile = [System.IO.Path]::GetTempFileName()
-                try 
+                try
                 {
                     $Command += "|Export-Clixml -Path '$passThruFile' -Force"
                     Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
@@ -964,7 +962,7 @@ function Start-PSPester {
                     Remove-Item $passThruFile -ErrorAction SilentlyContinue
                 }
             }
-            else 
+            else
             {
                 Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
             }
@@ -1000,13 +998,13 @@ function script:Start-UnelevatedProcess
 function Show-PSPesterError
 {
     [CmdletBinding(DefaultParameterSetName='xml')]
-    param ( 
+    param (
         [Parameter(ParameterSetName='xml',Mandatory)]
         [Xml.XmlElement]$testFailure,
         [Parameter(ParameterSetName='object',Mandatory)]
         [PSCustomObject]$testFailureObject
         )
-    
+
     if ($PSCmdLet.ParameterSetName -eq 'xml')
     {
         $description = $testFailure.description
@@ -1062,11 +1060,11 @@ function Test-PSPesterResults
         {
             logerror "TEST FAILURES"
             # switch between methods, SelectNode is not available on dotnet core
-            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) 
+            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] )
             {
                 $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
             }
-            else 
+            else
             {
                 $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
             }
@@ -1253,8 +1251,7 @@ function Start-PSBootstrap {
                 # Build tools
                 $Deps += "curl", "g++", "cmake", "make"
 
-                if ($BuildLinuxArm)
-                {
+                if ($BuildLinuxArm) {
                     $Deps += "gcc-arm-linux-gnueabihf", "g++-arm-linux-gnueabihf"
                 }
 
