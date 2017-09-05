@@ -122,9 +122,11 @@ Additional references:
   An issue title is to briefly describe what is wrong, while a PR title is to briefly describe what is changed.
   A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fix #5" in the PR's body.
 * When you create a pull request,
-  including a summary of what's included in your changes and
-  if the changes are related to an existing GitHub issue,
-  please reference the issue in pull request description (e.g. ```Fix #11```).
+  including a summary about your changes in the PR description.
+  The description is used to create change logs,
+  so try to have the first sentence explain the benefit to end users.
+  If the changes are related to an existing GitHub issue,
+  please reference the issue in PR description (e.g. ```Fix #11```).
   See [this][closing-via-message] for more details.
 * If the change warrants a note in the [changelog](../CHANGELOG.MD)
   either update the changelog in your pull request or

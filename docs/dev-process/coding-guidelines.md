@@ -1,4 +1,3 @@
-
 # C# Coding Guidelines
 
 ## Coding Conventions
@@ -45,7 +44,9 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Fields should be specified at the top within type declarations.
 
-* File encoding should be `ASCII` (preferred) or `UTF8` (with `BOM`) if absolutely necessary.
+* File encoding should be `ASCII`.
+  All `BOM` encodings should be avoided.
+  Tests that need a `BOM` encoding file should generate the file on the fly.
 
 ### Member Conventions
 
@@ -70,7 +71,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Add comments when a reviewer needs help to understand your changes.
 
-* Update existing comments when you are changing the corresponding code.
+* Update/remove existing comments when you are changing the corresponding code.
 
 * Make sure the added/updated comments are accurate and easy to understand.
 
@@ -101,6 +102,11 @@ Some general guidelines:
 * Avoid unnecessary memory allocation in a loop.
   Move the memory allocation outside the loop if possible.
 
+* Avoid gratuitous exceptions as much as possible.
+  Exception handling can be expensive due to cache misses and page faults when accessing the handling code and data.
+  Finding and designing away exception-heavy code can result in a decent performance win.
+  For example, you should stay away from things like using exceptions for control flow.
+
 * Use `dict.TryGetValue` instead of `dict.Contains` and `dict[<key>]` when retrieving value from a `Dictionary`.
   In this way you can avoid hashing the key twice.
 
@@ -129,10 +135,11 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
   but not required.
 
 * Stick to the `DRY` principle -- Don't Repeat Yourself.
-   * Wrap the commonly used code in methods, or even put it in a utility class if that makes sense,
-     so that the same code can be reused.
-   * Check if the code for the same purpose already exists in the code base before inventing your own wheel.
-   * Avoid repeating literal strings in code. Instead, use `const` variable to hold the string.
+    * Wrap the commonly used code in methods,
+      or even put it in a utility class if that makes sense,
+      so that the same code can be reused (i.e. `StringToBase64Converter.Base64ToString(string)`).
+    * Check if the code for the same purpose already exists in the code base before inventing your own wheel.
+    * Avoid repeating literal strings in code. Instead, use `const` variable to hold the string.
 
 * Use of new C# language syntax is encouraged.
   But avoid refactoring any existing code using new language syntax when submitting a PR
