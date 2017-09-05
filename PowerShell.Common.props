@@ -1,16 +1,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-        We should ~explicitly~ assign versions properties in the target
+        We should *explicitly* assign version properties in this target
         because:
-          1. By default the version properties defined in global PropertyGroup (not target!) in 'Microsoft.NET.DefaultAssemblyInfo.targets'
-          2. Properties in global 'PropertyGroups' is assigned before any targets
+          1. By default the version properties are defined in global 'PropertyGroup' (not target!) in 'Microsoft.NET.DefaultAssemblyInfo.targets'
+          2. Properties in global 'PropertyGroups' are assigned before any targets
           3. and cannot be conditionally excecuted as targets (after this target).
 
-        To assign versions properties we should excecute the target:
-          '_GenerateRestoreProjectSpec' - before 'Restore' target
-          'GenerateNuspec'              - before 'Pack' target
-          'BeforeBuild'                 - before 'Build' target
+        To assign version properties we should excecute this target:
+          before 'Restore' target - '_GenerateRestoreProjectSpec'
+          before 'Pack' target    - 'GenerateNuspec'
+          before 'Build' target   - 'BeforeBuild'
   -->
   <Target Name="GetPSCoreVersionFromGit"
     BeforeTargets="_GenerateRestoreProjectSpec;GenerateNuspec;BeforeBuild"
@@ -33,15 +33,18 @@
       <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
       <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
 
-      <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
-      <PSCorePrefixVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[1].Value)</PSCorePrefixVersion>
-      <PSCoreMajorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[2].Value)</PSCoreMajorVersion>
-      <PSCoreMinorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[3].Value)</PSCoreMinorVersion>
-      <PSCorePatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[4].Value)</PSCorePatchVersion>
-      <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
-
       <PSCoreFormattedVersion Condition = "'$(ReleaseTag)' != '' or '$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
       <PSCoreFormattedVersion Condition = "'$(PSCoreFormattedVersion)' == ''">$(PSCoreBuildVersion) Commits: $(PSCoreAdditionalCommits) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
+
+      <!-- Extract the major, minor and patch version numbers, as well as the preview label.
+           They are currently not used anywhere, so we comment them out for now.
+        <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
+        <PSCorePrefixVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[1].Value)</PSCorePrefixVersion>
+        <PSCoreMajorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[2].Value)</PSCoreMajorVersion>
+        <PSCoreMinorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[3].Value)</PSCoreMinorVersion>
+        <PSCorePatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[4].Value)</PSCorePatchVersion>
+        <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
+      -->
 
       <!--
             Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
@@ -61,7 +64,7 @@
 
     </PropertyGroup>
 
-   <!-- for debug output
+    <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);
                PowerShellVersion=$(PowerShellVersion);
@@ -79,7 +82,8 @@
                ProjectVersion = '!$(ProjectVersion)!'
                InformationalVersion = $(InformationalVersion);
               "
-        Overwrite="true"/-->
+        Overwrite="true" />
+    -->
 
   </Target>
 
@@ -99,7 +103,6 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
-
   </PropertyGroup>
 
 </Project>
