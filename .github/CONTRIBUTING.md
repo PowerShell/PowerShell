@@ -111,15 +111,20 @@ Additional references:
 
 ![Github-PR-dev.png](Images/Github-PR-dev.png)
 
+* It's recommended that the lines of changes in a PR should not be too big,
+  because it not only stretches the review time, but also makes it much harder to spot issues.
+  For large features, try to approach it in an incremental way, so that each PR won't be too big.
 * If you're contributing in a way that changes the user or developer experience, you are expected to document those changes.
   See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell).
 * Add a meaningful title of the PR describing what change you want to check in.
-  Don't simply put: "Fixes issue #5".
-  A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fixes #5" in the PR's body.
+  Don't simply put: "Fix issue #5".
+  Also don't directly use the issue title as the PR title.
+  An issue title is to briefly describe what is wrong, while a PR title is to briefly describe what is changed.
+  A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fix #5" in the PR's body.
 * When you create a pull request,
   including a summary of what's included in your changes and
   if the changes are related to an existing GitHub issue,
-  please reference the issue in pull request description (e.g. ```Closes #11```).
+  please reference the issue in pull request description (e.g. ```Fix #11```).
   See [this][closing-via-message] for more details.
 * If the change warrants a note in the [changelog](../CHANGELOG.MD)
   either update the changelog in your pull request or
