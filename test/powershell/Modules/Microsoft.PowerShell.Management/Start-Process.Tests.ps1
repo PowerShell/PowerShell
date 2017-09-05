@@ -112,8 +112,12 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should be able to use the whatif switch without performing the actual action" {
         $pingOutput = Join-Path $TestDrive "pingOutput.txt"
         Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf
-        Test-Path $pingOutput | Should Be $false
+        $pingOutput | Should Not Exist 
     }
+
+    It "Should return null when using -WhatIf switch with PassThru" {
+        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should Be $null
+   }
 }
 
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
