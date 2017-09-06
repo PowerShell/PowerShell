@@ -1470,6 +1470,7 @@ namespace System.Management.Automation.Internal
         internal static bool IgnoreScriptBlockCache;
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
+        internal static bool DisableGACLoading;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)

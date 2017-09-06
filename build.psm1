@@ -496,7 +496,7 @@ Fix steps:
     }
 
     # handle TypeGen
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs")) {
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen
     }
@@ -1537,7 +1537,6 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.ConsoleHost',
 'Microsoft.PowerShell.Security',
 'System.Management.Automation',
-'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
 'Microsoft.PowerShell.CoreCLR.Eventing',
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
@@ -1643,7 +1642,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs powershell.inc
+        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershell.inc
     } finally {
         Pop-Location
     }
@@ -2082,7 +2081,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
         "Microsoft.PowerShell.PSReadLine.dll",
