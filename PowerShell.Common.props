@@ -1,16 +1,14 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-        We should *explicitly* re-assign version properties in this target
-        because by default the version properties are defined in 'PropertyGroup' (not target!)
-        in 'Microsoft.NET.DefaultAssemblyInfo.targets' *before* any targets.
-        (the 'PropertyGroup' in 'Microsoft.NET.DefaultAssemblyInfo.targets' cannot be conditionally
-        executed after this target.)
+      The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
+      *before* any targets get a chance to execute.
+      We need to *explicitly* re-assign the 'version' property and other version tags in this target.
 
-        To re-assign version properties we should excecute this target:
-          before 'Restore' target - '_GenerateRestoreProjectSpec'
-          before 'Pack' target    - 'GenerateNuspec'
-          before 'Build' target   - 'BeforeBuild'
+      In order for the versions assigned here to take effect, we need to execute this target at an early stage:
+        before 'Restore' target - '_GenerateRestoreProjectSpec'
+        before 'Pack' target    - 'GenerateNuspec'
+        before 'Build' target   - 'BeforeBuild'
   -->
   <Target Name="GetPSCoreVersionFromGit"
     BeforeTargets="_GenerateRestoreProjectSpec;GenerateNuspec;BeforeBuild"
