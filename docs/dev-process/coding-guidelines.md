@@ -44,7 +44,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Fields should be specified at the top within type declarations.
   For those that serve as backing fields for properties,
-  they are OK to be specified next to the corresponding properties.
+  they should be specified next to the corresponding properties.
 
 * Preprocessor directives like `#if` and `#endif` should be placed at the beginning of a line,
   without any leading spaces.
