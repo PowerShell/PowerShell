@@ -4963,8 +4963,8 @@ end
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
-                SpecialVariables.IsOSX,
-                Platform.IsOSX,
+                SpecialVariables.IsMacOS,
+                Platform.IsMacOS,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 

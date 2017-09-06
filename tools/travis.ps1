@@ -42,7 +42,7 @@ function Set-DailyBuildBadge
     $storageAccountKey = $Env:TestResultAccountKey
 
     # this is the url referenced in README.MD which displays the badge
-    $platform = if ( $IsOSX ) { "OSX" } else { "Linux" }
+    $platform = if ( $IsLinux ) { "Linux" } else { "OSX" }
     $Url = "https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.${platform}.svg"
 
     $body = $content

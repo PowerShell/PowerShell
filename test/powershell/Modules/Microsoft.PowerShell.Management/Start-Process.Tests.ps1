@@ -12,7 +12,7 @@ Describe "Start-Process" -Tags @("Feature") {
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
-        elseif ($IsLinux -Or $IsOSX) {
+        elseif ($IsLinux -Or $IsMacOS) {
 	        $pingParam = "-c 2 localhost"
         }
     }

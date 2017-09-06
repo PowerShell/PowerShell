@@ -105,7 +105,7 @@ function Set-RepoName
 function Test-SkipWindows
 {
     [bool] $canRunWindows = (Get-DockerEngineOs) -like 'Windows*'
-    return ($IsLinux -or $IsOSX -or !$canRunWindows)
+    return ($IsLinux -or $IsMacOS -or !$canRunWindows)
 }
 
 function Test-SkipLinux

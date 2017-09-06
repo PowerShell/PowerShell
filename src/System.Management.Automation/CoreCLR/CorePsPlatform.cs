@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <summary>
         /// True if the current platform is OS X.
         /// </summary>
-        public static bool IsOSX
+        public static bool IsMacOS
         {
             get
             {
@@ -605,7 +605,7 @@ namespace System.Management.Automation
 
         internal static int NonWindowsGetProcessParentPid(int pid)
         {
-            return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+            return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
         // Unix specific implementations of required functionality

@@ -38,7 +38,7 @@ Describe "FormatHex" -tags "CI" {
             $certProviderAvailable = $true
         }
 
-        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX -or (-not $certProviderAvailable))
+        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsMacOS -or (-not $certProviderAvailable))
     }
 
     Context "InputObject Paramater" {

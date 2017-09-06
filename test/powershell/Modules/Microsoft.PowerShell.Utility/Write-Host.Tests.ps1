@@ -10,7 +10,7 @@
         )
     }
 
-    It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsOSX {
+    It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsMacOS {
         param($Command, $returnCount, $returnValue)
 
         [array]$result = & $powershell -noprofile -c $Command

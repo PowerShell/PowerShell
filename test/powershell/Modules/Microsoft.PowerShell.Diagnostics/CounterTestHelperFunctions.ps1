@@ -288,7 +288,7 @@ function CompareCounterSets
 function SkipCounterTests
 {
     if ([System.Management.Automation.Platform]::IsLinux -or
-        [System.Management.Automation.Platform]::IsOSX -or
+        [System.Management.Automation.Platform]::IsMacOS -or
         [System.Management.Automation.Platform]::IsIoT)
     {
         return $true

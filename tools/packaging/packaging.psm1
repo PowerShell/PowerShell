@@ -119,7 +119,7 @@ function Start-PSPackage {
             } else {
                 throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
             }
-        } elseif ($Environment.IsOSX) {
+        } elseif ($Environment.IsMacOS) {
             "osxpkg", "nupkg"
         } elseif ($Environment.IsWindows) {
             "msi", "nupkg"
@@ -269,7 +269,7 @@ function New-UnixPackage {
             }
         }
         "osxpkg" {
-            if (!$Environment.IsOSX) {
+            if (!$Environment.IsMacOS) {
                 throw ($ErrorMessage -f "OS X")
             }
         }
@@ -316,14 +316,14 @@ function New-UnixPackage {
     # Follow the Filesystem Hierarchy Standard for Linux and OS X
     $Destination = if ($Environment.IsLinux) {
         "/opt/microsoft/powershell/$Suffix"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "/usr/local/microsoft/powershell/$Suffix"
     }
 
     # Destination for symlink to powershell executable
     $Link = if ($Environment.IsLinux) {
         "/usr/bin"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "/usr/local/bin"
     }
 
@@ -358,7 +358,7 @@ function New-UnixPackage {
         # so we move it to make symlink broken
         $symlink_dest = "$Destination/$Name"
         $hack_dest = "./_fpm_symlink_hack_powershell"
-        if ($Environment.IsOSX) {
+        if ($Environment.IsMacOS) {
             if (Test-Path $symlink_dest) {
                 Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
                 Move-Item $symlink_dest $hack_dest
@@ -503,7 +503,7 @@ function New-UnixPackage {
             $Output = Start-NativeExecution { fpm $Arguments }
         }
     } finally {
-        if ($Environment.IsOSX) {
+        if ($Environment.IsMacOS) {
             # this is continuation of a fpm hack for a weird bug
             if (Test-Path $hack_dest) {
                 Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
@@ -521,7 +521,7 @@ function New-UnixPackage {
     # Magic to get path output
     $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-    if ($Environment.IsOSX) {
+    if ($Environment.IsMacOS) {
         if($pscmdlet.ShouldProcess("Fix package name"))
         {
             # Add the OS information to the OSX package file name.
