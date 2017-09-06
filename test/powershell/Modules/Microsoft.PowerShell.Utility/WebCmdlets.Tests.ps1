@@ -669,7 +669,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             # Validate response content
             $jsonContent = $result.Output.Content | ConvertFrom-Json
-            $jsonContent.headers.Host | Should Match "localhost"
+            $jsonContent.headers.Host | Should Be $uri.Authority
             $jsonContent.headers.'User-Agent' | Should Match $expectedAgent
         }
     }
@@ -679,7 +679,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-WebRequest" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "localhost"
+        $jsonContent.headers.Host | Should Be $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
@@ -1269,7 +1269,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.Host | Should Match "localhost"
+        $result.Output.headers.Host | Should Be $uri.Authority
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
         $result.Output.Headers.Connection | Should Be "Close"
     }
@@ -1474,7 +1474,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result = ExecuteWebCommand -command $command
 
             # Validate response
-            $result.Output.headers.Host | Should Match "localhost"
+            $result.Output.headers.Host | Should Be $uri.Authority
             $result.Output.headers.'User-Agent' | Should Match $expectedAgent
         }
     }
@@ -1484,7 +1484,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "localhost"
+        $jsonContent.headers.Host | Should Be $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
