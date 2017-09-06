@@ -62,7 +62,7 @@
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <!-- Prerequisite check for Windows Universal C runtime -->
-    <Property Id="Universal_CRuntime_Installed" Secure="yes">
+    <Property Id="UNIVERSAL_C_RUNTIME_INSTALLED" Secure="yes">
       <DirectorySearch Id="WindowsDirectory" Path="[WindowsFolder]">
         <DirectorySearch Id="System32" Path="System32">
           <FileSearch Id="ucrtbase" Name="ucrtbase.dll"/>
@@ -70,17 +70,17 @@
       </DirectorySearch>
     </Property>	
     <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
-      <![CDATA[Installed OR Universal_CRuntime_Installed]]>
+      <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
     </Condition>
 
      <!-- Prerequisite check for Visual Studio 2015 C++ redistributables -->
-     <Property Id="Visual_CPP_Runtime_Installed" Secure="yes">
+     <Property Id="VISUAL_CPP_RUNTIME_INSTALLED" Secure="yes">
       <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
         <FileSearch Id="vcruntime140" Name="vcruntime140.dll"/>
       </DirectorySearchRef>
     </Property>	
     <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
-      <![CDATA[Installed OR Visual_CPP_Runtime_Installed]]>
+      <![CDATA[Installed OR VISUAL_CPP_RUNTIME_INSTALLED]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
