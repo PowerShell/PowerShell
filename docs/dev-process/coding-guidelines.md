@@ -97,9 +97,10 @@ and we want certain inefficient code to stay out of the performance critical cod
 Some general guidelines:
 
 * Avoid LINQ - it can create lots of avoidable garbage.
+  Instead, iterate through a collection directly using `for` or `foreach` loop.
 
-* Prefer `for` and `foreach`,
-  with a slight preference towards `for` when you're uncertain if `foreach` allocates an iterator.
+* Between `for` and `foreach`,
+  `for` is slightly preferred when you're uncertain if `foreach` allocates an iterator.
 
 * Avoid `params` arrays, prefer adding overloads with 1, 2, 3, and maybe more parameters.
 
@@ -130,10 +131,14 @@ Some general guidelines:
 
 ## Security Considerations
 
-Security is an important aspect of PowerShell and we need to be very careful about changes that may introduce security risks.
+Security is an important aspect of PowerShell and we need to be very careful about changes that may introduce security risks,
+such as code injection caused by the lack of input validation,
+privilege escalation due to the misuse of impersonation,
+or data privacy breach with a plain text password.
+
 Reviewers of a PR should be sensitive to changes that may affect security.
 Some security related keywords may serve as good indicators,
-such as `crypto`, `encryption`, `decryption`, `certificate`, `authenticate`, `ssl/tls` and `protected data`.
+such as `password`, `crypto`, `encryption`, `decryption`, `certificate`, `authenticate`, `ssl/tls` and `protected data`.
 
 When facing a PR with such changes,
 the reviewers should request a designated security Subject Matter Expert (SME) to review the PR.
