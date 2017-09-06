@@ -2051,8 +2051,7 @@ namespace Microsoft.PowerShell.Commands
                 startInfo.WindowStyle = _windowstyle;
             }
 
-            string targetMessage =  StringUtil.Format(ProcessResources.ProcessStartInfo, startInfo.FileName, startInfo.Arguments.Trim());
-            
+            string targetMessage = StringUtil.Format(ProcessResources.ProcessStartInfo, startInfo.FileName, startInfo.Arguments.Trim());
             if (!ShouldProcess(targetMessage)) { return; }
 
             //Starts the Process
