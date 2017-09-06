@@ -208,7 +208,6 @@ function Invoke-AppVeyorInstall
         }
         elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
         {
-
             $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
         else
