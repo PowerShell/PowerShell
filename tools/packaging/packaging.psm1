@@ -18,7 +18,7 @@ function Start-PSPackage {
         [ValidatePattern("^powershell")]
         [string]$Name = "powershell",
 
-        # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
+        # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
         [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg")]
         [string[]]$Type,
 
@@ -270,7 +270,7 @@ function New-UnixPackage {
         }
         "osxpkg" {
             if (!$Environment.IsMacOS) {
-                throw ($ErrorMessage -f "OS X")
+                throw ($ErrorMessage -f "macOS")
             }
         }
     }
@@ -313,7 +313,7 @@ function New-UnixPackage {
         New-StagingFolder -StagingPath $Staging -Name $Name
     }
 
-    # Follow the Filesystem Hierarchy Standard for Linux and OS X
+    # Follow the Filesystem Hierarchy Standard for Linux and macOS
     $Destination = if ($Environment.IsLinux) {
         "/opt/microsoft/powershell/$Suffix"
     } elseif ($Environment.IsMacOS) {
@@ -334,7 +334,7 @@ function New-UnixPackage {
         if ($Environment.IsRedHatFamily) {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This is the only set of platforms needed for this currently
-            # as Ubuntu has these specific library files in the platform and OSX builds for itself
+            # as Ubuntu has these specific library files in the platform and macOS builds for itself
             # against the correct versions.
             New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
             New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
@@ -354,7 +354,7 @@ function New-UnixPackage {
 
         # there is a weird bug in fpm
         # if the target of the powershell symlink exists, `fpm` aborts
-        # with a `utime` error on OS X.
+        # with a `utime` error on macOS.
         # so we move it to make symlink broken
         $symlink_dest = "$Destination/$Name"
         $hack_dest = "./_fpm_symlink_hack_powershell"
@@ -524,7 +524,7 @@ function New-UnixPackage {
     if ($Environment.IsMacOS) {
         if($pscmdlet.ShouldProcess("Fix package name"))
         {
-            # Add the OS information to the OSX package file name.
+            # Add the OS information to the macOS package file name.
             $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
             $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
 

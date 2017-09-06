@@ -38,7 +38,7 @@ namespace PSTests
             }
         }
 
-        [Fact(Skip="Bad arguments for OS X")]
+        [Fact(Skip="Bad arguments for macOS")]
         public static void TestGetMachineName()
         {
             var startInfo = new ProcessStartInfo
@@ -61,7 +61,7 @@ namespace PSTests
             }
         }
 
-        [Fact(Skip="Bad arguments for OS X")]
+        [Fact(Skip="Bad arguments for macOS")]
         public static void TestGetFQDN()
         {
             var startInfo = new ProcessStartInfo
@@ -84,7 +84,7 @@ namespace PSTests
             }
         }
 
-        [Fact(Skip="Bad arguments for OS X")]
+        [Fact(Skip="Bad arguments for macOS")]
         public static void TestGetDomainName()
         {
             var startInfo = new ProcessStartInfo

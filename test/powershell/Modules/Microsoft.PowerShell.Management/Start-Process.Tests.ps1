@@ -18,7 +18,7 @@ Describe "Start-Process" -Tags @("Feature") {
     }
 
     # Note that ProcessName may still be `powershell` due to dotnet/corefx#5378
-    # This has been fixed on Linux, but not on OS X
+    # This has been fixed on Linux, but not on macOS
 
     It "Should process arguments without error" {
 	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"

@@ -639,7 +639,7 @@ namespace Microsoft.PowerShell.Commands
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
 #if UNIX
-                browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
 #else

@@ -30,7 +30,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if the current platform is OS X.
+        /// True if the current platform is macOS.
         /// </summary>
         public static bool IsMacOS
         {
@@ -710,7 +710,7 @@ namespace System.Management.Automation
             {
                 private const string psLib = "libpsl-native";
 
-                // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and OS X
+                // Ansi is a misnomer, it is hardcoded to UTF-8 on Linux and macOS
 
                 // C bools are 1 byte and so must be marshaled as I1
 
