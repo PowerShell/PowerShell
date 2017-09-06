@@ -1026,8 +1026,9 @@ try {
             # This is done with a set of test cases to improve failure investigation
             # since the data we get back comes from a number of sources, it will be
             # easier to debug the problem if we know *all* the failures
-            #
-            It "Test 01. Standard Property test - all properties (<property>)" -testcase $testCases {
+            # issue: https://github.com/PowerShell/PowerShell/issues/4762
+            #    CsPhysicallyInstalledMemory not available when run in nightly builds
+            It "Test 01. Standard Property test - all properties (<property>)" -testcase $testCases -Pending {
                 param ( $property )
                 $specialProperties = "CsNetworkAdapters","CsProcessors","OsHotFixes"
                 if ( $specialProperties -contains $property )
