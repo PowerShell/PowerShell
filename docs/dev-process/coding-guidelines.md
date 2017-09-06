@@ -15,7 +15,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 ### Naming Conventions
 
 * Use meaningful, descriptive words for names.
-  For method names, it's encouraged to use `Verb-Object` pair such as **`LoadModule`**.
+  For method names, it's encouraged to use `VerbObject` pair such as **`LoadModule`**.
 
 * Use `_camelCase` to name internal and private fields and use `readonly` where possible.
   Prefix instance fields with `_`, static fields with `s_` and thread static fields with `t_`.
@@ -34,15 +34,20 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 * Avoid more than one blank empty line at any time.
 
-* Avoid unnecessary trailing spaces at the end of a line.
+* Avoid trailing spaces at the end of a line.
 
 * Braces usually go on their own lines,
   with the exception of single line statements that are properly indented.
 
 * Namespace imports should be specified at the top of the file,
-  outside of `namespace` declarations and should be sorted alphabetically.
+  outside of `namespace` declarations.
 
 * Fields should be specified at the top within type declarations.
+  For those that serve as backing fields for properties,
+  they are OK to be specified next to the corresponding properties.
+
+* Preprocessor directives like `#if` and `#endif` should be placed at the beginning of a line,
+  without any leading spaces.
 
 * File encoding should be `ASCII`.
   All `BOM` encodings should be avoided.
@@ -67,13 +72,18 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 
 ### Commenting Conventions
 
-* Add comments when changes are not trivial or could be confusing.
+* Place the comment on a separate line, not at the end of a line of code.
 
-* Add comments when a reviewer needs help to understand your changes.
+* Begin comment text with an uppercase letter.
+  It's recommended to end comment text with a period but not required.
+
+* Add comments where the code is not trivial or could be confusing.
+
+* Add comments where a reviewer needs help to understand the code.
 
 * Update/remove existing comments when you are changing the corresponding code.
 
-* Make sure the added/updated comments are accurate and easy to understand.
+* Make sure the added/updated comments are meaningful, accurate and easy to understand.
 
 * Public members must use [doc comments](https://msdn.microsoft.com/en-us/library/b2s063f7.aspx).
   Internal and private members may use doc comments but it is not required.
@@ -107,8 +117,16 @@ Some general guidelines:
   Finding and designing away exception-heavy code can result in a decent performance win.
   For example, you should stay away from things like using exceptions for control flow.
 
-* Use `dict.TryGetValue` instead of `dict.Contains` and `dict[<key>]` when retrieving value from a `Dictionary`.
+* Avoid `if (obj is Example) { example = (Example)obj }` when casting an object to a type.
+  Instead, use `var example = obj as Example` or the C# 7 syntax `if (obj is Example example) {...}` as appropriate.
+  In this way you can avoid converting to the type twice.
+
+* Use `dict.TryGetValue` instead of `dict.Contains` and `dict[..]` when retrieving value from a `Dictionary`.
   In this way you can avoid hashing the key twice.
+
+* It's OK to use the `+` operator to concatenate one-off short strings.
+  But when dealing with strings in loops or large amounts of text,
+  use a `StringBuilder` object.
 
 ## Security Considerations
 
@@ -140,6 +158,7 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
       so that the same code can be reused (i.e. `StringToBase64Converter.Base64ToString(string)`).
     * Check if the code for the same purpose already exists in the code base before inventing your own wheel.
     * Avoid repeating literal strings in code. Instead, use `const` variable to hold the string.
+    * Resource strings used for errors or UI should be put in resource files (`.resx`) so that they can be localized later.
 
 * Use of new C# language syntax is encouraged.
   But avoid refactoring any existing code using new language syntax when submitting a PR
@@ -157,7 +176,7 @@ There are 3 primary preprocessor macros we use during builds:
 Any other preprocessor defines found in the source are used for one-off custom builds,
 typically to help debug specific scenarios.
 
-Here are some general guidelines for writing portable code: 
+Here are some general guidelines for writing portable code:
 
 * We are in the process of cleaning up Full CLR specific code (code enclosed in `!CORECLR`),
   so do not use `CORECLR` or `!CORECLR` in new code.

@@ -111,8 +111,9 @@ Additional references:
 
 ![Github-PR-dev.png](Images/Github-PR-dev.png)
 
-* It's recommended that the lines of changes in a PR should not be too big,
-  because it not only stretches the review time, but also makes it much harder to spot issues.
+* It's recommended to avoid a PR with too many changes.
+  A large PR not only stretches the review time, but also makes it much harder to spot issues.
+  In such case, it's better to split the PR to multiple smaller ones.
   For large features, try to approach it in an incremental way, so that each PR won't be too big.
 * If you're contributing in a way that changes the user or developer experience, you are expected to document those changes.
   See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell).
