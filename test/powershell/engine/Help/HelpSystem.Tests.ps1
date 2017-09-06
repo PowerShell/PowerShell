@@ -1,4 +1,4 @@
-﻿#
+#
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
 
 function UpdateHelpFromLocalContentPath

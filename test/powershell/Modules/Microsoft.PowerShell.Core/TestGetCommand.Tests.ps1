@@ -1,4 +1,4 @@
-﻿Describe "Get-Command Tests" -Tags "CI" {
+Describe "Get-Command Tests" -Tags "CI" {
     BeforeAll {
         function TestGetCommand-DynamicParametersDCR
         {

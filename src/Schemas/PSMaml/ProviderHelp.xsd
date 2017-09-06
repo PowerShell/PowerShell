@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <schema targetNamespace="http://schemas.microsoft.com/powershell/provider/2008/09" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:provider="http://schemas.microsoft.com/powershell/provider/2008/09" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
   <import schemaLocation="developerCommand.xsd" namespace="http://schemas.microsoft.com/maml/dev/command/2004/10" />

@@ -1,4 +1,4 @@
-﻿<#
+<#
   Windows PowerShell Diagnostics Module
   This module contains a set of wrapper scripts that
   enable a user to use ETW tracing in Windows

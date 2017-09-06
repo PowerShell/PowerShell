@@ -1,4 +1,4 @@
-﻿Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
+Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
         Class MyTestParameter {
             [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]

@@ -1,4 +1,4 @@
-﻿#
+#
 # Copyright (c) Microsoft Corporation, 2016
 #
 # This is a Pester test suite which validate the Web cmdlets.

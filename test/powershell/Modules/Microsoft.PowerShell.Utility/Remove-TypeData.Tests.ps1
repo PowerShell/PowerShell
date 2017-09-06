@@ -1,4 +1,4 @@
-﻿Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
+Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $XMLFile1 = Join-Path $TestDrive -ChildPath "testFile1.ps1xml"
         $XMLFile2 = Join-Path $TestDrive -ChildPath "testFile2.ps1xml"

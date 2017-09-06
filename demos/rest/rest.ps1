@@ -1,4 +1,4 @@
-﻿
+
 #-----------------
 
 function Get-Issue

@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Management.Automation.SecurityAccountsManager.Native;
 
 namespace System.Management.Automation.SecurityAccountsManager

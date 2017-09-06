@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Principal;
 using System.Text.RegularExpressions;

@@ -1,4 +1,4 @@
-﻿Describe "Common parameters support for script cmdlets" -Tags "CI" {
+Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
         $rs.open()

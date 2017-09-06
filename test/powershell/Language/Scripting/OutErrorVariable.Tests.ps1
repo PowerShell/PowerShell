@@ -1,4 +1,4 @@
-﻿Describe "Tests OutVariable only" -Tags "CI" {
+Describe "Tests OutVariable only" -Tags "CI" {
     BeforeAll {
 
         function get-foo1

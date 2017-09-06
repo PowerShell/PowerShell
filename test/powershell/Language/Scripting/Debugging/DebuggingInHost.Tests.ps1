@@ -1,4 +1,4 @@
-﻿##
+##
 ## Copyright (c) Microsoft Corporation
 ##
 ## Debugging in Host tests

@@ -1,4 +1,4 @@
-﻿##
+##
 ## Copyright (c) Microsoft Corporation, 2015
 ##
 ## Script debugging tests

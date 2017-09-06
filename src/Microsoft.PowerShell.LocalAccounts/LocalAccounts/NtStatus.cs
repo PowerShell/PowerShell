@@ -1,4 +1,4 @@
-﻿
+
 using System.Diagnostics.CodeAnalysis;
 
 namespace System.Management.Automation.SecurityAccountsManager.Native

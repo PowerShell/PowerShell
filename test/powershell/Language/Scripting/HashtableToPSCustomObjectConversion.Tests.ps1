@@ -1,4 +1,4 @@
-﻿Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
+Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     BeforeAll {
         class SampleClass5 {
             [int]$a

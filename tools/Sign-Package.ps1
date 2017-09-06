@@ -1,4 +1,4 @@
-﻿# Utility to generate a self-signed certificate and sign a given package such as PowerShell.zip/appx/msi
+# Utility to generate a self-signed certificate and sign a given package such as PowerShell.zip/appx/msi
 
 [CmdletBinding()]
 param (

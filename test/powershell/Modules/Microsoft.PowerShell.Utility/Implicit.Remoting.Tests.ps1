@@ -1,4 +1,4 @@
-﻿Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
+Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
 
     BeforeAll {
 

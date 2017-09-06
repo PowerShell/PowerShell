@@ -1,4 +1,4 @@
-﻿# Localized PSODataUtils.psd1
+# Localized PSODataUtils.psd1
 
 ConvertFrom-StringData @'
 ###PSLOC
