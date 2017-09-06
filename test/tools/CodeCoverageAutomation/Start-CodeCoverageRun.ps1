@@ -1,4 +1,4 @@
-﻿param(
+param(
     [Parameter(Mandatory = $true, Position = 0)] $coverallsToken,
     [Parameter(Mandatory = $true, Position = 1)] $codecovToken,
     [Parameter(Position = 2)] $azureLogDrive = "L:\",

@@ -1,4 +1,4 @@
-﻿Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
+Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
     It "Should be able to throw exception when missing mandatory parameters" {
         try
         {

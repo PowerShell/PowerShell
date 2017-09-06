@@ -10,7 +10,7 @@ Author = 'Microsoft Corporation'
 
 CompanyName = 'Microsoft Corporation'
 
-Copyright = '© Microsoft Corporation. All rights reserved.'
+Copyright = 'Â© Microsoft Corporation. All rights reserved.'
 
 PowerShellVersion = '3.0'
 

@@ -1,4 +1,4 @@
-﻿#if CORECLR
+#if CORECLR
 
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.

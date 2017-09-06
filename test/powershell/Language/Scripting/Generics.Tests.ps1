@@ -1,4 +1,4 @@
-﻿using namespace system.collections.generic
+using namespace system.collections.generic
 using namespace System.Management.Automation
 Describe "Generics support" -Tags "CI" {
     # list and stack are in different assemblies, and dictionary

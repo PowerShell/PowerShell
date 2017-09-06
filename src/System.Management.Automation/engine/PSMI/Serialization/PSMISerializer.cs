@@ -1,4 +1,4 @@
-﻿using Microsoft.Management.Infrastructure;
+using Microsoft.Management.Infrastructure;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation

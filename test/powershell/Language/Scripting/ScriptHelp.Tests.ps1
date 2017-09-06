@@ -1,4 +1,4 @@
-﻿$ProgressPreference = "SilentlyContinue"
+$ProgressPreference = "SilentlyContinue"
 
 Describe 'get-help HelpFunc1' -Tags "Feature" {
     BeforeAll {

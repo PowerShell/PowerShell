@@ -1,1 +1,1 @@
-﻿Get-Module
+Get-Module

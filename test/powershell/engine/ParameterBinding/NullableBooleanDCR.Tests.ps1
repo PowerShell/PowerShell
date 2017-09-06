@@ -1,4 +1,4 @@
-﻿Describe "Nullable Boolean DCR Tests" -Tags "CI" {
+Describe "Nullable Boolean DCR Tests" -Tags "CI" {
     BeforeAll {
         function ParserTestFunction
         {

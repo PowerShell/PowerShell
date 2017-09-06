@@ -1,4 +1,4 @@
-﻿Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
+Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
     BeforeAll {
 		$functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
 		$functionDefinition = @'
@@ -317,7 +317,7 @@ foo``u{2195}abc
 
 '@
 "@
-            $result | should be "`r`nfoo``u{2195}abc`r`n"
+            $result | should be "`nfoo``u{2195}abc`n"
         }
 
         It "Test that two consecutive Unicode escape sequences are tokenized correctly." {

@@ -1,4 +1,4 @@
-﻿Describe "Add-Member DRT Unit Tests" -Tags "CI" {
+Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Mandatory parameters should not be null nor empty" {
         # when Name is null

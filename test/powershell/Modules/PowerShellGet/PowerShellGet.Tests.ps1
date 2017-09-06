@@ -1,4 +1,4 @@
-﻿# no progress output during these tests
+# no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'INTGallery'

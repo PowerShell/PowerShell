@@ -1,4 +1,4 @@
-﻿Describe "DeserializedMethods" -Tags "CI" {
+Describe "DeserializedMethods" -Tags "CI" {
     It "Deserialized objects shouldn't ever have any methods (unless they are primitive known types)" {
         $a = [collections.arraylist]::new()
         $null = $a.Add(1)

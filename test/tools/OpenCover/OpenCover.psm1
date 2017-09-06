@@ -1,4 +1,4 @@
-﻿#region privateFunctions
+#region privateFunctions
 
 $script:psRepoPath = [string]::Empty
 if ($null -ne (Get-Command -Name 'git' -ErrorAction Ignore)) {

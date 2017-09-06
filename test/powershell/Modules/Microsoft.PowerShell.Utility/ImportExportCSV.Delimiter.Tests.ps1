@@ -1,4 +1,4 @@
-﻿Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
+Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
     BeforeAll {
         # note, we will not use "," as that's the default for CSV
         $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",

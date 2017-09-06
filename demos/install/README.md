@@ -1,4 +1,4 @@
-﻿## Install demo
+## Install demo
 
 For Windows refer to the [installation instructions](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md)
 

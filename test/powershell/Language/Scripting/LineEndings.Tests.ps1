@@ -1,4 +1,4 @@
-﻿Describe 'Line endings' -Tags "CI" {
+Describe 'Line endings' -Tags "CI" {
     BeforeAll {
         $lf = "`n"
         $cr = "`r"

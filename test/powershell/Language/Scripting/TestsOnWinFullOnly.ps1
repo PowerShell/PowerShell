@@ -1,4 +1,4 @@
-﻿function Run-TestOnWinFull
+function Run-TestOnWinFull
 {
     [CmdletBinding()]
     param( [string]$name )

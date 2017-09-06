@@ -1,4 +1,4 @@
-﻿Describe "ConvertTo-Html Tests" -Tags "CI" {
+Describe "ConvertTo-Html Tests" -Tags "CI" {
 
     BeforeAll {
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}

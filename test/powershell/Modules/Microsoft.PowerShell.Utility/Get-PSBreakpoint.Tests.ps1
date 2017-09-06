@@ -1,4 +1,4 @@
-﻿Describe "Get-PSBreakpoint" -Tags "CI" {
+Describe "Get-PSBreakpoint" -Tags "CI" {
 
     $scriptName = "Get-PSBreakpoint.Tests.ps1"
     $fullScriptPath = Join-Path -Path $PSScriptRoot -ChildPath $scriptName

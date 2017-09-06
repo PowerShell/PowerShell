@@ -9,7 +9,7 @@ Describe "Get-FileHash" -Tags "CI" {
         It "Should default to correct algorithm, hash and path" {
             $result = Get-FileHash $testDocument
             $result.Algorithm | Should Be "SHA256"
-            $result.Hash | Should Be "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570"
+            $result.Hash | Should Be "41620F6C9F3531722EFE90AED9ABBC1D1B31788AA9141982030D3DDE199F770C"
             $result.Path | Should Be $testDocument
         }
     }
@@ -18,11 +18,11 @@ Describe "Get-FileHash" -Tags "CI" {
         BeforeAll {
             # Keep "sHA1" below! It is for testing that the cmdlet accept a hash algorithm name in any case!
             $testcases =
-                @{ algorithm = "sHA1";   hash = "01B865D143E07ECC875AB0EFC0A4429387FD0CF7" },
-                @{ algorithm = "SHA256"; hash = "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570" },
-                @{ algorithm = "SHA384"; hash = "656215B6A07011E625206F43E57873F49AD7B36DFCABB70F6CDCE2303D7A603E55D052774D26F339A6D80A264340CB8C" },
-                @{ algorithm = "SHA512"; hash = "C688C33027D89ACAC920545471C8053D8F64A54E21D0415F1E03766DDCDA215420E74FAFD1DC399864C6B6B5723A3358BD337339906797A39090B02229BF31FE" },
-                @{ algorithm = "MD5";    hash = "7B09811D1631C9FD46B39D1D35522F0A" }
+                @{ algorithm = "sHA1";   hash = "0C483659B1F2D5A8F116211DE8F58BF45893CFFB" },
+                @{ algorithm = "SHA256"; hash = "41620F6C9F3531722EFE90AED9ABBC1D1B31788AA9141982030D3DDE199F770C" },
+                @{ algorithm = "SHA384"; hash = "EC4C4D4F0B2A79F216118C5A5059B8CE061097BA9161BE5890C098AAEB5DB169C13DAE0A6F855C9A589CD11DF47D0C87" },
+                @{ algorithm = "SHA512"; hash = "6ABA8BA8B619100A6829BEB940D9D77E4A8197FDCAC2D0FE5AD6C2758DACC5A59774195FD8A7A92780B7582A966B81CA0C1576C0044C5AF7BE20F5CCF425BD76" },
+                @{ algorithm = "MD5";    hash = "F9D78BD059AB162BEA21EB02BADDE001" }
         }
         It "Should be able to get the correct hash from <algorithm> algorithm" -TestCases $testCases {
             param($algorithm, $hash)

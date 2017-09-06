@@ -1,4 +1,4 @@
-﻿#region find, install, update, uninstall the PowerShell scripts from an online repository.
+#region find, install, update, uninstall the PowerShell scripts from an online repository.
 # Value: equivalent of pypi
 
 # List of PowerShellGet commands
