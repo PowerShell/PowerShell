@@ -24,7 +24,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 * Use `camelCase` to name non-constant local variables.
 
 * Use `PascalCase` to name constant local variables and fields.
-  The only exception is for interop code where the constant should exactly match the name and value of the code you are calling via interop (i.e. `const int ERROR_SUCCESS = 0`).
+  The only exception is for interop code where the constant should exactly match the name and value of the code you are calling via interop (e.g. `const int ERROR_SUCCESS = 0`).
 
 * Use `PascalCase` to name types and all other type members.
 
@@ -105,7 +105,7 @@ Some general guidelines:
 * Avoid `params` arrays, prefer adding overloads with 1, 2, 3, and maybe more parameters.
 
 * Be aware of APIs such as `String.Split(params char[])` that do not provide overloads to avoid array allocation.
-  When calling such APIs, reuse a static array when possible (i.e. `Utils.Separators.Colon`).
+  When calling such APIs, reuse a static array when possible (e.g. `Utils.Separators.Colon`).
 
 * Avoid creating empty arrays.
   Instead, reuse the static ones via `Utils.EmptyArray<T>`.
@@ -154,13 +154,13 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
 
 * Use `using` statement instead of `try/finally` if the only code in the `finally` block is to call the `Dispose` method.
 
-* Use of object initializers (i.e. `new Example { Name = "Name", ID = 1 }`) is encouraged for better readability,
+* Use of object initializers (e.g. `new Example { Name = "Name", ID = 1 }`) is encouraged for better readability,
   but not required.
 
 * Stick to the `DRY` principle -- Don't Repeat Yourself.
     * Wrap the commonly used code in methods,
       or even put it in a utility class if that makes sense,
-      so that the same code can be reused (i.e. `StringToBase64Converter.Base64ToString(string)`).
+      so that the same code can be reused (e.g. `StringToBase64Converter.Base64ToString(string)`).
     * Check if the code for the same purpose already exists in the code base before inventing your own wheel.
     * Avoid repeating literal strings in code. Instead, use `const` variable to hold the string.
     * Resource strings used for errors or UI should be put in resource files (`.resx`) so that they can be localized later.
