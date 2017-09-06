@@ -14,23 +14,15 @@ Describe "Windows Installer" -Tags "Scenario" {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    $universalCRuntimeDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=50410'
-    $visualStudioCPlusPlusRedistributablesDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=48145'
-
-    $downloadLinks = @(
-        @{ downloadLink = $universalCRuntimeDownloadLink; Name = 'Universal C Runtime' }
-        @{ downloadLink = $visualStudioCPlusPlusRedistributablesDownloadLink; Name = 'Visual Studio C++ 2015 Redistributables' }
-    )
+    $preRequisitesLink =  'https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites'
         
-    It "WiX (Windows Installer XML) file contains download link '<downloadLink>' for '<Name>'" -TestCases $downloadLinks -Test {
-        Param ([string]$downloadLink)
-        (Get-Content $wixProductFile -Raw).Contains($downloadLink) | Should Be $true
+    It "WiX (Windows Installer XML) file contains pre-requisites link $preRequisitesLink" {
+        (Get-Content $wixProductFile -Raw).Contains($preRequisitesLink) | Should Be $true
     }
 
-    It "Download link '<downloadLink>' for '<Name>' is reachable" -TestCases $downloadLinks -Test {
-        Param ([string]$downloadLink)
+    It "Pre-Requisistes link $preRequisitesLink is reachable" -TestCases $downloadLinks -Test {
         # Because an outdated link 'https://www.microsoft.com/download/details.aspx?id=504100000' would still return a 200 reponse (due to a redirection to an error page), it only checks that it returns something
-        (Invoke-WebRequest $universalCRuntimeDownloadLink -UseBasicParsing) | Should Not Be $null
+        (Invoke-WebRequest $preRequisitesLink -UseBasicParsing) | Should Not Be $null
     }
 	
 }

@@ -69,7 +69,7 @@
         </DirectorySearch>
       </DirectorySearch>
     </Property>	
-    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=50410">
+    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
       <![CDATA[Installed OR Universal_CRuntime_Installed]]>
     </Condition>
 
@@ -79,7 +79,7 @@
         <FileSearch Id="vcruntime140" Name="vcruntime140.dll"/>
       </DirectorySearchRef>
     </Property>	
-    <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=48145">
+    <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
       <![CDATA[Installed OR Visual_CPP_Runtime_Installed]]>
     </Condition>
 
