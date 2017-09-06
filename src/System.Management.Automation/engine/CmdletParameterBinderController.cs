@@ -215,9 +215,7 @@ namespace System.Management.Automation
             var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
             if (psCompiledScriptCmdlet != null)
             {
-                psCompiledScriptCmdlet.PrepareForBinding(
-                    ((ScriptParameterBinder)this.DefaultParameterBinder).LocalScope,
-                    this.CommandLineParameters);
+                psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
             }
 
             // Add the passed in arguments to the unboundArguments collection
@@ -1758,14 +1756,6 @@ namespace System.Management.Automation
                         if (_dynamicParameterBinder == null)
                         {
                             s_tracer.WriteLine("Getting the bindable object from the Cmdlet");
-
-                            var psCompiledScriptCmdlet = this.Command as PSScriptCmdlet;
-                            if (psCompiledScriptCmdlet != null)
-                            {
-                                psCompiledScriptCmdlet.PrepareForBinding(
-                                    ((ScriptParameterBinder)this.DefaultParameterBinder).LocalScope,
-                                    this.CommandLineParameters);
-                            }
 
                             // Now get the dynamic parameter bindable object.
                             object dynamicParamBindableObject;
