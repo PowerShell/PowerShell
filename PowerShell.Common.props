@@ -1,13 +1,13 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-        We should *explicitly* assign version properties in this target
-        because:
-          1. By default the version properties are defined in global 'PropertyGroup' (not target!) in 'Microsoft.NET.DefaultAssemblyInfo.targets'
-          2. Properties in global 'PropertyGroups' are assigned before any targets
-          3. and cannot be conditionally excecuted as targets (after this target).
+        We should *explicitly* re-assign version properties in this target
+        because by default the version properties are defined in 'PropertyGroup' (not target!)
+        in 'Microsoft.NET.DefaultAssemblyInfo.targets' *before* any targets.
+        (the 'PropertyGroup' in 'Microsoft.NET.DefaultAssemblyInfo.targets' cannot be conditionally
+        executed after this target.)
 
-        To assign version properties we should excecute this target:
+        To re-assign version properties we should excecute this target:
           before 'Restore' target - '_GenerateRestoreProjectSpec'
           before 'Pack' target    - 'GenerateNuspec'
           before 'Build' target   - 'BeforeBuild'
