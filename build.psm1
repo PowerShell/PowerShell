@@ -51,6 +51,8 @@ function Sync-PSTags
 # Gets the latest tag for the current branch
 function Get-PSLatestTag
 {
+    [CmdletBinding()]
+    param()
     # This function won't always return the correct value unless tags have been sync'ed
     # So, Write a warning to run Sync-PSTags
     if(!$tagsUpToDate)
@@ -63,6 +65,7 @@ function Get-PSLatestTag
 
 function Get-PSVersion
 {
+    [CmdletBinding()]
     param(
         [switch]
         $OmitCommitId
@@ -79,6 +82,8 @@ function Get-PSVersion
 
 function Get-PSCommitId
 {
+    [CmdletBinding()]
+    param()
     # This function won't always return the correct value unless tags have been sync'ed
     # So, Write a warning to run Sync-PSTags
     if(!$tagsUpToDate)
@@ -339,7 +344,7 @@ function Start-PSBuild {
     $gitCommitId = $ReleaseTag
     if (-not $gitCommitId) {
         # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = Get-PSCommitId
+        $gitCommitId = Get-PSCommitId -WarningAction SilentlyContinue
     }
     $gitCommitId > "$psscriptroot/powershell.version"
 
@@ -414,6 +419,11 @@ Fix steps:
     if (-not $SMAOnly) {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
+    }
+
+    if ($ReleaseTag) {
+        $ReleaseTagToUse = $ReleaseTag -Replace '^v'
+        $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
     }
 
     # handle Restore
@@ -1392,20 +1402,21 @@ function Publish-NuGetFeed
 {
     param(
         [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
-        [Parameter(Mandatory=$true)]
-        [string]$VersionSuffix
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag
     )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    if ($VersionSuffix) {
-        ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
-        ## Workaround:
-        ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
-        ##   dotnet pack --version-suffix <suffix>
-        $TopProject = (New-PSOptions).Top
-        dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
+    ## We update 'project.assets.json' files with new version tag value by 'GetPSCoreVersionFromGit' target.
+    $TopProject = (New-PSOptions).Top
+    if ($ReleaseTag) {
+        $ReleaseTagToUse = $ReleaseTag -Replace '^v'
+        dotnet restore $TopProject "/property:ReleaseTag=$ReleaseTagToUse"
+    } else {
+        dotnet restore $TopProject
     }
 
     try {
@@ -1423,8 +1434,8 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
         ) | ForEach-Object {
-            if ($VersionSuffix) {
-                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
+            if ($ReleaseTag) {
+                dotnet pack "src/$_" --output $OutputPath "/property:IncludeSymbols=true;ReleaseTag=$ReleaseTagToUse"
             } else {
                 dotnet pack "src/$_" --output $OutputPath
             }
