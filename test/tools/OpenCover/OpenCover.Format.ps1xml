@@ -141,6 +141,30 @@
      </TableRowEntries>
     </TableControl>
    </View>
+   <View>
+    <Name>FileCoverageComparisonObjectTable</Name>
+    <ViewSelectedBy>
+     <TypeName>FileCoverageComparisonObject</TypeName>
+    </ViewSelectedBy>
+    <TableControl>
+     <TableHeaders>
+      <TableColumnHeader><Label>FileName</Label></TableColumnHeader>
+      <TableColumnHeader><Label>ReferenceCoverage</Label></TableColumnHeader>
+      <TableColumnHeader><Label>DifferenceCoverage</Label></TableColumnHeader>
+      <TableColumnHeader><Label>CoverageDelta</Label></TableColumnHeader>
+     </TableHeaders>
+     <TableRowEntries>
+      <TableRowEntry>
+       <TableColumnItems>
+        <TableColumnItem><PropertyName>FileName</PropertyName></TableColumnItem>
+        <TableColumnItem><PropertyName>ReferenceCoverage</PropertyName><FormatString>N</FormatString></TableColumnItem>
+        <TableColumnItem><PropertyName>DifferenceCoverage</PropertyName><FormatString>N</FormatString></TableColumnItem>
+        <TableColumnItem><PropertyName>CoverageDelta</PropertyName><FormatString>N</FormatString></TableColumnItem>
+       </TableColumnItems>
+      </TableRowEntry>
+     </TableRowEntries>
+    </TableControl>
+   </View>
 
    </ViewDefinitions>
 </Configuration>

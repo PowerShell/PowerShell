@@ -526,19 +526,22 @@ function Compare-FileCoverage
     # create a couple of hashtables where the key is the path
     # so we can compare file coverage
     $reference = $ReferenceCoverage.GetFileCoverage($FileName) | Foreach-Object { $h = @{} } { $h[$_.path] = $_ } {$h}
-    $difference = $differenceCoverage.GetFileCoverage($FileName)| Foreach-Object { $h = @{}}{ $h[$_.path] = $_ }{$h }
+    $difference = $differenceCoverage.GetFileCoverage($FileName) | Foreach-Object { $h = @{}}{ $h[$_.path] = $_ }{$h }
     # based on the paths, create objects which show the difference between the two runs
     $reference.Keys | Sort-Object | Foreach-Object {
         $referenceObject = $reference[$_]
         $differenceObject = $difference[$_]
         if ( $differenceObject )
         {
-            [pscustomobject]@{
+            $fileCoverageObject = [pscustomobject]@{
                 FileName = [io.path]::GetFileName($_)
+                FilePath = "$_"
                 ReferenceCoverage = $ReferenceObject.Coverage
                 DifferenceCoverage = $DifferenceObject.Coverage
                 CoverageDelta = $DifferenceObject.Coverage - $ReferenceObject.Coverage
             }
+            $fileCoverageObject.psobject.typenames.Insert(0,"FileCoverageComparisonObject")
+            $fileCoverageObject
         }
         else
         {
