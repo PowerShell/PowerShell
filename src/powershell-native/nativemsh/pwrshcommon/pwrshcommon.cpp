@@ -680,7 +680,6 @@ namespace NativeMsh
         "Microsoft.PowerShell.Commands.Management",
         "Microsoft.PowerShell.Commands.Utility",
         "Microsoft.PowerShell.ConsoleHost",
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext",
         "Microsoft.PowerShell.CoreCLR.Eventing",
         "Microsoft.PowerShell.LocalAccounts",
         "Microsoft.PowerShell.PSReadLine",
@@ -1408,8 +1407,7 @@ namespace NativeMsh
         // Fall back to attempt to load the CLR from the alternate inbox location
         // or if the ALC was not located in the CoreCLR directory.
         std::string assemblyListToSearch = assemblyList.str();
-        if (listEmpty ||
-            (std::string::npos == assemblyListToSearch.rfind("Microsoft.PowerShell.CoreCLR.AssemblyLoadContext")))
+        if (listEmpty)
         {
             char coreCLRPowerShellExtInstallPath[MAX_PATH];
             ::ExpandEnvironmentStringsA(coreCLRPowerShellExtInstallDirectory, coreCLRPowerShellExtInstallPath, MAX_PATH);
