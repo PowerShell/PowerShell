@@ -58,6 +58,7 @@ We also run the [.NET code formatter tool](https://github.com/dotnet/codeformatt
 * Use of `this` is neither encouraged nor discouraged.
 
 * Use `nameof(<member-name>)` instead of `"<member-name>"` whenever possible and relevant.
+  The motivation is to easily and more accurately find references.
 
 * Always specify the visibility, even if it's the default (i.e. `private string _foo` not `string _foo`).
   Visibility should be the first modifier (i.e. `public abstract` not `abstract public`).
