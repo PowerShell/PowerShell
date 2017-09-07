@@ -138,7 +138,6 @@ After the object
 
     It "Test ConvertTo-HTML meta with invalid properties should throw warning" {
         ($customObject | ConvertTo-HTML -Meta @{"authors"="John Doe";"keywords"="PowerShell,PSv6"} 3>&1) -match "Accepted meta properties are" | Should Be $true
-        #{ ($customObject | ConvertTo-HTML -Meta @{"authors"="John Doe";"keywords"="PowerShell,PSv6"}) -join $newLine } | Should Throw "authors is not a supported meta property. Accepted meta properties are content-type, default-style, application-name, author, description, generator, keywords, x-ua-compatible, and viewport."
     }
 
     It "Test ConvertTo-HTML charset"{

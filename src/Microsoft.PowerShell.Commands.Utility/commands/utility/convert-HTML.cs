@@ -461,10 +461,8 @@ namespace Microsoft.PowerShell.Commands
                                     WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
                                     break;
                                 default:
-                                    //Exception exc = new NotSupportedException(StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s));
                                     MshCommandRuntime mshCommandRuntime = this.CommandRuntime as MshCommandRuntime;
-                                    //string Message = "Accepted meta properties are content-type, default-style, application-name, author, description, generator, keywords, x-ua-compatible, and viewport. The meta pair: " + s + " and " + _meta[s] + " may not function correctly.";
-                                    string Message = StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s, _meta[s]);
+                                    string Message = StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s, _meta[s])
                                     WarningRecord record = new WarningRecord(Message);
                                     InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -474,7 +472,6 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     mshCommandRuntime.WriteWarning(record);
                                     WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
-                                    //ThrowTerminatingError (new ErrorRecord(exc, "MetaPropertyNotFound", ErrorCategory.ParserError, null));
                                     break;
                             }
                             useditems.Add(s);
