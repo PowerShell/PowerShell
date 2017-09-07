@@ -50,4 +50,14 @@
             {Get-Verb -Group $group} | Should Not Throw
         }
     }
+
+    It "Should have descriptions for all verbs" {
+        $noDesc = Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.Description) }
+        $noDesc | Should be $null
+    }
+
+    It "Should have alias prefixes for all verbs" {
+        $noPrefix = Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.AliasPrefix) }
+        $noPrefix | Should be $null
+    }
 }
