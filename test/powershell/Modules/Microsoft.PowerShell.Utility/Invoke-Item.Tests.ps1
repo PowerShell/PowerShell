@@ -126,7 +126,7 @@ Categories=Application;
                 $before = $windows.Count
                 Invoke-Item -Path $PSHOME
                 # may take time for explorer to open window
-                Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds 10*1000 -IntervalInMilliseconds 100 > $null
+                Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 > $null
                 $after = $windows.Count
 
                 $before + 1 | Should Be $after
