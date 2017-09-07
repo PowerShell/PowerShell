@@ -121,7 +121,7 @@
     <value>Unable to access PowerShell registry information.</value>
   </data>
   <data name="MonadEngineRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access PowerShell PowerShellEngine registry information.</value>
+    <value>Unable to access PowerShell Engine registry information.</value>
   </data>
   <data name="PublicKeyTokenAccessFailed" xml:space="preserve">
     <value>Unable to access PublicKeyToken information.</value>

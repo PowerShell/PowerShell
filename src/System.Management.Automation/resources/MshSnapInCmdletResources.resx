@@ -130,6 +130,6 @@
     <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
   </data>
   <data name="CustomPSSnapInNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>The custom PowerShell snap-in is not supported in PowerShell.</value>
+    <value>The custom PowerShell snap-in is not supported in PowerShell Core.</value>
   </data>
 </root>

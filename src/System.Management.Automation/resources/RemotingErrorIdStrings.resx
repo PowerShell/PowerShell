@@ -657,10 +657,10 @@
     <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
 </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell to modify it.</value>
+    <value>Session configuration "{0}" is a PowerShell Core-based shell. Please use PowerShell Core to modify it.</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell to modify it.</value>
+    <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
     <value>No session configuration matches criteria "{0}".</value>
@@ -952,7 +952,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>A running command could not be found for this PSSession.</value>
   </data>
   <data name="NetFrameWorkV2NotInstalled" xml:space="preserve">
-    <value>The Microsoft .NET Framework 2.0, which is required for PowerShell 2.0, is not installed. Install the .NET Framework 2.0 and retry.</value>
+    <value>The Microsoft .NET Framework 2.0, which is required for Windows PowerShell 2.0, is not installed. Install the .NET Framework 2.0 and retry.</value>
   </data>
   <data name="PipelineFailedWithoutReason" xml:space="preserve">
     <value>The remote pipeline failed.</value>
@@ -1646,7 +1646,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>PowerShell does not support WOW64. The binary must match the architecture of the processor.</value>
+    <value>PowerShell Core does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
       <value>Unable to install plugin {0} to directory {1}.</value>
