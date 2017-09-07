@@ -438,6 +438,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Test-Connection",                                    ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-FileCatalog",                                   ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-ModuleManifest",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Test-Json",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-Path",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-PSSessionConfigurationFile",                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-WSMan",                                         ,                     $($FullCLR -or $CoreWindows              )
