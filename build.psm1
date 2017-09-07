@@ -303,7 +303,7 @@ function Start-PSBuild {
                      "opensuse.13.2-x64",
                      "opensuse.42.1-x64",
                      "linux-arm")]
-        [string]$Runtime,
+       [string]$Runtime,
 
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
@@ -472,7 +472,7 @@ Fix steps:
         try {
             Push-Location $Native
             if ($Runtime -eq "linux-arm") {
-                Start-NativeExecution { cmake -D CMAKE_TOOLCHAIN_FILE=./arm.toolchain.cmake . }
+                Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
                 Start-NativeExecution { make -j }
             }
             else {
