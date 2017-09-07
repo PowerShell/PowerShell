@@ -472,7 +472,7 @@ Fix steps:
         try {
             Push-Location $Native
             if ($Runtime -eq "linux-arm") {
-                Start-NativeExecution { cmake -D CMAKE_TOOLCHAIN_FILE=./arm.toolchain.cmake . }
+                Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
                 Start-NativeExecution { make -j }
             }
             else {
