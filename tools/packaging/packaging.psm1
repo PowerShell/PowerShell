@@ -34,15 +34,11 @@ function Start-PSPackage {
         [Switch] $SkipReleaseChecks
     )
 
-    $Script:Options = Get-PSOptions
-
     # Runtime and Configuration settings required by the package
     ($Runtime, $Configuration) = if ($WindowsRuntime) {
         $WindowsRuntime, "Release"
     } elseif ($Type -eq "deb-arm") {
         New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        # CrossGen isn't supported on ARM yet, so just let the check pass
-        $Script:Options.CrossGen = $true
     } else {
         New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
@@ -57,8 +53,13 @@ function Start-PSPackage {
 
     log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
+    $Script:Options = Get-PSOptions
+
     $crossGenCorrect = $false
-    if(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
+    if ($Type -eq "deb-arm") { # crossgen doesn't support arm32 yet
+        $crossGenCorrect = $true
+    }
+    elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
         $crossGenCorrect = $true
     }
     elseif ($IncludeSymbols.IsPresent -and -not $Script:Options.CrossGen) {
