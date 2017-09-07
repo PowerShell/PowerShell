@@ -160,8 +160,8 @@ namespace System.Management.Automation
         internal const string IsLinux = "IsLinux";
         internal static VariablePath IsLinuxPath = new VariablePath("IsLinux");
 
-        internal const string IsOSX = "IsOSX";
-        internal static VariablePath IsOSXPath = new VariablePath("IsOSX");
+        internal const string IsMacOS = "IsMacOS";
+        internal static VariablePath IsMacOSPath = new VariablePath("IsMacOS");
 
         internal const string IsWindows = "IsWindows";
         internal static VariablePath IsWindowsPath = new VariablePath("IsWindows");

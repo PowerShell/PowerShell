@@ -107,12 +107,12 @@ function Get-EnvironmentInformation
 
         $environment += @{'IsCoreCLR' = $true}
         $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
-        $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
+        $environment += @{'IsMacOS' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
         $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
     } catch {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
-        $environment += @{'IsOSX' = $false}
+        $environment += @{'IsMacOS' = $false}
         $environment += @{'IsWindows' = $true}
     }
 
@@ -357,7 +357,7 @@ function Start-PSBuild {
     # Verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
 
-    if ($Environment.IsLinux -or $Environment.IsOSX) {
+    if ($Environment.IsLinux -or $Environment.IsMacOS) {
         foreach ($Dependency in 'cmake', 'make', 'g++') {
             $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
         }
@@ -381,7 +381,7 @@ Fix steps:
 
 1. Remove the installed version from:
     - on windows '`$env:LOCALAPPDATA\Microsoft\dotnet'
-    - on osx and linux '`$env:HOME/.dotnet'
+    - on macOS and linux '`$env:HOME/.dotnet'
 2. Run Start-PSBootstrap or Install-Dotnet
 3. Start-PSBuild -Clean
 `n
@@ -451,10 +451,10 @@ Fix steps:
     }
 
     # Build native components
-    if (($Environment.IsLinux -or $Environment.IsOSX) -and -not $SMAOnly) {
+    if (($Environment.IsLinux -or $Environment.IsMacOS) -and -not $SMAOnly) {
         $Ext = if ($Environment.IsLinux) {
             "so"
-        } elseif ($Environment.IsOSX) {
+        } elseif ($Environment.IsMacOS) {
             "dylib"
         }
 
@@ -518,7 +518,7 @@ Fix steps:
     if ($Environment.IsRedHatFamily) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
-        # as Ubuntu has these specific library files in the platform and OSX builds for itself
+        # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
         if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
             $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
@@ -602,7 +602,7 @@ function New-PSOptions {
 
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
-        $Configuration = if ($Environment.IsLinux -or $Environment.IsOSX) {
+        $Configuration = if ($Environment.IsLinux -or $Environment.IsMacOS) {
             "Linux"
         } elseif ($Environment.IsWindows) {
             "Debug"
@@ -622,7 +622,7 @@ function New-PSOptions {
                 }
             }
             Default {
-                if ($Environment.IsLinux -or $Environment.IsOSX) {
+                if ($Environment.IsLinux -or $Environment.IsMacOS) {
                     $Configuration = "Linux"
                     Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
                 }
@@ -665,7 +665,7 @@ function New-PSOptions {
         }
     }
 
-    $Executable = if ($Environment.IsLinux -or $Environment.IsOSX) {
+    $Executable = if ($Environment.IsLinux -or $Environment.IsMacOS) {
         "powershell"
     } elseif ($Environment.IsWindows) {
         "powershell.exe"
@@ -1088,7 +1088,7 @@ function Start-PSxUnit {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
 
-    if ($Environment.IsOSX) {
+    if ($Environment.IsMacOS) {
         log "Not yet supported on OS X, pretending they passed..."
         return
     }
@@ -1139,11 +1139,11 @@ function Install-Dotnet {
     $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
-    if ($Environment.IsLinux -or $Environment.IsOSX) {
+    if ($Environment.IsLinux -or $Environment.IsMacOS) {
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($Environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
-        } elseif ($Environment.IsOSX) {
+        } elseif ($Environment.IsMacOS) {
             "dotnet-uninstall-pkgs.sh"
         }
 
@@ -1210,7 +1210,7 @@ function Start-PSBootstrap {
     Push-Location $PSScriptRoot/tools
 
     try {
-        if ($Environment.IsLinux -or $Environment.IsOSX) {
+        if ($Environment.IsLinux -or $Environment.IsMacOS) {
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
@@ -1268,7 +1268,7 @@ function Start-PSBootstrap {
                 Start-NativeExecution {
                     Invoke-Expression "$baseCommand $Deps"
                 }
-            } elseif ($Environment.IsOSX) {
+            } elseif ($Environment.IsMacOS) {
                 precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
                 # Build tools
@@ -1896,7 +1896,7 @@ function Start-CrossGen {
         }
     } elseif ($Environment.IsLinux) {
         "linux-x64"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "osx-x64"
     }
 
@@ -1925,7 +1925,7 @@ function Start-CrossGen {
          "clrjit.dll"
     } elseif ($Environment.IsLinux) {
         "libclrjit.so"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "libclrjit.dylib"
     }
 

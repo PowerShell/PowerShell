@@ -12,13 +12,13 @@ Describe "Start-Process" -Tags @("Feature") {
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
-        elseif ($IsLinux -Or $IsOSX) {
+        elseif ($IsLinux -Or $IsMacOS) {
 	        $pingParam = "-c 2 localhost"
         }
     }
 
     # Note that ProcessName may still be `powershell` due to dotnet/corefx#5378
-    # This has been fixed on Linux, but not on OS X
+    # This has been fixed on Linux, but not on macOS
 
     It "Should process arguments without error" {
 	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"

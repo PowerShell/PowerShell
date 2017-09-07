@@ -4963,8 +4963,8 @@ end
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
-                SpecialVariables.IsOSX,
-                Platform.IsOSX,
+                SpecialVariables.IsMacOS,
+                Platform.IsMacOS,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
@@ -5138,9 +5138,9 @@ end
                         "Invoke-RestMethod",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("iwr",
                         "Invoke-WebRequest",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / OS X
+// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / macOS
 #if !UNIX
-                    // ac is a native command on OS X
+                    // ac is a native command on macOS
                     new SessionStateAliasEntry("ac",
                         "Add-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("compare",

@@ -110,7 +110,7 @@ If you have any problems building, please consult the developer [FAQ][].
 
 | AppVeyor (Windows)       | Travis CI (Linux) | Travis CI (macOS) | Code Coverage Status |
 |--------------------------|-------------------|-------------------|----------------------|
-| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][tv-site] | [![osx-nightly-image][]][tv-site] | [![cc-image][]][cc-site] |
+| [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][tv-site] | [![macOS-nightly-image][]][tv-site] | [![cc-image][]][cc-site] |
 
 [bd-linux]: docs/building/linux.md
 [bd-windows]: docs/building/windows-core.md
@@ -123,7 +123,7 @@ If you have any problems building, please consult the developer [FAQ][].
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
 [linux-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.Linux.svg
-[osx-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.OSX.svg
+[macOS-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.OSX.svg
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 [cc-site]: https://codecov.io/gh/PowerShell/PowerShell

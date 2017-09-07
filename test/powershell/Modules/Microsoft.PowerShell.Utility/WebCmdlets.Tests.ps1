@@ -1187,7 +1187,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         
         # Test skipped on macOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsOSX {
+        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
@@ -1728,7 +1728,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         
         # Test skipped on macOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsOSX {
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck

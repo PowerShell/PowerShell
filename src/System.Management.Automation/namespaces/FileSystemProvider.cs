@@ -1332,7 +1332,7 @@ namespace Microsoft.PowerShell.Commands
                 bool invokeDefaultProgram = false;
                 if (Directory.Exists(path))
                 {
-                    // Path points to a directory. We have to use xdg-open/open on Linux/OSX.
+                    // Path points to a directory. We have to use xdg-open/open on Linux/macOS.
                     invokeDefaultProgram = true;
                 }
                 else
@@ -1345,7 +1345,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
                     {
                         // Error code 13 -- Permission denied
-                        // The file is possibly not an executable. We try xdg-open/open on Linux/OSX.
+                        // The file is possibly not an executable. We try xdg-open/open on Linux/macOS.
                         invokeDefaultProgram = true;
                     }
                 }
@@ -1353,7 +1353,7 @@ namespace Microsoft.PowerShell.Commands
                 if (invokeDefaultProgram)
                 {
                     const string quoteFormat = "\"{0}\"";
-                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
                     if (NativeCommandParameterBinder.NeedQuotes(path))
                     {
                         path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
