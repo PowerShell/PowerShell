@@ -56,7 +56,8 @@ function Start-PSPackage {
     $Script:Options = Get-PSOptions
 
     $crossGenCorrect = $false
-    if ($Type -eq "deb-arm") { # crossgen doesn't support arm32 yet
+    if ($Type -eq "deb-arm") {
+        # crossgen doesn't support arm32 yet
         $crossGenCorrect = $true
     }
     elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
