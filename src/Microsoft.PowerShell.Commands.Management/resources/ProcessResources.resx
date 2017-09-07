@@ -132,7 +132,7 @@
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
-  <data name="ProcessStartInfo" xml:space="preserve">
+  <data name="StartProcessTarget" xml:space="preserve">
     <value>{0} {1}</value>
   </data>
   <data name="CouldNotEnumerateModules" xml:space="preserve">
