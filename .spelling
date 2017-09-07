@@ -74,6 +74,7 @@ nunit
 NUnit
 nupkg
 nuspec
+OpenCover
 OpenSSH
 PackageManagement
 param
@@ -90,6 +91,7 @@ Register-PSSessionConfiguration
 remoting
 ResGen
 RFCs
+runas
 Runspace
 runtimes
 SecureString
