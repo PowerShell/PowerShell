@@ -465,7 +465,6 @@ namespace Microsoft.PowerShell.Commands
                                     string Message = StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s, _meta[s])
                                     WarningRecord record = new WarningRecord(Message);
                                     InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
-
                                     if (invocationInfo != null)
                                     {
                                         record.SetInvocationInfo(invocationInfo);
