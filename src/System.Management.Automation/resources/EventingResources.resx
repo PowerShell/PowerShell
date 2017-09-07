@@ -124,10 +124,10 @@
     <value>Cannot register for the specified event. An event with the name '{0}' does not exist.</value>
   </data>
   <data name="WinRTEventsNotSupported" xml:space="preserve">
-    <value>Windows PowerShell cannot subscribe to Windows RT events.</value>
+    <value>PowerShell cannot subscribe to Windows RT events.</value>
   </data>
   <data name="ReservedIdentifier" xml:space="preserve">
-    <value>Cannot register for the specified event. The event source identifier '{0}' is reserved for the Windows PowerShell engine.</value>
+    <value>Cannot register for the specified event. The event source identifier '{0}' is reserved for the PowerShell engine.</value>
   </data>
   <data name="RemoteOperationNotSupported" xml:space="preserve">
     <value>This operation is not supported on remote instances.</value>

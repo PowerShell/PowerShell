@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Description" xml:space="preserve">
-    <value>This Windows PowerShell snap-in contains cmdlets (such as Start-Transcript and Stop-Transcript) that are provided for use with the Windows PowerShell console host.</value>
+    <value>This PowerShell snap-in contains cmdlets (such as Start-Transcript and Stop-Transcript) that are provided for use with the PowerShell console host.</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft Corporation</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Host Windows PowerShell Snap-In.</value>
+    <value>Host PowerShell Snap-In.</value>
   </data>
 </root>

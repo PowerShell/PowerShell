@@ -141,11 +141,11 @@
 PowerShell[.exe] -Help | -? | /?
 
 -PSConsoleFile
-    Loads the specified Windows PowerShell console file. To create a console
-    file, use Export-Console in Windows PowerShell.
+    Loads the specified PowerShell console file. To create a console
+    file, use Export-Console in PowerShell.
 
 -Version
-    Starts the specified version of Windows PowerShell.
+    Starts the specified version of PowerShell.
 
 -NoLogo
     Hides the copyright banner at startup.
@@ -163,22 +163,22 @@ PowerShell[.exe] -Help | -? | /?
     Uses a single-threaded apartment for the execution thread.
 
 -OutputFormat
-    Determines how output from Windows PowerShell is formatted. Valid values
+    Determines how output from PowerShell is formatted. Valid values
     are "Text" (text strings) or "XML" (serialized CLIXML format).
 
 -InputFormat
-    Describes the format of data sent to Windows PowerShell. Valid values are
+    Describes the format of data sent to PowerShell. Valid values are
     "Text" (text strings) or "XML" (serialized CLIXML format).
 
 -ConfigurationName
-    Specifies a configuration endpoint in which Windows PowerShell is run.
+    Specifies a configuration endpoint in which PowerShell is run.
     This can be any endpoint registered on the local machine including the
-    default Windows PowerShell remoting endpoints or a custom endpoint having
+    default PowerShell remoting endpoints or a custom endpoint having
     specific user role capabilities.
 
 -Command
     Executes the specified commands (and any parameters) as though they were
-    typed at the Windows PowerShell command prompt, and then exits, unless
+    typed at the PowerShell command prompt, and then exits, unless
     NoExit is specified. The value of Command can be "-", a string. or a
     script block.
 
@@ -186,14 +186,14 @@ PowerShell[.exe] -Help | -? | /?
     input.
 
     Script blocks must be enclosed in braces ({}). You can specify a script
-    block only when running PowerShell.exe in Windows PowerShell. The results
+    block only when running PowerShell.exe in PowerShell. The results
     of the script are returned to the parent shell as deserialized XML objects,
     not live objects.
 
     If the value of Command is a string, Command must be the last parameter
     in the command , because any characters typed after the command are
     interpreted as the command arguments.
-       To write a string that runs a Windows PowerShell command, use the format:
+       To write a string that runs a PowerShell command, use the format:
     "&amp; {&lt;command&gt;}"
     where the quotation marks indicate a string and the invoke operator (&amp;)
     causes the command to be run.
@@ -249,7 +249,7 @@ EXAMPLES
     <value>Processing -WindowStyle '{0}' failed: {1}.</value>
   </data>
   <data name="InvalidFileArgumentExtension" xml:space="preserve">
-    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid Windows PowerShell script file name, and then try again.</value>
+    <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid PowerShell script file name, and then try again.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
     <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>

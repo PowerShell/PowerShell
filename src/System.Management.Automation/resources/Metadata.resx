@@ -223,7 +223,7 @@
     <value>The "{1}" validation script for the argument with value "{0}" did not return a result of True. Determine why the validation script failed, and then try the command again.</value>
   </data>
   <data name="ValidateVersionFailure" xml:space="preserve">
-    <value>The "{0}" argument does not contain a valid Windows PowerShell version. Supply a valid version number and then try the command again.</value>
+    <value>The "{0}" argument does not contain a valid PowerShell version. Supply a valid version number and then try the command again.</value>
   </data>
   <data name="ValidateVariableName" xml:space="preserve">
     <value>Cannot validate argument '{0}' because it is not a valid variable name.</value>
