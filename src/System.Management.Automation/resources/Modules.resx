@@ -592,9 +592,6 @@
     <value>A CIM provider for module discovery was not found on the CIM server.  {0}</value>
     <comment>{0} is a placeholder for a more detailed error message</comment>
   </data>
-  <data name="CannotDefineWorkflowInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot define the workflow. The language mode for this session is incompatible with the system-wide language mode.</value>
-  </data>
   <data name="XamlWorkflowsNotSupported" xml:space="preserve">
     <value>Cannot load the workflow. Only signed in-box XAML-based workflows or script-based workflows are supported in the current language mode.</value>
   </data>
