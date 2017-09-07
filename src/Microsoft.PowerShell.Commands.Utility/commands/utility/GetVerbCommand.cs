@@ -71,13 +71,7 @@ namespace Microsoft.PowerShell.Commands
 
                         VerbInfo verb = new VerbInfo();
                         verb.Verb = field.Name;
-
-                        FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(field.Name);
-                        if(aliasField != null)
-                        {
-                            verb.AliasPrefix = (string)aliasField.GetValue(null);
-                        }
-
+                        verb.AliasPrefix = VerbAliasPrefixes.GetVerbPrefix(field.Name);
                         verb.Group = groupName;
 
                         FieldInfo descriptionField = typeof(VerbDescriptions).GetField(field.Name);

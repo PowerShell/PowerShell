@@ -1601,6 +1601,22 @@ namespace System.Management.Automation
         /// "Write" verb alias prefix
         /// </summary>
         public const string Write = "wr";
+
+        /// <summary>
+        /// Gets verb prefix
+        /// </summary>
+        public static string GetVerbPrefix(string verb)
+        {
+            FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(verb);
+            if(aliasField != null)
+            {
+                return (string)aliasField.GetValue(null);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
     }//VerbAliasPrefixes
 
     /// <summary>
