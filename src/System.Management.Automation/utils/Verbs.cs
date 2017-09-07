@@ -594,7 +594,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Verb descriptions.
     /// </summary>
-    public static class VerbDescriptions
+    internal static class VerbDescriptions
     {
         /// <summary>
         /// Adds a resource to a container, or attaches an item to another item
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Verb Alias prefixes.
     /// </summary>
-    public static class VerbAliasPrefixes
+    internal static class VerbAliasPrefixes
     {
         /// <summary>
         /// "Add" verb alias prefix
