@@ -71,7 +71,7 @@ Describe "Get-Content" -Tags "CI" {
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
-        {Get-Content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+        {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
     It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
         {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
@@ -90,7 +90,7 @@ baz
         $expected = 'foo'
         $tailCount = 3
 
-        $testPath   = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
+        $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
         $content | Set-Content -Path $testPath -Encoding BigEndianUnicode
         $expected = 'foo'
 
