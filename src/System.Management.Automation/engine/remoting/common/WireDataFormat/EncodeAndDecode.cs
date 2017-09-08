@@ -2387,7 +2387,7 @@ namespace System.Management.Automation
                 //
                 // So just return the CurrentTimeZone.
 
-#if !CORECLR // TimeZone deprecated, need to change to TimeZoneInfo
+#if !CORECLR // TODO: TimeZone deprecated, need to change to TimeZoneInfo.  Affects serialization, remoting, and backwards compatibility.
                 result.TimeZone = TimeZone.CurrentTimeZone;
 #endif
             }
