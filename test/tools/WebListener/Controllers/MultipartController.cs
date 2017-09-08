@@ -23,8 +23,7 @@ namespace mvc.Controllers
             _environment = environment;
         }
         public ActionResult Index()
-        {
-            
+        {   
             return View();
         }
 

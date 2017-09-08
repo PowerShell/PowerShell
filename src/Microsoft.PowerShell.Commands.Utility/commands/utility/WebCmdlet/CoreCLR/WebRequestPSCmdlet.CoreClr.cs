@@ -389,10 +389,9 @@ namespace Microsoft.PowerShell.Commands
                     byte[] bytes = content as byte[];
                     SetRequestContent(request, bytes);
                 }
-                else if (content is MultipartFormDataContent)
+                else if (content is MultipartFormDataContent multipartFormDataContent)
                 {
                     WebSession.ContentHeaders.Clear();
-                    MultipartFormDataContent multipartFormDataContent = content as MultipartFormDataContent;
                     SetRequestContent(request, multipartFormDataContent);
                 }
                 else
@@ -806,9 +805,13 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
             if (request == null)
+            {
                 throw new ArgumentNullException("request");
+            }
             if (multipartContent == null)
+            {
                 throw new ArgumentNullException("multipartContent");
+            }
 
             request.Content = multipartContent;
 
