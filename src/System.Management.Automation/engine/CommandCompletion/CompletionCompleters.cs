@@ -4250,7 +4250,7 @@ namespace System.Management.Automation
                     }
 
                     // Sorting the results by the path
-                    var sortedPsobjs = psobjs.OrderBy(a => a, new ItemPathComparer());
+                    var sortedPsobjs = psobjs.OrderBy(a => a, new ItemPathComparer(wordToComplete));
 
                     foreach (PSObject psobj in sortedPsobjs)
                     {
@@ -6672,6 +6672,13 @@ namespace System.Management.Automation
 
         private class ItemPathComparer : IComparer<PSObject>
         {
+            private String _baseWord;
+
+            public ItemPathComparer(String baseWord)
+            {
+                _baseWord = baseWord + ".*";
+            }
+
             public int Compare(PSObject x, PSObject y)
             {
                 var xPathInfo = PSObject.Base(x) as PathInfo;
@@ -6701,7 +6708,21 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(xPath) || string.IsNullOrEmpty(yPath))
                     Diagnostics.Assert(false, "Base object of item PSObject should be either PathInfo or FileSystemInfo");
 
-                return String.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
+                var result = String.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
+#if UNIX
+                if (result == 0)
+                {
+                    if (Regex.IsMatch(xPath, _baseWord))
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+#endif
+                return result;
             }
         }
 
