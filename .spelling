@@ -67,6 +67,7 @@ macOS
 Microsoft.PowerShell.Archive
 MS-PSRP
 myget
+Multipart
 New-PSSessionOption
 New-PSTransportOption
 NuGet

@@ -116,6 +116,7 @@ function Get-WebListenerUrl {
             'Cert',
             'Get',
             'Home',
+            'Multipart',
             '/'
         )]
         [String]$Test
