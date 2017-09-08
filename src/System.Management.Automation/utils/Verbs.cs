@@ -599,7 +599,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets verb description from the resource file
         /// </summary>
-        public static string GetVerbDescription(string verb)
+        public static string Get(string verb)
         {
             return VerbDescriptionStrings.ResourceManager.GetString(verb + "VerbDescription");
         }

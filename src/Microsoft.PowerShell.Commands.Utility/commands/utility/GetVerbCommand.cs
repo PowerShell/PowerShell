@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
                         verb.Verb = field.Name;
                         verb.AliasPrefix = VerbAliasPrefixes.GetVerbPrefix(field.Name);
                         verb.Group = groupName;
-                        verb.Description = VerbDescriptions.GetVerbDescription(field.Name);
+                        verb.Description = VerbDescriptions.Get(field.Name);
                         WriteObject(verb);
                     }
                 }
