@@ -638,7 +638,7 @@ namespace System.Management.Automation
         /// <summary>
         /// "Build" verb alias prefix
         /// </summary>
-        public const string Build = "";
+        public const string Build = "bd";
 
         /// <summary>
         /// "Checkpoint" verb alias prefix
@@ -713,7 +713,7 @@ namespace System.Management.Automation
         /// <summary>
         /// "Deploy" verb alias prefix
         /// </summary>
-        public const string Deploy = "";
+        public const string Deploy = "dp";
 
         /// <summary>
         /// "Disable" verb alias prefix
@@ -858,7 +858,7 @@ namespace System.Management.Automation
         /// <summary>
         /// "Optimize" verb alias prefix
         /// </summary>
-        public const string Optimize = "";
+        public const string Optimize = "om";
 
         /// <summary>
         /// "Out" verb alias prefix
@@ -938,7 +938,7 @@ namespace System.Management.Automation
         /// <summary>
         /// "Resize" verb alias prefix
         /// </summary>
-        public const string Resize = "";
+        public const string Resize = "rz";
 
         /// <summary>
         /// "Resolve" verb alias prefix
