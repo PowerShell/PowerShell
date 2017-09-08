@@ -52,12 +52,15 @@
     }
 
     It "Should have descriptions for all verbs" {
-        $noDesc = Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.Description) }
-        $noDesc | Should be $null
+        $allVerbs = Get-Verb
+        $verbsWithDescription = $allVerbs | Where-Object { -not [string]::IsNullOrEmpty($_.Description) }
+        $verbsWithDescription.count | Should be $allVerbs.count
     }
 
     It "Should have alias prefixes for all verbs" {
-        $noPrefix = Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.AliasPrefix) }
-        $noPrefix | Should be $null
+        $allVerbs = Get-Verb
+        $verbsWithPrefix = $allVerbs | Where-Object { -not [string]::IsNullOrEmpty($_.AliasPrefix) }
+        $verbsWithPrefix.count | Should be $allVerbs.count
+    }
     }
 }
