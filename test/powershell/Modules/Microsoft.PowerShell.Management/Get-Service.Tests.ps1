@@ -43,12 +43,12 @@
   }
 
   It "GetServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
-    @{parameter="DisplayName";value="foo"},
-    @{parameter="Include";value="foo","bar"},
-    @{parameter="Exclude";value="bar","foo"},
-    @{parameter="InputObject";script={Get-Service | Select-Object -First 1}},
-    @{parameter="Name";value="foo","bar"},
-    @{parameter="ComputerName";value="bar","foo"}
+    @{parameter="DisplayName" ; value="foo"},
+    @{parameter="Include"     ; value="foo","bar"},
+    @{parameter="Exclude"     ; value="bar","foo"},
+    @{parameter="InputObject" ; script={Get-Service | Select-Object -First 1}},
+    @{parameter="Name"        ; value="foo","bar"},
+    @{parameter="ComputerName"; value="bar","foo"}
   ) {
     param($parameter, $value, $script)
     if ($script -ne $null) {
@@ -61,13 +61,13 @@
   }
 
   It "Get-Service filtering works for '<script>'" -TestCases @(
-    @{script={Get-Service -DisplayName Net*};expected={Get-Service | Where-Object { $_.DisplayName -like 'Net*' }}},
-    @{script={Get-Service -Include Net* -Exclude *logon};expected={Get-Service | Where-Object { $_.Name -match '^net.*?(?<!logon)$' }}}
-    @{script={Get-Service -Name Net* | Get-Service};expected={Get-Service -Name Net*}},
-    @{script={Get-Service -Name "$(new-guid)*"};expected=$null},
-    @{script={Get-Service -DisplayName "$(new-guid)*"};expected=$null},
+    @{script={Get-Service -DisplayName Net*}               ;expected={Get-Service | Where-Object { $_.DisplayName -like 'Net*' }}},
+    @{script={Get-Service -Include Net* -Exclude *logon}   ;expected={Get-Service | Where-Object { $_.Name -match '^net.*?(?<!logon)$' }}}
+    @{script={Get-Service -Name Net* | Get-Service}        ;expected={Get-Service -Name Net*}},
+    @{script={Get-Service -Name "$(new-guid)*"}            ;expected=$null},
+    @{script={Get-Service -DisplayName "$(new-guid)*"}     ;expected=$null},
     @{script={Get-Service -DependentServices -Name winmgmt};expected={(Get-Service -Name winmgmt).DependentServices}},
-    @{script={Get-Service -RequiredServices -Name winmgmt};expected={(Get-Service -name winmgmt).RequiredServices}}
+    @{script={Get-Service -RequiredServices -Name winmgmt} ;expected={(Get-Service -name winmgmt).RequiredServices}}
   ) {
     param($script, $expected)
     $services = & $script
