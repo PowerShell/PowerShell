@@ -50,13 +50,13 @@ Describe "ComparisonOperator" -tag "CI" {
     }
 
     It "Should return error if right hand is not a valid type: 'hello' <operator> <type>" -TestCases @(
-        @{operator = "-is"; type = "'foo'"},
-        @{operator = "-isnot"; type = "'foo'"},
-        @{operator = "-is"; type = "[foo]"},
-        @{operator = "-isnot"; type = "[foo]"}
+        @{operator = "-is"; type = "'foo'"; expected='RuntimeException,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
+        @{operator = "-isnot"; type = "'foo'"; expected='RuntimeException,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
+        @{operator = "-is"; type = "[foo]"; expected='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
+        @{operator = "-isnot"; type = "[foo]"; expected='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'}
     ) {
-        param($operator, $type)
-        { Invoke-Expression "'Hello' $operator $type" | ShouldBeErrorId "RuntimeException" }
+        param($operator, $type, $expected)
+        { Invoke-Expression "'Hello' $operator $type" } | ShouldBeErrorId $expected
     }
 
     It "Should succeed in comparing type: <lhs> <operator> <rhs>" -TestCases @(
