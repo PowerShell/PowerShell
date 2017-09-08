@@ -213,6 +213,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+            # NOTE: ensure the testId parameter is unique for each test case; it is used to generate a unique error and done file name.
             @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"; testId = 'GetItem'}
             @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"; testId = 'GetChildItem'}
             @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"; testId = 'NewItem'}
@@ -235,7 +236,6 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 Start-Sleep -Milliseconds 100
             }
 
-            $errFile | Should Exist
             $err = Get-Content $errFile
             $err | Should Be $expectedError
         }
