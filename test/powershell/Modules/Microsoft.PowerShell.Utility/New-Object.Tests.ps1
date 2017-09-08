@@ -166,24 +166,38 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 	}
 }
 
-Describe "New-Object COM functionality" -Tags "CI" {
-	$testCases = @(
-		@{
-			Name   = 'Microsoft.Update.AutoUpdate'
-			Property = 'Settings'
-			Type = 'Object'
-		}
-		@{
-			Name   = 'Microsoft.Update.SystemInfo'
-			Property = 'RebootRequired'
-			Type = 'Bool'
-		}
-	)
+try 
+{
+    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
-	It "Should be able to create <Name> with property <Property> of Type <Type>" -Skip:(!$IsWindows) -TestCases $testCases {
-		param($Name, $Property, $Type)
-		$comObject = New-Object -ComObject $name
-		$comObject.$Property | should not be $null
-		$comObject.$Property | should beoftype $Type
+	Describe "New-Object COM functionality" -Tags "CI" {
+		$testCases = @(
+			@{
+				Name   = 'Microsoft.Update.AutoUpdate'
+				Property = 'Settings'
+				Type = 'Object'
+			}
+			@{
+				Name   = 'Microsoft.Update.SystemInfo'
+				Property = 'RebootRequired'
+				Type = 'Bool'
+			}
+		)
+
+		It "Should be able to create <Name> with property <Property> of Type <Type>" -TestCases $testCases {
+			param($Name, $Property, $Type)
+			$comObject = New-Object -ComObject $name
+			$comObject.$Property | should not be $null
+			$comObject.$Property | should beoftype $Type
+		}
+
+		It "Should fail with correct error when creating a COM object that dose not exist" {
+			{New-Object -ComObject 'doesnotexist'} | shouldBeErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
+		}
 	}
+} 
+finally 
+{
+    $global:PSdefaultParameterValues = $defaultParamValues
 }
