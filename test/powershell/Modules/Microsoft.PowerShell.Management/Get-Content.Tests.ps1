@@ -100,10 +100,7 @@ baz
         $content | Set-Content -Path $testPath -Encoding BigEndianUnicode
         $expected = 'foo'
 
-        $testPath   = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
-        $content | Set-Content -Path $testPath -Encoding BigEndianUnicode
         $actual = Get-Content -Path $testPath -Tail 3 -Encoding BigEndianUnicode
-
         $actual | Should Be $expected
     }
     It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
