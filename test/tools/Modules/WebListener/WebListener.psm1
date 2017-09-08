@@ -112,6 +112,12 @@ function Get-WebListenerUrl {
     [OutputType([Uri])]
     param (
         [switch]$Https,
+        [ValidateSet(
+            'Cert',
+            'Get',
+            'Home',
+            '/'
+        )]
         [String]$Test
     )
     process {
