@@ -91,17 +91,23 @@ Describe "Get-Content" -Tags "CI" {
     }
     It 'Verifies -Tail with content that uses an uncommon encoding' {
         $content = @"
+one
+two
 foo
 bar
 baz
 "@
+        $expected = 'foo'
+        $tailCount = 3
 
         $testPath   = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
         $content | Set-Content -Path $testPath -Encoding BigEndianUnicode
         $expected = 'foo'
 
-        $actual = Get-Content -Path $testPath -Tail 3 -Encoding BigEndianUnicode
-        $actual | Should Be $expected
+        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding BigEndianUnicode
+        ,$actual | Should BeOfType "System.Object[]"
+        $actual.Length | Should Be $tailCount
+        $actual[0] | Should Be $expected
     }
     It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
         set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
