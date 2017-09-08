@@ -210,27 +210,27 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
             }
-            $errFile = "$testdrive\error.txt"
-            $doneFile = "$testdrive\done.txt"
-        }
-        AfterEach {
-            Remove-Item -Force $errFile -ErrorAction SilentlyContinue
-            Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
         }
 
         It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
-            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
-            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
-            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
-            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
-            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
-            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
+            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"; testId = 'GetItem'}
+            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"; testId = 'GetChildItem'}
+            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"; testId = 'NewItem'}
+            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"; testId = 'RenameItem'},
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand";  testId = 'MoveItem'},
+            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"; testId = 'RemoveItem'}
         ) {
-            param ($cmdline, $expectedError)
+            param ($cmdline, $expectedError, $testId)
+
+            $errFile = Join-Path -Path $TestDrive -ChildPath "$testId.error.txt"
+            $doneFile = Join-Path -Path $TestDrive -Childpath "$testId.done.txt"
+            # Seed the error file with text indicating a timeout waiting for the command.
+            "Test $testId timeout waiting for $cmdLine" | Set-Content -Path $errFile
 
             runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+
             $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and -not (Test-Path $doneFile))
+            while (((Get-Date) - $startTime).TotalSeconds -lt 15 -and -not (Test-Path $doneFile))
             {
                 Start-Sleep -Milliseconds 100
             }
