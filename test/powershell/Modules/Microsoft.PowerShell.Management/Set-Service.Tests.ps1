@@ -41,7 +41,8 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
     }
 
     It "Set-Service parameter validation for invalid values: <script>" -TestCases @(
-        @{script    = {Set-Service foo -StartupType bar};
+        @{
+            script  = {Set-Service foo -StartupType bar};
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"
         }
     ) {
@@ -159,8 +160,8 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
 
     It "New-Service with bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{name = 'credtest'    ; parameter = "Credential" ; value = (
-                [System.Management.Automation.PSCredential]::new("username", 
-                    (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
+            [System.Management.Automation.PSCredential]::new("username", 
+            (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
         },
         @{name = 'badstarttype'; parameter = "StartupType"; value = "System"},
         @{name = 'winmgmt'     ; parameter = "DisplayName"; value = "foo"}
