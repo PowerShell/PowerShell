@@ -61,7 +61,7 @@
             param($parameter)
             $__data = "abcdefg"
             $params = @{$parameter="variable:__data"}
-            { Select-XML @params "Root" | Should BeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
+            { Select-XML @params "Root" | ShouldBeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
         }
 
         It "Invalid xml file" {

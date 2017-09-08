@@ -56,7 +56,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{operator = "-isnot"; type = "[foo]"}
     ) {
         param($operator, $type)
-        { Invoke-Expression "'Hello' $operator $type" | Should Be ErrorId "RuntimeException" }
+        { Invoke-Expression "'Hello' $operator $type" | ShouldBeErrorId "RuntimeException" }
     }
 
     It "Should succeed in comparing type: <lhs> <operator> <rhs>" -TestCases @(
