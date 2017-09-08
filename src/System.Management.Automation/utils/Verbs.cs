@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets verb prefix
         /// </summary>
-        public static string Get(string verb)
+        public static string GetVerbAliasPrefix(string verb)
         {
             FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(verb);
             if(aliasField != null)
