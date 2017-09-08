@@ -71,23 +71,13 @@ Describe "Get-Content" -Tags "CI" {
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
-        {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+        {Get-Content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
     It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
-        try {
-            Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
-        }
+        {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
     }
     It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
-        try {
-            Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
-        }
+            { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
     }
     It 'Verifies -Tail with content that uses an uncommon encoding' {
         $content = @"
