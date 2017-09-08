@@ -62,5 +62,12 @@
         $verbsWithPrefix = $allVerbs | Where-Object { -not [string]::IsNullOrEmpty($_.AliasPrefix) }
         $verbsWithPrefix.count | Should be $allVerbs.count
     }
+
+    It "Should have unique alias prefixes" {
+        $allPrefixes = Get-Verb | Select-Object AliasPrefix
+        $uniquePrefixes = $allPrefixes |
+            Select-Object -Property * -Unique
+
+        $uniquePrefixes.Count | Should be $allPrefixes.Count
     }
 }
