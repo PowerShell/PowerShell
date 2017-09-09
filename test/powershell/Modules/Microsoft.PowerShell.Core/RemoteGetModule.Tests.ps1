@@ -20,7 +20,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
     ) {
         param($parameter, $value)
         $parameters = @{$parameter=$value}
-        { Get-Module @parameters } | ShouldBeErrorId "RemoteDiscoveryWorksOnlyInListAvailableMode,Microsoft.PowerShell.Commands.GetModuleCommand"
+        { Get-Module @parameters -ErrorAction Stop } | ShouldBeErrorId "RemoteDiscoveryWorksOnlyInListAvailableMode,Microsoft.PowerShell.Commands.GetModuleCommand"
     }
 
     It "Get-Module succeeds using -ListAvailable with '<parameter>'" -TestCases @(
@@ -69,21 +69,8 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         }
     }
 
-    It "ArugmentCompleter for PSEdition should work for '<cmd>'" -TestCases @(
-        @{cmd="Get-Module -PSEdition "; expected="Desktop","Core"}
-    ) {
-        param($cmd, $expected)
-        $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-        $res.CompletionMatches.Count | Should Be $expected.Count
-        $completionOptions = ""
-        foreach ($completion in $res.CompletionMatches) {
-            $completionOptions += $completion.ListItemText
-        }
-        $completionOptions | Should Be ([string]::Join("", $expected))
-    }
-
     It "Failure if -Name and -FullyQualifiedName are both specified" {
-        { Get-Module -Name foo -FullyQualifiedName @{ModuleName='foo'} } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.GetModuleCommand"
+        { Get-Module -Name foo -FullyQualifiedName @{ModuleName='foo'} -ErrorAction Stop } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.GetModuleCommand"
     }
 
     It "Get-Module supports pipeline" {

@@ -935,6 +935,21 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should Be $expected
         }
     }
+
+    Context "Module cmdlet completion tests" {
+        It "ArugmentCompleter for PSEdition should work for '<cmd>'" -TestCases @(
+            @{cmd = "Get-Module -PSEdition "; expected = "Desktop", "Core"}
+        ) {
+            param($cmd, $expected)
+            $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+            $res.CompletionMatches.Count | Should Be $expected.Count
+            $completionOptions = ""
+            foreach ($completion in $res.CompletionMatches) {
+                $completionOptions += $completion.ListItemText
+            }
+            $completionOptions | Should Be ([string]::Join("", $expected))
+        }
+    }
 }
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature {
