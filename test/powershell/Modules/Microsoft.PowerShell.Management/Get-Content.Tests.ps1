@@ -77,7 +77,7 @@ Describe "Get-Content" -Tags "CI" {
         {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
     }
     It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
-            { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
+        { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
     }
     It 'Verifies -Tail with content that uses an uncommon encoding' {
         $content = @"
