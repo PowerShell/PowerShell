@@ -15,22 +15,22 @@ Describe "TestWSMan tests" -Tags 'Feature' {
     }
 
     It "TestWSmanCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
-        @{parameter="computername";value="foo"},
-        @{parameter="computername";value=$null;expected="localhost"},
-        @{parameter="computername";value=".";expected="localhost"},
-        @{parameter="authentication";value="Basic"},
-        @{parameter="authentication";value="CredSSP"},
-        @{parameter="authentication";value="Digest"},
-        @{parameter="authentication";value="Negotiate"},
-        @{parameter="authentication";value="ClientCertificate"},
-        @{parameter="authentication";value="Default"},
-        @{parameter="authentication";value="Kerberos"},
-        @{parameter="authentication";value="None"},
-        @{parameter="port";value=5985},
-        @{parameter="port";value=8888},
-        @{parameter="usessl";value=$true},
-        @{parameter="usessl";value=$false},
-        @{parameter="applicationname";value="foo"}
+        @{ parameter = "computername"    ; value = "foo" },
+        @{ parameter = "computername"    ; value = $null ; expected = "localhost" },
+        @{ parameter = "computername"    ; value = "."   ; expected = "localhost" },
+        @{ parameter = "authentication"  ; value = "Basic" },
+        @{ parameter = "authentication"  ; value = "CredSSP" },
+        @{ parameter = "authentication"  ; value = "Digest" },
+        @{ parameter = "authentication"  ; value = "Negotiate" },
+        @{ parameter = "authentication"  ; value = "ClientCertificate" },
+        @{ parameter = "authentication"  ; value = "Default" },
+        @{ parameter = "authentication"  ; value = "Kerberos" },
+        @{ parameter = "authentication"  ; value = "None" },
+        @{ parameter = "port"            ; value = 5985 },
+        @{ parameter = "port"            ; value = 8888 },
+        @{ parameter = "usessl"          ; value = $true },
+        @{ parameter = "usessl"          ; value = $false },
+        @{ parameter = "applicationname" ; value = "foo" }
     ) {
         param($parameter, $value, $expected)
         $testWsman.$parameter = $value
@@ -41,13 +41,13 @@ Describe "TestWSMan tests" -Tags 'Feature' {
     }
 
     It "-Authentication for unsupported type should return error" {
-        { Test-WSMan -Authentication foo } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.WSMan.Management.TestWSManCommand"
+        { Test-WSMan -Authentication foo -ErrorAction Stop } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.WSMan.Management.TestWSManCommand"
     }
 
-    It "Test-WSMan works" -TestCases @(
-        @{computername=$null},
-        @{computername="localhost"},
-        @{computername=$env:COMPUTERNAME}
+    It "Test-WSMan works for '<computername>'" -TestCases @(
+        @{ computername = $null },
+        @{ computername = "localhost" },
+        @{ computername = $env:COMPUTERNAME }
     ) {
         param($computername)
         $response = Test-WSMan -ComputerName $computername
