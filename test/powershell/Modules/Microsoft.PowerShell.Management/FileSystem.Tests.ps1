@@ -213,20 +213,20 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
-            # NOTE: ensure the testId parameter is unique for each test case; it is used to generate a unique error and done file name.
-            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"; testId = 'GetItem'}
-            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"; testId = 'GetChildItem'}
-            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"; testId = 'NewItem'}
-            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"; testId = 'RenameItem'},
-            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand";  testId = 'MoveItem'},
-            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"; testId = 'RemoveItem'}
+            # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
+            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"; fileNameBase = 'GetItem'}
+            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"; fileNameBase = 'GetChildItem'}
+            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"; fileNameBase = 'NewItem'}
+            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"; fileNameBase = 'RenameItem'},
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand";  fileNameBase = 'MoveItem'},
+            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"; fileNameBase = 'RemoveItem'}
         ) {
-            param ($cmdline, $expectedError, $testId)
+            param ($cmdline, $expectedError, $fileNameBase)
 
-            $errFile = Join-Path -Path $TestDrive -ChildPath "$testId.error.txt"
-            $doneFile = Join-Path -Path $TestDrive -Childpath "$testId.done.txt"
+            $errFile = Join-Path -Path $TestDrive -ChildPath "$fileNameBase.error.txt"
+            $doneFile = Join-Path -Path $TestDrive -Childpath "$fileNameBase.done.txt"
             # Seed the error file with text indicating a timeout waiting for the command.
-            "Test $testId timeout waiting for $cmdLine" | Set-Content -Path $errFile
+            "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
 
             runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
 
