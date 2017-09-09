@@ -1055,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Win32Exception exception)
                 {
-                    WriteNonTerminatingError(process, exception, ProcessResources.Process_is_not_terminated, "ProcessNotTerminated", ErrorCategory.CloseError);
+                    WriteNonTerminatingError(process, exception, ProcessResources.ProcessIsNotTerminated, "ProcessNotTerminated", ErrorCategory.CloseError);
                 }
             }
 
@@ -1084,7 +1084,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Win32Exception exception)
                 {
-                    WriteNonTerminatingError(process, exception, ProcessResources.Process_is_not_terminated, "ProcessNotTerminated", ErrorCategory.CloseError);
+                    WriteNonTerminatingError(process, exception, ProcessResources.ProcessIsNotTerminated, "ProcessNotTerminated", ErrorCategory.CloseError);
                 }
             }
         }
