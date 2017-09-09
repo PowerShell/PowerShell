@@ -50,13 +50,13 @@ Describe "ComparisonOperator" -tag "CI" {
     }
 
     It "Should return error if right hand is not a valid type: 'hello' <operator> <type>" -TestCases @(
-        @{operator = "-is"; type = "'foo'"; expected='RuntimeException,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
-        @{operator = "-isnot"; type = "'foo'"; expected='RuntimeException,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
-        @{operator = "-is"; type = "[foo]"; expected='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
-        @{operator = "-isnot"; type = "[foo]"; expected='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'}
+        @{operator = "-is"; type = "'foo'"; expectedError='RuntimeException,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
+        @{operator = "-isnot"; type = "'foo'"; expectedError='RuntimeException,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
+        @{operator = "-is"; type = "[foo]"; expectedError='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'},
+        @{operator = "-isnot"; type = "[foo]"; expectedError='TypeNotFound,Microsoft.PowerShell.Commands.InvokeExpressionCommand'}
     ) {
-        param($operator, $type, $expected)
-        { Invoke-Expression "'Hello' $operator $type" } | ShouldBeErrorId $expected
+        param($operator, $type, $expectedError)
+        { Invoke-Expression "'Hello' $operator $type" } | ShouldBeErrorId $expectedError
     }
 
     It "Should succeed in comparing type: <lhs> <operator> <rhs>" -TestCases @(
