@@ -42,7 +42,7 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
 
     It "Set-Service parameter validation for invalid values: <script>" -TestCases @(
         @{
-            script  = {Set-Service foo -StartupType bar};
+            script  = {Set-Service foo -StartupType bar -ErrorAction Stop};
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"
         }
     ) {
