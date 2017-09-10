@@ -534,7 +534,14 @@ function New-UnixPackage {
         }
     }
 
-    return $createdPackage
+    if (Test-Path $createdPackage)
+    {
+        return $createdPackage
+    }
+    else
+    {
+        throw "Failed to create $createdPackage"
+    }
 }
 
 function New-StagingFolder
@@ -622,9 +629,15 @@ function New-ZipPackage
             Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
         }
 
-        log "You can find the Zip @ $zipLocationPath"
-        $zipLocationPath
-
+        if (Test-Path $zipLocationPath)
+        {
+            log "You can find the Zip @ $zipLocationPath"
+            $zipLocationPath
+        }
+        else
+        {
+            throw "Failed to create $zipLocationPath"
+        }
     }
     #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
@@ -706,7 +719,15 @@ function New-NugetPackage
     log "Use -verbose to see output..."
     Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
 
-    Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+    $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
+    if (Test-Path $nupkgFile)
+    {
+        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+    }
+    else
+    {
+        throw "Failed to create $nupkgFile"
+    }
 }
 
 function New-SubFolder
