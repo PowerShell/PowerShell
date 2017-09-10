@@ -1358,7 +1358,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -NoProxy"
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -NoProxy -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
 
