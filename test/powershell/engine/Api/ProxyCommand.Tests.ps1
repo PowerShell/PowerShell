@@ -90,9 +90,7 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $oldParameters = @($helpObj.parameters.parameter)
         $newParameters = @($newHelpObj.parameters.parameter)
         $oldParameters.Length | Should Be $newParameters.Length
-        for ($i = 0; $i -lt $oldParameters.Length; $i++) {
-            $oldParameters[$i].name | Should Be $newParameters[$i].name
-        }
+        $oldParameters.name -join "," | Should Be ($newParameters.name -join ",")
 
         $oldExamples = @($helpObj.examples.example)
         $newExamples = @($newHelpObj.examples.example)
