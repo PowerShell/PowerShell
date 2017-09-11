@@ -60,12 +60,22 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
   }
 
   It "Suspend/Resume-Service works" {
-    $workstation = Get-Service LanmanWorkstation
-    $workstation | Should Not BeNullOrEmpty
-    Suspend-Service LanmanWorkstation
-    (Get-Service LanmanWorkstation).Status | Should Be "Paused"
-    Resume-Service LanmanWorkstation
-    (Get-Service LanmanWorkstation).Status | Should Be "Running"
+    try {
+      $originalState = "Running"
+      $serviceName = "WerSvc"
+      $service = Get-Service $serviceName
+      if ($service.Status -ne $originalState) {
+        $originalState = $service.Status
+        Start-Service $serviceName
+      }
+      $service | Should Not BeNullOrEmpty
+      Suspend-Service $serviceName
+      (Get-Service $serviceName).Status | Should Be "Paused"
+      Resume-Service $serviceName
+      (Get-Service $serviceName).Status | Should Be "Running"
+    } finally {
+      Set-Service $serviceName -Status $originalState
+    }
   }
 
   It "Failure to control service with '<script>'" -TestCases @(
