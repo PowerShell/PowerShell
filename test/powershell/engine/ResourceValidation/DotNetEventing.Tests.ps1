@@ -1,8 +1,10 @@
 . "$psscriptroot/TestRunner.ps1"
-$AssemblyName = "System.Management.Automation"
+
+$assemblyName = "Microsoft.PowerShell.CoreCLR.Eventing"
 # this list is taken from ${AssemblyName}.csproj
 # excluded resources
-$excludeList = "CoreMshSnapinResources.resx",
-    "ErrorPackageRemoting.resx"
+$excludeList = @()
+# load the module since it isn't there by default
+
 # run the tests
 Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList
