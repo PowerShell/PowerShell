@@ -79,7 +79,17 @@ Describe "Get-Content" -Tags "CI" {
     It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
         { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
     }
-    It 'Verifies -Tail with content that uses an uncommon encoding' {
+    It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
+        @{EncodingName = 'String'},
+        @{EncodingName = 'Unicode'},
+        @{EncodingName = 'BigEndianUnicode'},
+        @{EncodingName = 'UTF8'},
+        @{EncodingName = 'UTF7'},
+        @{EncodingName = 'UTF32'},
+        @{EncodingName = 'Ascii'}
+        ){
+        param($EncodingName)
+
         $content = @"
 one
 two
@@ -89,12 +99,13 @@ baz
 "@
         $expected = 'foo'
         $tailCount = 3
+        [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding] $encoding = $EncodingName
 
         $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
-        $content | Set-Content -Path $testPath -Encoding BigEndianUnicode
+        $content | Set-Content -Path $testPath -Encoding $encoding
         $expected = 'foo'
 
-        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding BigEndianUnicode
+        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encoding
         $actual.GetType() | Should Be "System.Object[]"
         $actual.Length | Should Be $tailCount
         $actual[0] | Should Be $expected
