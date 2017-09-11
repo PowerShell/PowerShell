@@ -22,15 +22,18 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         @{parameter = "Status"      ; value = "Running"},
         @{parameter = "Status"      ; value = "Stopped"},
         @{parameter = "Status"      ; value = "Paused"},
-        @{parameter = "InputObject" ; value = (Get-Service | Select-Object -First 1)},
+        @{parameter = "InputObject" ; script = {Get-Service | Select-Object -First 1}},
         # cmdlet inherits this property, but it's not exposed as parameter so it should be $null
         @{parameter = "Include"     ; value = "foo", "bar" ; expectedNull = $true},
         # cmdlet inherits this property, but it's not exposed as parameter so it should be $null
         @{parameter = "Exclude"     ; value = "foo", "bar" ; expectedNull = $true}
     ) {
-        param($parameter, $value, $expectedNull)
+        param($parameter, $value, $script, $expectedNull)
 
         $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
+        if ($script -ne $Null) {
+            $value = & $script
+        }
         $setServiceCommand.$parameter = $value
         if ($expectedNull -eq $true) {
             $setServiceCommand.$parameter | Should BeNullOrEmpty
