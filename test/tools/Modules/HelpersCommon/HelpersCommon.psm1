@@ -29,19 +29,8 @@ function Wait-FileToBePresent
         [int]$TimeoutInSeconds = 10,
         [int]$IntervalInMilliseconds = 100
     )
-    # Get the current time
-    $startTime = [DateTime]::Now
 
-    # Loop until the file is present
-    while (-not (Test-Path $File)) {
-        # If the timeout period has passed, return false
-        if (([DateTime]::Now - $startTime).TotalSeconds -gt $TimeoutInSeconds) {
-            return $false
-        }
-        # Sleep for the specified interval
-        Start-Sleep -Milliseconds $intervalInMilliseconds
-    }
-    return $true
+    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds > $null
 }
 
 function Test-IsElevated

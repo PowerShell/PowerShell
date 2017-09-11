@@ -140,7 +140,7 @@ Categories=Application;
                 # validate on Unix by reassociating default app for directories
                 Invoke-Item -Path $PSHOME
                 # may take time for handler to start
-                Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 > $null
+                Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
                 Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
             }
             else

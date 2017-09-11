@@ -229,7 +229,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             param ($cmdline, $expectedError)
 
             runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
-            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 10 -IntervalInMilliseconds 100 > $null
+            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 10 -IntervalInMilliseconds 100
 
             $errFile | Should Exist
             $err = Get-Content $errFile
