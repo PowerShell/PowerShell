@@ -702,7 +702,7 @@ function New-PSOptions {
 
     if($RootInfo.RepoPath -ne $RootInfo.ValidPath)
     {
-        $RootInfo['Warning'] = "Please ensure you repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
+        $RootInfo['Warning'] = "Please ensure your repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
         $RootInfo['IsValid'] = $false
     }
     else
@@ -1837,8 +1837,15 @@ function New-MSIPackage
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
-    Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-    $msiLocationPath
+    if (Test-Path $msiLocationPath)
+    {
+        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+        $msiLocationPath
+    }
+    else
+    {
+        throw "Failed to create $msiLocationPath"
+    }
 }
 
 function Start-CrossGen {
