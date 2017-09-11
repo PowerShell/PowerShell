@@ -192,41 +192,58 @@ Describe "Get-Content" -Tags "CI" {
       Get-Content -Path $testPath -Tail 1 -ErrorAction Stop -Raw
     } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
   }
-
-  It "Should Get-Content containing multi-byte chars for a variety of -Tail and -ReadCount values" {
-    $firstLine = "Hello,World"
-    $secondLine = "Hello2,World2"
-    $thirdLine = "Hello3,World3"
-    $fourthLine = "Hello4,World4"
-    $fileContent = $firstLine,$secondLine,$thirdLine,$fourthLine
-    Set-content -Path $testPath $fileContent
-    $result = Get-Content -Path $testPath -ReadCount -1 -Tail 5 -Encoding UTF7
-    $result.Length | Should Be 4
-    $expected = $fileContent
-    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-    $result = Get-Content -Path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
-    $result.Length | Should Be 3
-    $expected = $secondLine,$thirdLine,$fourthLine
-    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-    $result = Get-Content -Path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
-    $result.Length | Should Be 3
-    $expected = $secondLine,$thirdLine,$fourthLine
-    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-    $result = Get-Content -Path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
-    $result.Length | Should Be 3
-    $expected = $secondLine,$thirdLine,$fourthLine
-    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-    $result = Get-Content -Path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
-    $result.Length | Should Be 2
-    $expected = $secondLine,$thirdLine
-    $expected = $expected,$fourthLine
-    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-    $result = Get-Content -Path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
-    $result.Length | Should Be 0
-    $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
-    $result.Length | Should Be 2
-    $expected = $firstLine,$secondLine
-    $expected = $expected,$thirdLine
-    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+  Context "Check Get-Content containing multi-byte chars" {
+    BeforeAll {
+      $firstLine = "Hello,World"
+      $secondLine = "Hello2,World2"
+      $thirdLine = "Hello3,World3"
+      $fourthLine = "Hello4,World4"
+      $fileContent = $firstLine,$secondLine,$thirdLine,$fourthLine
+    }
+    BeforeEach{
+      Set-content -Path $testPath $fileContent
+    }
+    It "Should return all lines when -Tail value is more than number of lines in the file"{
+      $result = Get-Content -Path $testPath -ReadCount -1 -Tail 5 -Encoding UTF7
+      $result.Length | Should Be 4
+      $expected = $fileContent
+      Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+    }
+    It "Should return last three lines at one time for -ReadCount 0 and -Tail 3"{
+      $result = Get-Content -Path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
+      $result.Length | Should Be 3
+      $expected = $secondLine,$thirdLine,$fourthLine
+      Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+    }
+    It "Should return last three lines reading one at a time for -ReadCount 1 and -Tail 3"{
+      $result = Get-Content -Path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
+      $result.Length | Should Be 3
+      $expected = $secondLine,$thirdLine,$fourthLine
+      Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+    }
+    It "Should return last three lines at one time for -ReadCount 99999 and -Tail 3"{
+      $result = Get-Content -Path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
+      $result.Length | Should Be 3
+      $expected = $secondLine,$thirdLine,$fourthLine
+      Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+    }
+    It "Should return last three lines two lines at a time for -ReadCount 2 and -Tail 3"{
+      $result = Get-Content -Path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
+      $result.Length | Should Be 2
+      $expected = $secondLine,$thirdLine
+      $expected = $expected,$fourthLine
+      Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+    }
+    It "Should not return any content when -TotalCount 0"{
+      $result = Get-Content -Path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
+      $result.Length | Should Be 0
+    }
+    It "Should return first three lines two lines at a time for -TotalCount 3 and -ReadCount 2"{
+      $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
+      $result.Length | Should Be 2
+      $expected = $firstLine,$secondLine
+      $expected = $expected,$thirdLine
+      Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+    }
   }
 }
