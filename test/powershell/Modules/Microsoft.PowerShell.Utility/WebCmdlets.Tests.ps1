@@ -388,7 +388,7 @@ function GetMultipartBody
         $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse("text/plain")
         $multipartContent.Add($fileContent)
     }
-    # unary comma required
+    # unary comma required to prevent $multipartContent from being unwrapped/enumerated
     return ,$multipartContent 
 }
 
