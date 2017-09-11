@@ -10,7 +10,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
-        else 
+        else
         {
             if ([System.Globalization.CultureInfo]::CurrentCulture.Name -ne "en-US")
             {
@@ -18,7 +18,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
             }
         }
     }
-    
+
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
@@ -41,10 +41,12 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         { Enable-WSManCredSSP @params } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.EnableWSManCredSSPCommand"
     }
 
-    It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
-        @{params=@{Role="Client";DelegateComputer="*"};description="client"},
-        @{params=@{Role="Server"};description="server"}
-    ) {
+    # Blocked on issue https://github.com/PowerShell/PowerShell/issues/4784
+    It "Enable-WSManCredSSP works: <description>" -Pending {
+    # -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
+    #    @{params=@{Role="Client";DelegateComputer="*"};description="client"},
+    #    @{params=@{Role="Server"};description="server"}
+    # ) {
         param ($params)
         $c = Enable-WSManCredSSP @params -Force
         $c.CredSSP | Should Be $true
@@ -60,10 +62,12 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         }
     }
 
-    It "Disable-WSManCredSSP works: <role>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
-        @{Role="Client"},
-        @{Role="Server"}
-    ) {
+    # Blocked on issue https://github.com/PowerShell/PowerShell/issues/4784
+    It "Disable-WSManCredSSP works: <role>" -Pending {
+    # -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
+    #    @{Role="Client"},
+    #    @{Role="Server"}
+    #) {
         param ($role)
         Disable-WSManCredSSP -Role $role | Should BeNullOrEmpty
 
