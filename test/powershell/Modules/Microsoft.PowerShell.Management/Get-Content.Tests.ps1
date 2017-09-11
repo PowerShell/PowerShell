@@ -95,7 +95,7 @@ baz
         $expected = 'foo'
 
         $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding BigEndianUnicode
-        ,$actual | Should BeOfType "System.Object[]"
+        $actual.GetType() | Should Be "System.Object[]"
         $actual.Length | Should Be $tailCount
         $actual[0] | Should Be $expected
     }
