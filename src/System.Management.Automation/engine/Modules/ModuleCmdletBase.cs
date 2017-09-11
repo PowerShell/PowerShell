@@ -1228,7 +1228,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (moduleInfo.RootModuleForManifest != null)
                     {
-                        if (moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                        if (moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             moduleInfo.SetModuleType(ModuleType.Binary);
                         }
@@ -1256,7 +1256,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleInfo.RootModule = moduleInfo.Path;
                     }
                 }
-                else if (extension.Equals(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     moduleInfo.SetModuleType(ModuleType.Binary);
                     moduleInfo.RootModule = moduleInfo.Path;
@@ -2203,7 +2203,7 @@ namespace Microsoft.PowerShell.Commands
                             iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
                             fixedUpAssemblyPathList.Add(fileName);
 
-                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.DependentWorkflowAssemblyExtension);
+                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILAssemblyExtension);
 
                             loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
                             WriteVerbose(loadMessage);

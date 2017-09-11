@@ -393,7 +393,6 @@ namespace System.Management.Automation
 
         internal static List<string> ModulesWithJobSourceAdapters = new List<string>
             {
-                Utils.WorkflowModule,
                 Utils.ScheduledJobModuleName,
             };
 

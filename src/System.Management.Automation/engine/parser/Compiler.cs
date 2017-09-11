@@ -206,8 +206,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo FunctionOps_DefineFunction =
             typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), staticFlags);
-        internal static readonly MethodInfo FunctionOps_DefineWorkflows =
-            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineWorkflows), staticFlags);
 
         internal static readonly ConstructorInfo Hashtable_ctor =
             typeof(Hashtable).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
@@ -2893,26 +2891,8 @@ namespace System.Management.Automation.Language
             return this.VisitPipeline(dynamicKeywordAst.GenerateCommandCallPipelineAst());
         }
 
-        private bool _generatedCallToDefineWorkflows;
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
-            if (functionDefinitionAst.IsWorkflow)
-            {
-                if (_generatedCallToDefineWorkflows)
-                    return ExpressionCache.Empty;
-
-                var topAst = functionDefinitionAst.Parent;
-                while (!(topAst is ScriptBlockAst))
-                {
-                    topAst = topAst.Parent;
-                }
-
-                _generatedCallToDefineWorkflows = true;
-                return Expression.Call(CachedReflectionInfo.FunctionOps_DefineWorkflows,
-                                       _executionContextParameter,
-                                       Expression.Constant(topAst, typeof(ScriptBlockAst)));
-            }
-
             return Expression.Call(CachedReflectionInfo.FunctionOps_DefineFunction,
                                    _executionContextParameter,
                                    Expression.Constant(functionDefinitionAst),

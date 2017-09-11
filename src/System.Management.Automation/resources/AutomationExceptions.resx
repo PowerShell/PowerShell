@@ -195,9 +195,6 @@
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
     <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
   </data>
-  <data name="CantLoadWorkflowType" xml:space="preserve">
-    <value>Cannot create workflow. The type '{0}' from the '{1}' module could not be loaded.</value>
-  </data>
   <data name="WorkflowDoesNotSupportWOW64" xml:space="preserve">
     <value>Windows PowerShell Workflow is not supported in a Windows PowerShell x86-based console. Open a Windows PowerShell x64-based console, and then try again.</value>
   </data>
