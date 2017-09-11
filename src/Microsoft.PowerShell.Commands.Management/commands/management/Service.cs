@@ -2015,10 +2015,11 @@ namespace Microsoft.PowerShell.Commands
                         dwStartType = NativeMethods.SERVICE_DISABLED;
                         break;
                     default:
-                        Diagnostics.Assert(
-                            ((ServiceStartMode)(-1)) == StartupType,
-                            "bad StartupType");
-                        break;
+                        WriteNonTerminatingError(StartupType.ToString(), DisplayName, Name,
+                            new ArgumentException(), "CouldNotNewService",
+                            ServiceResources.UnsupportedStartupType,
+                            ErrorCategory.InvalidArgument);
+                        return;
                 }
 
                 // set up the double-null-terminated lpDependencies parameter
