@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'j':
-                            sb.Append(dateTime.DayOfYear);
+                            sb.Append(StringUtil.Format("{0:000}", dateTime.DayOfYear));
                             break;
 
                         case 'k':

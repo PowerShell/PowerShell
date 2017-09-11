@@ -30,7 +30,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'aAbBcCdDehHIjmMpr' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%j%m%M%p%r | Should be "TueTuesdayJanJanuaryTue Jan  1 00:00:00 003000101/01/30 1Jan001210100AM12:00:00 AM"
+        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%j%m%M%p%r | Should be "TueTuesdayJanJanuaryTue Jan  1 00:00:00 003000101/01/30 1Jan00120010100AM12:00:00 AM"
     }
 
     It "using -uformat 'StTuUVwWxXyYZ' produces the correct output" {
