@@ -843,9 +843,15 @@ function Start-PSPester {
         [switch]$Unelevate,
         [switch]$Quiet,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
-        [switch]$PassThru
+        [switch]$PassThru,
+        [switch]$IncludeFailingTest
     )
 
+    if($IncludeFailingTest.IsPresent)
+    {
+        $Path += "$PSScriptRoot/tools/failingTests"
+    }
+    
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
     {
