@@ -1511,8 +1511,6 @@ namespace Microsoft.PowerShell.Commands
         internal ServiceStartMode startupType = (ServiceStartMode)(-1);
 
 
-
-
         /// <summary>
         /// The following is the definition of the input parameter "Status".
         /// This specifies what state the service should be in (e.g. Running, Stopped,
@@ -1684,22 +1682,14 @@ namespace Microsoft.PowerShell.Commands
                             || (ServiceStartMode)(-1) != StartupType)
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
-                            switch (StartupType)
+                            if ((ServiceStartMode)(-1) != StartupType &&
+                                !NativeMethods.GetNativeStartupType(StartupType, out dwStartType))
                             {
-                                case ServiceStartMode.Automatic:
-                                    dwStartType = NativeMethods.SERVICE_AUTO_START;
-                                    break;
-                                case ServiceStartMode.Manual:
-                                    dwStartType = NativeMethods.SERVICE_DEMAND_START;
-                                    break;
-                                case ServiceStartMode.Disabled:
-                                    dwStartType = NativeMethods.SERVICE_DISABLED;
-                                    break;
-                                default:
-                                    Diagnostics.Assert(
-                                        ((ServiceStartMode)(-1)) == StartupType,
-                                        "bad StartupType");
-                                    break;
+                                WriteNonTerminatingError(StartupType.ToString(), "Set-Service", Name,
+                                    new ArgumentException(), "CouldNotSetService",
+                                    ServiceResources.UnsupportedStartupType,
+                                    ErrorCategory.InvalidArgument);
+                                return;
                             }
                             bool succeeded = NativeMethods.ChangeServiceConfigW(
                                 hService,
@@ -2002,26 +1992,15 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                     return;
                 }
-                DWORD dwStartType = NativeMethods.SERVICE_AUTO_START;
-                switch (StartupType)
+                DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+                if (! NativeMethods.GetNativeStartupType(StartupType, out dwStartType))
                 {
-                    case ServiceStartMode.Automatic:
-                        dwStartType = NativeMethods.SERVICE_AUTO_START;
-                        break;
-                    case ServiceStartMode.Manual:
-                        dwStartType = NativeMethods.SERVICE_DEMAND_START;
-                        break;
-                    case ServiceStartMode.Disabled:
-                        dwStartType = NativeMethods.SERVICE_DISABLED;
-                        break;
-                    default:
-                        WriteNonTerminatingError(StartupType.ToString(), DisplayName, Name,
-                            new ArgumentException(), "CouldNotNewService",
-                            ServiceResources.UnsupportedStartupType,
-                            ErrorCategory.InvalidArgument);
-                        return;
+                    WriteNonTerminatingError(StartupType.ToString(), "New-Service", Name,
+                        new ArgumentException(), "CouldNotNewService",
+                        ServiceResources.UnsupportedStartupType,
+                        ErrorCategory.InvalidArgument);
+                    return;
                 }
-
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
                 if (null != DependsOn)
@@ -2411,6 +2390,40 @@ namespace Microsoft.PowerShell.Commands
         public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
+
+        /// <summary>
+        /// Get appropriate win32 StartupType
+        /// </summary>
+        /// <param name="StartupType">
+        /// StartupType provided by the user.
+        /// </param>
+        /// <param name="dwStartType">
+        /// Out parameter of the native win32 StartupType
+        /// </param>
+        /// <returns>
+        /// If a supported StartupType is provided, funciton returns true, otherwise false.
+        /// </returns>
+        internal static bool GetNativeStartupType(ServiceStartMode StartupType, out DWORD dwStartType)
+        {
+            bool success = true;
+            dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+            switch (StartupType)
+            {
+                case ServiceStartMode.Automatic:
+                    dwStartType = NativeMethods.SERVICE_AUTO_START;
+                    break;
+                case ServiceStartMode.Manual:
+                    dwStartType = NativeMethods.SERVICE_DEMAND_START;
+                    break;
+                case ServiceStartMode.Disabled:
+                    dwStartType = NativeMethods.SERVICE_DISABLED;
+                    break;
+                default:
+                    success = false;
+                    break;
+            }
+            return success;
+        }
     }
     #endregion NativeMethods
 }
