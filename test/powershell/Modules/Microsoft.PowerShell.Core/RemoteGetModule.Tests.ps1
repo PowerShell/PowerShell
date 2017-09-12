@@ -6,7 +6,8 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
             $pssession = New-RemoteSession
-            $cimsession = New-RemoteSession -CimSession
+            # pending https://github.com/PowerShell/PowerShell/issues/4819
+            # $cimsession = New-RemoteSession -CimSession
         }
     }
 
@@ -15,8 +16,8 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 
     It "Get-Module fails if not using -ListAvailable with '<parameter>'" -TestCases @(
-        @{parameter="PSSession" ; value=$pssession},
-        @{parameter="CIMSession"; value=$cimsession}
+        @{parameter="PSSession" ; value=$pssession}
+        # @{parameter="CIMSession"; value=$cimsession}
     ) {
         param($parameter, $value)
         $parameters = @{$parameter=$value}
@@ -25,9 +26,9 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     It "Get-Module succeeds using -ListAvailable with '<parameter>'" -TestCases @(
         @{parameter="PSSession" ; value=$pssession},
-        @{parameter="PSSession" ; value=$pssession ; name="Pester"},
-        @{parameter="CIMSession"; value=$cimsession},
-        @{parameter="CIMSession"; value=$cimsession; name="pESTER"}
+        @{parameter="PSSession" ; value=$pssession ; name="Pester"}
+        # @{parameter="CIMSession"; value=$cimsession},
+        # @{parameter="CIMSession"; value=$cimsession; name="pESTER"}
     ) {
         param($parameter, $value, $name)
         $parameters = @{$parameter=$value; ListAvailable=$true; Refresh=$true}
@@ -50,7 +51,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         @{parameter = "Refresh"           ; value = $true},
         @{parameter = "Refresh"           ; value = $false},
         @{parameter = "PSSession"         ; value = $pssession},
-        @{parameter = "CimSession"        ; value = $cimsession},
+        # @{parameter = "CimSession"        ; value = $cimsession},
         @{parameter = "CimResourceUri"    ; value = "http://foo/"},
         @{parameter = "CimNamespace"      ; value = "foo"},
         @{parameter = "PSEdition"         ; value = "Core"},
@@ -76,5 +77,9 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
     It "Get-Module supports pipeline" {
         $module = Get-Module -Name Microsoft.PowerShell.Utility
         Compare-Object $module ($module | Get-Module) | Should BeNullOrEmpty
+    }
+
+    It "New-CimSession works" -Pending {
+        # enable all CimSession tests once https://github.com/PowerShell/PowerShell/issues/4819 is fixed
     }
 }
