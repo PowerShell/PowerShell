@@ -371,9 +371,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'c':
-                            sb.Append("{0:ddd} {0:MMM} ");
-                            sb.Append(StringUtil.Format("{0,2} ", dateTime.Day));
-                            sb.Append("{0:HH}:{0:mm}:{0:ss} {0:yyyy}");
+                            sb.Append("{0:ddd} {0:MMM} {0:dd} {0:HH}:{0:mm}:{0:ss} {0:yyyy}");
                             break;
 
                         case 'D':
