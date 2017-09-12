@@ -5,6 +5,7 @@
 ### Breaking change
 
 * Fix `Get-Content -Delimiter` to not include the delimiter in the array elements returned (#3706) (Thanks @mklement0)
+* Rename `$IsOSX` to `$IsMacOS` (#4757)
 
 ### Engine updates and fixes
 
@@ -15,7 +16,6 @@
 * Fix `using module` when module has non-terminating errors handled with `SilentlyContinue` (#4711) (Thanks @iSazonov)
 * Enable use of 'Singleline,Multiline' option in split operator (#4721) (Thanks @iSazonov)
 * Fix error message in `ValidateSetAttribute.ValidateElement()` (#4722) (Thanks @iSazonov)
-* Rename $IsOSX to $IsMacOS (#4757)
 
 ### General cmdlet updates and fixes
 
@@ -23,7 +23,7 @@
 * Prevent `Test-ModuleManifest` from loading unnecessary modules (#4541)
 * Remove AlternateStream code and `-Stream` from provider cmdlets on non-Windows (#4567)
 * Add explicit ContentType detection to `Invoke-RestMethod` (#4692)
-* Fix for error on `Enter-PSSession` exit (#4693)
+* Fix an error on `Enter-PSSession` exit (#4693)
 * Add `-WhatIf` switch to `Start-Process` cmdlet (#4735) (Thanks @sarithsutha)
 * Remove double spaces in .cs, .ps1, and .resx files (#4741 & #4743) (Thanks @korygill)
 * Replace 'Windows PowerShell' with 'PowerShell' in resx files (#4758) (Thanks @iSazonov)
@@ -62,15 +62,15 @@
     * `New-Object -ComObject` (#4776)
     * ProxyCommand APIs (#4791)
 * Disable tests
-    * 'VC++ Redist'(#4673 & #4729)
+    * 'VC++ Redistributable'(#4673 & #4729)
     * "Test 01. Standard Property test - all properties (<property>)" due to missing CsPhysicallyInstalledMemory (#4763)
     * `New-Service` failing test (#4806)
 
 ### Documentation
 
 * Update WritingPesterTests.md to recommend ShouldBeErrorId (#4637)
-* Clarify the Pull Request process, roles, and responsibilties (#4710)
-* Add absolute urls in the issue template and pull request template (#4718) (Thanks @chucklu)
+* Clarify the Pull Request process, roles, and responsibilities (#4710)
+* Add absolute URLs in the issue template and pull request template (#4718) (Thanks @chucklu)
 * Add new approved Build and Deploy verbs (#4725)
 * Update using-vscode.md to use the new exe path (#4736)
 * Update coding guidelines to make it more concrete and useful in a review process (#4754)
