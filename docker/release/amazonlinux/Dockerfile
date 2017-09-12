@@ -2,7 +2,7 @@
 
 FROM amazonlinux:latest
 
-ARG POWERSHELL_VERSION=6.0.0-beta.6
+ARG POWERSHELL_VERSION=6.0.0-beta.7
 ARG IMAGE_NAME=microsoft/powershell:amazonlinux
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

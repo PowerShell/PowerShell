@@ -1,8 +1,8 @@
 # escape=`
 FROM microsoft/windowsservercore:latest
 
-ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win10-win2016-x64.msi
-ARG POWERSHELL_VERSION=6.0.0-beta.6
+ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win10-win2016-x64.msi
+ARG POWERSHELL_VERSION=6.0.0-beta.7
 ARG IMAGE_NAME=microsoft/powershell:windowsservercore
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
