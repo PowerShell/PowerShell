@@ -210,15 +210,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
             }
-            $errFile = "$testdrive\error.txt"
-            $doneFile = "$testdrive\done.txt"
-        }
-        AfterEach {
-            Remove-Item -Force $errFile -ErrorAction SilentlyContinue
-            Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
         }
 
         It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+            # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
             @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
             @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
             @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
@@ -228,14 +223,23 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         ) {
             param ($cmdline, $expectedError)
 
+            # generate a filename to use for the error and done text files to avoid test output collision
+            # when a timeout occurs waiting for powershell.
+            $fileNameBase = ([string] $cmdline).GetHashCode().ToString()
+            $errFile = Join-Path -Path $TestDrive -ChildPath "$fileNameBase.error.txt"
+            $doneFile = Join-Path -Path $TestDrive -Childpath "$fileNameBase.done.txt"
+
+            # Seed the error file with text indicating a timeout waiting for the command.
+            "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
+
             runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+
             $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and -not (Test-Path $doneFile))
+            while (((Get-Date) - $startTime).TotalSeconds -lt 15 -and -not (Test-Path $doneFile))
             {
                 Start-Sleep -Milliseconds 100
             }
 
-            $errFile | Should Exist
             $err = Get-Content $errFile
             $err | Should Be $expectedError
         }
