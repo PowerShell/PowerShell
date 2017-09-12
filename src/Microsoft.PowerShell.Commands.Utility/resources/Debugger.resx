@@ -142,7 +142,7 @@
     <value>You cannot debug the default host Runspace using this cmdlet. To debug the default Runspace use the normal debugging commands from the host.</value>
   </data>
   <data name="RunspaceDebuggingNoHostRunspaceOrDebugger" xml:space="preserve">
-    <value>Cannot debug Runspace. The host has no debugger. Try debugging the Runspace inside the Windows PowerShell console or the Windows PowerShell ISE, both of which have built-in debuggers.</value>
+    <value>Cannot debug Runspace. The host has no debugger. Try debugging the Runspace inside the PowerShell console or with Visual Studio Code, both of which have built-in debuggers.</value>
   </data>
   <data name="RunspaceDebuggingNoHost" xml:space="preserve">
     <value>Cannot debug Runspace. There is no host or host UI. The debugger requires a host and host UI for debugging.</value>

@@ -132,6 +132,9 @@
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
+  <data name="StartProcessTarget" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
   <data name="CouldNotEnumerateModules" xml:space="preserve">
     <value>Cannot enumerate the modules of the "{0}" process.</value>
   </data>

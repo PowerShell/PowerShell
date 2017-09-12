@@ -1658,7 +1658,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Start-process command
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135261")]
+    [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135261")]
     [OutputType(typeof(Process))]
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
@@ -2050,6 +2050,9 @@ namespace Microsoft.PowerShell.Commands
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
             }
+
+            string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
+            if (!ShouldProcess(targetMessage)) { return; }
 
             //Starts the Process
             Process process = Start(startInfo);

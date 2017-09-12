@@ -308,7 +308,7 @@ Do you want to continue?</value>
     <value>This command cannot be used from the current path. Move to root path of the provider using cd\ and run your command again.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This Windows PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the Windows PowerShell host to manage WSMan operations.</value>
+    <value>This PowerShell snap-in contains cmdlets (such as Get-WSManInstance and Set-WSManInstance) that are used by the PowerShell host to manage WSMan operations.</value>
   </data>
   <data name="LocalHost" xml:space="preserve">
     <value>This command cannot be used to remove the computer 'localhost' because it will always be connected. Give some other connected computer and run your command.</value>

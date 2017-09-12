@@ -1211,40 +1211,6 @@ namespace System.Management.Automation
                 throw;
             }
         }
-
-        internal static void DefineWorkflows(ExecutionContext context, ScriptBlockAst scriptBlockAst)
-        {
-            ParseException parseErrors = null;
-
-            try
-            {
-                var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(context);
-                PSLanguageMode? languageMode = (context != null) ? context.LanguageMode : (PSLanguageMode?) null;
-                var workflows = converterInstance.CompileWorkflows(scriptBlockAst, context.EngineSessionState.Module, null, languageMode, out parseErrors);
-                foreach (var workflow in workflows)
-                {
-                    context.EngineSessionState.SetWorkflowRaw(workflow,
-                                                              context.EngineSessionState.CurrentScope.ScopeOrigin);
-                }
-            }
-            catch (Exception exception)
-            {
-                var rte = exception as RuntimeException;
-                if (rte == null)
-                {
-                    throw ExceptionHandlingOps.ConvertToRuntimeException(exception, scriptBlockAst.Extent);
-                }
-
-                InterpreterError.UpdateExceptionErrorRecordPosition(rte, scriptBlockAst.Extent);
-                throw;
-            }
-
-            if (parseErrors != null && parseErrors.Errors != null)
-            {
-                InterpreterError.UpdateExceptionErrorRecordPosition(parseErrors, scriptBlockAst.Extent);
-                throw parseErrors;
-            }
-        }
     }
 
     internal class ScriptBlockExpressionWrapper

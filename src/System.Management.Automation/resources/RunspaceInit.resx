@@ -130,7 +130,7 @@
     <value>The run objects available to cmdlets</value>
   </data>
   <data name="PSVersionTableDescription" xml:space="preserve">
-    <value>Version information for current Windows PowerShell session</value>
+    <value>Version information for current PowerShell session</value>
   </data>
   <data name="PIDDescription" xml:space="preserve">
     <value>Current process ID</value>
@@ -199,10 +199,10 @@
     <value>Displays errors with a description of the error class</value>
   </data>
   <data name="DollarPSCultureDescription" xml:space="preserve">
-    <value>Culture of the current Windows PowerShell session</value>
+    <value>Culture of the current PowerShell session</value>
   </data>
   <data name="DollarPSUICultureDescription" xml:space="preserve">
-    <value>UI culture of the current Windows PowerShell session</value>
+    <value>UI culture of the current PowerShell session</value>
   </data>
   <data name="PSDefaultParameterValuesDescription" xml:space="preserve">
     <value>Variable to hold all default &lt;cmdlet:parameter, value&gt; pairs</value>

@@ -18,14 +18,14 @@ function Start-PSPackage {
         [ValidatePattern("^powershell")]
         [string]$Name = "powershell",
 
-        # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg")]
+        # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "deb-arm")]
         [string[]]$Type,
 
         # Generate windows downlevel package
         [ValidateSet("win7-x86", "win7-x64")]
         [ValidateScript({$Environment.IsWindows})]
-        [string]$WindowsRuntime,
+        [string] $WindowsRuntime,
 
         [Switch] $Force,
 
@@ -37,6 +37,8 @@ function Start-PSPackage {
     # Runtime and Configuration settings required by the package
     ($Runtime, $Configuration) = if ($WindowsRuntime) {
         $WindowsRuntime, "Release"
+    } elseif ($Type -eq "deb-arm") {
+        New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     } else {
         New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
@@ -54,7 +56,11 @@ function Start-PSPackage {
     $Script:Options = Get-PSOptions
 
     $crossGenCorrect = $false
-    if(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
+    if ($Type -eq "deb-arm") {
+        # crossgen doesn't support arm32 yet
+        $crossGenCorrect = $true
+    }
+    elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
         $crossGenCorrect = $true
     }
     elseif ($IncludeSymbols.IsPresent -and -not $Script:Options.CrossGen) {
@@ -119,7 +125,7 @@ function Start-PSPackage {
             } else {
                 throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
             }
-        } elseif ($Environment.IsOSX) {
+        } elseif ($Environment.IsMacOS) {
             "osxpkg", "nupkg"
         } elseif ($Environment.IsWindows) {
             "msi", "nupkg"
@@ -269,8 +275,8 @@ function New-UnixPackage {
             }
         }
         "osxpkg" {
-            if (!$Environment.IsOSX) {
-                throw ($ErrorMessage -f "OS X")
+            if (!$Environment.IsMacOS) {
+                throw ($ErrorMessage -f "macOS")
             }
         }
     }
@@ -313,17 +319,17 @@ function New-UnixPackage {
         New-StagingFolder -StagingPath $Staging -Name $Name
     }
 
-    # Follow the Filesystem Hierarchy Standard for Linux and OS X
+    # Follow the Filesystem Hierarchy Standard for Linux and macOS
     $Destination = if ($Environment.IsLinux) {
         "/opt/microsoft/powershell/$Suffix"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "/usr/local/microsoft/powershell/$Suffix"
     }
 
     # Destination for symlink to powershell executable
     $Link = if ($Environment.IsLinux) {
         "/usr/bin"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "/usr/local/bin"
     }
 
@@ -334,7 +340,7 @@ function New-UnixPackage {
         if ($Environment.IsRedHatFamily) {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This is the only set of platforms needed for this currently
-            # as Ubuntu has these specific library files in the platform and OSX builds for itself
+            # as Ubuntu has these specific library files in the platform and macOS builds for itself
             # against the correct versions.
             New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
             New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
@@ -354,11 +360,11 @@ function New-UnixPackage {
 
         # there is a weird bug in fpm
         # if the target of the powershell symlink exists, `fpm` aborts
-        # with a `utime` error on OS X.
+        # with a `utime` error on macOS.
         # so we move it to make symlink broken
         $symlink_dest = "$Destination/$Name"
         $hack_dest = "./_fpm_symlink_hack_powershell"
-        if ($Environment.IsOSX) {
+        if ($Environment.IsMacOS) {
             if (Test-Path $symlink_dest) {
                 Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
                 Move-Item $symlink_dest $hack_dest
@@ -503,7 +509,7 @@ function New-UnixPackage {
             $Output = Start-NativeExecution { fpm $Arguments }
         }
     } finally {
-        if ($Environment.IsOSX) {
+        if ($Environment.IsMacOS) {
             # this is continuation of a fpm hack for a weird bug
             if (Test-Path $hack_dest) {
                 Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
@@ -521,10 +527,10 @@ function New-UnixPackage {
     # Magic to get path output
     $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-    if ($Environment.IsOSX) {
+    if ($Environment.IsMacOS) {
         if($pscmdlet.ShouldProcess("Fix package name"))
         {
-            # Add the OS information to the OSX package file name.
+            # Add the OS information to the macOS package file name.
             $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
             $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
 
@@ -534,7 +540,14 @@ function New-UnixPackage {
         }
     }
 
-    return $createdPackage
+    if (Test-Path $createdPackage)
+    {
+        return $createdPackage
+    }
+    else
+    {
+        throw "Failed to create $createdPackage"
+    }
 }
 
 function New-StagingFolder
@@ -622,9 +635,15 @@ function New-ZipPackage
             Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
         }
 
-        log "You can find the Zip @ $zipLocationPath"
-        $zipLocationPath
-
+        if (Test-Path $zipLocationPath)
+        {
+            log "You can find the Zip @ $zipLocationPath"
+            $zipLocationPath
+        }
+        else
+        {
+            throw "Failed to create $zipLocationPath"
+        }
     }
     #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
@@ -706,7 +725,15 @@ function New-NugetPackage
     log "Use -verbose to see output..."
     Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
 
-    Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+    $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
+    if (Test-Path $nupkgFile)
+    {
+        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+    }
+    else
+    {
+        throw "Failed to create $nupkgFile"
+    }
 }
 
 function New-SubFolder

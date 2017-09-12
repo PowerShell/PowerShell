@@ -133,7 +133,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
         Test-Path $transcriptFilePath | Should be $true
         $transcriptFilePath | Should contain "Before Dispose"
-        $transcriptFilePath | Should contain "Windows PowerShell transcript end"
+        $transcriptFilePath | Should contain "PowerShell transcript end"
     }
 
 }

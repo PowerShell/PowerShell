@@ -17,8 +17,8 @@ This will provide us much needed visibility in how PowerShell Core is being used
 We already have infrastructure in place to allow us see how PowerShell Core is being used, by collecting telemetry from PowerShell Core, we can improve our confidence as we drive to production quality.
 
 ### Logging
-The code which on Windows create ETW logging has been completely stubbed out on Linux/OSX.
-We should take advantage of the native logging mechanisms on Linux/OSX and implement a logger similar to the ETW logger on Windows using Syslog (or equivalent).
+The code which on Windows create ETW logging has been completely stubbed out on Linux/macOS.
+We should take advantage of the native logging mechanisms on Linux/macOS and implement a logger similar to the ETW logger on Windows using Syslog (or equivalent).
 We could use this data during test runs to identify test gaps.
 Simply by capturing the cmdlets and their parameters which are invoked during test would illuminate the gaps we have in our current tests, and allow us to easily fill them.
 It is not sufficient to support only one platform because we have many tests which determine at runtime whether or not it should run based on OS, so data from Windows will not be the same as that from Linux or MacOS.
@@ -69,7 +69,7 @@ In addition to loopback tests using both WSMan and SSH protocols, we should have
 * Windows Client->Nano Server
 * Windows Client->Linux Server
 * Linux Client -> Windows Server
-* OSX Client -> Nano Client
+* macOS Client -> Nano Client
 * PowerShell Core Client -> Full PowerShell Server
 * Full PowerShell Client -> PowerShell Core Server
 * Downlevel Full PowerShell Client -> PowerShell Core Server

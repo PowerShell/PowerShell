@@ -64,7 +64,7 @@ class FileCoverage
    If a line was hit during a test run a '+' will follow the line number, if a line was missed, a '-'
    will follow the line number. If a line is not hittable, it will not show '+' or '-'.
 
-   You can map file locations with the -oldBase and -newBase parameters (see example below), so you can 
+   You can map file locations with the -oldBase and -newBase parameters (see example below), so you can
    view coverage on a system with a different file layout. It is obvious to note that if files are different
    between the systems, the results will be misleading
 .EXAMPLE
@@ -116,25 +116,23 @@ class FileCoverage
 #>
 function Format-FileCoverage
 {
-    param ( 
-        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)]$FileCoverageData, 
-        [Parameter()][string]$oldBase = "", 
-        [Parameter()][string]$newBase = "", 
-        [Parameter()][string]$filter = ".*" 
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true,Position=0,ValueFromPipeline=$true)]$CoverageData,
+        [Parameter()][string]$oldBase = "",
+        [Parameter()][string]$newBase = ""
     )
 
-    $files = @($fileCoverageData.Keys) | Where-Object { $_ -match $filter }
-
-    foreach ( $file in $files ) {
-        $coverageData = $FileCoverageData[$file]
+    PROCESS {
+        $file = $CoverageData.Path
         $filepath = $file -replace "$oldBase","${newBase}"
         if ( test-path $filepath ) {
             $content = get-content $filepath
             for($i = 0; $i -lt $content.length; $i++ ) {
-                if ( $coverageData.Hit -contains ($i+1)) {
+                if ( $CoverageData.Hit -contains ($i+1)) {
                     $sign = "+"
                 }
-                elseif ( $coverageData.Miss -contains ($i+1)) {
+                elseif ( $CoverageData.Miss -contains ($i+1)) {
                     $sign = "-"
                 }
                 else {
@@ -157,7 +155,7 @@ function Get-FileCoverageData([xml]$CoverageData)
     $result = [Collections.Generic.Dictionary[string,FileCoverage]]::new()
     $count = 0
     Write-Progress "collecting files"
-    $filehash = $CoverageData.SelectNodes(".//File") | %{ $h = @{} } { $h[$_.uid] = $_.fullpath } { $h }
+    $filehash = $CoverageData.SelectNodes(".//File") | Foreach-Object { $h = @{} } { $h[$_.uid] = $_.fullpath } { $h }
     Write-Progress "collecting sequence points"
     $nodes = $CoverageData.SelectNodes(".//SequencePoint")
     $ncount = $nodes.count
@@ -226,7 +224,7 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
         }
         return
     }
-    
+
     $r1.assembly | ForEach-Object { $h[$_.assemblyname] = @($_) }
     $r2.assembly | ForEach-Object {
                         if($h.ContainsKey($_.assemblyname))
@@ -304,6 +302,8 @@ function Get-CoverageData($xmlPath)
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
     Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object {$_.classname -match $name } }
     $null = $CoverageXml
+
+    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetFileCoverage -Value { param ( $name = ".*" ) @($this.FileCoverage.Values) | Where-Object {$_.Path -match "$name"} }
 
     ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
     [gc]::Collect()
@@ -421,7 +421,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
 #>
 function Get-CodeCoverage
 {
-    param ( [string]$CoverageXmlFile = "$pwd/OpenCover.xml" )
+    param ( [string]$CoverageXmlFile = "$HOME/Documents/OpenCover.xml" )
     $xmlPath = (get-item $CoverageXmlFile).Fullname
     (Get-CoverageData -xmlPath $xmlPath)
 }
@@ -506,13 +506,47 @@ function Compare-CodeCoverage
     }
 
     $change = Get-CodeCoverageChange -r1 $Run1 -r2 $Run2 -Class $ClassName
-    if ( $Summary -or $ClassName ) 
-    { 
-        $change 
+    if ( $Summary -or $ClassName )
+    {
+        $change
     }
     else
-    { 
-        $change.Deltas 
+    {
+        $change.Deltas
+    }
+}
+
+function Compare-FileCoverage
+{
+    param (
+        [Parameter(Position=0,Mandatory=$true)]$ReferenceCoverage,
+        [Parameter(Position=1,Mandatory=$true)]$DifferenceCoverage,
+        [Parameter(Position=2,Mandatory=$true)]$FileName
+    )
+    # create a couple of hashtables where the key is the path
+    # so we can compare file coverage
+    $reference = $ReferenceCoverage.GetFileCoverage($FileName) | Foreach-Object { $h = @{} } { $h[$_.path] = $_ } {$h}
+    $difference = $differenceCoverage.GetFileCoverage($FileName) | Foreach-Object { $h = @{}}{ $h[$_.path] = $_ }{$h }
+    # based on the paths, create objects which show the difference between the two runs
+    $reference.Keys | Sort-Object | Foreach-Object {
+        $referenceObject = $reference[$_]
+        $differenceObject = $difference[$_]
+        if ( $differenceObject )
+        {
+            $fileCoverageObject = [pscustomobject]@{
+                FileName = [io.path]::GetFileName($_)
+                FilePath = "$_"
+                ReferenceCoverage = $ReferenceObject.Coverage
+                DifferenceCoverage = $DifferenceObject.Coverage
+                CoverageDelta = $DifferenceObject.Coverage - $ReferenceObject.Coverage
+            }
+            $fileCoverageObject.psobject.typenames.Insert(0,"FileCoverageComparisonObject")
+            $fileCoverageObject
+        }
+        else
+        {
+            Write-Warning "skipping '$_', not found in difference"
+        }
     }
 }
 
@@ -579,7 +613,7 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
+   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win7-x64
 #>
 function Invoke-OpenCover
 {
@@ -588,9 +622,9 @@ function Invoke-OpenCover
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
         [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win10-x64/publish",
-        [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
-        [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
+        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win7-x64/publish",
+        [parameter()]$PesterLogElevated = "$HOME/Documents/TestResultsElevated.xml",
+        [parameter()]$PesterLogUnelevated = "$HOME/Documents/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
         [parameter()]$TestToolsModulesPath = "${script:psRepoPath}/test/tools/Modules",
         [switch]$CIOnly,

@@ -134,7 +134,7 @@
     <value>There is no entry in Task Scheduler for scheduled job definition {0}.  A new Task Scheduler entry has been created for this scheduled job definition.</value>
   </data>
   <data name="CantLoadDefinitionFromStore" xml:space="preserve">
-    <value>Cannot get the {0} scheduled job because it is corrupted or in an irresolvable state. Because it cannot run, Windows PowerShell has deleted {0} and its results from the computer. To recreate the scheduled job, use the Register-ScheduledJob cmdlet. For more information about corrupted scheduled jobs, see about_Scheduled_Jobs_Troubleshooting.</value>
+    <value>Cannot get the {0} scheduled job because it is corrupted or in an irresolvable state. Because it cannot run, PowerShell has deleted {0} and its results from the computer. To recreate the scheduled job, use the Register-ScheduledJob cmdlet. For more information about corrupted scheduled jobs, see about_Scheduled_Jobs_Troubleshooting.</value>
     <comment>{0} is the name of the scheduled job definition.</comment>
   </data>
   <data name="CantLoadJobRunFromStore" xml:space="preserve">
@@ -192,7 +192,7 @@
     <value>Scheduled job definition {0}.</value>
   </data>
   <data name="DirectoryNotFoundError" xml:space="preserve">
-    <value>A directory not found error occurred while registering scheduled job definition {0}.  Make sure you are running Windows PowerShell with elevated privileges.</value>
+    <value>A directory not found error occurred while registering scheduled job definition {0}.  Make sure you are running PowerShell with elevated privileges.</value>
   </data>
   <data name="ErrorRegisteringDefinitionStore" xml:space="preserve">
     <value>An error occurred while registering scheduled job definition {0}. Cannot add this definition object to the job store.</value>
@@ -231,7 +231,7 @@
     <value>The FilePath parameter is not valid.</value>
   </data>
   <data name="InvalidFilePathFile" xml:space="preserve">
-    <value>Only Windows PowerShell script files are allowed for FilePath parameter. Specify a file with .ps1 extension.</value>
+    <value>Only PowerShell script files are allowed for FilePath parameter. Specify a file with .ps1 extension.</value>
   </data>
   <data name="InvalidIdleDuration" xml:space="preserve">
     <value>The IdleDuration parameter cannot have a negative value.</value>
@@ -255,7 +255,7 @@
     <value>The WeeksInterval parameter value must be greater than zero.</value>
   </data>
   <data name="IOFailureOnSetJobDefinition" xml:space="preserve">
-    <value>An I/O failure occurred while updating the scheduled job definition {0}.  This could mean a file is missing or corrupted, either in Task Scheduler or in the Windows PowerShell scheduled job store. You might need to create the scheduled job definition again.</value>
+    <value>An I/O failure occurred while updating the scheduled job definition {0}.  This could mean a file is missing or corrupted, either in Task Scheduler or in the PowerShell scheduled job store. You might need to create the scheduled job definition again.</value>
     <comment>{0} is the scheduled job definition name</comment>
   </data>
   <data name="JobAlreadyRunning" xml:space="preserve">
@@ -283,7 +283,7 @@
     <value>No Frequency type has been specified for this job trigger. One of the following job trigger frequencies must be specified: AtStartup, AtLogon, Once, Daily, Weekly.</value>
   </data>
   <data name="NoAccessOnSetJobDefinition" xml:space="preserve">
-    <value>An access denied error occurred while updating the scheduled job definition {0}.  Try running Windows PowerShell with elevated user rights; that is, Run as Administrator.</value>
+    <value>An access denied error occurred while updating the scheduled job definition {0}.  Try running PowerShell with elevated user rights; that is, Run as Administrator.</value>
     <comment>{0} is the scheduled job definition name</comment>
   </data>
   <data name="NoAssociatedJobDefinitionForOption" xml:space="preserve">
@@ -320,7 +320,7 @@
     <value>Weekly</value>
   </data>
   <data name="UnauthorizedAccessError" xml:space="preserve">
-    <value>An access denied error occurred when registering scheduled job definition {0}.  Try running Windows PowerShell with elevated user rights; that is, Run As Administrator.</value>
+    <value>An access denied error occurred when registering scheduled job definition {0}.  Try running PowerShell with elevated user rights; that is, Run As Administrator.</value>
   </data>
   <data name="UnknownTriggerFrequency" xml:space="preserve">
     <value>Cannot convert a ScheduledJobTrigger object with TriggerFrequency value of {0}.</value>
@@ -334,7 +334,7 @@
 {1} is the inner exception message from .Net serialization, or empty if no exception message.</comment>
   </data>
   <data name="UnsupportedHostFunction" xml:space="preserve">
-    <value>Commands that interact with the host program, such as Write-Host, cannot be included in Windows PowerShell scheduled jobs because scheduled jobs do not interact with the host program.  Use an alternate command that does not interact with the host program, such as Write-Output or Out-File.</value>
+    <value>Commands that interact with the host program, such as Write-Host, cannot be included in PowerShell scheduled jobs because scheduled jobs do not interact with the host program.  Use an alternate command that does not interact with the host program, such as Write-Output or Out-File.</value>
   </data>
   <data name="InvalidRepetitionInterval" xml:space="preserve">
     <value>The RepetitionInterval parameter value must be less than or equal to the RepetitionDuration parameter value.</value>

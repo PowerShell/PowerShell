@@ -13,7 +13,7 @@ Describe "PSReadLine" -tags "CI" {
         $module.Version | Should Be "1.2"
     }
 
-    It "Should use Emacs Bindings on Linux and OS X" -skip:$IsWindows {
+    It "Should use Emacs Bindings on Linux and macOS" -skip:$IsWindows {
         (Get-PSReadLineOption).EditMode | Should Be Emacs
         (Get-PSReadlineKeyHandler | Where-Object { $_.Key -eq "Ctrl+A" }).Function | Should Be BeginningOfLine
     }

@@ -44,7 +44,7 @@ If you would like to author one script that will return the IP address across Li
 
 ```PowerShell
 # Script to return current IPv4 addresses for Linux, MacOS, or Windows
-$IP = if ($IsLinux -or $IsOSX) {
+$IP = if ($IsLinux -or $IsMacOS) {
     $ipInfo = ifconfig | Select-String 'inet'
     $ipInfo = [regex]::matches($ipInfo,"addr:\b(?:\d{1,3}\.){3}\d{1,3}\b") | ForEach-Object value
     foreach ($ip in $ipInfo) {

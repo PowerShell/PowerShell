@@ -29,7 +29,7 @@ function Get-DailyBadge
 #
 # the best way to do this would be if travis-ci supported a webcall to get
 # the status of cron_job builds, but it doesn't, so we have this
-# also, since we can have a build on Linux which succeeds and one on OSX which
+# also, since we can have a build on Linux which succeeds and one on macOS which
 # doesn't we'll set the appropriate badge so the the README can pick it up
 function Set-DailyBuildBadge
 {
@@ -42,7 +42,7 @@ function Set-DailyBuildBadge
     $storageAccountKey = $Env:TestResultAccountKey
 
     # this is the url referenced in README.MD which displays the badge
-    $platform = if ( $IsOSX ) { "OSX" } else { "Linux" }
+    $platform = if ( $IsLinux ) { "Linux" } else { "OSX" }
     $Url = "https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.${platform}.svg"
 
     $body = $content
@@ -133,7 +133,7 @@ else
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     # CrossGen'ed assemblies cause a hang to happen intermittently when running powershell class
-    # basic parsing tests in Linux/OSX. The hang seems to happen when generating dynamic assemblies.
+    # basic parsing tests in Linux/macOS. The hang seems to happen when generating dynamic assemblies.
     # This issue has been reported to CoreCLR team. We need to work around it for now because
     # the Travis CI build failures caused by this is draining our builder resource and severely
     # affect our daily work. The workaround is:
@@ -175,6 +175,17 @@ else
 
     $pesterPassThruObject = Start-PSPester @pesterParam
 
+    # Determine whether the build passed
+    try {
+        # this throws if there was an error
+        Test-PSPesterResults -ResultObject $pesterPassThruObject
+        $result = "PASS"
+    }
+    catch {
+        $resultError = $_
+        $result = "FAIL"
+    }
+
     if (-not $isPr) {
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
@@ -203,16 +214,6 @@ else
             }            
         }
 
-        # Determine whether the build passed
-        try {
-            # this throws if there was an error
-            Test-PSPesterResults -ResultObject $pesterPassThruObject
-            $result = "PASS"
-        }
-        catch {
-            $resultError = $_
-            $result = "FAIL"
-        }
         # update the badge if you've done a cron build, these are not fatal issues
         if ( $cronBuild ) {
             try {
@@ -229,10 +230,11 @@ else
                 Write-Warning "Could not update status badge: $_"
             }
         }
-        # if the tests did not pass, throw the reason why
-        if ( $result -eq "FAIL" ) {
-            Throw $resultError
-        }
+    }
+
+    # if the tests did not pass, throw the reason why
+    if ( $result -eq "FAIL" ) {
+        Throw $resultError
     }
 
     Start-PSxUnit

@@ -41,7 +41,7 @@ function ExecuteRequestWithOutFile
         [string]
         $cmdletName,
         [string]
-        $uri = "http://httpbin.org/get"
+        $uri = (Get-WebListenerUrl -Test 'Get')
     )
 
     $result = [PSObject]@{Output = $null; Error = $null}
@@ -82,7 +82,7 @@ function ExecuteRequestWithHeaders
         [string]
         $cmdletName,
         [string]
-        $uri = "http://httpbin.org/get"
+        $uri = (Get-WebListenerUrl -Test 'Get')
     )
 
     $result = [PSObject]@{Output = $null; Error = $null}
@@ -359,6 +359,39 @@ function ExecuteRestMethod
     return $result
 }
 
+function GetMultipartBody 
+{
+    param
+    (
+        [Switch]$String,
+        [Switch]$File
+    )
+    $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
+    if ($String.IsPresent)
+    {
+        $stringHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
+        $stringHeader.Name = "TestString"
+        $StringContent = [System.Net.Http.StringContent]::new("TestValue")
+        $StringContent.Headers.ContentDisposition = $stringHeader
+        $multipartContent.Add($stringContent)
+    }
+    if ($File.IsPresent)
+    {
+        $multipartFile = Join-Path $TestDrive 'multipart.txt'
+        "TestContent" | Set-Content $multipartFile
+        $FileStream = [System.IO.FileStream]::new($multipartFile, [System.IO.FileMode]::Open)
+        $fileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
+        $fileHeader.Name = "TestFile"
+        $fileHeader.FileName = 'multipart.txt'
+        $fileContent = [System.Net.Http.StreamContent]::new($FileStream)
+        $fileContent.Headers.ContentDisposition = $fileHeader
+        $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse("text/plain")
+        $multipartContent.Add($fileContent)
+    }
+    # unary comma required to prevent $multipartContent from being unwrapped/enumerated
+    return ,$multipartContent 
+}
+
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
@@ -442,13 +475,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
 
         # Operation options
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri $uri -TimeoutSec 5 -DisableKeepAlive"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
-        $result.Output.Headers["Connection"] | Should Be "Close"
+        $result.Output.Headers.Connection | Should Be "Close"
     }
 
     It "Validate Invoke-WebRequest -MaximumRedirection" {
@@ -641,10 +674,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest -Headers --> Set KeepAlive to false via headers" {
 
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithHeaders -cmdletName Invoke-WebRequest -uri $uri
         ValidateResponse -response $result
-        $result.Output.Headers["Connection"] | Should Be "Close"
+        $result.Output.Headers.Connection | Should Be "Close"
     }
 
     # Validate all available user agents for Invoke-WebRequest
@@ -658,7 +691,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     foreach ($agentName in $agents.Keys)
     {
         $expectedAgent = $agents[$agentName]
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
         $command = "Invoke-WebRequest -Uri $uri -UserAgent ($userAgent)  -TimeoutSec 5"
 
@@ -669,17 +702,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             # Validate response content
             $jsonContent = $result.Output.Content | ConvertFrom-Json
-            $jsonContent.headers.Host | Should Match "httpbin.org"
+            $jsonContent.headers.Host | Should Be $uri.Authority
             $jsonContent.headers.'User-Agent' | Should Match $expectedAgent
         }
     }
 
     It "Validate Invoke-WebRequest -OutFile" {
 
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-WebRequest" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.Host | Should Be $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
@@ -715,7 +748,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET" {
 
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         ($result.Output.Content | ConvertFrom-Json).args.testparam | Should Be "testvalue"
     }
@@ -1187,7 +1221,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         
         # Test skipped on macOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsOSX {
+        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
@@ -1196,6 +1230,41 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             
             $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
+        }
+    }
+
+    Context "Multipart/form-data Tests" {
+        It "Verifies Invoke-WebRequest Supports Multipart String Values" {
+            $body = GetMultipartBody -String
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Body $body -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+        }
+        It "Verifies Invoke-WebRequest Supports Multipart File Values" {
+            $body = GetMultipartBody -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Body $body -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
+        }
+        It "Verifies Invoke-WebRequest Supports Mixed Multipart String and File Values" {
+            $body = GetMultipartBody -String -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Body $body -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
         }
     }
 
@@ -1262,16 +1331,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod -DisableKeepAlive" {
 
         # Operation options
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/get' -TimeoutSec 5 -DisableKeepAlive"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -DisableKeepAlive"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.Host | Should Match "httpbin.org"
+        $result.Output.headers.Host | Should Be $uri.Authority
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
-
-        # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
-        #$result.Output.Headers["Connection"] | Should Be "Close"
+        $result.Output.Headers.Connection | Should Be "Close"
     }
 
     It "Validate Invoke-RestMethod -MaximumRedirection" {
@@ -1445,15 +1513,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -Headers --> Set KeepAlive to false via headers" {
 
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithHeaders -cmdletName Invoke-RestMethod -uri $uri
 
         # Validate response
         $result.Output.url | Should Match $uri
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
-
-        # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
-        #$result.Output.Headers["Connection"] | Should Be "Close"
+        $result.Output.Headers.Connection | Should Be "Close"
     }
 
     # Validate all available user agents for Invoke-RestMethod
@@ -1467,7 +1533,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     foreach ($agentName in $agents.Keys)
     {
         $expectedAgent = $agents[$agentName]
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
         $command = "Invoke-RestMethod -Uri $uri -UserAgent ($userAgent)  -TimeoutSec 5"
 
@@ -1476,17 +1542,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result = ExecuteWebCommand -command $command
 
             # Validate response
-            $result.Output.headers.Host | Should Match "httpbin.org"
+            $result.Output.headers.Host | Should Be $uri.Authority
             $result.Output.headers.'User-Agent' | Should Match $expectedAgent
         }
     }
 
     It "Validate Invoke-RestMethod -OutFile" {
 
-        $uri = "http://httpbin.org/get"
+        $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.Host | Should Be $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
@@ -1521,7 +1587,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET" {
 
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should Be "testvalue"
     }
@@ -1728,13 +1795,45 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         
         # Test skipped on macOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsOSX {
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
             
             $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
+        }
+    }
+
+    Context "Multipart/form-data Tests" {
+        It "Verifies Invoke-RestMethod Supports Multipart String Values" {
+            $body = GetMultipartBody -String
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Body $body -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+        }
+        It "Verifies Invoke-RestMethod Supports Multipart File Values" {
+            $body = GetMultipartBody -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Body $body -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
+        }
+        It "Verifies Invoke-RestMethod Supports Mixed Multipart String and File Values" {
+            $body = GetMultipartBody -String -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Body $body -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
         }
     }
 

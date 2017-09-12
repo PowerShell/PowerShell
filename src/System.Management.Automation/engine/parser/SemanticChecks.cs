@@ -400,20 +400,7 @@ namespace System.Management.Automation.Language
 
             if (functionDefinitionAst.IsWorkflow)
             {
-#if !CORECLR // Workflow Not Supported On CSS
-                try
-                {
-                    var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(null);
-                    List<ParseError> parseErrors = converterInstance.ValidateAst(functionDefinitionAst);
-                    foreach (ParseError error in parseErrors)
-                    {
-                        _parser.ReportError(error);
-                    }
-                }
-                catch (NotSupportedException) { }
-#else
                 _parser.ReportError(functionDefinitionAst.Extent, () => ParserStrings.WorkflowNotSupportedInPowerShellCore);
-#endif
             }
 
             return AstVisitAction.Continue;

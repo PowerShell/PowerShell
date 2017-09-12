@@ -35,14 +35,6 @@ namespace System.Management.Automation
         RemoteServer = 0x1,
 
         /// <summary>
-        /// Session with <see cref="WorkflowServer"/> capabilities can be made available on
-        /// a server that wants to provide workflow hosting capabilities in the
-        /// specified end points. All jobs commands as well as commands for
-        /// implicit remoting and interactive remoting will be made available
-        /// </summary>
-        WorkflowServer = 0x2,
-
-        /// <summary>
         /// Include language capabilities
         /// </summary>
         Language = 0x4
@@ -1337,16 +1329,6 @@ end
             if (SessionCapabilities.RemoteServer == (sessionCapabilities & SessionCapabilities.RemoteServer))
             {
                 restrictedCommands.AddRange(GetRestrictedRemotingCommands());
-            }
-
-            if (SessionCapabilities.WorkflowServer == (sessionCapabilities & SessionCapabilities.WorkflowServer))
-            {
-#if CORECLR     // Workflow Not Supported On PowerShell Core
-                throw PSTraceSource.NewNotSupportedException(ParserStrings.WorkflowNotSupportedInPowerShellCore);
-#else
-                restrictedCommands.AddRange(GetRestrictedRemotingCommands());
-                restrictedCommands.AddRange(GetRestrictedJobCommands());
-#endif
             }
 
             Dictionary<string, CommandMetadata> result = new Dictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);

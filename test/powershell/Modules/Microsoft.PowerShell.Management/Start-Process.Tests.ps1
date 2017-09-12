@@ -12,13 +12,13 @@ Describe "Start-Process" -Tags @("Feature") {
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
         }
-        elseif ($IsLinux -Or $IsOSX) {
+        elseif ($IsLinux -Or $IsMacOS) {
 	        $pingParam = "-c 2 localhost"
         }
     }
 
     # Note that ProcessName may still be `powershell` due to dotnet/corefx#5378
-    # This has been fixed on Linux, but not on OS X
+    # This has been fixed on Linux, but not on macOS
 
     It "Should process arguments without error" {
 	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
@@ -104,6 +104,16 @@ Describe "Start-Process" -Tags @("Feature") {
         $process.Name | Should Be "notepad"
         $process | Stop-Process
     }
+
+    It "Should be able to use the -WhatIf switch without performing the actual action" {
+        $pingOutput = Join-Path $TestDrive "pingOutput.txt"
+        { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop } | Should Not Throw
+        $pingOutput | Should Not Exist 
+    }
+
+    It "Should return null when using -WhatIf switch with -PassThru" {
+        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should Be $null
+   }
 }
 
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {

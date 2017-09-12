@@ -178,7 +178,7 @@
     <value>The key type {0} is not valid. The PSPrimitiveDictionary class accepts only keys of the type System.String.</value>
   </data>
   <data name="PrimitiveHashtableInvalidValue" xml:space="preserve">
-    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over Windows PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
+    <value>The type of the value {0} is not valid. The PSPrimitiveDictionary class accepts only values of types that are fully serializable over PowerShell remoting. See the Help topic about_Remoting for a list of fully-serializable types.</value>
   </data>
   <data name="InvalidKey" xml:space="preserve">
     <value>Could not decrypt data. The data was not encrypted with this key.</value>

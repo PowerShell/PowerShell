@@ -176,7 +176,7 @@ Categories=Application;
     }
 
     It "Should open text file without error" -Skip:(!$supportedEnvironment) {
-        if ($IsOSX) {
+        if ($IsMacOS) {
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)

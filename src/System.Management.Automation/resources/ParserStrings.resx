@@ -850,7 +850,7 @@ Possible matches are</value>
     <value>Flow of control cannot leave a Finally block.</value>
   </data>
   <data name="UnrecoverableParserError" xml:space="preserve">
-    <value>Unrecoverable error in Windows PowerShell.</value>
+    <value>Unrecoverable error in PowerShell.</value>
   </data>
   <data name="AstIsReused" xml:space="preserve">
     <value>An AST cannot be used as the child of more than one AST. To use this AST in another AST, call the Copy() method and use its result.</value>
@@ -925,7 +925,7 @@ Possible matches are</value>
     <value>The argument for the Module parameter is not valid. {0}</value>
   </data>
   <data name="RequiresVersionInvalid" xml:space="preserve">
-    <value>The argument for the Version parameter is not valid. Specify a valid Windows PowerShell version, in the format major.minor version.</value>
+    <value>The argument for the Version parameter is not valid. Specify a valid PowerShell version, in the format major.minor version.</value>
   </data>
   <data name="RequiresPSEditionInvalid" xml:space="preserve">
     <value>The argument for the {0} parameter is not valid. Specify a valid PowerShell edition.</value>

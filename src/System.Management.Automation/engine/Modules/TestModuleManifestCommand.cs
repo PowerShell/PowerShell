@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
                             foreach (ModuleSpecification nestedModule in nestedModules)
                             {
                                 if (!IsValidFilePath(nestedModule.Name, module, true)
-                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.DependentWorkflowAssemblyExtension, module, true)
+                                    && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellILAssemblyExtension, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellNgenAssemblyExtension, module, true)
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true)
                                     && !IsValidGacAssembly(nestedModule.Name))
@@ -350,9 +350,9 @@ namespace Microsoft.PowerShell.Commands
             string gacPath = System.Environment.GetEnvironmentVariable("windir") + "\\Microsoft.NET\\assembly";
             string assemblyFile = assemblyName;
             string ngenAssemblyFile = assemblyName;
-            if (!assemblyName.EndsWith(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            if (!assemblyName.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
             {
-                assemblyFile = assemblyName + StringLiterals.DependentWorkflowAssemblyExtension;
+                assemblyFile = assemblyName + StringLiterals.PowerShellILAssemblyExtension;
                 ngenAssemblyFile = assemblyName + StringLiterals.PowerShellNgenAssemblyExtension;
             }
             try

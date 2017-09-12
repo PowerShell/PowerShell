@@ -157,31 +157,31 @@
     <value>A script block that contains a top-level trap statement cannot be converted.</value>
   </data>
   <data name="CantConvertWithUndeclaredVariables" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock dereferencing variables undeclared in the param(...) block.  Name of undeclared variable: {0}.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock dereferencing variables undeclared in the param(...) block.  Name of undeclared variable: {0}.</value>
   </data>
   <data name="CantConvertWithNonConstantExpression" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock evaluating non-constant expressions. Non-constant expression: {0}.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating non-constant expressions. Non-constant expression: {0}.</value>
   </data>
   <data name="CantConvertWithDynamicExpression" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock evaluating dynamic expressions. Dynamic expression: {0}.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock evaluating dynamic expressions. Dynamic expression: {0}.</value>
   </data>
   <data name="CantConvertWithScriptBlocks" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock that tries to pass other script blocks inside argument values.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock that tries to pass other script blocks inside argument values.</value>
   </data>
   <data name="CantConvertWithCommandInvocations" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock which invokes pipelines, commands or functions to evaluate arguments of the main pipeline.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock which invokes pipelines, commands or functions to evaluate arguments of the main pipeline.</value>
   </data>
   <data name="CantConvertWithDotSourcing" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock that uses dot sourcing.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock that uses dot sourcing.</value>
   </data>
   <data name="CantConvertWithScriptBlockInvocation" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock that invokes other script blocks.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock that invokes other script blocks.</value>
   </data>
   <data name="CanConvertOneOutputErrorRedir" xml:space="preserve">
-    <value>The script block cannot be converted to a Windows PowerShell object because it contains forbidden redirection operators.</value>
+    <value>The script block cannot be converted to a PowerShell object because it contains forbidden redirection operators.</value>
   </data>
   <data name="CantConvertScriptBlockWithNoContext" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock that does not have an associated operation context.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock that does not have an associated operation context.</value>
   </data>
   <data name="HaltCommandException" xml:space="preserve">
     <value>The command was stopped by the user.</value>
@@ -193,10 +193,7 @@
     <value>The script block cannot be converted to an open generic type. Define an appropriate closed generic type, and then retry.</value>
   </data>
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
-    <value>Cannot generate a Windows PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
-  </data>
-  <data name="CantLoadWorkflowType" xml:space="preserve">
-    <value>Cannot create workflow. The type '{0}' from the '{1}' module could not be loaded.</value>
+    <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
   </data>
   <data name="WorkflowDoesNotSupportWOW64" xml:space="preserve">
     <value>Windows PowerShell Workflow is not supported in a Windows PowerShell x86-based console. Open a Windows PowerShell x64-based console, and then try again.</value>

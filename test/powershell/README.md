@@ -35,7 +35,7 @@ Some tests simply must be tied to certain platforms. Use Pester's
 the test only on Windows:
 
 ```powershell
-It "Should do something on Windows" -Skip:($IsLinux -Or $IsOSX) { ... }
+It "Should do something on Windows" -Skip:($IsLinux -Or $IsMacOS) { ... }
 ```
 
 Or only on Linux and OS X:
