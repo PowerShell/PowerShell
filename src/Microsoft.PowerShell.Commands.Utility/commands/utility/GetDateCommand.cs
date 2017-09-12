@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'l':
-                            sb.Append("{0:hh}");
+                            sb.Append(StringUtil.Format("{0,2:0}", dateTime.Hour%12));
                             break;
 
                         case 'M':
