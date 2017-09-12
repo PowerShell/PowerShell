@@ -196,19 +196,13 @@ Categories=Application;
         elseif ($IsLinux) {
             # Validate on Linux by reassociating default app for text file
             & $TestFile
-            $startTime = Get-Date
             # It may take time for handler to start
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (-not (Test-Path "$HOME/nativeCommandProcessor.Success"))) {
-                Start-Sleep -Milliseconds 100
-            }
+            Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
             Get-Content $HOME/nativeCommandProcessor.Success | Should Be $TestFile
         }
         else {
             & $TestFile
-            $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (!(Test-Path $TestDrive\foo.txt))) {
-                Start-Sleep -Milliseconds 100
-            }
+            Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100
             "$TestDrive\foo.txt" | Should Exist
             Get-Content $TestDrive\foo.txt | Should BeExactly $TestFile
         }

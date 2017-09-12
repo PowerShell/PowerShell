@@ -125,12 +125,8 @@ Categories=Application;
 
                 $before = $windows.Count
                 Invoke-Item -Path $PSHOME
-                $startTime = Get-Date
                 # may take time for explorer to open window
-                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($windows.Count -eq $before))
-                {
-                    Start-Sleep -Milliseconds 100
-                }
+                Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 > $null
                 $after = $windows.Count
 
                 $before + 1 | Should Be $after
@@ -143,12 +139,8 @@ Categories=Application;
             {
                 # validate on Unix by reassociating default app for directories
                 Invoke-Item -Path $PSHOME
-                $startTime = Get-Date
                 # may take time for handler to start
-                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (-not (Test-Path "$HOME/InvokeItemTest.Success")))
-                {
-                    Start-Sleep -Milliseconds 100
-                }
+                Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
                 Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
             }
             else

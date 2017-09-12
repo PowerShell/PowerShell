@@ -133,11 +133,9 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
         $fooFile = Join-Path $TestDrive "FooTest.foo"
         New-Item $fooFile -ItemType File -Force
         Start-Process $fooFile
-        $startTime = Get-Date
-        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (!(Test-Path $testdrive\foo.txt)))
-        {
-            Start-Sleep -Milliseconds 100
-        }
+
+        Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
+
         "$testdrive\foo.txt" | Should Exist
         Get-Content $testdrive\foo.txt | Should BeExactly $fooFile
     }

@@ -233,12 +233,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
 
             runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
-
-            $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 15 -and -not (Test-Path $doneFile))
-            {
-                Start-Sleep -Milliseconds 100
-            }
+            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 15 -IntervalInMilliseconds 100
 
             $err = Get-Content $errFile
             $err | Should Be $expectedError
