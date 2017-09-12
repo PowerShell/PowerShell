@@ -190,6 +190,6 @@
     <value>WARNING: {0}</value>
   </data>
   <data name="ReadFailsOnNonInteractiveFlag" xml:space="preserve">
-    <value>Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.</value>
+    <value>PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.</value>
   </data>
 </root>

@@ -206,8 +206,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo FunctionOps_DefineFunction =
             typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), staticFlags);
-        internal static readonly MethodInfo FunctionOps_DefineWorkflows =
-            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineWorkflows), staticFlags);
 
         internal static readonly ConstructorInfo Hashtable_ctor =
             typeof(Hashtable).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
@@ -2429,7 +2427,13 @@ namespace System.Management.Automation.Language
                 .AddParameter("Name", modulePath)
                 .AddParameter("PassThru");
             var moduleInfo = ps.Invoke<PSModuleInfo>();
-            if (ps.HadErrors)
+
+            // It's possible that 'ps.HadErrors == true' while the error stream is empty. That would happen if
+            // one or more non-terminating errors happen when running the module script and ErrorAction is set
+            // to 'SilentlyContinue'. In such case, the errors would not be written to the error stream.
+            // It's OK to treat the module loading as successful in this case because the non-terminating errors
+            // are explicitly handled with 'SilentlyContinue' action, which means they don't block the loading.
+            if (ps.HadErrors && ps.Streams.Error.Count > 0)
             {
                 var errorRecord = ps.Streams.Error[0];
                 throw InterpreterError.NewInterpreterException(modulePath, typeof(RuntimeException), null,
@@ -2887,26 +2891,8 @@ namespace System.Management.Automation.Language
             return this.VisitPipeline(dynamicKeywordAst.GenerateCommandCallPipelineAst());
         }
 
-        private bool _generatedCallToDefineWorkflows;
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
-            if (functionDefinitionAst.IsWorkflow)
-            {
-                if (_generatedCallToDefineWorkflows)
-                    return ExpressionCache.Empty;
-
-                var topAst = functionDefinitionAst.Parent;
-                while (!(topAst is ScriptBlockAst))
-                {
-                    topAst = topAst.Parent;
-                }
-
-                _generatedCallToDefineWorkflows = true;
-                return Expression.Call(CachedReflectionInfo.FunctionOps_DefineWorkflows,
-                                       _executionContextParameter,
-                                       Expression.Constant(topAst, typeof(ScriptBlockAst)));
-            }
-
             return Expression.Call(CachedReflectionInfo.FunctionOps_DefineFunction,
                                    _executionContextParameter,
                                    Expression.Constant(functionDefinitionAst),

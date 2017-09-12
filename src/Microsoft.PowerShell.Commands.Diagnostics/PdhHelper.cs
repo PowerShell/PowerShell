@@ -1292,8 +1292,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     continue;
                 }
 
-                //Console.WriteLine ("added  pdh query path:" + unifiedPath );
-
                 //now, add all actual paths to m_ReloggerPathToHandleAndInstanceMap
                 foreach (PerformanceCounterSample sample in prefixInstanceMap[prefix])
                 {

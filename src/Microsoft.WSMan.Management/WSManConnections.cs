@@ -51,7 +51,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "Authentication".
         /// This parameter takes a set of authentication methods the user can select
         /// from. The available method are an enum called Authentication in the
-        /// System.Management.Automation.Runspaces  namespace. The available options
+        /// System.Management.Automation.Runspaces namespace. The available options
         /// should be as follows:
         /// - Default : Use the default authentication (ad defined by the underlying
         /// protocol) for establishing a remote connection.

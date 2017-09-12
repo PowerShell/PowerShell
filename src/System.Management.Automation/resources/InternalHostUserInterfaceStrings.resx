@@ -197,7 +197,7 @@
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-Windows PowerShell transcript start
+PowerShell transcript start
 Start time: {0:yyyyMMddHHmmss}
 Username: {1}
 RunAs User: {2}
@@ -210,7 +210,7 @@ Process ID: {7}
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-Windows PowerShell transcript end
+PowerShell transcript end
 End time: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>

@@ -65,7 +65,7 @@ function Invoke-Docker
 # Return a list of Linux Container Test Cases
 function Get-LinuxContainer
 {
-    foreach($os in 'amazonlinux','centos7','opensuse42.1','ubuntu14.04','ubuntu16.04')
+    foreach($os in 'amazonlinux','centos7','opensuse42.2','ubuntu14.04','ubuntu16.04')
     {
         Write-Output @{
             Name = $os
@@ -105,7 +105,7 @@ function Set-RepoName
 function Test-SkipWindows
 {
     [bool] $canRunWindows = (Get-DockerEngineOs) -like 'Windows*'
-    return ($IsLinux -or $IsOSX -or !$canRunWindows)
+    return ($IsLinux -or $IsMacOS -or !$canRunWindows)
 }
 
 function Test-SkipLinux

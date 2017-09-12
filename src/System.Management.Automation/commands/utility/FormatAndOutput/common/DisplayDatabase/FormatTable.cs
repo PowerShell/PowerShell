@@ -286,7 +286,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Removes the <paramref name="formatFile"/> from the current FormatTable's  file list.
+        /// Removes the <paramref name="formatFile"/> from the current FormatTable's file list.
         /// The FormatTable will not reflect the change until Update is called.
         /// </summary>
         /// <param name="formatFile"></param>

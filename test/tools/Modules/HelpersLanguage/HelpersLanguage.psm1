@@ -71,7 +71,7 @@ function ShouldBeParseError
     )
 
     #
-    # CrossGen'ed assemblies cause a hang to happen when running tests with this helper function in Linux and OSX.
+    # CrossGen'ed assemblies cause a hang to happen when running tests with this helper function in Linux and macOS.
     # The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
     #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
     #  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
@@ -81,8 +81,21 @@ function ShouldBeParseError
     #       https://github.com/dotnet/coreclr/issues/9745
     #
     if ($SkipInTravisFullBuild) {
-        ## Report that we skipped the test and return
-        It "Parse error expected: <<$src>>" -Skip {}
+        ## Report that we skipped the tests and return
+        ## be sure to report the same number of tests
+        ## it should have the same appearance as if the tests were run
+        Context "Parse error expected: <<$src>>" {
+            if ($SkipAndCheckRuntimeError)
+            {
+                It "error should happen at parse time, not at runtime" -Skip {}
+            }
+            It "Error count" -Skip { }
+            foreach($expectedError in $expectedErrors)
+            {
+                It "Error Id" -Skip { }
+                It "Error position" -Skip { }
+            }
+        }
         return
     }
 

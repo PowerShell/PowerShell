@@ -133,7 +133,7 @@
     <value>The console file is not valid because the element {0} is not valid.</value>
   </data>
   <data name="IDNotFound" xml:space="preserve">
-    <value>The console file is not valid because the Windows PowerShell snap-in name is missing.</value>
+    <value>The console file is not valid because the PowerShell snap-in name is missing.</value>
   </data>
   <data name="SaveDefaultError" xml:space="preserve">
     <value>Attempting to save a console file with no name. Use Export-Console with the Path parameter to save the console file.</value>
@@ -151,49 +151,49 @@
     <value>The console file name extension is not valid. A console file name extension must be psc1.</value>
   </data>
   <data name="BadMonadVersion" xml:space="preserve">
-    <value>Incorrect Windows PowerShell version {0}. Windows PowerShell version {1} is supported on this computer.</value>
+    <value>Incorrect PowerShell version {0}. PowerShell version {1} is supported on this computer.</value>
   </data>
   <data name="PSSnapInDoesNotExist" xml:space="preserve">
-    <value>Cannot find any Windows PowerShell snap-in information for {0}.</value>
+    <value>Cannot find any PowerShell snap-in information for {0}.</value>
   </data>
   <data name="CannotLoadDefault" xml:space="preserve">
-    <value>This is a system Windows PowerShell snap-in that is loaded by Windows PowerShell.</value>
+    <value>This is a system PowerShell snap-in that is loaded by PowerShell.</value>
   </data>
   <data name="PSSnapInAlreadyExists" xml:space="preserve">
-    <value>Cannot add Windows PowerShell snap-in {0} because it is already added. Verify the name of the snap-in, and then try again.</value>
+    <value>Cannot add PowerShell snap-in {0} because it is already added. Verify the name of the snap-in, and then try again.</value>
   </data>
   <data name="CannotRemovePSSnapIn" xml:space="preserve">
-    <value>Cannot remove the Windows PowerShell snap-in {0} because it is not loaded. Verify the name of the snap-in that you want to remove, and then try again.</value>
+    <value>Cannot remove the PowerShell snap-in {0} because it is not loaded. Verify the name of the snap-in that you want to remove, and then try again.</value>
   </data>
   <data name="CannotRemoveDefault" xml:space="preserve">
-    <value>Cannot remove the Windows PowerShell snap-in {0} because it is a system snap-in. Verify the name of the snap-in that you want to remove, and then try again.</value>
+    <value>Cannot remove the PowerShell snap-in {0} because it is a system snap-in. Verify the name of the snap-in that you want to remove, and then try again.</value>
   </data>
   <data name="PSSnapInReadError" xml:space="preserve">
-    <value>Cannot load the Windows PowerShell snap-in because an error occurred while reading the registry information for the snap-in.</value>
+    <value>Cannot load the PowerShell snap-in because an error occurred while reading the registry information for the snap-in.</value>
   </data>
   <data name="CannotLoadDefaults" xml:space="preserve">
-    <value>An error occurred while attempting to load the system Windows PowerShell snap-ins. Please contact Microsoft Customer Support Services.</value>
+    <value>An error occurred while attempting to load the system PowerShell snap-ins. Please contact Microsoft Customer Support Services.</value>
   </data>
   <data name="ConsoleLoadFailure" xml:space="preserve">
     <value>The following errors occurred when loading console {0}: {1}</value>
   </data>
   <data name="PSSnapInLoadFailure" xml:space="preserve">
-    <value>Cannot load Windows PowerShell snap-in {0} because of the following error: {1}</value>
+    <value>Cannot load PowerShell snap-in {0} because of the following error: {1}</value>
   </data>
   <data name="PSSnapInLoadWarning" xml:space="preserve">
-    <value>Windows PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
+    <value>PowerShell snap-in "{0}" loaded with the following warnings: {1}</value>
   </data>
   <data name="PSSnapInAssemblyNameMismatch" xml:space="preserve">
-    <value>The Windows PowerShell snap-in module {0} does not have the required Windows PowerShell snap-in strong name {1}.</value>
+    <value>The PowerShell snap-in module {0} does not have the required PowerShell snap-in strong name {1}.</value>
   </data>
   <data name="PSSnapInDuplicateCmdlets" xml:space="preserve">
-    <value>The cmdlet '{0}' should not occur more than once in Windows PowerShell snap-in '{1}'.</value>
+    <value>The cmdlet '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
   </data>
   <data name="PSSnapInDuplicateProviders" xml:space="preserve">
-    <value>Windows PowerShell provider '{0}' should not occur more than once in Windows PowerShell snap-in '{1}'.</value>
+    <value>PowerShell provider '{0}' should not occur more than once in PowerShell snap-in '{1}'.</value>
   </data>
   <data name="AddPSSnapInBadMonadVersion" xml:space="preserve">
-    <value>Windows PowerShell {0} is not supported in the current console. Windows PowerShell {1} is supported in the current console.</value>
+    <value>PowerShell {0} is not supported in the current console. PowerShell {1} is supported in the current console.</value>
   </data>
   <data name="CmdletNotAvailable" xml:space="preserve">
     <value>The cmdlet is not supported by the custom shell.</value>

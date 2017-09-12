@@ -902,18 +902,18 @@ namespace System.Management.Automation
     /// <Summary>
     /// Predefined range kind to use with ValidateRangeAttribute.
     /// </Summary>
-    public enum ValidateRangeKind 
+    public enum ValidateRangeKind
     {
         /// <Summary>
         /// Range is greater than 0.
         /// </Summary>
         Positive,
-        
+
         /// <Summary>
         /// Range is greater than or equal to 0.
         /// </Summary>
         NonNegative,
-        
+
         /// <Summary>
         /// Range is less than 0.
         /// </Summary>
@@ -921,7 +921,7 @@ namespace System.Management.Automation
 
         /// <Summary>
         /// Range is less than or equal to 0.
-        /// </Summary>        
+        /// </Summary>
         NonPositive
     }
     /// <summary>
@@ -978,7 +978,7 @@ namespace System.Management.Automation
             {
                 element = o.BaseObject;
             }
-            
+
             if (_rangeKind.HasValue)
             {
                 ValidateRange(element, (ValidateRangeKind)_rangeKind);
@@ -1078,9 +1078,9 @@ namespace System.Management.Automation
             {
                     throw new ValidationMetadataException(
                     "ValidationRangeElementType",
-                    null, 
+                    null,
                     Metadata.ValidateRangeElementType,
-                    element.GetType().Name, 
+                    element.GetType().Name,
                     typeof(int).Name);
             }
 
@@ -1090,19 +1090,19 @@ namespace System.Management.Automation
             if (LanguagePrimitives.TryConvertTo(element, commonType, out resultValue))
             {
                 element = resultValue;
-                
+
                 if (LanguagePrimitives.TryConvertTo(0, commonType, out resultValue))
                 {
                     dynamicZero = (IComparable)resultValue;
-                }                    
+                }
             }
             else
             {
                 throw new ValidationMetadataException(
                     "ValidationRangeElementType",
-                    null, 
+                    null,
                     Metadata.ValidateRangeElementType,
-                    element.GetType().Name, 
+                    element.GetType().Name,
                     commonType.Name);
             }
 
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangePositiveFailure",
-                            null, 
+                            null,
                             Metadata.ValidateRangePositiveFailure,
                             element.ToString());
                     }
@@ -1123,7 +1123,7 @@ namespace System.Management.Automation
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangeNonNegativeFailure",
-                            null, 
+                            null,
                             Metadata.ValidateRangeNonNegativeFailure,
                             element.ToString());
                     }
@@ -1133,7 +1133,7 @@ namespace System.Management.Automation
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangeNegativeFailure",
-                            null, 
+                            null,
                             Metadata.ValidateRangeNegativeFailure,
                             element.ToString());
                     }
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangeNonPositiveFailure",
-                            null, 
+                            null,
                             Metadata.ValidateRangeNonPositiveFailure,
                             element.ToString());
                     }
@@ -1166,9 +1166,9 @@ namespace System.Management.Automation
                 {
                     throw new ValidationMetadataException(
                         "ValidationRangeElementType",
-                        null, 
+                        null,
                         Metadata.ValidateRangeElementType,
-                        element.GetType().Name, 
+                        element.GetType().Name,
                         MinRange.GetType().Name);
                 }
             }
@@ -1178,9 +1178,9 @@ namespace System.Management.Automation
             {
                 throw new ValidationMetadataException(
                     "ValidateRangeTooSmall",
-                    null, 
+                    null,
                     Metadata.ValidateRangeSmallerThanMinRangeFailure,
-                    element.ToString(), 
+                    element.ToString(),
                     MinRange.ToString());
             }
 
@@ -1646,7 +1646,7 @@ namespace System.Management.Automation
 
         private string SetAsString()
         {
-            return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, _validValues);
+            return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, ValidValues);
         }
 
         /// <summary>

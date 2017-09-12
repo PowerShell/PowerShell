@@ -1354,7 +1354,7 @@ namespace System.Management.Automation.Provider
 
         /// <summary>
         /// Internal wrapper for the MoveProperty protected method. This method will
-        /// only be called if the provider implements the IDynamicPropertyCmdletProvider  interface.
+        /// only be called if the provider implements the IDynamicPropertyCmdletProvider interface.
         /// </summary>
         ///
         /// <param name="sourcePath">

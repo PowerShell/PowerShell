@@ -79,6 +79,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './demos/SSHRemoting/*.md'
                 './docker/*.md'
                 './tools/*.md'
+                './.github/CONTRIBUTING.md'
             )
             $filter = ($docsToTest -join ',')
             &"gulp" test-mdsyntax --silent `

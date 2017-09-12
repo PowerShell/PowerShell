@@ -81,7 +81,7 @@ namespace System.Management.Automation.Runspaces
             : base(host, initialSessionState)
         {
         }
-        #endregion  constructors
+        #endregion constructors
 
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.

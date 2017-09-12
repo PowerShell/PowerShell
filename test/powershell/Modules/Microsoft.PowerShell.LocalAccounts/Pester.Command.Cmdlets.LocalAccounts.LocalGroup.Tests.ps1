@@ -497,7 +497,7 @@ try {
 
         AfterAll {
             if ($IsNotSkipped) {
-                RemoveTestGroups -basename  TestGroupRename
+                RemoveTestGroups -basename TestGroupRename
             }
         }
 
@@ -534,7 +534,7 @@ try {
 
         AfterAll {
             if ($IsNotSkipped) {
-                RemoveTestGroups -basename  TestGroupRename
+                RemoveTestGroups -basename TestGroupRename
             }
         }
 

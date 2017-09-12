@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MonadRootRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access Windows PowerShell registry information.</value>
+    <value>Unable to access PowerShell registry information.</value>
   </data>
   <data name="MonadEngineRegistryAccessFailed" xml:space="preserve">
-    <value>Unable to access Windows PowerShell PowerShellEngine registry information.</value>
+    <value>Unable to access PowerShell Engine registry information.</value>
   </data>
   <data name="PublicKeyTokenAccessFailed" xml:space="preserve">
     <value>Unable to access PublicKeyToken information.</value>
   </data>
   <data name="SpecifiedVersionNotFound" xml:space="preserve">
-    <value>Version {0} of Windows PowerShell is not available on this computer.</value>
+    <value>Version {0} of PowerShell is not available on this computer.</value>
   </data>
   <data name="MshSnapinDoesNotExist" xml:space="preserve">
-    <value>The Windows PowerShell snap-in '{0}' is not installed on this computer.</value>
+    <value>The PowerShell snap-in '{0}' is not installed on this computer.</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
     <value>The mandatory value {0} is not specified for registry key {1}.</value>
@@ -145,7 +145,7 @@
     <value>Cannot find required information in registry or missing key files.  Cannot load some cmdlets.</value>
   </data>
   <data name="NoMshSnapinPresentForVersion" xml:space="preserve">
-    <value>No snap-ins have been registered for Windows PowerShell version {0}.</value>
+    <value>No snap-ins have been registered for PowerShell version {0}.</value>
   </data>
   <data name="ResourceReaderDisposed" xml:space="preserve">
     <value>Cannot retrieve the string resource because the reader has been disposed.</value>
@@ -154,6 +154,6 @@
     <value>Version value {0} is not specified or is incorrect for registry key {1}.</value>
   </data>
   <data name="PSVersionAttributeNotExist" xml:space="preserve">
-    <value>No [PSVersion] attribute was found for Windows PowerShell type {0}. Add a PSVersion attribute to the type using [PSVersion(Windows PowerShell SnapinBase.PSEngineVersion)].</value>
+    <value>No [PSVersion] attribute was found for PowerShell type {0}. Add a PSVersion attribute to the type using [PSVersion(PowerShell SnapinBase.PSEngineVersion)].</value>
   </data>
 </root>

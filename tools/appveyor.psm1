@@ -94,7 +94,7 @@ Function Test-DailyBuild
     {
         return $true
     }
-    
+
     # if [Feature] is in the commit message,
     # Run Daily tests
     if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
@@ -208,7 +208,6 @@ function Invoke-AppVeyorInstall
         }
         elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
         {
-            
             $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
         else
@@ -451,24 +450,26 @@ function Invoke-AppveyorFinish
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
-            # ignore the first part of semver, use the preview part
-            $preReleaseVersion = ($env:APPVEYOR_REPO_TAG_NAME).Split('-')[1]
+            $preReleaseVersion = $env:APPVEYOR_REPO_TAG_NAME
         }
         else
         {
-            $previewLabel = (git describe --abbrev=0).Split('-')[1].replace('.','')
+            $previewVersion = (git describe --abbrev=0).Split('-')
+            $previewPrefix = $previewVersion[0]
+            $previewLabel = $previewVersion[1].replace('.','')
+
             if(Test-DailyBuild)
             {
-                $previewLabel= "daily-{0}" -f $previewLabel
+                $previewLabel= "daily{0}" -f $previewLabel
             }
 
-            $preReleaseVersion = "$previewLabel-$($env:APPVEYOR_BUILD_NUMBER.replace('.','-'))"
+            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
         # only publish to nuget feed if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
-            Publish-NuGetFeed -OutputPath .\nuget-artifacts -VersionSuffix $preReleaseVersion
+            Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
         }
 
         $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
@@ -498,7 +499,7 @@ function Invoke-AppveyorFinish
             {
                 log "pushing $_ to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-            }            
+            }
         }
         if(!$pushedAllArtifacts)
         {

@@ -451,7 +451,7 @@
     <value>Cannot find a provider with the name '{0}'.</value>
   </data>
   <data name="ProviderNotFoundBadFormat" xml:space="preserve">
-    <value>Cannot find a provider with the name '{0}'. The name is not in the proper format. A provider name can only be alphanumeric characters, or a Windows PowerShell snap-in name that is followed by a single '\', followed by alphanumeric characters.</value>
+    <value>Cannot find a provider with the name '{0}'. The name is not in the proper format. A provider name can only be alphanumeric characters, or a PowerShell snap-in name that is followed by a single '\', followed by alphanumeric characters.</value>
   </data>
   <data name="ProviderNameAmbiguous" xml:space="preserve">
     <value>'{0}' resolved to more than one provider name. Possible matches include:{1}.</value>

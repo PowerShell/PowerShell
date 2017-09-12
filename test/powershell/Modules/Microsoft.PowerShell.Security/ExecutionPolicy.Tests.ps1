@@ -8,7 +8,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
             Get-ExecutionPolicy | Should Be Unrestricted
         }
 
-        It "Should return Microsoft.Powershell.ExecutionPolicy PSObject on Windows" -Skip:($IsLinux -Or $IsOSX) {
+        It "Should return Microsoft.Powershell.ExecutionPolicy PSObject on Windows" -Skip:($IsLinux -Or $IsMacOS) {
             Get-ExecutionPolicy | Should BeOfType Microsoft.Powershell.ExecutionPolicy
         }
     }
@@ -18,7 +18,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
             { Set-ExecutionPolicy Unrestricted } | Should Throw "Operation is not supported on this platform."
         }
 
-        It "Should succeed on Windows" -Skip:($IsLinux -Or $IsOSX) {
+        It "Should succeed on Windows" -Skip:($IsLinux -Or $IsMacOS) {
             # We use the Process scope to avoid affecting the system
             # Unrestricted is assumed "safe", otherwise these tests would not be running
             { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | Should Not Throw

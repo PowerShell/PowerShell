@@ -116,5 +116,53 @@ After the object
 "@
         $returnString | Should Be $expectedValue
     }
+
+    It "Test ConvertTo-HTML meta"{
+        $returnString = ($customObject | ConvertTo-HTML -Meta @{"author"="John Doe"}) -join $newLine
+        $expectedValue = normalizeLineEnds @"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="author" content="John Doe">
+<title>HTML TABLE</title>
+</head><body>
+<table>
+<colgroup><col/><col/><col/></colgroup>
+<tr><th>Name</th><th>Age</th><th>Friends</th></tr>
+<tr><td>John Doe</td><td>42</td><td>System.Object[]</td></tr>
+</table>
+</body></html>
+"@
+        $returnString | Should Be $expectedValue
+    }
+
+    It "Test ConvertTo-HTML meta with invalid properties should throw warning" {
+        $parms = @{"authors"="John Doe";"keywords"="PowerShell,PSv6"}
+        ($customObject | ConvertTo-HTML -Meta $parms 3>&1) -match $parms["authors"]  | Should Be $true
+    }
+
+    It "Test ConvertTo-HTML charset"{
+        $returnString = ($customObject | ConvertTo-HTML -Charset "utf-8") -join $newLine
+        $expectedValue = normalizeLineEnds @"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<title>HTML TABLE</title>
+</head><body>
+<table>
+<colgroup><col/><col/><col/></colgroup>
+<tr><th>Name</th><th>Age</th><th>Friends</th></tr>
+<tr><td>John Doe</td><td>42</td><td>System.Object[]</td></tr>
+</table>
+</body></html>
+"@
+        $returnString | Should Be $expectedValue
+    }
+
+    It "Test ConvertTo-HTML transitional"{
+        $returnString = $customObject | ConvertTo-HTML -Transitional | Select-Object -First 1
+        $returnString | Should Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+    }
 }
 

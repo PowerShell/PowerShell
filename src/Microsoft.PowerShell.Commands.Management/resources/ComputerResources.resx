@@ -238,7 +238,7 @@
     <value>Verifying that the computer has been restarted...</value>
   </data>
   <data name="WaitForPowerShell" xml:space="preserve">
-    <value>Waiting for Windows PowerShell connectivity...</value>
+    <value>Waiting for PowerShell connectivity...</value>
   </data>
   <data name="WaitForRestartToBegin" xml:space="preserve">
     <value>Waiting for the restart to begin...</value>

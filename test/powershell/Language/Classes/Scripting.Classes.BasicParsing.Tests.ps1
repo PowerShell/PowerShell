@@ -4,7 +4,7 @@
 
 try {
 #
-# CrossGen'ed assemblies cause a hang to happen intermittently when running this test suite in Linux and OSX.
+# CrossGen'ed assemblies cause a hang to happen intermittently when running this test suite in Linux and macOS.
 # The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
 #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
 #  2. For daily build, build with '-CrossGen' but don't run the parsing tests

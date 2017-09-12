@@ -187,6 +187,6 @@
     <value>The operation is on user root store and UI is not allowed. </value>
   </data>
   <data name="RemoteErrorMessage" xml:space="preserve">
-    <value>. The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with Windows PowerShell remoting. </value>
+    <value>. The following error may be a result of user credentials required on the remote machine. See Enable-WSManCredSSP Cmdlet help on how to enable and use CredSSP for delegation with PowerShell remoting. </value>
   </data>
 </root>

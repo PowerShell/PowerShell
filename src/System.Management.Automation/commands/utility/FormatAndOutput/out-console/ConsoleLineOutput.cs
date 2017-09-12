@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
 
     /// <summary>
-    /// test class to provide easily overridable behavior for testing  on US machines
+    /// test class to provide easily overridable behavior for testing on US machines
     /// using US data.
     /// NOTE: the class just forces any uppercase letter [A-Z] to be prepended
     /// with an underscore (e.g. "A" becomes "_A", but "a" stays the same)

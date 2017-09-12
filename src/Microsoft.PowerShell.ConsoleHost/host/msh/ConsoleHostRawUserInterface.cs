@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell
                 // Now we check if the bottom right coordinate of our window went over the coordinate of the bottom
                 // right of the buffer.  If it did then we need to adjust the window.
 
-                // bufferInfo.BufferSize.X - 1  will give us the rightmost coordinate of the buffer.
+                // bufferInfo.BufferSize.X - 1 will give us the rightmost coordinate of the buffer.
                 // r.Right - rightCoordinateOfBuffer will give us how much we need to adjust the window left and right coordinates.
                 // Then we can do the same for top and bottom.
                 short adjustLeft = (short)(r.Right - (bufferInfo.BufferSize.X - 1));

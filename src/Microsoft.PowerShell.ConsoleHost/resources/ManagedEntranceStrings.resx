@@ -134,11 +134,11 @@ Copyright (C) Microsoft Corporation. All rights reserved.</value>
 PowerShell[.exe] -Help | -? | /?
 
 -PSConsoleFile
-    Loads the specified Windows PowerShell console file. To create a console
-    file, use Export-Console in Windows PowerShell.
+    Loads the specified PowerShell console file. To create a console
+    file, use Export-Console in PowerShell.
 
 -Version
-    Starts the specified version of Windows PowerShell.
+    Starts the specified version of PowerShell.
     Enter a version number with the parameter, such as "-version 2.0".
 
 -NoLogo
@@ -155,7 +155,7 @@ PowerShell[.exe] -Help | -? | /?
     Start the shell using a multithreaded apartment.
 
 -NoProfile
-    Does not load the Windows PowerShell profile.
+    Does not load the PowerShell profile.
 
 -NonInteractive
     Does not present an interactive prompt to the user.
@@ -164,11 +164,11 @@ PowerShell[.exe] -Help | -? | /?
     Present an interactive prompt to the user.
 
 -InputFormat
-    Describes the format of data sent to Windows PowerShell. Valid values are
+    Describes the format of data sent to PowerShell. Valid values are
     "Text" (text strings) or "XML" (serialized CLIXML format).
 
 -OutputFormat
-    Determines how output from Windows PowerShell is formatted. Valid values
+    Determines how output from PowerShell is formatted. Valid values
     are "Text" (text strings) or "XML" (serialized CLIXML format).
 
 -WindowStyle
@@ -176,13 +176,13 @@ PowerShell[.exe] -Help | -? | /?
 
 -EncodedCommand
     Accepts a base-64-encoded string version of a command. Use this parameter
-    to submit commands to Windows PowerShell that require complex quotation
+    to submit commands to PowerShell that require complex quotation
     marks or curly braces.
 
 -ConfigurationName
-    Specifies a configuration endpoint in which Windows PowerShell is run.
+    Specifies a configuration endpoint in which PowerShell is run.
     This can be any endpoint registered on the local machine including the
-    default Windows PowerShell remoting endpoints or a custom endpoint having
+    default PowerShell remoting endpoints or a custom endpoint having
     specific user role capabilities.
 
 -File
@@ -196,12 +196,12 @@ PowerShell[.exe] -Help | -? | /?
 -ExecutionPolicy
     Sets the default execution policy for the current session and saves it
     in the $env:PSExecutionPolicyPreference environment variable.
-    This parameter does not change the Windows PowerShell execution policy
+    This parameter does not change the PowerShell execution policy
     that is set in the registry.
 
 -Command
     Executes the specified commands (and any parameters) as though they were
-    typed at the Windows PowerShell command prompt, and then exits, unless
+    typed at the PowerShell command prompt, and then exits, unless
     NoExit is specified. The value of Command can be "-", a string. or a
     script block.
 
@@ -210,14 +210,14 @@ PowerShell[.exe] -Help | -? | /?
 
     If the value of Command is a script block, the script block must be enclosed
     in braces ({}). You can specify a script block only when running PowerShell.exe
-    in Windows PowerShell. The results of the script block are returned to the
+    in PowerShell. The results of the script block are returned to the
     parent shell as deserialized XML objects, not live objects.
 
     If the value of Command is a string, Command must be the last parameter
     in the command , because any characters typed after the command are
     interpreted as the command arguments.
 
-    To write a string that runs a Windows PowerShell command, use the format:
+    To write a string that runs a PowerShell command, use the format:
     "&amp; {&lt;command&gt;}"
     where the quotation marks indicate a string and the invoke operator (&amp;)
     causes the command to be executed.

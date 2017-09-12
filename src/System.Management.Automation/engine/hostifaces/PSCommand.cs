@@ -146,7 +146,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add a piece of script  to construct a command pipeline.
+        /// Add a piece of script to construct a command pipeline.
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").
@@ -187,7 +187,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add a piece of script  to construct a command pipeline.
+        /// Add a piece of script to construct a command pipeline.
         /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").

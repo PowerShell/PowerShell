@@ -157,7 +157,7 @@
     <value>The module manifest '{0}' could not be processed because it is not a valid PowerShell module manifest file. Remove the elements that are not permitted: {1}</value>
   </data>
   <data name="EmptyModuleManifest" xml:space="preserve">
-    <value>Processing the module manifest file '{0}' did not result in a valid manifest object. Update the file to contain a valid Windows PowerShell module manifest. A valid manifest can be created using the New-ModuleManifest cmdlet.</value>
+    <value>Processing the module manifest file '{0}' did not result in a valid manifest object. Update the file to contain a valid PowerShell module manifest. A valid manifest can be created using the New-ModuleManifest cmdlet.</value>
   </data>
   <data name="InvalidModuleManifestMember" xml:space="preserve">
     <value>The '{0}' module cannot be imported because its manifest contains one or more members that are not valid. The valid manifest members are ({1}). Remove the members that are not valid ({2}), then try to import the module again.</value>
@@ -181,7 +181,7 @@
     <value>The version of the Common Language Runtime (CLR) on this computer is '{0}'. The module '{1}' requires a minimum CLR version of '{2}' to run. Verify that you are running the minimum required version of CLR, and then try again.</value>
   </data>
   <data name="ModuleManifestInsufficientPowerShellVersion" xml:space="preserve">
-    <value>The version of Windows PowerShell on this computer is '{0}'. The module '{1}' requires a minimum Windows PowerShell version of '{2}' to run. Verify that you have the minimum required version of Windows PowerShell installed, and then try again.</value>
+    <value>The version of PowerShell on this computer is '{0}'. The module '{1}' requires a minimum PowerShell version of '{2}' to run. Verify that you have the minimum required version of PowerShell installed, and then try again.</value>
   </data>
   <data name="ModuleManifestNestedModulesCantGoWithModuleToProcess" xml:space="preserve">
     <value>The module manifest member 'NestedModules' cannot be used if the 'ModuleToProcess' member is a binary module. Edit the module manifest file at '{0}', and then try again.</value>
@@ -346,10 +346,10 @@
     <value>The module '{0}' requires the following version of the .NET Framework: {1}.  The required version is not installed.</value>
   </data>
   <data name="InvalidPowerShellHostName" xml:space="preserve">
-    <value>The name of the current Windows PowerShell host is: '{0}'. The module '{1}' requires the following Windows PowerShell host: '{2}'.</value>
+    <value>The name of the current PowerShell host is: '{0}'. The module '{1}' requires the following PowerShell host: '{2}'.</value>
   </data>
   <data name="InvalidPowerShellHostVersion" xml:space="preserve">
-    <value>The current Windows PowerShell host is: '{0}' (version {1}). The module '{2}' requires a minimum Windows PowerShell host version of '{3}' to run.</value>
+    <value>The current PowerShell host is: '{0}' (version {1}). The module '{2}' requires a minimum PowerShell host version of '{3}' to run.</value>
   </data>
   <data name="ManifestHeaderLine1" xml:space="preserve">
     <value>Module manifest for module '{0}'</value>
@@ -388,7 +388,7 @@
     <value>Description of the functionality provided by this module</value>
   </data>
   <data name="PowerShellVersion" xml:space="preserve">
-    <value>Minimum version of the Windows PowerShell engine required by this module</value>
+    <value>Minimum version of the PowerShell engine required by this module</value>
   </data>
   <data name="CLRVersion" xml:space="preserve">
     <value>Minimum version of the common language runtime (CLR) required by this module. {0}</value>
@@ -475,10 +475,10 @@
     <value>Minimum version of Microsoft .NET Framework required by this module. {0}</value>
   </data>
   <data name="PowerShellHostName" xml:space="preserve">
-    <value>Name of the Windows PowerShell host required by this module</value>
+    <value>Name of the PowerShell host required by this module</value>
   </data>
   <data name="PowerShellHostVersion" xml:space="preserve">
-    <value>Minimum version of the Windows PowerShell host required by this module</value>
+    <value>Minimum version of the PowerShell host required by this module</value>
   </data>
   <data name="LoadingWorkflow" xml:space="preserve">
     <value>Loading workflow {0}</value>
@@ -487,13 +487,13 @@
     <value>HelpInfo URI of this module</value>
   </data>
   <data name="IncludedItemPathFallsOutsideSaveTree" xml:space="preserve">
-    <value>The item {0} that resolves to {1} is not located in the same directory as the module manifest or any of its subdirectories. Windows PowerShell looks for items referenced in the manifest only in paths relative to the manifest location. To fix this problem, move the item, and use a relative path to identify its location.</value>
+    <value>The item {0} that resolves to {1} is not located in the same directory as the module manifest or any of its subdirectories. PowerShell looks for items referenced in the manifest only in paths relative to the manifest location. To fix this problem, move the item, and use a relative path to identify its location.</value>
   </data>
   <data name="InvalidWorkflowExtension" xml:space="preserve">
     <value>The workflow file name is not valid because it does not have the required .XAML file name extension. Run the New-ModuleManifest command again specifying a value for the WorkflowsToProcess parameter with this extension.</value>
   </data>
   <data name="ModuleDriveInUse" xml:space="preserve">
-    <value>Because the {0} module is providing the PSDrive in the current Windows PowerShell session, no modules were removed. Change the current PSDrive provider, and then try removing modules again.</value>
+    <value>Because the {0} module is providing the PSDrive in the current PowerShell session, no modules were removed. Change the current PSDrive provider, and then try removing modules again.</value>
   </data>
   <data name="InvalidWorkflowExtensionDuringManifestProcessing" xml:space="preserve">
     <value>The workflow file name extension is not valid. The workflow file name {0} that is listed in the WorkflowsToProcess key of the module manifest does not have the required .XAML or .DLL file name extension. Edit the module manifest and correct the workflow file name. If you are using a .DLL file extension, then provide only one assembly name.</value>
@@ -514,7 +514,7 @@
     <value>Wildcard characters are not allowed in members 'ModuleToProcess', 'RootModule', or 'NestedModules' in the module manifest '{0}'.</value>
   </data>
   <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
-    <value>The module '{0}' is a core module for Windows PowerShell. Add the Force parameter to your command to remove core modules.</value>
+    <value>The module '{0}' is a core module for PowerShell. Add the Force parameter to your command to remove core modules.</value>
   </data>
   <data name="ModuleManifestCannotContainBothModuleToProcessAndRootModule" xml:space="preserve">
     <value>The module manifest cannot contain both the 'ModuleToProcess' and 'RootModule' members. Change the module manifest file to remove one of these members at '{0}', and then try again.</value>
@@ -535,7 +535,7 @@
     <value>The required module '{0}' was not loaded because no valid module file was found in any module directory.</value>
   </data>
   <data name="MixedModuleOverCimSessionWarning" xml:space="preserve">
-    <value>Some commands from module {0} cannot be imported over a CimSession.  To get all the commands, verify that the remote server has Windows PowerShell remote management enabled, and then try adding the PSSession parameter to an Import-Module cmdlet.</value>
+    <value>Some commands from module {0} cannot be imported over a CimSession.  To get all the commands, verify that the remote server has PowerShell remote management enabled, and then try adding the PSSession parameter to an Import-Module cmdlet.</value>
   </data>
   <data name="PsModuleOverCimSessionError" xml:space="preserve">
     <value>The module {0} cannot be imported over a CimSession.  Try using the PSSession parameter of the Import-Module cmdlet.</value>
@@ -591,9 +591,6 @@
   <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
     <value>A CIM provider for module discovery was not found on the CIM server.  {0}</value>
     <comment>{0} is a placeholder for a more detailed error message</comment>
-  </data>
-  <data name="CannotDefineWorkflowInconsistentLanguageMode" xml:space="preserve">
-    <value>Cannot define the workflow. The language mode for this session is incompatible with the system-wide language mode.</value>
   </data>
   <data name="XamlWorkflowsNotSupported" xml:space="preserve">
     <value>Cannot load the workflow. Only signed in-box XAML-based workflows or script-based workflows are supported in the current language mode.</value>

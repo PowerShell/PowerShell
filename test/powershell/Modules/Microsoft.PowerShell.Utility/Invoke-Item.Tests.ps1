@@ -26,9 +26,9 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             Remove-Item -Path $redirectErr -Force -ErrorAction SilentlyContinue
         }
 
-        ## Run this test only on OSX because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
+        ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to hang.
-        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsOSX) -TestCases $textFileTestCases {
+        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
@@ -213,7 +213,7 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
             $startTime = [Datetime]::Now
             while (-not (test-path $renamedtestfilepath))
             {
-                Start-Sleep -Milliseconds  100
+                Start-Sleep -Milliseconds 100
                 if (([Datetime]::Now - $startTime) -ge [timespan]"00:00:05") { throw "Timeout exception" }
             }
         } | Should Not throw

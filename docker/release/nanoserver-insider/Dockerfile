@@ -26,23 +26,22 @@ ARG VCS_REF="none"
 ARG PS_VERSION=6.0.0-beta.6
 ARG IMAGE_NAME=microsoft/nanoserver-insider-powershell
 
-LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
-LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL description="This Dockerfile will install the latest release of PS."
-# Usage on URL to Usage
-LABEL org.label-schema.usage="https://github.com/PowerShell/PowerShell/tree/master/docker#run-the-docker-image-you-built"
-LABEL org.label-schema.url="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL org.label-schema.vcs-url="https://github.com/PowerShell/PowerShell"
-# Image friendly name
-LABEL org.label-schema.name="nanoserver-insider-powershell"
-LABEL org.label-schema.vcs-ref=${VCS_REF}
-LABEL org.label-schema.vendor="PowerShell"
-LABEL org.label-schema.version=${PS_VERSION}
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'"
-LABEL org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}"
-LABEL org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester"
-LABEL org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
+      readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" `
+      description="This Dockerfile will install the latest release of PS." `
+      org.label-schema.usage="https://github.com/PowerShell/PowerShell/tree/master/docker#run-the-docker-image-you-built" `
+      org.label-schema.url="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" `
+      org.label-schema.vcs-url="https://github.com/PowerShell/PowerShell" `
+      org.label-schema.name="powershell" `
+      org.label-schema.vcs-ref=${VCS_REF} `
+      org.label-schema.vendor="PowerShell" `
+      org.label-schema.version=${PS_VERSION} `
+      org.label-schema.schema-version="1.0" `
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" `
+      org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" `
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" `
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+
 # Copy Powershell from the installer containter
 ENV ProgramFiles C:\Program Files
 COPY --from=installer-env ["\\PowerShell\\", "$ProgramFiles\\PowerShell"]

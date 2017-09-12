@@ -1414,7 +1414,7 @@ namespace System.Management.Automation.Host
         Trailing
     }
 
-    #endregion  Ancillary types
+    #endregion Ancillary types
 
 
 

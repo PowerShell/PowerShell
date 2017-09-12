@@ -61,7 +61,7 @@ gen
 #VS Code files
 .vscode
 
-# OS X
+# macOS
 .DS_Store
 
 # TestsResults

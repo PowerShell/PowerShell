@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Do begin processing.
         /// </summary>
-        protected override void  BeginProcessing()
+        protected override void BeginProcessing()
         {
             base.BeginProcessing();
 

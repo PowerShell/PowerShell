@@ -3258,7 +3258,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// constructor for  EnhancedKeyUsageProperty
+        /// constructor for EnhancedKeyUsageProperty
         /// </summary>
         public EnhancedKeyUsageProperty(X509Certificate2 cert)
         {

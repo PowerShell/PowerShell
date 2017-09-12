@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the delivery notifications options for the e-mail message. The various
-        /// option available for this parameter are None, OnSuccess, OnFailure, Delay and  Never
+        /// option available for this parameter are None, OnSuccess, OnFailure, Delay and Never
         /// </summary>
         [Parameter()]
         [Alias("DNO")]
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         private MailPriority _priority;
 
         /// <summary>
-        /// Specifies the  subject of the email message.
+        /// Specifies the subject of the email message.
         /// </summary>
         [Parameter(Mandatory = true, Position = 1)]
         [Alias("sub")]

@@ -1240,7 +1240,7 @@ namespace System.Management.Automation.Runspaces.Internal
             return returnCaps;
         }
 
-        #endregion  Public Methods
+        #endregion Public Methods
 
         #region Static methods
 

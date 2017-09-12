@@ -1228,7 +1228,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (moduleInfo.RootModuleForManifest != null)
                     {
-                        if (moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                        if (moduleInfo.RootModuleForManifest.EndsWith(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             moduleInfo.SetModuleType(ModuleType.Binary);
                         }
@@ -1256,7 +1256,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleInfo.RootModule = moduleInfo.Path;
                     }
                 }
-                else if (extension.Equals(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+                else if (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) || extension.Equals(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     moduleInfo.SetModuleType(ModuleType.Binary);
                     moduleInfo.RootModule = moduleInfo.Path;
@@ -2153,7 +2153,7 @@ namespace Microsoft.PowerShell.Commands
             // Indicates that RunspaceConfig.Update() should be called.
             bool doUpdate = false;
 
-            // Set up to load any required assemblies  that have been specified...
+            // Set up to load any required assemblies that have been specified...
             List<string> tmpAssemblyList;
             List<string> assemblyList = new List<string>();
             List<string> fixedUpAssemblyPathList = new List<string>();
@@ -2203,7 +2203,7 @@ namespace Microsoft.PowerShell.Commands
                             iss.Assemblies.Add(new SessionStateAssemblyEntry(assembly, fileName));
                             fixedUpAssemblyPathList.Add(fileName);
 
-                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.DependentWorkflowAssemblyExtension);
+                            fileName = FixupFileName(moduleBase, assembly, StringLiterals.PowerShellILAssemblyExtension);
 
                             loadMessage = StringUtil.Format(Modules.LoadingFile, "Assembly", fileName);
                             WriteVerbose(loadMessage);
@@ -5838,7 +5838,7 @@ namespace Microsoft.PowerShell.Commands
             }
             PSModuleInfo module = null;
 
-            // If  MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
+            // If MinimumVersion/RequiredVersion/MaximumVersion has been specified, then only try to process manifest modules...
             if (BaseMinimumVersion != null || BaseMaximumVersion != null || BaseRequiredVersion != null || BaseGuid != null)
             {
                 // If the -Version flag was specified, don't look for non-manifest modules

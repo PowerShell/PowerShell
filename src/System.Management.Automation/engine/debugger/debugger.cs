@@ -1924,7 +1924,7 @@ namespace System.Management.Automation
                     break;
 
                 case DebuggerResumeAction.Continue:
-                    // nothing to  do, just continue
+                    // nothing to do, just continue
                     _steppingMode = SteppingMode.None;
                     _overOrOutFrame = null;
                     break;

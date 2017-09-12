@@ -2,6 +2,7 @@
 if($IsWindows)
 {
     Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
+}
 
     $currentUserMyLocations = @(
         @{path = 'Cert:\CurrentUser\my'}
@@ -15,7 +16,6 @@ if($IsWindows)
         @{path = 'CERT:\'}
         @{path = 'Microsoft.PowerShell.Security\Certificate::'}
     )
-}
 
 # Add CurrentUserMyLocations to TestLocations
 foreach($location in $currentUserMyLocations)

@@ -330,6 +330,12 @@ namespace System.Management.Automation
                                             out string user,
                                             out string domain)
         {
+            if (String.IsNullOrEmpty(input))
+            {
+                user = domain = null;
+                return false;
+            }
+
             SplitUserDomain(input, out user, out domain);
 
             if ((user == null) ||

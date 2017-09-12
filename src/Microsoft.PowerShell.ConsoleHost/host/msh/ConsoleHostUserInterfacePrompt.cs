@@ -493,7 +493,7 @@ namespace Microsoft.PowerShell
         /// If input does not start with PromptCommandPrefix (= "!"), returns input
         /// Tilde commands -
         /// !   end of list, only valid for input field types that implement IList, returns string.Empty
-        /// !!*  input !* literally, returns !* where * is any string
+        /// !!* input !* literally, returns !* where * is any string
         /// !h  prints out field's Quick Help, returns null
         /// All others tilde comments are invalid and return null
         ///

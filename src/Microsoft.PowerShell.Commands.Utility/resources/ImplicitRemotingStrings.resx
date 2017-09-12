@@ -139,22 +139,22 @@
     <value>Could not resolve remote alias '{0}'.</value>
   </data>
   <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because the name did not match the value of the Name  parameter.</value>
+    <value>Proxy creation has been skipped for the '{0}' command, because the name did not match the value of the Name parameter.</value>
   </data>
   <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
     <value>Extended type definition has been skipped for the '{0}' type because its name did not match the value of the FormatTypeName parameter.</value>
   </data>
   <data name="ErrorSkippedUnsafeCommandName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of the command name.</value>
+    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of the command name.</value>
   </data>
   <data name="ErrorSkippedUnsafeParameterName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of a parameter name: '{1}'.</value>
+    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of a parameter name: '{1}'.</value>
   </data>
   <data name="ErrorSkippedUnsafeParameterSetName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of a parameter set name: '{1}'.</value>
+    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of a parameter set name: '{1}'.</value>
   </data>
   <data name="ErrorSkippedUnsafeAliasName" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because Windows PowerShell could not verify the safety of a parameter alias name: '{1}'.</value>
+    <value>Proxy creation has been skipped for the '{0}' command, because PowerShell could not verify the safety of a parameter alias name: '{1}'.</value>
   </data>
   <data name="ErrorCommandSkippedBecauseOfShadowing" xml:space="preserve">
     <value>Proxy creation has been skipped for the following command: '{0}', because it would shadow an existing local command.  Use the AllowClobber parameter if you want to shadow existing local commands.</value>
@@ -211,7 +211,7 @@
     <value>Completed.</value>
   </data>
   <data name="CredentialRequestTitle" xml:space="preserve">
-    <value>Windows PowerShell Credential Request</value>
+    <value>PowerShell Credential Request</value>
   </data>
   <data name="CredentialRequestBody" xml:space="preserve">
     <value>Enter your credentials for {0}.</value>

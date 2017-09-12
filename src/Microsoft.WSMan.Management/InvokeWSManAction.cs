@@ -113,7 +113,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hashtable  and is used to pass a set of switches to the
+        /// OptionSet is a hashtable and is used to pass a set of switches to the
         /// service to modify or refine the nature of the request.
         /// </summary>
         [Parameter(ValueFromPipeline = true,
