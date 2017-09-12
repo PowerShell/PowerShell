@@ -324,12 +324,13 @@ namespace Microsoft.PowerShell.Commands
         } // EndProcessing
 
 
+        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         /// <summary>
         /// This is more an implementation of the UNIX strftime
         /// </summary>
         private string UFormatDateString(DateTime dateTime)
         {
-            DateTime epoch = DateTime.Parse("January 1, 1970", System.Globalization.CultureInfo.InvariantCulture);
             int offset = 0;
             StringBuilder sb = new StringBuilder();
 
@@ -436,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(dateTime.Subtract(epoch).TotalSeconds);
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.Subtract(epoch).TotalSeconds));
                             break;
 
                         case 'T':
