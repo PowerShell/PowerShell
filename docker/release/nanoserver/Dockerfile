@@ -1,8 +1,8 @@
 # escape=`
 FROM microsoft/nanoserver:latest
 
-ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win10-win2016-x64.zip
-ARG POWERSHELL_VERSION=6.0.0-beta.6
+ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win10-win2016-x64.zip
+ARG POWERSHELL_VERSION=6.0.0-beta.7
 ARG IMAGE_NAME=microsoft/powershell:nanoserver
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
