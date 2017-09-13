@@ -54,9 +54,9 @@
             }
         }
 
-        It "non filesystem path using <parameter>" -TestCases @(
+        It "Verifies a non filesystem path using <parameter> should fail" -TestCases @(
             @{parameter="literalPath"; expectedError='ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'},
-            @{parameter="path"; expectedError='ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'}
+            @{parameter="path";        expectedError='ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'}
         ) {
             param($parameter, $expectedError)
             try
