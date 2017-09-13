@@ -1079,14 +1079,17 @@ function Test-PSPesterResults
     {
         if ($ResultObject.TotalCount -le 0)
         {
-            logerror 'NO TESTS RUN'
+            throw 'NO TESTS RUN'
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
             logerror 'TEST FAILURES'
+
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
             }
+
+            throw "$($ResultObject.FailedCount) tests in $TestArea failed"
         }
     }
 }
