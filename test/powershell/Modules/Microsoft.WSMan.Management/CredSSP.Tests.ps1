@@ -100,11 +100,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         param ($cmdline, $cmd)
 
         runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline } catch { `$_.FullyQualifiedErrorId | Out-File $errtxt }; New-Item -Type File -Path $donefile"
-        $startTime = Get-Date
-        while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and -not (Test-Path "$donefile"))
-        {
-            Start-Sleep -Milliseconds 100
-        }
+        Wait-FileToBePresent -File $donefile -TimeoutInSeconds 5 -IntervalInMilliseconds 100
         $errtxt | Should Exist
         $err = Get-Content $errtxt
         $err | Should Be "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"

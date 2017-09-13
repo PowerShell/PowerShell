@@ -23,6 +23,18 @@ function Wait-UntilTrue
     return $true
 }
 
+function Wait-FileToBePresent
+{
+    [CmdletBinding()]
+    param (
+        [string]$File,
+        [int]$TimeoutInSeconds = 10,
+        [int]$IntervalInMilliseconds = 100
+    )
+
+    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds > $null
+}
+
 function Test-IsElevated
 {
     $IsElevated = $False

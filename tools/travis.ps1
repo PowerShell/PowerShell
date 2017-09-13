@@ -175,6 +175,17 @@ else
 
     $pesterPassThruObject = Start-PSPester @pesterParam
 
+    # Determine whether the build passed
+    try {
+        # this throws if there was an error
+        Test-PSPesterResults -ResultObject $pesterPassThruObject
+        $result = "PASS"
+    }
+    catch {
+        $resultError = $_
+        $result = "FAIL"
+    }
+
     if (-not $isPr) {
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
@@ -203,16 +214,6 @@ else
             }            
         }
 
-        # Determine whether the build passed
-        try {
-            # this throws if there was an error
-            Test-PSPesterResults -ResultObject $pesterPassThruObject
-            $result = "PASS"
-        }
-        catch {
-            $resultError = $_
-            $result = "FAIL"
-        }
         # update the badge if you've done a cron build, these are not fatal issues
         if ( $cronBuild ) {
             try {
@@ -229,10 +230,11 @@ else
                 Write-Warning "Could not update status badge: $_"
             }
         }
-        # if the tests did not pass, throw the reason why
-        if ( $result -eq "FAIL" ) {
-            Throw $resultError
-        }
+    }
+
+    # if the tests did not pass, throw the reason why
+    if ( $result -eq "FAIL" ) {
+        Throw $resultError
     }
 
     Start-PSxUnit

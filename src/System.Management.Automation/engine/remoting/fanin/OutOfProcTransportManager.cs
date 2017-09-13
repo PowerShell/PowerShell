@@ -1403,6 +1403,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamWriter _stdInWriter;
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
+        private bool _connectionEstablished;
         private const string _threadName = "SSHTransport Reader Thread";
 
         #endregion
@@ -1464,7 +1465,12 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CloseAsync()
         {
             base.CloseAsync();
-            CloseConnection();
+
+            if (!_connectionEstablished)
+            {
+                // If the connection is not yet estalished then clean up any existing connection state.
+                CloseConnection();
+            }
         }
 
         #endregion
@@ -1641,6 +1647,9 @@ namespace System.Management.Automation.Remoting.Client
                     }
                     else
                     {
+                        // The first received PSRP message from the server indicates that the connection is established and that PSRP is running.
+                        if (!_connectionEstablished) { _connectionEstablished = true; }
+
                         // Normal output data.
                         HandleOutputDataReceived(data);
                     }
@@ -2410,3 +2419,4 @@ namespace System.Management.Automation.Remoting.Server
         #endregion
     }
 }
+

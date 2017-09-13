@@ -82,3 +82,47 @@ Invoke-WebRequest -Uri 'http://localhost:8083/Get/' -Body @{TestField = 'TestVal
   "origin": "127.0.0.1"
 }
 ```
+
+## /Multipart/
+
+### GET 
+Provides an HTML form for `multipart/form-data` submission.
+
+### POST
+Accepts a `multipart/form-data` submission and returns a JSON object containing information about the submission including the items and files submitted.
+
+```json
+{
+  "Files": [
+    {
+      "ContentDisposition": "form-data; name=fileData; filename=test.txt",
+      "Headers": {
+        "Content-Disposition": [
+          "form-data; name=fileData; filename=test.txt"
+        ],
+        "Content-Type": [
+          "text/plain"
+        ]
+      },
+      "FileName": "test.txt",
+      "Length": 15,
+      "ContentType": "text/plain",
+      "Name": "fileData",
+      "Content": "Test Contents\r\n"
+    }
+  ],
+  "Items": {
+    "stringData": [
+      "TestValue"
+    ]
+  },
+  "Boundary": "83027bde-fd9b-4ea0-b1ca-a1f661d01ada",
+  "Headers": {
+    "Content-Type": "multipart/form-data; boundary=\"83027bde-fd9b-4ea0-b1ca-a1f661d01ada\"",
+    "Connection": "Keep-Alive",
+    "Content-Length": "336",
+    "Host": "localhost:8083",
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) WindowsPowerShell/6.0.0"
+  }
+}
+```
