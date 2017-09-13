@@ -9,6 +9,11 @@
 
             $fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
 
+            $subDirName = Join-Path $TestDrive 'selectSubDir'
+            New-Item -Path $subDirName -ItemType Directory > $null
+            $pathWithoutWildcard = $TestDrive
+            $pathWithWildcard = Join-Path $TestDrive '*'
+
             $tempFile = New-TemporaryFile
             "abc" | Out-File -LiteralPath $tempFile.fullname
 	        "bcd" | Out-File -LiteralPath $tempFile.fullname -Append
@@ -22,6 +27,14 @@
         AfterAll {
             Remove-Item $tempFile -Force -ErrorAction SilentlyContinue
             Pop-Location
+        }
+
+        It "Select-String does not throw on subdirectory (path without wildcard)" {
+            { select-string -Path  $pathWithoutWildcard "noExists" } | Should Not Throw
+        }
+
+        It "Select-String does not throw on subdirectory (path with wildcard)" {
+            { select-string -Path  $pathWithWildcard "noExists" } | Should Not Throw
         }
 
         It "LiteralPath with relative path" {

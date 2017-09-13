@@ -1347,6 +1347,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string filename in expandedPaths)
                 {
+                    if (System.IO.Directory.Exists(filename))
+                    {
+                        continue;
+                    }
+
                     bool foundMatch = ProcessFile(filename);
                     if (_quiet && foundMatch)
                         return;
