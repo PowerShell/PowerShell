@@ -112,7 +112,7 @@ try
     $defaultParamValues = $PSDefaultParameterValues
     $PSDefaultParameterValues["it:Skip"] = !$IsWindows
 
-    Describe "Built-ins work within constrained language" -Tags 'Feature' {
+    Describe "Built-ins work within constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
             $TestCasesBuiltIn = @(
@@ -140,7 +140,7 @@ try
         }
     }
 
-    Describe "Background jobs" -Tags 'Feature' {
+    Describe "Background jobs" -Tags 'Feature','RequireAdminOnWindows' {
 
         Context "Background jobs in system lock down mode" {
 
@@ -191,7 +191,7 @@ try
         }
     }
 
-    Describe "Add-Type in constrained language" -Tags 'Feature' {
+    Describe "Add-Type in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Add-Type fails in constrained language mode" {
 
@@ -220,7 +220,7 @@ try
         }
     }
 
-    Describe "New-Object in constrained language" -Tags 'Feature' {
+    Describe "New-Object in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         Context "New-Object with dotNet types" {
 
@@ -300,7 +300,7 @@ try
         }
     }
 
-    Describe "New-Item command on function drive in constrained language" -Tags 'Feature' {
+    Describe "New-Item command on function drive in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies New-Item directory on function drive is not allowed in constrained language mode" {
 
@@ -324,7 +324,7 @@ try
         }
     }
 
-    Describe "Script debugging in constrained language" -Tags 'Feature' {
+    Describe "Script debugging in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that a debugging breakpoint cannot be set in constrained language and no system lockdown" {
 
@@ -436,7 +436,7 @@ try
         }
     }
     
-    Describe "Engine events in constrained language mode" -Tags 'Feature' {
+    Describe "Engine events in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies engine event in constrained language mode, its action runs as constrained" {
 
@@ -458,7 +458,7 @@ try
         }
     }
 
-    Describe "Module scope scripts in constrained language mode" -Tags 'Feature' {
+    Describe "Module scope scripts in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that while in constrained language mode script run in a module scope also runs constrained" {
             Import-Module PSDiagnostics
@@ -484,7 +484,7 @@ try
         }
     }
 
-    Describe "Switch -file in constrained language mode" -Tags 'Feature' {
+    Describe "Switch -file in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that switch -file will not work in constrained language without provider" {
 
@@ -512,7 +512,7 @@ try
         }
     }
 
-    Describe "Get content syntax in constrained language mode" -Tags 'Feature' {
+    Describe "Get content syntax in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that the get content syntax returns null value in constrained language without provider" {
 
@@ -529,7 +529,7 @@ try
         }
     }
 
-    Describe "Stream redirection in constrained language mode" -Tags 'Feature' {
+    Describe "Stream redirection in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that stream redirection doesn't work in constrained language mode without provider" {
 
@@ -558,7 +558,7 @@ try
         }
     }
 
-    Describe "Invoke-Expression in constrained language mode" -Tags 'Feature' {
+    Describe "Invoke-Expression in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
 
@@ -596,7 +596,7 @@ try
         }
     }
 
-    Describe "Dynamic method invocation in constrained language mode" -Tags 'Feature' {
+    Describe "Dynamic method invocation in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies dynamic method invocation does not bypass constrained language mode" {
 
@@ -645,7 +645,7 @@ try
         }
     }
 
-    Describe "Tab expansion in constrained language mode" -Tags 'Feature' {
+    Describe "Tab expansion in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that tab expansion cannot convert disallowed IntPtr type" {
 
@@ -664,7 +664,7 @@ try
         }
     }
 
-    Describe "Variable AllScope in constrained language mode" -Tags 'Feature' {
+    Describe "Variable AllScope in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Set-Variable cannot create AllScope in constrained language" {
         
@@ -709,7 +709,7 @@ try
         }
     }
 
-    Describe "Data section additional commands in constrained language" -Tags 'Feature' {
+    Describe "Data section additional commands in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         function InvokeDataSectionConstrained
         {
@@ -768,7 +768,7 @@ try
         }
     }
 
-    Describe "Import-LocalizedData additional commands in constrained language" -Tags 'Feature' {
+    Describe "Import-LocalizedData additional commands in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Import-LocalizedData disallows Add-Type in constrained language" {
 
@@ -794,7 +794,7 @@ try
         }
     }
 
-    Describe "Where and Foreach operators should not allow unapproved types in constrained language" -Tags 'Feature' {
+    Describe "Where and Foreach operators should not allow unapproved types in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         BeforeAll {
 
