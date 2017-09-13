@@ -1683,7 +1683,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                             if ((ServiceStartMode)(-1) != StartupType &&
-                                !NativeMethods.GetNativeStartupType(StartupType, out dwStartType))
+                                !NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
                             {
                                 WriteNonTerminatingError(StartupType.ToString(), "Set-Service", Name,
                                     new ArgumentException(), "CouldNotSetService",
@@ -1992,8 +1992,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                     return;
                 }
-                DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
-                if (! NativeMethods.GetNativeStartupType(StartupType, out dwStartType))
+                if (!NativeMethods.TryGetNativeStartupType(StartupType, out DWORD dwStartType))
                 {
                     WriteNonTerminatingError(StartupType.ToString(), "New-Service", Name,
                         new ArgumentException(), "CouldNotNewService",
@@ -2403,7 +2402,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// If a supported StartupType is provided, funciton returns true, otherwise false.
         /// </returns>
-        internal static bool GetNativeStartupType(ServiceStartMode StartupType, out DWORD dwStartType)
+        internal static bool TryGetNativeStartupType(ServiceStartMode StartupType, out DWORD dwStartType)
         {
             bool success = true;
             dwStartType = NativeMethods.SERVICE_NO_CHANGE;
