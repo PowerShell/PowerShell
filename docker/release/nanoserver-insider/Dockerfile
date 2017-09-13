@@ -12,7 +12,7 @@ FROM ${WindowsServerCoreRepo}:$WindowsServerCoreVersion  AS installer-env
 # Arguments for installing powershell, must be defined in the container they are used
 ARG PS_VERSION=6.0.0-beta.7
 
-ENV PS_DOWNLOAD_URL https://github.com/PowerShell/PowerShell/releases/download/v$PS_VERSION/PowerShell-$PS_VERSION-win10-win2016-x64.zip
+ENV PS_DOWNLOAD_URL https://github.com/PowerShell/PowerShell/releases/download/v$PS_VERSION/PowerShell-$PS_VERSION-win-x64.zip
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 RUN Invoke-WebRequest $Env:PS_DOWNLOAD_URL -OutFile powershell.zip

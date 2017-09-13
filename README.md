@@ -27,10 +27,8 @@ You can download and install a PowerShell package for any of the following platf
 
 | Platform                           | Downloads              | How to Install                |
 | ---------------------------------- | ---------------------- | ----------------------------- |
-| Windows 10 / Server 2016 (x64)     | [.msi][rl-windows10]   | [Instructions][in-windows]    |
-| Windows 8.1 / Server 2012 R2 (x64) | [.msi][rl-windows81]   | [Instructions][in-windows]    |
-| Windows 7 / Server 2008 R2 (x64)   | [.msi][rl-windows7-64] | [Instructions][in-windows]    |
-| Windows 7 (x86)                    | [.msi][rl-windows7-86] | [Instructions][in-windows]    |
+| Windows (x64)                      | [.msi][rl-windows-64]  | [Instructions][in-windows]    |
+| Windows (x86)                      | [.msi][rl-windows-86]  | [Instructions][in-windows]    |
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
 | Debian 8                           | [.deb][rl-ubuntu14]    | [Instructions][in-deb8]       |
@@ -43,10 +41,8 @@ You can download and install a PowerShell package for any of the following platf
 | Docker                             |                        | [Instructions][in-docker]     |
 | Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win10-win2016-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win81-win2012r2-x64.msi
-[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win7-win2008r2-x64.msi
-[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win7-x86.msi
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win-x86.msi
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell_6.0.0-beta.7-1ubuntu1.16.04.1_amd64.deb
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell_6.0.0-beta.7-1ubuntu1.14.04.1_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell-6.0.0_beta.7-1.el7.x86_64.rpm
