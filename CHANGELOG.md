@@ -1,5 +1,80 @@
 # Changelog
 
+## v6.0.0-beta.7 - 2017-09-13
+
+### Breaking change
+
+* Fix `Get-Content -Delimiter` to not include the delimiter in the array elements returned (#3706) (Thanks @mklement0)
+* Rename `$IsOSX` to `$IsMacOS` (#4757)
+
+### Engine updates and fixes
+
+* Use stricter rules when unwrapping a PSObject that wraps a COM object (#4614)
+* Remove appended Windows PowerShell `PSModulePath` on Windows. (#4656)
+* Ensure `GetNetworkCredential()` returns null if PSCredential has null or empty user name (#4697)
+* Push locals of automatic variables to 'DottedScopes' when dotting script cmdlets (#4709)
+* Fix `using module` when module has non-terminating errors handled with `SilentlyContinue` (#4711) (Thanks @iSazonov)
+* Enable use of 'Singleline,Multiline' option in split operator (#4721) (Thanks @iSazonov)
+* Fix error message in `ValidateSetAttribute.ValidateElement()` (#4722) (Thanks @iSazonov)
+
+### General cmdlet updates and fixes
+
+* Add Meta, Charset, and Transitional parameters to `ConvertTo-HTML` (#4184) (Thanks @ergo3114)
+* Prevent `Test-ModuleManifest` from loading unnecessary modules (#4541)
+* Remove AlternateStream code and `-Stream` from provider cmdlets on non-Windows (#4567)
+* Add explicit ContentType detection to `Invoke-RestMethod` (#4692)
+* Fix an error on `Enter-PSSession` exit (#4693)
+* Add `-WhatIf` switch to `Start-Process` cmdlet (#4735) (Thanks @sarithsutha)
+* Remove double spaces in .cs, .ps1, and .resx files (#4741 & #4743) (Thanks @korygill)
+* Replace 'Windows PowerShell' with 'PowerShell' in resx files (#4758) (Thanks @iSazonov)
+
+### Build and Packaging Improvements
+
+* Refactor MSBuild project files to get PowerShell version from git tag (#4182) (Thanks @iSazonov)
+* Create a single package for each Windows supported architecture (x86 and amd64) (#4540)
+* Set the default windows RID to win7-<arch> (#4701)
+* Enable cross-compiling for Raspberry-PI arm32 (#4742)
+* Fix macOS brew reinstall command (#4627) (Thanks @TheNewStellW)
+* Improvements to the Travis-CI script (#4689, #4731, #4807)
+* Update OpenSUSE docker image to 42.2 (#4737)
+* Confirm `Start-PSPackage` produces a package (#4795)
+
+### Code Cleanup
+
+* Remove Workflow code (#4777)
+* Clean up CORECLR preprocessor directives in TraceSource (#4684)
+
+### Test
+
+* Add test WebListener module and tests for Web Cmdlet Certificate Authentication (#4622) (Thanks @markekraus)
+* Move WebCmdlets HTTPS tests to WebListener (#4733) (Thanks @markekraus)
+* Replace httpbin.org/get tests With WebListener (#4738) (Thanks @markekraus)
+* Use `-PassThru` on Pester tests to reliably catch failures (#4644)
+* Display the same number of tests regardless of platform (#4728)
+* Improve comparison of code coverage values for a file (#4764)
+* Silence PSSessionConfiguration test warning messages in the log (#4794)
+* Add tests for
+    * `Get-Service` (#4773)
+    * `Set-Service` and `New-Service` (#4785)
+    * `Trace-Command` (#4288)
+    * `StaticParameter` (#4779)
+    * `Test-Wsman` (#4771)
+    * `New-Object -ComObject` (#4776)
+    * ProxyCommand APIs (#4791)
+* Disable tests
+    * 'VC++ Redistributable'(#4673 & #4729)
+    * "Test 01. Standard Property test - all properties (<property>)" due to missing CsPhysicallyInstalledMemory (#4763)
+    * `New-Service` failing test (#4806)
+
+### Documentation
+
+* Update WritingPesterTests.md to recommend ShouldBeErrorId (#4637)
+* Clarify the Pull Request process, roles, and responsibilities (#4710)
+* Add absolute URLs in the issue template and pull request template (#4718) (Thanks @chucklu)
+* Add new approved Build and Deploy verbs (#4725)
+* Update using-vscode.md to use the new exe path (#4736)
+* Update coding guidelines to make it more concrete and useful in a review process (#4754)
+
 ## v6.0.0-beta.6 - 2017-08-24
 
 ### Breaking change
