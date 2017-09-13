@@ -1682,8 +1682,7 @@ namespace Microsoft.PowerShell.Commands
                             || (ServiceStartMode)(-1) != StartupType)
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
-                            if ((ServiceStartMode)(-1) != StartupType &&
-                                !NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
+                            if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
                             {
                                 WriteNonTerminatingError(StartupType.ToString(), "Set-Service", Name,
                                     new ArgumentException(), "CouldNotSetService",
@@ -2416,6 +2415,9 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case ServiceStartMode.Disabled:
                     dwStartType = NativeMethods.SERVICE_DISABLED;
+                    break;
+                case (ServiceStartMode)(-1):
+                    dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                     break;
                 default:
                     success = false;
