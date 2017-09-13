@@ -123,7 +123,7 @@ Some general guidelines:
   Instead, use `var example = obj as Example` or the C# 7 syntax `if (obj is Example example) {...}` as appropriate.
   In this way you can avoid converting to the type twice.
 
-* Use generic collections instead of `ArrayList` to avoid type casting and unnecessary boxing whenever possible.
+* Use generic collections instead of the non-generic ones such as `ArrayList` and `Hashtable` to avoid type casting and unnecessary boxing whenever possible.
 
 * Use collection constructor overloads that take an initial capacity for collection types that have them.
   Internally, `List<T>`, `Dictionary<TKey, TValue>`,
