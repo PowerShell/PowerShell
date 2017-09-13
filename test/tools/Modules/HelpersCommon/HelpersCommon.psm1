@@ -11,14 +11,12 @@ function Wait-UntilTrue
 
     # Loop until the script block evaluates to true
     while (-not ($sb.Invoke())) {
-        # Sleep for the specified interval
-        start-sleep -mil $intervalInMilliseconds
-
-        # If the timeout period has passed, throw an exception
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds)
-        {
+        # If the timeout period has passed, return false
+        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
+        # Sleep for the specified interval
+        Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true
 }
