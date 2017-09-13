@@ -168,7 +168,7 @@ else
         $pesterParam['ThrowOnFailure'] = $true
     }
 
-    if($hasRunFailingTestTag)
+    if ($hasRunFailingTestTag)
     {
         $pesterParam['IncludeFailingTest'] = $true
     }

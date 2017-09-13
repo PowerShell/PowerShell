@@ -847,7 +847,7 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    if($IncludeFailingTest.IsPresent)
+    if ($IncludeFailingTest.IsPresent)
     {
         $Path += "$PSScriptRoot/tools/failingTests"
     }
