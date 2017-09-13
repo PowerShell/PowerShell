@@ -359,6 +359,39 @@ function ExecuteRestMethod
     return $result
 }
 
+function GetMultipartBody 
+{
+    param
+    (
+        [Switch]$String,
+        [Switch]$File
+    )
+    $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
+    if ($String.IsPresent)
+    {
+        $stringHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
+        $stringHeader.Name = "TestString"
+        $StringContent = [System.Net.Http.StringContent]::new("TestValue")
+        $StringContent.Headers.ContentDisposition = $stringHeader
+        $multipartContent.Add($stringContent)
+    }
+    if ($File.IsPresent)
+    {
+        $multipartFile = Join-Path $TestDrive 'multipart.txt'
+        "TestContent" | Set-Content $multipartFile
+        $FileStream = [System.IO.FileStream]::new($multipartFile, [System.IO.FileMode]::Open)
+        $fileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
+        $fileHeader.Name = "TestFile"
+        $fileHeader.FileName = 'multipart.txt'
+        $fileContent = [System.Net.Http.StreamContent]::new($FileStream)
+        $fileContent.Headers.ContentDisposition = $fileHeader
+        $fileContent.Headers.ContentType = [System.Net.Http.Headers.MediaTypeHeaderValue]::Parse("text/plain")
+        $multipartContent.Add($fileContent)
+    }
+    # unary comma required to prevent $multipartContent from being unwrapped/enumerated
+    return ,$multipartContent 
+}
+
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
@@ -1200,6 +1233,41 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
     }
 
+    Context "Multipart/form-data Tests" {
+        It "Verifies Invoke-WebRequest Supports Multipart String Values" {
+            $body = GetMultipartBody -String
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Body $body -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+        }
+        It "Verifies Invoke-WebRequest Supports Multipart File Values" {
+            $body = GetMultipartBody -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Body $body -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
+        }
+        It "Verifies Invoke-WebRequest Supports Mixed Multipart String and File Values" {
+            $body = GetMultipartBody -String -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Body $body -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -1734,6 +1802,38 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             
             $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
+        }
+    }
+
+    Context "Multipart/form-data Tests" {
+        It "Verifies Invoke-RestMethod Supports Multipart String Values" {
+            $body = GetMultipartBody -String
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Body $body -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+        }
+        It "Verifies Invoke-RestMethod Supports Multipart File Values" {
+            $body = GetMultipartBody -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Body $body -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
+        }
+        It "Verifies Invoke-RestMethod Supports Mixed Multipart String and File Values" {
+            $body = GetMultipartBody -String -File
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Body $body -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString[0] | Should Be 'TestValue'
+            $result.Files[0].FileName | Should Be 'multipart.txt'
+            $result.Files[0].ContentType | Should Be 'text/plain'
+            $result.Files[0].Content | Should Match 'TestContent'
         }
     }
 

@@ -35,6 +35,7 @@ function New-RemoteSession
     param (
         [string] $Name,
         [string] $ConfigurationName,
+        [switch] $CimSession,
         [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
 
     $parameters = @{ ComputerName = "."; }
@@ -61,7 +62,11 @@ function New-RemoteSession
         Write-Verbose "Using Implicit Credential" -Verbose
     }
 
-    $session = New-PSSession @parameters
+    if ($CimSession) {
+        $session = New-CimSession @parameters
+    } else {
+        $session = New-PSSession @parameters
+    }
 
     return $session
 }
