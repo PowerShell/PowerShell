@@ -68,3 +68,7 @@ function ShouldBeErrorId
         }
 }
 
+function Get-RandomFileName
+{
+    [System.IO.Path]::GetFileNameWithoutExtension([IO.Path]::GetRandomFileName())
+}
