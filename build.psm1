@@ -843,9 +843,15 @@ function Start-PSPester {
         [switch]$Unelevate,
         [switch]$Quiet,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
-        [switch]$PassThru
+        [switch]$PassThru,
+        [switch]$IncludeFailingTest
     )
 
+    if ($IncludeFailingTest.IsPresent)
+    {
+        $Path += "$PSScriptRoot/tools/failingTests"
+    }
+    
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
     {
@@ -1079,14 +1085,17 @@ function Test-PSPesterResults
     {
         if ($ResultObject.TotalCount -le 0)
         {
-            logerror 'NO TESTS RUN'
+            throw 'NO TESTS RUN'
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
             logerror 'TEST FAILURES'
+
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
             }
+
+            throw "$($ResultObject.FailedCount) tests in $TestArea failed"
         }
     }
 }

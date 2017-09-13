@@ -114,6 +114,7 @@ else
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
+$hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
 $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 # only update the build badge for the cron job
 $cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
@@ -165,6 +166,11 @@ else
     } else {
         $pesterParam['Tag'] = @('CI')
         $pesterParam['ThrowOnFailure'] = $true
+    }
+
+    if ($hasRunFailingTestTag)
+    {
+        $pesterParam['IncludeFailingTest'] = $true
     }
 
     # Remove telemetry semaphore file in CI
