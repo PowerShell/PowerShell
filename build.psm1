@@ -1844,9 +1844,9 @@ function New-MSIPackage
     }
     else
     {
-        $WiXHeatLog   | Out-String | Write-Verbose
-        $WiXCandleLog | Out-String | Write-Verbose
-        $WiXLightLog  | Out-String | Write-Verbose
+        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
+        $WiXCandleLog | Out-String | Write-Verbose -Verbose
+        $WiXLightLog  | Out-String | Write-Verbose -Verbose
         throw "Failed to create $msiLocationPath"
     }
 }
