@@ -449,14 +449,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest returns User-Agent" {
 
-        $command = "Invoke-WebRequest -Uri http://httpbin.org/user-agent -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.'User-Agent' | Should Match "WindowsPowerShell"
+        $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Invoke-WebRequest returns headers dictionary" {
@@ -1311,12 +1312,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod returns User-Agent" {
 
-        $command = "Invoke-RestMethod -Uri http://httpbin.org/user-agent -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.'User-Agent' | Should Match "WindowsPowerShell"
+        $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -1426,12 +1428,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/user-agent' -TimeoutSec 5 -NoProxy"
+        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -NoProxy -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.'User-Agent' | Should Match "WindowsPowerShell"
+        $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     # Perform the following operation for Invoke-RestMethod
