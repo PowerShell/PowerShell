@@ -638,17 +638,19 @@ function New-PSOptions {
         if ($Environment.IsLinux) {
             $Runtime = "linux-x64"
         } else {
-            $Runtime = dotnet --info | ForEach-Object {
+            $RID = dotnet --info | ForEach-Object {
                 if ($_ -match "RID") {
                     $_ -split "\s+" | Select-Object -Last 1
                 }
             }
 
-            # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
-            # which supports all supported windows platforms.
-            # So we, will change the RID to win7-<arch>
             if ($Environment.IsWindows) {
-                $Runtime = $Runtime -replace "win\d+", "win7"
+                # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
+                # which supports all supported windows platforms.
+                # So we, will change the RID to win7-<arch>
+                $Runtime = $RID -replace "win\d+", "win7"
+            } else {
+                $Runtime = $RID
             }
         }
 
