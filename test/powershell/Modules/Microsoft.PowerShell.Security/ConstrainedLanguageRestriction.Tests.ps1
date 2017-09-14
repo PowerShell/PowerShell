@@ -495,7 +495,7 @@ try
             $iss.LanguageMode = "ConstrainedLanguage"
             [runspace] $rs = [runspacefactory]::CreateRunspace($iss)
             $rs.Open()
-            $pl = $rs.CreatePipeline('switch -file c:\temp\foo.txt { "A" { "B" } }')
+            $pl = $rs.CreatePipeline("switch -file $testDrive/foo.txt { 'A' { 'B' } }")
 
             try
             {
@@ -523,7 +523,7 @@ try
             $iss.LanguageMode = "ConstrainedLanguage"
             $rs = [runspacefactory]::CreateRunspace($iss)
             $rs.Open()
-            $pl = $rs.CreatePipeline('${c:\temp\foo.txt}')
+            $pl = $rs.CreatePipeline('${' + "$testDrive/foo.txt}")
 
             $result = $pl.Invoke()
             $rs.Dispose()
