@@ -165,7 +165,6 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode
                 }
 
-                $expectedError | Should Not Be $null
                 $expectedError.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
             }
         }
@@ -529,7 +528,7 @@ try
             $result = $pl.Invoke()
             $rs.Dispose()
 
-            $result[0] | Should Be $null
+            $result[0] | Should BeNullOrEmpty
         }
     }
 
