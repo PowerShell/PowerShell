@@ -49,7 +49,7 @@ $session = New-PSSession -ComputerName <Nano Server IP address> -Credential <An 
 * Copy the file to the Nano Server instance
 
 ```powershell
-Copy-Item <local PS Core download location>\powershell-<version>-win10-win2016-x64.zip c:\ -ToSession $session
+Copy-Item <local PS Core download location>\powershell-<version>-win-x64.zip c:\ -ToSession $session
 ```
 
 * Enter the session
@@ -62,7 +62,7 @@ Enter-PSSession $session
 
 ```powershell
 # Insert the appropriate version.
-Expand-Archive -Path C:\powershell-<version>-win10-win2016-x64.zip -DestinationPath "C:\PowerShellCore_<version>"
+Expand-Archive -Path C:\powershell-<version>-win-x64.zip -DestinationPath "C:\PowerShellCore_<version>"
 ```
 
 * Follow the instructions to create a remoting endpoint using the [another instance technique](#executed-by-another-instance-of-powershell-on-behalf-of-the-instance-that-it-will-register).
