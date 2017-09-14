@@ -290,18 +290,12 @@ function Start-PSBuild {
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
-        [ValidateSet("ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
-                     "win7-x64",
+        [ValidateSet("win7-x64",
                      "win7-x86",
                      "win81-x64",
                      "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64",
+                     "linux-x64",
                      "linux-arm")]
         [string]$Runtime,
 
@@ -589,18 +583,12 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
                      "win7-x86",
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64",
+                     "linux-x64",
                      "linux-arm")]
         [string]$Runtime,
 
@@ -659,17 +647,21 @@ function New-PSOptions {
     }
 
     if (-not $Runtime) {
-        $Runtime = dotnet --info | ForEach-Object {
-            if ($_ -match "RID") {
-                $_ -split "\s+" | Select-Object -Last 1
+        if ($Environment.IsLinux) {
+            $Runtime = "linux-x64"
+        } else {
+            $Runtime = dotnet --info | ForEach-Object {
+                if ($_ -match "RID") {
+                    $_ -split "\s+" | Select-Object -Last 1
+                }
             }
-        }
 
-        # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
-        # which supports all supported windows platforms.
-        # So we, will change the RID to win7-<arch>
-        if ($Environment.IsWindows) {
-            $Runtime = $Runtime -replace "win\d+", "win7"
+            # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
+            # which supports all supported windows platforms.
+            # So we, will change the RID to win7-<arch>
+            if ($Environment.IsWindows) {
+                $Runtime = $Runtime -replace "win\d+", "win7"
+            }
         }
 
         if (-not $Runtime) {
@@ -851,7 +843,7 @@ function Start-PSPester {
     {
         $Path += "$PSScriptRoot/tools/failingTests"
     }
-    
+
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
     {
@@ -1866,18 +1858,12 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
-                     "win7-x86",
+        [ValidateSet("win7-x86",
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64",
+                     "linux-x64",
                      "linux-arm")]
         [string]
         $Runtime
