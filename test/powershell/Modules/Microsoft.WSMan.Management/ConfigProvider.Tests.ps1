@@ -6,8 +6,9 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         if ($IsWindows) {
             $badCredentialError = 1326
-            $pluginXml = [xml](winrm g winrm/config/plugin?name=microsoft.powershell -format:xml)
-            $pluginPath = "WSMan:\localhost\Plugin\microsoft.powershell"
+            $endpoint = & "$PSHOME\Install-PowerShellRemoting.ps1"
+            $pluginXml = [xml](winrm g winrm/config/plugin?name=$($endpoint.name) -format:xml)
+            $pluginPath = "WSMan:\localhost\Plugin\$($endpoint.name)"
             $testPluginXml = [xml]($pluginXml.OuterXml)
             $testPluginXml.PlugInConfiguration.Name = "TestPlugin"
             $testPluginXml.PlugInConfiguration.RemoveAttribute("xml:lang")
@@ -53,13 +54,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
     Context "Misc tests" {
         It "Can remove and add wsman drive" {
-            $w = Get-PSDrive -Name WSMan
+            $wsmanDrive = Get-PSDrive -Name WSMan
             Remove-PSDrive -Name wsman
             { Get-PSDrive -Name wsman -ErrorAction Stop } | ShouldBeErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
-            $w2 = $w | New-PSDrive -PSProvider WSMan
-            $w2 | Should BeOfType System.Management.Automation.PSDriveInfo
-            $w2.Name | Should Be "WSMan"
-            $w2.Provider.Name | Should Be "WSMan"
+            $wsmanDrive2 = $wsmanDrive | New-PSDrive -PSProvider WSMan
+            $wsmanDrive2 | Should BeOfType System.Management.Automation.PSDriveInfo
+            $wsmanDrive2.Name | Should Be "WSMan"
+            $wsmanDrive2.Provider.Name | Should Be "WSMan"
         }
 
         It "WSMan Config Provider starts WinRM if it is stopped" {
@@ -74,61 +75,6 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 }
             }
         }
-    }
-
-    Context "Tab complete tests" {
-
-        It "Tab completion works correctly for Listeners" {
-            $path = "wsman:\localhost\listener\listener"
-            $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
-            $l = Get-ChildItem WSMan:\localhost\Listener
-            $res.CompletionMatches.Count | Should Be $l.Count
-            for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++)
-            {
-                $res.CompletionMatches[$i].ListItemText | Should Be $l[$i].Name
-            }
-        }
-
-        It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
-            @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
-            @{path = ""; parameter = "-op"; expected = "OptionSet"},
-            @{path = ""; parameter = "-au"; expected = "Authentication"},
-            @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
-            @{path = ""; parameter = "-se"; expected = "SessionOption"},
-            @{path = ""; parameter = "-ap"; expected = "ApplicationName"},
-            @{path = ""; parameter = "-po"; expected = "Port"},
-            @{path = ""; parameter = "-u"; expected = "UseSSL"},
-            @{path = "localhost\plugin"; parameter = "-pl"; expected = "Plugin"},
-            @{path = "localhost\plugin"; parameter = "-sd"; expected = "SDKVersion"},
-            @{path = "localhost\plugin"; parameter = "-re"; expected = "Resource"},
-            @{path = "localhost\plugin"; parameter = "-ca"; expected = "Capability"},
-            @{path = "localhost\plugin"; parameter = "-xm"; expected = "XMLRenderingType"},
-            @{path = "localhost\plugin"; parameter = "-fi"; expected = @("FileName", "File")},
-            @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
-            @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
-            @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
-            @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
-            @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
-            @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
-        ) {
-            param($path, $parameter, $expected)
-            $script = "new-item wsman:\$path $parameter"
-            $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
-            $res.CompletionMatches.Count | Should Be $expected.Count
-            $completionOptions = ""
-            foreach ($completion in $res.CompletionMatches) {
-                $completionOptions += $completion.ListItemText
-            }
-            $completionOptions | Should Be ([string]::Join("", $expected))
-        }
-
-        It "Tab completion get dynamic parameters for initialization parameters" -Pending -TestCases @(
-            @{path = "localhost\Plugin\microsoft.powershell\InitializationParameters\"; parameter = "-pa"; expected = @("ParamName", "ParamValue")}
-        ) {
-            # https://github.com/PowerShell/PowerShell/issues/4744
-            # TODO: move to test cases above once working
-        }
-
     }
 
     Context "Get-Item tests" {
@@ -164,7 +110,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             (,$pluginXml.PluginConfiguration.Resources.Resource).Count | Should Be 1 # by default only Security resource should be there
             $resource = Get-ChildItem "$pluginPath\Resources" | Select-Object -First 1
             $resourceUri = Get-Item "$($resource.PSPath)\ResourceUri"
-            $resourceUri.Value | Should Be "http://schemas.microsoft.com/powershell/microsoft.powershell"
+            $resourceUri.Value | Should Be "http://schemas.microsoft.com/powershell/$($endpoint.name)"
             $securityContainer = Get-ChildItem "$pluginPath\Resources\$($resource.Name)\Security" | Select-Object -First 1
             $securityProperties = Get-ChildItem $securityContainer.PSPath
             $skippedAttributes = @("ParentResourceUri","xmlns") # these are added by the WSMan Config Provider but not in the original xml
@@ -273,7 +219,9 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         }
 
         It "Set-Item on plugin Security Resource '<property>' property with '<value>' should succeed" -TestCases @(
+            # truncated version of the default SDDL
             @{property="Sddl"; value="O:NSG:BAD:P(A;;GA;;;BA)"},
+            # default SDDL set by WinRM
             @{property="SDDL"; value="O:NSG:BAD:P(A;;GA;;;BA)(A;;GA;;;IU)(A;;GA;;;RM)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)"}
         ) {
             param($property, $value, $expected)
@@ -285,7 +233,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         It "Set-Item on plugin Security Resource '<property>' property with invalid '<value>' should fail" -TestCases @(
             @{property="Sddl"; value="foo"},
-            @{property="sDDL"; value="D:P(A;;GA;;;BA)"} # owner missing
+            @{property="sDDL"; value="D:P(A;;GA;;;BA)"} # truncated version of default SDDL with owner removed
         ) {
             param($property, $value, $expected)
             $resource = Get-ChildItem "$testPluginPath\Resources" | Select-Object -First 1
@@ -363,10 +311,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                         $property.Value | Should Be $listenerXml.Listener.$($property.Name)
                     }
                 }
-            }
-            finally {
                 Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Force
                 $newListener.PSPath | Should Not Exist
+            }
+            finally {
+                if (Test-Path "WSMan:\localhost\Listener\$listenerName") {
+                    Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Force
+                }
             }
         }
 
@@ -375,7 +326,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $password = ConvertTo-SecureString $testPass -AsPlainText -Force
                 $creds = [pscredential]::new($testUser, $password)
                 $plugin = New-Item -Plugin TestPlugin2 -UseSharedProcess -AutoRestart `
-                    -ProcessIdleTimeoutSec 120 -FileName ${env:windir}\system32\WindowsPowerShell\v1.0\pwrshsip.dll `
+                    -ProcessIdleTimeoutSec 120 -FileName $endpoint.Filename `
                     -SDKVersion 2 -Resource foo -Capability shell -XMLRenderingType text -Path WSMan:\localhost\plugin `
                     -RunAsCredential $creds
                 $expectedMissingProperties = @("InitializationParameters")
@@ -389,7 +340,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         It "New-Item and Remove-Item for a plugin using a file" {
             $fileXml = @"
-<PlugInConfiguration Name="TestPlugin2" Filename="%windir%\system32\pwrshplugin.dll" SDKVersion="2" XmlRenderingType="text" Enabled="false"
+<PlugInConfiguration Name="TestPlugin2" Filename="$($endpoint.Filename)" SDKVersion="2" XmlRenderingType="text" Enabled="false"
  Architecture="64" UseSharedProcess="true" ProcessIdleTimeoutSec="0" RunAsUser="" RunAsPassword="" AutoRestart="false" RunAsVirtualAccount="false"
  RunAsVirtualAccountGroups="" OutputBufferingMode="Block" xmlns="http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration">
     <InitializationParameters>
@@ -410,10 +361,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             try {
                 $plugin = New-Item -Path WSMan:\localhost\Plugin -File $testdrive\plugin.xml -Name TestPlugin2
                 Test-Plugin -Plugin $plugin
-            }
-            finally {
                 Remove-Item WSMan:\localhost\Plugin\TestPlugin2\
                 "WSMan:\localhost\Plugin\TestPlugin2\" | Should Not Exist
+            }
+            finally {
+                if (Test-Path "WSMan:\localhost\Plugin\TestPlugin2\") {
+                    Remove-Item "WSMan:\localhost\Plugin\TestPlugin2\" -Force
+                }
             }
         }
 
@@ -425,10 +379,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $properties = Get-ChildItem $resource.PSPath
                 ($properties | Where-Object { $_.Name -eq "ResourceUri" }).Value | Should Be "http://foo/"
                 ($properties | Where-Object { $_.Name -eq "Capability" })[0].Value | Should Be "shell"
-            }
-            finally {
                 Remove-Item $resource.PSPath
                 $resource.PSPath | Should Not Exist
+            }
+            finally {
+                if (Test-Path $resource.PSPath) {
+                    Remove-Item $resource.PSPath -Force
+                }
             }
         }
 
@@ -439,10 +396,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $parameterObj = Get-Item $parameter.PSPath
                 $parameterObj.Name | Should Be "foo"
                 $parameterObj.Value | Should Be "bar"
-            }
-            finally {
                 Remove-Item $parameter.PSPath
                 $parameter.PSPath | Should Not Exist
+            }
+            finally {
+                if (Test-Path $parameter.PSPath) {
+                    Remove-Item $parameter.PSPath -Force
+                }
             }
         }
 
@@ -456,10 +416,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $security.PSPath | Should Exist
                 $securityObj = Get-Item $security.PSPath
                 (Get-ChildItem $securityObj.PSPath | Where-Object { $_.Name -eq 'sddl' }).Value | Should Be $sddl
-            }
-            finally {
                 Remove-Item $security.PSPath
                 $security.PSPath | Should Not Exist
+            }
+            finally {
+                if (Test-Path $security.PSPath) {
+                    Remove-Item $security.PSPath -Force
+                }
             }
         }
     }
