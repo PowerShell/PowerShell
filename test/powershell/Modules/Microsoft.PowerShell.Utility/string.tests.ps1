@@ -10,7 +10,7 @@
             $fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
 
             $subDirName = Join-Path $TestDrive 'selectSubDir'
-            New-Item -Path $subDirName -ItemType Directory > $null
+            New-Item -Path $subDirName -ItemType Directory -Force > $null
             $pathWithoutWildcard = $TestDrive
             $pathWithWildcard = Join-Path $TestDrive '*'
 
@@ -30,11 +30,11 @@
         }
 
         It "Select-String does not throw on subdirectory (path without wildcard)" {
-            { select-string -Path  $pathWithoutWildcard "noExists" } | Should Not Throw
+            { select-string -Path  $pathWithoutWildcard "noExists" -ErrorAction Stop } | Should Not Throw
         }
 
         It "Select-String does not throw on subdirectory (path with wildcard)" {
-            { select-string -Path  $pathWithWildcard "noExists" } | Should Not Throw
+            { select-string -Path  $pathWithWildcard "noExists" -ErrorAction Stop } | Should Not Throw
         }
 
         It "LiteralPath with relative path" {

@@ -1347,7 +1347,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string filename in expandedPaths)
                 {
-                    if (System.IO.Directory.Exists(filename))
+                    if (Directory.Exists(filename))
                     {
                         continue;
                     }
