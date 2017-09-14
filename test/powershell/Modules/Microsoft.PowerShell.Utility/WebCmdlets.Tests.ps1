@@ -415,6 +415,12 @@ $redirectTests = @(
     @{redirectType = 'RedirectKeepVerb'; redirectedMethod='GET'} # Synonym for TemporaryRedirect
 )
 
+$PendingCertificateTest = $false
+# we can't check for Certificate on MacOS and Centos libcurl (currently 7.29.0) returns the following error:
+# The handler does not support client authentication certificates with this combination of libcurl (7.29.0) and its SSL backend ("NSS/3.21 Basic ECC")
+if ( $IsMacOS ) { $PendingCertificateTest = $true }
+if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
+
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
@@ -1222,9 +1228,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Status | Should Be 'FAILED'
         }
         
-        # Test skipped on macOS pending support for Client Certificate Authentication
+        # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
+        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
@@ -1799,9 +1805,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Status | Should Be 'FAILED'
         }
         
-        # Test skipped on macOS pending support for Client Certificate Authentication
+        # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
