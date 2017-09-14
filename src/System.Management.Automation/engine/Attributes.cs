@@ -1564,6 +1564,14 @@ namespace System.Management.Automation
         private static ConcurrentDictionary<Type, IValidateSetValuesGenerator> s_ValidValuesGeneratorCache = new ConcurrentDictionary<Type, IValidateSetValuesGenerator>();
 
         /// <summary>
+        /// If AllowAll==true 'ValidateElement' always pass all elements.
+        /// Useful if we need enable IntelliSense (TabComplete) but effectively disable validation
+        /// when a parameter can accept not only the listed values but also arbitrary.
+        /// Ex.: Get-Date -Format
+        /// </summary>
+        public bool AllowAll { get; set; } = false;
+
+        /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
         ///
         /// The item being validated and a text representation of the validation set
@@ -1623,6 +1631,11 @@ namespace System.Management.Automation
                             "ArgumentIsEmpty",
                             null,
                             Metadata.ValidateNotNullFailure);
+            }
+
+            if (AllowAll == true)
+            {
+                return;
             }
 
             string objString = element.ToString();
