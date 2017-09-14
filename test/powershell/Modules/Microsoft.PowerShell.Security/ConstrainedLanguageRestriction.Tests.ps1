@@ -3,11 +3,15 @@
 ## These are Windows platform only tests
 ##
 
+##
+## ----------
 ## Test Note:
 ## ----------
 ## Since these tests change session and system state (constrained language and system lockdown)
 ## they will all use try/finally blocks instead of Pester AfterEach/AfterAll to ensure session 
 ## and system state is restored.
+## Pester AfterEach, AfterAll is not reliable when the session is constrained language or locked down.
+##
 
 if ($IsWindows)
 {
@@ -117,7 +121,7 @@ try
         BeforeAll {
             $TestCasesBuiltIn = @(
                 @{testName = "Verify built-in function"; scriptblock = { Get-Verb } }
-                @{testName = "Verify build-in error variable"; scriptblock = { Write-Error SomeError -ErrorVariable ErrorOutput -ErrorAction SilentlyContinue; $ErrorOutput } }
+                @{testName = "Verify built-in error variable"; scriptblock = { Write-Error SomeError -ErrorVariable ErrorOutput -ErrorAction SilentlyContinue; $ErrorOutput} }
             )
         }
 
@@ -136,7 +140,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            ($result.Count -gt 0) | Should Be $true
+            $result.Count | Should BeGreaterThan 0
         }
     }
 
@@ -383,11 +387,11 @@ try
                 $restoreEAPreference = $ErrorActionPreference
                 $ErrorActionPreference = "Stop"
                 MyDebuggerFunction3
+                throw "No Exception!"
             }
             catch
             {
                 $exception = $_
-                throw "No Exception!"
             }
             finally
             {
@@ -884,6 +888,7 @@ try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -EnableConstrainedLanguageMode
 
+                # Scriptblock must be created inside constrained language.
                 $sb = [scriptblock]::Create($script)
                 & sb
                 throw "No Exception!"
@@ -905,11 +910,6 @@ try
 }
 finally
 {
-    if ($IsWindows)
-    {
-        Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
-    }
-
     if ($defaultParamValues -ne $null)
     {
         $Global:PSDefaultParameterValues = $defaultParamValues
