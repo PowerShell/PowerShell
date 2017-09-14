@@ -81,6 +81,22 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
 
 Describe "Get-Date" -Tags "CI" {
+    It "-Format FileDate works" {
+        Get-date -Date 0030-01-01T01:02:03.0004 -Format FileDate | Should Be "00300101"
+    }
+
+    It "-Format FileDateTime works" {
+        Get-date -Date 0030-01-01T01:02:03.0004 -Format FileDateTime | Should Be "00300101T0102030004"
+    }
+
+    It "-Format FileDateTimeUniversal works" {
+        Get-date -Date 0030-01-01T01:02:03.0004z -Format FileDateTimeUniversal | Should Be "00300101T0102030004Z"
+    }
+
+    It "-Format FileDateTimeUniversal works" {
+        Get-date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should Be "00300101Z"
+    }
+
     It "Should have colons when ToString method is used" {
         (Get-Date).ToString().Contains(":")                   | Should be $true
         (Get-Date -DisplayHint Time).ToString().Contains(":") | Should be $true
