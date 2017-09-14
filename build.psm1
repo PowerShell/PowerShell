@@ -160,14 +160,6 @@ if ( $env:PSModulePath -notcontains $TestModulePath ) {
     $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
-#
-# At the moment, we just support x64 builds. When we support x86 builds, this
-# check may need to verify the SDK for the specified architecture.
-#
-function Get-Win10SDKBinDir {
-    return "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
-}
-
 function Test-Win10SDK {
     # The Windows 10 SDK is installed to "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64",
     # but the directory may exist even if the SDK has not been installed.
@@ -292,8 +284,6 @@ function Start-PSBuild {
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("win7-x64",
                      "win7-x86",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
                      "linux-x64",
                      "linux-arm")]
@@ -585,8 +575,6 @@ function New-PSOptions {
         [ValidateSet("",
                      "win7-x86",
                      "win7-x64",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
                      "linux-x64",
                      "linux-arm")]
@@ -1860,8 +1848,6 @@ function Start-CrossGen {
         [Parameter(Mandatory=$true)]
         [ValidateSet("win7-x86",
                      "win7-x64",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
                      "linux-x64",
                      "linux-arm")]

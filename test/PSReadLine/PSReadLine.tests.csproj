@@ -6,7 +6,7 @@
     <Description>PSReadLine basic tests</Description>
     <AssemblyName>TestPSReadLine</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>win7-x86;win7-x64;win10-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
