@@ -1,8 +1,9 @@
 . "$psscriptroot/TestRunner.ps1"
 
 $assemblyName = "Microsoft.PowerShell.Security"
-# this list is taken from ${AssemblyName}.csproj
-# excluded resources
+
+# excluded resources, taken from the 'EmbeddedResource Remove'
+# entries in the csproj for the assembly
 $excludeList = @("SecurityMshSnapinResources.resx")
 # load the module since it isn't there by default
 import-module Microsoft.PowerShell.Security

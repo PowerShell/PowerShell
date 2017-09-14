@@ -1,8 +1,9 @@
 . "$psscriptroot/TestRunner.ps1"
 
 $assemblyName = "Microsoft.Management.Infrastructure.CimCmdlets"
-# this list is taken from ${AssemblyName}.csproj
-# excluded resources
+
+# excluded resources, taken from the 'EmbeddedResource Remove'
+# entries in the csproj for the assembly
 $excludeList = @()
 # load the module since it isn't there by default
 import-module CimCmdlets

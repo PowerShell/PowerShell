@@ -1,10 +1,12 @@
 . "$psscriptroot/TestRunner.ps1"
 
 $assemblyName = "Microsoft.WSMan.Management"
-# this list is taken from ${AssemblyName}.csproj
-# excluded resources
+
+# excluded resources, taken from the 'EmbeddedResource Remove'
+# entries in the csproj for the assembly
 $excludeList = @()
 # load the module since it isn't there by default
+import-module Microsoft.WSMan.Management
 
 
 try {

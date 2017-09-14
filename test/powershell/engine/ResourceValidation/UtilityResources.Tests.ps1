@@ -1,7 +1,8 @@
 . "$psscriptroot/TestRunner.ps1"
 $AssemblyName = "Microsoft.PowerShell.Commands.Utility"
-# this list is taken from ${AssemblyName}.csproj
-# excluded resources
+
+# excluded resources, taken from the 'EmbeddedResource Remove'
+# entries in the csproj for the assembly
 $excludeList = "CoreMshSnapinResources.resx",
     "ErrorPackageRemoting.resx",
     "FormatAndOut_out_gridview.resx",
