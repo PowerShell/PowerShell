@@ -111,7 +111,6 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
     }
 
     It "Set-Service can change credentials of a service" {
-        param()
         try {
             $startUsername = "user1"
             $endUsername = "user2"
