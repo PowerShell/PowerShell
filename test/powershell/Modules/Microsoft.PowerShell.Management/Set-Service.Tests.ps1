@@ -112,9 +112,9 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
 
     It "Set-Service can create a new service called '<name>' and change the credentials" -TestCases @(
         @{name = "testsetcredential"; 
-            startCredential = [System.Management.Automation.PSCredential]::new("username", 
+            startCredential = [System.Management.Automation.PSCredential]::new(".\Guest", 
                 (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)); 
-            endCredential = [System.Management.Automation.PSCredential]::new("username2", 
+            endCredential = [System.Management.Automation.PSCredential]::new(".\Administrator", 
                 (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force))}
     ) {
         param($name, $startCredential, $endCredential)
