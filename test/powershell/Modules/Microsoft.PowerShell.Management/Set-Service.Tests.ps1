@@ -22,15 +22,18 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         @{parameter = "Status"      ; value = "Running"},
         @{parameter = "Status"      ; value = "Stopped"},
         @{parameter = "Status"      ; value = "Paused"},
-        @{parameter = "InputObject" ; value = (Get-Service | Select-Object -First 1)},
+        @{parameter = "InputObject" ; script = {Get-Service | Select-Object -First 1}},
         # cmdlet inherits this property, but it's not exposed as parameter so it should be $null
         @{parameter = "Include"     ; value = "foo", "bar" ; expectedNull = $true},
         # cmdlet inherits this property, but it's not exposed as parameter so it should be $null
         @{parameter = "Exclude"     ; value = "foo", "bar" ; expectedNull = $true}
     ) {
-        param($parameter, $value, $expectedNull)
+        param($parameter, $value, $script, $expectedNull)
 
         $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
+        if ($script -ne $Null) {
+            $value = & $script
+        }
         $setServiceCommand.$parameter = $value
         if ($expectedNull -eq $true) {
             $setServiceCommand.$parameter | Should BeNullOrEmpty
@@ -42,7 +45,7 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
 
     It "Set-Service parameter validation for invalid values: <script>" -TestCases @(
         @{
-            script  = {Set-Service foo -StartupType bar};
+            script  = {Set-Service foo -StartupType bar -ErrorAction Stop};
             errorid = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.SetServiceCommand"
         }
     ) {
@@ -58,6 +61,7 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
     ) {
         param($parameter, $value, $expected)
         $currentService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
+        $originalStartupType = (Get-Service -Name spooler).StartType
         try {
             $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
             $setServiceCommand.Name = "Spooler"
@@ -76,7 +80,7 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         }
         finally {
             if ($parameter -eq "StartupType") {
-                $setServiceCommand.StartupType = $currentService.StartMode
+                $setServiceCommand.StartupType = $originalStartupType
             }
             else {
                 $setServiceCommand.$parameter = $currentService.$parameter
@@ -158,17 +162,23 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         }
     }
 
-    It "New-Service with bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
-        @{name = 'credtest'    ; parameter = "Credential" ; value = (
+    It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
+        @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
             [System.Management.Automation.PSCredential]::new("username", 
-            (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
-        },
-        # This test case fails due to #4803. Disabled for now.
-        # @{name = 'badstarttype'; parameter = "StartupType"; value = "System"},
-        @{name = 'winmgmt'     ; parameter = "DisplayName"; value = "foo"}
+            (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)));
+            errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
+        @{cmdlet="New-Service"; name = 'badstarttype'; parameter = "StartupType"; value = "System";
+            errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
+        @{cmdlet="New-Service"; name = 'winmgmt'     ; parameter = "DisplayName"; value = "foo";
+            errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
+        @{cmdlet="Set-Service"; name = 'winmgmt'     ; parameter = "StartupType"; value = "Boot";
+            errorid = "CouldNotSetService,Microsoft.PowerShell.Commands.SetServiceCommand"}
     ) {
-        param($name, $parameter, $value)
-        $parameters = @{$parameter = $value; Name = $name; Binary = "$PSHOME\powershell.exe"; ErrorAction = "Stop"}
-        { New-Service @parameters } | ShouldBeErrorId "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"
+        param($cmdlet, $name, $parameter, $value, $errorid)
+        $parameters = @{$parameter = $value; Name = $name; ErrorAction = "Stop"}
+        if ($cmdlet -eq "New-Service") {
+            $parameters += @{Binary = "$PSHOME\powershell.exe"}; 
+        }
+        { & $cmdlet @parameters } | ShouldBeErrorId $errorid
     }
 }
