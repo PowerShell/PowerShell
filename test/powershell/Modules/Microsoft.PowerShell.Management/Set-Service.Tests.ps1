@@ -111,35 +111,39 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
     }
 
     It "Set-Service can change credentials of a service" -TestCases @(
-        @{name = "testsetcredential"; 
-            startCredential = [System.Management.Automation.PSCredential]::new(".\Guest", 
-                (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)); 
-            endCredential = [System.Management.Automation.PSCredential]::new(".\Administrator", 
-                (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force))}
+        @{name = "testsetcredential"; startUsername = "user1"; endUsername = "user2"}
     ) {
-        param($name, $startCredential, $endCredential)
+        param($name, $startUsername, $endUsername)
         try {
+            $testPass = "Secret123!"
+            $null = net user $startUsername $testPass /add
+            $null = net user $endUsername $testPass /add
+            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
+            $creds = [pscredential]::new(".\$startUsername", $password)
             $parameters = @{
                 Name           = $name;
                 BinaryPathName = "$PSHOME\powershell.exe";
                 StartupType    = "Manual";
-                Credential     = $startCredential
+                Credential     = $creds
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
             $service = Get-CimInstance Win32_Service -Filter "name='$name'"
             $service | Should Not BeNullOrEmpty
-            $service.StartName | Should Be $startCredential.UserName
-            Set-Service -Name $name -Credential $endCredential
+            $service.StartName | Should Be $creds.UserName
+            $creds = [pscredential]::new(".\$endUsername", $password)
+            Set-Service -Name $name -Credential $creds
             $service = Get-CimInstance Win32_Service -Filter "name='$name'"
             $service | Should Not BeNullOrEmpty
-            $service.StartName | Should Be $endCredential.UserName
+            $service.StartName | Should Be $creds.UserName
         }
         finally {
             $service = Get-CimInstance Win32_Service -Filter "name='$name'" -ErrorAction SilentlyContinue
             if ($service -ne $null) {
                 $service | Remove-CimInstance -ErrorAction SilentlyContinue
             }
+            $null = net user $startUsername /delete
+            $null = net user $endUsername /delete
         }
     }
 
