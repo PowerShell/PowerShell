@@ -1987,6 +1987,17 @@ namespace System.Management.Automation
                             }
                         }
                     }
+                    else if (argumentCompleterAttribute.CompleteStrings != null)
+                    {
+                        var customResults = argumentCompleterAttribute.CompleteStrings.CompleteArgument(commandName, parameterName,
+                                context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
+                        if (customResults != null)
+                        {
+                            result.AddRange(customResults);
+                            result.Add(CompletionResult.Null);
+                            return;
+                        }
+                    }
                     else
                     {
                         if (InvokeScriptArgumentCompleter(

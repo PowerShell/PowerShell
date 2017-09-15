@@ -30,6 +30,8 @@ namespace System.Management.Automation
         /// <summary/>
         public ScriptBlock ScriptBlock { get; private set; }
 
+        internal StringArrayArgumentCompleter CompleteStrings { get; private set; } = null;
+
         /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
@@ -53,6 +55,27 @@ namespace System.Management.Automation
             }
 
             ScriptBlock = scriptBlock;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ArgumentCompleterAttribute class
+        /// </summary>
+        /// <param name="completeStrings">list of complete values</param>
+        /// <exception cref="ArgumentNullException">for null arguments</exception>
+        /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
+        public ArgumentCompleterAttribute(params string[] completeStrings)
+        {
+            if (completeStrings == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("completeStrings");
+            }
+
+            if (completeStrings.Length == 0)
+            {
+                throw PSTraceSource.NewArgumentOutOfRangeException("completeStrings", completeStrings);
+            }
+
+            CompleteStrings = new StringArrayArgumentCompleter(completeStrings);
         }
     }
 
@@ -155,6 +178,28 @@ namespace System.Management.Automation
                 }
 
                 completerDictionary[key] = ScriptBlock;
+            }
+        }
+    }
+
+    internal class StringArrayArgumentCompleter : IArgumentCompleter
+    {
+        private string[] _completeStrings;
+
+        public StringArrayArgumentCompleter(params string[] completeStrings)
+        {
+            _completeStrings = completeStrings;
+        }
+        public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        {
+            var wordToCompletePattern = WildcardPattern.Get(string.IsNullOrWhiteSpace(wordToComplete) ? "*" : wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            foreach (var str in _completeStrings)
+            {
+                if (wordToCompletePattern.IsMatch(str))
+                {
+                    yield return new CompletionResult(str, str, CompletionResultType.Text, str);
+                }
             }
         }
     }
