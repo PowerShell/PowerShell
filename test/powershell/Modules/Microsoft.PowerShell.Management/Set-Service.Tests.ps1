@@ -110,7 +110,7 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         $newServiceCommand.$parameter | Should Be $value
     }
 
-    It "Set-Service can create a new service called '<name>' and change the credentials" -TestCases @(
+    It "Set-Service can change credentials of a service" -TestCases @(
         @{name = "testsetcredential"; 
             startCredential = [System.Management.Automation.PSCredential]::new(".\Guest", 
                 (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)); 
@@ -136,9 +136,9 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
             $service.StartName | Should Be $endCredential.UserName
         }
         finally {
-            $service = Get-CimInstance Win32_Service -Filter "name='$name'"
+            $service = Get-CimInstance Win32_Service -Filter "name='$name'" -ErrorAction SilentlyContinue
             if ($service -ne $null) {
-                $service | Remove-CimInstance
+                $service | Remove-CimInstance -ErrorAction SilentlyContinue
             }
         }
     }
