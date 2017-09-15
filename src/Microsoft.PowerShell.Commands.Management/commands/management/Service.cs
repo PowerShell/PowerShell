@@ -1466,6 +1466,19 @@ namespace Microsoft.PowerShell.Commands
         }
         internal string displayName = null;
 
+        /// <summary>
+        /// Account under which the service should run
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        [Credential()]
+        public PSCredential Credential
+        {
+            get { return credential; }
+            set { credential = value; }
+        }
+        internal PSCredential credential = null;
+
 
 
         /// <summary>
@@ -1589,6 +1602,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ServiceController service = null;
             string ServiceComputerName = null;
+            IntPtr password = IntPtr.Zero;
             foreach (string computer in ComputerName)
             {
                 bool objServiceShouldBeDisposed = false;
@@ -1679,9 +1693,9 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
 
-                        // modify startup type or display name
+                        // modify startup type or display name or credential
                         if (!String.IsNullOrEmpty(DisplayName)
-                            || (ServiceStartMode)(-1) != StartupType)
+                            || (ServiceStartMode)(-1) != StartupType || null != Credential) 
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                             switch (StartupType)
@@ -1701,6 +1715,14 @@ namespace Microsoft.PowerShell.Commands
                                         "bad StartupType");
                                     break;
                             }
+
+                            // set up the Credential parameter
+                            string username = null;
+                            if (null != Credential)
+                            {
+                                username = Credential.UserName;
+                                password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
+                            }
                             bool succeeded = NativeMethods.ChangeServiceConfigW(
                                 hService,
                                 NativeMethods.SERVICE_NO_CHANGE,
@@ -1710,8 +1732,8 @@ namespace Microsoft.PowerShell.Commands
                                 null,
                                 IntPtr.Zero,
                                 null,
-                                null,
-                                IntPtr.Zero,
+                                username,
+                                password,
                                 DisplayName
                                 );
                             if (!succeeded)
@@ -1847,6 +1869,10 @@ namespace Microsoft.PowerShell.Commands
                 } //End try
                 finally
                 {
+                    if (IntPtr.Zero != password)
+                    {
+                        Marshal.ZeroFreeCoTaskMemUnicode(password);
+                    }
                     if (objServiceShouldBeDisposed)
                     {
                         service.Dispose();
