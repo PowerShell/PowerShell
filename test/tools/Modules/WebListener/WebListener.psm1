@@ -117,6 +117,7 @@ function Get-WebListenerUrl {
             'Get',
             'Home',
             'Multipart',
+            'Redirect/3',
             '/'
         )]
         [String]$Test
