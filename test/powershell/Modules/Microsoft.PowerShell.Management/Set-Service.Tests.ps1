@@ -110,6 +110,39 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         $newServiceCommand.$parameter | Should Be $value
     }
 
+    It "Set-Service can create a new service called '<name>' and change the credentials" -TestCases @(
+        @{name = "testsetcredential"; 
+            startCredential = [System.Management.Automation.PSCredential]::new("username", 
+                (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)); 
+            endCredential = [System.Management.Automation.PSCredential]::new("username2", 
+                (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force))}
+    ) {
+        param($name, $startCredential, $endCredential)
+        try {
+            $parameters = @{
+                Name           = $name;
+                BinaryPathName = "$PSHOME\powershell.exe";
+                StartupType    = "Manual";
+                Credential     = $startCredential
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-CimInstance Win32_Service -Filter "name='$name'"
+            $service | Should Not BeNullOrEmpty
+            $service.StartName | Should Be $startCredential.UserName
+            Set-Service -Name $name -Credential $endCredential
+            $service = Get-CimInstance Win32_Service -Filter "name='$name'"
+            $service | Should Not BeNullOrEmpty
+            $service.StartName | Should Be $endCredential.UserName
+        }
+        finally {
+            $service = Get-CimInstance Win32_Service -Filter "name='$name'"
+            if ($service -ne $null) {
+                $service | Remove-CimInstance
+            }
+        }
+    }
+
     It "New-Service can create a new service called '<name>'" -TestCases @(
         @{name = "testautomatic"; startupType = "Automatic"; description = "foo" ; displayname = "one"},
         @{name = "testmanual"   ; startupType = "Manual"   ; description = "bar" ; displayname = "two"},
