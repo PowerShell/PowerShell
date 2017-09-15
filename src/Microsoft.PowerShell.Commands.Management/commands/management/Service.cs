@@ -1472,12 +1472,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter]
         [Credential()]
-        public PSCredential Credential
-        {
-            get { return credential; }
-            set { credential = value; }
-        }
-        internal PSCredential credential = null;
+        public PSCredential Credential { get; set; }
 
 
 
@@ -1693,7 +1688,7 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
 
-                        // modify startup type or display name or credential
+                        // Modify startup type or display name or credential
                         if (!String.IsNullOrEmpty(DisplayName)
                             || (ServiceStartMode)(-1) != StartupType || null != Credential) 
                         {
@@ -1716,7 +1711,6 @@ namespace Microsoft.PowerShell.Commands
                                     break;
                             }
 
-                            // set up the Credential parameter
                             string username = null;
                             if (null != Credential)
                             {
