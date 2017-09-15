@@ -1158,6 +1158,20 @@ namespace System.Management.Automation
             return new Pipe(context, PipelineProcessor);
         }
 
+        /// <summary>
+        /// After file redirection is done, we need to call 'DoComplete' on the pipeline processor,
+        /// so that 'EndProcessing' of Out-File can be called to wrap up the file write operation.
+        /// </summary>
+        /// <remark>
+        /// 'StartStepping' is called after creating the pipeline processor.
+        /// 'Step' is called when an object is added to the pipe created with the pipeline processor.
+        /// </remark>
+        internal void CallDoCompleteForExpression()
+        {
+            Diagnostics.Assert(PipelineProcessor != null, "PipelineProcessor should never be null when running this method");
+            PipelineProcessor.DoComplete();
+        }
+
         private bool _disposed;
 
         public void Dispose()
