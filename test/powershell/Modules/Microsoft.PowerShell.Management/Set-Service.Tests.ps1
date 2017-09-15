@@ -129,19 +129,14 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
             $service = Get-CimInstance Win32_Service -Filter "name='$name'"
-            $service | Should Not BeNullOrEmpty
-            $service.StartName | Should Be $creds.UserName
+            $service.StartName | Should BeExactly $creds.UserName
             $creds = [pscredential]::new(".\$endUsername", $password)
             Set-Service -Name $name -Credential $creds
             $service = Get-CimInstance Win32_Service -Filter "name='$name'"
-            $service | Should Not BeNullOrEmpty
-            $service.StartName | Should Be $creds.UserName
+            $service.StartName | Should BeExactly $creds.UserName
         }
         finally {
-            $service = Get-CimInstance Win32_Service -Filter "name='$name'" -ErrorAction SilentlyContinue
-            if ($service -ne $null) {
-                $service | Remove-CimInstance -ErrorAction SilentlyContinue
-            }
+            Get-CimInstance Win32_Service -Filter "name='$name'" | Remove-CimInstance -ErrorAction SilentlyContinue
             $null = net user $startUsername /delete
             $null = net user $endUsername /delete
         }
