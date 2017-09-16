@@ -1168,8 +1168,11 @@ namespace System.Management.Automation
         /// </remark>
         internal void CallDoCompleteForExpression()
         {
-            Diagnostics.Assert(PipelineProcessor != null, "PipelineProcessor should never be null when running this method");
-            PipelineProcessor.DoComplete();
+            // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
+            if (PipelineProcessor != null)
+            {
+                PipelineProcessor.DoComplete();
+            }
         }
 
         private bool _disposed;
