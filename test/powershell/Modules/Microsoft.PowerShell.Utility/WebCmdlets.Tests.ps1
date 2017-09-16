@@ -494,20 +494,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest -MaximumRedirection" {
 
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 4 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 4"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.Host | Should Match $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -1355,18 +1357,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -MaximumRedirection" {
 
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 4 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 4"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.Host | Should Match "httpbin.org"
+        $result.Output.headers.Host | Should Match $uri.Authority
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Validate Invoke-RestMethod error for -MaximumRedirection" {
 
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
