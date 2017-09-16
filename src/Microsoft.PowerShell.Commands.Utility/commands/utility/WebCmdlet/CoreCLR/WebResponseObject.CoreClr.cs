@@ -31,27 +31,27 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if(headers == null)
+                if(_headers == null)
                 {
-                    headers = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
+                    _headers = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
                     foreach (var entry in BaseResponse.Headers)
                     {
-                        headers[entry.Key] = entry.Value;
+                        _headers[entry.Key] = entry.Value;
                     }
                     if (BaseResponse.Content != null)
                     {
                         foreach (var entry in BaseResponse.Content.Headers)
                         {
-                            headers[entry.Key] = entry.Value;
+                            _headers[entry.Key] = entry.Value;
                         }
                     }
                 }
 
-                return headers;
+                return _headers;
             }
         }
 
-        private Dictionary<string, IEnumerable<string>> headers = null;
+        private Dictionary<string, IEnumerable<string>> _headers = null;
         
         /// <summary>
         /// gets the RelationLink property
