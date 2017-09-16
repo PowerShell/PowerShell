@@ -117,7 +117,8 @@ Describe "File redirection should have 'DoComplete' called on the underlying pip
         $outputContent = Get-Content $outputFile -Raw
         $outputContent.Trim() | Should Be '1234'
 
-        $errorContent = Get-Content $otherStreamFile -Raw
+        $errorContent = Get-Content $otherStreamFile | ForEach-Object { $_.Trim() }
+        $errorContent = $errorContent -join ""
         $errorContent | Should Match "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
     }
 }
