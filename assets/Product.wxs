@@ -24,7 +24,7 @@
     <Package Id="*" Keywords="Installer" Platform="$(var.ProductTargetArchitecture)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
 
     <!-- Add PowerShell icon for executable -->
-    <Icon Id="PowerShellExe.ico" SourceFile="assets\Powershell_256.ico" />
+    <Icon Id="PowerShellExe.ico" SourceFile="assets\Avatar_256.ico" />
 
     <!-- Add PowerShell icon in Add/Remove Programs -->
     <Property Id="ARPPRODUCTICON" Value="PowerShellExe.ico" />
