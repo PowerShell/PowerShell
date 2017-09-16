@@ -6,9 +6,8 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         if ($IsWindows) {
             $badCredentialError = 1326
-            $endpoint = & "$PSHOME\Install-PowerShellRemoting.ps1"
-            $pluginXml = [xml](winrm g winrm/config/plugin?name=$($endpoint.name) -format:xml)
-            $pluginPath = "WSMan:\localhost\Plugin\$($endpoint.name)"
+            $pluginXml = [xml](winrm g winrm/config/plugin?name=microsoft.powershell -format:xml)
+            $pluginPath = "WSMan:\localhost\Plugin\microsoft.powershell"
             $testPluginXml = [xml]($pluginXml.OuterXml)
             $testPluginXml.PlugInConfiguration.Name = "TestPlugin"
             $testPluginXml.PlugInConfiguration.RemoveAttribute("xml:lang")
@@ -110,7 +109,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             (,$pluginXml.PluginConfiguration.Resources.Resource).Count | Should Be 1 # by default only Security resource should be there
             $resource = Get-ChildItem "$pluginPath\Resources" | Select-Object -First 1
             $resourceUri = Get-Item "$($resource.PSPath)\ResourceUri"
-            $resourceUri.Value | Should Be "http://schemas.microsoft.com/powershell/$($endpoint.name)"
+            $resourceUri.Value | Should Be "http://schemas.microsoft.com/powershell/microsoft.powershell"
             $securityContainer = Get-ChildItem "$pluginPath\Resources\$($resource.Name)\Security" | Select-Object -First 1
             $securityProperties = Get-ChildItem $securityContainer.PSPath
             $skippedAttributes = @("ParentResourceUri","xmlns") # these are added by the WSMan Config Provider but not in the original xml
@@ -326,7 +325,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $password = ConvertTo-SecureString $testPass -AsPlainText -Force
                 $creds = [pscredential]::new($testUser, $password)
                 $plugin = New-Item -Plugin TestPlugin2 -UseSharedProcess -AutoRestart `
-                    -ProcessIdleTimeoutSec 120 -FileName $endpoint.Filename `
+                    -ProcessIdleTimeoutSec 120 -FileName "${env:windir}\system32\pwrshplugin.dll" `
                     -SDKVersion 2 -Resource foo -Capability shell -XMLRenderingType text -Path WSMan:\localhost\plugin `
                     -RunAsCredential $creds
                 $expectedMissingProperties = @("InitializationParameters")
@@ -340,7 +339,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         It "New-Item and Remove-Item for a plugin using a file" {
             $fileXml = @"
-<PlugInConfiguration Name="TestPlugin2" Filename="$($endpoint.Filename)" SDKVersion="2" XmlRenderingType="text" Enabled="false"
+<PlugInConfiguration Name="TestPlugin2" Filename="${env:windir}\system32\pwrshplugin.dll" SDKVersion="2" XmlRenderingType="text" Enabled="false"
  Architecture="64" UseSharedProcess="true" ProcessIdleTimeoutSec="0" RunAsUser="" RunAsPassword="" AutoRestart="false" RunAsVirtualAccount="false"
  RunAsVirtualAccountGroups="" OutputBufferingMode="Block" xmlns="http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration">
     <InitializationParameters>
