@@ -4,6 +4,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Globalization;
 
@@ -15,6 +17,24 @@ namespace Microsoft.PowerShell.Commands
         {
             string characterSet = response.Content.Headers.ContentType.CharSet;
             return characterSet;
+        }
+        
+        internal static Dictionary<string, IEnumerable<string>> GetHeadersDictionary(HttpResponseMessage response)
+        {
+            var headers = new Dictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
+            foreach (var entry in response.Headers)
+            {
+                headers[entry.Key] = entry.Value;
+            }
+            if (response.Content != null)
+            {
+                foreach (var entry in response.Content.Headers)
+                {
+                    headers[entry.Key] = entry.Value;
+                }
+            }
+
+            return headers;
         }
 
         internal static string GetProtocol(HttpResponseMessage response)
