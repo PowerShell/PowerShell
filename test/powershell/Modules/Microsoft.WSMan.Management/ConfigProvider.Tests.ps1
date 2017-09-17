@@ -23,7 +23,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
     }
 
     AfterAll {
-        $PSDefaultParameterValues = $originalDefaultParameterValues
+        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
         if ($IsWindows) {
             $null = winrm d winrm/config/plugin?Name=TestPlugin
             $null = net user $testUser /DELETE
@@ -32,10 +32,10 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
     Function Test-Plugin($plugin, $expectedMissingProperties, $expectedMissingAttributes) {
         $plugin.PSPath | Should Exist
-        $plugin | Should Not BeNullOrEmpty
         $testPluginXml = [xml](winrm g winrm/config/plugin?name=$($plugin.Name) -format:xml)
         $pluginProperties = Get-ChildItem $plugin.PSPath
-        $pluginProperties.Count | Should Be (($testPluginXml.PluginConfiguration | Get-Member -Type Properties).Count + $expectedMissingProperties.Count - $expectedMissingAttributes.Count)
+        $xmlElementCount = ($testPluginXml.PluginConfiguration | Get-Member -Type Properties).Count + $expectedMissingProperties.Count - $expectedMissingAttributes.Count
+        $pluginProperties.Count | Should BeExactly $xmlElementCount
         foreach ($pluginProperty in $pluginProperties) {
             if ($pluginProperty.Type -eq "System.String") {
                 $pluginProperty.Value | Should Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
@@ -58,8 +58,8 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             { Get-PSDrive -Name wsman -ErrorAction Stop } | ShouldBeErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
             $wsmanDrive2 = $wsmanDrive | New-PSDrive -PSProvider WSMan
             $wsmanDrive2 | Should BeOfType System.Management.Automation.PSDriveInfo
-            $wsmanDrive2.Name | Should Be "WSMan"
-            $wsmanDrive2.Provider.Name | Should Be "WSMan"
+            $wsmanDrive2.Name | Should BeExactly "WSMan"
+            $wsmanDrive2.Provider.Name | Should BeExactly "WSMan"
         }
 
         It "WSMan Config Provider starts WinRM if it is stopped" {
@@ -209,12 +209,12 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         It "Set-Item on plugin Resource '<property>' property with '<value>' should succeed" -TestCases @(
             @{property="SupportsOptions"; value=$false; expected="False"},
-            @{property="sUPPORTSoPTIONS"; value=$true; expected="true"}
+            @{property="sUPPORTSoPTIONS"; value=$true; expected="True"}
         ) {
             param($property, $value, $expected)
             $resource = Get-ChildItem "$testPluginPath\Resources" | Select-Object -First 1
             Set-Item "$($resource.PSPath)\$property" $value -WarningAction SilentlyContinue
-            (Get-Item "$($resource.PSPath)\$property").Value | Should Be $expected
+            (Get-Item "$($resource.PSPath)\$property").Value | Should BeExactly $expected
         }
 
         It "Set-Item on plugin Security Resource '<property>' property with '<value>' should succeed" -TestCases @(
@@ -284,16 +284,21 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             @{name=$env:computername;expected=$env:computername},
             @{name="${env:computername}\";expected=$env:computername}
         ) {
-            param($name,$expected)
-            $connections = Get-ChildItem wsman:\
-            $newItem = New-Item WSMan:\$name
-            "WSMan:\$name" | Should Exist
-            (Get-ChildItem wsman:\).Count | Should Be ($connections.Count + 1)
-            # not a .Net type so can't use BeOfType
-            $newItem.PSObject.TypeNames[0] | Should Be "Microsoft.WSMan.Management.WSManConfigContainerElement#ComputerLevel"
-            $newItem.Name | Should Be $expected
-            Remove-Item WSMan:\$name
-            "WSMan:\$name" | Should Not Exist
+            param($name, $expected)
+            try {
+                $connections = Get-ChildItem wsman:\
+                $newItem = New-Item WSMan:\$name
+                "WSMan:\$name" | Should Exist
+                (Get-ChildItem wsman:\).Count | Should Be ($connections.Count + 1)
+                # not a .Net type so can't use BeOfType
+                $newItem.PSObject.TypeNames[0] | Should Be "Microsoft.WSMan.Management.WSManConfigContainerElement#ComputerLevel"
+                $newItem.Name | Should Be $expected
+                Remove-Item WSMan:\$name
+                "WSMan:\$name" | Should Not Exist
+            }
+            finally {
+                Remove-Item WSMan:\$name -Force -ErrorAction SilentlyContinue
+            }
         }
 
         It "New-Item and Remove-Item for a listener" {
@@ -314,9 +319,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $newListener.PSPath | Should Not Exist
             }
             finally {
-                if (Test-Path "WSMan:\localhost\Listener\$listenerName") {
-                    Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Force
-                }
+                Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -330,10 +333,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                     -RunAsCredential $creds
                 $expectedMissingProperties = @("InitializationParameters")
                 Test-Plugin -Plugin $plugin -expectedMissingProperties $expectedMissingProperties
-            }
-            finally {
                 Remove-Item WSMan:\localhost\Plugin\TestPlugin2\
                 "WSMan:\localhost\Plugin\TestPlugin2" | Should Not Exist
+            }
+            finally {
+                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -364,9 +368,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 "WSMan:\localhost\Plugin\TestPlugin2\" | Should Not Exist
             }
             finally {
-                if (Test-Path "WSMan:\localhost\Plugin\TestPlugin2\") {
-                    Remove-Item "WSMan:\localhost\Plugin\TestPlugin2\" -Force
-                }
+                Remove-Item "WSMan:\localhost\Plugin\TestPlugin2\" -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -382,9 +384,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $resource.PSPath | Should Not Exist
             }
             finally {
-                if (Test-Path $resource.PSPath) {
-                    Remove-Item $resource.PSPath -Force
-                }
+                Remove-Item $resource.PSPath -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -399,9 +399,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $parameter.PSPath | Should Not Exist
             }
             finally {
-                if (Test-Path $parameter.PSPath) {
-                    Remove-Item $parameter.PSPath -Force
-                }
+                Remove-Item $parameter.PSPath -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -419,9 +417,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $security.PSPath | Should Not Exist
             }
             finally {
-                if (Test-Path $security.PSPath) {
-                    Remove-Item $security.PSPath -Force
-                }
+                Remove-Item $security.PSPath -Force -ErrorAction SilentlyContinue
             }
         }
     }

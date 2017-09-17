@@ -1015,16 +1015,16 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     }
 
     AfterAll {
-        $PSDefaultParameterValues = $originalDefaultParameterValues
+        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Tab completion works correctly for Listeners" {
         $path = "wsman:\localhost\listener\listener"
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
-        $l = Get-ChildItem WSMan:\localhost\Listener
-        $res.CompletionMatches.Count | Should Be $l.Count
+        $listener = Get-ChildItem WSMan:\localhost\Listener
+        $res.CompletionMatches.Count | Should Be $listener.Count
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $res.CompletionMatches[$i].ListItemText | Should Be $l[$i].Name
+            $res.CompletionMatches[$i].ListItemText | Should Be $listener[$i].Name
         }
     }
 
