@@ -158,6 +158,7 @@ else
     $pesterParam = @{ 
         'binDir'   = $output 
         'PassThru' = $true
+        'Terse'    = $true
     }
 
     if ($isFullBuild) {

@@ -842,6 +842,7 @@ function Start-PSPester {
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
         [switch]$Quiet,
+        [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
         [switch]$IncludeFailingTest
@@ -883,6 +884,10 @@ function Start-PSPester {
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
+    if ($Terse)
+    {
+        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+    }
 
     # Autoload (in subprocess) temporary modules used in our tests
     $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
@@ -925,6 +930,49 @@ function Start-PSPester {
 
     Write-Verbose $Command
 
+    $script:nonewline = $true
+    $script:inerror = $false
+    function Write-Terse([string] $line)
+    {
+        $trimmedline = $line.Trim()
+        if ($trimmedline.StartsWith("[+]")) {
+            Write-Host "+" -NoNewline -ForegroundColor Green
+            $script:nonewline = $true
+            $script:inerror = $false
+        }
+        elseif ($trimmedline.StartsWith("[?]")) {
+            Write-Host "?" -NoNewline -ForegroundColor Cyan
+            $script:nonewline = $true
+            $script:inerror = $false
+        }
+        elseif ($trimmedline.StartsWith("[!]")) {
+            Write-Host "!" -NoNewline -ForegroundColor Gray
+            $script:nonewline = $true
+            $script:inerror = $false
+        }
+        else {
+            if ($script:nonewline) {
+                Write-Host "`n" -NoNewline
+            }
+            if ($trimmedline.StartsWith("[-]") -or $script:inerror) {
+                Write-Host $line -ForegroundColor Red
+                $script:inerror = $true
+            }
+            elseif ($trimmedline.StartsWith("VERBOSE:")) {
+                Write-Host $line -ForegroundColor Yellow
+                $script:inerror = $false
+            }
+            elseif ($trimmedline.StartsWith("Describing") -or $trimmedline.StartsWith("Context")) {
+                Write-Host $line -ForegroundColor Magenta
+                $script:inerror = $false
+            }
+            else {
+                Write-Host $line -ForegroundColor Gray
+            }
+            $script:nonewline = $false
+        }
+    }
+
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
@@ -935,7 +983,17 @@ function Start-PSPester {
             while ($true)
             {
                 $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
-                $lines | Write-Host
+                if ($Terse)
+                {
+                    foreach ($line in $lines)
+                    {
+                        Write-Terse -line $line
+                    }
+                }
+                else
+                {
+                    $lines | Write-Host
+                }
                 if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
                 {
                     break
@@ -970,7 +1028,14 @@ function Start-PSPester {
             }
             else
             {
-                Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                if ($Terse)
+                {
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                }
+                else
+                {
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                }
             }
         }
     } finally {
