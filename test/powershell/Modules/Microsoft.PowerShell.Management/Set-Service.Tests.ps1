@@ -114,6 +114,39 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
         $newServiceCommand.$parameter | Should Be $value
     }
 
+    It "Set-Service can change credentials of a service" {
+        try {
+            $startUsername = "user1"
+            $endUsername = "user2"
+            $testPass = "Secret123!"
+            $servicename = "testsetcredential"
+            net user $startUsername $testPass /add > $null
+            net user $endUsername $testPass /add > $null
+            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
+            $creds = [pscredential]::new(".\$startUsername", $password)
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe";
+                StartupType    = "Manual";
+                Credential     = $creds
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
+            $service.StartName | Should BeExactly $creds.UserName
+
+            $creds = [pscredential]::new(".\$endUsername", $password)
+            Set-Service -Name $servicename -Credential $creds
+            $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
+            $service.StartName | Should BeExactly $creds.UserName
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            net user $startUsername /delete > $null
+            net user $endUsername /delete > $null
+        }
+    }
+
     It "New-Service can create a new service called '<name>'" -TestCases @(
         @{name = "testautomatic"; startupType = "Automatic"; description = "foo" ; displayname = "one"},
         @{name = "testmanual"   ; startupType = "Manual"   ; description = "bar" ; displayname = "two"},
