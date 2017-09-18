@@ -232,7 +232,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "Remove-Service cannot accept a service that does not exist" {
-        { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should Throw
+        { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
