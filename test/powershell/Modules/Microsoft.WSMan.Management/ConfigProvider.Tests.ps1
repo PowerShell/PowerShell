@@ -47,7 +47,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
     AfterEach {
         if (-not (Test-Path wsman:))
         {
-            New-PSDrive -Name WSMan -PSProvider WSMan -Root "" -Scope Global > $null
+            $null = New-PSDrive -Name WSMan -PSProvider WSMan -Root "" -Scope Global
         }
     }
 
@@ -113,6 +113,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $securityContainer = Get-ChildItem "$pluginPath\Resources\$($resource.Name)\Security" | Select-Object -First 1
             $securityProperties = Get-ChildItem $securityContainer.PSPath
             $skippedAttributes = @("ParentResourceUri","xmlns") # these are added by the WSMan Config Provider but not in the original xml
+
             # ParentResourceUri is added by the Config Provider, xmlns existing seems to be dependent on WinRM which is inconsistent
             $securityProperties.Count | Should BeGreaterThan (($pluginXml.PluginConfiguration.Resources.Resource.Security | Get-Member -Type Properties).Count)
             foreach ($securityProperty in $securityProperties) {
@@ -160,7 +161,6 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
             $creds = [pscredential]::new((Get-Random),$password)
             $exception = { Set-Item $testPluginPath\RunAsUser $creds } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
-            # make sure it's the error we expect
             $exception.Exception.Message | Should Match ".*$badCredentialError.*"
         }
 
@@ -179,7 +179,6 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
             $creds = [pscredential]::new($testUser,$password)
             $exception = { Set-Item $testPluginPath\RunAsUser $creds } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
-            # make sure it's the error we expect
             $exception.Exception.Message | Should Match ".*$badCredentialError.*"
         }
 
