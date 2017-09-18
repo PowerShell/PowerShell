@@ -368,7 +368,7 @@ Describe "Type accelerators" -Tags "CI" {
         
             if ( $IsCoreCLR )
             {
-                $totalAccelerators = 89 
+                $totalAccelerators = 90 
             }
             else
             {

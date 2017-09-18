@@ -1987,17 +1987,6 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                    else if (argumentCompleterAttribute.CompleteStrings != null)
-                    {
-                        var customResults = argumentCompleterAttribute.CompleteStrings.CompleteArgument(commandName, parameterName,
-                                context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
-                        if (customResults != null)
-                        {
-                            result.AddRange(customResults);
-                            result.Add(CompletionResult.Null);
-                            return;
-                        }
-                    }
                     else
                     {
                         if (InvokeScriptArgumentCompleter(
@@ -2013,6 +2002,26 @@ namespace System.Management.Automation
                 {
                 }
             }
+
+            var argumentCompletionsAttribute = parameter.CompiledAttributes.OfType<ArgumentCompletionsAttribute>().FirstOrDefault();
+            if (argumentCompletionsAttribute != null)
+            {
+                try
+                {
+                    var customResults = argumentCompletionsAttribute.CompleteArgument(commandName, parameterName,
+                            context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
+                    if (customResults != null)
+                    {
+                        result.AddRange(customResults);
+                        result.Add(CompletionResult.Null);
+                        return;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
             switch (commandName)
             {
                 case "Get-Command":
