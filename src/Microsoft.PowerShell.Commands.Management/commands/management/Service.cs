@@ -2179,7 +2179,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Name of the service to remove
         /// </summary>
-        /// <value></value>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Name")]
         [Alias("ServiceName", "SN")]
         public string Name { get; set; }
@@ -2218,7 +2217,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             ServiceController service = null;
-            string ServiceComputerName = null;
+            string serviceComputerName = null;
             foreach (string computer in ComputerName)
             {
                 bool objServiceShouldBeDisposed = false;
@@ -2228,13 +2227,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         service = InputObject;
                         Name = service.ServiceName;
-                        ServiceComputerName = service.MachineName;
+                        serviceComputerName = service.MachineName;
                         objServiceShouldBeDisposed = false;
                     }
                     else
                     {
-                        ServiceComputerName = computer;
-                        service = new ServiceController(Name, ServiceComputerName);
+                        serviceComputerName = computer;
+                        service = new ServiceController(Name, serviceComputerName);
                         objServiceShouldBeDisposed = true;
                     }
                     Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
@@ -2273,9 +2272,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         hScManager = NativeMethods.OpenSCManagerW(
-                            ServiceComputerName,
-                            null,
-                            NativeMethods.SC_MANAGER_ALL_ACCESS
+                            lpMachineName: serviceComputerName,
+                            lpDatabaseName: null,
+                            dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
                             );
                         if (IntPtr.Zero == hScManager)
                         {
@@ -2284,7 +2283,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteObject(exception);
                             WriteNonTerminatingError(
                                 service,
-                                ServiceComputerName,
+                                serviceComputerName,
                                 exception,
                                 "ComputerAccessDenied",
                                 ServiceResources.ComputerAccessDenied,
@@ -2331,13 +2330,7 @@ namespace Microsoft.PowerShell.Commands
                             if (!succeeded)
                             {
                                 int lastError = Marshal.GetLastWin32Error();
-                                Win32Exception exception = new Win32Exception(lastError);
-                                WriteNonTerminatingError(
-                                    service,
-                                    exception,
-                                    "CouldNotRemoveService",
-                                    ServiceResources.CouldNotRemoveService,
-                                    ErrorCategory.PermissionDenied);
+                                Diagnostics.Assert(lastError != 0, "ErrorCode not success");
                             }
                         }
 
@@ -2347,13 +2340,7 @@ namespace Microsoft.PowerShell.Commands
                             if (!succeeded)
                             {
                                 int lastError = Marshal.GetLastWin32Error();
-                                Win32Exception exception = new Win32Exception(lastError);
-                                WriteNonTerminatingError(
-                                    service,
-                                    exception,
-                                    "CouldNotRemoveService",
-                                    ServiceResources.CouldNotRemoveService,
-                                    ErrorCategory.PermissionDenied);
+                                Diagnostics.Assert(lastError != 0, "ErrorCode not success");
                             }
                         }
                     } // Finally
