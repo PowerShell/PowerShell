@@ -1018,7 +1018,14 @@ function Start-PSPester {
                 try
                 {
                     $Command += "|Export-Clixml -Path '$passThruFile' -Force"
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                    if ($Terse)
+                    {
+                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                    }
+                    else
+                    {
+                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                    }
                     Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
