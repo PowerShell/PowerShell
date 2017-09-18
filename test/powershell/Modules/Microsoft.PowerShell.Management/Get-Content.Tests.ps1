@@ -229,8 +229,9 @@ Describe "Get-Content" -Tags "CI" {
         It "Should return last three lines two lines at a time for -ReadCount 2 and -Tail 3"{
             $result = Get-Content -Path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
             $result.Length | Should Be 2
-            $expected = $secondLine,$thirdLine
-            $expected = $expected,$fourthLine
+            $expected = New-Object System.Array[] 2
+            $expected[0] = ($secondLine,$thirdLine)
+            $expected[1] = $fourthLine
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
         }
         It "Should not return any content when -TotalCount 0"{
@@ -240,8 +241,9 @@ Describe "Get-Content" -Tags "CI" {
         It "Should return first three lines two lines at a time for -TotalCount 3 and -ReadCount 2"{
             $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
             $result.Length | Should Be 2
-            $expected = $firstLine,$secondLine
-            $expected = $expected,$thirdLine
+            $expected = New-Object System.Array[] 2
+            $expected[0] = ($firstLine,$secondLine)
+            $expected[1] = $thirdLine
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
         }
     }
