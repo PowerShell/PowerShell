@@ -43,7 +43,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             if ( Test-CimTestInstance ) {
                 Get-CimInstance @CimCmdletArgs | Remove-CimInstance
             }
-            # if there's a failure with mofcomp then we will have trouble 
+            # if there's a failure with mofcomp then we will have trouble
             # executing the tests. Keep track of the exit code
             $result = MofComp.exe $deleteMof
             $script:MofCompReturnCode = $LASTEXITCODE
@@ -57,6 +57,8 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         # if there's a problem, there's no reason to keep going
         $testMof = Get-Content -Path ${script:createmof} -Raw
         $currentTimeZone = [System.TimeZoneInfo]::Local
+
+        # this date is simply the same one used in the test mof
         $UTCOffset = ($currentTimeZone.GetUtcOffset([datetime]::new(2008, 01, 01, 0, 0, 0))).TotalMinutes.ToString()
         $testMof = $testMof.Replace("<UTCOffSet>", $UTCOffset)
         Set-Content -Path $testDrive\testmof.mof -Value $testMof
