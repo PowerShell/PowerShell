@@ -5,6 +5,7 @@
     <AssemblyName>powershell</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    <RootNamespace>Microsoft.PowerShell</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -53,7 +54,5 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>Microsoft.PowerShell</RootNamespace>
-  </PropertyGroup>
+
 </Project>
