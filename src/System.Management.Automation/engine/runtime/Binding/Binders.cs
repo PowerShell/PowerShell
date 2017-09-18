@@ -6571,7 +6571,7 @@ namespace System.Management.Automation.Language
                 Expression expr = InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary);
                 if (codeMethod.CodeReference.ReturnType == typeof(void))
                 {
-                    expr = Expression.Block(expr, Expression.Default(typeof(object)));
+                    expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
                 else
                 {
