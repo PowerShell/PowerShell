@@ -2177,7 +2177,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// Name of the service to create
+        /// Name of the service to remove
         /// </summary>
         /// <value></value>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Name")]
@@ -2186,7 +2186,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies ServiceController object representing the services to be stopped.
+        /// Specifies ServiceController object representing the services to be removed.
         /// Enter a variable that contains the objects or type a command or expression
         /// that gets the objects.
         /// </summary>
@@ -2212,7 +2212,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
         /// <summary>
-        /// Create the service
+        /// Remove the service
         /// </summary>
         [ArchitectureSensitive]
         protected override void ProcessRecord()
@@ -2309,7 +2309,6 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
 
-                    
                         bool status = NativeMethods.DeleteService(hService);
 
                         if (!status)
