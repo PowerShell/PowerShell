@@ -1,3 +1,4 @@
+Import-Module "C:\Users\jsa\code\PowerShell\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\Microsoft.PowerShell.Commands.Management.dll"
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -232,7 +233,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "Remove-Service cannot accept a service that does not exist" {
-        { Remove-Service -Name "testremoveservice" } | Should Throw
+        { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should Throw
     }
 
 

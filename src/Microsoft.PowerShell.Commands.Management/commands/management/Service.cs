@@ -2169,7 +2169,7 @@ namespace Microsoft.PowerShell.Commands
 
     #region RemoveServiceCommand
     /// <summary>
-    /// This class implements the set-service command
+    /// This class implements the remove-service command
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
     public class RemoveServiceCommand : ServiceBaseCommand
