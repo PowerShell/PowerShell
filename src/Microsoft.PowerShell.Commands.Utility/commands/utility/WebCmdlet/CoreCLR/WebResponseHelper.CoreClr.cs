@@ -26,6 +26,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 headers[entry.Key] = entry.Value;
             }
+            // In CoreFX, HttpResponseMessage separates content related headers, such as Content-Type to 
+            // HttpResponseMessage.Content.Headers. The remaining headers are in HttpResponseMessage.Headers.
+            // The keys in both should be unique with no duplicates between them.
+            // Added for backwards compatibility with PowerShell 5.1 and earlier.
             if (response.Content != null)
             {
                 foreach (var entry in response.Content.Headers)
