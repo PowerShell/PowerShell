@@ -135,5 +135,6 @@ namespace System.Management.Automation
         internal const string Process32FirstDllName = "api-ms-win-core-toolhelp-l1-1-0";                     /*121*/
         internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/
         internal const string GetACPDllName = "api-ms-win-core-localization-l1-2-0.dll";                     /*123*/
+        internal const string DeleteServiceDllName = "api-ms-win-service-management-l1-1-0.dll";             /*124*/
     }
 }

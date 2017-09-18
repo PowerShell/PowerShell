@@ -1,4 +1,5 @@
-Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
+Import-Module ".\Microsoft.PowerShell.Commands.Management.dll"
+Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( -not $IsWindows ) {
@@ -192,6 +193,24 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
             if ($service -ne $null) {
                 $service | Remove-CimInstance
             }
+        }
+    }
+
+    It "Remove-Service can remove a service" {
+        try {
+            $servicename = "testremoveservice"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            Remove-Service -Name $servicename
+            $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
+            $service | Should BeNullOrEmpty
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
         }
     }
 
