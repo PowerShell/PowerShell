@@ -1,4 +1,3 @@
-Import-Module ".\Microsoft.PowerShell.Commands.Management.dll"
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -213,6 +212,29 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
         }
     }
+
+    It "Remove-Service can accept pipeline input of a ServiceController" {
+        try {
+            $servicename = "testremoveservice"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            Get-Service -Name $servicename | Remove-Service -ErrorAction SilentlyContinue
+            $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
+            $service | Should BeNullOrEmpty
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Remove-Service cannot accept a service that does not exist" {
+        { Remove-Service -Name "testremoveservice" } | Should Throw
+    }
+
 
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
