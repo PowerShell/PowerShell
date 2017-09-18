@@ -38,7 +38,7 @@ function Test-ResourceStrings
         {
             # in the event that the id has a space in it, it is replaced with a '_'
             $classname = $resourcefile.Name -replace ".resx"
-            It "'$classname' should be an available type and the strings should be correct" {
+            It "'$classname' should be an available type and the strings should be correct" -Skip:(!$IsWindows) {
                 # get the type from the assembly
                 $resourceType = $ASSEMBLY.GetType($classname, $false, $true)
                 # the properties themselves are static internals, so we need
