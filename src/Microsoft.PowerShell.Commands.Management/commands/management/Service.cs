@@ -2247,14 +2247,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ArgumentException ex)
                 {
-                    //cannot use WriteNonterminatingError as service is null
+                    //Cannot use WriteNonterminatingError as service is null
                     ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, computer);
                     WriteError(er);
                     continue;
                 }
                 catch (InvalidOperationException ex)
                 {
-                    //cannot use WriteNonterminatingError as service is null
+                    //Cannot use WriteNonterminatingError as service is null
                     ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, computer);
                     WriteError(er);
                     continue;
@@ -2262,8 +2262,8 @@ namespace Microsoft.PowerShell.Commands
 
                 try // In finally we ensure dispose, if object not pipelined.
                 {
-                    // confirm the operation first
-                    // this is always false if WhatIf is set
+                    // Confirm the operation first.
+                    // This is always false if WhatIf is set.
                     if (!ShouldProcessServiceOperation(service))
                     {
                         continue;
@@ -2358,7 +2358,7 @@ namespace Microsoft.PowerShell.Commands
                                     ErrorCategory.PermissionDenied);
                             }
                         }
-                    } // finally
+                    } // Finally
                 } //End try
                 finally
                 {
@@ -2367,7 +2367,7 @@ namespace Microsoft.PowerShell.Commands
                         service.Dispose();
                     }
                 }
-            }//end for
+            }//End for
         }
         #endregion Overrides
     } // class RemoveServiceCommand
