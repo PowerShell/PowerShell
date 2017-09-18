@@ -557,7 +557,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const ApartmentState DefaultApartmentState = ApartmentState.Unknown;
 
         /// <summary>
@@ -587,7 +586,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// This property determines whether a new thread is create for each invocation
@@ -650,12 +648,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// RunspaceConfiguration information for this runspace.
         /// </summary>
-#if CORECLR
-        internal
-#else
-        public
-#endif
-        abstract RunspaceConfiguration RunspaceConfiguration
+        internal abstract RunspaceConfiguration RunspaceConfiguration
         {
             get;
         }

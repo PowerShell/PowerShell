@@ -151,17 +151,12 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-#if CORECLR
-                        //Start execution of pipeline in another thread
-                        // No ApartmentState/ThreadStackSize In CoreCLR
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc));
-                        SetupInvokeThread(invokeThread, true);
-#else
                         //Start execution of pipeline in another thread
                         // 2004/05/02-JonN Specify maxStack parameter
                         Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), MaxStack);
                         SetupInvokeThread(invokeThread, true);
 
+#if !UNIX
                         ApartmentState apartmentState;
 
                         if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
@@ -247,7 +242,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR
         /// <summary>
         /// Stack Reserve setting for pipeline threads
         /// </summary>
@@ -255,46 +249,10 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                int i = ReadRegistryInt("PipelineMaxStackSizeMB", 10);
-                if (i < 10)
-                    i = 10; // minimum 10MB
-                else if (i > 100)
-                    i = 100; // maximum 100MB
-                return i * 1000000;
+                // TODO: move this to startupconfig is needed.  This number is in bytes.
+                return 10000000;
             }
         }
-
-        internal static int ReadRegistryInt(string policyValueName, int defaultValue)
-        {
-            RegistryKey key;
-            try
-            {
-                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (null == key)
-                return defaultValue;
-
-            object temp;
-            try
-            {
-                temp = key.GetValue(policyValueName);
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (!(temp is int))
-            {
-                return defaultValue;
-            }
-            int i = (int)temp;
-            return i;
-        }
-#endif
 
         ///<summary>
         /// Helper method for asynchronous invoke
@@ -675,13 +633,11 @@ namespace System.Management.Automation.Runspaces
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#if !CORECLR // No ThreadAbortException In CoreCLR
             catch (ThreadAbortException ex)
             {
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#endif
             // 1021203-2005/05/09-JonN
             // HaltCommandException will cause the command
             // to stop, but not be reported as an error.
@@ -1233,15 +1189,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the worker thread and waits for it to be ready
         /// </summary>
-#if CORECLR
-        internal PipelineThread()
-        {
-            _worker = new Thread(WorkerProc);
-            _workItem = null;
-            _workItemReady = new AutoResetEvent(false);
-            _closed = false;
-        }
-#else
         internal PipelineThread(ApartmentState apartmentState)
         {
             _worker = new Thread(WorkerProc, LocalPipeline.MaxStack);
@@ -1254,7 +1201,6 @@ namespace System.Management.Automation.Runspaces
                 _worker.SetApartmentState(apartmentState);
             }
         }
-#endif
 
         /// <summary>
         /// Returns the worker thread

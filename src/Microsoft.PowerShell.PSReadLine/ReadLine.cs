@@ -713,9 +713,6 @@ namespace Microsoft.PowerShell
 
         private static void ExecuteOnSTAThread(Action action)
         {
-#if CORECLR
-            action();
-#else
             if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
             {
                 action();
@@ -743,7 +740,6 @@ namespace Microsoft.PowerShell
             {
                 throw exception;
             }
-#endif
         }
 
         #region Miscellaneous bindable functions

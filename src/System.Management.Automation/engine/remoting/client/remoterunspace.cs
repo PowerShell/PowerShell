@@ -554,9 +554,7 @@ namespace System.Management.Automation
             try
             {
                 RunspacePool.ThreadOptions = this.ThreadOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
                 RunspacePool.ApartmentState = this.ApartmentState;
-#endif
                 RunspacePool.Open();
             }
             catch (InvalidRunspacePoolStateException e)

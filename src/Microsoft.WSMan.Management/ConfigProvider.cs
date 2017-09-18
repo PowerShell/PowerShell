@@ -16,9 +16,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Security;
-#if !CORECLR
 using System.ServiceProcess;
-#endif
 
 namespace Microsoft.WSMan.Management
 {
@@ -113,11 +111,8 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                //XmlDocument in CoreCLR does not have file path parameter, use XmlReader
                 XmlReaderSettings readerSettings = new XmlReaderSettings();
-#if !CORECLR
                 readerSettings.XmlResolver = null;
-#endif
                 using (XmlReader reader = XmlReader.Create(helpFile, readerSettings))
                 {
                     document.Load(reader);
@@ -4463,10 +4458,6 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private bool IsWSManServiceRunning()
         {
-#if CORECLR
-            // TODO once s78 comes in undo this
-            return true;
-#else
             ServiceController svc = new ServiceController("WinRM");
             if (svc != null)
             {
@@ -4476,7 +4467,6 @@ namespace Microsoft.WSMan.Management
                 }
             }
             return false;
-#endif
         }
 
         /// <summary>
@@ -4515,8 +4505,6 @@ namespace Microsoft.WSMan.Management
                 hostfound = true;
             }
 
-            // Domain look up not available on CoreCLR?
-#if !CORECLR
             //Check is TestMac
             if (!hostfound)
             {
@@ -4559,7 +4547,6 @@ namespace Microsoft.WSMan.Management
                     }
                 }
             }
-#endif
             return hostfound;
         }
 
@@ -4857,14 +4844,7 @@ namespace Microsoft.WSMan.Management
                             if (attributecol[i].LocalName.Equals("Value", StringComparison.OrdinalIgnoreCase))
                             {
                                 String ValueAsXML = attributecol[i].Value;
-#if CORECLR
-                                //SecurityElement.Escape() not supported on .NET Core, use WebUtility.HtmlEncode() to replace.
-                                //During the encoding, single quote "\'" convert to "&#39;", then manually convert "&#39;" to "&apos;" since we are encode xml not html;
-                                Value = System.Net.WebUtility.HtmlEncode(ValueAsXML);
-                                Value = Value.Replace("&#39;", "&apos;");
-#else
                                 Value = SecurityElement.Escape(ValueAsXML);
-#endif
                             }
                         }
                         objInitParam.Properties.Add(new PSNoteProperty(Name, Value));
@@ -5058,18 +5038,9 @@ namespace Microsoft.WSMan.Management
 
             if (value != null)
             {
-#if !CORECLR
-                //coreCLR only supports marshal for unicode
                 IntPtr ptr = Marshal.SecureStringToBSTR(value);
                 passwordValueToAdd = Marshal.PtrToStringAuto(ptr);
                 Marshal.ZeroFreeBSTR(ptr);
-#else
-                IntPtr ptr = SecureStringMarshal.SecureStringToCoTaskMemUnicode(value);
-                passwordValueToAdd = Marshal.PtrToStringUni(ptr);
-                Marshal.ZeroFreeCoTaskMemAnsi(ptr);
-#endif
-
-
             }
 
             return passwordValueToAdd;

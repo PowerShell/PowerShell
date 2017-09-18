@@ -1089,7 +1089,6 @@ else
                     maxObjectSizeMB.Value,
                     Environment.NewLine));
             }
-#if !CORECLR // No ApartmentState In CoreCLR
             if (threadAptState.HasValue)
             {
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
@@ -1098,7 +1097,6 @@ else
                     threadAptState.Value,
                     Environment.NewLine));
             }
-#endif
             if (threadOptions.HasValue)
             {
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
@@ -2135,7 +2133,6 @@ else
         internal PSCredential runAsCredential;
         internal bool isRunAsCredentialSpecified;
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the Runspace created for the shell.
         /// </summary>
@@ -2155,7 +2152,6 @@ else
             set { threadAptState = value; }
         }
         internal Nullable<ApartmentState> threadAptState;
-#endif
 
         /// <summary>
         /// ThreadOptions of the Runspace created for the shell.
@@ -3286,9 +3282,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             ConfigurationDataFromXML.MAXRCVDOBJSIZETOKEN,
             ConfigurationDataFromXML.MAXRCVDCMDSIZETOKEN,
             ConfigurationDataFromXML.THREADOPTIONSTOKEN,
-#if !CORECLR // No ApartmentState In CoreCLR
             ConfigurationDataFromXML.THREADAPTSTATETOKEN,
-#endif
             ConfigurationDataFromXML.PSVERSIONTOKEN,
             ConfigurationDataFromXML.MAXPSVERSIONTOKEN,
             ConfigurationDataFromXML.SESSIONCONFIGTOKEN,
@@ -3954,12 +3948,10 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 result.Properties.Add(new PSNoteProperty(ConfigurationDataFromXML.MAXRCVDOBJSIZETOKEN, input));
             }
 
-#if !CORECLR // No ApartmentState In CoreCLR
             if (threadAptState.HasValue)
             {
                 result.Properties.Add(new PSNoteProperty(ConfigurationDataFromXML.THREADAPTSTATETOKEN, threadAptState.Value));
             }
-#endif
 
             if (threadOptions.HasValue)
             {

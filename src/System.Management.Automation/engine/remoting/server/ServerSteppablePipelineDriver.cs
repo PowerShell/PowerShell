@@ -76,9 +76,7 @@ namespace System.Management.Automation
         // was created
         private bool _addToHistory;
         // associated with this powershell
-#if !CORECLR // No ApartmentState In CoreCLR
         private ApartmentState apartmentState;  // apartment state for this powershell
-#endif
 
         // pipeline that runs the actual command.
         private ServerSteppablePipelineSubscriber _eventSubscriber;
@@ -86,36 +84,6 @@ namespace System.Management.Automation
 
         #endregion
 
-#if CORECLR // No ApartmentState In CoreCLR
-        /// <summary>
-        /// Default constructor for creating ServerSteppablePipelineDriver...Used by server to concurrently
-        /// run 2 pipelines.
-        /// </summary>
-        /// <param name="powershell">decoded powershell object</param>
-        /// <param name="noInput">whether there is input for this powershell</param>
-        /// <param name="clientPowerShellId">the client powershell id</param>
-        /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
-        /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
-        /// <param name="streamOptions">serialization options for the streams in this powershell</param>
-        /// <param name="addToHistory">
-        /// true if the command is to be added to history list of the runspace. false, otherwise.
-        /// </param>
-        /// <param name="rsToUse">
-        /// If not null, this Runspace will be used to invoke Powershell.
-        /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
-        /// </param>
-        /// <param name="eventSubscriber">
-        /// Steppable pipeline event subscriber
-        /// </param>
-        /// <param name="powershellInput">input collection of the PowerShell pipeline</param>
-        internal ServerSteppablePipelineDriver(PowerShell powershell, bool noInput, Guid clientPowerShellId,
-            Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
-            HostInfo hostInfo, RemoteStreamOptions streamOptions,
-            bool addToHistory, Runspace rsToUse, ServerSteppablePipelineSubscriber eventSubscriber, PSDataCollection<object> powershellInput)
-#else
         /// <summary>
         /// Default constructor for creating ServerSteppablePipelineDriver...Used by server to concurrently
         /// run 2 pipelines.
@@ -145,15 +113,12 @@ namespace System.Management.Automation
             Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
             ApartmentState apartmentState, HostInfo hostInfo, RemoteStreamOptions streamOptions,
             bool addToHistory, Runspace rsToUse, ServerSteppablePipelineSubscriber eventSubscriber, PSDataCollection<object> powershellInput)
-#endif
         {
             LocalPowerShell = powershell;
             InstanceId = clientPowerShellId;
             RunspacePoolId = clientRunspacePoolId;
             RemoteStreamOptions = streamOptions;
-#if !CORECLR // No ApartmentState In CoreCLR
             this.apartmentState = apartmentState;
-#endif
             NoInput = noInput;
             _addToHistory = addToHistory;
             _eventSubscriber = eventSubscriber;
