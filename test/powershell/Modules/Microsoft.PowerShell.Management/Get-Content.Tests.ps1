@@ -73,6 +73,43 @@ Describe "Get-Content" -Tags "CI" {
     It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
         {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
+    It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
+        {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+    It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
+        { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+    It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
+        @{EncodingName = 'String'},
+        @{EncodingName = 'Unicode'},
+        @{EncodingName = 'BigEndianUnicode'},
+        @{EncodingName = 'UTF8'},
+        @{EncodingName = 'UTF7'},
+        @{EncodingName = 'UTF32'},
+        @{EncodingName = 'Ascii'}
+        ){
+        param($EncodingName)
+
+        $content = @"
+one
+two
+foo
+bar
+baz
+"@
+        $expected = 'foo'
+        $tailCount = 3
+        [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding] $encoding = $EncodingName
+
+        $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
+        $content | Set-Content -Path $testPath -Encoding $encoding
+        $expected = 'foo'
+
+        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encoding
+        $actual.GetType() | Should Be "System.Object[]"
+        $actual.Length | Should Be $tailCount
+        $actual[0] | Should Be $expected
+    }
     It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
         set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
         $result=get-content -path $testPath -readcount:-1 -tail 5
