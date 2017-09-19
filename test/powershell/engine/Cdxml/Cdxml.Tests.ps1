@@ -59,7 +59,10 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         $currentTimeZone = [System.TimeZoneInfo]::Local
 
         # this date is simply the same one used in the test mof
-        $UTCOffset = ($currentTimeZone.GetUtcOffset([datetime]::new(2008, 01, 01, 0, 0, 0))).TotalMinutes.ToString()
+        # the minutes must be padded to 3 digits proceeded by a '+' or '-'
+        # when east of UTC 0 we must add a '+'
+        $offsetMinutes = ($currentTimeZone.GetUtcOffset([datetime]::new(2008, 01, 01, 0, 0, 0))).TotalMinutes
+        $UTCOffset = "{0:+000;-000}" -f $offsetMinutes
         $testMof = $testMof.Replace("<UTCOffSet>", $UTCOffset)
         Set-Content -Path $testDrive\testmof.mof -Value $testMof
         $result = MofComp.exe $testDrive\testmof.mof
