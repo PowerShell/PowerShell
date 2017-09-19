@@ -53,41 +53,96 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { & $script } | ShouldBeErrorId $errorid
     }
 
-    It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(
-        @{parameter = "Description"; value = "hello"},
-        @{parameter = "DisplayName"; value = "test spooler"},
-        @{parameter = "StartupType"; value = "Disabled"},
-        @{parameter = "Status"     ; value = "running"     ; expected = "OK"}
-    ) {
-        param($parameter, $value, $expected)
-        $currentService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-        $originalStartupType = (Get-Service -Name spooler).StartType
+    It "Set-Service can change 'Description' to 'hello'" {
+        $serviceName = "spooler"
+        $parameter = "Description"
+        $value = "hello"
+        $service = Get-Service $serviceName
+        $originalServiceDescription = (Get-CimInstance -ClassName Win32_Service -Filter "Name='$serviceName'").$parameter
         try {
-            $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
-            $setServiceCommand.Name = "Spooler"
-            $setServiceCommand.$parameter = $value
-            $setServiceCommand.Invoke()
-            $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-            if ($expected -eq $null) {
-                $expected = $value
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $value
             }
-            if ($parameter -eq "StartupType") {
-                $updatedService.StartMode | Should Be $expected
-            }
-            else {
-                $updatedService.$parameter | Should Be $expected
-            }
+            Set-Service @arguments
+            (Get-CimInstance -ClassName Win32_Service -Filter "Name='$serviceName'").$parameter | Should BeExactly $value
         }
         finally {
-            if ($parameter -eq "StartupType") {
-                $setServiceCommand.StartupType = $originalStartupType
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $originalServiceDescription
             }
-            else {
-                $setServiceCommand.$parameter = $currentService.$parameter
+            Set-Service @arguments
+            (Get-CimInstance -ClassName Win32_Service -Filter "Name='$serviceName'").$parameter | Should BeExactly $originalServiceDescription
+        }
+    }
+
+    It "Set-Service can change 'DisplayName' to 'test spooler'" {
+        $serviceName = "spooler"
+        $parameter = "DisplayName"
+        $value = "test spooler"
+        $originalServiceDisplayName = (Get-Service $serviceName).$parameter
+        try {
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $value
             }
-            $setServiceCommand.Invoke()
-            $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-            $updatedService.$parameter | Should Be $currentService.$parameter
+            Set-Service @arguments
+            (Get-Service -Name $serviceName).$parameter | Should BeExactly $value
+        }
+        finally {
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $originalServiceDisplayName
+            }
+            Set-Service @arguments
+            (Get-Service -Name $serviceName).$parameter | Should BeExactly $originalServiceDisplayName
+        }
+    }
+
+    It "Set-Service can change 'StartupType' to 'Disabled'" {
+        $serviceName = "spooler"
+        $parameter = "StartupType"
+        $value = "Disabled"
+        $originalServiceStartupType = (Get-Service $serviceName).StartType
+        try {
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $value
+            }
+            Set-Service @arguments
+            (Get-Service -Name $serviceName).StartType | Should BeExactly $value
+        }
+        finally {
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $originalServiceStartupType
+            }
+            Set-Service @arguments
+            (Get-Service -Name $serviceName).StartType | Should BeExactly $originalServiceStartupType
+        }
+    }
+
+    It "Set-Service can change 'Status' to 'Running'" {
+        $serviceName = "spooler"
+        $parameter = "Status"
+        $value = "Running"
+        $originalServiceStatus = (Get-Service $serviceName).$parameter
+        try {
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $value
+            }
+            Set-Service @arguments
+            (Get-Service -Name $serviceName).$parameter | Should BeExactly $value
+        }
+        finally {
+            $arguments = @{
+                'Name' = $serviceName
+                $parameter = $originalServiceStatus
+            }
+            Set-Service @arguments
+            (Get-Service -Name $serviceName).$parameter | Should BeExactly $originalServiceStatus
         }
     }
 

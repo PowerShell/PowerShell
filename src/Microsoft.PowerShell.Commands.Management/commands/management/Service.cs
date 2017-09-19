@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the base for service commands
     /// </summary>
-    public abstract class ServiceBaseCommand : Cmdlet
+    public abstract class ServiceBaseCommand : PSCmdlet
     {
         #region Internal
 
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
                 bool objServiceShouldBeDisposed = false;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
+                    if (this.ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
                     {
                         service = InputObject;
                         Name = service.ServiceName;
@@ -2223,7 +2223,7 @@ namespace Microsoft.PowerShell.Commands
                 bool objServiceShouldBeDisposed = false;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
+                    if (this.ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
                     {
                         service = InputObject;
                         Name = service.ServiceName;
