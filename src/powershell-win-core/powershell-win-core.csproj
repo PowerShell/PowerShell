@@ -1,12 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="..\..\PowerShell.Common.props"/>
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Core on Windows top-level project</Description>
     <AssemblyName>powershell</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    <RootNamespace>Microsoft.PowerShell</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
