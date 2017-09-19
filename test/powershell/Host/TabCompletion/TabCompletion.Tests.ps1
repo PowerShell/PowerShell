@@ -1006,3 +1006,65 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature {
         $res.CompletionMatches[0].CompletionText | Should Be $expected
     }
 }
+
+Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOnWindows {
+
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+    }
+
+    AfterAll {
+        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "Tab completion works correctly for Listeners" {
+        $path = "wsman:\localhost\listener\listener"
+        $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
+        $listener = Get-ChildItem WSMan:\localhost\Listener
+        $res.CompletionMatches.Count | Should Be $listener.Count
+        for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
+            $res.CompletionMatches[$i].ListItemText | Should Be $listener[$i].Name
+        }
+    }
+
+    It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
+        @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
+        @{path = ""; parameter = "-op"; expected = "OptionSet"},
+        @{path = ""; parameter = "-au"; expected = "Authentication"},
+        @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
+        @{path = ""; parameter = "-se"; expected = "SessionOption"},
+        @{path = ""; parameter = "-ap"; expected = "ApplicationName"},
+        @{path = ""; parameter = "-po"; expected = "Port"},
+        @{path = ""; parameter = "-u"; expected = "UseSSL"},
+        @{path = "localhost\plugin"; parameter = "-pl"; expected = "Plugin"},
+        @{path = "localhost\plugin"; parameter = "-sd"; expected = "SDKVersion"},
+        @{path = "localhost\plugin"; parameter = "-re"; expected = "Resource"},
+        @{path = "localhost\plugin"; parameter = "-ca"; expected = "Capability"},
+        @{path = "localhost\plugin"; parameter = "-xm"; expected = "XMLRenderingType"},
+        @{path = "localhost\plugin"; parameter = "-fi"; expected = @("FileName", "File")},
+        @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
+        @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
+        @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
+        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
+        @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
+    ) {
+        param($path, $parameter, $expected)
+        $script = "new-item wsman:\$path $parameter"
+        $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $res.CompletionMatches.Count | Should Be $expected.Count
+        $completionOptions = ""
+        foreach ($completion in $res.CompletionMatches) {
+            $completionOptions += $completion.ListItemText
+        }
+        $completionOptions | Should Be ([string]::Join("", $expected))
+    }
+
+    It "Tab completion get dynamic parameters for initialization parameters" -Pending -TestCases @(
+        @{path = "localhost\Plugin\microsoft.powershell\InitializationParameters\"; parameter = "-pa"; expected = @("ParamName", "ParamValue")}
+    ) {
+        # https://github.com/PowerShell/PowerShell/issues/4744
+        # TODO: move to test cases above once working
+    }
+}

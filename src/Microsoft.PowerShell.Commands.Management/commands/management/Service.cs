@@ -1466,6 +1466,14 @@ namespace Microsoft.PowerShell.Commands
         }
         internal string displayName = null;
 
+        /// <summary>
+        /// Account under which the service should run
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        [Credential()]
+        public PSCredential Credential { get; set; }
+
 
 
         /// <summary>
@@ -1509,8 +1517,6 @@ namespace Microsoft.PowerShell.Commands
         // We set the initial value to an invalid value so that we can
         // distinguish when this is and is not set.
         internal ServiceStartMode startupType = (ServiceStartMode)(-1);
-
-
 
 
         /// <summary>
@@ -1589,6 +1595,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ServiceController service = null;
             string ServiceComputerName = null;
+            IntPtr password = IntPtr.Zero;
             foreach (string computer in ComputerName)
             {
                 bool objServiceShouldBeDisposed = false;
@@ -1679,27 +1686,25 @@ namespace Microsoft.PowerShell.Commands
                             continue;
                         }
 
-                        // modify startup type or display name
+                        // Modify startup type or display name or credential
                         if (!String.IsNullOrEmpty(DisplayName)
-                            || (ServiceStartMode)(-1) != StartupType)
+                            || (ServiceStartMode)(-1) != StartupType || null != Credential) 
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
-                            switch (StartupType)
+                            if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
                             {
-                                case ServiceStartMode.Automatic:
-                                    dwStartType = NativeMethods.SERVICE_AUTO_START;
-                                    break;
-                                case ServiceStartMode.Manual:
-                                    dwStartType = NativeMethods.SERVICE_DEMAND_START;
-                                    break;
-                                case ServiceStartMode.Disabled:
-                                    dwStartType = NativeMethods.SERVICE_DISABLED;
-                                    break;
-                                default:
-                                    Diagnostics.Assert(
-                                        ((ServiceStartMode)(-1)) == StartupType,
-                                        "bad StartupType");
-                                    break;
+                                WriteNonTerminatingError(StartupType.ToString(), "Set-Service", Name,
+                                    new ArgumentException(), "CouldNotSetService",
+                                    ServiceResources.UnsupportedStartupType,
+                                    ErrorCategory.InvalidArgument);
+                                return;
+                            }
+
+                            string username = null;
+                            if (null != Credential)
+                            {
+                                username = Credential.UserName;
+                                password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
                             }
                             bool succeeded = NativeMethods.ChangeServiceConfigW(
                                 hService,
@@ -1710,8 +1715,8 @@ namespace Microsoft.PowerShell.Commands
                                 null,
                                 IntPtr.Zero,
                                 null,
-                                null,
-                                IntPtr.Zero,
+                                username,
+                                password,
                                 DisplayName
                                 );
                             if (!succeeded)
@@ -1847,6 +1852,10 @@ namespace Microsoft.PowerShell.Commands
                 } //End try
                 finally
                 {
+                    if (IntPtr.Zero != password)
+                    {
+                        Marshal.ZeroFreeCoTaskMemUnicode(password);
+                    }
                     if (objServiceShouldBeDisposed)
                     {
                         service.Dispose();
@@ -2002,25 +2011,14 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                     return;
                 }
-                DWORD dwStartType = NativeMethods.SERVICE_AUTO_START;
-                switch (StartupType)
+                if (!NativeMethods.TryGetNativeStartupType(StartupType, out DWORD dwStartType))
                 {
-                    case ServiceStartMode.Automatic:
-                        dwStartType = NativeMethods.SERVICE_AUTO_START;
-                        break;
-                    case ServiceStartMode.Manual:
-                        dwStartType = NativeMethods.SERVICE_DEMAND_START;
-                        break;
-                    case ServiceStartMode.Disabled:
-                        dwStartType = NativeMethods.SERVICE_DISABLED;
-                        break;
-                    default:
-                        Diagnostics.Assert(
-                            ((ServiceStartMode)(-1)) == StartupType,
-                            "bad StartupType");
-                        break;
+                    WriteNonTerminatingError(StartupType.ToString(), "New-Service", Name,
+                        new ArgumentException(), "CouldNotNewService",
+                        ServiceResources.UnsupportedStartupType,
+                        ErrorCategory.InvalidArgument);
+                    return;
                 }
-
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
                 if (null != DependsOn)
@@ -2410,6 +2408,43 @@ namespace Microsoft.PowerShell.Commands
         public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
+
+        /// <summary>
+        /// Get appropriate win32 StartupType
+        /// </summary>
+        /// <param name="StartupType">
+        /// StartupType provided by the user.
+        /// </param>
+        /// <param name="dwStartType">
+        /// Out parameter of the native win32 StartupType
+        /// </param>
+        /// <returns>
+        /// If a supported StartupType is provided, funciton returns true, otherwise false.
+        /// </returns>
+        internal static bool TryGetNativeStartupType(ServiceStartMode StartupType, out DWORD dwStartType)
+        {
+            bool success = true;
+            dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+            switch (StartupType)
+            {
+                case ServiceStartMode.Automatic:
+                    dwStartType = NativeMethods.SERVICE_AUTO_START;
+                    break;
+                case ServiceStartMode.Manual:
+                    dwStartType = NativeMethods.SERVICE_DEMAND_START;
+                    break;
+                case ServiceStartMode.Disabled:
+                    dwStartType = NativeMethods.SERVICE_DISABLED;
+                    break;
+                case (ServiceStartMode)(-1):
+                    dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+                    break;
+                default:
+                    success = false;
+                    break;
+            }
+            return success;
+        }
     }
     #endregion NativeMethods
 }

@@ -21,6 +21,9 @@ dotnet-uninstall-debian-packages.sh
 # VS auto-generated files for csproj files
 *.csproj.user
 
+# Visual Studio IDE directory
+.vs/
+
 # Project Rider IDE files
 .idea.powershell/
 

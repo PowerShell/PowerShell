@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
             get { return _moduleVersion; }
             set { _moduleVersion = value; }
         }
-        private Version _moduleVersion = new Version(1, 0);
+        private Version _moduleVersion = new Version(0, 0, 1);
 
         /// <summary>
         /// Set the module description

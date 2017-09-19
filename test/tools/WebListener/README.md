@@ -126,3 +126,53 @@ Accepts a `multipart/form-data` submission and returns a JSON object containing 
   }
 }
 ```
+
+## /Redirect/
+
+Will 302 redirect to `/Get/`. If a number is supplied, redirect will occur that many times. Can be used to test maximum redirects.
+
+Request 1:
+```none
+GET http://localhost:8083/Redirect/2 HTTP/1.1
+Connection: Keep-Alive
+User-Agent: Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) WindowsPowerShell/6.0.0
+Host: localhost:8083
+```
+
+Response 1:
+```none
+HTTP/1.1 302 Found
+Date: Fri, 15 Sep 2017 10:46:41 GMT
+Content-Type: text/html; charset=utf-8
+Server: Kestrel
+Transfer-Encoding: chunked
+Location: /Redirect/1
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to target URL: <a href="/Redirect/1">/Redirect/1</a>.  If not click the link.
+```
+
+Request 2:
+```none
+GET http://localhost:8083/Redirect/1 HTTP/1.1
+Connection: Keep-Alive
+User-Agent: Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) WindowsPowerShell/6.0.0
+Host: localhost:8083
+```
+
+Response 2:
+```none
+HTTP/1.1 302 Found
+Date: Fri, 15 Sep 2017 10:46:41 GMT
+Content-Type: text/html; charset=utf-8
+Server: Kestrel
+Transfer-Encoding: chunked
+Location: /Get/
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to target URL: <a href="/Get/">/Get/</a>.  If not click the link.
+```

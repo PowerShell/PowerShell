@@ -14,24 +14,15 @@ Describe "Windows Installer" -Tags "Scenario" {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    Context "Universal C Runtime Download Link" {
-        $universalCRuntimeDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=50410'
-        It "Wix file should have download link about Universal C runtime" -Pending {
-           (Get-Content $wixProductFile -Raw).Contains($universalCRuntimeDownloadLink) | Should Be $true
-        }
-        It "Should have download link about Universal C runtime that is reachable" {
-           (Invoke-WebRequest $universalCRuntimeDownloadLink.Replace("https://",'http://')) | Should Not Be $null
-        }
+    $preRequisitesLink =  'https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites'
+        
+    It "WiX (Windows Installer XML) file contains pre-requisites link $preRequisitesLink" {
+        (Get-Content $wixProductFile -Raw).Contains($preRequisitesLink) | Should Be $true
     }
 
-    Context "Visual Studio C++ Redistributables Link" {
-        $visualStudioCPlusPlusRedistributablesDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=48145'
-        It "WiX file should have documentation about Visual Studio C++ redistributables" -Pending {
-           (Get-Content $wixProductFile -Raw).Contains($visualStudioCPlusPlusRedistributablesDownloadLink) | Should Be $true
-        }
-        It "Should have download link about Universal C runtime that is reachable" {
-           (Invoke-WebRequest $visualStudioCPlusPlusRedistributablesDownloadLink.Replace("https://",'http://')) | Should Not Be $null
-        }
+    It "Pre-Requisistes link $preRequisitesLink is reachable" -TestCases $downloadLinks -Test {
+        # Because an outdated link 'https://www.microsoft.com/download/details.aspx?id=504100000' would still return a 200 reponse (due to a redirection to an error page), it only checks that it returns something
+        (Invoke-WebRequest $preRequisitesLink -UseBasicParsing) | Should Not Be $null
     }
-
+	
 }

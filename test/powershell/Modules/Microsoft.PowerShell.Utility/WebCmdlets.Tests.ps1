@@ -415,6 +415,12 @@ $redirectTests = @(
     @{redirectType = 'RedirectKeepVerb'; redirectedMethod='GET'} # Synonym for TemporaryRedirect
 )
 
+$PendingCertificateTest = $false
+# we can't check for Certificate on MacOS and Centos libcurl (currently 7.29.0) returns the following error:
+# The handler does not support client authentication certificates with this combination of libcurl (7.29.0) and its SSL backend ("NSS/3.21 Basic ECC")
+if ( $IsMacOS ) { $PendingCertificateTest = $true }
+if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
+
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
@@ -449,26 +455,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest returns User-Agent" {
 
-        $command = "Invoke-WebRequest -Uri http://httpbin.org/user-agent -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.'User-Agent' | Should Match "WindowsPowerShell"
+        $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Invoke-WebRequest returns headers dictionary" {
 
-        $command = "Invoke-WebRequest -Uri http://httpbin.org/headers -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.Host | Should Be $Uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
@@ -486,20 +494,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest -MaximumRedirection" {
 
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 4 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 4"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.Host | Should Match $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -569,14 +579,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $command = "Invoke-WebRequest -Uri '${protocol}://httpbin.org/headers' -TimeoutSec 5 -NoProxy"
+        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -NoProxy -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.Host | Should Be $uri.Authority
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
@@ -1219,9 +1230,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Status | Should Be 'FAILED'
         }
         
-        # Test skipped on macOS pending support for Client Certificate Authentication
+        # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
+        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
@@ -1309,22 +1320,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod returns User-Agent" {
 
-        $command = "Invoke-RestMethod -Uri http://httpbin.org/user-agent -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.'User-Agent' | Should Match "WindowsPowerShell"
+        $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
 
-        $command = "Invoke-RestMethod -Uri http://httpbin.org/headers -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.Host | Should Match "httpbin.org"
+        $result.Output.headers.Host | Should Be $Uri.Authority
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
@@ -1344,18 +1357,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -MaximumRedirection" {
 
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 4 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 4"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.Host | Should Match "httpbin.org"
+        $result.Output.headers.Host | Should Match $uri.Authority
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     It "Validate Invoke-RestMethod error for -MaximumRedirection" {
 
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
@@ -1423,12 +1438,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/user-agent' -TimeoutSec 5 -NoProxy"
+        $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -NoProxy -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.'User-Agent' | Should Match "WindowsPowerShell"
+        $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     # Perform the following operation for Invoke-RestMethod
@@ -1793,9 +1809,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Status | Should Be 'FAILED'
         }
         
-        # Test skipped on macOS pending support for Client Certificate Authentication
+        # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
-        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsMacOS {
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck

@@ -160,14 +160,6 @@ if ( $env:PSModulePath -notcontains $TestModulePath ) {
     $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
-#
-# At the moment, we just support x64 builds. When we support x86 builds, this
-# check may need to verify the SDK for the specified architecture.
-#
-function Get-Win10SDKBinDir {
-    return "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
-}
-
 function Test-Win10SDK {
     # The Windows 10 SDK is installed to "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64",
     # but the directory may exist even if the SDK has not been installed.
@@ -290,18 +282,10 @@ function Start-PSBuild {
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
-        [ValidateSet("ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
-                     "win7-x64",
+        [ValidateSet("win7-x64",
                      "win7-x86",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64",
+                     "linux-x64",
                      "linux-arm")]
         [string]$Runtime,
 
@@ -589,18 +573,10 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
                      "win7-x86",
                      "win7-x64",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64",
+                     "linux-x64",
                      "linux-arm")]
         [string]$Runtime,
 
@@ -659,17 +635,23 @@ function New-PSOptions {
     }
 
     if (-not $Runtime) {
-        $Runtime = dotnet --info | ForEach-Object {
-            if ($_ -match "RID") {
-                $_ -split "\s+" | Select-Object -Last 1
+        if ($Environment.IsLinux) {
+            $Runtime = "linux-x64"
+        } else {
+            $RID = dotnet --info | ForEach-Object {
+                if ($_ -match "RID") {
+                    $_ -split "\s+" | Select-Object -Last 1
+                }
             }
-        }
 
-        # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
-        # which supports all supported windows platforms.
-        # So we, will change the RID to win7-<arch>
-        if ($Environment.IsWindows) {
-            $Runtime = $Runtime -replace "win\d+", "win7"
+            if ($Environment.IsWindows) {
+                # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
+                # which supports all supported windows platforms.
+                # So we, will change the RID to win7-<arch>
+                $Runtime = $RID -replace "win\d+", "win7"
+            } else {
+                $Runtime = $RID
+            }
         }
 
         if (-not $Runtime) {
@@ -843,8 +825,14 @@ function Start-PSPester {
         [switch]$Unelevate,
         [switch]$Quiet,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
-        [switch]$PassThru
+        [switch]$PassThru,
+        [switch]$IncludeFailingTest
     )
+
+    if ($IncludeFailingTest.IsPresent)
+    {
+        $Path += "$PSScriptRoot/tools/failingTests"
+    }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
@@ -1079,14 +1067,17 @@ function Test-PSPesterResults
     {
         if ($ResultObject.TotalCount -le 0)
         {
-            logerror 'NO TESTS RUN'
+            throw 'NO TESTS RUN'
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
             logerror 'TEST FAILURES'
+
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
             }
+
+            throw "$($ResultObject.FailedCount) tests in $TestArea failed"
         }
     }
 }
@@ -1831,9 +1822,9 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
-    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+    $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
+    $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v
+    $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
@@ -1844,6 +1835,9 @@ function New-MSIPackage
     }
     else
     {
+        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
+        $WiXCandleLog | Out-String | Write-Verbose -Verbose
+        $WiXLightLog  | Out-String | Write-Verbose -Verbose
         throw "Failed to create $msiLocationPath"
     }
 }
@@ -1857,18 +1851,10 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
-                     "win7-x86",
+        [ValidateSet("win7-x86",
                      "win7-x64",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64",
+                     "linux-x64",
                      "linux-arm")]
         [string]
         $Runtime

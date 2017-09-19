@@ -123,6 +123,15 @@ Some general guidelines:
   Instead, use `var example = obj as Example` or the C# 7 syntax `if (obj is Example example) {...}` as appropriate.
   In this way you can avoid converting to the type twice.
 
+* Use generic collections instead of the non-generic ones such as `ArrayList` and `Hashtable` to avoid type casting and unnecessary boxing whenever possible.
+
+* Use collection constructor overloads that take an initial capacity for collection types that have them.
+  Internally, `List<T>`, `Dictionary<TKey, TValue>`,
+  and the other generic collections use one or more arrays to hold valid data.
+  Whenever resizing is needed,
+  one or more new arrays double the size of existing arrays are created and items from the existing arrays are copied.
+  Setting an approximate initial capacity will reduce the number of resizing operations.
+
 * Use `dict.TryGetValue` instead of `dict.Contains` and `dict[..]` when retrieving value from a `Dictionary`.
   In this way you can avoid hashing the key twice.
 
