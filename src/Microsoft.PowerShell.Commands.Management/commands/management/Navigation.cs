@@ -3266,6 +3266,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // not a directory
                     }
+                    catch (System.ArgumentException)
+                    {
+                        // invalid characters (like asterisk) for a file path, but valid for other paths (like registry)
+                    }
 
                     if (!treatAsFile && !Recurse && hasChildren)
                     {
