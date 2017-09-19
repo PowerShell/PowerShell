@@ -205,7 +205,7 @@ namespace System.Management.Automation
             {
                 if (wordToCompletePattern.IsMatch(str))
                 {
-                    yield return new CompletionResult(str, str, CompletionResultType.Text, str);
+                    yield return new CompletionResult(str, str, CompletionResultType.ParameterValue, str);
                 }
             }
         }
