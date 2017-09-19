@@ -407,6 +407,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Set-PSDebug",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-PSSessionConfiguration",                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-Service",                                        ,                     $($FullCLR -or $CoreWindows              )
+"Cmdlet", "Remove-Service",                                     ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Set-StrictMode",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-TimeZone",                                       ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Set-TraceSource",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)

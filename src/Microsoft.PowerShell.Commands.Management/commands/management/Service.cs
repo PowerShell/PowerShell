@@ -2169,7 +2169,7 @@ namespace Microsoft.PowerShell.Commands
 
     #region RemoveServiceCommand
     /// <summary>
-    /// This class implements the remove-service command
+    /// This class implements the Remove-Service command
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
     public class RemoveServiceCommand : ServiceBaseCommand
@@ -2233,26 +2233,24 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         serviceComputerName = computer;
+                        // "new ServiceController" will succeed even if there is no such service.
+                        // This checks whether the service actually exists.
                         service = new ServiceController(Name, serviceComputerName);
                         objServiceShouldBeDisposed = true;
                     }
                     Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
-                    // "new ServiceController" will succeed even if
-                    // there is no such service.  This checks whether
-                    // the service actually exists.
-
                     string unusedByDesign = service.DisplayName;
                 }
                 catch (ArgumentException ex)
                 {
-                    //Cannot use WriteNonterminatingError as service is null
+                    // Cannot use WriteNonterminatingError as service is null
                     ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, computer);
                     WriteError(er);
                     continue;
                 }
                 catch (InvalidOperationException ex)
                 {
-                    //Cannot use WriteNonterminatingError as service is null
+                    // Cannot use WriteNonterminatingError as service is null
                     ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, computer);
                     WriteError(er);
                     continue;
@@ -2344,7 +2342,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     } // Finally
-                } //End try
+                } // End try
                 finally
                 {
                     if (objServiceShouldBeDisposed)
@@ -2352,7 +2350,7 @@ namespace Microsoft.PowerShell.Commands
                         service.Dispose();
                     }
                 }
-            }//End for
+            }// End for
         }
         #endregion Overrides
     } // class RemoveServiceCommand
