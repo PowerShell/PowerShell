@@ -24,7 +24,7 @@ namespace mvc.Controllers
 
         public ActionResult Utf8()
         {
-            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("tex/html");
+            MediaTypeHeaderValue mediaType = new MediaTypeHeaderValue("text/html");
             mediaType.Encoding = Encoding.UTF8;
             return View();
         }
