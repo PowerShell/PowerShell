@@ -6,17 +6,9 @@ $assemblyName = "Microsoft.WSMan.Management"
 # entries in the csproj for the assembly
 $excludeList = @()
 # load the module since it isn't there by default
-import-module Microsoft.WSMan.Management
-
-
-try {
-    if ( ! $IsWindows ) 
-    {
-        $PSDefaultParameterValues["it:skip"] = $true
-    }
-    # run the tests
-    Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList
+if ( $IsWindows ) {
+    import-module Microsoft.WSMan.Management
 }
-finally {
-    $PSDefaultParameterValues.Remove("it:skip")
-}
+
+# run the tests
+Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList

@@ -6,7 +6,10 @@ $assemblyName = "Microsoft.Management.Infrastructure.CimCmdlets"
 # entries in the csproj for the assembly
 $excludeList = @()
 # load the module since it isn't there by default
-import-module CimCmdlets
+if ( $IsWindows )
+{
+    import-module CimCmdlets
+}
 
 # run the tests
 Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList
