@@ -32,6 +32,7 @@ class PSCore_Test1
     [key] string id;
     string field1;
     sint32 field2;
+    datetime datetime;
     PSCore_subclass subclass;
 };
 
@@ -40,6 +41,7 @@ instance of PSCore_Test1
     id = "1";
     field1 = "instance 1";
     field2 = -1;
+    datetime = "20080101000000.000000<UTCOffSet>";
     subclass = instance of PSCore_subclass{Id="10";subfield1="yup";subfield2=200;};
 };
 
