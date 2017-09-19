@@ -45,7 +45,7 @@ namespace System.Management.Automation
         private static Version s_psV4Version = new Version(4, 0);
         private static Version s_psV5Version = new Version(5, 0);
         private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "beta");
+        private static SemanticVersion s_psV6Version;
 
         /// <summary>
         /// A constant to track current PowerShell Edition
@@ -56,6 +56,11 @@ namespace System.Management.Automation
         static PSVersionInfo()
         {
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
+
+            string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
+
+            s_psV6Version = new SemanticVersion(fileVersionInfo.ProductVersion);
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;

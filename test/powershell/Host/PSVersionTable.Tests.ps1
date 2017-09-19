@@ -15,8 +15,15 @@ Describe "PSVersionTable" -Tags "CI" {
        $PSVersionTable.ContainsKey("OS")                        | Should Be True
 
     }
-    It "GitCommitId property should not contain an error" {
-       $PSVersionTable.GitCommitId | Should not match "powershell.version"
+
+    It "PSVersion property" {
+       $powershellProcess=Get-Process -id $pid
+       $rootPath = Split-Path -Path $powershellProcess.path -Parent
+       $sma = Get-Item (Join-Path $rootPath "System.Management.Automation.dll")
+       $expectedVersion = $sma.VersionInfo.ProductVersion
+
+       $PSVersionTable.PSVersion | Should BeOfType "System.Management.Automation.SemanticVersion"
+       $PSVersionTable.PSVersion | Should BeExactly $expectedVersion
     }
 
     It "Should have the correct platform info" {
