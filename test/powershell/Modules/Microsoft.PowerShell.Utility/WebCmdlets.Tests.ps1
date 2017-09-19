@@ -517,18 +517,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
 
-        $command = "Invoke-WebRequest -Uri http://httpbin.org/encoding/utf8 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Encoding/Utf8'
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
-        # Validate response content
-        # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
-        <#
-        $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.Host | Should Match "httpbin.org"
-        $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
-        #>
+        $Result.Output.Encoding.BodyName | Should Be 'utf-8'
+        $Result.Output.Content | Should Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
     It "Invoke-WebRequest validate timeout option" {
@@ -1376,19 +1372,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
-    <#
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
 
-        $command = "Invoke-RestMethod -Uri http://httpbin.org/encoding/utf8 -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Encoding/Utf8'
+        $command = "Invoke-RestMethod -Uri '$uri'"
 
-        $result = ExecuteWebCommand -command $command
-
-        # Validate response content
-        # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
-        $result.headers.Host | Should Match "httpbin.org"
-        $result.headers.'User-Agent' | Should Match "WindowsPowerShell"
+        $result = ExecuteWebCommand -command $command        
+        $Result.Output | Should Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
-    #>
 
     It "Invoke-RestMethod validate timeout option" {
 
@@ -1607,13 +1598,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should Be "testvalue"
-    }
-
-    It "Invoke-RestMethod supports request that returns plain text response." {
-
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/encoding/utf8'"
-        $result = ExecuteWebCommand -command $command
-        $result.Error | Should BeNullOrEmpty
     }
 
     It "Validate Invoke-RestMethod returns HTTP errors in exception" {

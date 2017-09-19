@@ -114,6 +114,7 @@ function Get-WebListenerUrl {
         [switch]$Https,
         [ValidateSet(
             'Cert',
+            'Encoding/Utf8',
             'Get',
             'Home',
             'Multipart',

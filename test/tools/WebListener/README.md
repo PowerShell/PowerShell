@@ -59,6 +59,10 @@ Response when certificate is not provided in request:
 }
 ```
 
+## /Encoding/Utf8/
+
+Returns page containing UTF-8 data.
+
 
 ## /Get/
 
