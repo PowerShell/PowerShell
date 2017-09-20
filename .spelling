@@ -386,6 +386,7 @@ rest.ps1
  - demos/SSHRemoting/README.md
 _config
 2kCbnhT2dUE6WCGgVJ8Hyfu1z2wE4lifaJXLO7QJy0Y
+com.openssh.sshd
 ComputerName
 ComputerType
 ConfigurationName
@@ -393,6 +394,7 @@ Enter-PSSession
 HostName
 KeyFilePath
 KeyPath
+launchctl
 New-PSSession
 NoLogo
 NoProfile
@@ -411,8 +413,6 @@ TestUser
 UbuntuVM1
 UbuntuVM1s
 usr
-launchctl
-com.openssh.sshd
 #endregion
 
 #region demos/SystemD/readme.md Overrides
