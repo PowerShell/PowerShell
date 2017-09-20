@@ -20,7 +20,9 @@ Describe "PSVersionTable" -Tags "CI" {
        $powershellProcess=Get-Process -id $pid
        $rootPath = Split-Path -Path $powershellProcess.path -Parent
        $sma = Get-Item (Join-Path $rootPath "System.Management.Automation.dll")
-       $expectedVersion = $sma.VersionInfo.ProductVersion
+       # Convert '6.0.0-beta.7 Commits: 29 SHA: 52c6bfe1eae24dbaa1a162bffb3754ba3fdc1f4c'
+       # to '6.0.0-beta.7'
+       $expectedVersion = ($sma.VersionInfo.ProductVersion -split " ")[0]
 
        $PSVersionTable.PSVersion | Should BeOfType "System.Management.Automation.SemanticVersion"
        $PSVersionTable.PSVersion | Should BeExactly $expectedVersion
