@@ -296,7 +296,10 @@ namespace System.Management.Automation
         private bool TryFindInGAC(AssemblyName assemblyName, out string assemblyFilePath)
         {
             assemblyFilePath = null;
-            if (Internal.InternalTestHooks.DisableGACLoading) { return false; }
+            if (Internal.InternalTestHooks.DisableGACLoading)
+            {
+                return false;
+            }
 
             bool assemblyFound = false;
             char dirSeparator = IO.Path.DirectorySeparatorChar;

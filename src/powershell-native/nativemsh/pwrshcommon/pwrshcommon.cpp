@@ -1404,11 +1404,9 @@ namespace NativeMsh
         bool listEmpty = true;
         this->GetTrustedAssemblyList(hostEnvironment.GetCoreCLRDirectoryPath(), assemblyList, listEmpty);
 
-        // Fall back to attempt to load the CLR from the alternate inbox location
-        // or if the ALC was not located in the CoreCLR directory.
-        std::string assemblyListToSearch = assemblyList.str();
         if (listEmpty)
         {
+            // Fall back to attempt to load the CLR from the alternate inbox location
             char coreCLRPowerShellExtInstallPath[MAX_PATH];
             ::ExpandEnvironmentStringsA(coreCLRPowerShellExtInstallDirectory, coreCLRPowerShellExtInstallPath, MAX_PATH);
             this->GetTrustedAssemblyList(coreCLRPowerShellExtInstallPath, assemblyList, listEmpty);
