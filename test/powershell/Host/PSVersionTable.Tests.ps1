@@ -28,6 +28,11 @@ Describe "PSVersionTable" -Tags "CI" {
        $PSVersionTable.PSVersion | Should BeExactly $expectedVersion
     }
 
+    It "GitCommitId property" {
+       $PSVersionTable.GitCommitId | Should BeOfType "System.String"
+       { [System.Management.Automation.SemanticVersion]::Parse($PSVersionTable.GitCommitId) } | Should Not Throw
+    }
+
     It "Should have the correct platform info" {
        $platform = [String][System.Environment]::OSVersion.Platform
 	   [String]$PSVersionTable["Platform"] | Should Be $platform
