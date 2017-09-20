@@ -136,17 +136,13 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
 
     It "Transcription should record native command output" {
-        try {
-            $ps = [powershell]::Create()
-            $ps.addscript("Start-Transcript -path $transcriptFilePath").Invoke()
-            $ps.addscript("hostname").Invoke()
-            $ps.addscript("Stop-Transcript").Invoke()
-        } finally {
-            if ($null -ne $ps) {
-                $ps.Dispose()
-            }
-        }
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            hostname
+            Stop-Transcript }
+        & $script
         Test-Path $transcriptFilePath | Should be $true
+
         $machineName = [System.Environment]::MachineName
         $transcriptFilePath | Should contain $machineName
     }
