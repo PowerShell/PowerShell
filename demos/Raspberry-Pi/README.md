@@ -28,22 +28,22 @@ Note that it's important to do a `-Clean` build because if you previously built 
 
 ## Copy the bits to your Pi
 
-Use SSH to copy the bits remotely, replace `yourPi` with the name or ip address of your Pi.
+Use SSH to copy the bits remotely, replace `yourPi` with the name or IP address of your Pi.
 
 ```powershell
 scp -r "$(split-path (Get-PSOutput))/*" pi@yourPi:/home/pi/powershell
 ```
 
-## Get latest coreclr runtime
+## Get latest CoreClr runtime
 
-We need to get a coreclr that fixes a [threading bug](https://github.com/dotnet/coreclr/pull/13922) which is in dotnetcore 2.0.0.
+We need to get a CoreClr that fixes a [threading bug](https://github.com/dotnet/coreclr/pull/13922) which is in DotNetCore 2.0.0.
 
 You can do these steps locally on your Pi, but we're using SSH remoting here.
 
 We'll be using the latest [build](https://github.com/dotnet/core-setup#daily-builds) from master which has the fix.
 Note that at the time of authoring these instructions, the 2.0.x servicing build didn't have the necessary fix and the 2.1.x builds may be more unstable.
 
-We'll use `curl` to get the latest dotnetcore runtime.
+We'll use `curl` to get the latest DotNetCore runtime.
 
 ```bash
 sudo apt install curl
@@ -54,15 +54,15 @@ Now we'll download it and unpack it.
 ```bash
 # connect to your Pi
 ssh pi@yourpi
-# we'll make a folder to put latest coreclr runtime
+# we'll make a folder to put latest CoreClr runtime
 mkdir dotnet
 cd dotnet
-# download the latest coreclr runtime
+# download the latest CoreClr runtime
 curl -O https://dotnetcli.blob.core.windows.net/dotnet/Runtime/master/dotnet-runtime-latest-linux-arm.tar.gz
 # unpack it
 tar xvf ./dotnet-runtime-latest-linux-arm.tar.gz
-# we're going to overwrite the coreclr bits we built with newer ones, replace the version named folder below as appropriate
-# if you build a newer version of PowerShell Core, you'll need to make sure you get latest coreclr runtime otherwise you may hit a segmentation fault
+# we're going to overwrite the CoreClr bits we built with newer ones, replace the version named folder below as appropriate
+# if you build a newer version of PowerShell Core, you'll need to make sure you get latest CoreClr runtime otherwise you may hit a segmentation fault
 cp shared/Microsoft.NetCore.App/2.1.0-preview1-25719-04/* ~/powershell
 ```
 
@@ -72,4 +72,4 @@ cp shared/Microsoft.NetCore.App/2.1.0-preview1-25719-04/* ~/powershell
 ~/powershell/powershell
 ```
 
-Note that until arm32 is fully supported by coreclr, it's not supported by PowerShell Core.
+Note that until arm32 is fully supported by CoreClr, it's not supported by PowerShell Core.

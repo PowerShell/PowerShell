@@ -377,6 +377,16 @@ _script.ps1
 _script.ps1.
 #endregion
 
+#region demos/Raspberry-Pi/README.md Overrides
+ - demos/Raspberry-Pi/README.md
+2.0.x
+2.1.x
+CoreClr
+DotNetCore
+Raspbian
+toolchain
+#endregion
+
 #region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
