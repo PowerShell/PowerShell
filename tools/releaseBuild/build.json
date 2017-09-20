@@ -1,0 +1,63 @@
+{
+  "Windows": [
+    {
+        "Name": "win7-x64",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x64 -ReleaseTag _ReleaseTag_",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
+        "DockerImageName": "ps-winsrvcore"
+    },
+    {
+        "Name": "win7-x86",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x86 -ReleaseTag _ReleaseTag_",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
+        "DockerImageName": "ps-winsrvcore"
+    }
+  ],
+  "Linux": [
+    {
+        "Name": "ubuntu.14.04",
+        "RepoDestinationPath": "/PowerShell",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage",
+        "BuildDockerOptions": [
+            "--cap-add",
+            "SYS_ADMIN",
+            "--cap-add",
+            "MKNOD",
+            "--device=/dev/fuse",
+            "--security-opt",
+            "apparmor:unconfined"
+        ],
+        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu14.04/Dockerfile",
+        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
+        "DockerImageName": "ps-ubunutu-14-04"
+    },
+    {  
+        "Name": "ubuntu.16.04",
+        "RepoDestinationPath": "/PowerShell",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
+        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
+        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu16.04/Dockerfile",
+        "DockerImageName": "ps-ubunutu-16-04"
+    },
+    {  
+        "Name": "centos.7",
+        "RepoDestinationPath": "/PowerShell",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
+        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
+        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
+        "DockerImageName": "ps-centos-7"
+    }
+  ]
+}
