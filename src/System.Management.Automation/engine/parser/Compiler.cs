@@ -3219,7 +3219,7 @@ namespace System.Management.Automation.Language
                 // Expressions for this purpose are kept in 'extraFileRedirectExprs' and will be used later.
                 extraFileRedirectExprs.Add(Expression.Call(redirectionExpr, CachedReflectionInfo.FileRedirection_CallDoCompleteForExpression));
 
-                // The 'UnBind' and 'Dispose' operations on 'FileRedirection' objects must be done in the reversed order of 'Bind' operations.
+                // The 'UnBind' and 'Dispose' operations on 'FileRedirection' objects must be done in the reverse order of 'Bind' operations.
                 // Namely, it should be done is this order:
                 //   try {
                 //       // The order is A, B
