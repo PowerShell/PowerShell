@@ -100,20 +100,6 @@ namespace System.Management.Automation
             return result;
         }
 
-        // Get the commit id from the powershell.version file. If the powershell.version file doesn't exist, use the string "N/A"
-        internal static string GetCommitInfo()
-        {
-            try
-            {
-                string assemblyPath = IO.Path.GetDirectoryName(typeof(PSVersionInfo).GetTypeInfo().Assembly.Location);
-                return (IO.File.ReadAllLines(IO.Path.Combine(assemblyPath, "powershell.version"))[0]);
-            }
-            catch (Exception e)
-            {
-                return e.Message;
-            }
-        }
-
         #region Private helper methods
 
         // Gets the current WSMan stack version from the registry.
