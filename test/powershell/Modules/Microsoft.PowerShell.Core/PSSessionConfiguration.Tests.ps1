@@ -15,7 +15,7 @@ try
     #
     if ($IsNotSkipped)
     {
-        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
+        $endpointName = "PowerShell.v$($psversiontable.GitCommitId)" -replace " Commits: ", "-"  -replace " SHA: ", "-"
 
         $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
