@@ -79,6 +79,39 @@ Describe "Adapter Tests" -tags "CI" {
         $val  = $doc.ToString()
         $val | Should Be "book"
     }
+
+    It "Calls CodeMethod with void result" {
+
+        class TestCodeMethodInvokationWithVoidReturn {
+            [int] $CallCounter
+
+            static [int] IntMethodCM([PSObject] $self) {
+                return $self.CallCounter
+            }
+
+            static [void] VoidMethodCM([PSObject] $self) {
+                $self.CallCounter++
+            }
+
+            static [Reflection.MethodInfo] GetMethodInfo([string] $name) {
+                return [TestCodeMethodInvokationWithVoidReturn].GetMethod($name)
+            }
+        }
+
+        Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName IntMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('IntMethodCM'))
+        Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName VoidMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('VoidMethodCM'))
+        try {
+            $o = [TestCodeMethodInvokationWithVoidReturn]::new()
+            $o.CallCounter | Should Be 0
+            $o.VoidMethod()
+            $o.CallCounter | Should be 1
+
+            $o.IntMethod() | Should be 1
+        }
+        finally {
+            Remove-TypeData TestCodeMethodInvokationWithVoidReturn
+        }
+    }
 }
 
 Describe "Adapter XML Tests" -tags "CI" {

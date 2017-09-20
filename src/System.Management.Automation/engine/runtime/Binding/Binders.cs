@@ -6568,9 +6568,16 @@ namespace System.Management.Automation.Language
             var codeMethod = methodInfo as PSCodeMethod;
             if (codeMethod != null)
             {
-                return new DynamicMetaObject(
-                    InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary)
-                    .Cast(typeof(object)), restrictions).WriteToDebugLog(this);
+                Expression expr = InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary);
+                if (codeMethod.CodeReference.ReturnType == typeof(void))
+                {
+                    expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
+                }
+                else
+                {
+                    expr = expr.Cast(typeof(object));
+                }
+                return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
             }
 
             var parameterizedProperty = methodInfo as PSParameterizedProperty;
