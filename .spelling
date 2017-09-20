@@ -240,6 +240,9 @@ sshs
 TestUser
 UbuntuVM1
 UbuntuVM1s
+usr
+launchctl
+com.openssh.sshd
  - demos/SystemD/readme.md
 Get-SystemDJournal
 journalctl
