@@ -370,6 +370,10 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Copy-Item -LiteralPath $file.FullName -Destination $newPath
             Test-Path -LiteralPath $newPath | Should Be $true
         }
+
+        It "Remove-Item -LiteralPath should fail if it contains asterisk" {
+            { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+        }
     }
 }
 

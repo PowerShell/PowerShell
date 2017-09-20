@@ -475,13 +475,13 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             try {
                 $tempPath = "HKCU:\_tmp"
                 $testPath = "$tempPath\*\sub"
-                New-Item -Force $testPath
+                $null = New-Item -Force $testPath
                 $testPath | Should Exist
                 Remove-Item -LiteralPath $testPath
                 $testPath | Should Not Exist
             }
             finally {
-                Remove-Item -Recurse $tempPath
+                Remove-Item -Recurse $tempPath -ErrorAction SilentlyContinue
             }
         }
     }
