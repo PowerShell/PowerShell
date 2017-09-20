@@ -185,6 +185,17 @@ namespace System.Management.Automation
 
             //Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
+
+            try
+            {
+                Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                    new Host.Rectangle(_startPosition, _startPosition));
+                _scrapeHostOutput = true;
+            }
+            catch (NotImplementedException)
+            {
+                _scrapeHostOutput = false;
+            }
         }
 
         /// <summary>
@@ -398,12 +409,16 @@ namespace System.Management.Automation
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
 
-            //Calculate if input and output are redirected.
-            bool redirectOutput;
-            bool redirectError;
-            bool redirectInput;
+            // Calculate if input and output are redirected.
+            bool redirectOutput = true;
+            bool redirectError = true;
+            bool redirectInput = true;
 
-            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
+            // If we are transcribing and can't scrape, then continue to redirect so we have the output
+            if (!this.Command.Context.EngineHostInterface.UI.IsTranscribing || _scrapeHostOutput)
+            {
+                CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
+            }
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
@@ -417,7 +432,6 @@ namespace System.Management.Automation
             }
 
             _startPosition = new Host.Coordinates();
-            _scrapeHostOutput = false;
 
             Exception exceptionToRethrow = null;
             try
@@ -432,19 +446,10 @@ namespace System.Management.Automation
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    try
+                    if (this.Command.Context.EngineHostInterface.UI.IsTranscribing && _scrapeHostOutput)
                     {
-                        if (this.Command.Context.EngineHostInterface.UI.IsTranscribing)
-                        {
-                            _scrapeHostOutput = true;
-                            _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            _startPosition.X = 0;
-                        }
-                    }
-                    catch (Host.HostException)
-                    {
-                        // The host doesn't support scraping via its RawUI interface
-                        _scrapeHostOutput = false;
+                        _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        _startPosition.X = 0;
                     }
                 }
 
