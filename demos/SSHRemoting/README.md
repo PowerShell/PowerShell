@@ -103,7 +103,7 @@ In addition you will need to enable password authentication and optionally key b
     ```
     - Make sure password authentication is enabled
     ```none
-      PasswordAuthentication yes
+    PasswordAuthentication yes
     ```
     - Add a PowerShell subsystem entry
     ```none
