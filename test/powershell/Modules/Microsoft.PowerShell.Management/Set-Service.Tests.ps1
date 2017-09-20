@@ -235,6 +235,25 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
+    It "Set-Service can accept pipeline input of a ServiceController" {
+        try {
+            $servicename = "testsetservice"
+            $newdisplayname = "newdisplayname"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            Get-Service -Name $servicename | Set-Service -DisplayName $newdisplayname
+            $service = Get-Service -Name $servicename
+            $service.DisplayName | Should BeExactly $newdisplayname
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
             [System.Management.Automation.PSCredential]::new("username", 

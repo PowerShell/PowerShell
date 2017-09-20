@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
                 bool objServiceShouldBeDisposed = false;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
+                    if (InputObject != null)
                     {
                         service = InputObject;
                         Name = service.ServiceName;
@@ -2223,7 +2223,7 @@ namespace Microsoft.PowerShell.Commands
                 bool objServiceShouldBeDisposed = false;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
+                    if (InputObject != null)
                     {
                         service = InputObject;
                         Name = service.ServiceName;
