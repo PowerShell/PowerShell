@@ -3,6 +3,7 @@
 # global dictionary is at the start, file overrides afterwards
 # one word per line, to define a file override use ' - filename'
 # where filename is relative to this configuration file
+
 #region Global Dictionary
 2ae5d07
 acl
@@ -195,11 +196,13 @@ WSMan
 wsmansessionoption.cs
 xUnit
 #endregion
+
 #region ./tools/install-powershell.readme.md Overrides
  - ./tools/install-powershell.readme.md
 includeide
 sed
 #endregion
+
 #region CHANGELOG.md Overrides
  - CHANGELOG.md
 _
@@ -326,11 +329,13 @@ WSManCredSSP
 XPath
 Youtube
 #endregion
+
 #region CODE_OF_CONDUCT.md Overrides
  - CODE_OF_CONDUCT.md
 microsoft.com
 opencode
 #endregion
+
 #region demos/Apache/readme.md Overrides
  - demos/Apache/readme.md
 Get-ApacheModule
@@ -338,6 +343,7 @@ Get-ApacheVHost
 New-ApacheVHost
 Restart-ApacheHTTPserver
 #endregion
+
 #region demos/Azure/README.md Overrides
  - demos/Azure/README.md
 AzureRM.NetCore.Preview
@@ -346,6 +352,7 @@ AzureRM.Resources.NetCore.Preview
 ExcludeVersion
 ProviderName
 #endregion
+
 #region demos/crontab/README.md Overrides
  - demos/crontab/README.md
 DayOfWeek
@@ -354,22 +361,27 @@ New-CronJob
 Remove-CronJob
 u
 #endregion
+
 #region demos/DSC/readme.md Overrides
  - demos/DSC/readme.md
 #endregion
+
 #region demos/install/README.md Overrides
  - demos/install/README.md
 download.sh
 #endregion
+
 #region demos/python/README.md Overrides
  - demos/python/README.md
 _script.ps1
 _script.ps1.
 #endregion
+
 #region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
 #endregion
+
 #region demos/SSHRemoting/README.md Overrides
  - demos/SSHRemoting/README.md
 _config
@@ -402,12 +414,14 @@ usr
 launchctl
 com.openssh.sshd
 #endregion
+
 #region demos/SystemD/readme.md Overrides
  - demos/SystemD/readme.md
 Get-SystemDJournal
 journalctl
 SystemD
 #endregion
+
 #region docker/README.md Overrides
  - docker/README.md
 andschwa's
@@ -417,6 +431,7 @@ microsoft
 NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
+
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
 Catalog
@@ -424,10 +439,12 @@ MSBuild
 powershell-unix
 src
 #endregion
+
 #region docs/building/macos.md Overrides
  - docs/building/macos.md
 preview3
 #endregion
+
 #region docs/community/governance.md Overrides
  - docs/community/governance.md
 Aiello
@@ -447,6 +464,7 @@ PRs
 Snover
 SteveL-MSFT
 #endregion
+
 #region docs/debugging/README.md Overrides
  - docs/debugging/README.md
 CmdletProviderClasses
@@ -476,6 +494,7 @@ TypeConversion
 TypeMatch
 XTerm
 #endregion
+
 #region docs/dev-process/breaking-change-contract.md Overrides
  - docs/dev-process/breaking-change-contract.md
 cd
@@ -483,6 +502,7 @@ cdxml
 int
 p1
 #endregion
+
 #region docs/dev-process/coding-guidelines.md Overrides
  - docs/dev-process/coding-guidelines.md
 interop
@@ -491,6 +511,7 @@ SMEs
 TravisEz13
 uppercase
 #endregion
+
 #region docs/FAQ.md Overrides
  - docs/FAQ.md
 PoshCode
@@ -498,11 +519,13 @@ SS64.com
 TypeGen
 v6.0.0
 #endregion
+
 #region docs/git/submodules.md Overrides
  - docs/git/submodules.md
 GoogleTest
 superproject
 #endregion
+
 #region docs/host-powershell/README.md Overrides
  - docs/host-powershell/README.md
 0-powershell
@@ -514,11 +537,13 @@ preview1-002106-00
 sample-dotnet1
 sample-dotnet2
 #endregion
+
 #region docs/installation/linux.md Overrides
  - docs/installation/linux.md
 OpenSUSE
 TravisEz13
 #endregion
+
 #region docs/installation/windows.md Overrides
  - docs/installation/windows.md
 Install-PowerShellRemoting
@@ -527,6 +552,7 @@ System32
 Win8
 windir
 #endregion
+
 #region docs/KNOWNISSUES.md Overrides
  - docs/KNOWNISSUES.md
 cp
@@ -537,11 +563,13 @@ Register-WmiEvent
 System.Management.Automation.SemanticVersion
 System.Timers.Timer
 #endregion
+
 #region docs/learning-powershell/create-powershell-scripts.md Overrides
  - docs/learning-powershell/create-powershell-scripts.md
 NetIP.ps1.
 RemoteSigned
 #endregion
+
 #region docs/learning-powershell/debugging-from-commandline.md Overrides
  - docs/learning-powershell/debugging-from-commandline.md
 _Debuggers
@@ -549,12 +577,14 @@ celsius
 Set-PSBreakpoint
 test.ps1
 #endregion
+
 #region docs/learning-powershell/powershell-beginners-guide.md Overrides
  - docs/learning-powershell/powershell-beginners-guide.md
 dir
 jen
 LastWriteTime
 #endregion
+
 #region docs/learning-powershell/README.md Overrides
  - docs/learning-powershell/README.md
 Lynda.com
@@ -564,16 +594,19 @@ PowerShellMagazine.com
 ScriptCenter
 TechNet
 #endregion
+
 #region docs/learning-powershell/using-vscode.md Overrides
  - docs/learning-powershell/using-vscode.md
 helloworld.ps1
 launch.json
 OSs
 #endregion
+
 #region docs/learning-powershell/working-with-powershell-objects.md Overrides
  - docs/learning-powershell/working-with-powershell-objects.md
 ForEach-Object
 #endregion
+
 #region docs/maintainers/issue-management.md Overrides
  - docs/maintainers/issue-management.md
 Microsoft.PowerShell.Core
@@ -581,10 +614,12 @@ Microsoft.PowerShell.Management
 Microsoft.PowerShell.Utility
 omi
 #endregion
+
 #region docs/maintainers/pull-request-process.md Overrides
  - docs/maintainers/pull-request-process.md
 ci-system
 #endregion
+
 #region docs/maintainers/README.md Overrides
  - docs/maintainers/README.md
 andschwa
@@ -597,6 +632,7 @@ TravisEz13
 Vorobev
 vors
 #endregion
+
 #region docs/maintainers/releasing.md Overrides
  - docs/maintainers/releasing.md
 2012r2
@@ -610,6 +646,7 @@ Toolset
 v6
 WiX
 #endregion
+
 #region docs/testing-guidelines/PowerShellCoreTestStatus.md Overrides
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Add-LocalGroupMember
@@ -768,6 +805,7 @@ Update-ModuleManifest
 Update-ScriptFileInfo
 Update-TypeData
 #endregion
+
 #region docs/testing-guidelines/testing-guidelines.md Overrides
  - docs/testing-guidelines/testing-guidelines.md
 100ms
@@ -784,6 +822,7 @@ Microsoft.PowerShell.Utility
 NativeExecution
 TabCompletion
 #endregion
+
 #region docs/testing-guidelines/TestRoadmap.md Overrides
  - docs/testing-guidelines/TestRoadmap.md
 corefx
@@ -797,6 +836,7 @@ org
 PowerBI
 Syslog
 #endregion
+
 #region docs/testing-guidelines/WritingPesterTests.md Overrides
  - docs/testing-guidelines/WritingPesterTests.md
 ErrorRecord
@@ -811,6 +851,7 @@ StreamDescribeCIFeatureScenarioDescribeContextItContextContextBeforeAllAfterAllB
 TestDrive
 throw-testcasesItMockDescribe
 #endregion
+
 #region README.md Overrides
  - README.md
 Gitter
@@ -821,6 +862,7 @@ opencode
 pkg
 UserVoice
 #endregion
+
 #region src/libpsl-native/README.md Overrides
  - src/libpsl-native/README.md
 Ansi
@@ -828,6 +870,7 @@ C#'s
 codepage
 libpsl-native
 #endregion
+
 #region src/Microsoft.PowerShell.PSReadLine/en-US/PSReadline.md Overrides
  - src/Microsoft.PowerShell.PSReadLine/en-US/PSReadline.md
 _history.txt
@@ -882,17 +925,20 @@ ValidateAndAcceptLine
 ValidationHandler
 WordDelimiters
 #endregion
+
 #region src/Microsoft.PowerShell.SDK/README.md Overrides
  - src/Microsoft.PowerShell.SDK/README.md
 metapackage
 project.json
 #endregion
+
 #region src/Modules/README.md Overrides
  - src/Modules/README.md
 ps1xml
 psd1
 psm1
 #endregion
+
 #region src/Modules/Shared/Pester/CHANGELOG.md Overrides
  - src/Modules/Shared/Pester/CHANGELOG.md
 _be
@@ -1062,6 +1108,7 @@ v3.0
 Validate-Xml
 Write-UsageForNewFixture
 #endregion
+
 #region src/Modules/Shared/Pester/README.md Overrides
  - src/Modules/Shared/Pester/README.md
 hoc
@@ -1069,20 +1116,24 @@ pester-bdd-for-the-system-administrator
 powershell-bdd-testing-pester-screencast
 v1.0.
 #endregion
+
 #region src/powershell/README.md Overrides
  - src/powershell/README.md
 powershell-unix
 #endregion
+
 #region src/TypeCatalogGen/README.md Overrides
  - src/TypeCatalogGen/README.md
 TypeCatalogGen
 #endregion
+
 #region test/README.md Overrides
  - test/README.md
 csharp
 fullclr
 shebang
 #endregion
+
 #region test/tools/CodeCoverageAutomation/README.md Overrides
  - test/tools/CodeCoverageAutomation/README.md
 CodeCoverage.zip
