@@ -989,6 +989,10 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     this.ArgumentList = new object[] { psSession };
+                    // since we already applied these filters remotely, we don't want to apply it locally where the generated module is always 1.0
+                    BaseMinimumVersion = null;
+                    BaseMaximumVersion = null;
+                    BaseRequiredVersion = null;
                     ImportModule_LocallyViaName(importModuleOptions, wildcardEscapedPsd1Path);
                 }
                 finally

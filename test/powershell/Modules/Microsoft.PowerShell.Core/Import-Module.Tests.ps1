@@ -21,10 +21,16 @@
         { Import-Module -ModuleInfo $a } | Should Not Throw
         (Get-Module -Name $moduleName).Name | Should Be $moduleName
     }
+
+    It "should be able to load an already loaded module" {
+        Import-Module $moduleName
+        { $script:module = Import-Module $moduleName -PassThru } | Should Not Throw
+        Get-Module -Name $moduleName | Should Be $script:module
+    }
 }
 
 Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
-    
+
     BeforeAll {
         $moduleRootPath = Join-Path $TestDrive 'TestModules'
         New-Item $moduleRootPath -ItemType Directory -Force | Out-Null
