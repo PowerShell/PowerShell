@@ -29,6 +29,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.ArgumentCompleterAttribute]
                 }
                 @{
+                    Accelerator = 'ArgumentCompletions'
+                    Type        = [System.Management.Automation.ArgumentCompletionsAttribute]
+                }
+                @{
                     Accelerator = 'array'
                     Type        = [System.Array]
                 }

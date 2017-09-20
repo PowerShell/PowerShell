@@ -355,3 +355,63 @@ Describe "Additional type name completion tests" -Tags "CI" {
         TestInput = 'Get-Command -ParameterType System.Collections.Generic.Dic'
     } | Get-CompletionTestCaseData | Test-Completions
 }
+
+Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
+
+    BeforeAll {
+        function TestArgumentCompletionsAttribute
+        {
+            param(
+                [ArgumentCompletions("value1", "value2", "value3")]
+                $Alpha,
+                [ArgumentCompleter()]
+                $Beta
+            )
+        }
+
+        $cmdletSrc=@'
+        using System;
+        using System.Management.Automation;
+        using System.Collections.Generic;
+
+        namespace Test.ArgumentCompletionsAttribute {
+
+            [Cmdlet(VerbsCommon.Get, "ArgumentCompletions")]
+            public class TestArgumentCompletionsAttributeCommand0 : PSCmdlet
+            {
+                [Parameter]
+                [ArgumentCompletions("value1", "value2", "value3")]
+                public string Param1;
+
+                protected override void EndProcessing()
+                {
+                    WriteObject(Param1);
+                }
+            }
+        }
+'@
+
+            $cls = Add-Type -TypeDefinition $cmdletSrc -PassThru | Select-Object -First 1
+            $testModule = Import-Module $cls.Assembly -PassThru
+    }
+
+    AfterAll {
+        Remove-Module -ModuleInfo $testModule
+    }
+
+    It "ArgumentCompletionsAttribute works in script" {
+        $line = "TestArgumentCompletionsAttribute -Alpha val"
+        $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
+        $res.CompletionMatches.Count | Should Be 3
+        $res.CompletionMatches.CompletionText -join " " | Should Be "value1 value2 value3"
+        { TestArgumentCompletionsAttribute -Alpha unExpectedValue } | Should Not Throw
+    }
+
+    It "ArgumentCompletionsAttribute works in c#" {
+        $line = "Get-ArgumentCompletions -Param1 val"
+        $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
+        $res.CompletionMatches.Count | Should Be 3
+        $res.CompletionMatches.CompletionText -join " " | Should Be "value1 value2 value3"
+        { TestArgumentCompletionsAttribute -Param1 unExpectedValue } | Should Not Throw
+    }
+}
