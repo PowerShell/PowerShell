@@ -83,6 +83,25 @@ In addition you will need to enable password authentication and optionally key b
 1. Restart the sshd service
     - sudo service sshd restart
 
+## Setup on MacOS Machine
+
+1. Install the latest [PowerShell for MacOS] build
+    - Make sure SSH Remoting is enabled by following these steps:
+      + Open `System Preferences`
+      + Click on `Sharing`
+      + Check `Remote Login` - Should say `Remote Login: On`
+      + Allow access to appropriate users
+1. Edit the sshd_config file at location /private/etc/ssh/sshd_config
+    - Make sure password authentication is enabled
+      + PasswordAuthentication yes
+    - Add a PowerShell subsystem entry
+      + Subsystem powershell /usr/local/bin/powershell -sshs -NoLogo -NoProfile
+    - Optionally enable key authentication
+      + PubkeyAuthentication yes
+1. Restart the sshd service
+    - sudo launchctl stop com.openssh.sshd
+    - sudo launchctl start com.openssh.sshd
+
 ## PowerShell Remoting Example
 
 The easiest way to test remoting is to just try it on a single machine.
@@ -182,3 +201,4 @@ GitCommitId                    v6.0.0-alpha.17
 [installation]: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 [PowerShell for Linux]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#ubuntu-1404
 [Ubuntu SSH]: https://help.ubuntu.com/lts/serverguide/openssh-server.html
+[PowerShell for MacOS]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#macos-1012
