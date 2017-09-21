@@ -36,7 +36,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
     AfterAll {
         if(!$IsWindows)
         {
-            $PSdefaultParameterValues = $defaultParamValues
+            $global:PSdefaultParameterValues = $defaultParamValues
         }
     }
 
@@ -98,7 +98,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
         else
         {
-            $PSdefaultParameterValues = $defaultParamValues
+            $global:PSdefaultParameterValues = $defaultParamValues
         }
     }
 

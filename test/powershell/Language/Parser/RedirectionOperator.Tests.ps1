@@ -18,7 +18,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     }
     AfterAll {
         # be sure to tidy up afterwards
-        $psDefaultParameterValues = $oldDefaultParameterValues
+        $global:psDefaultParameterValues = $oldDefaultParameterValues
     }
     BeforeEach {
         # start each test with a clean plate!
