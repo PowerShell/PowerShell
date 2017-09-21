@@ -374,6 +374,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Remove-PSDrive",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-PSSession",                                   ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-PSSnapin",                                    ,                     $($FullCLR                               )
+"Cmdlet", "Remove-Service",                                     ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Remove-TypeData",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-Variable",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-WmiObject",                                   ,                     $($FullCLR                               )

@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
                 bool objServiceShouldBeDisposed = false;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
+                    if (InputObject != null)
                     {
                         service = InputObject;
                         Name = service.ServiceName;
@@ -2167,6 +2167,195 @@ namespace Microsoft.PowerShell.Commands
     } // class NewServiceCommand
     #endregion NewServiceCommand
 
+    #region RemoveServiceCommand
+    /// <summary>
+    /// This class implements the Remove-Service command
+    /// </summary>
+    [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    public class RemoveServiceCommand : ServiceBaseCommand
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Name of the service to remove
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Name")]
+        [Alias("ServiceName", "SN")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The following is the definition of the input parameter "InputObject".
+        /// Specifies ServiceController object representing the services to be removed.
+        /// Enter a variable that contains the objects or type a command or expression
+        /// that gets the objects.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ParameterSetName = "InputObject")]
+        public ServiceController InputObject { get; set; }
+
+        /// <summary>
+        /// The following is the definition of the input parameter "ComputerName".
+        /// Set the properties of service running on the list of computer names
+        /// specified. The default is the local computer.
+        /// Type the NETBIOS name, an IP address, or a fully-qualified domain name of
+        /// one or more remote computers. To indicate the local computer, use the
+        /// computer name, "localhost" or a dot (.). When the computer is in a different
+        /// domain than the user, the fully-qualified domain name is required.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty]
+        [Alias("cn")]
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public String[] ComputerName { get; set; } = new string[] { "." };
+
+        #endregion Parameters
+
+        #region Overrides
+        /// <summary>
+        /// Remove the service
+        /// </summary>
+        [ArchitectureSensitive]
+        protected override void ProcessRecord()
+        {
+            ServiceController service = null;
+            string serviceComputerName = null;
+            foreach (string computer in ComputerName)
+            {
+                bool objServiceShouldBeDisposed = false;
+                try
+                {
+                    if (InputObject != null)
+                    {
+                        service = InputObject;
+                        Name = service.ServiceName;
+                        serviceComputerName = service.MachineName;
+                        objServiceShouldBeDisposed = false;
+                    }
+                    else
+                    {
+                        serviceComputerName = computer;
+                        // "new ServiceController" will succeed even if there is no such service.
+                        // This checks whether the service actually exists.
+                        service = new ServiceController(Name, serviceComputerName);
+                        objServiceShouldBeDisposed = true;
+                    }
+                    Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+                    string unusedByDesign = service.DisplayName;
+                }
+                catch (ArgumentException ex)
+                {
+                    // Cannot use WriteNonterminatingError as service is null
+                    ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, computer);
+                    WriteError(er);
+                    continue;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    // Cannot use WriteNonterminatingError as service is null
+                    ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, computer);
+                    WriteError(er);
+                    continue;
+                }
+
+                try // In finally we ensure dispose, if object not pipelined.
+                {
+                    // Confirm the operation first.
+                    // This is always false if WhatIf is set.
+                    if (!ShouldProcessServiceOperation(service))
+                    {
+                        continue;
+                    }
+
+                    NakedWin32Handle hScManager = IntPtr.Zero;
+                    NakedWin32Handle hService = IntPtr.Zero;
+                    try
+                    {
+                        hScManager = NativeMethods.OpenSCManagerW(
+                            lpMachineName: serviceComputerName,
+                            lpDatabaseName: null,
+                            dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
+                            );
+                        if (IntPtr.Zero == hScManager)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            WriteObject(exception);
+                            WriteNonTerminatingError(
+                                service,
+                                serviceComputerName,
+                                exception,
+                                "ComputerAccessDenied",
+                                ServiceResources.ComputerAccessDenied,
+                                ErrorCategory.PermissionDenied);
+                            continue;
+                        }
+                        hService = NativeMethods.OpenServiceW(
+                            hScManager,
+                            Name,
+                            NativeMethods.SERVICE_DELETE
+                            );
+                        if (IntPtr.Zero == hService)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            WriteNonTerminatingError(
+                                service,
+                                exception,
+                                "CouldNotRemoveService",
+                                ServiceResources.CouldNotSetService,
+                                ErrorCategory.PermissionDenied);
+                            continue;
+                        }
+
+                        bool status = NativeMethods.DeleteService(hService);
+
+                        if (!status)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            WriteNonTerminatingError(
+                                service,
+                                exception,
+                                "CouldNotRemoveService",
+                                ServiceResources.CouldNotRemoveService,
+                                ErrorCategory.PermissionDenied);
+                        }
+                    }
+                    finally
+                    {
+                        if (IntPtr.Zero != hService)
+                        {
+                            bool succeeded = NativeMethods.CloseServiceHandle(hService);
+                            if (!succeeded)
+                            {
+                                int lastError = Marshal.GetLastWin32Error();
+                                Diagnostics.Assert(lastError != 0, "ErrorCode not success");
+                            }
+                        }
+
+                        if (IntPtr.Zero != hScManager)
+                        {
+                            bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
+                            if (!succeeded)
+                            {
+                                int lastError = Marshal.GetLastWin32Error();
+                                Diagnostics.Assert(lastError != 0, "ErrorCode not success");
+                            }
+                        }
+                    } // Finally
+                } // End try
+                finally
+                {
+                    if (objServiceShouldBeDisposed)
+                    {
+                        service.Dispose();
+                    }
+                }
+            }// End for
+        }
+        #endregion Overrides
+    } // class RemoveServiceCommand
+    #endregion RemoveServiceCommand
+
     #region ServiceCommandException
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands
@@ -2264,8 +2453,10 @@ namespace Microsoft.PowerShell.Commands
         internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
         internal const DWORD SC_MANAGER_CONNECT = 1;
         internal const DWORD SC_MANAGER_CREATE_SERVICE = 2;
+        internal const DWORD SC_MANAGER_ALL_ACCESS = 0xf003f;
         internal const DWORD SERVICE_QUERY_CONFIG = 1;
         internal const DWORD SERVICE_CHANGE_CONFIG = 2;
+        internal const DWORD SERVICE_DELETE = 0x10000;
         internal const DWORD SERVICE_NO_CHANGE = 0xffffffff;
         internal const DWORD SERVICE_AUTO_START = 0x2;
         internal const DWORD SERVICE_DEMAND_START = 0x3;
@@ -2295,6 +2486,12 @@ namespace Microsoft.PowerShell.Commands
         internal static extern
         bool CloseServiceHandle(
             NakedWin32Handle hSCManagerOrService
+            );
+
+        [DllImport(PinvokeDllNames.DeleteServiceDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern
+        bool DeleteService(
+            NakedWin32Handle hService
             );
 
         [DllImport(PinvokeDllNames.ChangeServiceConfigWDllName, CharSet = CharSet.Unicode, SetLastError = true)]

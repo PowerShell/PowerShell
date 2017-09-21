@@ -171,6 +171,9 @@
   <data name="CouldNotNewServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
   </data>
+  <data name="CouldNotRemoveService" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be removed due to the following error: {2}</value>
+  </data> 
   <data name="CouldNotAccessDependentServices" xml:space="preserve">
     <value>'Cannot access dependent services of '{1} ({0})'</value>
   </data>

@@ -1,4 +1,4 @@
-Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
+Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( -not $IsWindows ) {
@@ -192,6 +192,65 @@ Describe "Set/New-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows"
             if ($service -ne $null) {
                 $service | Remove-CimInstance
             }
+        }
+    }
+
+    It "Remove-Service can remove a service" {
+        try {
+            $servicename = "testremoveservice"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            Remove-Service -Name $servicename
+            $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
+            $service | Should BeNullOrEmpty
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Remove-Service can accept pipeline input of a ServiceController" {
+        try {
+            $servicename = "testremoveservice"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            Get-Service -Name $servicename | Remove-Service
+            $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
+            $service | Should BeNullOrEmpty
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Remove-Service cannot accept a service that does not exist" {
+        { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
+    }
+
+    It "Set-Service can accept pipeline input of a ServiceController" {
+        try {
+            $servicename = "testsetservice"
+            $newdisplayname = "newdisplayname"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            Get-Service -Name $servicename | Set-Service -DisplayName $newdisplayname
+            $service = Get-Service -Name $servicename
+            $service.DisplayName | Should BeExactly $newdisplayname
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
         }
     }
 
