@@ -113,7 +113,7 @@ if ($IsWindows)
 
 try
 {
-    $defaultParamValues = $PSDefaultParameterValues
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:Skip"] = !$IsWindows
 
     Describe "Built-ins work within constrained language" -Tags 'Feature','RequireAdminOnWindows' {
