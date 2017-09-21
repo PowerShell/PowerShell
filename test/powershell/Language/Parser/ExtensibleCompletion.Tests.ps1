@@ -426,7 +426,7 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
     }
 
     AfterAll {
-        #Remove-Module -ModuleInfo $testModule
+        Remove-Module -ModuleInfo $testModule
     }
 
     It "<attributeName> works in script" -TestCases $testCasesScript {
