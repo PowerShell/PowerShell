@@ -43,9 +43,6 @@ dotnet-uninstall-debian-packages.sh
 *.pkg
 *.nupkg
 
-# ignore the version file as it is generated at build time
-powershell.version
-
 # ignore the telemetry semaphore file
 DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
 
