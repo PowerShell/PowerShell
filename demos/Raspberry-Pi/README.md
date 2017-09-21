@@ -72,4 +72,4 @@ cp shared/Microsoft.NetCore.App/2.1.0-preview1-25719-04/* ~/powershell
 ~/powershell/powershell
 ```
 
-Note that until arm32 is fully supported by CoreCLR, it's not supported by PowerShell Core.
+Note that until arm32 is [fully supported by CoreCLR](https://github.com/dotnet/coreclr/issues/3977), it's not supported by PowerShell Core.
