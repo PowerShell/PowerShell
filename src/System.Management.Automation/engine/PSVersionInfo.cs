@@ -60,11 +60,15 @@ namespace System.Management.Automation
             string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
 
-            s_psV6Version = new SemanticVersion(fileVersionInfo.ProductVersion);
+            // Convert to '6.0.0-beta.7-29-g52c6bfe1eae24dbaa1a162bffb3754ba3fdc1f4c'.
+            // The raw git commit version string is widely used internally.
+            string rawGitCommitId = "v" + fileVersionInfo.ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+
+            s_psV6Version = new SemanticVersion(fileVersionInfo.ProductVersion.Substring(0, fileVersionInfo.ProductVersion.IndexOf(' ')));
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
-            s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
+            s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
             s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
