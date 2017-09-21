@@ -4874,7 +4874,7 @@ param(
                 # Section 1:
                 # Move pwrshplugin.dll from $PSHOME to the endpoint directory
                 #
-                $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" (""v"" + $psversiontable.GitCommitId -replace "" Commits: "", ""-""  -replace "" SHA: "", ""-"")
+                $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" $psversiontable.GitCommitId
                 if (!(Test-Path $pluginInstallPath))
                 {{
                     $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
