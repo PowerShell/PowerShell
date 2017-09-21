@@ -206,6 +206,7 @@ namespace Microsoft.PowerShell.Commands
         /// Unix format string
         /// </summary>
         [Parameter(ParameterSetName = "net")]
+        [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
         #endregion

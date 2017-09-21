@@ -2002,6 +2002,20 @@ namespace System.Management.Automation
                 {
                 }
             }
+
+            var argumentCompletionsAttribute = parameter.CompiledAttributes.OfType<ArgumentCompletionsAttribute>().FirstOrDefault();
+            if (argumentCompletionsAttribute != null)
+            {
+                var customResults = argumentCompletionsAttribute.CompleteArgument(commandName, parameterName,
+                        context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
+                if (customResults != null)
+                {
+                    result.AddRange(customResults);
+                    result.Add(CompletionResult.Null);
+                    return;
+                }
+            }
+
             switch (commandName)
             {
                 case "Get-Command":

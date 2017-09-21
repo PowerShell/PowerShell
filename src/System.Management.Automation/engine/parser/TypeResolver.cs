@@ -736,6 +736,7 @@ namespace System.Management.Automation
                     { typeof(AllowEmptyStringAttribute),                   new[] { "AllowEmptyString" } },
                     { typeof(AllowNullAttribute),                          new[] { "AllowNull" } },
                     { typeof(ArgumentCompleterAttribute),                  new[] { "ArgumentCompleter" } },
+                    { typeof(ArgumentCompletionsAttribute),                new[] { "ArgumentCompletions" } },
                     { typeof(Array),                                       new[] { "array" } },
                     { typeof(bool),                                        new[] { "bool" } },
                     { typeof(byte),                                        new[] { "byte" } },
