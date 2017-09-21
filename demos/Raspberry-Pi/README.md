@@ -34,9 +34,9 @@ Use SSH to copy the bits remotely, replace `yourPi` with the name or IP address 
 scp -r "$(split-path (Get-PSOutput))/*" pi@yourPi:/home/pi/powershell
 ```
 
-## Get latest CoreClr runtime
+## Get latest CoreCLR runtime
 
-We need to get a CoreClr that fixes a [threading bug](https://github.com/dotnet/coreclr/pull/13922) which is in DotNetCore 2.0.0.
+We need to get a CoreCLR that fixes a [threading bug](https://github.com/dotnet/coreclr/pull/13922) which is in DotNetCore 2.0.0.
 
 You can do these steps locally on your Pi, but we're using SSH remoting here.
 
@@ -52,17 +52,17 @@ sudo apt install curl
 Now we'll download it and unpack it.
 
 ```bash
-# connect to your Pi
+# Connect to your Pi.
 ssh pi@yourpi
-# we'll make a folder to put latest CoreClr runtime
+# We'll make a folder to put latest CoreCLR runtime.
 mkdir dotnet
 cd dotnet
-# download the latest CoreClr runtime
+# Download the latest CoreCLR runtime.
 curl -O https://dotnetcli.blob.core.windows.net/dotnet/Runtime/master/dotnet-runtime-latest-linux-arm.tar.gz
-# unpack it
+# Unpack it.
 tar xvf ./dotnet-runtime-latest-linux-arm.tar.gz
-# we're going to overwrite the CoreClr bits we built with newer ones, replace the version named folder below as appropriate
-# if you build a newer version of PowerShell Core, you'll need to make sure you get latest CoreClr runtime otherwise you may hit a segmentation fault
+# We're going to overwrite the CoreCLR bits we built with newer ones, replace the version named folder below as appropriate.
+# If you build a newer version of PowerShell Core, you'll need to make sure you get latest CoreCLR runtime otherwise you may hit a segmentation fault.
 cp shared/Microsoft.NetCore.App/2.1.0-preview1-25719-04/* ~/powershell
 ```
 
@@ -72,4 +72,4 @@ cp shared/Microsoft.NetCore.App/2.1.0-preview1-25719-04/* ~/powershell
 ~/powershell/powershell
 ```
 
-Note that until arm32 is fully supported by CoreClr, it's not supported by PowerShell Core.
+Note that until arm32 is fully supported by CoreCLR, it's not supported by PowerShell Core.

@@ -60,6 +60,7 @@ debughandler
 DevOps
 DockerFile
 DockerFiles
+DotNetCore
 DottedScopes
 eBook
 enum
@@ -381,8 +382,6 @@ _script.ps1.
  - demos/Raspberry-Pi/README.md
 2.0.x
 2.1.x
-CoreClr
-DotNetCore
 Raspbian
 toolchain
 #endregion
