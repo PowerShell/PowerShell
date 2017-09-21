@@ -20,20 +20,13 @@ namespace System.Management.Automation
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
         internal const string PSVersionName = "PSVersion";
         internal const string PSEditionName = "PSEdition";
-        internal const string PSFormattedGitCommitIdName = "GitCommitId";
+        internal const string PSGitCommitIdName = "GitCommitId";
         internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
         internal const string PSPlatformName = "Platform";
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
         private static PSVersionHashTable s_psVersionTable = null;
-
-        /// <summary>
-        /// The constant contains a raw git commit version.
-        /// 'git describe --abbrev=60 --long'
-        /// Ex.: '6.0.0-beta.7-29-52c6bfe1eae24dbaa1a162bffb3754ba3fdc1f4c'
-        /// </summary>
-        private static string s_rawGitCommitId;
 
         /// <summary>
         /// A constant to track current PowerShell Version.
@@ -64,21 +57,14 @@ namespace System.Management.Automation
         {
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
-            // Get '6.0.0-beta.7 Commits: 29 SHA: 52c6bfe1eae24dbaa1a162bffb3754ba3fdc1f4c'.
-            // The formatted string is displayed to users in '$PSVersionTable' and PowerShell banner.
-            string assemblyPath = typeof(PSVersionInfo).Assembly.Location;
-            string formattedGitCommitId = FileVersionInfo.GetVersionInfo(assemblyPath).ProductVersion;
-            s_psVersionTable[PSFormattedGitCommitIdName] = formattedGitCommitId;
+            string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
 
-            // Convert to '6.0.0-beta.7-29-52c6bfe1eae24dbaa1a162bffb3754ba3fdc1f4c'.
-            // The raw git commit version string is widely used internally.
-            s_rawGitCommitId = "v" + formattedGitCommitId.Replace(" Commits: ", "-").Replace(" SHA: ", "-");
-
-            // Use a short version '6.0.0-beta.7'.
-            s_psV6Version = new SemanticVersion(formattedGitCommitId.Substring(0, formattedGitCommitId.IndexOf(' ')));
+            s_psV6Version = new SemanticVersion(fileVersionInfo.ProductVersion);
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
+            s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
             s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
@@ -152,15 +138,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return s_rawGitCommitId;
-            }
-        }
-
-        internal static string FormattedGitCommitId
-        {
-            get
-            {
-                return (string)GetPSVersionTable()[PSFormattedGitCommitIdName];
+                return (string)GetPSVersionTable()[PSGitCommitIdName];
             }
         }
 

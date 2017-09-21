@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell
             try
             {
                 var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
-                var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.FormattedGitCommitId);
+                var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
                     formattedBanner,
