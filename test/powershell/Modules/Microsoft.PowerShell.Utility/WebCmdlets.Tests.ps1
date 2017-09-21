@@ -2080,14 +2080,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
             $headers.Server | Should Be 'Kestrel'
         }
-        It "Verifies Invoke-RestMethod supports -HV alias" {
-            $uri = Get-WebListenerUrl -Test '/'
-            $response = Invoke-RestMethod -Uri $uri -HV 'headers'
-
-            $headers | Should Not BeNullOrEmpty
-            $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
-            $headers.Server | Should Be 'Kestrel'
-        }
+        
         It "Verifies Invoke-RestMethod supports -ResponseHeadersVariable overwriting existing variable" {
             $uri = Get-WebListenerUrl -Test '/'
             $headers = 'prexisting'
