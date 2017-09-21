@@ -1,4 +1,14 @@
 Describe "PSVersionTable" -Tags "CI" {
+
+    BeforeAll {
+        $powershellProcess=Get-Process -id $pid
+        $rootPath = Split-Path -Path $powershellProcess.path -Parent
+        $sma = Get-Item (Join-Path $rootPath "System.Management.Automation.dll")
+        $formattedVersion = $sma.VersionInfo.ProductVersion
+        $rawGitCommitId = "v" + $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
+        $expectedVersion = ($formattedVersion -split " ")[0]
+    }
+
     It "Should have version table entries" {
        $PSVersionTable.Count | Should Be 9
     }
@@ -17,30 +27,27 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "PSVersion property" {
-       $powershellProcess=Get-Process -id $pid
-       $rootPath = Split-Path -Path $powershellProcess.path -Parent
-       $sma = Get-Item (Join-Path $rootPath "System.Management.Automation.dll")
-       $expectedVersion = $sma.VersionInfo.ProductVersion
-
        $PSVersionTable.PSVersion | Should BeOfType "System.Management.Automation.SemanticVersion"
        $PSVersionTable.PSVersion | Should BeExactly $expectedVersion
+       $PSVersionTable.PSVersion.Major | Should Be 6
     }
 
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should BeOfType "System.String"
-       { [System.Management.Automation.SemanticVersion]::Parse($PSVersionTable.GitCommitId) } | Should Not Throw
+       [regex]::IsMatch($PSVersionTable.GitCommitId, "^v(\d+\.\d+\.\d+)-(.+)-(\d+)-g(.+)") | Should Be $true
+       $PSVersionTable.GitCommitId | Should BeExactly $rawGitCommitId
     }
 
     It "Should have the correct platform info" {
        $platform = [String][System.Environment]::OSVersion.Platform
-	   [String]$PSVersionTable["Platform"] | Should Be $platform
+       [String]$PSVersionTable["Platform"] | Should Be $platform
     }
 
     It "Should have the correct OS info" {
        if ($IsCoreCLR)
        {
            $OSDescription = [String][System.Runtime.InteropServices.RuntimeInformation]::OSDescription
-	       [String]$PSVersionTable["OS"] | Should Be $OSDescription
+           [String]$PSVersionTable["OS"] | Should Be $OSDescription
        }
        else
        {
