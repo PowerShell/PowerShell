@@ -10,7 +10,7 @@ using Newtonsoft.Json.Schema;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A cmdlet to validate an Json.
+    /// This class implements Test-Json command.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Json", HelpUri = "")]
     public class TestJsonCommand : PSCmdlet
