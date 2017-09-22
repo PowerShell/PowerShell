@@ -57,14 +57,15 @@ namespace System.Management.Automation
         {
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
-            string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyPath);
+            string assemblyPath = typeof(PSVersionInfo).Assembly.Location;
+            string productVersion = FileVersionInfo.GetVersionInfo(assemblyPath).ProductVersion;
 
-            // Convert to '6.0.0-beta.7-29-g52c6bfe1eae24dbaa1a162bffb3754ba3fdc1f4c'.
-            // The raw git commit version string is widely used internally.
-            string rawGitCommitId = "v" + fileVersionInfo.ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+            // Get 'ProductVersion' of the assembly. The product version string can be one of the following format examples:
+            //    when powershell is built from a commit      -- '6.0.0-beta.7 Commits: 29 SHA: 52c6b...'
+            //    when powershell is built from a release tag -- '6.0.0-beta.7 SHA: f1ec9...'
+            string rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
 
-            s_psV6Version = new SemanticVersion(fileVersionInfo.ProductVersion.Substring(0, fileVersionInfo.ProductVersion.IndexOf(' ')));
+            s_psV6Version = new SemanticVersion(productVersion.Substring(0, productVersion.IndexOf(' ')));
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
