@@ -2,8 +2,8 @@
 
 ## Setup your Pi
 
-Note that CoreCLR (and thus PowerShell Core) will only work on Pi-2 and Pi-3 devices as other devices
-like [Pi-Zero](https://github.com/dotnet/coreclr/issues/10605) have an unsupported processor.
+Note that CoreCLR (and thus PowerShell Core) will only work on Pi 2 and Pi 3 devices as other devices
+like [Pi Zero](https://github.com/dotnet/coreclr/issues/10605) have an unsupported processor.
 
 Download [Raspbian](https://www.raspberrypi.org/downloads/raspbian/) and follow the [installation instructions](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) to get it onto your Pi.
 
