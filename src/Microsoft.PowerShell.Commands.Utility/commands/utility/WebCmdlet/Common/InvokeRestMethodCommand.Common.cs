@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the ResponseHeadersVariable property.
         /// </summary>
         [Parameter]
-        [Alias("HV")]
+        [Alias("RHV")]
         public string ResponseHeadersVariable { get; set; }
 
         #endregion Parameters
