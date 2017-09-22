@@ -1561,7 +1561,6 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
             return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
@@ -1574,7 +1573,6 @@ else
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell Core uses its versioned directory instead of system32
-            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
             string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
