@@ -989,11 +989,27 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     this.ArgumentList = new object[] { psSession };
-                    // since we already applied these filters remotely, we don't want to apply it locally where the generated module is always 1.0
+
+                    // The correct module version has already been imported from the remote session and created locally. 
+                    // The locally created module always has a version of 1.0 regardless of the actual module version
+                    // imported from the remote session, and version checking is no longer needed and will not work while 
+                    // importing this created local module.
+                    Version originalBaseMinimumVersion = BaseMinimumVersion;
+                    Version originalBaseMaximumVersion = BaseMaximumVersion;
+                    Version originalBaseRequiredVersion = BaseRequiredVersion;
                     BaseMinimumVersion = null;
                     BaseMaximumVersion = null;
                     BaseRequiredVersion = null;
-                    ImportModule_LocallyViaName(importModuleOptions, wildcardEscapedPsd1Path);
+                    try
+                    {
+                        ImportModule_LocallyViaName(importModuleOptions, wildcardEscapedPsd1Path);
+                    }
+                    finally
+                    {
+                        BaseMinimumVersion = originalBaseMinimumVersion;
+                        BaseMaximumVersion = originalBaseMaximumVersion;
+                        BaseRequiredVersion = originalBaseRequiredVersion;
+                    }
                 }
                 finally
                 {
