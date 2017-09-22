@@ -21,7 +21,7 @@ if($ReleaseTag)
 
 if(-not $env:homedrive)
 {
-    Write-Verbose "fixng empty home paths..." -Verbose
+    Write-Verbose "fixing empty home paths..." -Verbose
     $profileParts = $env:userprofile -split ':'
     $env:homedrive = $profileParts[0]+':'
     $env:homepath = $profileParts[1]
@@ -30,7 +30,7 @@ if(-not $env:homedrive)
 if(! (Test-Path $destination))
 {
     Write-Verbose "Creating destination $destination" -Verbose
-    $null = New-Item -Path $destination -ItemType Directory -Force
+    $null = New-Item -Path $destination -ItemType Directory
 }
 
 Write-Verbose "homedrive : ${env:homedrive}"
@@ -71,18 +71,9 @@ try{
     Start-PSPackage @pspackageParams @releaseTagParam
 
     Write-Verbose "Exporting packages ..." -verbose
-    $files= @()
 
-    Get-ChildItem $location\*.msi |Select-Object -ExpandProperty FullName | ForEach-Object {
-        $files += $_
-    }
-
-    Get-ChildItem $location\*.zip |Select-Object -ExpandProperty FullName | ForEach-Object {
-        $files += $_
-    }
-
-    Foreach($file in $files)
-    {
+    Get-ChildItem $location\*.msi,$location\*.zip | Select-Object -ExpandProperty FullName | ForEach-Object {
+        $file = $_
         Write-Verbose "Copying $file to $destination" -verbose
         Copy-Item -Path $file -Destination "$destination\" -Force
     }
