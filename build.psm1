@@ -272,7 +272,12 @@ function Start-BuildNativeUnixBinaries {
         return
     }
 
+    if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
     # Verify we have all tools in place to do the build
+    $precheck = $true
     foreach ($Dependency in 'cmake', 'make', 'g++') {
         $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
     }
@@ -299,9 +304,11 @@ function Start-BuildNativeUnixBinaries {
     $Lib = "$PSScriptRoot/src/powershell-unix/libpsl-native.$Ext"
     log "Start building $Lib"
 
+    git clean -qfdX $Native
+
     try {
         Push-Location $Native
-        if ($Runtime -eq "linux-arm") {
+        if ($BuildLinuxArm) {
             Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
             Start-NativeExecution { make -j }
         }
