@@ -246,10 +246,6 @@ function New-UnixPackage {
         [Parameter(Mandatory)]
         [string]$Version,
 
-        # Package iteration version (rarely changed)
-        # This is a string because strings are appended to it
-        [string]$Iteration = "1",
-
         [Switch]
         $Force
     )
