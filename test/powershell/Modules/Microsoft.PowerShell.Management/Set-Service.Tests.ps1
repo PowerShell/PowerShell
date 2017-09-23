@@ -235,6 +235,85 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
+    It "Get-Service can get the username of a service" {
+        try {
+            $userName = "user1"
+            $testPass = "Secret123!"
+            $servicename = "testgetusername"
+            net user $userName $testPass /add > $null
+            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
+            $creds = [pscredential]::new(".\$userName", $password)
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe";
+                Credential     = $creds
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-Service -Name $servicename
+            $service.UserName | Should BeExactly $creds.UserName
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            net user $userName /delete > $null
+        }
+    }
+
+    It "Get-Service can get the BinPath of a service" {
+        try {
+            $servicename = "testbinpathservice"
+            $binpath = "$PSHOME\powershell.exe"
+            $parameters = @{
+                Name = $servicename
+                BinaryPathName = $binpath
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-Service -Name $servicename
+            $service.BinPath | Should BeExactly $binpath
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Get-Service can get the description of a service" {
+        try {
+            $servicename = "testdescriptionservice"
+            $description = "This is a test description"
+            $parameters = @{
+                Name = $servicename
+                Description = $description
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-Service -Name $servicename
+            $service.Description | Should BeExactly $description
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Get-Service can get the delayed autostart property of a service" {
+        try {
+            $servicename = "testgetdelayautostartservice"
+            $binpath = "$PSHOME\powershell.exe"
+            $parameters = @{
+                Name = $servicename
+                BinaryPathName = $binpath
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-Service -Name $servicename
+            $service.DelayedAutoStart | Should BeExactly $false
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Set-Service can accept pipeline input of a ServiceController" {
         try {
             $servicename = "testsetservice"

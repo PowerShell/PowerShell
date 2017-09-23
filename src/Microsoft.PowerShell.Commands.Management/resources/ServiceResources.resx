@@ -162,6 +162,9 @@
   <data name="CouldNotSetService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
   </data>
+  <data name="CouldNotGetServiceInfo" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be queried due to the following error: {2}</value>
+  </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
   </data>

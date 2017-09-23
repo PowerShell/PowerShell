@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!DependentServices.IsPresent && !RequiredServices.IsPresent)
                 {
-                    WriteObject(service);
+                    WriteObject(AddProperties(service));
                 }
                 else
                 {
@@ -689,6 +689,207 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Overrides
+
+        /// <summary>
+        /// Adds UserName, Description, BinPath and Delay Autostart info to the ServiceController object.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <returns></returns>
+        private PSObject AddProperties(ServiceController service) {
+            NakedWin32Handle hScManager = IntPtr.Zero;
+            NakedWin32Handle hService = IntPtr.Zero;
+            int lastError = 0;
+            PSObject serviceAsPSObj = PSObject.AsPSObject(service);
+            try
+            {
+                hScManager = NativeMethods.OpenSCManagerW(
+                    lpMachineName: service.MachineName,
+                    lpDatabaseName: null,
+                    dwDesiredAccess: NativeMethods.SC_MANAGER_CONNECT
+                );
+                if (IntPtr.Zero == hScManager) {
+                    lastError = Marshal.GetLastWin32Error();
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        service.MachineName,
+                        exception,
+                        "ComputerAccessDenied",
+                        ServiceResources.ComputerAccessDenied,
+                        ErrorCategory.PermissionDenied);
+                }
+                hService = NativeMethods.OpenServiceW(
+                    hScManager,
+                    service.ServiceName,
+                    NativeMethods.SERVICE_QUERY_CONFIG
+                );
+                if (IntPtr.Zero == hService) {
+                    lastError = Marshal.GetLastWin32Error();
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+                }
+
+                // Description information
+                IntPtr lpBuffer = IntPtr.Zero;
+                DWORD bufferSizeNeeded = 0;
+                bool status = NativeMethods.QueryServiceConfig2W(
+                    hService: hService,
+                    dwInfoLevel: NativeMethods.SERVICE_CONFIG_DESCRIPTION,
+                    lpBuffer: lpBuffer,
+                    cbBufSize: 0,
+                    pcbBytesNeeded: out bufferSizeNeeded);
+
+                lastError = Marshal.GetLastWin32Error();
+                if(lastError != NativeMethods.ERROR_INSUFFICIENT_BUFFER) {
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+                }
+                lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+
+                status = NativeMethods.QueryServiceConfig2W(
+                    hService,
+                    NativeMethods.SERVICE_CONFIG_DESCRIPTION,
+                    lpBuffer,
+                    bufferSizeNeeded,
+                    out bufferSizeNeeded);
+
+                if(!status) {
+                    lastError = Marshal.GetLastWin32Error();
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+                }
+                NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
+
+                // Delayed auto start information
+                lpBuffer = IntPtr.Zero;
+                bufferSizeNeeded = 0;
+                status = NativeMethods.QueryServiceConfig2W(
+                    hService: hService,
+                    dwInfoLevel: NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                    lpBuffer: lpBuffer,
+                    cbBufSize: 0,
+                    pcbBytesNeeded: out bufferSizeNeeded);
+
+                lastError = Marshal.GetLastWin32Error();
+                if(lastError != NativeMethods.ERROR_INSUFFICIENT_BUFFER) {
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+
+                }
+                lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+
+                status = NativeMethods.QueryServiceConfig2W(
+                    hService,
+                    NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                    lpBuffer,
+                    bufferSizeNeeded,
+                    out bufferSizeNeeded);
+                if(!status) {
+                    lastError = Marshal.GetLastWin32Error();
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+                }
+                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
+
+                // General information
+                lpBuffer = IntPtr.Zero;
+                bufferSizeNeeded = 0;
+                status = NativeMethods.QueryServiceConfigW(
+                    hSCManager: hService,
+                    lpServiceConfig: lpBuffer,
+                    cbBufSize: 0,
+                    pcbBytesNeeded: out bufferSizeNeeded);
+
+                lastError = Marshal.GetLastWin32Error();
+                if(lastError != NativeMethods.ERROR_INSUFFICIENT_BUFFER) {
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+
+                }
+                lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+
+                status = NativeMethods.QueryServiceConfigW(
+                    hService,
+                    lpBuffer,
+                    bufferSizeNeeded,
+                    out bufferSizeNeeded);
+                if(!status) {
+                    lastError = Marshal.GetLastWin32Error();
+                    Win32Exception exception = new Win32Exception(lastError);
+                    WriteNonTerminatingError(
+                        service,
+                        exception,
+                        "CouldNotGetServiceInfo",
+                        ServiceResources.CouldNotGetServiceInfo,
+                        ErrorCategory.PermissionDenied);
+                }
+
+                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
+
+                PSProperty noteProperty = new PSProperty("UserName", serviceInfo.lpServiceStartName);
+                serviceAsPSObj.Properties.Add(noteProperty, true);
+                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#UserName");
+
+                noteProperty = new PSProperty("Description", description.lpDescription);
+                serviceAsPSObj.Properties.Add(noteProperty, true);
+                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#Description");
+
+                noteProperty = new PSProperty("DelayedAutoStart", autostartInfo.fDelayedAutostart);
+                serviceAsPSObj.Properties.Add(noteProperty, true);
+                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
+
+                noteProperty = new PSProperty("BinPath", serviceInfo.lpBinaryPathName);
+                serviceAsPSObj.Properties.Add(noteProperty, true);
+                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinPath");
+            }
+            finally
+            {
+                if (IntPtr.Zero != hService) {
+                    bool succeeded = NativeMethods.CloseServiceHandle(hService);
+                    if (!succeeded) {
+                        Diagnostics.Assert(lastError != 0, "ErrorCode not success");
+                    }
+                }
+
+                if (IntPtr.Zero != hScManager) {
+                    bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
+                    if (!succeeded) {
+                        Diagnostics.Assert(lastError != 0, "ErrorCode not success");
+                    }
+                }
+            } // finally
+            return serviceAsPSObj;
+        }
     }
     #endregion GetServiceCommand
 
@@ -2451,6 +2652,7 @@ namespace Microsoft.PowerShell.Commands
         // from winuser.h
         internal const int ERROR_SERVICE_ALREADY_RUNNING = 1056;
         internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
+        internal const int ERROR_INSUFFICIENT_BUFFER = 122;
         internal const DWORD SC_MANAGER_CONNECT = 1;
         internal const DWORD SC_MANAGER_CREATE_SERVICE = 2;
         internal const DWORD SC_MANAGER_ALL_ACCESS = 0xf003f;
@@ -2462,6 +2664,9 @@ namespace Microsoft.PowerShell.Commands
         internal const DWORD SERVICE_DEMAND_START = 0x3;
         internal const DWORD SERVICE_DISABLED = 0x4;
         internal const DWORD SERVICE_CONFIG_DESCRIPTION = 1;
+        internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
+        internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
+
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 
@@ -2480,6 +2685,25 @@ namespace Microsoft.PowerShell.Commands
             NakedWin32Handle hSCManager,
             [In, MarshalAs(UnmanagedType.LPWStr)] string lpServiceName,
             DWORD dwDesiredAccess
+            );
+
+        [DllImport(PinvokeDllNames.QueryServiceConfigDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern
+        bool QueryServiceConfigW(
+            NakedWin32Handle hSCManager,
+            IntPtr lpServiceConfig,
+            DWORD cbBufSize,
+            out DWORD pcbBytesNeeded
+            );
+
+        [DllImport(PinvokeDllNames.QueryServiceConfig2DllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern
+        bool QueryServiceConfig2W(
+            NakedWin32Handle hService,
+            DWORD dwInfoLevel,
+            IntPtr lpBuffer,
+            DWORD cbBufSize,
+            out DWORD pcbBytesNeeded
             );
 
         [DllImport(PinvokeDllNames.CloseServiceHandleDllName, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -2523,6 +2747,26 @@ namespace Microsoft.PowerShell.Commands
         {
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string lpDescription;
+        };
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct QUERY_SERVICE_CONFIG
+        {
+            internal uint dwServiceType;
+            internal uint dwStartType;
+            internal uint dwErrorControl;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string lpBinaryPathName;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string lpLoadOrderGroup;
+            internal uint dwTagId;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string lpDependencies;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string lpServiceStartName;
+            [MarshalAs(UnmanagedType.LPWStr)] internal string lpDisplayName;
+        };
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct SERVICE_DELAYED_AUTO_START_INFO
+        {
+            internal bool fDelayedAutostart;
         };
 
         [DllImport(PinvokeDllNames.CreateServiceWDllName, CharSet = CharSet.Unicode, SetLastError = true)]
