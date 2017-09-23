@@ -2076,7 +2076,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test '/'
             $response = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
-            $headers | Should Not BeNullOrEmpty
             $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
             $headers.Server | Should Be 'Kestrel'
         }
@@ -2087,7 +2086,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $response = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
             $headers | Should Not Be 'prexisting'
-            $headers | Should Not BeNullOrEmpty
             $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
             $headers.Server | Should Be 'Kestrel'
         }
