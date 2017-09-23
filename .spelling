@@ -60,6 +60,7 @@ debughandler
 DevOps
 DockerFile
 DockerFiles
+DotNetCore
 DottedScopes
 eBook
 enum
@@ -376,6 +377,14 @@ download.sh
  - demos/python/README.md
 _script.ps1
 _script.ps1.
+#endregion
+
+#region demos/Raspberry-Pi/README.md Overrides
+ - demos/Raspberry-Pi/README.md
+2.0.x
+2.1.x
+Raspbian
+toolchain
 #endregion
 
 #region demos/rest/README.md Overrides
