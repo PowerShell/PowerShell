@@ -59,6 +59,30 @@ Response when certificate is not provided in request:
 }
 ```
 
+## /Delay/
+
+Returns the same results as the Get test. If a number is supplied, the server will wait that many seconds before returning a response. This can be used to test timeouts.
+
+```powershell
+Invoke-WebRequest -Uri 'http://localhost:8083/Delay/5'
+```
+
+After 5 Seconds:
+
+```json
+{
+  "args": {
+    
+  },
+  "origin": "127.0.0.1",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.15063.608",
+    "Host": "localhost:8083"
+  },
+  "url": "http://localhost:8083/Delay/5"
+}
+```
+
 ## /Encoding/Utf8/
 
 Returns page containing UTF-8 data.
