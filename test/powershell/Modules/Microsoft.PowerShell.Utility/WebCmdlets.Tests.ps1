@@ -494,7 +494,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest -MaximumRedirection" {
 
-        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 4"
 
         $result = ExecuteWebCommand -command $command
@@ -508,7 +508,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
-        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 2"
 
         $result = ExecuteWebCommand -command $command
@@ -517,7 +517,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
 
-        $uri = Get-WebListenerUrl -Test 'Encoding/Utf8'
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
@@ -1353,7 +1353,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -MaximumRedirection" {
 
-        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 4"
 
         $result = ExecuteWebCommand -command $command
@@ -1365,7 +1365,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod error for -MaximumRedirection" {
 
-        $uri = Get-WebListenerUrl -Test 'Redirect/3'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 2"
 
         $result = ExecuteWebCommand -command $command
@@ -1374,7 +1374,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
 
-        $uri = Get-WebListenerUrl -Test 'Encoding/Utf8'
+        $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-RestMethod -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command        
