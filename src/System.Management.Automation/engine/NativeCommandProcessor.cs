@@ -186,16 +186,7 @@ namespace System.Management.Automation
             //Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
 
-            try
-            {
-                Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
-                    new Host.Rectangle(_startPosition, _startPosition));
-                _scrapeHostOutput = true;
-            }
-            catch (NotImplementedException)
-            {
-                _scrapeHostOutput = false;
-            }
+            _isTranscribing = this.Command.Context.EngineHostInterface.UI.IsTranscribing;
         }
 
         /// <summary>
@@ -384,8 +375,8 @@ namespace System.Management.Automation
         /// </summary>
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
-        private bool _scrapeHostOutput;
-
+        private static bool? s_supportScreenScrape = null;
+        private bool _isTranscribing;
         private Host.Coordinates _startPosition;
 
         /// <summary>
@@ -412,10 +403,24 @@ namespace System.Management.Automation
             // Calculate if input and output are redirected.
             bool redirectOutput = true;
             bool redirectError = true;
-            bool redirectInput = true;
+            bool redirectInput = this.Command.MyInvocation.ExpectingInput;
+
+            if (null == s_supportScreenScrape)
+            {
+                try
+                {
+                    Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                        new Host.Rectangle(_startPosition, _startPosition));
+                    s_supportScreenScrape = true;
+                }
+                catch (NotImplementedException)
+                {
+                    s_supportScreenScrape = false;
+                }
+            }
 
             // If we are transcribing and can't scrape, then continue to redirect so we have the output
-            if (!this.Command.Context.EngineHostInterface.UI.IsTranscribing || _scrapeHostOutput)
+            if (!_isTranscribing || (true == s_supportScreenScrape))
             {
                 CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
             }
@@ -446,7 +451,7 @@ namespace System.Management.Automation
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    if (this.Command.Context.EngineHostInterface.UI.IsTranscribing && _scrapeHostOutput)
+                    if (_isTranscribing && (true == s_supportScreenScrape))
                     {
                         _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         _startPosition.X = 0;
@@ -703,8 +708,7 @@ namespace System.Management.Automation
                     _nativeProcess.WaitForExit();
 
                     // Capture screen output if we are transcribing
-                    if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
-                        _scrapeHostOutput)
+                    if (_isTranscribing && (true == s_supportScreenScrape))
                     {
                         Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
