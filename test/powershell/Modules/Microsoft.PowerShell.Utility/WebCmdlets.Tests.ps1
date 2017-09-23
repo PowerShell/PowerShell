@@ -591,15 +591,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Invoke-WebRequest validate timeout option" {
-
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '10'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 10"
-
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-    }
-
     # Perform the following operation for Invoke-WebRequest
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
