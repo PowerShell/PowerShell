@@ -13,12 +13,12 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # If out-file -encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
-        $oldDefaultParameterValues = $psDefaultParameterValues
+        $oldDefaultParameterValues = $psDefaultParameterValues.Clone()
         $psDefaultParameterValues = @{}
     }
     AfterAll {
         # be sure to tidy up afterwards
-        $psDefaultParameterValues = $oldDefaultParameterValues
+        $global:psDefaultParameterValues = $oldDefaultParameterValues
     }
     BeforeEach {
         # start each test with a clean plate!

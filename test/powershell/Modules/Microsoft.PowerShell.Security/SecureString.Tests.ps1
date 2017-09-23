@@ -8,7 +8,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
         if ( ! $IsWindows ) { $PSdefaultParameterValues["it:pending"] = $true }
     }
     AfterAll {
-        $PSdefaultParameterValues = $defaultParamValues
+        $global:PSdefaultParameterValues = $defaultParamValues
     }
 
     It "using null arguments to ConvertFrom-SecureString produces an exception" {
