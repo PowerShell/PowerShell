@@ -663,7 +663,7 @@ namespace System.Management.Automation
         /// <summary>
         /// "Complete" verb alias prefix
         /// </summary>
-        public const string Complete = "cp";
+        public const string Complete = "cmp";
 
         /// <summary>
         /// "Compress" verb alias prefix
