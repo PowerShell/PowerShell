@@ -252,7 +252,7 @@ namespace System.Management.Automation.Runspaces
         /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations 
         /// (close runspace or stop powershell). For instance, when the user hits ctrl-C, 
         /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state. 
-        /// The administrator wouldn�t mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
+        /// The administrator wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
         /// A high timeout here like 3 minutes will give the administrator a feeling that the PowerShell client has hung.
         /// </summary>
         public int CancelTimeout { get; set; } = defaultCancelTimeout;
