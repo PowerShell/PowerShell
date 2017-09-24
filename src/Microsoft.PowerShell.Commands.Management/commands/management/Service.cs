@@ -733,128 +733,26 @@ namespace Microsoft.PowerShell.Commands
                         ServiceResources.CouldNotGetServiceInfo,
                         ErrorCategory.PermissionDenied);
                 }
+                IntPtr structurePointer = IntPtr.Zero;
 
-                // Description information
-                IntPtr lpBuffer = IntPtr.Zero;
-                DWORD bufferSizeNeeded = 0;
-                bool status = NativeMethods.QueryServiceConfig2W(
-                    hService: hService,
-                    dwInfoLevel: NativeMethods.SERVICE_CONFIG_DESCRIPTION,
-                    lpBuffer: lpBuffer,
-                    cbBufSize: 0,
-                    pcbBytesNeeded: out bufferSizeNeeded);
+                bool queryStatus = NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out structurePointer);
+                NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(structurePointer, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
 
-                lastError = Marshal.GetLastWin32Error();
-                if(lastError != NativeMethods.ERROR_INSUFFICIENT_BUFFER) {
-                    Win32Exception exception = new Win32Exception(lastError);
+                queryStatus = queryStatus & NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out structurePointer);
+                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(structurePointer, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
+
+                queryStatus = queryStatus & NativeMethods.QueryServiceConfig(hService, out structurePointer);
+                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(structurePointer, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
+
+                if(!queryStatus) {
                     WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
+                        service: service,
+                        innerException: null,
+                        errorId: "CouldNotGetServiceInfo",
+                        errorMessage: ServiceResources.CouldNotGetServiceInfo,
+                        category: ErrorCategory.PermissionDenied
+                        );
                 }
-                lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
-
-                status = NativeMethods.QueryServiceConfig2W(
-                    hService,
-                    NativeMethods.SERVICE_CONFIG_DESCRIPTION,
-                    lpBuffer,
-                    bufferSizeNeeded,
-                    out bufferSizeNeeded);
-
-                if(!status) {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
-                }
-                NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
-
-                // Delayed auto start information
-                lpBuffer = IntPtr.Zero;
-                bufferSizeNeeded = 0;
-                status = NativeMethods.QueryServiceConfig2W(
-                    hService: hService,
-                    dwInfoLevel: NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
-                    lpBuffer: lpBuffer,
-                    cbBufSize: 0,
-                    pcbBytesNeeded: out bufferSizeNeeded);
-
-                lastError = Marshal.GetLastWin32Error();
-                if(lastError != NativeMethods.ERROR_INSUFFICIENT_BUFFER) {
-                    Win32Exception exception = new Win32Exception(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
-
-                }
-                lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
-
-                status = NativeMethods.QueryServiceConfig2W(
-                    hService,
-                    NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
-                    lpBuffer,
-                    bufferSizeNeeded,
-                    out bufferSizeNeeded);
-                if(!status) {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
-                }
-                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
-
-                // General information
-                lpBuffer = IntPtr.Zero;
-                bufferSizeNeeded = 0;
-                status = NativeMethods.QueryServiceConfigW(
-                    hSCManager: hService,
-                    lpServiceConfig: lpBuffer,
-                    cbBufSize: 0,
-                    pcbBytesNeeded: out bufferSizeNeeded);
-
-                lastError = Marshal.GetLastWin32Error();
-                if(lastError != NativeMethods.ERROR_INSUFFICIENT_BUFFER) {
-                    Win32Exception exception = new Win32Exception(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
-
-                }
-                lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
-
-                status = NativeMethods.QueryServiceConfigW(
-                    hService,
-                    lpBuffer,
-                    bufferSizeNeeded,
-                    out bufferSizeNeeded);
-                if(!status) {
-                    lastError = Marshal.GetLastWin32Error();
-                    Win32Exception exception = new Win32Exception(lastError);
-                    WriteNonTerminatingError(
-                        service,
-                        exception,
-                        "CouldNotGetServiceInfo",
-                        ServiceResources.CouldNotGetServiceInfo,
-                        ErrorCategory.PermissionDenied);
-                }
-
-                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
 
                 PSProperty noteProperty = new PSProperty("UserName", serviceInfo.lpServiceStartName);
                 serviceAsPSObj.Properties.Add(noteProperty, true);
@@ -871,6 +769,10 @@ namespace Microsoft.PowerShell.Commands
                 noteProperty = new PSProperty("BinPath", serviceInfo.lpBinaryPathName);
                 serviceAsPSObj.Properties.Add(noteProperty, true);
                 serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinPath");
+
+                noteProperty = new PSProperty("StartupType", NativeMethods.GetServiceStartupType(service.StartType, autostartInfo.fDelayedAutostart));
+                serviceAsPSObj.Properties.Add(noteProperty, true);
+                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#StartupType");
             }
             finally
             {
@@ -1707,17 +1609,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("StartMode", "SM", "ST")]
         [ValidateNotNullOrEmpty]
-        public ServiceStartMode StartupType
-        {
-            get { return startupType; }
-            set
-            {
-                startupType = value;
-            }
-        }
-        // We set the initial value to an invalid value so that we can
-        // distinguish when this is and is not set.
-        internal ServiceStartMode startupType = (ServiceStartMode)(-1);
+        public ServiceStartupType StartupType { get; set; } = (ServiceStartupType)(-1);
 
 
         /// <summary>
@@ -1889,7 +1781,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Modify startup type or display name or credential
                         if (!String.IsNullOrEmpty(DisplayName)
-                            || (ServiceStartMode)(-1) != StartupType || null != Credential) 
+                            || (ServiceStartupType)(-1) != StartupType || null != Credential)
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                             if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
@@ -1957,7 +1849,31 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.PermissionDenied);
                         }
 
+                        // Set the delayed auto start
+                        NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
+                        ds.fDelayedAutostart = StartupType == ServiceStartupType.AutomaticDelayedStart;
+                        size = Marshal.SizeOf(ds);
+                        buffer = Marshal.AllocCoTaskMem(size);
+                        Marshal.StructureToPtr(ds, buffer, false);
 
+                        status = NativeMethods.ChangeServiceConfig2W(
+                            hService,
+                            NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                            buffer);
+
+                        if (!status)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            WriteNonTerminatingError(
+                                Name,
+                                DisplayName,
+                                Name,
+                                exception,
+                                "CouldNotNewServiceDescription",
+                                ServiceResources.CouldNotNewServiceDescription,
+                                ErrorCategory.PermissionDenied);
+                        }
 
                         //Addition by v-ramch Mar 11 2008
                         //if Status parameter specified do the necessary action
@@ -2135,12 +2051,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        public ServiceStartMode StartupType
-        {
-            get { return startupType; }
-            set { startupType = value; }
-        }
-        internal ServiceStartMode startupType = ServiceStartMode.Automatic;
+        public ServiceStartupType StartupType { get; set; } = ServiceStartupType.Automatic;
 
         /// <summary>
         /// Account under which the service should run
@@ -2311,6 +2222,34 @@ namespace Microsoft.PowerShell.Commands
                         "CouldNotNewServiceDescription",
                         ServiceResources.CouldNotNewServiceDescription,
                         ErrorCategory.PermissionDenied);
+                }
+
+                // Set the delayed auto start
+                if(StartupType == ServiceStartupType.AutomaticDelayedStart) {
+                    NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
+                    ds.fDelayedAutostart = true;
+                    size = Marshal.SizeOf(ds);
+                    buffer = Marshal.AllocCoTaskMem(size);
+                    Marshal.StructureToPtr(ds, buffer, false);
+
+                    succeeded = NativeMethods.ChangeServiceConfig2W(
+                        hService,
+                        NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
+                        buffer);
+
+                    if (!succeeded)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            Name,
+                            DisplayName,
+                            Name,
+                            exception,
+                            "CouldNotNewServiceDescription",
+                            ServiceResources.CouldNotNewServiceDescription,
+                            ErrorCategory.PermissionDenied);
+                    }
                 }
 
                 // write the ServiceController for the new service
@@ -2850,6 +2789,52 @@ namespace Microsoft.PowerShell.Commands
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
 
+        internal static bool QueryServiceConfig(NakedWin32Handle hService, out IntPtr structurePointer)
+        {
+            IntPtr lpBuffer = IntPtr.Zero;
+            DWORD bufferSize, bufferSizeNeeded = 0;
+            bool status = NativeMethods.QueryServiceConfigW(
+                hSCManager: hService,
+                lpServiceConfig: lpBuffer,
+                cbBufSize: 0,
+                pcbBytesNeeded: out bufferSizeNeeded);
+
+            lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+            bufferSize = bufferSizeNeeded;
+
+            status = NativeMethods.QueryServiceConfigW(
+                hService,
+                lpBuffer,
+                bufferSize,
+                out bufferSizeNeeded);
+            structurePointer = lpBuffer;
+            return status;
+        }
+
+        internal static bool QueryServiceConfig2(NakedWin32Handle hService, DWORD infolevel, out IntPtr structurePointer)
+        {
+            IntPtr lpBuffer = IntPtr.Zero;
+            DWORD bufferSize, bufferSizeNeeded = 0;
+            bool status = NativeMethods.QueryServiceConfig2W(
+                hService: hService,
+                dwInfoLevel: infolevel,
+                lpBuffer: lpBuffer,
+                cbBufSize: 0,
+                pcbBytesNeeded: out bufferSizeNeeded);
+
+            lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+            bufferSize = bufferSizeNeeded;
+
+            status = NativeMethods.QueryServiceConfig2W(
+                hService,
+                infolevel,
+                lpBuffer,
+                bufferSize,
+                out bufferSizeNeeded);
+            structurePointer = lpBuffer;
+            return status;
+        }
+
         /// <summary>
         /// Get appropriate win32 StartupType
         /// </summary>
@@ -2862,22 +2847,23 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// If a supported StartupType is provided, funciton returns true, otherwise false.
         /// </returns>
-        internal static bool TryGetNativeStartupType(ServiceStartMode StartupType, out DWORD dwStartType)
+        internal static bool TryGetNativeStartupType(ServiceStartupType StartupType, out DWORD dwStartType)
         {
             bool success = true;
             dwStartType = NativeMethods.SERVICE_NO_CHANGE;
             switch (StartupType)
             {
-                case ServiceStartMode.Automatic:
+                case ServiceStartupType.Automatic:
+                case ServiceStartupType.AutomaticDelayedStart:
                     dwStartType = NativeMethods.SERVICE_AUTO_START;
                     break;
-                case ServiceStartMode.Manual:
+                case ServiceStartupType.Manual:
                     dwStartType = NativeMethods.SERVICE_DEMAND_START;
                     break;
-                case ServiceStartMode.Disabled:
+                case ServiceStartupType.Disabled:
                     dwStartType = NativeMethods.SERVICE_DISABLED;
                     break;
-                case (ServiceStartMode)(-1):
+                case (ServiceStartupType)(-1):
                     dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                     break;
                 default:
@@ -2886,8 +2872,42 @@ namespace Microsoft.PowerShell.Commands
             }
             return success;
         }
+
+        internal static ServiceStartupType GetServiceStartupType(ServiceStartMode startMode, bool delayedAutoStart)
+        {
+            ServiceStartupType result = ServiceStartupType.Disabled;
+            switch(startMode)
+            {
+                case ServiceStartMode.Automatic:
+                    result = delayedAutoStart ? ServiceStartupType.AutomaticDelayedStart : ServiceStartupType.Automatic;
+                    break;
+                case ServiceStartMode.Manual:
+                    result = ServiceStartupType.Manual;
+                    break;
+                case ServiceStartMode.Disabled:
+                    result = ServiceStartupType.Disabled;
+                    break;
+            }
+            return result;
+        }
     }
     #endregion NativeMethods
+
+    #region ServiceStartupType
+    ///<summary>
+    ///Enum for usage with StartupType. Automatic, Manual & Disabled index matched from System.ServiceProcess.ServiceStartMode
+    ///</summary>
+    public enum ServiceStartupType {
+        ///<summary>Automatic service</summary>
+        Automatic = 2,
+        ///<summary>Manual service</summary>
+        Manual = 3,
+        ///<summary>Disabled service</summary>
+        Disabled = 4,
+        ///<summary>Automatic (Delayed Start) service</summary>
+        AutomaticDelayedStart = 10
+    }
+    #endregion ServiceStartupType
 }
 
 #endif // Not built on Unix
