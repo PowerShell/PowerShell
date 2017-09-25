@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="ShowCommandParameterInfo.cs" company="Microsoft">
+// <copyright company="Microsoft">
 //     Copyright © Microsoft Corporation.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------

@@ -1,9 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// <copyright company="Microsoft">
+//    Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <summary>
 // Implements CompletionResult.
-//</summary>
+// </summary>
 //-----------------------------------------------------------------------
 
 namespace System.Management.Automation
