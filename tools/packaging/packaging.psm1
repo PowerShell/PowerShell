@@ -30,7 +30,7 @@ function Start-PSPackage {
         [Switch] $Force,
 
         [Switch] $IncludeSymbols,
-        
+
         [Switch] $SkipReleaseChecks
     )
 
@@ -43,11 +43,9 @@ function Start-PSPackage {
         New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
 
-    # We convert the runtime to win7-x64 or win7-x86 to build the universal windows package.
     if($Environment.IsWindows) {
-        $Runtime = $Runtime -replace "win\d+", "win7"
-
-        # Build the name suffix for win-plat packages
+        # Runtime will always be win7-x64 or win7-x86 on Windows.
+        # Build the name suffix for universal win-plat packages.
         $NameSuffix = $Runtime -replace 'win\d+', 'win'
     }
 
@@ -134,7 +132,7 @@ function Start-PSPackage {
     }
     log "Packaging Type: $Type"
 
-    # Add the symbols to the suffix 
+    # Add the symbols to the suffix
     # if symbols are specified to be included
     if($IncludeSymbols.IsPresent -and $NameSuffix) {
         $NameSuffix = "symbols-$NameSuffix"
@@ -186,7 +184,7 @@ function Start-PSPackage {
             {
                 throw "AppImage does not support packaging '-IncludeSymbols'"
             }
-            
+
             if ($Environment.IsUbuntu14) {
                 $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
                 $appImage = Get-Item PowerShell-*.AppImage
@@ -248,10 +246,6 @@ function New-UnixPackage {
         [Parameter(Mandatory)]
         [string]$Version,
 
-        # Package iteration version (rarely changed)
-        # This is a string because strings are appended to it
-        [string]$Iteration = "1",
-
         [Switch]
         $Force
     )
@@ -260,14 +254,14 @@ function New-UnixPackage {
     $ErrorMessage = "Must be on {0} to build '$Type' packages!"
     switch ($Type) {
         "deb" {
-            $WarningMessage = "Building for Ubuntu {0}.04!"
+            $verboseMsg = "Building for Ubuntu {0}.04!"
             if (!$Environment.IsUbuntu) {
-                    throw ($ErrorMessage -f "Ubuntu")
-                } elseif ($Environment.IsUbuntu14) {
-                    Write-Warning ($WarningMessage -f "14")
-                } elseif ($Environment.IsUbuntu16) {
-                    Write-Warning ($WarningMessage -f "16")
-                }
+                throw ($ErrorMessage -f "Ubuntu")
+            } elseif ($Environment.IsUbuntu14) {
+                Write-Verbose ($verboseMsg -f "14")
+            } elseif ($Environment.IsUbuntu16) {
+                Write-Verbose ($verboseMsg -f "16")
+            }
         }
         "rpm" {
             if (!$Environment.IsRedHatFamily) {
@@ -309,7 +303,7 @@ function New-UnixPackage {
     # Suffix is used for side-by-side package installation
     $Suffix = $Name -replace "^powershell"
     if (!$Suffix) {
-        Write-Warning "Suffix not given, building primary PowerShell package!"
+        Write-Verbose "Suffix not given, building primary PowerShell package!"
         $Suffix = $Version
     }
 
@@ -408,73 +402,28 @@ function New-UnixPackage {
             "libc6",
             "libcurl3",
             "libgcc1",
-            "libssl1.0.0",
+            "libgssapi-krb5-2",
+            "liblttng-ust0",
             "libstdc++6",
-            "libtinfo5",
             "libunwind8",
             "libuuid1",
-            "zlib1g"
+            "zlib1g",
+            "libssl1.0.0",
+            "libicu-dev"
         )
-        # Please note the different libicu package dependency!
-        if ($Environment.IsUbuntu14) {
-            $Dependencies += "libicu52"
-        } elseif ($Environment.IsUbuntu16) {
-            $Dependencies += "libicu55"
-        }
     } elseif ($Environment.IsRedHatFamily) {
         $Dependencies = @(
-            "glibc",
-            "libicu",
-            "openssl",
             "libunwind",
-            "uuid",
-            "zlib"
+            "libcurl",
+            "openssl-libs",
+            "libicu"
         )
-
-        if($Environment.IsFedora -or $Environment.IsCentOS)
-        {
-            $Dependencies += "libcurl"
-            $Dependencies += "libgcc"
-            $Dependencies += "libstdc++"
-            $Dependencies += "ncurses-base"
-        }
-
-        if($Environment.IsOpenSUSE)
-        {
-            $Dependencies += "libgcc_s1"
-            $Dependencies += "libstdc++6"
-        }
     }
-
-    # iteration is "debian_revision"
-    # usage of this to differentiate distributions is allowed by non-standard
-    if ($Environment.IsUbuntu14) {
-        $Iteration += "ubuntu1.14.04.1"
-    } elseif ($Environment.IsUbuntu16) {
-        $Iteration += "ubuntu1.16.04.1"
-    }
-
-    # We currently only support:
-    # CentOS 7
-    # Fedora 24+
-    # OpenSUSE 42.1 (13.2 might build but is EOL)
-    # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
-    if ($Environment.IsCentOS) {
-        $rpm_dist = "el7"
-    } elseif ($Environment.IsFedora) {
-        $version_id = $Environment.LinuxInfo.VERSION_ID
-        $rpm_dist = "fedora.$version_id"
-    } elseif ($Environment.IsOpenSUSE) {
-        $version_id = $Environment.LinuxInfo.VERSION_ID
-        $rpm_dist = "suse.$version_id"
-    }
-
 
     $Arguments = @(
         "--force", "--verbose",
         "--name", $Name,
         "--version", $Version,
-        "--iteration", $Iteration,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
@@ -485,7 +434,7 @@ function New-UnixPackage {
         "-s", "dir"
     )
     if ($Environment.IsRedHatFamily) {
-        $Arguments += @("--rpm-dist", $rpm_dist)
+        $Arguments += @("--rpm-dist", "rhel.7")
         $Arguments += @("--rpm-os", "linux")
     }
     foreach ($Dependency in $Dependencies) {
@@ -504,8 +453,7 @@ function New-UnixPackage {
     )
     # Build package
     try {
-        if($pscmdlet.ShouldProcess("Create $type package"))
-        {
+        if($pscmdlet.ShouldProcess("Create $type package")) {
             $Output = Start-NativeExecution { fpm $Arguments }
         }
     } finally {

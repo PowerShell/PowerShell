@@ -262,6 +262,70 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
     }
 }
 
+function Start-BuildNativeUnixBinaries {
+    param (
+        [switch] $BuildLinuxArm
+    )
+
+    if (-not $Environment.IsLinux -and -not $Environment.IsMacOS) {
+        Write-Warning -Message "'Start-BuildNativeUnixBinaries' is only supported on Linux/macOS platforms"
+        return
+    }
+
+    if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
+    # Verify we have all tools in place to do the build
+    $precheck = $true
+    foreach ($Dependency in 'cmake', 'make', 'g++') {
+        $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+    }
+
+    if ($BuildLinuxArm) {
+        foreach ($Dependency in 'arm-linux-gnueabihf-gcc', 'arm-linux-gnueabihf-g++') {
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+        }
+    }
+
+    # Abort if any precheck failed
+    if (-not $precheck) {
+        return
+    }
+
+    # Build native components
+    $Ext = if ($Environment.IsLinux) {
+        "so"
+    } elseif ($Environment.IsMacOS) {
+        "dylib"
+    }
+
+    $Native = "$PSScriptRoot/src/libpsl-native"
+    $Lib = "$PSScriptRoot/src/powershell-unix/libpsl-native.$Ext"
+    log "Start building $Lib"
+
+    git clean -qfdX $Native
+
+    try {
+        Push-Location $Native
+        if ($BuildLinuxArm) {
+            Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
+            Start-NativeExecution { make -j }
+        }
+        else {
+            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+            Start-NativeExecution { make -j }
+            Start-NativeExecution { ctest --verbose }
+        }
+    } finally {
+        Pop-Location
+    }
+
+    if (-not (Test-Path $Lib)) {
+        throw "Compilation of $Lib failed"
+    }
+}
+
 function Start-PSBuild {
     [CmdletBinding()]
     param(
@@ -298,6 +362,10 @@ function Start-PSBuild {
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
     )
+
+    if ($Runtime -eq "linux-arm" -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
 
     function Stop-DevPowerShell {
         Get-Process powershell* |
@@ -339,22 +407,8 @@ function Start-PSBuild {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    # Verify we have all tools in place to do the build
+    # Verify we have .NET SDK in place to do the build, and abort if the precheck failed
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
-
-    if ($Environment.IsLinux -or $Environment.IsMacOS) {
-        foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
-        }
-    }
-
-    if ($RunTime -eq "linux-arm") {
-        foreach ($Dependency in 'arm-linux-gnueabihf-gcc', 'arm-linux-gnueabihf-g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
-        }
-    }
-
-    # Abort if any precheck failed
     if (-not $precheck) {
         return
     }
@@ -439,38 +493,6 @@ Fix steps:
     if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
         log "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
-    }
-
-    # Build native components
-    if (($Environment.IsLinux -or $Environment.IsMacOS) -and -not $SMAOnly) {
-        $Ext = if ($Environment.IsLinux) {
-            "so"
-        } elseif ($Environment.IsMacOS) {
-            "dylib"
-        }
-
-        $Native = "$PSScriptRoot/src/libpsl-native"
-        $Lib = "$($Options.Top)/libpsl-native.$Ext"
-        log "Start building $Lib"
-
-        try {
-            Push-Location $Native
-            if ($Runtime -eq "linux-arm") {
-                Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
-                Start-NativeExecution { make -j }
-            }
-            else {
-                Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
-                Start-NativeExecution { make -j }
-                Start-NativeExecution { ctest --verbose }
-            }
-        } finally {
-            Pop-Location
-        }
-
-        if (-not (Test-Path $Lib)) {
-            throw "Compilation of $Lib failed"
-        }
     }
 
     # handle TypeGen
