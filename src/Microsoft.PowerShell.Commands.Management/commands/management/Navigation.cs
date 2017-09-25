@@ -3107,6 +3107,18 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
+                        if (null != LiteralPath && 0 == resolvedPSPaths.Count)
+                        {
+                            ItemNotFoundException pathNotFound =
+                                new ItemNotFoundException(
+                                    path,
+                                    "PathNotFound",
+                                    SessionStateStrings.PathNotFound);
+                            WriteError(new ErrorRecord(
+                                pathNotFound.ErrorRecord,
+                                pathNotFound));
+                            continue;
+                        }
                     }
                     finally
                     {
@@ -3253,18 +3265,23 @@ namespace Microsoft.PowerShell.Commands
 
                     bool shouldRecurse = Recurse;
                     bool treatAsFile = false;
-                    try
+
+                    // only check if path is a directory using DirectoryInfo if using FileSystemProvider
+                    if (resolvedPath.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
-                        if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                        try
                         {
-                            shouldRecurse = false;
-                            treatAsFile = true;
+                            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(providerPath);
+                            if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                            {
+                                shouldRecurse = false;
+                                treatAsFile = true;
+                            }
                         }
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                        // not a directory
+                        catch (System.IO.FileNotFoundException)
+                        {
+                            // not a directory
+                        }
                     }
 
                     if (!treatAsFile && !Recurse && hasChildren)
