@@ -114,14 +114,17 @@ function Get-WebListenerUrl {
         [switch]$Https,
         [ValidateSet(
             'Cert',
-            'Encoding/Utf8',
+            'Delay',
+            'Encoding',
             'Get',
             'Home',
             'Multipart',
-            'Redirect/3',
+            'Redirect',
             '/'
         )]
-        [String]$Test
+        [String]$Test,
+
+        [String]$TestValue
     )
     process {
         $runningListener = Get-WebListener
@@ -138,7 +141,7 @@ function Get-WebListenerUrl {
             $Uri.Port = $runningListener.HttpsPort
             $Uri.Scheme = 'Https'
         }
-        $Uri.Path = $Test
+        $Uri.Path = '{0}/{1}' -f $Test, $TestValue
         return [Uri]$Uri.ToString()
     }
 }

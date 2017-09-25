@@ -48,6 +48,11 @@ namespace mvc
                     template: "Redirect/{count?}",
                     defaults: new {controller = "Redirect", action = "Index"}
                 );
+                routes.MapRoute(
+                    name: "delay",
+                    template: "Delay/{seconds?}",
+                    defaults: new {controller = "Delay", action = "Index"}
+                );
             });
         }
     }
