@@ -4,15 +4,19 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         if ( -not $IsWindows ) {
             $PSDefaultParameterValues["it:skip"] = $true
         }
-        $userName = "testuserservices"
-        $testPass = "Secret123!"
-        net user $userName $testPass /add > $null
-        $password = ConvertTo-SecureString $testPass -AsPlainText -Force
-        $creds = [pscredential]::new(".\$userName", $password)
+        if($IsWindows) {
+          $userName = "testuserservices"
+          $testPass = "Secret123!"
+          net user $userName $testPass /add > $null
+          $password = ConvertTo-SecureString $testPass -AsPlainText -Force
+          $creds = [pscredential]::new(".\$userName", $password)
+        }
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        net user $userName /delete > $null
+        if($IsWindows) {
+          net user $userName /delete > $null
+        }
     }
 
     It "SetServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
