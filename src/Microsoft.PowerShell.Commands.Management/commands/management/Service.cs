@@ -1609,7 +1609,17 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("StartMode", "SM", "ST")]
         [ValidateNotNullOrEmpty]
-        public ServiceStartupType StartupType { get; set; } = (ServiceStartupType)(-1);
+        public ServiceStartupType StartupType
+        {
+            get { return startupType; }
+            set
+            {
+                startupType = value;
+            }
+        }
+        // We set the initial value to an invalid value so that we can
+        // distinguish when this is and is not set.
+        internal ServiceStartupType startupType = (ServiceStartupType)(-1);
 
 
         /// <summary>
@@ -2051,7 +2061,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        public ServiceStartupType StartupType { get; set; } = ServiceStartupType.Automatic;
+        public ServiceStartupType StartupType
+        {
+            get { return startupType; }
+            set { startupType = value; }
+        }
+        internal ServiceStartupType startupType = ServiceStartupType.Automatic;
 
         /// <summary>
         /// Account under which the service should run
