@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 string app = string.Format(CultureInfo.InvariantCulture,
-                    "WindowsPowerShell/{0}", PSVersionInfo.PSVersion);
+                    "PowerShell/{0}", PSVersionInfo.PSVersion);
                 return (app);
             }
         }
