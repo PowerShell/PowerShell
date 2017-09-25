@@ -79,11 +79,16 @@ Describe "Test-Json" -Tags "CI" {
         { Test-Json -Json $validJson -Schema $invalidSchemaJson -ErrorAction Stop } | ShouldBeErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
-    It "Test-Json write an error on invalid (type) Json aganist a valid schema" {
-        $errorVar = $null
-        Test-Json -Json $invalidTypeInJson -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
+    It "Test-Json write an error on invalid (<name>) Json aganist a valid schema" -TestCases @(
+        @{ name = "type"; json = $invalidTypeInJson; error = "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        @{ name = "node"; json = $invalidTypeInJson; error = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        ) {
+            param($json, $error)
 
-        $errorVar.FullyQualifiedErrorId | Should BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+            $errorVar = $null
+            Test-Json -Json $invalidTypeInJson -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
+
+            $errorVar.FullyQualifiedErrorId | Should BeExactly $error
     }
 
     It "Test-Json write an error on invalid (node) Json aganist a valid schema" {
