@@ -1880,8 +1880,8 @@ namespace Microsoft.PowerShell.Commands
                                 DisplayName,
                                 Name,
                                 exception,
-                                "CouldNotNewServiceDescription",
-                                ServiceResources.CouldNotNewServiceDescription,
+                                "CouldNotSetServiceDelayedAutoStart",
+                                ServiceResources.CouldNotSetServiceDelayedAutoStart,
                                 ErrorCategory.PermissionDenied);
                         }
 
@@ -2234,8 +2234,8 @@ namespace Microsoft.PowerShell.Commands
                         DisplayName,
                         Name,
                         exception,
-                        "CouldNotNewServiceDescription",
-                        ServiceResources.CouldNotNewServiceDescription,
+                        "CouldNotNewServiceDelayedAutoStart",
+                        ServiceResources.CouldNotNewServiceDelayedAutoStart,
                         ErrorCategory.PermissionDenied);
                 }
 
