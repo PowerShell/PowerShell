@@ -95,6 +95,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
                 }
+
+                if (!String.IsNullOrEmpty(ResponseHeadersVariable))
+                {
+                    PSVariableIntrinsics vi = SessionState.PSVariable;
+                    vi.Set(ResponseHeadersVariable, WebResponseHelper.GetHeadersDictionary(response));
+                }
             }
         }
 

@@ -2055,6 +2055,26 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #endregion charset encoding tests
 
+    Context 'Invoke-RestMethod ResponseHeadersVariable Tests' {
+        It "Verifies Invoke-RestMethod supports -ResponseHeadersVariable" {
+            $uri = Get-WebListenerUrl -Test '/'
+            $response = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
+
+            $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
+            $headers.Server | Should Be 'Kestrel'
+        }
+        
+        It "Verifies Invoke-RestMethod supports -ResponseHeadersVariable overwriting existing variable" {
+            $uri = Get-WebListenerUrl -Test '/'
+            $headers = 'prexisting'
+            $response = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
+
+            $headers | Should Not Be 'prexisting'
+            $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
+            $headers.Server | Should Be 'Kestrel'
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy

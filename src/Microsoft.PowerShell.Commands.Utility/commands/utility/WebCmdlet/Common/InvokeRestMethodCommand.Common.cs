@@ -60,6 +60,13 @@ namespace Microsoft.PowerShell.Commands
             set { base._maximumFollowRelLink = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the ResponseHeadersVariable property.
+        /// </summary>
+        [Parameter]
+        [Alias("RHV")]
+        public string ResponseHeadersVariable { get; set; }
+
         #endregion Parameters
 
         #region Helper Methods
