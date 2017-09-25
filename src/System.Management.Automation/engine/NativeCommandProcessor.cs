@@ -401,9 +401,9 @@ namespace System.Management.Automation
             // we have to see if the redirection is actually being done at the topmost level or not.
 
             // Calculate if input and output are redirected.
-            bool redirectOutput = true;
-            bool redirectError = true;
-            bool redirectInput = this.Command.MyInvocation.ExpectingInput;
+            bool redirectOutput;
+            bool redirectError;
+            bool redirectInput;
 
             _startPosition = new Host.Coordinates();
 
@@ -1290,7 +1290,10 @@ namespace System.Management.Automation
                     redirectError = true;
                 }
             }
-            else if (_isTranscribing && (false == s_supportScreenScrape))
+
+            // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
+            // as redirected output is always transcribed
+            if (_isTranscribing && (false == s_supportScreenScrape))
             {
                 redirectOutput = true;
                 redirectError = true;
