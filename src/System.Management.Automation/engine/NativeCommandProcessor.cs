@@ -405,6 +405,8 @@ namespace System.Management.Automation
             bool redirectError = true;
             bool redirectInput = this.Command.MyInvocation.ExpectingInput;
 
+            _startPosition = new Host.Coordinates();
+
             if (null == s_supportScreenScrape)
             {
                 try
@@ -419,11 +421,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // If we are transcribing and can't scrape, then continue to redirect so we have the output
-            if (!_isTranscribing || (true == s_supportScreenScrape))
-            {
-                CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
-            }
+            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
@@ -435,8 +433,6 @@ namespace System.Management.Automation
             {
                 throw new PipelineStoppedException();
             }
-
-            _startPosition = new Host.Coordinates();
 
             Exception exceptionToRethrow = null;
             try
@@ -707,8 +703,8 @@ namespace System.Management.Automation
                     ConsumeAvailableNativeProcessOutput(blocking: true);
                     _nativeProcess.WaitForExit();
 
-                    // Capture screen output if we are transcribing
-                    if (_isTranscribing && (true == s_supportScreenScrape))
+                    // Capture screen output if we are transcribing and running stand alone
+                    if (_isTranscribing && (true == s_supportScreenScrape) && _runStandAlone)
                     {
                         Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
@@ -1293,6 +1289,11 @@ namespace System.Management.Automation
                     redirectOutput = true;
                     redirectError = true;
                 }
+            }
+            else if (_isTranscribing && (false == s_supportScreenScrape))
+            {
+                redirectOutput = true;
+                redirectError = true;
             }
 
             _runStandAlone = !redirectInput && !redirectOutput && !redirectError;
