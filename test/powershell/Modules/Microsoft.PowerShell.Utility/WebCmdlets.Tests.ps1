@@ -421,6 +421,9 @@ $PendingCertificateTest = $false
 if ( $IsMacOS ) { $PendingCertificateTest = $true }
 if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
 
+# Get the default UserAgent through reflection
+$DefaultUserAgent = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('UserAgent',@('Static','NonPublic')).GetValue($null,$null)
+
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
@@ -463,7 +466,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Invoke-WebRequest returns headers dictionary" {
@@ -477,7 +480,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.headers.Host | Should Be $Uri.Authority
-        $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
@@ -503,7 +506,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.headers.Host | Should Match $uri.Authority
-        $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
@@ -584,7 +587,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.headers.Host | Should Be $uri.Authority
-        $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Invoke-WebRequest validate timeout option" {
@@ -658,7 +661,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should Match $uri
-                $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+                $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
 
                 # For a GET request, there is no data property to validate.
                 if ($method -ne "GET")
@@ -720,7 +723,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-WebRequest" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
         $jsonContent.headers.Host | Should Be $uri.Authority
-        $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
@@ -1322,7 +1325,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -1334,7 +1337,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.headers.Host | Should Be $Uri.Authority
-        $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Validate Invoke-RestMethod -DisableKeepAlive" {
@@ -1347,7 +1350,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.headers.Host | Should Be $uri.Authority
-        $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
         $result.Output.Headers.Connection | Should Be "Close"
     }
 
@@ -1360,7 +1363,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.headers.Host | Should Match $uri.Authority
-        $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Validate Invoke-RestMethod error for -MaximumRedirection" {
@@ -1435,7 +1438,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     # Perform the following operation for Invoke-RestMethod
@@ -1497,7 +1500,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
                 # Validate response
                 $result.Output.url | Should Match $uri
-                $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+                $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
 
                 # For a GET request, there is no data property to validate.
                 if ($method -ne "GET")
@@ -1525,7 +1528,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.url | Should Match $uri
-        $result.Output.headers.'User-Agent' | Should Match "PowerShell"
+        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
         $result.Output.Headers.Connection | Should Be "Close"
     }
 
@@ -1560,7 +1563,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
         $jsonContent.headers.Host | Should Be $uri.Authority
-        $jsonContent.headers.'User-Agent' | Should Match "PowerShell"
+        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
     }
 
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
