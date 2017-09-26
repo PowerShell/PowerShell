@@ -986,14 +986,28 @@ namespace Microsoft.PowerShell.Commands
                 // import the proxy module just as any other local module
                 //
                 object[] oldArgumentList = this.ArgumentList;
+                Version originalBaseMinimumVersion = BaseMinimumVersion;
+                Version originalBaseMaximumVersion = BaseMaximumVersion;
+                Version originalBaseRequiredVersion = BaseRequiredVersion;
                 try
                 {
                     this.ArgumentList = new object[] { psSession };
+
+                    // The correct module version has already been imported from the remote session and created locally. 
+                    // The locally created module always has a version of 1.0 regardless of the actual module version
+                    // imported from the remote session, and version checking is no longer needed and will not work while 
+                    // importing this created local module.
+                    BaseMinimumVersion = null;
+                    BaseMaximumVersion = null;
+                    BaseRequiredVersion = null;
                     ImportModule_LocallyViaName(importModuleOptions, wildcardEscapedPsd1Path);
                 }
                 finally
                 {
                     this.ArgumentList = oldArgumentList;
+                    BaseMinimumVersion = originalBaseMinimumVersion;
+                    BaseMaximumVersion = originalBaseMaximumVersion;
+                    BaseRequiredVersion = originalBaseRequiredVersion;
                 }
 
                 //
