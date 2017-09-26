@@ -1,4 +1,15 @@
 Describe "New-Object" -Tags "CI" {
+    It "Support 'ComObject' parameter on platforms" {
+        if ($IsLinux -or $IsMacOs ) {
+            { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+        } elseif (![System.Management.Automation.Platform]::IsWindowsDesktop) {
+            # Windows Core and IoT
+            { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "ComObjectPlatformIsNotSupported,Microsoft.PowerShell.Commands.NewObjectCommand"
+        } elseif ($IsWindows) {
+            { New-Object -ComObject "Shell.Application" } | Should Not Throw
+        }
+    }
+
     It "should create an object with 4 fields" {
         $o = New-Object psobject
         $val = $o.GetType()
