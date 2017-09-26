@@ -14,7 +14,7 @@
             $pathWithoutWildcard = $TestDrive
             $pathWithWildcard = Join-Path $TestDrive '*'
 
-            # Here Get-ChildItem add 'PSDrive' property
+            # Here Get-ChildItem adds 'PSDrive' property
             $tempFile = New-TemporaryFile | Get-ChildItem
             "abc" | Out-File -LiteralPath $tempFile.fullname
 	        "bcd" | Out-File -LiteralPath $tempFile.fullname -Append
