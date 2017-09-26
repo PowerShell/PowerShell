@@ -144,4 +144,7 @@
   <data name="ApartmentNotSupported" xml:space="preserve">
     <value>{0} Please note that Single-Threaded Apartment is not supported in PowerShell Core.</value>
   </data>
+  <data name="ComObjectPlatformIsNotSupported" xml:space="preserve">
+    <value>Parameter 'ComObject' is not supported on the platform.</value>
+  </data>
 </root>

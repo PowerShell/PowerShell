@@ -31,12 +31,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
         public string TypeName { get; set; } = null;
 
-
+#if !UNIX
         private Guid _comObjectClsId = Guid.Empty;
         /// <summary> the ProgID of the Com object</summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
         public string ComObject { get; set; } = null;
-
+#endif
 
         /// <summary>
         /// The parameters for the constructor
@@ -245,8 +245,15 @@ namespace Microsoft.PowerShell.Commands
                      "CannotFindAppropriateCtor",
                      ErrorCategory.ObjectNotFound, null));
             }
+#if !UNIX
             else // Parameterset -Com
             {
+                if (!Platform.IsWindowsDesktop)
+                {
+                    Exception exc = new NotSupportedException(NewObjectStrings.ComObjectPlatformIsNotSupported);
+                    ThrowTerminatingError(new ErrorRecord(exc, "ComObjectPlatformIsNotSupported", ErrorCategory.NotImplemented, null));
+                }
+
                 int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
 
                 // If we're in ConstrainedLanguage, do additional restrictions
@@ -295,6 +302,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 WriteObject(comObject);
             }
+#endif
         }//protected override void BeginProcessing()
 
         #endregion Overrides
@@ -407,6 +415,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
+#if !UNIX
         private object CreateComObject()
         {
             Type type = null;
@@ -465,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
         }
-
+#endif
         #endregion Com
 
         // HResult code '-2147417850' - Cannot change thread mode after it is set.
