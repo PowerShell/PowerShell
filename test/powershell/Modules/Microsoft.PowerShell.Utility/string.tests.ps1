@@ -14,7 +14,8 @@
             $pathWithoutWildcard = $TestDrive
             $pathWithWildcard = Join-Path $TestDrive '*'
 
-            $tempFile = New-TemporaryFile
+            # Here Get-ChildItem add 'PSDrive' property
+            $tempFile = New-TemporaryFile | Get-ChildItem
             "abc" | Out-File -LiteralPath $tempFile.fullname
 	        "bcd" | Out-File -LiteralPath $tempFile.fullname -Append
 	        "cde" | Out-File -LiteralPath $tempFile.fullname -Append
@@ -49,7 +50,7 @@
             (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2
         }
 
-        It "Network path" -skip:($IsCoreCLR) {
+        It "Network path" -skip:(!$IsWindows) {
             (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
         }
 
