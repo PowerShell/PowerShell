@@ -141,7 +141,16 @@ function Get-WebListenerUrl {
             $Uri.Port = $runningListener.HttpsPort
             $Uri.Scheme = 'Https'
         }
-        $Uri.Path = '{0}/{1}' -f $Test, $TestValue
+
+        if ($TestValue)
+        {
+            $Uri.Path = '{0}/{1}' -f $Test, $TestValue
+        }
+        else 
+        {
+            $Uri.Path = $Test
+        }
+
         return [Uri]$Uri.ToString()
     }
 }
