@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         public String Schema { get; set; }
 
-        private JSchema _jschema = null;
+        private JSchema _jschema;
 
         /// <summary>
         /// Prepare an Json schema.
