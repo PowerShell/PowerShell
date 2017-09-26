@@ -2190,7 +2190,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
     }
 }
 
-Describe "PSUserAgent Tests" {
+Describe "PSUserAgent Tests" -Tags "CI" {
     It "App Should Match ^PowerShell/\d+\.\d+\.\d+.*" {
         $app = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('App',@('Static','NonPublic')).GetValue($null,$null) 
         $app | Should Match '^PowerShell/\d+\.\d+\.\d+.*'
