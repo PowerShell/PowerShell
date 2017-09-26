@@ -421,14 +421,13 @@ $PendingCertificateTest = $false
 if ( $IsMacOS ) { $PendingCertificateTest = $true }
 if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
 
-# Get the default UserAgent through reflection
-$DefaultUserAgent = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('UserAgent',@('Static','NonPublic')).GetValue($null,$null)
-
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8080
         $WebListener = Start-WebListener
+        # Get the default UserAgent through reflection
+        $DefaultUserAgent = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('UserAgent',@('Static','NonPublic')).GetValue($null,$null)
     }
 
     AfterAll {
@@ -1310,6 +1309,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     BeforeAll {
         $response = Start-HttpListener -Port 8081
         $WebListener = Start-WebListener
+        # Get the default UserAgent through reflection
+        $DefaultUserAgent = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('UserAgent',@('Static','NonPublic')).GetValue($null,$null)
     }
 
     AfterAll {
@@ -2186,5 +2187,12 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
     It "Execute Invoke-RestMethod" {
         $result = irm "http://localhost:8082/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
         $result.Hello | Should Be "world"
+    }
+}
+
+Describe "PSUserAgent Tests" {
+    It "App Should Match ^PowerShell/\d+\.\d+\.\d+.*" {
+        $app = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('App',@('Static','NonPublic')).GetValue($null,$null) 
+        $app | Should Match '^PowerShell/\d+\.\d+\.\d+.*'
     }
 }
