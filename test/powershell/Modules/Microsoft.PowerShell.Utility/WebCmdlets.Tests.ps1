@@ -465,7 +465,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'User-Agent' | Should Be $DefaultUserAgent
+        $jsonContent.headers.'User-Agent' | Should Match '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     It "Invoke-WebRequest returns headers dictionary" {
@@ -1326,7 +1326,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'User-Agent' | Should Be $DefaultUserAgent
+        $result.Output.headers.'User-Agent' | Should Be '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -2187,12 +2187,5 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
     It "Execute Invoke-RestMethod" {
         $result = irm "http://localhost:8082/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
         $result.Hello | Should Be "world"
-    }
-}
-
-Describe "PSUserAgent Tests" -Tags "CI" {
-    It "App Should Match ^PowerShell/\d+\.\d+\.\d+.*" {
-        $app = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('App',@('Static','NonPublic')).GetValue($null,$null) 
-        $app | Should Match '^PowerShell/\d+\.\d+\.\d+.*'
     }
 }
