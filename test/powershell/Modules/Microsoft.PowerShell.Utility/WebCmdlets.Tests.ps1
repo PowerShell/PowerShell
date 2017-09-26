@@ -463,7 +463,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'User-Agent' | Should Match '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
+        $jsonContent.headers.'User-Agent' | Should MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     It "Invoke-WebRequest returns headers dictionary" {
@@ -1317,7 +1317,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'User-Agent' | Should Match '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
+        $result.Output.headers.'User-Agent' | Should MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -1427,7 +1427,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'User-Agent' | Should Match '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
+        $result.Output.headers.'User-Agent' | Should MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     # Perform the following operation for Invoke-RestMethod
