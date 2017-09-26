@@ -196,6 +196,52 @@ try
         $openCoverParams.Add('SuppressQuiet', $true)
     }
 
+    # grab the commitID, we need this to grab the right sources
+    $gitCommitId = & "$psBinPath\powershell.exe" -noprofile -command { $PSVersiontable.GitCommitId }
+    $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
+
+    # download the src directory
+    try
+    {
+        $gitexe = "C:\Program Files\git\bin\git.exe"
+        # operations relative to where the test location is.
+        # some tests rely on source files being available in $outputBaseFolder/test
+        Push-Location $outputBaseFolder
+        # clean up partial repo clone before starting
+        if ( Test-Path "$outputBaseFolder/.git" )
+        {
+            remove-item -force -recurse "${outputBaseFolder}/.git"
+        }
+        if ( Test-Path "$outputBaseFolder/src" )
+        {
+            remove-item -force -recurse "${outputBaseFolder}/src"
+        }
+        Write-LogPassThru -Message "initializing repo in $outputBaseFolder"
+        & $gitexe init
+        Write-LogPassThru -Message "git operation 'init' returned $LASTEXITCODE"
+
+        Write-LogPassThru -Message "adding remote"
+        & $gitexe remote add origin https://github.com/PowerShell/PowerShell
+        Write-LogPassThru -Message "git operation 'remote add' returned $LASTEXITCODE"
+
+        Write-LogPassThru -Message "setting sparse-checkout"
+        & $gitexe config core.sparsecheckout true
+        Write-LogPassThru -Message "git operation 'set sparse-checkout' returned $LASTEXITCODE"
+
+        Write-LogPassThru -Message "pulling sparse repo"
+        "src" | out-file -encoding ascii .git\info\sparse-checkout
+        & $gitexe pull origin master
+        Write-LogPassThru -Message "git operation 'pull' returned $LASTEXITCODE"
+
+        Write-LogPassThru -Message "checkout commit $commitId"
+        & $gitexe checkout $commitId
+        Write-LogPassThru -Message "git operation 'checkout' returned $LASTEXITCODE"
+    }
+    finally
+    {
+        Pop-Location
+    }
+
     $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
 
@@ -203,7 +249,7 @@ try
     {
         Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
     }
-
+    # now invoke opencover
     Invoke-OpenCover @openCoverParams
 
     if(Test-Path $outputLog)
@@ -212,9 +258,6 @@ try
     }
 
     Write-LogPassThru -Message "Test run done."
-
-    $gitCommitId = & "$psBinPath\powershell.exe" -noprofile -command { $PSVersiontable.GitCommitId }
-    $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
 
     Write-LogPassThru -Message $commitId
 
@@ -242,10 +285,15 @@ try
     & $coverallsExe """$coverallsParams"""
 
     Write-LogPassThru -Message "Uploading to CodeCov"
-    ConvertTo-CodeCovJson -Path $outputLog -DestinationPath $jsonFile
-    Push-CodeCovData -file $jsonFile -CommitID $commitId -token $codecovToken -Branch 'master'
+    if ( test-path $outputLog ) {
+        ConvertTo-CodeCovJson -Path $outputLog -DestinationPath $jsonFile
+        Push-CodeCovData -file $jsonFile -CommitID $commitId -token $codecovToken -Branch 'master'
 
-    Write-LogPassThru -Message "Upload complete."
+        Write-LogPassThru -Message "Upload complete."
+    }
+    else {
+        Write-LogPassThru -Message "ERROR: Could not find $outputLog - no upload"
+    }
 }
 catch
 {
@@ -253,6 +301,13 @@ catch
 }
 finally
 {
+    # the powershell execution should be done, be sure that there are no PowerShell test executables running because
+    # they will cause subsequent coverage runs to behave poorly. Make sure that the path is properly formatted, and
+    # we need to use like rather than match because on Windows, there will be "\" as path separators which would need 
+    # escaping for -match
+    $ResolvedPSBinPath = (Resolve-Path ${psbinpath}).Path
+    Get-Process PowerShell | Where-Object { $_.Path -like "*${ResolvedPSBinPath}*" } | Stop-Process -Force -ErrorAction Continue
+
     ## See if Azure log directory is mounted
     if(Test-Path $azureLogDrive)
     {
@@ -267,6 +322,8 @@ finally
 
         Remove-Item -Path $destinationPath -Force -ErrorAction SilentlyContinue
     }
+
+    Write-LogPassThru -Message "**** COMPLETE ****"
 
     ## Disable the cleanup till we stabilize.
     #Remove-Item -recurse -force -path $outputBaseFolder
