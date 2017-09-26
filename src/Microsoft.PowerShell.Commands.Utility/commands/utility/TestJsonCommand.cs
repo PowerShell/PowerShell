@@ -23,6 +23,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// A schema to validate the Json against.
+        /// It is optional parameter.
+        /// If the parameter is absent the cmdlet only try to parse the Json.
+        /// If the parameter present the cmdlet try to parse the Json and
+        /// then check the Json against the schema. Before the check
+        /// the cmdlet parse the schema doing implicitly check the schema too.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty()]
