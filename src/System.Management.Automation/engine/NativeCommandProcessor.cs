@@ -375,8 +375,8 @@ namespace System.Management.Automation
         /// </summary>
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
-        private static bool? s_supportScreenScrape = null;
-        private bool _isTranscribing;
+        private static bool s_supportScreenScrape = false;
+        private bool _isTranscribing = false;
         private Host.Coordinates _startPosition;
 
         /// <summary>
@@ -407,18 +407,16 @@ namespace System.Management.Automation
 
             _startPosition = new Host.Coordinates();
 
-            if (null == s_supportScreenScrape)
+            try
             {
-                try
-                {
-                    Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
-                        new Host.Rectangle(_startPosition, _startPosition));
-                    s_supportScreenScrape = true;
-                }
-                catch (NotImplementedException)
-                {
-                    s_supportScreenScrape = false;
-                }
+                _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                    new Host.Rectangle(_startPosition, _startPosition));
+                s_supportScreenScrape = true;
+            }
+            catch (Exception)
+            {
+                // screen scraping not supported on non-Windows or as job
             }
 
             CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
