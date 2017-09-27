@@ -1,0 +1,13 @@
+{
+    "tool": "Credential Scanner",
+    "suppressions": [
+      {
+       "file": "\\test\\tools\\Modules\\WebListener\\ClientCert.pfx", 
+        "_justification": "Test certificate with private key"
+      },
+      {
+        "file": "\\test\\tools\\Modules\\WebListener\\ServerCert.pfx", 
+         "_justification": "Test certificate with private key"
+       }
+     ]  
+}
