@@ -187,6 +187,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         It "Set-Item on password without user on plugin should fail for <password>" -TestCases @(
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             @{password=(ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force)},
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             @{password="hello"}
         ) {
             param($password)
