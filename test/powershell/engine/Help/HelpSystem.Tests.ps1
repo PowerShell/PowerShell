@@ -272,5 +272,29 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         )
         $command.Invoke() | Should Be $result
     }
+}
+
+  Describe "Get-Help should find pattern alias" -Tags "CI" {
+    # Remove test alias
+    AfterAll {
+        Remove-Item alias:\testAlias1
+    }
+    
+    It "Get-Help should find alias as command" {
+       (Get-Help where).Name | Should BeExactly "Where-Object"
+    }
+
+    It "Get-Help should find alias with ? pattern" {
+       $help = Get-Help wher?
+       $help.Category | Should BeExactly "Alias"
+       $help.Synopsis | Should BeExactly "Where-Object"
+    }
+
+    It "Get-Help should find alias with * pattern" {
+       Set-Alias -Name testAlias1 -Value Where-Object
+       $help = Get-Help testAlias1*
+       $help.Category | Should BeExactly "Alias"
+       $help.Synopsis | Should BeExactly "Where-Object"
+    }
 
 }
