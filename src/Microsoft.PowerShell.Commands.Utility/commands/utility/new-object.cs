@@ -248,12 +248,6 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             else // Parameterset -Com
             {
-                if (!Platform.IsWindowsDesktop)
-                {
-                    Exception exc = new NotSupportedException(NewObjectStrings.ComObjectPlatformIsNotSupported);
-                    ThrowTerminatingError(new ErrorRecord(exc, "ComObjectPlatformIsNotSupported", ErrorCategory.NotImplemented, null));
-                }
-
                 int result = NewObjectNativeMethods.CLSIDFromProgID(ComObject, out _comObjectClsId);
 
                 // If we're in ConstrainedLanguage, do additional restrictions
@@ -307,6 +301,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Overrides
 
+#if !UNIX
         #region Com
 
         private object SafeCreateInstance(Type t, object[] args)
@@ -415,7 +410,6 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-#if !UNIX
         private object CreateComObject()
         {
             Type type = null;
@@ -474,8 +468,9 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
         }
-#endif
+
         #endregion Com
+#endif
 
         // HResult code '-2147417850' - Cannot change thread mode after it is set.
         private const int RPC_E_CHANGED_MODE = unchecked((int)0x80010106);

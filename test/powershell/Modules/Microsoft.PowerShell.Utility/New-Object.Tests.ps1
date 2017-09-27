@@ -2,10 +2,7 @@ Describe "New-Object" -Tags "CI" {
     It "Support 'ComObject' parameter on platforms" {
         if ($IsLinux -or $IsMacOs ) {
             { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
-        } elseif (![System.Management.Automation.Platform]::IsWindowsDesktop) {
-            # Windows Core and IoT
-            { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "ComObjectPlatformIsNotSupported,Microsoft.PowerShell.Commands.NewObjectCommand"
-        } elseif ($IsWindows) {
+        } else {
             { New-Object -ComObject "Shell.Application" } | Should Not Throw
         }
     }
