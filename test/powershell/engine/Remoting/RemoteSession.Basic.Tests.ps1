@@ -103,10 +103,10 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         {
             Enable-PSRemoting -SkipNetworkProfileCheck
             $endPoint = (Get-PSSessionConfiguration -Name "PowerShell.$(${PSVersionTable}.GitCommitId)").Name
-            $disconnectedSession = New-PSSession -ConfigurationName $endPoint -ComputerName localhost | Disconnect-PSSession
-            $closedSession = New-PSSession -ConfigurationName $endPoint -ComputerName localhost
+            $disconnectedSession = New-RemoteSession -ConfigurationName $endPoint -ComputerName localhost | Disconnect-PSSession
+            $closedSession = New-RemoteSession -ConfigurationName $endPoint -ComputerName localhost
             $closedSession.Runspace.Close()
-            $openSession = New-PSSession -ConfigurationName $endPoint
+            $openSession = New-RemoteSession -ConfigurationName $endPoint
 
             $ParameterError = @(
                 @{
@@ -167,7 +167,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Can connect to default endpoint' {
-        $session = New-PSSession -ConfigurationName $endPoint
+        $session = New-RemoteSession -ConfigurationName $endPoint
         ValidateSessionInfo -session $session -state 'Opened'
         $session | Remove-PSSession -ErrorAction SilentlyContinue
     }
@@ -185,7 +185,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Can disconnect and connect to PSSession' {
-        $session = New-PSSession -ConfigurationName $endPoint
+        $session = New-RemoteSession -ConfigurationName $endPoint
 
         ValidateSessionInfo -session $session -state 'Opened'
         Disconnect-PSSession -Session $session
@@ -255,7 +255,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     It 'Can connect to all disconnected sessions by name' {
         $connectionNames = @("DiscPSS$(Get-Random)", "DiscPSS$(Get-Random)")
-        $connectionNames | ForEach-Object { $null = New-PSSession -ComputerName localhost -ConfigurationName $endpoint -Name $_ | Disconnect-PSSession}
+        $connectionNames | ForEach-Object { $null = New-RemoteSession -ComputerName localhost -ConfigurationName $endpoint -Name $_ | Disconnect-PSSession}
 
         Connect-PSSession -ComputerName localhost -Name $connectionNames
         $sessions = Get-PSSession -Name $connectionNames
