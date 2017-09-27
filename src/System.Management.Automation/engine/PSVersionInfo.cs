@@ -64,14 +64,14 @@ namespace System.Management.Automation
             //
             // The strings can be one of the following format examples:
             //    when powershell is built from a commit:
-            //      productVersion = 6.0.0-beta.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = '6.0.0-beta.7-29-g52c6b...'
-            //                                                                          PSVersion   = '6.0.0-beta.7'
+            //      productVersion = '6.0.0-beta.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = 'v6.0.0-beta.7-29-g52c6b...'
+            //                                                                           PSVersion   = '6.0.0-beta.7'
             //    when powershell is built from a release tag:
-            //      productVersion = '6.0.0-beta.7 SHA: f1ec9...'            convert to GitCommitId = '6.0.0-beta.7'
-            //                                                                          PSVersion   = '6.0.0-beta.7'
+            //      productVersion = '6.0.0-beta.7 SHA: f1ec9...'             convert to GitCommitId = 'v6.0.0-beta.7'
+            //                                                                           PSVersion   = '6.0.0-beta.7'
             //    when powershell is built from a release tag for RTM:
-            //      productVersion = '6.0.0 SHA: f1ec9...'                   convert to GitCommitId = '6.0.0'
-            //                                                                          PSVersion   = '6.0.0'
+            //      productVersion = '6.0.0 SHA: f1ec9...'                    convert to GitCommitId = 'v6.0.0'
+            //                                                                           PSVersion   = '6.0.0'
             string rawGitCommitId;
             string mainVersion = productVersion.Substring(0, productVersion.IndexOf(' '));
 
