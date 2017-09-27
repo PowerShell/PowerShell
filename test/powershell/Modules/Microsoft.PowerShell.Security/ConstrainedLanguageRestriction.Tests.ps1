@@ -905,6 +905,41 @@ try
         }
     }
 
+    Describe "New-Object constrained language test" -Tags "CI" {
+
+        It "New-Object object cannot create COM object under constrained mode" -skip:(-not $IsWindows) {
+        
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableConstrainedLanguageMode
+                $WshShell = New-Object -ComObject WScript.Shell
+            }
+            catch
+            {
+                $exception = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }
+            $exception.FullyQualifiedErrorId | Should Match "CannotCreateComTypeConstrainedLanguage"        
+        }
+
+        It "New-Object object can create core object object under constrained mode" -skip:(-not $IsWindows) {
+
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableConstrainedLanguageMode
+                $o = New-Object -TypeName System.Version -ArgumentList "1.2.3.4"
+                $o.GetType() | Should Be ([System.Version])
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+            }       
+        }
+    }
+
     # End Describe blocks
 }
 finally
