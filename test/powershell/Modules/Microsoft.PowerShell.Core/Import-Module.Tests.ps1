@@ -114,5 +114,7 @@ namespace ModuleCmdlets
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
     $assembly.Path | Should be $path
+    Test-BinaryModuleCmdlet1 | Should Be "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
  }
+
