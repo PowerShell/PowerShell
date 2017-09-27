@@ -1,7 +1,7 @@
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR armv7l)
-set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++)
+set(CMAKE_CXX_COMPILER arm-linux-gnueabihf-g++ -fstack-protector-strong -fpie)
 set(CMAKE_C_COMPILER arm-linux-gnueabihf-gcc)
 
 # add_compile_options(-target armv7-linux-gnueabihf)
