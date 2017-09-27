@@ -60,12 +60,31 @@ namespace System.Management.Automation
             string assemblyPath = typeof(PSVersionInfo).Assembly.Location;
             string productVersion = FileVersionInfo.GetVersionInfo(assemblyPath).ProductVersion;
 
-            // Get 'ProductVersion' of the assembly. The product version string can be one of the following format examples:
-            //    when powershell is built from a commit      -- '6.0.0-beta.7 Commits: 29 SHA: 52c6b...'
-            //    when powershell is built from a release tag -- '6.0.0-beta.7 SHA: f1ec9...'
-            string rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+            // Get 'GitCommitId' and 'PSVersion' from the 'productVersion' assembly attribute.
+            //
+            // The strings can be one of the following format examples:
+            //    when powershell is built from a commit:
+            //      productVersion = 6.0.0-beta.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = '6.0.0-beta.7-29-g52c6b...'
+            //                                                                          PSVersion   = '6.0.0-beta.7'
+            //    when powershell is built from a release tag:
+            //      productVersion = '6.0.0-beta.7 SHA: f1ec9...'            convert to GitCommitId = '6.0.0-beta.7'
+            //                                                                          PSVersion   = '6.0.0-beta.7'
+            //    when powershell is built from a release tag for RTM:
+            //      productVersion = '6.0.0 SHA: f1ec9...'                   convert to GitCommitId = '6.0.0'
+            //                                                                          PSVersion   = '6.0.0'
+            string rawGitCommitId;
+            string mainVersion = productVersion.Substring(0, productVersion.IndexOf(' '));
 
-            s_psV6Version = new SemanticVersion(productVersion.Substring(0, productVersion.IndexOf(' ')));
+            if (productVersion.Contains(" Commits: "))
+            {
+                rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+            }
+            else
+            {
+                rawGitCommitId = "v" + mainVersion;
+            }
+
+            s_psV6Version = new SemanticVersion(mainVersion);
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;

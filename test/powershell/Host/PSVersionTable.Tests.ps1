@@ -5,8 +5,23 @@ Describe "PSVersionTable" -Tags "CI" {
         $rootPath = Split-Path -Path $powershellProcess.path -Parent
         $sma = Get-Item (Join-Path $rootPath "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
-        $rawGitCommitId = "v" + $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
-        $expectedVersion = ($formattedVersion -split " ")[0]
+
+        $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
+        $fullVersionPattern = "^v(\d+\.\d+\.\d+)-(.+)-(\d+)-g(.+)$"
+
+        $expectedPSVersion = ($formattedVersion -split " ")[0]
+        $expectedVersionPattern = "^$mainVersionPattern$"
+
+        if ($formattedVersion.Contains(" Commits: "))
+        {
+            $rawGitCommitId = "v" + $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
+            $expectedGitCommitIdPattern = $fullVersionPattern
+            $unexpectectGitCommitIdPattern = "qwerty"
+        } else {
+            $rawGitCommitId = "v" + ($formattedVersion -split " SHA: ")[0]
+            $expectedGitCommitIdPattern = "^v$mainVersionPattern$"
+            $unexpectectGitCommitIdPattern = $fullVersionPattern
+        }
     }
 
     It "Should have version table entries" {
@@ -28,13 +43,15 @@ Describe "PSVersionTable" -Tags "CI" {
 
     It "PSVersion property" {
        $PSVersionTable.PSVersion | Should BeOfType "System.Management.Automation.SemanticVersion"
-       $PSVersionTable.PSVersion | Should BeExactly $expectedVersion
+       $PSVersionTable.PSVersion | Should BeExactly $expectedPSVersion
+       $PSVersionTable.PSVersion | Should Match $expectedVersionPattern
        $PSVersionTable.PSVersion.Major | Should Be 6
     }
 
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should BeOfType "System.String"
-       [regex]::IsMatch($PSVersionTable.GitCommitId, "^v(\d+\.\d+\.\d+)-(.+)-(\d+)-g(.+)") | Should Be $true
+       $PSVersionTable.GitCommitId | Should Match $expectedGitCommitIdPattern
+       $PSVersionTable.GitCommitId | Should Not Match $unexpectectGitCommitIdPattern
        $PSVersionTable.GitCommitId | Should BeExactly $rawGitCommitId
     }
 
