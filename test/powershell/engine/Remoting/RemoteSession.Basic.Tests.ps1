@@ -1,4 +1,3 @@
-
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         try {
@@ -12,7 +11,20 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 
 Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {
     BeforeAll {
-        Enable-PSRemoting -SkipNetworkProfileCheck
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if ( ! $IsWindows )
+        {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else
+        {
+            Enable-PSRemoting -SkipNetworkProfileCheck
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Configuration name should be in the transcript header" {
@@ -41,7 +53,20 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
 
 Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
     BeforeAll {
-        Enable-PSRemoting -SkipNetworkProfileCheck
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if ( ! $IsWindows )
+        {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else
+        {
+            Enable-PSRemoting -SkipNetworkProfileCheck
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     It "Get-Help should work in JEA sessions" {
@@ -67,51 +92,60 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
 
 Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
-        Enable-PSRemoting -SkipNetworkProfileCheck
-        $endPoint = (Get-PSSessionConfiguration -Name "PowerShell.$(${PSVersionTable}.GitCommitId)").Name
-        $disconnectedSession = New-PSSession -ConfigurationName $endPoint -ComputerName localhost | Disconnect-PSSession
-        $closedSession = New-PSSession -ConfigurationName $endPoint -ComputerName localhost
-        $closedSession.Runspace.Close()
-        $openSession = New-PSSession -ConfigurationName $endPoint
 
-        $ParameterError = @(
-            @{
-                parameters = @{
-                    'InDisconnectedSession' = $true
-                    'AsJob'                 = $true
-                    'ScriptBlock'           = {1}
-                    'ComputerName'          = 'localhost'
-                    'ConfigurationName'     = $endpoint
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        if ( ! $IsWindows )
+        {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else
+        {
+            Enable-PSRemoting -SkipNetworkProfileCheck
+            $endPoint = (Get-PSSessionConfiguration -Name "PowerShell.$(${PSVersionTable}.GitCommitId)").Name
+            $disconnectedSession = New-PSSession -ConfigurationName $endPoint -ComputerName localhost | Disconnect-PSSession
+            $closedSession = New-PSSession -ConfigurationName $endPoint -ComputerName localhost
+            $closedSession.Runspace.Close()
+            $openSession = New-PSSession -ConfigurationName $endPoint
+
+            $ParameterError = @(
+                @{
+                    parameters    = @{
+                        'InDisconnectedSession' = $true
+                        'AsJob'                 = $true
+                        'ScriptBlock'           = {1}
+                        'ComputerName'          = 'localhost'
+                        'ConfigurationName'     = $endpoint
+                    }
+                    expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                    title         = 'Cannot use InDisconnectedState and AsJob together'
+                },
+                @{
+                    parameters    = @{
+                        'ScriptBlock' = {1}
+                        'SessionName' = 'SomeSessionName'
+                    }
+                    expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                    title         = 'Cannot use SessionName without InDisconnectedSession'
+                },
+                @{
+                    parameters    = @{
+                        'ScriptBlock' = { 1 }
+                        'Session'     = $disconnectedSession
+                        'ErrorAction' = 'Stop'
+                    }
+                    expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                    title         = 'Cannot use Invoke-Command on a disconnected session'
                 }
-                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title = 'Cannot use InDisconnectedState and AsJob together'
-            },
-            @{
-                parameters = @{
-                    'ScriptBlock'          = {1}
-                    'SessionName'          = 'SomeSessionName'
+                @{
+                    parameters    = @{
+                        'ScriptBlock' = { 1 }
+                        'Session'     = $closedSession
+                        'ErrorAction' = 'Stop'
+                    }
+                    expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
+                    title         = 'Cannot use Invoke-Command on a closed session'
                 }
-                expectedError = 'System.InvalidOperationException,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title = 'Cannot use SessionName without InDisconnectedSession'
-            },
-            @{
-                parameters = @{
-                    'ScriptBlock' = { 1 }
-                    'Session' = $disconnectedSession
-                    'ErrorAction' = 'Stop'
-                }
-                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title = 'Cannot use Invoke-Command on a disconnected session'
-            }
-            @{
-                parameters = @{
-                    'ScriptBlock' = { 1 }
-                    'Session' = $closedSession
-                    'ErrorAction' = 'Stop'
-                }
-                expectedError = 'InvokeCommandCommandInvalidSessionState,Microsoft.PowerShell.Commands.InvokeCommandCommand'
-                title = 'Cannot use Invoke-Command on a closed session'
-            }
             )
 
             function script:ValidateSessionInfo($session, $state)
@@ -120,10 +154,16 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
                 $session.ConfigurationName | Should BeExactly $endPoint
                 $session.State | Should Be $state
             }
+        }
     }
 
     AfterAll {
-        Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+
+        if($isWindows)
+        {
+            Remove-PSSession $disconnectedSession,$closedSession,$openSession -ErrorAction SilentlyContinue
+        }
     }
 
     It 'Can connect to default endpoint' {
