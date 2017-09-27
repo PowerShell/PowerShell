@@ -11,6 +11,10 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 }
 
 Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnWindows') {
+    BeforeAll {
+        Enable-PSRemoting -SkipNetworkProfileCheck
+    }
+
     It "Configuration name should be in the transcript header" {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
@@ -36,6 +40,10 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
 }
 
 Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
+    BeforeAll {
+        Enable-PSRemoting -SkipNetworkProfileCheck
+    }
+
     It "Get-Help should work in JEA sessions" {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
