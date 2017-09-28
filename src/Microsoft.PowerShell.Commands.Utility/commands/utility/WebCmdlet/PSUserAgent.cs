@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return RuntimeInformation.OSDescription
+                return RuntimeInformation.OSDescription;
             }
         }
 
