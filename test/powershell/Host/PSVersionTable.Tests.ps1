@@ -1,9 +1,7 @@
 Describe "PSVersionTable" -Tags "CI" {
 
     BeforeAll {
-        $powershellProcess=Get-Process -id $pid
-        $rootPath = Split-Path -Path $powershellProcess.path -Parent
-        $sma = Get-Item (Join-Path $rootPath "System.Management.Automation.dll")
+        $sma = Get-Item (Join-Path $PSHome "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
         $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
