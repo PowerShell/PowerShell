@@ -391,11 +391,6 @@ namespace System.Management.Automation
         {
             // $Console - set the console file for this shell, if there is one, "" otherwise...
             string consoleFileName = string.Empty;
-            RunspaceConfigForSingleShell rcss = ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
-            if (rcss != null && rcss.ConsoleInfo != null && !string.IsNullOrEmpty(rcss.ConsoleInfo.Filename))
-            {
-                consoleFileName = rcss.ConsoleInfo.Filename;
-            }
             PSVariable v = new PSVariable(SpecialVariables.ConsoleFileName,
                     consoleFileName,
                     ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,

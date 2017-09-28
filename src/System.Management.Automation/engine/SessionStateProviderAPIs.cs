@@ -52,48 +52,6 @@ namespace System.Management.Automation
         }
         private Dictionary<ProviderInfo, PSDriveInfo> _providersCurrentWorkingDrive = new Dictionary<ProviderInfo, PSDriveInfo>();
 
-        private bool _providersInitialized = false;
-
-        /// <summary>
-        /// Gets called by the RunspaceConfiguration when a PSSnapin gets added or removed.
-        /// </summary>
-        ///
-        internal void UpdateProviders()
-        {
-            // This should only be called from Update() on a runspace configuration q.e.d. runspace configuration
-            // should never be null when this gets called...
-            if (this.ExecutionContext.RunspaceConfiguration == null)
-                throw PSTraceSource.NewInvalidOperationException();
-
-            if (this == ExecutionContext.TopLevelSessionState && !_providersInitialized)
-            {
-                foreach (ProviderConfigurationEntry providerConfig in this.ExecutionContext.RunspaceConfiguration.Providers)
-                {
-                    AddProvider(providerConfig);
-                }
-
-                _providersInitialized = true;
-                return;
-            }
-
-            foreach (ProviderConfigurationEntry providerConfig in this.ExecutionContext.RunspaceConfiguration.Providers.UpdateList)
-            {
-                switch (providerConfig.Action)
-                {
-                    case UpdateAction.Add:
-                        AddProvider(providerConfig);
-                        break;
-
-                    case UpdateAction.Remove:
-                        RemoveProvider(providerConfig);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-
         /// <summary>
         /// Entrypoint used by to add a provider to the current session state
         /// based on a SessionStateProviderEntry.
@@ -106,20 +64,6 @@ namespace System.Management.Automation
                             providerEntry.HelpFileName,
                             providerEntry.PSSnapIn,
                             providerEntry.Module
-            );
-        }
-
-        /// <summary>
-        /// Internal method used by RunspaceConfig for updating providers.
-        /// </summary>
-        /// <param name="providerConfig"></param>
-        private ProviderInfo AddProvider(ProviderConfigurationEntry providerConfig)
-        {
-            return AddProvider(providerConfig.ImplementingType,
-                            providerConfig.Name,
-                            providerConfig.HelpFileName,
-                            providerConfig.PSSnapIn,
-                            null
             );
         }
 

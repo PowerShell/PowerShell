@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell
         /// Starts managed MSH
         /// </summary>
         /// <param name="consoleFilePath">
-        /// Console file used to create a runspace configuration to start MSH
+        /// Deprecated: Console file used to create a runspace configuration to start MSH
         /// </param>
         /// <param name="args">
         /// Command line arguments to the managed MSH
@@ -55,54 +55,37 @@ namespace Microsoft.PowerShell
             Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
-            RunspaceConfigForSingleShell configuration = null;
-            PSConsoleLoadException warning = null;
             //      PSSnapInException will cause the control to return back to the native code
             //      and stuff the EXCEPINFO field with the message of the exception.
             //      The native code will print this out and exit the process.
-            if (string.IsNullOrEmpty(consoleFilePath))
-            {
 #if DEBUG
 // Special switches for debug mode to allow self-hosting on InitialSessionState instead
 // of runspace configuration...
-                    if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-iss", StringComparison.OrdinalIgnoreCase))
-                    {
-                        ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-                        configuration = null;
-                    }
-                    else if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Console.WriteLine("Attach the debugger and hit enter to continue:");
-                        Console.ReadLine();
-                        ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-                        configuration = null;
-                    }
-                    else
-                    {
-                        ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-                        configuration = null;
-                    }
-#else
+            if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-iss", StringComparison.OrdinalIgnoreCase))
+            {
                 ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-                configuration = null;
-#endif
+            }
+            else if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine("Attach the debugger and hit enter to continue:");
+                Console.ReadLine();
+                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
             }
             else
             {
-                //TODO : Deprecate RunspaceConfiguration and use InitialSessionState
-                configuration =
-                    RunspaceConfigForSingleShell.Create(consoleFilePath, out warning);
+                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
             }
+#else
+            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
+#endif
             int exitCode = 0;
             try
             {
                 var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
                 var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
-                    configuration,
                     formattedBanner,
                     ManagedEntranceStrings.ShellHelp,
-                    warning == null ? null : warning.Message,
                     args);
             }
             catch (System.Management.Automation.Host.HostException e)

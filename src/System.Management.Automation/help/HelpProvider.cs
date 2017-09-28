@@ -246,9 +246,7 @@ namespace System.Management.Automation
         /// <returns>true if supported,false otherwise.</returns>
         internal bool AreSnapInsSupported()
         {
-            RunspaceConfigForSingleShell runspace = _helpSystem.ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
-
-            return (null == runspace ? false : true);
+            return false;
         }
 
         /// <summary>
