@@ -109,12 +109,12 @@ namespace ModuleCmdlets
 "@
 
     Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
-    $assembly = Import-Module $TESTDRIVE\System.dll -Force -PassThru
+    $results = powershell -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
 
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
-    $assembly.Path | Should be $path
-    Test-BinaryModuleCmdlet1 | Should Be "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
+    $results[0] | Should Be $path
+    $results[1] | Should BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
  }
 
