@@ -6,7 +6,6 @@ using System;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Globalization;
-using System.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -139,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // unknown/unsupported platform
-                    Debug.Assert(true, "Unable to determine Operating System Platform");
+                    Diagnostics.Assert(false, "Unable to determine Operating System Platform");
                     return String.Empty;
                 }
             }
