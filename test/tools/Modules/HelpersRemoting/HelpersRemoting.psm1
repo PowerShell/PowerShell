@@ -32,7 +32,7 @@ function New-RemoteRunspace
 function CreateParameters
 {
     param (
-        [string] $ComputerName
+        [string] $ComputerName,
         [string] $Name,
         [string] $ConfigurationName,
         [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
