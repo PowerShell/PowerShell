@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) {4}",
-                    Compatibility, Platform, OS, Culture, App);
+                    Compatibility, PlatformName, OS, Culture, App);
                 return (userAgent);
             }
         }
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} (compatible; MSIE 9.0; {1}; {2}; {3})",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) Gecko/20100401 Firefox/4.0",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "Opera/9.70 ({0}; {1}; {2}) Presto/2.2.1",
-                    Platform, OS, Culture);
+                    PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -120,19 +120,19 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static string Platform
+        internal static string PlatformName
         {
             get
             {
-                if(System.Management.Automation.Platform.IsWindows)
+                if (Platform.IsWindows)
                 {
                     return "Windows NT";
                 }
-                else if(System.Management.Automation.Platform.IsMacOS)
+                else if (Platform.IsMacOS)
                 {
                     return "Macintosh";
                 }
-                else if(System.Management.Automation.Platform.IsLinux)
+                else if (Platform.IsLinux)
                 {
                     return "Linux";
                 }
