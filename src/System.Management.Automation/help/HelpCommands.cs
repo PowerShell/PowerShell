@@ -204,34 +204,8 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _showOnlineHelp;
 
-        private bool _showWindow;
-        /// <summary>
-        /// Gets and sets a value indicating whether the help should be displayed in a separate window
-        /// </summary>
-        [Parameter(ParameterSetName = "ShowWindow", Mandatory = true)]
-        public SwitchParameter ShowWindow
-        {
-            get
-            {
-                return _showWindow;
-            }
-
-            set
-            {
-                _showWindow = value;
-                if (_showWindow)
-                {
-                    VerifyParameterForbiddenInRemoteRunspace(this, "ShowWindow");
-                }
-            }
-        }
-
         // The following variable controls the view.
         private HelpView _viewTokenToAdd = HelpView.Default;
-
-#if !CORECLR
-        private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
-#endif
 
         private readonly Stopwatch _timer = new Stopwatch();
 #if LEGACYTELEMETRY
@@ -270,12 +244,6 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-#if !CORECLR
-                if (this.ShowWindow)
-                {
-                    this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
-                }
-#endif
                 this.Context.HelpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
 
                 bool failed = false;
@@ -568,12 +536,6 @@ namespace Microsoft.PowerShell.Commands
                         throw PSTraceSource.NewInvalidOperationException(HelpErrors.NoURIFound);
                     }
                 }
-                else if (showFullHelp && ShowWindow)
-                {
-#if !CORECLR
-                    graphicalHostReflectionWrapper.CallStaticMethod("ShowHelpWindow", helpInfo.FullHelp, this);
-#endif
-                }
                 else
                 {
                     // show inline help
@@ -687,22 +649,13 @@ namespace Microsoft.PowerShell.Commands
             WriteProgress(record);
         }
 
-#if !CORECLR
-        [DllImport("wininet.dll")]
-        private static extern bool InternetGetConnectedState(out int desc, int reserved);
-#endif
         /// <summary>
         /// Checks if we can connect to the internet
         /// </summary>
         /// <returns></returns>
         private bool HasInternetConnection()
         {
-#if CORECLR
             return true; // TODO:CORECLR wininet.dll is not present on NanoServer
-#else
-            int unused;
-            return InternetGetConnectedState(out unused, 0);
-#endif
         }
 
         #region Helper methods for verification of parameters against NoLanguage mode
