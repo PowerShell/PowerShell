@@ -6,6 +6,7 @@ using System;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -123,15 +124,23 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                if(System.Management.Automation.Platform.IsWindows)
+                {
                     return "Windows NT";
-                }else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX)){
+                }
+                else if(System.Management.Automation.Platform.IsMacOS)
+                {
                     return "Macintosh";
-                }else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)){
+                }
+                else if(System.Management.Automation.Platform.IsLinux)
+                {
                     return "Linux";
-                }else{
+                }
+                else
+                {
                     // unknown/unsupported platform
-                    throw new PlatformNotSupportedException("Platform is not supported");
+                    Debug.Assert(true, "Unable to determine Operating System Platform");
+                    return String.Empty;
                 }
             }
         }
