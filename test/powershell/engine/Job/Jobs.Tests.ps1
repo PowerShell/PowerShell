@@ -24,9 +24,12 @@ Describe 'Basic Job Tests' -Tags 'CI' {
 
     Context 'Basic tests' {
 
+        BeforeEach {
+            Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
+        }
+
         It 'Can start, wait and receive a Job' {
             $job = Start-Job -ScriptBlock { 1 + 1 }
-            ValidateJobInfo -job $job -state 'Running' -hasMoreData $true -command ' 1 + 1 '
             $result = $job | Wait-Job | Receive-Job
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $false -command ' 1 + 1 '
             $result | Should Be 2
@@ -117,14 +120,15 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $waitedJob = Wait-Job -Job $jobs -Any
             ValidateJobInfo -job $waitedJob -state 'Completed' -hasMoreData $true -command ' Start-Sleep -Seconds $using:seconds ; $using:seconds'
             $result = $waitedJob | Receive-Job
-            $result | Should Be 1
+            ## We check for $result to be less than 4 so that any of the jobs completing first will considered a success.
+            $result | Should BeLessThan 4
             $jobs | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
         It 'Can timeout waiting for a job' {
-            $job = Start-Job -ScriptBlock { Start-Sleep -Seconds 3 }
+            $job = Start-Job -ScriptBlock { Start-Sleep -Seconds 10 }
             $job | Wait-Job -TimeoutSec 1
-            ValidateJobInfo -job $job -state 'Running' -hasMoreData $true -command ' Start-Sleep -Seconds 3 '
+            ValidateJobInfo -job $job -state 'Running' -hasMoreData $true -command ' Start-Sleep -Seconds 10 '
             $job | Remove-Job -Force
         }
     }
@@ -181,7 +185,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         It 'Can receive-job using Location' {
             $jobName = 'ReceiveUsingLocation'
             $job = Start-Job -ScriptBlock { 1 + 1 } -Name $jobName | Wait-Job
-            $result = Receive-Job -ComputerName localhost -Job $job
+            $result = Receive-Job -Location localhost -Job $job
             $result | Should Be 2
             $job | Remove-Job -Force -ErrorAction SilentlyContinue
         }
@@ -206,6 +210,10 @@ Describe 'Basic Job Tests' -Tags 'CI' {
                 @{ parameters = @{ IncludeChildJob = $true }; property = '-IncludeChildJob'},
                 @{ parameters = @{ ChildJobState = 'Completed' }; property = '-ChildJobState'}
             )
+        }
+
+        BeforeEach {
+            Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
         }
 
         It 'Can get-job with <property>' -TestCases $getJobTestCases {

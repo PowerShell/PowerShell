@@ -35,8 +35,8 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
         {
             New-PSSessionConfigurationFile -Path $PSSessionConfigFile -TranscriptDirectory $RoleCapDirectory -SessionType RestrictedRemoteServer
             Register-PSSessionConfiguration -Name JEA -Path $PSSessionConfigFile -Force -ErrorAction SilentlyContinue
-            $scriptBlock = {Enter-PSSession -ComputerName Localhost -ConfigurationName JEA; Exit-PSSession}
-            # Invoke the script block in a different PowerShell instance to that when TestDrive tries to delete $RoleCapDirectory,
+            $scriptBlock = {Enter-RemoteSession -ComputerName Localhost -ConfigurationName JEA; Exit-PSSession}
+            # Invoke the script block in a different PowerShell instance so that when TestDrive tries to delete $RoleCapDirectory,
             # the transcription has finished and the files are not locked.
             [powershell]::Create().AddScript($scriptBlock).Invoke()
             $headerFile = Get-ChildItem $transScriptFile | Sort-Object LastWriteTime | Select-Object -Last 1
@@ -76,8 +76,8 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
         {
             New-PSSessionConfigurationFile -Path $PSSessionConfigFile -TranscriptDirectory $RoleCapDirectory -SessionType RestrictedRemoteServer
             Register-PSSessionConfiguration -Name JEA -Path $PSSessionConfigFile -Force -ErrorAction SilentlyContinue
-            $scriptBlock = {Enter-PSSession -ComputerName Localhost -ConfigurationName JEA; Get-Help Get-Command; Exit-PSSession}
-            # Invoke the script block in a different PowerShell instance to that when TestDrive tries to delete $RoleCapDirectory,
+            $scriptBlock = {Enter-RemoteSession -ComputerName Localhost -ConfigurationName JEA; Get-Help Get-Command; Exit-PSSession}
+            # Invoke the script block in a different PowerShell instance so that when TestDrive tries to delete $RoleCapDirectory,
             # the transcription has finished and the files are not locked.
             $helpContent = [powershell]::Create().AddScript($scriptBlock).Invoke()
             $helpContent | Should Not Be $null
@@ -173,7 +173,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Can execute command in a disconnected session' {
-        $session = Invoke-Command -InDisconnectedSession -ComputerName 'localhost' -ScriptBlock { 1+1 } -ConfigurationName $endPoint
+        $session = Invoke-RemoteCommand -InDisconnectedSession -ComputerName 'localhost' -ScriptBlock { 1+1 } -ConfigurationName $endPoint
 
         ValidateSessionInfo -session $session -state 'Disconnected'
 
