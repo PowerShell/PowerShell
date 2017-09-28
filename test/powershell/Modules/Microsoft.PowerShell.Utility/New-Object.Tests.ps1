@@ -3,7 +3,8 @@ Describe "New-Object" -Tags "CI" {
         if ($IsLinux -or $IsMacOs ) {
             { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         } else {
-            { New-Object -ComObject "Shell.Application" } | Should Not Throw
+            # It works on NanoServer and IoT too
+            (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should Be $true
         }
     }
 
