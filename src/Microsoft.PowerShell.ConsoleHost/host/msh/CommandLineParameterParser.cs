@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell
                     ++i;
                     if (i < args.Length)
                     {
-                        if (LanguagePrimitives.TryConvertTo<int>(args[i], out int verNumber) && (verNumber == 2 || verNumber == 3)
+                        if (LanguagePrimitives.TryConvertTo<int>(args[i], out int verNumber) && (verNumber == 2 || verNumber == 3))
                         {
                             WriteCommandLineError(CommandLineParameterParserStrings.DeprecatedVersionParameter);
                         }
