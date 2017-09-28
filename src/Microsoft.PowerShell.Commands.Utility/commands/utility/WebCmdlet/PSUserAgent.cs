@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Management.Automation;
+using System.Runtime.InteropServices;
 using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
@@ -122,7 +123,16 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return ("Windows NT");
+                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                    return "Windows NT";
+                }else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX)){
+                    return "Macintosh";
+                }else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux)){
+                    return "Linux";
+                }else{
+                    // unknown/unsupported platform
+                    throw new PlatformNotSupportedException("Platform is not supported");
+                }
             }
         }
 
@@ -130,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+                return RuntimeInformation.OSDescription
             }
         }
 
