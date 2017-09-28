@@ -1,4 +1,27 @@
 Describe "PSVersionTable" -Tags "CI" {
+
+    BeforeAll {
+        $sma = Get-Item (Join-Path $PSHome "System.Management.Automation.dll")
+        $formattedVersion = $sma.VersionInfo.ProductVersion
+
+        $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
+        $fullVersionPattern = "^v(\d+\.\d+\.\d+)-(.+)-(\d+)-g(.+)$"
+
+        $expectedPSVersion = ($formattedVersion -split " ")[0]
+        $expectedVersionPattern = "^$mainVersionPattern$"
+
+        if ($formattedVersion.Contains(" Commits: "))
+        {
+            $rawGitCommitId = "v" + $formattedVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
+            $expectedGitCommitIdPattern = $fullVersionPattern
+            $unexpectectGitCommitIdPattern = "qwerty"
+        } else {
+            $rawGitCommitId = "v" + ($formattedVersion -split " SHA: ")[0]
+            $expectedGitCommitIdPattern = "^v$mainVersionPattern$"
+            $unexpectectGitCommitIdPattern = $fullVersionPattern
+        }
+    }
+
     It "Should have version table entries" {
        $PSVersionTable.Count | Should Be 9
     }
@@ -15,20 +38,31 @@ Describe "PSVersionTable" -Tags "CI" {
        $PSVersionTable.ContainsKey("OS")                        | Should Be True
 
     }
-    It "GitCommitId property should not contain an error" {
-       $PSVersionTable.GitCommitId | Should not match "powershell.version"
+
+    It "PSVersion property" {
+       $PSVersionTable.PSVersion | Should BeOfType "System.Management.Automation.SemanticVersion"
+       $PSVersionTable.PSVersion | Should BeExactly $expectedPSVersion
+       $PSVersionTable.PSVersion | Should Match $expectedVersionPattern
+       $PSVersionTable.PSVersion.Major | Should Be 6
+    }
+
+    It "GitCommitId property" {
+       $PSVersionTable.GitCommitId | Should BeOfType "System.String"
+       $PSVersionTable.GitCommitId | Should Match $expectedGitCommitIdPattern
+       $PSVersionTable.GitCommitId | Should Not Match $unexpectectGitCommitIdPattern
+       $PSVersionTable.GitCommitId | Should BeExactly $rawGitCommitId
     }
 
     It "Should have the correct platform info" {
        $platform = [String][System.Environment]::OSVersion.Platform
-	   [String]$PSVersionTable["Platform"] | Should Be $platform
+       [String]$PSVersionTable["Platform"] | Should Be $platform
     }
 
     It "Should have the correct OS info" {
        if ($IsCoreCLR)
        {
            $OSDescription = [String][System.Runtime.InteropServices.RuntimeInformation]::OSDescription
-	       [String]$PSVersionTable["OS"] | Should Be $OSDescription
+           [String]$PSVersionTable["OS"] | Should Be $OSDescription
        }
        else
        {

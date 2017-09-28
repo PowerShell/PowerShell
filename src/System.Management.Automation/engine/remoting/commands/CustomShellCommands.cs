@@ -132,7 +132,7 @@ function Register-PSSessionConfiguration
                 $pluginWsmanRunAsUserPath = [System.IO.Path]::Combine(""WSMan:\localhost\Plugin"", ""$pluginName"", ""RunAsUser"")
                 set-item -WarningAction SilentlyContinue $pluginWsmanRunAsUserPath $runAsCredential -confirm:$false
             }} catch {{
-                 
+
                 remove-item (Join-Path WSMan:\localhost\Plugin ""$pluginName"") -recurse -force
                 write-error $_
                 # Do not add anymore clean up code after Write-Error, because if EA=Stop is set by user
@@ -1561,10 +1561,9 @@ else
         internal static string GetWinrmPluginShellName()
         {
             // PowerShell Core uses a versioned directory to hold the plugin
-            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
-            return System.String.Concat("PowerShell.", (string)versionTable["GitCommitId"]);
+            return System.String.Concat("PowerShell.", PSVersionInfo.GitCommitId);
         }
 
         /// <summary>
@@ -1574,10 +1573,9 @@ else
         internal static string GetWinrmPluginDllPath()
         {
             // PowerShell Core uses its versioned directory instead of system32
-            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
-            string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", (string)versionTable["GitCommitId"]);
+            string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", PSVersionInfo.GitCommitId);
             return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
 
@@ -2555,7 +2553,7 @@ function Unregister-PSSessionConfiguration
                     return
                 }}
            }}
-           
+
            $shellsFound++
 
            $shouldProcessTargetString = $targetTemplate -f $_.Name
@@ -2779,12 +2777,12 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
     }}
 
     Get-Details $pluginDir $h
-    
+
     # Workflow is not supported in PowerShell Core. Attempting to load the
     # assembly results in a FileNotFoundException.
     if (![System.Management.Automation.Platform]::IsCoreCLR -AND
         $h[""AssemblyName""] -eq ""Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"") {{
-        
+
         $serviceCore = [Reflection.Assembly]::Load(""Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"")
 
         if ($null -ne $serviceCore) {{
@@ -4967,7 +4965,7 @@ param(
                     }}
                 }}
             }}
-            
+
             # remove the 'network deny all' tag
             Get-PSSessionConfiguration -Force:$Force | ForEach-Object {{
                 $sddl = $null

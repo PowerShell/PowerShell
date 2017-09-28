@@ -45,7 +45,7 @@ namespace System.Management.Automation
         private static Version s_psV4Version = new Version(4, 0);
         private static Version s_psV5Version = new Version(5, 0);
         private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "beta");
+        private static SemanticVersion s_psV6Version;
 
         /// <summary>
         /// A constant to track current PowerShell Edition
@@ -57,9 +57,38 @@ namespace System.Management.Automation
         {
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
+            string assemblyPath = typeof(PSVersionInfo).Assembly.Location;
+            string productVersion = FileVersionInfo.GetVersionInfo(assemblyPath).ProductVersion;
+
+            // Get 'GitCommitId' and 'PSVersion' from the 'productVersion' assembly attribute.
+            //
+            // The strings can be one of the following format examples:
+            //    when powershell is built from a commit:
+            //      productVersion = '6.0.0-beta.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = 'v6.0.0-beta.7-29-g52c6b...'
+            //                                                                           PSVersion   = '6.0.0-beta.7'
+            //    when powershell is built from a release tag:
+            //      productVersion = '6.0.0-beta.7 SHA: f1ec9...'             convert to GitCommitId = 'v6.0.0-beta.7'
+            //                                                                           PSVersion   = '6.0.0-beta.7'
+            //    when powershell is built from a release tag for RTM:
+            //      productVersion = '6.0.0 SHA: f1ec9...'                    convert to GitCommitId = 'v6.0.0'
+            //                                                                           PSVersion   = '6.0.0'
+            string rawGitCommitId;
+            string mainVersion = productVersion.Substring(0, productVersion.IndexOf(' '));
+
+            if (productVersion.Contains(" Commits: "))
+            {
+                rawGitCommitId = "v" + productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+            }
+            else
+            {
+                rawGitCommitId = "v" + mainVersion;
+            }
+
+            s_psV6Version = new SemanticVersion(mainVersion);
+
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
-            s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
+            s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
             s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
@@ -79,20 +108,6 @@ namespace System.Management.Automation
             // Downlevel systems don't support SemanticVersion, but Version is most likely good enough anyway.
             result[PSVersionInfo.PSVersionName] = (Version)(SemanticVersion)s_psVersionTable[PSVersionInfo.PSVersionName];
             return result;
-        }
-
-        // Get the commit id from the powershell.version file. If the powershell.version file doesn't exist, use the string "N/A"
-        internal static string GetCommitInfo()
-        {
-            try
-            {
-                string assemblyPath = IO.Path.GetDirectoryName(typeof(PSVersionInfo).GetTypeInfo().Assembly.Location);
-                return (IO.File.ReadAllLines(IO.Path.Combine(assemblyPath, "powershell.version"))[0]);
-            }
-            catch (Exception e)
-            {
-                return e.Message;
-            }
         }
 
         #region Private helper methods

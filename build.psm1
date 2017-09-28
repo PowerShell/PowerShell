@@ -393,14 +393,6 @@ function Start-PSBuild {
         }
     }
 
-    # save git commit id to file for PowerShell to include in PSVersionTable
-    $gitCommitId = $ReleaseTag
-    if (-not $gitCommitId) {
-        # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = Get-PSCommitId -WarningAction SilentlyContinue
-    }
-    $gitCommitId > "$psscriptroot/powershell.version"
-
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
 
