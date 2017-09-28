@@ -375,8 +375,8 @@ namespace System.Management.Automation
         /// </summary>
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
-        private static bool s_supportScreenScrape = false;
-        private bool _isTranscribing = false;
+        private static bool? s_supportScreenScrape = null;
+        private bool _isTranscribing;
         private Host.Coordinates _startPosition;
 
         /// <summary>
@@ -406,18 +406,6 @@ namespace System.Management.Automation
             bool redirectInput;
 
             _startPosition = new Host.Coordinates();
-
-            try
-            {
-                _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
-                    new Host.Rectangle(_startPosition, _startPosition));
-                s_supportScreenScrape = true;
-            }
-            catch (Exception)
-            {
-                // screen scraping not supported on non-Windows or as job
-            }
 
             CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
 
@@ -1289,15 +1277,34 @@ namespace System.Management.Automation
                 }
             }
 
-            // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
-            // as redirected output is always transcribed
-            if (_isTranscribing && (false == s_supportScreenScrape))
-            {
-                redirectOutput = true;
-                redirectError = true;
-            }
-
             _runStandAlone = !redirectInput && !redirectOutput && !redirectError;
+
+            if (_runStandAlone)
+            {
+                if (null == s_supportScreenScrape)
+                {
+                    try
+                    {
+                        _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                            new Host.Rectangle(_startPosition, _startPosition));
+                        s_supportScreenScrape = true;
+                    }
+                    catch (Exception)
+                    {
+                        s_supportScreenScrape = false;
+                    }
+                }
+
+                // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
+                // as redirected output is always transcribed
+                if (_isTranscribing && (false == s_supportScreenScrape))
+                {
+                    redirectOutput = true;
+                    redirectError = true;
+                    _runStandAlone = false;
+                }
+            }
         }
 
         private bool ValidateExtension(string path)
