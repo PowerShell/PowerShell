@@ -72,7 +72,7 @@ Invoke-RestMethod -Uri $uri -Headers $headers
   "args": {},
   "origin": "127.0.0.1",
   "headers": {
-    "User-Agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.15063.608",
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) PowerShell/6.0.0",
     "Host": "localhost:8083"
   },
   "url": "http://localhost:8083/Compression/Deflate"
@@ -92,7 +92,7 @@ Invoke-RestMethod -Uri $uri -Headers $headers
   "args": {},
   "origin": "127.0.0.1",
   "headers": {
-    "User-Agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.15063.608",
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) PowerShell/6.0.0",
     "Host": "localhost:8083"
   },
   "url": "http://localhost:8083/Compression/Gzip"

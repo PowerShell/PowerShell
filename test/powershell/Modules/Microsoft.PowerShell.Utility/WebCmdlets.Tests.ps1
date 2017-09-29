@@ -605,9 +605,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         ValidateResponse -response $result
 
         # Validate response content
-        $result.Output.Headers.'Content-Encoding'[0] | Should Be $dataEncoding
+        $result.Output.Headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding
         $jsonContent = $result.Output.Content | ConvertFrom-Json        
-        $jsonContent.Headers.Host | Should Be $uri.Authority
+        $jsonContent.Headers.Host | Should BeExactly $uri.Authority
     }
 
     # Perform the following operation for Invoke-WebRequest using the following content types: "text/plain", "application/xml", "application/xml"
@@ -1436,8 +1436,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
         # Validate response content
-        $headers.'Content-Encoding'[0] | Should Be $dataEncoding      
-        $result.Headers.Host | Should Be $uri.Authority
+        $headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding      
+        $result.Headers.Host | Should BeExactly $uri.Authority
     }
 
     # Perform the following operation for Invoke-RestMethod using the following content types: "text/plain", "application/xml", "application/xml"
