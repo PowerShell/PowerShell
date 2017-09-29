@@ -178,6 +178,15 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | should be $currentVersion
         }
 
+        It "-Version should write an error if a value is present" {
+            $versionValue = "abrakadabra"
+            $tempFile = Join-Path $testdrive "expectedError.txt"
+            $observed = & $powershell -version $versionValue > $tempFile
+            $expectedError = (Get-Content $tempFile)[0]
+
+            $expectedError | Should Match $versionValue
+        }
+
         It "-File should be default parameter" {
             Set-Content -Path $testdrive/test -Value "'hello'"
             $observed = & $powershell -NoProfile $testdrive/test

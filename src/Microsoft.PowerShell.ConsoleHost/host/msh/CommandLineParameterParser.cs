@@ -548,6 +548,12 @@ namespace Microsoft.PowerShell
                     _noInteractive = true;
                     _skipUserInit = true;
                     _noExit = false;
+
+                    ++i;
+                    if (i < args.Length)
+                    {
+                        WriteCommandLineError(string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.DeprecatedVersionParameter,args[i]));
+                    }
                     break;
                 }
 

@@ -272,4 +272,7 @@ EXAMPLES
   <data name="InvalidArgument" xml:space="preserve">
     <value>Invalid argument '{0}', did you mean:</value>
   </data>
+  <data name="DeprecatedVersionParameter" xml:space="preserve">
+    <value>Usage of '-Version {0}' is not supported. '-Version' currently only returns the current PowerShell version.</value>
+  </data>
 </root>
