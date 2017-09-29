@@ -516,7 +516,8 @@ Possible matches are</value>
     <value>Missing '{' in switch statement.</value>
   </data>
   <data name="MissingVariableNameAfterForeach" xml:space="preserve">
-    <value>Missing variable name after foreach.</value>
+    <value>Missing variable name after foreach.
+The correct form is: foreach ($a in $b) {}</value>
   </data>
   <data name="MissingInInForeach" xml:space="preserve">
     <value>Missing 'in' after variable in foreach loop.</value>
