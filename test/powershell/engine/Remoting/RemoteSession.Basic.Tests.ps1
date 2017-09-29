@@ -168,49 +168,70 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     It 'Can connect to default endpoint' {
         $session = New-RemoteSession -ConfigurationName $endPoint
-        ValidateSessionInfo -session $session -state 'Opened'
-        $session | Remove-PSSession -ErrorAction SilentlyContinue
+
+        try
+        {
+            ValidateSessionInfo -session $session -state 'Opened'
+        }
+        finally
+        {
+            $session | Remove-PSSession -ErrorAction SilentlyContinue
+        }
     }
 
     It 'Can execute command in a disconnected session' {
-        $session = Invoke-RemoteCommand -InDisconnectedSession -ComputerName 'localhost' -ScriptBlock { 1+1 } -ConfigurationName $endPoint
+        $session = Invoke-RemoteCommand -InDisconnectedSession -ComputerName 'localhost' -ScriptBlock { 1 + 1 } -ConfigurationName $endPoint
+        try
+        {
+            ValidateSessionInfo -session $session -state 'Disconnected'
 
-        ValidateSessionInfo -session $session -state 'Disconnected'
-
-        $result = Receive-PSSession -Session $session
-        $result | Should Be 2
-        $result.PSComputerName | Should BeExactly 'localhost'
-
-        $session | Remove-PSSession -ErrorAction SilentlyContinue
+            $result = Receive-PSSession -Session $session
+            $result | Should Be 2
+            $result.PSComputerName | Should BeExactly 'localhost'
+        }
+        finally
+        {
+            $session | Remove-PSSession -ErrorAction SilentlyContinue
+        }
     }
 
     It 'Can disconnect and connect to PSSession' {
         $session = New-RemoteSession -ConfigurationName $endPoint
+        try
+        {
+            ValidateSessionInfo -session $session -state 'Opened'
+            Disconnect-PSSession -Session $session
 
-        ValidateSessionInfo -session $session -state 'Opened'
-        Disconnect-PSSession -Session $session
+            ValidateSessionInfo -session $session -state 'Disconnected'
+            Connect-RemoteSession -Session $session
 
-        ValidateSessionInfo -session $session -state 'Disconnected'
-        Connect-PSSession -Session $session
-
-        $result = Invoke-Command -Session $session -ScriptBlock { 1 + 1 }
-        $result | Should Be 2
-        $result.PSComputerName | Should BeExactly 'localhost'
-
-        $session | Remove-PSSession -ErrorAction SilentlyContinue
+            $result = Invoke-Command -Session $session -ScriptBlock { 1 + 1 }
+            $result | Should Be 2
+            $result.PSComputerName | Should BeExactly 'localhost'
+        }
+        finally
+        {
+            $session | Remove-PSSession -ErrorAction SilentlyContinue
+        }
     }
 
     It 'Can export and import PSSession' {
-        $name = Get-Random
-        $commandName = 'Add-Number'
+        try
+        {
+            $name = Get-Random
+            $commandName = 'Add-Number'
 
-        Invoke-Command -Session $openSession -ScriptBlock { function Add-Number ($number1, $number2) { $number1 + $number2 } }
+            Invoke-Command -Session $openSession -ScriptBlock { function Add-Number ($number1, $number2) { $number1 + $number2 } }
 
-        $null = Export-PSSession -OutputModule $name -Force -Session $openSession -CommandName $commandName
-        $imported = Import-PSSession -Module $name -Session $openSession
+            $null = Export-PSSession -OutputModule $name -Force -Session $openSession -CommandName $commandName
+            $imported = Import-PSSession -Module $name -Session $openSession
 
-        $imported.ExportedCommands.Keys | Should BeExactly $commandName
-        Remove-Item "function:\$commandName" -ErrorAction SilentlyContinue -Force
+            $imported.ExportedCommands.Keys | Should BeExactly $commandName
+        }
+        finally
+        {
+            Remove-Item "function:\$commandName" -ErrorAction SilentlyContinue -Force
+        }
     }
 
     It "<title>" -TestCases $ParameterError {
@@ -238,18 +259,19 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It 'Can execute command without creating new scope' {
-        $result = Invoke-Command -NoNewScope -ScriptBlock { 1 + 1 }
-        $result | Should Be 2
+        Invoke-Command -NoNewScope -ScriptBlock { $sameScopeVariable = 'SetInCurrentScope' }
+        $sameScopeVariable | Should BeExactly 'SetInCurrentScope'
     }
 
     It 'Can execute command from a file' {
-        '1 + 1' | Out-File $testdrive/remotingscript.ps1
-        $result = Invoke-Command -FilePath $testdrive/remotingscript.ps1 -Session $openSession
+        $fileName = "$testdrive/remotingscript.ps1"
+        '1 + 1' | Out-File $fileName
+        $result = Invoke-Command -FilePath $fileName -Session $openSession
         $result | Should Be 2
     }
 
     It 'Can invoke-command as job' {
-        $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Wait-Job | Receive-Job
+        $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Receive-Job -AutoRemoveJob -Wait
         $result | Should Be 2
     }
 
@@ -257,13 +279,18 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $connectionNames = @("DiscPSS$(Get-Random)", "DiscPSS$(Get-Random)")
         $connectionNames | ForEach-Object { $null = New-RemoteSession -ComputerName localhost -ConfigurationName $endpoint -Name $_ | Disconnect-PSSession}
 
-        Connect-PSSession -ComputerName localhost -Name $connectionNames
+        Connect-RemoteSession -ComputerName localhost -Name $connectionNames -ConfigurationName $endpoint
         $sessions = Get-PSSession -Name $connectionNames
-        $sessions | ForEach-Object {
-            ValidateSessionInfo -session $_ -state 'Opened'
-         }
-
-        $sessions | Remove-PSSession -ErrorAction SilentlyContinue
+        try
+        {
+            $sessions | ForEach-Object {
+                ValidateSessionInfo -session $_ -state 'Opened'
+            }
+        }
+        finally
+        {
+            $sessions | Remove-PSSession -ErrorAction SilentlyContinue
+        }
     }
 
     It 'Can pass values through $using' {

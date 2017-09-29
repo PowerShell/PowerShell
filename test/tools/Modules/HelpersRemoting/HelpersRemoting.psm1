@@ -8,7 +8,6 @@ if ($IsWindows) {
     try { $Script:AppVeyorRemoteCred = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" } catch { }
 }
 
-
 function New-RemoteRunspace
 {
     $wsmanConInfo = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
@@ -33,15 +32,25 @@ function CreateParameters
 {
     param (
         [string] $ComputerName,
-        [string] $Name,
+        [string[]] $Name,
         [string] $ConfigurationName,
-        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
+        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption,
+        [System.Management.Automation.Runspaces.PSSession[]] $Session)
 
-    if($ComputerName) {
-        $parameters = @{ ComputerName = $ComputerName; }
+    if($ComputerName)
+    {
+        $parameters = @{ComputerName = $ComputerName}
     }
-    else {
-        $parameters = @{ ComputerName = "."; }
+    else
+    {
+        if($Session)
+        {
+            $parameters = @{Session = $Session}
+        }
+        else
+        {
+            $parameters = @{ComputerName = '.'}
+        }
     }
 
     if ($Name) {
@@ -96,8 +105,16 @@ function Invoke-RemoteCommand
         [switch] $InDisconnectedSession)
 
     $parameters = CreateParameters -ComputerName $ComputerName -ConfigurationName $ConfigurationName
-    $parameters.Add('ScriptBlock', $ScriptBlock)
-    $parameters.Add('InDisconnectedSession', $InDisconnectedSession.IsPresent)
+
+    if($ScriptBlock)
+    {
+        $parameters.Add('ScriptBlock', $ScriptBlock)
+    }
+
+    if($InDisconnectedSession)
+    {
+        $parameters.Add('InDisconnectedSession', $InDisconnectedSession.IsPresent)
+    }
 
     Invoke-Command @parameters
 }
@@ -111,4 +128,17 @@ function Enter-RemoteSession
 
     $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption
     Enter-PSSession @parameters
+}
+
+function Connect-RemoteSession
+{
+    param(
+        [string] $ComputerName,
+        [string[]] $Name,
+        [System.Management.Automation.Runspaces.PSSession[]] $Session,
+        [string] $ConfigurationName
+    )
+
+    $parameters = CreateParameters -ComputerName $ComputerName -Name $Name -Session $Session -ConfigurationName $ConfigurationName
+    Connect-PSSession @parameters
 }

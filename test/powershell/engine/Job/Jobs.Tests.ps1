@@ -24,7 +24,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
 
     Context 'Basic tests' {
 
-        BeforeEach {
+        AfterEach {
             Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
         }
 
@@ -33,7 +33,6 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $result = $job | Wait-Job | Receive-Job
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $false -command ' 1 + 1 '
             $result | Should Be 2
-            $job | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
         It 'Can run nested jobs' {
@@ -41,28 +40,24 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             ValidateJobInfo -job $job -state 'Running' -hasMoreData $true -command ' Start-Job -ScriptBlock { 1 + 1 } | Wait-Job | Receive-Job '
             $result = $job | Wait-Job | Receive-Job
             $result | Should Be 2
-            $job | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
         It 'Can get errors messages from job' {
             $job = Start-Job -ScriptBlock { throw 'MyError' } | Wait-Job
             Receive-Job -Job $job -ErrorVariable ev -ErrorAction SilentlyContinue
             $ev[0].Exception.Message | Should BeExactly 'MyError'
-            Remove-Job -Job $job -ErrorAction SilentlyContinue -Force
         }
 
         It 'Can get warning messages from job' {
             $job = Start-Job -ScriptBlock { Write-Warning 'MyWarning' } | Wait-Job
             Receive-Job -Job $job -WarningVariable wv -WarningAction SilentlyContinue
             $wv | Should BeExactly 'MyWarning'
-            Remove-Job -Job $job -ErrorAction SilentlyContinue -Force
         }
 
         It 'Can get verbose message from job' {
             $job = Start-Job -ScriptBlock { Write-Verbose -Verbose 'MyVerbose' } | Wait-Job
             $VerboseMsg = $job.ChildJobs[0].verbose.readall()
             $VerboseMsg | Should BeExactly 'MyVerbose'
-            Remove-Job -Job $job -ErrorAction SilentlyContinue -Force
         }
 
         It 'Can get progress message from job' {
@@ -70,7 +65,6 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $ProgressMsg = $job.ChildJobs[0].progress.readall()
             $ProgressMsg[0].Activity | Should BeExactly 1
             $ProgressMsg[0].StatusDescription | Should BeExactly 2
-            Remove-Job -Job $job -ErrorAction SilentlyContinue -Force
         }
 
         It "Create job with native command" {
@@ -101,12 +95,8 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             )
         }
 
-        It 'Can receive a job with -wait switch' {
-            $job = Start-Job -ScriptBlock { 1 + 1 }
-            $result = $job | Receive-Job -Wait
-            ValidateJobInfo -job $job -state 'Completed' -hasMoreData $false -command ' 1 + 1 '
-            $result | Should Be 2
-            $job | Remove-Job -Force -ErrorAction SilentlyContinue
+        AfterEach {
+            Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
         }
 
         It 'Can wait for jobs to complete using <property>' -TestCases $waitJobTestCases {
@@ -122,27 +112,26 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $result = $waitedJob | Receive-Job
             ## We check for $result to be less than 4 so that any of the jobs completing first will considered a success.
             $result | Should BeLessThan 4
-            $jobs | Remove-Job -Force -ErrorAction SilentlyContinue
+            ## Check none of the jobs threw errors.
+            $jobs.Error | Should BeNullOrEmpty
         }
 
         It 'Can timeout waiting for a job' {
             $job = Start-Job -ScriptBlock { Start-Sleep -Seconds 10 }
             $job | Wait-Job -TimeoutSec 1
             ValidateJobInfo -job $job -state 'Running' -hasMoreData $true -command ' Start-Sleep -Seconds 10 '
-            $job | Remove-Job -Force
         }
     }
 
     Context 'Receive-job tests' {
-        It   'Can receive-job with state change events' {
+        It 'Can Receive-Job with state change events' {
             $result = Start-Job -Name 'ReceiveWriteEventsJob' -ScriptBlock { 1 + 1 } | Receive-Job -Wait -WriteEvents
             $result.Count | Should Be 3
             $result[0] | Should Be 2
             $result[1].GetType().FullName | Should BeExactly 'System.Management.Automation.JobStateEventArgs'
-            Remove-Job -Name 'ReceiveWriteEventsJob' -Force -ErrorAction SilentlyContinue
         }
 
-        It 'Can receive-job with job object and result' {
+        It 'Can Receive-Job with job object and result' {
             $result = Start-Job -ScriptBlock { 1 + 1 } | Receive-Job -Wait -WriteJobInResults
             $result.Count | Should Be 2
             ValidateJobInfo -job $result[0] -command ' 1 + 1 ' -state 'Completed' -hasMoreData $false
@@ -150,13 +139,13 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $result[0] | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
-        It 'Can receive-job and autoremove' {
+        It 'Can Receive-Job and autoremove' {
             $result = Start-Job -Name 'ReceiveJobAutoRemove' -ScriptBlock { 1 + 1 } | Receive-Job -Wait -AutoRemoveJob
             $result | Should Be 2
             { Get-Job -Name 'ReceiveJobAutoRemove' -ErrorAction Stop } | ShouldBeErrorId 'JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand'
         }
 
-        It 'Can receive-job and keep results' {
+        It 'Can Receive-Job and keep results' {
             $job = Start-Job -ScriptBlock { 1 + 1 } | Wait-Job
             $result = Receive-Job -Keep -Job $job
             $result | Should Be 2
@@ -167,14 +156,14 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $job | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
-        It 'Can receive-job with NoRecurse' {
+        It 'Can Receive-Job with NoRecurse' {
             $job = Start-Job -ScriptBlock { 1 + 1 }
             $result = Receive-Job -Wait -NoRecurse -Job $job
             $result | Should BeNullOrEmpty
             $job | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
-        It 'Can receive-job using ComputerName' {
+        It 'Can Receive-Job using ComputerName' {
             $jobName = 'ReceiveUsingComputerName'
             $job = Start-Job -ScriptBlock { 1 + 1 } -Name $jobName | Wait-Job
             $result = Receive-Job -ComputerName localhost -Job $job
@@ -182,12 +171,19 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             $job | Remove-Job -Force -ErrorAction SilentlyContinue
         }
 
-        It 'Can receive-job using Location' {
+        It 'Can Receive-Job using Location' {
             $jobName = 'ReceiveUsingLocation'
             $job = Start-Job -ScriptBlock { 1 + 1 } -Name $jobName | Wait-Job
             $result = Receive-Job -Location localhost -Job $job
             $result | Should Be 2
             $job | Remove-Job -Force -ErrorAction SilentlyContinue
+        }
+
+        It 'Can receive a job with -wait switch' {
+            $job = Start-Job -ScriptBlock { 1 + 1 }
+            $result = $job | Receive-Job -Wait
+            ValidateJobInfo -job $job -state 'Completed' -hasMoreData $false -command ' 1 + 1 '
+            $result | Should Be 2
         }
     }
 
@@ -212,23 +208,23 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             )
         }
 
-        BeforeEach {
+        AfterEach {
             Get-Job | Where-Object { $_.Id -ne $startedJob.Id } | Remove-Job -ErrorAction SilentlyContinue -Force
         }
 
-        It 'Can get-job with <property>' -TestCases $getJobTestCases {
+        It 'Can Get-Job with <property>' -TestCases $getJobTestCases {
             param($parameters)
             $job = Get-Job @parameters
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $true -command ' 1 + 1 '
         }
 
-        It 'Can get-job with <property>' -TestCases $getJobSwitches {
+        It 'Can Get-Job with <property>' -TestCases $getJobSwitches {
             param($parameters)
             $job = Get-Job @parameters
             ValidateJobInfo -job $job -state 'Completed' -hasMoreData $true -Name 'StartedJob'
         }
 
-        It 'Can get-job with <property>' -TestCases $getJobChildJobs {
+        It 'Can Get-Job with <property>' -TestCases $getJobChildJobs {
             param($parameters)
             $jobs = Get-Job @parameters
             $jobs.Count | Should Be 2
@@ -251,7 +247,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             )
         }
 
-        It 'Can remove-job with <property>' -TestCases $removeJobTestCases {
+        It 'Can Reemove-Job with <property>' -TestCases $removeJobTestCases {
             param($property)
             $jobToRemove = Start-Job -ScriptBlock { 1 + 1 } -Name 'JobToRemove' | Wait-Job
             $splat = @{ $property = $jobToRemove.$property }
@@ -271,15 +267,20 @@ Describe 'Basic Job Tests' -Tags 'CI' {
                 @{ property = 'InstanceId'}
                 @{ property = 'State'}
             )
+
+            $jobToStop = Start-Job -ScriptBlock { Start-Sleep -Seconds 100 } -Name 'JobToStop'
         }
 
-        It 'Can stop-job with <property>' -TestCases $stopJobTestCases {
+        It 'Can Stop-Job with <property>' -TestCases $stopJobTestCases {
             param($property)
             # '-Seconds 100' is chosen to be substantially large, so that the job is in running state when Stop-Job is called.
-            $jobToStop = Start-Job -ScriptBlock { Start-Sleep -Seconds 100 } -Name 'JobToStop'
+
             $splat = @{ $property = $jobToStop.$property }
             Stop-Job @splat
             ValidateJobInfo -job $jobToStop -state 'Stopped' -hasMoreData $false
+        }
+
+        AfterAll {
             Remove-Job $jobToStop -Force -ErrorAction SilentlyContinue
         }
     }
