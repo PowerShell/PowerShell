@@ -107,7 +107,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         ValidateTranscription -scriptToExecute $script -outputFilePath $null -expectedError $expectedError
     }
     It "Transcription should remain active if other runspace in the host get closed" {
-        try{
+        try {
             $ps = [powershell]::Create()
             $ps.addscript("Start-Transcript -path $transcriptFilePath").Invoke()
             $ps.addscript('$rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()').Invoke()
@@ -115,12 +115,11 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             $ps.addscript('$rs.Dispose()').Invoke()
             $ps.addscript('Write-Host "After Dispose"').Invoke()
             $ps.addscript("Stop-Transcript").Invoke()
-            } finally {
-                if ($null -ne $ps) {
-                    $ps.Dispose()
-                }
+        } finally {
+            if ($null -ne $ps) {
+                $ps.Dispose()
             }
-
+        }
 
         Test-Path $transcriptFilePath | Should be $true
         $transcriptFilePath | Should contain "After Dispose"
@@ -136,4 +135,15 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath | Should contain "PowerShell transcript end"
     }
 
+    It "Transcription should record native command output" {
+        $script = {
+            Start-Transcript -Path $transcriptFilePath
+            hostname
+            Stop-Transcript }
+        & $script
+        Test-Path $transcriptFilePath | Should be $true
+
+        $machineName = [System.Environment]::MachineName
+        $transcriptFilePath | Should contain $machineName
+    }
 }
