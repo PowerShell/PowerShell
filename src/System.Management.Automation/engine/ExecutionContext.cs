@@ -1322,14 +1322,37 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         internal static Assembly LoadAssembly(string name, string filename, out Exception error)
         {
-            // First we try to load the assembly based on the given name
+            // First we try to load the assembly based on the filename
 
             Assembly loadedAssembly = null;
             error = null;
 
-            string fixedName = null;
-            if (!String.IsNullOrEmpty(name))
+            if (!String.IsNullOrEmpty(filename))
             {
+                try
+                {
+                    loadedAssembly = Assembly.LoadFrom(filename);
+                }
+                catch (FileNotFoundException fileNotFound)
+                {
+                    error = fileNotFound;
+                }
+                catch (FileLoadException fileLoadException)
+                {
+                    error = fileLoadException;
+                }
+                catch (BadImageFormatException badImage)
+                {
+                    error = badImage;
+                }
+                catch (SecurityException securityException)
+                {
+                    error = securityException;
+                }
+            }
+            else if (!String.IsNullOrEmpty(name))
+            {
+                string fixedName = null;
                 // Remove the '.dll' if it's there...
                 fixedName = name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
                                 ? Path.GetFileNameWithoutExtension(name)
@@ -1356,76 +1379,15 @@ namespace System.Management.Automation
                 catch (BadImageFormatException badImage)
                 {
                     error = badImage;
-                    return null;
                 }
                 catch (SecurityException securityException)
                 {
                     error = securityException;
-                    return null;
                 }
             }
 
-            if (loadedAssembly != null)
-                return loadedAssembly;
-
-            if (!String.IsNullOrEmpty(filename))
-            {
-                error = null;
-
-                try
-                {
-                    loadedAssembly = Assembly.LoadFrom(filename);
-                    return loadedAssembly;
-                }
-                catch (FileNotFoundException fileNotFound)
-                {
-                    error = fileNotFound;
-                }
-                catch (FileLoadException fileLoadException)
-                {
-                    error = fileLoadException;
-                    return null;
-                }
-                catch (BadImageFormatException badImage)
-                {
-                    error = badImage;
-                    return null;
-                }
-                catch (SecurityException securityException)
-                {
-                    error = securityException;
-                    return null;
-                }
-            }
-
-#if !CORECLR// Assembly.LoadWithPartialName is not in CoreCLR. In CoreCLR, 'LoadWithPartialName' can be replaced by Assembly.Load with the help of AssemblyLoadContext.
-            // Finally try with partial name...
-            if (!String.IsNullOrEmpty(fixedName))
-            {
-                try
-                {
-                    // This is a deprecated API, use of this API needs to be
-                    // reviewed periodically.
-#pragma warning disable 0618
-                    loadedAssembly = Assembly.LoadWithPartialName(fixedName);
-
-                    if (loadedAssembly != null)
-                    {
-                        // In the past, LoadWithPartialName would just return null in most cases when the assembly could not be found or loaded.
-                        // In addition to this, the error was always cleared. So now, clear the error variable only if the assembly was loaded.
-                        error = null;
-                    }
-                    return loadedAssembly;
-                }
-
-                // Expected exceptions are ArgumentNullException and BadImageFormatException. See https://msdn.microsoft.com/en-us/library/12xc5368(v=vs.110).aspx
-                catch (BadImageFormatException badImage)
-                {
-                    error = badImage;
-                }
-            }
-#endif
-            return null;
+            // We either return the loaded Assembly, or return null.
+            return loadedAssembly;
         }
 
         /// <summary>

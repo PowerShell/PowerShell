@@ -94,3 +94,33 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
         }
     }
 }
+
+Describe "Import-Module for Binary Modules" -Tags 'CI' {
+
+    It "PS should try to load the assembly from file path first" {
+ $src = @"
+using System.Management.Automation;           // Windows PowerShell namespace.
+
+namespace ModuleCmdlets
+{
+  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]   
+  public class TestBinaryModuleCmdlet1Command : Cmdlet
+  {
+    protected override void BeginProcessing()
+    {
+      WriteObject("BinaryModuleCmdlet1 exported by the ModuleCmdlets module.");
+    }
+  }
+}
+"@
+
+    Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
+    $results = powershell -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
+
+    #Ignore slash format difference under windows/Unix
+    $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
+    $results[0] | Should Be $path
+    $results[1] | Should BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
+    }
+ }
+
