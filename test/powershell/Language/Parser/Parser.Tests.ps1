@@ -310,7 +310,6 @@
         }
 
         It 'Test that Unicode escape sequence in single quoted here string is not processed.' {
-            $newline = [System.Environment]::NewLine
             $result = ExecuteCommand @"
 @'
 
@@ -318,7 +317,7 @@ foo``u{2195}abc
 
 '@
 "@
-            $result | should be "${newline}foo``u{2195}abc${newline}"
+            $result | should match "\r?\nfoo``u\{2195\}abc\r?\n"
         }
 
         It "Test that two consecutive Unicode escape sequences are tokenized correctly." {
