@@ -219,7 +219,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
         {
             $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue
         }
-        
+
         try
         {
             $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
@@ -234,11 +234,11 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
 }
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
-    
-    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally. 
+
+    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally.
     # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
     # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
-  
+
   BeforeAll {
     $helpFile1 = "about_testCase1.help.txt"
     $helpFile2 = "about_testCase.2.help.txt"
@@ -249,7 +249,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue -Force
     # Create at least one help file matches "about*" pattern
     $null = New-Item -ItemType File -Path $helpFilePath1 -Value "about_test1" -ErrorAction SilentlyContinue
-    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue 
+    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue
   }
 
   # Remove the test files
@@ -277,9 +277,9 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
   Describe "Get-Help should find pattern alias" -Tags "CI" {
     # Remove test alias
     AfterAll {
-        Remove-Item alias:\testAlias1
+        Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
     }
-    
+
     It "Get-Help should find alias as command" {
        (Get-Help where).Name | Should BeExactly "Where-Object"
     }
