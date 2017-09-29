@@ -40,4 +40,10 @@ Describe "Environment-Variables" -Tags "CI" {
 	$ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
 
     }
+
+    It "User Agent should reflect current plafformID" {
+    $bingdings = [System.Reflection.BindingFlags]::NonPublic -bxor [System.Reflection.BindingFlags]::Static
+    $platform = [Microsoft.PowerShell.Commands.PSUserAgent].GetProperty('Platform',$bingdings).GetValue($null,$null)
+    $platform | Should BeExactly $PSVersionTable.platform
+    }
 }
