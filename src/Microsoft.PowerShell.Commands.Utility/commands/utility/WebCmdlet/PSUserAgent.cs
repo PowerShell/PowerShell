@@ -122,7 +122,8 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return ("Windows NT");
+                OperatingSystem osInfo = Environment.OSVersion;
+                return (osInfo.Platform.ToString());
             }
         }
 
