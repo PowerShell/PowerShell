@@ -691,15 +691,18 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         /// <summary>
-        /// Adds UserName, Description, BinPath and Delay Autostart info to the ServiceController object.
+        /// Adds UserName, Description, BinPath, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
         /// <param name="service"></param>
-        /// <returns></returns>
+        /// <returns>ServiceController as PSObject with UserName, Description and StartupType added</returns>
         private PSObject AddProperties(ServiceController service) {
             NakedWin32Handle hScManager = IntPtr.Zero;
             NakedWin32Handle hService = IntPtr.Zero;
             int lastError = 0;
             PSObject serviceAsPSObj = PSObject.AsPSObject(service);
+            IntPtr descriptionStructPtr = IntPtr.Zero;
+            IntPtr delayedAutoStartStuctPtr = IntPtr.Zero;
+            IntPtr serviceConfigStructPtr = IntPtr.Zero;
             try
             {
                 hScManager = NativeMethods.OpenSCManagerW(
@@ -733,16 +736,15 @@ namespace Microsoft.PowerShell.Commands
                         ServiceResources.CouldNotGetServiceInfo,
                         ErrorCategory.PermissionDenied);
                 }
-                IntPtr structurePointer = IntPtr.Zero;
 
-                bool queryStatus = NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out structurePointer);
-                NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(structurePointer, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
+                bool queryStatus = NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out descriptionStructPtr);
+                NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(descriptionStructPtr, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
 
-                queryStatus = queryStatus & NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out structurePointer);
-                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(structurePointer, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
+                queryStatus = queryStatus & NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out delayedAutoStartStuctPtr);
+                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(delayedAutoStartStuctPtr, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
 
-                queryStatus = queryStatus & NativeMethods.QueryServiceConfig(hService, out structurePointer);
-                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(structurePointer, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
+                queryStatus = queryStatus & NativeMethods.QueryServiceConfig(hService, out serviceConfigStructPtr);
+                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(serviceConfigStructPtr, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
 
                 if(!queryStatus) {
                     WriteNonTerminatingError(
@@ -776,6 +778,9 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
+                Marshal.FreeHGlobal(descriptionStructPtr);
+                Marshal.FreeHGlobal(delayedAutoStartStuctPtr);
+                Marshal.FreeHGlobal(serviceConfigStructPtr);
                 if (IntPtr.Zero != hService) {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
                     if (!succeeded) {
@@ -1871,6 +1876,7 @@ namespace Microsoft.PowerShell.Commands
                             NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
                             buffer);
 
+                        Marshal.FreeHGlobal(buffer);
                         if (!status)
                         {
                             int lastError = Marshal.GetLastWin32Error();
@@ -2265,6 +2271,7 @@ namespace Microsoft.PowerShell.Commands
                             ServiceResources.CouldNotNewServiceDelayedAutoStart,
                             ErrorCategory.PermissionDenied);
                     }
+                    Marshal.FreeHGlobal(buffer);
                 }
 
                 // write the ServiceController for the new service
