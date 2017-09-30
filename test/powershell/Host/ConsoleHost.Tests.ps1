@@ -171,13 +171,6 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | should be $currentVersion
         }
 
-        It "-Version should ignore other parameters" {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version -command get-date
-            # no extraneous output
-            $observed | should be $currentVersion
-        }
-
         It "-Version should write an error if a value is present" {
             $versionValue = "abrakadabra"
             $tempFile = Join-Path $testdrive "expectedError.txt"
