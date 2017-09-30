@@ -201,16 +201,16 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
          }
 
          It "Set-Location on Unix succeeds with folder with colon" -Skip:($IsWindows) {
-             New-Item -Path "$testdrive/hello:world" -ItemType Directory > $null
+             New-Item -Path "$testdrive\hello:world" -ItemType Directory > $null
              Set-Location "$testdrive"
-             Set-Location "./hello:world"
+             Set-Location ".\hello:world"
              (Get-Location).Path | Should Be "$testdrive/hello:world"
          }
 
          It "Get-Content on Unix succeeds with folder and file with colon" -Skip:($IsWindows) {
             $testPath = "$testdrive/hello:world"
             New-Item -Path $testPath -ItemType Directory > $null
-            Set-Content -Path "$testPath/foo:bar.txt" -Value "Hello"
+            Set-Content -Path "$testPath\foo:bar.txt" -Value "Hello"
             $files = Get-ChildItem "$testPath"
             $files.Count | Should Be 1
             $files[0].Name | Should BeExactly "foo:bar.txt"

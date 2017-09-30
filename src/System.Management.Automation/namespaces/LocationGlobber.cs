@@ -1649,7 +1649,6 @@ namespace System.Management.Automation
                 }
 
                 int index = path.IndexOf(":", StringComparison.Ordinal);
-                int separator = path.IndexOf(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal);
 
                 if (index == -1)
                 {
@@ -1664,11 +1663,18 @@ namespace System.Management.Automation
                 // must assume that it is part of the path, and not
                 // delimiting the drive name.
 
-                if (index > 0 && index < separator)
+                if (index > 0)
                 {
-                    // We must have a drive specified
-
-                    result = true;
+                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);
+                    if (separator == -1)
+                    {
+                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
+                    }
+                    if (separator == -1 || index < separator)
+                    {                        
+                        // We must have a drive specified
+                        result = true;
+                    }
                 }
             } while (false);
 
@@ -3408,19 +3414,24 @@ namespace System.Management.Automation
             // Find the drive separator only if it's before a path separator
 
             int index = path.IndexOf(":", StringComparison.Ordinal);
-            int separator = path.IndexOf(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal);
-
-            if (index != -1 && index < separator)
+            if (index != -1)
             {
-                // Remove the \ or / if it follows the drive indicator
-
-                if (path[index + 1] == '\\' ||
-                    path[index + 1] == '/')
+                int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);
+                if (separator == -1)
                 {
-                    ++index;
+                    separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
                 }
+                if (separator == -1 || index < separator)
+                {
+                    // Remove the \ or / if it follows the drive indicator
+                    if (path[index + 1] == '\\' ||
+                        path[index + 1] == '/')
+                    {
+                        ++index;
+                    }
 
-                result = path.Substring(index + 1);
+                    result = path.Substring(index + 1);
+                }
             }
 
             return result;
