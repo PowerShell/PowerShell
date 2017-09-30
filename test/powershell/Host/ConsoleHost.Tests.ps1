@@ -171,10 +171,13 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | should be $currentVersion
         }
 
-        It "-Version should write an error if a value is present" {
-            $versionValue = "abrakadabra"
-            $observed = & $powershell -version $versionValue 2>&1
-            $observed | Should Match $versionValue
+        It "-Version should write an error if a value is present: <value>" -TestCases @(
+            @{value="2"},
+            @{value="-command 1-1"}
+        ) {
+            param($value)
+            $observed = & $powershell -version $value 2>&1
+            $observed | Should Match $value
             $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
         }
 
