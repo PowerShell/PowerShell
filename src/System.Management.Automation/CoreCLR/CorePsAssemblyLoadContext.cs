@@ -267,7 +267,7 @@ namespace System.Management.Automation
                 {
 #if !UNIX
                     //Try loading from GAC
-                    if(!TryFindInGAC(assemblyName, out asmFilePath))
+                    if (!TryFindInGAC(assemblyName, out asmFilePath))
                     {
                          return null;
                     }
@@ -295,53 +295,55 @@ namespace System.Management.Automation
         // If there are multiple version of the assembly, load the latest.
         private bool TryFindInGAC(AssemblyName assemblyName, out string assemblyFilePath)
         {
-            bool assemblyFound = false;
             assemblyFilePath = null;
+            if (Internal.InternalTestHooks.DisableGACLoading)
+            {
+                return false;
+            }
+
+            bool assemblyFound = false;
             char dirSeparator = IO.Path.DirectorySeparatorChar;
 
-            if (PowerShellAssemblyLoadContextTestHooks.AllowGACLoading)
+            if (String.IsNullOrEmpty(_winDir))
             {
-                if(String.IsNullOrEmpty(_winDir))
+                //cache value of '_winDir' folder in member variable.
+                _winDir = Environment.GetEnvironmentVariable("winDir");
+            }
+
+            if (String.IsNullOrEmpty(_gacPathMSIL))
+            {
+                //cache value of '_gacPathMSIL' folder in member variable.
+                _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
+            }
+
+            assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
+
+            if (!assemblyFound)
+            {
+                string gacBitnessAwarePath = null;
+
+                if (Environment.Is64BitProcess)
                 {
-                    //cache value of '_winDir' folder in member variable.
-                    _winDir = Environment.GetEnvironmentVariable("winDir");
-                }
-
-                if (String.IsNullOrEmpty(_gacPathMSIL))
-                {
-                    //cache value of '_gacPathMSIL' folder in member variable.
-                    _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
-                }
-
-                assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
-
-                if(!assemblyFound)
-                {
-                    string gacBitnessAwarePath = null;
-
-                    if(Environment.Is64BitProcess)
+                    if (String.IsNullOrEmpty(_gacPath64))
                     {
-                        if(String.IsNullOrEmpty(_gacPath64))
-                        {
-                            //cache value of '_gacPath64' folder in member variable.
-                            _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
-                        }
-
-                        gacBitnessAwarePath = _gacPath64;
-                    }
-                    else
-                    {
-                        if(String.IsNullOrEmpty(_gacPath32))
-                        {
-                            //cache value of '_gacPath32' folder in member variable.
-                            _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
-                        }
-
-                        gacBitnessAwarePath = _gacPath32;
+                        //cache value of '_gacPath64' folder in member variable.
+                        _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
                     }
 
-                    assemblyFound = FindInGac(gacBitnessAwarePath, assemblyName, out assemblyFilePath);
+                    gacBitnessAwarePath = _gacPath64;
                 }
+                else
+                {
+                    if (String.IsNullOrEmpty(_gacPath32))
+                    {
+                        //cache value of '_gacPath32' folder in member variable.
+                        _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
+                    }
+
+                    gacBitnessAwarePath = _gacPath32;
+                }
+
+                assemblyFound = FindInGac(gacBitnessAwarePath, assemblyName, out assemblyFilePath);
             }
 
             return assemblyFound;
@@ -356,17 +358,17 @@ namespace System.Management.Automation
             char dirSeparator = IO.Path.DirectorySeparatorChar;
             string tempAssemblyDirPath = $"{gacRoot}{dirSeparator}{assemblyName.Name}";
 
-            if(Directory.Exists(tempAssemblyDirPath))
+            if (Directory.Exists(tempAssemblyDirPath))
             {
                 //Enumerate all directories, sort by name and select the last. This selects the latest version.
                 var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
 
-                if(!String.IsNullOrEmpty(chosenVersionDirectory))
+                if (!String.IsNullOrEmpty(chosenVersionDirectory))
                 {
                     //Select first or default as the directory will contain only one assembly. If nothing then default is null;
                     var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
-                    if(!String.IsNullOrEmpty(foundAssemblyPath))
+                    if (!String.IsNullOrEmpty(foundAssemblyPath))
                     {
                         AssemblyName asmNameFound = AssemblyLoadContext.GetAssemblyName(foundAssemblyPath);
                         if (IsAssemblyMatching(assemblyName, asmNameFound))
@@ -513,24 +515,6 @@ namespace System.Management.Automation
                 throw new ArgumentNullException("basePaths");
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
-        }
-    }
-
-    /// <summary>
-    /// Test hooks for PowershellAssemblyLoadContext
-    /// </summary>
-    public static class PowerShellAssemblyLoadContextTestHooks
-    {
-        internal static bool AllowGACLoading = true;
-
-        /// <summary>This member is used for internal test purposes.</summary>
-        public static void SetTestHook(string property, bool value)
-        {
-            var fieldInfo = typeof(PowerShellAssemblyLoadContextTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
-            if (fieldInfo != null)
-            {
-                fieldInfo.SetValue(null, value);
-            }
         }
     }
 }
