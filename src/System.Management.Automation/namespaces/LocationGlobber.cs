@@ -1649,6 +1649,7 @@ namespace System.Management.Automation
                 }
 
                 int index = path.IndexOf(":", StringComparison.Ordinal);
+                int separator = path.IndexOf(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal);
 
                 if (index == -1)
                 {
@@ -1663,7 +1664,7 @@ namespace System.Management.Automation
                 // must assume that it is part of the path, and not
                 // delimiting the drive name.
 
-                if (index > 0)
+                if (index > 0 && index < separator)
                 {
                     // We must have a drive specified
 
@@ -3404,11 +3405,12 @@ namespace System.Management.Automation
 
             string result = path;
 
-            // Find the drive separator
+            // Find the drive separator only if it's before a path separator
 
             int index = path.IndexOf(":", StringComparison.Ordinal);
+            int separator = path.IndexOf(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal);
 
-            if (index != -1)
+            if (index != -1 && index < separator)
             {
                 // Remove the \ or / if it follows the drive indicator
 
