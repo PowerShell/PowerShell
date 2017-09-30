@@ -1876,7 +1876,7 @@ namespace Microsoft.PowerShell.Commands
                             NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
                             buffer);
 
-                        Marshal.FreeHGlobal(buffer);
+                        Marshal.FreeCoTaskMem(buffer);
                         if (!status)
                         {
                             int lastError = Marshal.GetLastWin32Error();
@@ -2271,7 +2271,7 @@ namespace Microsoft.PowerShell.Commands
                             ServiceResources.CouldNotNewServiceDelayedAutoStart,
                             ErrorCategory.PermissionDenied);
                     }
-                    Marshal.FreeHGlobal(buffer);
+                    Marshal.FreeCoTaskMem(buffer);
                 }
 
                 // write the ServiceController for the new service
