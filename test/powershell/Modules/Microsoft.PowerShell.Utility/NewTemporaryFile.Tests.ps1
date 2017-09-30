@@ -40,15 +40,16 @@ Describe "NewTemporaryFile" -Tags "CI" {
         $tempFile.Extension | Should be $defaultExtension
     }
 
-    if (!$IsWindows)
-    {
-        It "creates a new temporary file with the Extension parameter being the default but different casing on Unix" {
-            $defaultExtensionWithUpperCasing = $defaultExtension.ToUpper()
-            $script:tempFile = New-TemporaryFile  -Extension $defaultExtensionWithUpperCasing
-            $tempFile | Should Exist
+
+    It "creates a new temporary file with the Extension parameter being the default but different casing" {
+        $defaultExtensionWithUpperCasing = $defaultExtension.ToUpper()
+        $script:tempFile = New-TemporaryFile  -Extension $defaultExtensionWithUpperCasing
+        $tempFile | Should Exist
+        if (!$IsWindows) # on Windows '.TMP' and '.tmp' would be the same
+        {
             [System.IO.Path]::ChangeExtension($tempFile, $defaultExtension) | Should Not Exist
-            $tempFile.Extension | Should be $defaultExtensionWithUpperCasing
         }
+        $tempFile.Extension | Should be $defaultExtensionWithUpperCasing
     }
 
     It "creates a new temporary file with a specific extension" -TestCases @(
