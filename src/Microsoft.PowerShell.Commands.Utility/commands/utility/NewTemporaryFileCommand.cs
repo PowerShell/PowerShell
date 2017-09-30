@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Threading;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -47,58 +48,91 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(tempPath))
             {
-                int attempts = 0;
-                bool creationOfFileSuccessful = false;
-
-                // In case the random temporary file already exists, retry 
-                while (attempts++ < 10 && !creationOfFileSuccessful)
+                if (Extension.Equals(defaultExtension, StringComparison.Ordinal))
                 {
                     try
                     {
-                        temporaryFilePath = Path.GetTempFileName(); // this already creates the temporary file
-                        if (Extension != defaultExtension)
-                        {
-                            // rename file
-                            var temporaryFileWithCustomExtension = Path.ChangeExtension(temporaryFilePath, Extension);
-                            File.Move(temporaryFilePath, temporaryFileWithCustomExtension);
-                            temporaryFilePath = temporaryFileWithCustomExtension;
-                        }
-                        creationOfFileSuccessful = true;
-                        WriteDebug($"Created temporary file {temporaryFilePath}.");
+                        temporaryFilePath = Path.GetTempFileName();
                     }
-                    catch (IOException) // file already exists -> retry
-                    {
-                        attempts++;
-                        if (temporaryFilePath != null)
-                        {
-                            File.Delete(temporaryFilePath);
-                        }
-                    }
-                    catch (Exception exception) // fatal error, which could be e.g. insufficient permissions, etc.
+                    catch (Exception e)
                     {
                         WriteError(
-                        new ErrorRecord(
-                                exception,
+                            new ErrorRecord(
+                                e,
                                 "NewTemporaryFileWriteError",
                                 ErrorCategory.WriteError,
                                 tempPath));
                         return;
                     }
                 }
-
-                if (!creationOfFileSuccessful)
+                else
                 {
-                    WriteError(
-                        new ErrorRecord(
-                            new IOException(StringUtil.Format(UtilityCommonStrings.CouldNotFindTemporaryFilename, tempPath)),
-                                "NewTemporaryFileResourceUnavailable",
-                                ErrorCategory.ResourceUnavailable,
-                                tempPath));
-                    return;
+                    int attempts = 0;
+                    bool creationOfFileSuccessful = false;
+
+                    // In case the random temporary file already exists, retry 
+                    while (attempts++ < 10 && !creationOfFileSuccessful)
+                    {
+                        try
+                        {
+                            temporaryFilePath = Path.GetTempFileName(); // this already creates the temporary file
+                            if (Extension != defaultExtension)
+                            {
+                                // rename file
+                                var temporaryFileWithCustomExtension = Path.ChangeExtension(temporaryFilePath, Extension);
+                                File.Move(temporaryFilePath, temporaryFileWithCustomExtension);
+                                temporaryFilePath = temporaryFileWithCustomExtension;
+                            }
+                            creationOfFileSuccessful = true;
+                            WriteDebug($"Created temporary file {temporaryFilePath}.");
+                        }
+                        catch (IOException) // file already exists -> retry
+                        {
+                            attempts++;
+                            if (temporaryFilePath != null)
+                            {
+                                try
+                                {
+                                    File.Delete(temporaryFilePath);
+                                }
+                                catch (Exception exception)
+                                {
+                                    WriteError(
+                                        new ErrorRecord(
+                                            exception,
+                                            "NewTemporaryFileWriteError",
+                                            ErrorCategory.WriteError,
+                                            tempPath));
+                                    Thread.Sleep(10); // to increase chance of success in the next try
+                                }
+                            }
+                        }
+                        catch (Exception exception) // fatal error, which could be e.g. insufficient permissions, etc.
+                        {
+                            WriteError(
+                                new ErrorRecord(
+                                        exception,
+                                        "NewTemporaryFileWriteError",
+                                        ErrorCategory.WriteError,
+                                    tempPath));
+                            return;
+                        }
+                    }
+
+                    if (!creationOfFileSuccessful)
+                    {
+                        WriteError(
+                            new ErrorRecord(
+                                new IOException(StringUtil.Format(UtilityCommonStrings.CouldNotCreateTemporaryFilename, tempPath)),
+                                    "NewTemporaryFileResourceUnavailable",
+                                    ErrorCategory.ResourceUnavailable,
+                                    tempPath));
+                        return;
+                    }
                 }
 
-                FileInfo file = new FileInfo(temporaryFilePath);
-                WriteObject(file);
+                var temporaryFileInfo = new FileInfo(temporaryFilePath);
+                WriteObject(temporaryFileInfo);
             }
         }
     }
