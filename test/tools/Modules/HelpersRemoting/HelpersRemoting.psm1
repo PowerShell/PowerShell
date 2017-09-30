@@ -65,7 +65,8 @@ function CreateParameters
         $parameters["SessionOption"] = $SessionOption
     }
 
-    if ($Script:AppVeyorRemoteCred)
+    ## If a PSSession is provided, do not add credentials.
+    if ($Script:AppVeyorRemoteCred -and (-not $Session))
     {
         Write-Verbose "Using Global AppVeyor Credential" -Verbose
         $parameters["Credential"] = $Script:AppVeyorRemoteCred

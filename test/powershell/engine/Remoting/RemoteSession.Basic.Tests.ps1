@@ -215,25 +215,6 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         }
     }
 
-    It 'Can export and import PSSession' {
-        try
-        {
-            $name = Get-Random
-            $commandName = 'Add-Number'
-
-            Invoke-Command -Session $openSession -ScriptBlock { function Add-Number ($number1, $number2) { $number1 + $number2 } }
-
-            $null = Export-PSSession -OutputModule $name -Force -Session $openSession -CommandName $commandName
-            $imported = Import-PSSession -Module $name -Session $openSession
-
-            $imported.ExportedCommands.Keys | Should BeExactly $commandName
-        }
-        finally
-        {
-            Remove-Item "function:\$commandName" -ErrorAction SilentlyContinue -Force
-        }
-    }
-
     It "<title>" -TestCases $ParameterError {
         param($parameters, $expectedError)
 

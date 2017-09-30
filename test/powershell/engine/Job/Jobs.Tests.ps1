@@ -247,7 +247,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             )
         }
 
-        It 'Can Reemove-Job with <property>' -TestCases $removeJobTestCases {
+        It 'Can Remove-Job with <property>' -TestCases $removeJobTestCases {
             param($property)
             $jobToRemove = Start-Job -ScriptBlock { 1 + 1 } -Name 'JobToRemove' | Wait-Job
             $splat = @{ $property = $jobToRemove.$property }
@@ -267,14 +267,12 @@ Describe 'Basic Job Tests' -Tags 'CI' {
                 @{ property = 'InstanceId'}
                 @{ property = 'State'}
             )
-
+            # '-Seconds 100' is chosen to be substantially large, so that the job is in running state when Stop-Job is called.
             $jobToStop = Start-Job -ScriptBlock { Start-Sleep -Seconds 100 } -Name 'JobToStop'
         }
 
         It 'Can Stop-Job with <property>' -TestCases $stopJobTestCases {
             param($property)
-            # '-Seconds 100' is chosen to be substantially large, so that the job is in running state when Stop-Job is called.
-
             $splat = @{ $property = $jobToStop.$property }
             Stop-Job @splat
             ValidateJobInfo -job $jobToStop -state 'Stopped' -hasMoreData $false
