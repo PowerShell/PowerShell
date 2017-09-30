@@ -165,20 +165,15 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $actual | Should Be $expected
         }
 
-        It "-Version should return the engine version" {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version
-            $observed | should be $currentVersion
-        }
-
-        It "-Version should write an error if a value is present: <value>" -TestCases @(
-            @{value="2"},
-            @{value="-command 1-1"}
+        It "-Version should return the engine version using: -version <value>" -TestCases @(
+            @{value = ""},
+            @{value = "2"},
+            @{value = "-command 1-1"}
         ) {
-            param($value)
+            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
             $observed = & $powershell -version $value 2>&1
-            $observed | Should Match $value
-            $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
+            $observed | should be $currentVersion
+            $LASTEXITCODE | Should Be 0
         }
 
         It "-File should be default parameter" {

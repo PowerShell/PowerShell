@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
-                    s_theConsoleHost.UI.WriteLine("powershell " + PSVersionInfo.GitCommitId);
+                    s_theConsoleHost.UI.WriteLine("PowerShell " + PSVersionInfo.GitCommitId);
                     return 0;
                 }
 
