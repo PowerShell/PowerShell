@@ -76,13 +76,10 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             temporaryFilePath = Path.GetTempFileName(); // this already creates the temporary file
-                            if (Extension != defaultExtension)
-                            {
-                                // rename file
-                                var temporaryFileWithCustomExtension = Path.ChangeExtension(temporaryFilePath, Extension);
-                                File.Move(temporaryFilePath, temporaryFileWithCustomExtension);
-                                temporaryFilePath = temporaryFileWithCustomExtension;
-                            }
+                            // rename file
+                            var temporaryFileWithCustomExtension = Path.ChangeExtension(temporaryFilePath, Extension);
+                            File.Move(temporaryFilePath, temporaryFileWithCustomExtension);
+                            temporaryFilePath = temporaryFileWithCustomExtension;
                             creationOfFileSuccessful = true;
                             WriteDebug($"Created temporary file {temporaryFilePath}.");
                         }
