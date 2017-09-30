@@ -552,11 +552,11 @@ namespace Microsoft.PowerShell
                     ++i;
                     if (i < args.Length)
                     {
+                        _showVersion = false;
                         WriteCommandLineError(string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.DeprecatedVersionParameter,args[i]));
                     }
                     break;
                 }
-
 
                 if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
