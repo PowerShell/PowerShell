@@ -567,7 +567,7 @@ function Compress-TestContent {
         $Destination
     )
 
-    Publish-PSTestTools
+    $null = Publish-PSTestTools
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
