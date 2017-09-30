@@ -200,4 +200,4 @@
     <value>The remote computer returned a CDXML file that is not valid. The following cmdlet adapter is not supported for importing a CDXML module from a remote computer: {0}</value>
     <comment>{0} is a placeholder for a fully qualified type name</comment>
   </data>
-</root>
+</root>
