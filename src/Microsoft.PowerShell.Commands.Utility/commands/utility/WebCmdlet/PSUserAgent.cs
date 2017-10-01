@@ -125,7 +125,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Platform.IsWindows)
                 {
-                    return "Windows NT";
+                    // find the version in the windows operating system description
+                    string versionText = PSUserAgent.OS.Substring(PSUserAgent.OS.TrimEnd().LastIndexOf(" ") +1);
+                    Version windowsPlatformversion = new Version(versionText);
+                    return $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
                 }
                 else if (Platform.IsMacOS)
                 {
