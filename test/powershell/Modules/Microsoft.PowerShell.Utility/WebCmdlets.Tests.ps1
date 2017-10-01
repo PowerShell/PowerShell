@@ -1557,6 +1557,78 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     }
 
+    Context "Invoke-WebRequest CertificateValidationScript Tests" {
+        It "Verifies Invoke-WebRequest -CertificateValidationScript can accept all certificates" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { $true }
+            }
+            # WebListener uses a self-signed cert. Without -SkipCertificateCheck this would normally fail
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-WebRequest -CertificateValidationScript is ignored when -SkipCertificateCheck is present" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                SkipCertificateCheck = $true
+                # This script would fail all certificates
+                CertificateValidationScript = { $false }                
+            }
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-WebRequest -CertificateValidationScript script has access to the calling scope" {
+            # WebListener's Certificate Thumbprint
+            $thumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
+            $scriptHash = @{Subject = $null}
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { 
+                    # $args[1] is the remote server's X509Certificate2 certificate
+                    $scriptHash['Subject'] = $args[1].Subject
+                    return ($args[1].Thumbprint -eq $thumbprint)
+                }
+            }
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+            $scriptHash.Subject | Should BeExactly 'CN=localhost'
+        }
+
+        It "Verifies Invoke-WebRequest -CertificateValidationScript treats exceptions as Certificate failures" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { throw 'Bad Cert' }
+            }
+            { Invoke-WebRequest @Params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
+        It "Verifies Invoke-WebRequest -CertificateValidationScript Creates the <Name> automatic variable" -TestCases @(
+            @{ Name = "HttpRequestMessage"; Type = "System.Net.Http.HttpRequestMessage" }
+            @{ Name = "X509Certificate2"; Type = "System.Security.Cryptography.X509Certificates.X509Certificate2" }
+            @{ Name = "X509Chain"; Type = "System.Security.Cryptography.X509Certificates.X509Chain" }
+            @{ Name = "SslPolicyErrors"; Type = "System.Net.Security.SslPolicyErrors" }
+        ) {
+            param($name, $type)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { (Get-Variable -Name $name -ValueOnly) -is $type }
+            }
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -2626,6 +2698,74 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             Invoke-RestMethod -Uri $url | Should Be $null
             $url = '{0}{1}' -f $baseUrl, "           null         `n"
             Invoke-RestMethod -Uri $url | Should Be $null
+        }
+    }
+
+    Context "Invoke-RestMethod CertificateValidationScript Tests" {
+        It "Verifies Invoke-RestMethod -CertificateValidationScript can accept all certificates" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { $true }
+            }
+            # WebListener uses a self-signed cert. Without -SkipCertificateCheck this would normally fail
+            $result = Invoke-RestMethod @Params
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-RestMethod -CertificateValidationScript is ignored when -SkipCertificateCheck is present" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                SkipCertificateCheck = $true
+                # This script would fail all certificates
+                CertificateValidationScript = { $false }                
+            }
+            $result = Invoke-RestMethod @Params
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+        
+        It "Verifies Invoke-RestMethod -CertificateValidationScript script has access to the calling scope" {
+            # WebListener's Certificate Thumbprint
+            $thumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
+            $scriptHash = @{Subject = $null}
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { 
+                    # $args[1] is the remote server's X509Certificate2 certificate
+                    $scriptHash['Subject'] = $args[1].Subject
+                    return ($args[1].Thumbprint -eq $thumbprint)
+                }
+            }
+            $result = Invoke-RestMethod @Params
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
+            $scriptHash.Subject | Should BeExactly 'CN=localhost'
+        }
+
+        It "Verifies Invoke-RestMethod -CertificateValidationScript treats exceptions as Certificate failures" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { throw 'Bad Cert' }
+            }
+            { Invoke-RestMethod @Params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+        It "Verifies Invoke-RestMethod -CertificateValidationScript Creates the <Name> automatic variable" -TestCases @(
+            @{ Name = "HttpRequestMessage"; Type = "System.Net.Http.HttpRequestMessage" }
+            @{ Name = "X509Certificate2"; Type = "System.Security.Cryptography.X509Certificates.X509Certificate2" }
+            @{ Name = "X509Chain"; Type = "System.Security.Cryptography.X509Certificates.X509Chain" }
+            @{ Name = "SslPolicyErrors"; Type = "System.Net.Security.SslPolicyErrors" }
+        ) {
+            param($name, $type)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { (Get-Variable -Name $name -ValueOnly) -is $type }
+            }
+            $result = Invoke-RestMethod @Params
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
         }
     }
 

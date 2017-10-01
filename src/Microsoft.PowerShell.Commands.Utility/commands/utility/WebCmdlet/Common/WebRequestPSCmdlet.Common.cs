@@ -165,6 +165,12 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         /// <summary>
+        /// gets or sets the CertificateValidationScript property
+        /// </summary>
+        [Parameter]
+        public virtual ScriptBlock CertificateValidationScript { get; set; }
+
+        /// <summary>
         /// Gets or sets the TLS/SSL protocol used by the Web Cmdlet
         /// </summary>
         [Parameter]

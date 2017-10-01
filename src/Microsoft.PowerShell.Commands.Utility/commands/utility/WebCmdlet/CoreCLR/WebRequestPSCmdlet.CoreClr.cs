@@ -4,15 +4,18 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
 using System;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
 using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
 using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Xml;
 using System.Collections.Generic;
@@ -172,6 +175,50 @@ namespace Microsoft.PowerShell.Commands
             {
                 handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            }
+            else if (CertificateValidationScript != null)
+            {
+                // validationCallBackWrapper wraps the certificateValidationClosure ScriptBlock so the async callback can set the default
+                // PowerShell Runspace in the async thread to the Runspace of the current thread. This provides the ScriptBlock access to 
+                // the current scope.
+                Runspace currentRunspace = Runspace.DefaultRunspace;
+                ScriptBlock certificateValidationClosure = CertificateValidationScript.GetNewClosure();
+                Func<HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors,bool> validationCallBackWrapper = 
+                    delegate(HttpRequestMessage httpRequestMessage, X509Certificate2 x509Certificate2, X509Chain x509Chain, SslPolicyErrors sslPolicyErrors)
+                    {
+                        Runspace previousRunspace = Runspace.DefaultRunspace;
+                        Runspace.DefaultRunspace = currentRunspace;
+
+                        // Set Script scope automatic variables for the closure.
+                        PSVariableIntrinsics closureVi = certificateValidationClosure.Module.SessionState.PSVariable;
+                        closureVi.Set("HttpRequestMessage", httpRequestMessage);
+                        closureVi.Set("X509Certificate2", x509Certificate2);
+                        closureVi.Set("X509Chain", x509Chain);
+                        closureVi.Set("SslPolicyErrors", sslPolicyErrors);
+                        closureVi.Set("ErrorActionPreference", "Stop");
+
+                        Boolean result = false;
+                        try
+                        {
+                            result = LanguagePrimitives.IsTrue(
+                                certificateValidationClosure.InvokeReturnAsIs(
+                                    httpRequestMessage, 
+                                    x509Certificate2, 
+                                    x509Chain, 
+                                    sslPolicyErrors
+                                )
+                            );
+                        }
+                        catch // Treat all exceptions as Certificate failures.
+                        {
+                            result = false;
+                        }
+
+                        Runspace.DefaultRunspace = previousRunspace;
+                        return result;
+                    };
+
+                handler.ServerCertificateCustomValidationCallback = validationCallBackWrapper;
             }
 
             // This indicates GetResponse will handle redirects.
