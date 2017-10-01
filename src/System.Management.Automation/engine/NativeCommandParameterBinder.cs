@@ -197,7 +197,15 @@ namespace System.Management.Automation
                         {
                             _arguments.Append('"');
                             _arguments.Append(arg);
-                            _arguments.Append('"');
+                            // if trailing backslash, we need to escape it so that it doesn't escape the quotes
+                            if (arg.EndsWith('\\'))
+                            {
+                                _arguments.Append("\\\"");
+                            }
+                            else
+                            {
+                                _arguments.Append('"');
+                            }
                         }
                         else
                         {
