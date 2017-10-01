@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericMeasureInfo()
         {
-            Average = Sum = Maximum = Minimum = null;
+            Average = Sum = Maximum = Minimum = StdDeviation = null;
         }
 
         /// <summary>
@@ -71,6 +71,13 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// </summary>
         public double? Minimum { get; set; }
+
+        /// <summary>
+        ///
+        /// The StdDeviation of property values
+        ///
+        /// </summary>
+        public double? StdDeviation { get; set; }
     }
 
     /// <summary>
@@ -90,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericObjectMeasureInfo()
         {
-            Average = Sum = null;
+            Average = Sum = StdDeviation = null;
             Maximum = Minimum = null;
         }
 
@@ -128,6 +135,13 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// </summary>
         public object Minimum { get; set; }
+
+        /// <summary>
+        ///
+        /// The StdDeviation of property values
+        ///
+        /// </summary>
+        public double? StdDeviation { get; set; }
     }
 
     /// <summary>
@@ -225,6 +239,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Generic/Numeric statistics
             internal double sum = 0.0;
+            internal double stdDeviation = 0.0;
+            internal List<double> stdDeviationNumbers = new List<double>();
             internal object max = null;
             internal object min = null;
 
@@ -262,6 +278,25 @@ namespace Microsoft.PowerShell.Commands
         public string[] Property { get; set; } = null;
 
         #endregion Common parameters in both sets
+
+        /// <summary>
+        /// Set to true is StdDeviation is to be returned
+        /// </summary>
+        /// <value></value>
+        [Parameter(ParameterSetName = GenericParameterSet)]
+        public SwitchParameter StdDeviation
+        {
+            get
+            {
+                return _measureStdDeviation;
+            }
+            set
+            {
+                _measureStdDeviation = value;
+            }
+        }
+
+        private bool _measureStdDeviation;
 
         /// <summary>
         /// Set to true is Sum is to be returned
@@ -710,6 +745,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_measureSum || _measureAverage)
                 stat.sum += numValue;
+            if (_measureStdDeviation)
+                stat.stdDeviationNumbers.Add(numValue);
         }
 
         /// <summary>
@@ -790,6 +827,7 @@ namespace Microsoft.PowerShell.Commands
         {
             double? sum = null;
             double? average = null;
+            double? stdDeviation = null;
             object max = null;
             object min = null;
 
@@ -797,8 +835,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_measureSum)
                     sum = stat.sum;
+
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
+
+                if (_measureStdDeviation && _measureAverage && stat.count > 0)
+                {
+                    var popdev = 0.0;
+
+                    foreach (double n in stat.stdDeviationNumbers)
+                    {
+                        popdev += Math.Pow((n - (double)average), 2);
+                    }
+
+                    stdDeviation = Math.Round(Math.Sqrt(popdev / (stat.stdDeviationNumbers.Count - 1)), 4);
+                }
             }
 
             if (_measureMax)
@@ -835,6 +886,7 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Count = stat.count;
                 gmi.Sum = sum;
                 gmi.Average = average;
+                gmi.StdDeviation = stdDeviation;
                 if (null != max)
                 {
                     gmi.Maximum = (double)max;
