@@ -778,9 +778,9 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                Marshal.FreeHGlobal(descriptionStructPtr);
-                Marshal.FreeHGlobal(delayedAutoStartStuctPtr);
-                Marshal.FreeHGlobal(serviceConfigStructPtr);
+                Marshal.FreeCoTaskMem(descriptionStructPtr);
+                Marshal.FreeCoTaskMem(delayedAutoStartStuctPtr);
+                Marshal.FreeCoTaskMem(serviceConfigStructPtr);
                 if (IntPtr.Zero != hService) {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
                     if (!succeeded) {
@@ -2821,7 +2821,7 @@ namespace Microsoft.PowerShell.Commands
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
 
-            lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+            lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
             bufferSize = bufferSizeNeeded;
 
             status = NativeMethods.QueryServiceConfigW(
@@ -2844,7 +2844,7 @@ namespace Microsoft.PowerShell.Commands
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
 
-            lpBuffer = Marshal.AllocHGlobal((int)bufferSizeNeeded);
+            lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
             bufferSize = bufferSizeNeeded;
 
             status = NativeMethods.QueryServiceConfig2W(
