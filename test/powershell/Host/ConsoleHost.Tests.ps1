@@ -165,26 +165,15 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $actual | Should Be $expected
         }
 
-        It "-Version should return the engine version" {
+        It "-Version should return the engine version using: -version <value>" -TestCases @(
+            @{value = ""},
+            @{value = "2"},
+            @{value = "-command 1-1"}
+        ) {
             $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version
+            $observed = & $powershell -version $value 2>&1
             $observed | should be $currentVersion
-        }
-
-        It "-Version should ignore other parameters" {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version -command get-date
-            # no extraneous output
-            $observed | should be $currentVersion
-        }
-
-        It "-Version should write an error if a value is present" {
-            $versionValue = "abrakadabra"
-            $tempFile = Join-Path $testdrive "expectedError.txt"
-            $observed = & $powershell -version $versionValue > $tempFile
-            $expectedError = (Get-Content $tempFile)[0]
-
-            $expectedError | Should Match $versionValue
+            $LASTEXITCODE | Should Be 0
         }
 
         It "-File should be default parameter" {

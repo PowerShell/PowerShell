@@ -400,15 +400,9 @@ namespace Microsoft.PowerShell
 
         private void ShowHelp()
         {
+            Dbg.Assert(_helpText != null, "_helpText should not be null");
             _hostUI.WriteLine("");
-            if (_helpText == null)
-            {
-                _hostUI.WriteLine(CommandLineParameterParserStrings.DefaultHelp);
-            }
-            else
-            {
-                _hostUI.Write(_helpText);
-            }
+            _hostUI.Write(_helpText);
             _hostUI.WriteLine("");
         }
 
@@ -548,17 +542,9 @@ namespace Microsoft.PowerShell
                     _noInteractive = true;
                     _skipUserInit = true;
                     _noExit = false;
-
-                    ++i;
-                    if (i < args.Length)
-                    {
-                        WriteCommandLineError(string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.DeprecatedVersionParameter,args[i]));
-                    }
                     break;
                 }
-
-
-                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+                else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
                     _abortStartup = true;

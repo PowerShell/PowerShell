@@ -122,8 +122,8 @@
 Copyright (C) Microsoft Corporation. All rights reserved.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
-    <value>PowerShell[.exe] [-PSConsoleFile &lt;file&gt; | -Version &lt;version&gt;]
-    [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive] [-Interactive]
+    <value>PowerShell[.exe] [-Version] [-NoLogo] [-NoExit]
+    [-NoProfile] [-NonInteractive] [-Interactive]
     [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}]
     [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
     [-ConfigurationName &lt;string&gt;]
@@ -133,26 +133,15 @@ Copyright (C) Microsoft Corporation. All rights reserved.</value>
 
 PowerShell[.exe] -Help | -? | /?
 
--PSConsoleFile
-    Loads the specified PowerShell console file. To create a console
-    file, use Export-Console in PowerShell.
-
 -Version
-    Starts the specified version of PowerShell.
-    Enter a version number with the parameter, such as "-version 2.0".
+    Shows the version of PowerShell and exits.
+    Additional arguments are ignored.
 
 -NoLogo
     Hides the copyright banner at startup.
 
 -NoExit
     Does not exit after running startup commands.
-
--Sta
-    Starts the shell using a single-threaded apartment.
-    Single-threaded apartment (STA) is the default.
-
--Mta
-    Start the shell using a multithreaded apartment.
 
 -NoProfile
     Does not load the PowerShell profile.
@@ -228,8 +217,7 @@ PowerShell[.exe] -Help | -? | /?
     slash (/). You can use either a hyphen or forward slash in Cmd.exe.
 
 EXAMPLES
-    PowerShell -PSConsoleFile SqlSnapIn.Psc1
-    PowerShell -version 2.0 -NoLogo -InputFormat text -OutputFormat XML
+    PowerShell -Version
     PowerShell -ConfigurationName AdminRoles
     PowerShell -Command {Get-EventLog -LogName security}
     PowerShell -Command "&amp; {Get-EventLog -LogName security}"
@@ -239,6 +227,6 @@ EXAMPLES
     $command = 'dir "c:\program files" '
     $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
     $encodedCommand = [Convert]::ToBase64String($bytes)
-    powershell.exe -encodedCommand $encodedCommand</value>
+    powershell -encodedCommand $encodedCommand</value>
   </data>
 </root>
