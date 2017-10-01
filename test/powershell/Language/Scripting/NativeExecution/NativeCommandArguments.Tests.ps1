@@ -33,7 +33,7 @@ Describe "Native Command Arguments" -tags "CI" {
     }
 
     It "Should correctly quote paths with spaces" {
-        $lines = testexe -echoargs '.\test 1\' '.\test 2\'
+        $lines = testexe -echoargs '.\test 1\' ".\test 2\"
         ($lines | measure).Count | Should Be 2
         $lines[0] | Should Be 'Arg 0 is <.\test 1\>'
         $lines[1] | Should Be 'Arg 1 is <.\test 2\>'
