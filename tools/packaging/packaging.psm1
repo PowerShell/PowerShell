@@ -480,7 +480,6 @@ function New-UnixPackage {
             "--force", "--verbose",
             "--name", $Name,
             "--version", $Version,
-            "--iteration", $Iteration,
             "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
             "--vendor", "Microsoft Corporation",
             "--url", "https://microsoft.com/powershell",
@@ -490,7 +489,9 @@ function New-UnixPackage {
             "-t", $Type,
             "-s", "dir"
         )
-        if ($Environment.IsRedHatFamily) {
+        if ($Environment.IsUbuntu -or $Environment.IsDebian) {
+            $Arguments += @("--iteration", $Iteration)
+        } elseif ($Environment.IsRedHatFamily) {
             $Arguments += @("--rpm-dist", "rhel.7")
             $Arguments += @("--rpm-os", "linux")
         }
