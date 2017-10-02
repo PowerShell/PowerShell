@@ -16,6 +16,6 @@ Copyright = 'Copyright (C) Microsoft Corporation, All rights reserved.'
 
 Description = 'Temporary module for remoting tests'
 
-FunctionsToExport = 'New-RemoteRunspace', 'New-RemoteSession'
+FunctionsToExport = 'New-RemoteRunspace', 'New-RemoteSession', 'Enter-RemoteSession', 'Invoke-RemoteCommand', 'Connect-RemoteSession'
 
 }
