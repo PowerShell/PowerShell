@@ -10,9 +10,9 @@ If the use falls into any of those categories, you can move forward with the use
 ## Third Party Permission Requests
 
 If questions remain after reviewing the permitted uses page, please submit a request to [Third Party Permissions](mailto:mscrqs@microsoft.com).
-The people supporting this alias will direct the request depending upon the content.
+The people supporting this will direct the request depending upon the content.
 
-If a request needs to be submitted to the [Third Party Permissions](mailto:mscrqs@microsoft.com) alias, the request should include the following:
+If a request needs to be submitted to the [Third Party Permissions](mailto:mscrqs@microsoft.com), the request should include the following:
 
   - A statement that the [Use of Microsoft Copyrighted Material](https://www.microsoft.com/en-us/legal/intellectualproperty/permissions) was reviewed and did not address the situation.
   - A statement that Microsoft (and not a third party) is the owner of the logo at issue.
