@@ -6,14 +6,14 @@ Existing Windows PowerShell users are familiar with the large number of modules 
 More information regarding compatibility is in a [blog post](https://blogs.msdn.microsoft.com/powershell/2017/07/14/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
 
 Windows PowerShell 5.1 is based on .Net Framework 4.6.1, while PowerShell Core is based on .Net Core 2.0.
-Although both adhere to .Net Standard 2.0 and can be compatible, some modules may be using APIs not supported on CoreCLR or using APIs from Windows PowerShell that have been deprecated and removed from PowerShell Core (for example, PSSnapins).
+Although both adhere to .Net Standard 2.0 and can be compatible, some modules may be using APIs or cmdlets not supported on CoreCLR or using APIs from Windows PowerShell that have been deprecated and removed from PowerShell Core (for example, PSSnapins).
 
 ## Importing a Windows PowerShell module
 
 Since compatibility cannot be ensured, PowerShell Core, by default, does not look in the Windows PowerShell module path to find those modules.
 However, advanced users can explicitly enable PowerShell Core to include the Windows PowerShell module path and attempt to import those modules.
 
-First, install the [WindowsPSModulePath](https://www.powershellgallery.com/packages/WindowsPSModulePath) module from the PowerShellGallery to enable this:
+First, install the [WindowsPSModulePath](https://www.powershellgallery.com/packages/WindowsPSModulePath) module from the PowerShellGallery:
 
 ```powershell
 Install-Module WindowsPSModulePath -Scope CurrentUser
@@ -26,7 +26,7 @@ Add-WindowsPSModulePath
 ```
 
 Note that this is only effective in the current PowerShell session.
-If you want to persist this, you can add this line to your profile:
+If you want to persist this, you can add `Add-WindowsPSModulePath` to your profile:
 
 ```powershell
 "Add-WindowsPSModulePath" >> $profile
@@ -47,7 +47,7 @@ Get-VM
 # this will automatically load the Hyper-V module
 ```
 
-A good number of cmdlets based on CDXML will work just fine, but the Active Directory module, for example, won't work.
+Most of the cmdlets based on CDXML will work just fine, as well as some C# based cmdlets that happen to be .NET Standard 2.0 compatible (for example, Hyper-V module) but the Active Directory module, for example, won't work.
 
 ## How you can help
 
