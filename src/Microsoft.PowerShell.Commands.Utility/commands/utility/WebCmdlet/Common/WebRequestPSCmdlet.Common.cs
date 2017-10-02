@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         /// <summary>
-        /// gets or sets the CertificateValidationScript property
+        /// gets or sets the CertificateValidationScript property. This will be ignored if SkipCertificateCheck is set.
         /// </summary>
         [Parameter]
         public virtual ScriptBlock CertificateValidationScript { get; set; }
