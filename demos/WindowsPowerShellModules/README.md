@@ -11,15 +11,15 @@ Although both adhere to .Net Standard 2.0 and can be compatible, some modules ma
 ## Importing a Windows PowerShell module
 
 Since compatibility cannot be ensured, PowerShell Core, by default, does not look in the Windows PowerShell module path to find those modules.
-However, for advanced or adventurous users, they can explicitly enable PowerShell Core to include the Windows PowerShell module path and attempt to import those modules.
+However, advanced users can explicitly enable PowerShell Core to include the Windows PowerShell module path and attempt to import those modules.
 
-First, install a module from the PowerShellGallery to enable this:
+First, install the [WindowsPSModulePath](https://www.powershellgallery.com/packages/WindowsPSModulePath) module from the PowerShellGallery to enable this:
 
 ```powershell
 Install-Module WindowsPSModulePath -Scope CurrentUser
 ```
 
-Then run the cmdlet to add the Windows PowerShell module path to your PowerShell Core module path:
+Then run `Add-WindowsPSModulePath` cmdlet to add the Windows PowerShell module path to your PowerShell Core module path:
 
 ```powershell
 Add-WindowsPSModulePath
