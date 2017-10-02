@@ -197,25 +197,11 @@ namespace System.Management.Automation
                         {
                             _arguments.Append('"');
                             // need to escape all trailing backslashes so the native command receives it correctly
-                            if (arg.EndsWith('\\'))
+                            // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
+                            _arguments.Append(arg);
+                            for (int i = arg.Length-1; i >= 0 && arg[i] == '\\'; i--)
                             {
-                                // find index of last character that isn't a backslash
-                                var chars = arg.ToCharArray();
-                                int index = 0;
-                                for (int i = chars.Length-1; i > 0; i--)
-                                {
-                                    if (chars[i] != '\\')
-                                    {
-                                        index = i;
-                                        break;
-                                    }
-                                }
-                                _arguments.Append(arg.Substring(0, index));
-                                _arguments.Append(arg.Substring(index).Replace("\\","\\\\"));
-                            }
-                            else
-                            {
-                                _arguments.Append(arg);
+                                _arguments.Append('\\');
                             }
                             _arguments.Append('"');
                         }
