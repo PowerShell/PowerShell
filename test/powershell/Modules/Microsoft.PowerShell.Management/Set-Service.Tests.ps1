@@ -242,29 +242,29 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "Get-Service can get the '<property>' of a service" -TestCases @(
-      @{property = "Description"; value = "This is a test description"}
-      @{property = "BinPath";     value = "$PSHOME\powershell.exe"; parameters = @{ BinaryPathName = "$PSHOME\powershell.exe" }},
-      @{property = "UserName";    value = $creds.UserName;          parameters = @{ Credential = $creds }},
-      @{property = "StartupType"; value = "AutomaticDelayedStart";}
-      ) {
-        param($property, $value, $parameters)
-        try {
-          $servicename = "testgetservice"
-          $startparameters = @{Name = $servicename; BinaryPathName = "$PSHOME\powershell.exe"}
-          if($parameters -ne $null) {
-            foreach($key in $parameters.Keys) {
-              $startparameters.$key = $parameters.$key
+        @{property = "Description"; value = "This is a test description"}
+        @{property = "BinPath";     value = "$PSHOME\powershell.exe"; parameters = @{ BinaryPathName = "$PSHOME\powershell.exe" }},
+        @{property = "UserName";    value = $creds.UserName;          parameters = @{ Credential = $creds }},
+        @{property = "StartupType"; value = "AutomaticDelayedStart";}
+        ) {
+            param($property, $value, $parameters)
+            try {
+            $servicename = "testgetservice"
+            $startparameters = @{Name = $servicename; BinaryPathName = "$PSHOME\powershell.exe"}
+            if($parameters -ne $null) {
+                foreach($key in $parameters.Keys) {
+                $startparameters.$key = $parameters.$key
+                }
+            } else {
+                $startparameters.$property = $value
             }
-          } else {
-            $startparameters.$property = $value
-          }
-          $service = New-Service @startparameters
-          $service | Should Not BeNullOrEmpty
-          $service = Get-Service -Name $servicename
-          $service.$property | Should BeExactly $value
+            $service = New-Service @startparameters
+            $service | Should Not BeNullOrEmpty
+            $service = Get-Service -Name $servicename
+            $service.$property | Should BeExactly $value
         }
         finally {
-          Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
         }
     }
 
