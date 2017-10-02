@@ -17,7 +17,6 @@ Describe "Measure-Object" -Tags "CI" {
         $($testObject | Measure-Object).Count | Should Be $testObject.Length
     }
 
-
     It "Should calculate Standard Deviation" {
         $actual = ($testObject | Measure-Object -Average -StdDeviation)
         $actual.StdDeviation | Should Be 1.5275

@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         ///
-        /// The StdDeviation of property values
+        /// The Standard Deviation of property values
         ///
         /// </summary>
         public double? StdDeviation { get; set; }
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         ///
-        /// The StdDeviation of property values
+        /// The Standard Deviation of property values
         ///
         /// </summary>
         public double? StdDeviation { get; set; }
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Common parameters in both sets
 
         /// <summary>
-        /// Set to true is StdDeviation is to be returned
+        /// Set to true if Standard Deviation is to be returned
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = GenericParameterSet)]
@@ -839,16 +839,22 @@ namespace Microsoft.PowerShell.Commands
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
 
+                if(_measureStdDeviation && !_measureAverage) {
+                    var message = "StdDeviation was requested and requires the average to be calculated, please add the -Average switch";
+                    throw new ArgumentException(message);
+                }
+
                 if (_measureStdDeviation && _measureAverage && stat.count > 0)
                 {
-                    var popdev = 0.0;
+                    var sumOfDerivation = 0.0;
 
                     foreach (double n in stat.stdDeviationNumbers)
                     {
-                        popdev += Math.Pow((n - (double)average), 2);
+                        var m = n - (double)average;
+                        sumOfDerivation += m * m;
                     }
 
-                    stdDeviation = Math.Round(Math.Sqrt(popdev / (stat.stdDeviationNumbers.Count - 1)), 4);
+                    stdDeviation = Math.Round(Math.Sqrt(sumOfDerivation / (stat.stdDeviationNumbers.Count - 1)), 4);
                 }
             }
 
