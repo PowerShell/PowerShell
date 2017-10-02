@@ -424,9 +424,9 @@ SystemD
 
 #region demos/WindowsPowerShellModules/README.md Overrides
  - demos/WindowsPowerShellModules/README.md
-CoreCLR
 PowerShellGallery
 PSSnapins
+WindowsPSModulePath
 #endregion
 
 #region docker/README.md Overrides
