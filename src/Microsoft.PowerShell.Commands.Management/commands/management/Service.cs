@@ -2917,7 +2917,7 @@ namespace Microsoft.PowerShell.Commands
 
     #region ServiceStartupType
     ///<summary>
-    ///Enum for usage with StartupType. Automatic, Manual & Disabled index matched from System.ServiceProcess.ServiceStartMode
+    ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
     ///</summary>
     public enum ServiceStartupType {
         ///<summary>Automatic service</summary>

@@ -5,17 +5,17 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $PSDefaultParameterValues["it:skip"] = $true
         }
         if($IsWindows) {
-          $userName = "testuserservices"
-          $testPass = "Secret123!"
-          net user $userName $testPass /add > $null
-          $password = ConvertTo-SecureString $testPass -AsPlainText -Force
-          $creds = [pscredential]::new(".\$userName", $password)
+            $userName = "testuserservices"
+            $testPass = "Secret123!"
+            net user $userName $testPass /add > $null
+            $password = ConvertTo-SecureString $testPass -AsPlainText -Force
+            $creds = [pscredential]::new(".\$userName", $password)
         }
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
         if($IsWindows) {
-          net user $userName /delete > $null
+            net user $userName /delete > $null
         }
     }
 
@@ -241,7 +241,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
-    It "Get-Service can get the '<property>' of a service"  -TestCases @(
+    It "Get-Service can get the '<property>' of a service" -TestCases @(
       @{property = "Description"; value = "This is a test description"}
       @{property = "BinPath";     value = "$PSHOME\powershell.exe"; parameters = @{ BinaryPathName = "$PSHOME\powershell.exe" }},
       @{property = "UserName";    value = $creds.UserName;          parameters = @{ Credential = $creds }},
