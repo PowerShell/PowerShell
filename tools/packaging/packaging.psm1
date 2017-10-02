@@ -246,6 +246,10 @@ function New-UnixPackage {
         [Parameter(Mandatory)]
         [string]$Version,
 
+        # Package iteration version (rarely changed)
+        # This is a string because strings are appended to it
+        [string]$Iteration = "1",
+
         [Switch]
         $Force
     )
@@ -254,13 +258,28 @@ function New-UnixPackage {
     $ErrorMessage = "Must be on {0} to build '$Type' packages!"
     switch ($Type) {
         "deb" {
-            $verboseMsg = "Building for Ubuntu {0}.04!"
-            if (!$Environment.IsUbuntu) {
-                throw ($ErrorMessage -f "Ubuntu")
-            } elseif ($Environment.IsUbuntu14) {
-                Write-Verbose ($verboseMsg -f "14")
-            } elseif ($Environment.IsUbuntu16) {
-                Write-Verbose ($verboseMsg -f "16")
+            if ($Environment.IsUbuntu) {
+                $verboseMsg = "Building for Ubuntu {0}.04!"
+
+                if ($Environment.IsUbuntu14) {
+                    Write-Verbose ($verboseMsg -f "14")
+                } elseif ($Environment.IsUbuntu16) {
+                    Write-Verbose ($verboseMsg -f "16")
+                } elseif ($Environment.IsUbuntu17) {
+                    Write-Verbose ($verboseMsg -f "17")
+                }
+            }
+            elseif ($Environment.IsDebian) {
+                $verboseMsg = "Building for Debian {0}!"
+
+                if ($Environment.IsDebian8) {
+                    Write-Verbose ($verboseMsg -f "8")
+                } elseif ($Environment.IsDebian9) {
+                    Write-Verbose ($verboseMsg -f "9")
+                }
+            }
+            else {
+                throw ($ErrorMessage -f "Ubuntu or Debian")
             }
         }
         "rpm" {
@@ -397,7 +416,7 @@ function New-UnixPackage {
     # Setup package dependencies
     # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
     $Dependencies = @()
-    if ($Environment.IsUbuntu) {
+    if ($Environment.IsUbuntu -or $Environment.IsDebian) {
         $Dependencies = @(
             "libc6",
             "libcurl3",
@@ -407,10 +426,28 @@ function New-UnixPackage {
             "libstdc++6",
             "libunwind8",
             "libuuid1",
-            "zlib1g",
-            "libssl1.0.0",
-            "libicu-dev"
+            "zlib1g"
         )
+
+        # iteration is "debian_revision"
+        # usage of this to differentiate distributions is allowed by non-standard
+        if ($Environment.IsUbuntu14) {
+            $Dependencies += @("libssl1.0.0", "libicu52")
+            $Iteration += "ubuntu1.14.04.1"
+        } elseif ($Environment.IsUbuntu16) {
+            $Dependencies += @("libssl1.0.0", "libicu55")
+            $Iteration += "ubuntu1.16.04.1"
+        } elseif ($Environment.IsUbuntu17) {
+            $Dependencies += @("libssl1.0.0", "libicu57")
+            $Iteration += "ubuntu1.17.04.1"
+        } elseif ($Environment.IsDebian8) {
+            $Dependencies += @("libssl1.0.0", "libicu52")
+            $Iteration += "debian.8.1"
+        } elseif ($Environment.IsDebian9) {
+            $Dependencies += @("libssl1.0.2", "libicu57")
+            $Iteration += "debian.9.1"
+        }
+
     } elseif ($Environment.IsRedHatFamily) {
         $Dependencies = @(
             "libunwind",
@@ -424,6 +461,7 @@ function New-UnixPackage {
         "--force", "--verbose",
         "--name", $Name,
         "--version", $Version,
+        "--iteration", $Iteration,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
