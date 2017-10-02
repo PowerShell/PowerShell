@@ -4,7 +4,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         if ( -not $IsWindows ) {
             $PSDefaultParameterValues["it:skip"] = $true
         }
-        if($IsWindows) {
+        if ($IsWindows) {
             $userName = "testuserservices"
             $testPass = "Secret123!"
             net user $userName $testPass /add > $null
@@ -14,7 +14,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        if($IsWindows) {
+        if ($IsWindows) {
             net user $userName /delete > $null
         }
     }
