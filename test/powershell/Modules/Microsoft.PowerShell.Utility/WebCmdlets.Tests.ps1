@@ -592,29 +592,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
-    #                 Note: These are the supported options, but we do not have a web service to test them all.
-    # $dataEncodings = @("gzip", "deflate") --> Currently there is a bug for deflate encoding. Please see '7976639:Invoke-WebRequest does not support -TransferEncoding deflate' for more info.
-    $dataEncodings = @("gzip")
-    foreach ($data in $dataEncodings)
-    {
-        It "Invoke-WebRequest supports request that returns $data-encoded data." {
+    # Note: These are the supported options, but we do not have a web service to test them all.
+    It "Invoke-WebRequest supports request that returns <DataEncoding>-encoded data." -TestCases @(
+        @{ DataEncoding = "gzip"}
+        @{ DataEncoding = "deflate"}
+    ) {
+        param($dataEncoding)
+        $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
-            $command = "Invoke-WebRequest -Uri http://httpbin.org/$data -TimeoutSec 5"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
 
-            $result = ExecuteWebCommand -command $command
-            ValidateResponse -response $result
-
-            # Validate response content
-            $jsonContent = $result.Output.Content | ConvertFrom-Json
-            if ($data -eq "gzip")
-            {
-                $jsonContent.gzipped | Should Match $true
-            }
-            else
-            {
-                $jsonContent.deflated | Should Match $true
-            }
-        }
+        # Validate response content
+        $result.Output.Headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding
+        $jsonContent = $result.Output.Content | ConvertFrom-Json        
+        $jsonContent.Headers.Host | Should BeExactly $uri.Authority
     }
 
     # Perform the following operation for Invoke-WebRequest using the following content types: "text/plain", "application/xml", "application/xml"
@@ -1433,27 +1426,18 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
-    #                 Note: These are the supported options, but we do not have a web service to test them all.
-    # $dataEncodings = @("gzip", "deflate") --> Currently there is a bug for deflate encoding. Please see '7976639:Invoke-RestMethod does not support -TransferEncoding deflate' for more info.
-    $dataEncodings = @("gzip")
-    foreach ($data in $dataEncodings)
-    {
-        It "Invoke-RestMethod supports request that returns $data-encoded data." {
+    # Note: These are the supported options, but we do not have a web service to test them all.
+    It "Invoke-RestMethod supports request that returns <DataEncoding>-encoded data." -TestCases @(
+        @{ DataEncoding = "gzip"}
+        @{ DataEncoding = "deflate"}
+    ) {
+        param($dataEncoding)
+        $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
+        $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
-            $command = "Invoke-RestMethod -Uri http://httpbin.org/$data -TimeoutSec 5"
-
-            $result = ExecuteWebCommand -command $command
-
-            # Validate response
-            if ($data -eq "gzip")
-            {
-                $result.Output.gzipped | Should Match $true
-            }
-            else
-            {
-                $result.Output.deflated | Should Match $true
-            }
-        }
+        # Validate response content
+        $headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding      
+        $result.Headers.Host | Should BeExactly $uri.Authority
     }
 
     # Perform the following operation for Invoke-RestMethod using the following content types: "text/plain", "application/xml", "application/xml"
