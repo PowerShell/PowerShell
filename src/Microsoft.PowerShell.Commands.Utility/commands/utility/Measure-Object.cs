@@ -840,8 +840,14 @@ namespace Microsoft.PowerShell.Commands
                     average = stat.sum / stat.count;
 
                 if(_measureStdDeviation && !_measureAverage) {
-                    var message = "StdDeviation was requested and requires the average to be calculated, please add the -Average switch";
-                    throw new ArgumentException(message);
+                    ErrorRecord errorRecord = new ErrorRecord(
+                        PSTraceSource.NewArgumentException("Average"),
+                        "AverageSwitchNotSet",
+                        ErrorCategory.InvalidArgument,
+                        null);
+
+                    errorRecord.ErrorDetails = new ErrorDetails(this, "MeasureObjectStrings", "AverageSwitchNotSet", "Average");
+                    WriteError(errorRecord);
                 }
 
                 if (_measureStdDeviation && _measureAverage && stat.count > 0)
