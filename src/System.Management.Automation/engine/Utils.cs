@@ -1147,11 +1147,12 @@ namespace System.Management.Automation
             return hresult >= 0;
         }
 
-        internal static FileSystemCmdletProviderEncoding GetEncoding(string path)
+        // Attempt to determine the existing encoding
+        internal static Encoding GetEncoding(string path)
         {
             if (!File.Exists(path))
             {
-                return FileSystemCmdletProviderEncoding.Default;
+                return ClrFacade.GetDefaultEncoding();
             }
 
             byte[] initialBytes = new byte[100];
@@ -1169,12 +1170,12 @@ namespace System.Management.Automation
             }
             catch (IOException)
             {
-                return FileSystemCmdletProviderEncoding.Default;
+                return ClrFacade.GetDefaultEncoding();
             }
 
             // Test for four-byte preambles
             string preamble = null;
-            FileSystemCmdletProviderEncoding foundEncoding = FileSystemCmdletProviderEncoding.Default;
+            Encoding foundEncoding = ClrFacade.GetDefaultEncoding();
 
             if (bytesRead > 3)
             {
@@ -1210,77 +1211,26 @@ namespace System.Management.Automation
             string initialBytesAsAscii = System.Text.Encoding.ASCII.GetString(initialBytes, 0, bytesRead);
             if (initialBytesAsAscii.IndexOfAny(nonPrintableCharacters) >= 0)
             {
-                return FileSystemCmdletProviderEncoding.Byte;
+                return Encoding.Unicode;
             }
 
-            return FileSystemCmdletProviderEncoding.Ascii;
+            return Encoding.ASCII;
         }
 
-        internal static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding encoding)
-        {
-            // Default to unicode encoding
-            Encoding result = Encoding.Unicode;
 
-            switch (encoding)
-            {
-                case FileSystemCmdletProviderEncoding.String:
-                    result = Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Unicode:
-                    result = Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUnicode:
-                    result = Encoding.BigEndianUnicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF8:
-                    result = Encoding.UTF8;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF7:
-                    result = Encoding.UTF7;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF32:
-                    result = Encoding.UTF32;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUTF32:
-                    result = Encoding.BigEndianUnicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Ascii:
-                    result = Encoding.ASCII;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Default:
-                    result = ClrFacade.GetDefaultEncoding();
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Oem:
-                    result = ClrFacade.GetOEMEncoding();
-                    break;
-
-                default:
-                    break;
-            }
-
-            return result;
-        } // GetEncodingFromEnum
-
+        // BigEndianUTF32 encoding is possible, but requires creation
+        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(true,true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<String, FileSystemCmdletProviderEncoding> encodingMap =
-            new Dictionary<string, FileSystemCmdletProviderEncoding>()
+        internal static Dictionary<String, Encoding> encodingMap =
+            new Dictionary<string, Encoding>()
             {
-                { "255-254", FileSystemCmdletProviderEncoding.Unicode },
-                { "254-255", FileSystemCmdletProviderEncoding.BigEndianUnicode },
-                { "255-254-0-0", FileSystemCmdletProviderEncoding.UTF32 },
-                { "0-0-254-255", FileSystemCmdletProviderEncoding.BigEndianUTF32 },
-                { "239-187-191", FileSystemCmdletProviderEncoding.UTF8 },
+                { "255-254", Encoding.Unicode },
+                { "254-255", Encoding.BigEndianUnicode },
+                { "255-254-0-0", Encoding.UTF32 },
+                { "0-0-254-255", BigEndianUTF32Encoding },
+                { "239-187-191", Encoding.UTF8 },
             };
 
         internal static char[] nonPrintableCharacters = {

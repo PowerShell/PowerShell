@@ -211,7 +211,7 @@
         $paramName = "Encoding"
         $results = get-command -verb get -noun content -Encoding Unicode
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
-        VerifyParameterType -cmdlet $results[0] -parameterName $paramName -parameterType Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding
+        VerifyParameterType -cmdlet $results[0] -parameterName $paramName -parameterType System.Text.Encoding
     }
 
     It "Verify Single Cmdlet Using Verb&Noun ParameterSet With Usage" {
@@ -261,7 +261,7 @@
         $paramName = "Encoding"
         $results = Get-Command -verb get -noun content -encoding UTF8
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
-        VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding
+        VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType System.Text.Encoding
     }
 
     #unsupported parameter: -synop
@@ -269,6 +269,6 @@
         $paramName = "Encoding"
         $results = get-command -verb get -noun content -encoding UTF8 -synop
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
-        VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding
+        VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType System.Text.Encoding
     }
 }

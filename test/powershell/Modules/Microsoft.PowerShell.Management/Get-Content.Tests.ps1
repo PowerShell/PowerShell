@@ -99,13 +99,12 @@ baz
 "@
         $expected = 'foo'
         $tailCount = 3
-        [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding] $encoding = $EncodingName
 
         $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
-        $content | Set-Content -Path $testPath -Encoding $encoding
+        $content | Set-Content -Path $testPath -Encoding $encodingName
         $expected = 'foo'
 
-        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encoding
+        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encodingName
         $actual.GetType() | Should Be "System.Object[]"
         $actual.Length | Should Be $tailCount
         $actual[0] | Should Be $expected

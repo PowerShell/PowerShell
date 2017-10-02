@@ -212,8 +212,27 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; }
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                if ( value == EncodingConversion.byteEncoding )
+                {
+                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
+                }
+                else
+                {
+                    _encoding = value;
+                }
+            }
+        }
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -373,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     this.Path,
-                    Encoding ?? "ASCII",
+                    Encoding,
                     false, // defaultEncoding
                     Append,
                     Force,
@@ -577,8 +596,27 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        [ValidateSetAttribute(new[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; }
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                if ( value == EncodingConversion.byteEncoding )
+                {
+                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
+                }
+                else
+                {
+                    _encoding = value;
+                }
+            }
+        }
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are

@@ -29,13 +29,14 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         $psdefaultParameterValues.Remove("out-file:encoding")
     }
 
-    It "If encoding is unset, redirection should be Unicode" {
+    It "If encoding is unset, redirection should be UTF8 without bom" {
         $asciiString > TESTDRIVE:\file.txt
         $bytes = get-content -encoding byte TESTDRIVE:\file.txt
-        # create the expected
-        $BOM = [text.encoding]::unicode.GetPreamble()
-        $TXT = [text.encoding]::unicode.GetBytes($asciiString)
-        $CR  = [text.encoding]::unicode.GetBytes($asciiCR)
+        # create the expected - utf8 encoding without a bom
+        $encoding = [text.utf8encoding]::new($false)
+        $BOM = $encoding.GetPreamble()
+        $TXT = $encoding.GetBytes($asciiString)
+        $CR  = $encoding.GetBytes($asciiCR)
         $expectedBytes = .{ $BOM; $TXT; $CR }
         $bytes.Count | should be $expectedBytes.count
         for($i = 0; $i -lt $bytes.count; $i++) {

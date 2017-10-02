@@ -77,19 +77,27 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        public Encoding Encoding
         {
             get
             {
-                return _encoding.GetType().Name;
+                return _encoding;
             }
             set
             {
-                _encoding = EncodingConversion.Convert(this, value);
+                if ( value == EncodingConversion.byteEncoding )
+                {
+                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
+                }
+                else
+                {
+                    _encoding = value;
+                }
             }
         }
-        private Encoding _encoding = System.Text.Encoding.UTF8;
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         #endregion Parameters
 

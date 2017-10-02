@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Collections;
@@ -1201,19 +1202,27 @@ namespace Microsoft.PowerShell.Commands
         /// The text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] {
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf32,
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Default,
-            EncodingConversion.OEM })]
-        public string Encoding { get; set; }
-
-        private System.Text.Encoding _textEncoding;
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        public Encoding Encoding
+        {
+            get
+            {
+                return _textEncoding;
+            }
+            set
+            {
+                if ( value == EncodingConversion.byteEncoding )
+                {
+                    _textEncoding = EncodingConversion.byteEncoding.ActualEncoding;
+                }
+                else
+                {
+                    _textEncoding = value;
+                }
+            }
+        }
+        private System.Text.Encoding _textEncoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// The number of context lines to collect. If set to a
@@ -1282,16 +1291,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Process encoding switch.
-            if (Encoding != null)
-            {
-                _textEncoding = EncodingConversion.Convert(this, Encoding);
-            }
-            else
-            {
-                _textEncoding = new System.Text.UTF8Encoding();
-            }
-
             if (!_simpleMatch)
             {
                 RegexOptions regexOptions = (_caseSensitive) ? RegexOptions.None : RegexOptions.IgnoreCase;

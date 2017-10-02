@@ -46,14 +46,24 @@ namespace Microsoft.PowerShell.Commands
         /// Type of character encoding for InputObject
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
-        [ValidateSetAttribute(new string[] {
-            EncodingConversion.Unicode,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf32,
-            EncodingConversion.Ascii})]
-        public string Encoding { get; set; } = "Ascii";
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        public Encoding Encoding
+        {
+            get { return _encoding; }
+            set
+            {
+                if ( value == EncodingConversion.byteEncoding )
+                {
+                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
+                }
+                else
+                {
+                    _encoding = value;
+                }
+            }
+        }
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// This parameter is no-op
@@ -239,8 +249,7 @@ namespace Microsoft.PowerShell.Commands
             else if (obj is string)
             {
                 string inputString = obj.ToString();
-                Encoding resolvedEncoding = EncodingConversion.Convert(this, Encoding);
-                inputBytes = resolvedEncoding.GetBytes(inputString);
+                inputBytes = Encoding.GetBytes(inputString);
             }
             
             else if (obj is byte)

@@ -6619,7 +6619,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = dynParams.Encoding;
                     }
 
                     // Get the wait value
@@ -6770,7 +6770,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = dynParams.Encoding;
                     }
 
 #if !UNIX
@@ -7477,73 +7477,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    /// <summary>
-    /// Defines the values that can be supplied as the encoding parameter in the
-    /// FileSystemContentDynamicParametersBase class.
-    /// </summary>
-    public enum FileSystemCmdletProviderEncoding
-    {
-        /// <summary>
-        /// No encoding.
-        /// </summary>
-        Unknown,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        String,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        Unicode,
-
-        /// <summary>
-        /// Byte encoding.
-        /// </summary>
-        Byte,
-
-        /// <summary>
-        /// Big Endian Unicode encoding.
-        /// </summary>
-        BigEndianUnicode,
-
-        /// <summary>
-        /// UTF8 encoding.
-        /// </summary>
-        UTF8,
-
-        /// <summary>
-        /// UTF7 encoding.
-        /// </summary>
-        UTF7,
-
-        /// <summary>
-        /// UTF32 encoding.
-        /// </summary>
-        UTF32,
-
-        /// <summary>
-        /// ASCII encoding.
-        /// </summary>
-        Ascii,
-
-        /// <summary>
-        /// Default encoding.
-        /// </summary>
-        Default,
-
-        /// <summary>
-        /// OEM encoding.
-        /// </summary>
-        Oem,
-
-        /// <summary>
-        /// Big Endian UTF32 encoding.
-        /// </summary>
-        BigEndianUTF32,
-    } // FileSystemCmdletProviderEncoding
-
     #endregion
 
     #region Dynamic Parameters
@@ -7647,8 +7580,30 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
-
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                if ( value == EncodingConversion.byteEncoding )
+                {
+                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
+                    UsingByteEncoding = true;
+                }
+                else
+                {
+                    _encoding = value;
+                }
+                // If an encoding was explicitly set, be sure to capture that.
+                WasStreamTypeSpecified = true;
+            }
+        }
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 #if !UNIX
         /// <summary>
         /// A parameter to return a stream of an item.
@@ -7658,27 +7613,15 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         /// <summary>
-        /// Gets the encoding from the specified StreamType parameter.
-        /// </summary>
-        public Encoding EncodingType
-        {
-            get
-            {
-                return Utils.GetEncodingFromEnum(Encoding);
-            }
-        } // EncodingType
-
-        /// <summary>
         /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
         /// if the stream was opened with "Byte" encoding, false otherwise.
         /// </summary>
         public bool UsingByteEncoding
         {
-            get
-            {
-                return Encoding == FileSystemCmdletProviderEncoding.Byte;
-            } // get
+            get { return _usingByteEncoding; }
+            set { _usingByteEncoding = value; }
         } // UsingByteEncoding
+        private bool _usingByteEncoding;
 
         /// <summary>
         /// Gets the status of the StreamType parameter.  Returns true
@@ -7688,9 +7631,14 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (Encoding != FileSystemCmdletProviderEncoding.String);
-            } // get
+                return _wasStreamTypeSpecified;
+            }
+            set
+            {
+                _wasStreamTypeSpecified = value;
+            }
         } // WasStreamTypeSpecified
+        private bool _wasStreamTypeSpecified;
 
     } // class FileSystemContentDynamicParametersBase
 
