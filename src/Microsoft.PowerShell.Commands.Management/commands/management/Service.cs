@@ -691,7 +691,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         /// <summary>
-        /// Adds UserName, Description, BinPath, DelayedAutoStart and StartupType to a ServiceController object.
+        /// Adds UserName, Description, BinaryPathName, DelayedAutoStart and StartupType to a ServiceController object.
         /// </summary>
         /// <param name="service"></param>
         /// <returns>ServiceController as PSObject with UserName, Description and StartupType added</returns>
@@ -737,16 +737,16 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                 }
 
-                bool queryStatus = NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out descriptionStructPtr);
+                bool querySuccessful = NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out descriptionStructPtr);
                 NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(descriptionStructPtr, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
 
-                queryStatus = queryStatus & NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out delayedAutoStartStuctPtr);
+                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out delayedAutoStartStuctPtr);
                 NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(delayedAutoStartStuctPtr, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
 
-                queryStatus = queryStatus & NativeMethods.QueryServiceConfig(hService, out serviceConfigStructPtr);
+                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceConfigStructPtr);
                 NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(serviceConfigStructPtr, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
 
-                if(!queryStatus) {
+                if(!querySuccessful) {
                     WriteNonTerminatingError(
                         service: service,
                         innerException: null,
@@ -768,9 +768,9 @@ namespace Microsoft.PowerShell.Commands
                 serviceAsPSObj.Properties.Add(noteProperty, true);
                 serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#DelayedAutoStart");
 
-                noteProperty = new PSProperty("BinPath", serviceInfo.lpBinaryPathName);
+                noteProperty = new PSProperty("BinaryPathName", serviceInfo.lpBinaryPathName);
                 serviceAsPSObj.Properties.Add(noteProperty, true);
-                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinPath");
+                serviceAsPSObj.TypeNames.Insert(0, "System.Service.ServiceController#BinaryPathName");
 
                 noteProperty = new PSProperty("StartupType", NativeMethods.GetServiceStartupType(service.StartType, autostartInfo.fDelayedAutostart));
                 serviceAsPSObj.Properties.Add(noteProperty, true);
@@ -2814,12 +2814,17 @@ namespace Microsoft.PowerShell.Commands
         internal static bool QueryServiceConfig(NakedWin32Handle hService, out IntPtr structurePointer)
         {
             IntPtr lpBuffer = IntPtr.Zero;
+            structurePointer = IntPtr.Zero;
             DWORD bufferSize, bufferSizeNeeded = 0;
             bool status = NativeMethods.QueryServiceConfigW(
                 hSCManager: hService,
                 lpServiceConfig: lpBuffer,
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
+
+            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER) {
+                return status;
+            }
 
             lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
             bufferSize = bufferSizeNeeded;
@@ -2836,6 +2841,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool QueryServiceConfig2(NakedWin32Handle hService, DWORD infolevel, out IntPtr structurePointer)
         {
             IntPtr lpBuffer = IntPtr.Zero;
+            structurePointer = IntPtr.Zero;
             DWORD bufferSize, bufferSizeNeeded = 0;
             bool status = NativeMethods.QueryServiceConfig2W(
                 hService: hService,
@@ -2843,6 +2849,10 @@ namespace Microsoft.PowerShell.Commands
                 lpBuffer: lpBuffer,
                 cbBufSize: 0,
                 pcbBytesNeeded: out bufferSizeNeeded);
+
+            if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER) {
+                return status;
+            }
 
             lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
             bufferSize = bufferSizeNeeded;
