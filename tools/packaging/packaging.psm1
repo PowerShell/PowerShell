@@ -260,6 +260,10 @@ function New-UnixPackage {
         [Parameter(Mandatory)]
         [string]$Version,
 
+        # Package iteration version (rarely changed)
+        # This is a string because strings are appended to it
+        [string]$Iteration = "1",
+
         [Switch]
         $Force
     )
@@ -306,7 +310,7 @@ function New-UnixPackage {
 
                 # iteration is "debian_revision"
                 # usage of this to differentiate distributions is allowed by non-standard
-                $Iteration = $DebDistro
+                $Iteration += ".$DebDistro"
             }
             "rpm" {
                 if (!$Environment.IsRedHatFamily) {
@@ -480,6 +484,7 @@ function New-UnixPackage {
             "--force", "--verbose",
             "--name", $Name,
             "--version", $Version,
+            "--iteration", $Iteration,
             "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
             "--vendor", "Microsoft Corporation",
             "--url", "https://microsoft.com/powershell",
@@ -489,9 +494,7 @@ function New-UnixPackage {
             "-t", $Type,
             "-s", "dir"
         )
-        if ($Environment.IsUbuntu -or $Environment.IsDebian) {
-            $Arguments += @("--iteration", $Iteration)
-        } elseif ($Environment.IsRedHatFamily) {
+        if ($Environment.IsRedHatFamily) {
             $Arguments += @("--rpm-dist", "rhel.7")
             $Arguments += @("--rpm-os", "linux")
         }
