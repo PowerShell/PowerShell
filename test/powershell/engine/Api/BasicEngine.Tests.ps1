@@ -13,4 +13,11 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $result[0].PSSnapIn.Name | Should Be "Microsoft.WSMan.Management"
         }
     }
+
+    Context 'executioncontext' {
+        It 'args are passed correctly' {
+            $result = $ExecutionContext.SessionState.InvokeCommand.InvokeScript('"`$args:($args); `$input:($input)"', 1, 2, 3)
+            $result | Should BeExactly '$args:(1 2 3); $input:()'
+        }
+    }
 }
