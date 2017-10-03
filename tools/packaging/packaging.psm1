@@ -461,18 +461,14 @@ function New-UnixPackage {
                 "zlib1g"
             )
 
-            if ($DebDistro -eq "ubuntu.14.04") {
-                $Dependencies += @("libssl1.0.0", "libicu52")
-            } elseif ($DebDistro -eq "ubuntu.16.04") {
-                $Dependencies += @("libssl1.0.0", "libicu55")
-            } elseif ($DebDistro -eq "ubuntu.17.04") {
-                $Dependencies += @("libssl1.0.0", "libicu57")
-            } elseif ($DebDistro -eq "debian.8") {
-                $Dependencies += @("libssl1.0.0", "libicu52")
-            } elseif ($DebDistro -eq "debian.9") {
-                $Dependencies += @("libssl1.0.2", "libicu57")
+            switch ($DebDistro) {
+                "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
+                "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
+                "ubuntu.17.04" { $Dependencies += @("libssl1.0.0", "libicu57") }
+                "debian.8"     { $Dependencies += @("libssl1.0.0", "libicu52") }
+                "debian.9"     { $Dependencies += @("libssl1.0.2", "libicu57") }
+                default        { throw "Debian distro '$DebDistro' is not supported." }
             }
-
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
                 "libunwind",
