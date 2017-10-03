@@ -14,6 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class PSUserAgent
     {
+
+        private static string _windowsUserAgent;
+
         internal static string UserAgent
         {
             get
@@ -125,10 +128,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Platform.IsWindows)
                 {
-                    // find the version in the windows operating system description
-                    string versionText = PSUserAgent.OS.Substring(PSUserAgent.OS.TrimEnd().LastIndexOf(" ") +1);
-                    Version windowsPlatformversion = new Version(versionText);
-                    return $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
+                    // only generate the windows user agent once
+                    if(PSUserAgent._windowsUserAgent == null){
+                        // find the version in the windows operating system description
+                        string versionText = PSUserAgent.OS.Substring(PSUserAgent.OS.TrimEnd().LastIndexOf(" ") +1);
+                        Version windowsPlatformversion = new Version(versionText);
+                        PSUserAgent._windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
+                    }
+
+                    return PSUserAgent._windowsUserAgent;
                 }
                 else if (Platform.IsMacOS)
                 {
