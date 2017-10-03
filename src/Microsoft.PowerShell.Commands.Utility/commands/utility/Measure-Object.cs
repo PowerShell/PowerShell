@@ -293,6 +293,8 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _measureStdDeviation = value;
+                if(value == true)
+                    _measureAverage = true;
             }
         }
 
