@@ -13,13 +13,25 @@ Describe "Measure-Object" -Tags "CI" {
         $($testObject | Measure-Object).Count | Should Be $testObject.Length
     }
 
-	It "Should calculate Standard Deviation" {
-		$actual = ($testObject | Measure-Object -Average -StdDeviation)
+    It "Should calculate Standard Deviation" {
+        $actual = ($testObject | Measure-Object -Average -StdDeviation)
         $actual.StdDeviation | Should Be 1.5275
     }
 
-    It "Should throw if Standard Deviation requested and -Average not specified" {
-        {$testObject | Measure-Object -StdDeviation} | Should Throw
+    It "Should throw if Standard Deviation with -Average not specified" {
+        #{$testObject | Measure-Object -StdDeviation} | Should Throw
+        $actual = $testObject | Measure-Object -StdDeviation
+        $actual.StdDeviation | Should Be 1.5275
+    }
+
+    It 'Should throw if Standard Deviation requested and -Average:$false' {
+        try {
+            $Error.Clear()
+            $testObject | Measure-Object -StdDeviation -Average:$false -ErrorAction Stop
+        }
+        catch {
+            $Error.Count | should be 1
+        }
     }
 
     It "Should be able to count using the Property switch" {
