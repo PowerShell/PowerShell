@@ -35,7 +35,7 @@
 APP=powershell
 
 # Generate status file for use by apt-get; assuming that the recipe uses no newer
-# ingredients than what would require more recent dependencies than what we assume 
+# ingredients than what would require more recent dependencies than what we assume
 # to be part of the base system
 generate_status()
 {
@@ -60,7 +60,7 @@ delete_blacklisted()
       rm -f "${FOUND}"
     fi
   done
-  
+
   # Do not bundle developer stuff
   rm -rf usr/include || true
   rm -rf usr/lib/cmake || true
@@ -409,7 +409,7 @@ OPTIONS="-o Debug::NoLocking=1
 -o APT::Install-Suggests=0
 "
 
-cp ../powershell_*_amd64.deb .
+cp ../powershell_*ubuntu.14.04_amd64.deb .
 
 # Add local repository so that we can install deb files
 # that were downloaded outside of a repository

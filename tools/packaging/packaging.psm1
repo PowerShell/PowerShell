@@ -1,6 +1,7 @@
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
+$DebianDistributions = @("ubuntu.14.04", "ubuntu.16.04", "ubuntu.17.04", "debian.8", "debian.9")
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -211,6 +212,19 @@ function Start-PSPackage {
                 New-NugetPackage @Arguments
             }
         }
+        'deb' {
+            $Arguments = @{
+                Type = 'deb'
+                PackageSourcePath = $Source
+                Name = $Name
+                Version = $Version
+                Force = $Force
+            }
+            foreach ($Distro in $Script:DebianDistributions) {
+                $Arguments["Distribution"] = $Distro
+                New-UnixPackage @Arguments
+            }
+        }
         default {
             $Arguments = @{
                 Type = $_
@@ -246,255 +260,301 @@ function New-UnixPackage {
         [Parameter(Mandatory)]
         [string]$Version,
 
+        # Package iteration version (rarely changed)
+        # This is a string because strings are appended to it
+        [string]$Iteration = "1",
+
         [Switch]
         $Force
     )
 
-    # Validate platform
-    $ErrorMessage = "Must be on {0} to build '$Type' packages!"
-    switch ($Type) {
-        "deb" {
-            $verboseMsg = "Building for Ubuntu {0}.04!"
-            if (!$Environment.IsUbuntu) {
-                throw ($ErrorMessage -f "Ubuntu")
-            } elseif ($Environment.IsUbuntu14) {
-                Write-Verbose ($verboseMsg -f "14")
-            } elseif ($Environment.IsUbuntu16) {
-                Write-Verbose ($verboseMsg -f "16")
-            }
-        }
-        "rpm" {
-            if (!$Environment.IsRedHatFamily) {
-                throw ($ErrorMessage -f "Redhat Family")
-            }
-        }
-        "osxpkg" {
-            if (!$Environment.IsMacOS) {
-                throw ($ErrorMessage -f "macOS")
-            }
+    DynamicParam {
+        if ($Type -eq "deb") {
+            # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
+            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
+            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:DebianDistributions
+            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+            $Attributes.Add($ParameterAttr) > $null
+            $Attributes.Add($ValidateSetAttr) > $null
+
+            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            $Dict.Add("Distribution", $Parameter) > $null
+            return $Dict
         }
     }
 
-    foreach ($Dependency in "fpm", "ronn") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
-            # These tools are not added to the path automatically on OpenSUSE 13.2
-            # try adding them to the path and re-tesing first
-            [string] $gemsPath = $null
-            [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-            if($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
-                $originalPath = $env:PATH
-                $env:PATH = $ENV:PATH +":" + $depenencyPath
-                if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
-                    continue
+    End {
+        # Validate platform
+        $ErrorMessage = "Must be on {0} to build '$Type' packages!"
+        switch ($Type) {
+            "deb" {
+                if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
+                    throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
-                else {
-                    $env:PATH = $originalPath
+
+                if ($PSBoundParameters.ContainsKey('Distribution')) {
+                    $DebDistro = $PSBoundParameters['Distribution']
+                } elseif ($Environment.IsUbuntu14) {
+                    $DebDistro = "ubuntu.14.04"
+                } elseif ($Environment.IsUbuntu16) {
+                    $DebDistro = "ubuntu.16.04"
+                } elseif ($Environment.IsUbuntu17) {
+                    $DebDistro = "ubuntu.17.04"
+                } elseif ($Environment.IsDebian8) {
+                    $DebDistro = "debian.8"
+                } elseif ($Environment.IsDebian9) {
+                    $DebDistro = "debian.9"
+                } else {
+                    throw "The current Debian distribution is not supported."
+                }
+
+                # iteration is "debian_revision"
+                # usage of this to differentiate distributions is allowed by non-standard
+                $Iteration += ".$DebDistro"
+            }
+            "rpm" {
+                if (!$Environment.IsRedHatFamily) {
+                    throw ($ErrorMessage -f "Redhat Family")
+                }
+            }
+            "osxpkg" {
+                if (!$Environment.IsMacOS) {
+                    throw ($ErrorMessage -f "macOS")
+                }
+            }
+        }
+
+        foreach ($Dependency in "fpm", "ronn") {
+            if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                # These tools are not added to the path automatically on OpenSUSE 13.2
+                # try adding them to the path and re-tesing first
+                [string] $gemsPath = $null
+                [string] $depenencyPath = $null
+                $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+                if($gemsPath) {
+                    $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                    $originalPath = $env:PATH
+                    $env:PATH = $ENV:PATH +":" + $depenencyPath
+                    if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                        continue
+                    }
+                    else {
+                        $env:PATH = $originalPath
+                    }
+                }
+
+                throw "Dependency precheck failed!"
+            }
+        }
+
+        $Description = $packagingStrings.Description
+
+        # Suffix is used for side-by-side package installation
+        $Suffix = $Name -replace "^powershell"
+        if (!$Suffix) {
+            Write-Verbose "Suffix not given, building primary PowerShell package!"
+            $Suffix = $Version
+        }
+
+        # Setup staging directory so we don't change the original source directory
+        $Staging = "$PSScriptRoot/staging"
+        if ($pscmdlet.ShouldProcess("Create staging folder")) {
+            New-StagingFolder -StagingPath $Staging -Name $Name
+        }
+
+        # Follow the Filesystem Hierarchy Standard for Linux and macOS
+        $Destination = if ($Environment.IsLinux) {
+            "/opt/microsoft/powershell/$Suffix"
+        } elseif ($Environment.IsMacOS) {
+            "/usr/local/microsoft/powershell/$Suffix"
+        }
+
+        # Destination for symlink to powershell executable
+        $Link = if ($Environment.IsLinux) {
+            "/usr/bin"
+        } elseif ($Environment.IsMacOS) {
+            "/usr/local/bin"
+        }
+
+        if($pscmdlet.ShouldProcess("Create package file system"))
+        {
+            New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
+
+            if ($Environment.IsRedHatFamily) {
+                # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+                # platform specific changes. This is the only set of platforms needed for this currently
+                # as Ubuntu has these specific library files in the platform and macOS builds for itself
+                # against the correct versions.
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
+                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+
+                $AfterInstallScript = [io.path]::GetTempFileName()
+                $AfterRemoveScript = [io.path]::GetTempFileName()
+                $packagingStrings.RedHatAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.RedHatAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+            }
+            elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
+                $AfterInstallScript = [io.path]::GetTempFileName()
+                $AfterRemoveScript = [io.path]::GetTempFileName()
+                $packagingStrings.UbuntuAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+            }
+
+
+            # there is a weird bug in fpm
+            # if the target of the powershell symlink exists, `fpm` aborts
+            # with a `utime` error on macOS.
+            # so we move it to make symlink broken
+            $symlink_dest = "$Destination/$Name"
+            $hack_dest = "./_fpm_symlink_hack_powershell"
+            if ($Environment.IsMacOS) {
+                if (Test-Path $symlink_dest) {
+                    Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
+                    Move-Item $symlink_dest $hack_dest
                 }
             }
 
-            throw "Dependency precheck failed!"
+            # run ronn to convert man page to roff
+            $RonnFile = Join-Path $PSScriptRoot "/../../assets/powershell.1.ronn"
+            $RoffFile = $RonnFile -replace "\.ronn$"
+
+            # Run ronn on assets file
+            # Run does not play well with files named powershell6.0.1, so we generate and then rename
+            Start-NativeExecution { ronn --roff $RonnFile }
+
+            # Setup for side-by-side man pages (noop if primary package)
+            $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
+            if ($Name -ne "powershell") {
+                Move-Item $RoffFile $FixedRoffFile
+            }
+
+            # gzip in assets directory
+            $GzipFile = "$FixedRoffFile.gz"
+            Start-NativeExecution { gzip -f $FixedRoffFile }
+
+            $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+
+            # Change permissions for packaging
+            Start-NativeExecution {
+                find $Staging -type d | xargs chmod 755
+                find $Staging -type f | xargs chmod 644
+                chmod 644 $GzipFile
+                chmod 755 "$Staging/$Name" # only the executable should be executable
+            }
         }
-    }
 
-    $Description = $packagingStrings.Description
+        # Setup package dependencies
+        # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
+        $Dependencies = @()
+        if ($Environment.IsUbuntu -or $Environment.IsDebian) {
+            $Dependencies = @(
+                "libc6",
+                "libcurl3",
+                "libgcc1",
+                "libgssapi-krb5-2",
+                "liblttng-ust0",
+                "libstdc++6",
+                "libunwind8",
+                "libuuid1",
+                "zlib1g"
+            )
 
-    # Suffix is used for side-by-side package installation
-    $Suffix = $Name -replace "^powershell"
-    if (!$Suffix) {
-        Write-Verbose "Suffix not given, building primary PowerShell package!"
-        $Suffix = $Version
-    }
+            switch ($DebDistro) {
+                "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
+                "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
+                "ubuntu.17.04" { $Dependencies += @("libssl1.0.0", "libicu57") }
+                "debian.8"     { $Dependencies += @("libssl1.0.0", "libicu52") }
+                "debian.9"     { $Dependencies += @("libssl1.0.2", "libicu57") }
+                default        { throw "Debian distro '$DebDistro' is not supported." }
+            }
+        } elseif ($Environment.IsRedHatFamily) {
+            $Dependencies = @(
+                "libunwind",
+                "libcurl",
+                "openssl-libs",
+                "libicu"
+            )
+        }
 
-    # Setup staging directory so we don't change the original source directory
-    $Staging = "$PSScriptRoot/staging"
-    if ($pscmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $Staging -Name $Name
-    }
-
-    # Follow the Filesystem Hierarchy Standard for Linux and macOS
-    $Destination = if ($Environment.IsLinux) {
-        "/opt/microsoft/powershell/$Suffix"
-    } elseif ($Environment.IsMacOS) {
-        "/usr/local/microsoft/powershell/$Suffix"
-    }
-
-    # Destination for symlink to powershell executable
-    $Link = if ($Environment.IsLinux) {
-        "/usr/bin"
-    } elseif ($Environment.IsMacOS) {
-        "/usr/local/bin"
-    }
-
-    if($pscmdlet.ShouldProcess("Create package file system"))
-    {
-        New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
-
+        $Arguments = @(
+            "--force", "--verbose",
+            "--name", $Name,
+            "--version", $Version,
+            "--iteration", $Iteration,
+            "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
+            "--vendor", "Microsoft Corporation",
+            "--url", "https://microsoft.com/powershell",
+            "--license", "MIT License",
+            "--description", $Description,
+            "--category", "shells",
+            "-t", $Type,
+            "-s", "dir"
+        )
         if ($Environment.IsRedHatFamily) {
-            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-            # platform specific changes. This is the only set of platforms needed for this currently
-            # as Ubuntu has these specific library files in the platform and macOS builds for itself
-            # against the correct versions.
-            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
-            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
-
-            $AfterInstallScript = [io.path]::GetTempFileName()
-            $AfterRemoveScript = [io.path]::GetTempFileName()
-            $packagingStrings.RedHatAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-            $packagingStrings.RedHatAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+            $Arguments += @("--rpm-dist", "rhel.7")
+            $Arguments += @("--rpm-os", "linux")
         }
-        elseif ($Environment.IsUbuntu) {
-            $AfterInstallScript = [io.path]::GetTempFileName()
-            $AfterRemoveScript = [io.path]::GetTempFileName()
-            $packagingStrings.UbuntuAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-            $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-        }
-
-
-        # there is a weird bug in fpm
-        # if the target of the powershell symlink exists, `fpm` aborts
-        # with a `utime` error on macOS.
-        # so we move it to make symlink broken
-        $symlink_dest = "$Destination/$Name"
-        $hack_dest = "./_fpm_symlink_hack_powershell"
-        if ($Environment.IsMacOS) {
-            if (Test-Path $symlink_dest) {
-                Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-                Move-Item $symlink_dest $hack_dest
-            }
-        }
-
-        # run ronn to convert man page to roff
-        $RonnFile = Join-Path $PSScriptRoot "/../../assets/powershell.1.ronn"
-        $RoffFile = $RonnFile -replace "\.ronn$"
-
-        # Run ronn on assets file
-        # Run does not play well with files named powershell6.0.1, so we generate and then rename
-        Start-NativeExecution { ronn --roff $RonnFile }
-
-        # Setup for side-by-side man pages (noop if primary package)
-        $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
-        if ($Name -ne "powershell") {
-            Move-Item $RoffFile $FixedRoffFile
-        }
-
-        # gzip in assets directory
-        $GzipFile = "$FixedRoffFile.gz"
-        Start-NativeExecution { gzip -f $FixedRoffFile }
-
-        $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
-
-        # Change permissions for packaging
-        Start-NativeExecution {
-            find $Staging -type d | xargs chmod 755
-            find $Staging -type f | xargs chmod 644
-            chmod 644 $GzipFile
-            chmod 755 "$Staging/$Name" # only the executable should be executable
-        }
-    }
-
-    # Setup package dependencies
-    # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
-    $Dependencies = @()
-    if ($Environment.IsUbuntu) {
-        $Dependencies = @(
-            "libc6",
-            "libcurl3",
-            "libgcc1",
-            "libgssapi-krb5-2",
-            "liblttng-ust0",
-            "libstdc++6",
-            "libunwind8",
-            "libuuid1",
-            "zlib1g",
-            "libssl1.0.0",
-            "libicu-dev"
-        )
-    } elseif ($Environment.IsRedHatFamily) {
-        $Dependencies = @(
-            "libunwind",
-            "libcurl",
-            "openssl-libs",
-            "libicu"
-        )
-    }
-
-    $Arguments = @(
-        "--force", "--verbose",
-        "--name", $Name,
-        "--version", $Version,
-        "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
-        "--vendor", "Microsoft Corporation",
-        "--url", "https://microsoft.com/powershell",
-        "--license", "MIT License",
-        "--description", $Description,
-        "--category", "shells",
-        "-t", $Type,
-        "-s", "dir"
-    )
-    if ($Environment.IsRedHatFamily) {
-        $Arguments += @("--rpm-dist", "rhel.7")
-        $Arguments += @("--rpm-os", "linux")
-    }
-    foreach ($Dependency in $Dependencies) {
-        $Arguments += @("--depends", $Dependency)
-    }
-    if ($AfterInstallScript) {
-       $Arguments += @("--after-install", $AfterInstallScript)
-    }
-    if ($AfterRemoveScript) {
-       $Arguments += @("--after-remove", $AfterRemoveScript)
-    }
-    $Arguments += @(
-        "$Staging/=$Destination/",
-        "$GzipFile=$ManFile",
-        "/tmp/$Name=$Link"
-    )
-    # Build package
-    try {
-        if($pscmdlet.ShouldProcess("Create $type package")) {
-            $Output = Start-NativeExecution { fpm $Arguments }
-        }
-    } finally {
-        if ($Environment.IsMacOS) {
-            # this is continuation of a fpm hack for a weird bug
-            if (Test-Path $hack_dest) {
-                Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                Move-Item $hack_dest $symlink_dest
-            }
+        foreach ($Dependency in $Dependencies) {
+            $Arguments += @("--depends", $Dependency)
         }
         if ($AfterInstallScript) {
-           Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+        $Arguments += @("--after-install", $AfterInstallScript)
         }
         if ($AfterRemoveScript) {
-           Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
+        $Arguments += @("--after-remove", $AfterRemoveScript)
         }
-    }
+        $Arguments += @(
+            "$Staging/=$Destination/",
+            "$GzipFile=$ManFile",
+            "/tmp/$Name=$Link"
+        )
+        # Build package
+        try {
+            if($pscmdlet.ShouldProcess("Create $type package")) {
+                $Output = Start-NativeExecution { fpm $Arguments }
+            }
+        } finally {
+            if ($Environment.IsMacOS) {
+                # this is continuation of a fpm hack for a weird bug
+                if (Test-Path $hack_dest) {
+                    Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
+                    Move-Item $hack_dest $symlink_dest
+                }
+            }
+            if ($AfterInstallScript) {
+            Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+            }
+            if ($AfterRemoveScript) {
+            Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
+            }
+        }
 
-    # Magic to get path output
-    $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+        # Magic to get path output
+        $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-    if ($Environment.IsMacOS) {
-        if($pscmdlet.ShouldProcess("Fix package name"))
+        if ($Environment.IsMacOS) {
+            if($pscmdlet.ShouldProcess("Fix package name"))
+            {
+                # Add the OS information to the macOS package file name.
+                $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
+                $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
+
+                $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
+                $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
+                $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
+            }
+        }
+
+        if (Test-Path $createdPackage)
         {
-            # Add the OS information to the macOS package file name.
-            $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
-            $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
-
-            $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
-            $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
-            $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
+            return $createdPackage
         }
-    }
-
-    if (Test-Path $createdPackage)
-    {
-        return $createdPackage
-    }
-    else
-    {
-        throw "Failed to create $createdPackage"
+        else
+        {
+            throw "Failed to create $createdPackage"
+        }
     }
 }
 
