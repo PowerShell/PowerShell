@@ -440,7 +440,7 @@ namespace System.Management.Automation
         {
             try
             {
-                return checked(Math.Pow(lhs, rhs);
+                return checked(Math.Pow(lhs, rhs));
             }
             catch (OverflowException oe)
             {
