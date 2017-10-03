@@ -2161,6 +2161,8 @@ namespace System.Management.Automation.Language
                     return BinarySub(target, arg, errorSuggestion).WriteToDebugLog(this);
                 case ExpressionType.Multiply:
                     return BinaryMultiply(target, arg, errorSuggestion).WriteToDebugLog(this);
+                case ExpressionType.PowerOf:
+                    return BinaryPowerOf(target, arg, errorSuggestion).WriteToDebugLog(this);
                 case ExpressionType.Divide:
                     return BinaryDivide(target, arg, errorSuggestion).WriteToDebugLog(this);
                 case ExpressionType.Modulo:
@@ -2221,6 +2223,7 @@ namespace System.Management.Automation.Language
                 case ExpressionType.Add: return TokenKind.Plus.Text();
                 case ExpressionType.Subtract: return TokenKind.Minus.Text();
                 case ExpressionType.Multiply: return TokenKind.Multiply.Text();
+                case ExpressionType.PowerOf: return TokenKind.PowerOf.Tex();
                 case ExpressionType.Divide: return TokenKind.Divide.Text();
                 case ExpressionType.Modulo: return TokenKind.Rem.Text();
                 case ExpressionType.And: return TokenKind.Band.Text();
@@ -2695,7 +2698,7 @@ namespace System.Management.Automation.Language
 
         private DynamicMetaObject BinarySub(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
         {
-            return BinarySubDivOrRem(target, arg, errorSuggestion, "Sub", "op_Subtraction", "-");
+            return BinarySubDivPowOrRem(target, arg, errorSuggestion, "Sub", "op_Subtraction", "-");
         }
 
         private DynamicMetaObject BinaryMultiply(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
@@ -2760,22 +2763,27 @@ namespace System.Management.Automation.Language
             return CallImplicitOp("op_Multiply", target, arg, "*", errorSuggestion);
         }
 
+        private DynamicMetaObject BinaryPowerOf(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
+        {
+            return BinarySubDivPowOrRem(target, arg, errorSuggestion, "PowerOf", "op_PowerOf", "**");
+        }
+
         private DynamicMetaObject BinaryDivide(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
         {
-            return BinarySubDivOrRem(target, arg, errorSuggestion, "Divide", "op_Division", "/");
+            return BinarySubDivPowOrRem(target, arg, errorSuggestion, "Divide", "op_Division", "/");
         }
 
         private DynamicMetaObject BinaryRemainder(DynamicMetaObject target, DynamicMetaObject arg, DynamicMetaObject errorSuggestion)
         {
-            return BinarySubDivOrRem(target, arg, errorSuggestion, "Remainder", "op_Modulus", "%");
+            return BinarySubDivPowOrRem(target, arg, errorSuggestion, "Remainder", "op_Modulus", "%");
         }
 
-        private DynamicMetaObject BinarySubDivOrRem(DynamicMetaObject target,
-                                                    DynamicMetaObject arg,
-                                                    DynamicMetaObject errorSuggestion,
-                                                    string numericOpMethodName,
-                                                    string implicitOpMethodName,
-                                                    string errorOperatorText)
+        private DynamicMetaObject BinarySubDivPowOrRem(DynamicMetaObject target,
+                                                       DynamicMetaObject arg,
+                                                       DynamicMetaObject errorSuggestion,
+                                                       string numericOpMethodName,
+                                                       string implicitOpMethodName,
+                                                       string errorOperatorText)
         {
             if (target.Value == null)
             {
