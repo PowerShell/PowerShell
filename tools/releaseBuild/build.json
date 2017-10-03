@@ -23,6 +23,30 @@
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
         "DockerImageName": "ps-winsrvcore"
+    },
+    {
+        "Name": "win7-x64-symbols",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x64 -ReleaseTag _ReleaseTag_ -Symbols",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
+        "DockerImageName": "ps-winsrvcore"
+    },
+    {
+        "Name": "win7-x86-symbols",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x86 -ReleaseTag _ReleaseTag_ -Symbols",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
+        "DockerImageName": "ps-winsrvcore"
     }
   ],
   "Linux": [
