@@ -2277,7 +2277,6 @@ namespace Microsoft.PowerShell.Commands
                             ServiceResources.CouldNotNewServiceDelayedAutoStart,
                             ErrorCategory.PermissionDenied);
                     }
-                    Marshal.FreeCoTaskMem(buffer);
                 }
 
                 // write the ServiceController for the new service
