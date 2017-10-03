@@ -1756,6 +1756,7 @@ namespace Microsoft.PowerShell.Commands
 
                     NakedWin32Handle hScManager = IntPtr.Zero;
                     NakedWin32Handle hService = IntPtr.Zero;
+                    IntPtr delayedAutoStartInfoBuffer = IntPtr.Zero;
                     try
                     {
                         hScManager = NativeMethods.OpenSCManagerW(
@@ -1868,15 +1869,14 @@ namespace Microsoft.PowerShell.Commands
                         NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
                         ds.fDelayedAutostart = StartupType == ServiceStartupType.AutomaticDelayedStart;
                         size = Marshal.SizeOf(ds);
-                        buffer = Marshal.AllocCoTaskMem(size);
-                        Marshal.StructureToPtr(ds, buffer, false);
+                        delayedAutoStartInfoBuffer = Marshal.AllocCoTaskMem(size);
+                        Marshal.StructureToPtr(ds, delayedAutoStartInfoBuffer, false);
 
                         status = NativeMethods.ChangeServiceConfig2W(
                             hService,
                             NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
-                            buffer);
+                            delayedAutoStartInfoBuffer);
 
-                        Marshal.FreeCoTaskMem(buffer);
                         if (!status)
                         {
                             int lastError = Marshal.GetLastWin32Error();
@@ -1950,6 +1950,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     finally
                     {
+                        if (IntPtr.Zero != delayedAutoStartInfoBuffer)
+                        {
+                            Marshal.FreeCoTaskMem(delayedAutoStartInfoBuffer);
+                        }
+
                         if (IntPtr.Zero != hService)
                         {
                             bool succeeded = NativeMethods.CloseServiceHandle(hService);
@@ -2123,6 +2128,7 @@ namespace Microsoft.PowerShell.Commands
             NakedWin32Handle hScManager = IntPtr.Zero;
             NakedWin32Handle hService = IntPtr.Zero;
             IntPtr password = IntPtr.Zero;
+            IntPtr delayedAutoStartInfoBuffer = IntPtr.Zero;
             try
             {
                 hScManager = NativeMethods.OpenSCManagerW(
@@ -2250,13 +2256,13 @@ namespace Microsoft.PowerShell.Commands
                     NativeMethods.SERVICE_DELAYED_AUTO_START_INFO ds = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
                     ds.fDelayedAutostart = true;
                     size = Marshal.SizeOf(ds);
-                    buffer = Marshal.AllocCoTaskMem(size);
-                    Marshal.StructureToPtr(ds, buffer, false);
+                    delayedAutoStartInfoBuffer = Marshal.AllocCoTaskMem(size);
+                    Marshal.StructureToPtr(ds, delayedAutoStartInfoBuffer, false);
 
                     succeeded = NativeMethods.ChangeServiceConfig2W(
                         hService,
                         NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO,
-                        buffer);
+                        delayedAutoStartInfoBuffer);
 
                     if (!succeeded)
                     {
@@ -2283,6 +2289,11 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
+                if (IntPtr.Zero != delayedAutoStartInfoBuffer)
+                {
+                    Marshal.FreeCoTaskMem(delayedAutoStartInfoBuffer);
+                }
+
                 if (IntPtr.Zero != password)
                 {
                     Marshal.ZeroFreeCoTaskMemUnicode(password);
