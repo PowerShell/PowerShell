@@ -1593,7 +1593,7 @@ namespace System.Management.Automation
                             }
 
                             int unUsedChildrenNotMatchingFilterCriteria = 0;
-                            ProcessPathItems(providerInstance, providerPath, recurse, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                            ProcessPathItems(providerInstance, providerPath, recurse, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate, depth: depth);
                         }
                     }
                     else
@@ -1836,6 +1836,10 @@ namespace System.Management.Automation
         ///
         /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
         ///
+        /// <param name="depth">
+        /// Limits the depth of recursion; uint.MaxValue performs full recursion.
+        /// </param>
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
@@ -1860,7 +1864,8 @@ namespace System.Management.Automation
             CmdletProviderContext context,
             out int childrenNotMatchingFilterCriteria,
             ProcessMode processMode = ProcessMode.Enumerate,
-            bool skipIsItemContainerCheck = false)
+            bool skipIsItemContainerCheck = false,
+            uint depth = uint.MaxValue)
         {
             ContainerCmdletProvider containerCmdletProvider = GetContainerProviderInstance(providerInstance);
             childrenNotMatchingFilterCriteria = 0;
@@ -2016,7 +2021,7 @@ namespace System.Management.Automation
                     }
 
                     // Now recurse if it is a container
-                    if (recurse && IsPathContainer(providerInstance, qualifiedPath, context))
+                    if (recurse && IsPathContainer(providerInstance, qualifiedPath, context) && depth > 0)
                     {
                         // Making sure to obey the StopProcessing.
                         if (context.Stopping)
@@ -2024,7 +2029,7 @@ namespace System.Management.Automation
                             return;
                         }
                         // The item is a container so recurse into it.
-                        ProcessPathItems(providerInstance, qualifiedPath, recurse, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
+                        ProcessPathItems(providerInstance, qualifiedPath, recurse, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true, depth: depth - 1);
                     }
                 } // for each childName
             }
