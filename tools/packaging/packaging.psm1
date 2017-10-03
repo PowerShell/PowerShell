@@ -270,6 +270,8 @@ function New-UnixPackage {
 
     DynamicParam {
         if ($Type -eq "deb") {
+            # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
+            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:DebianDistributions
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
