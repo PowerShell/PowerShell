@@ -180,6 +180,21 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
   as it obscures the functional changes of the PR.
   A separate PR should be submitted for such refactoring without any functional changes.
 
+* Avoid initializing variables, fields and auto-implemented properties to zero or null because C# guarantees its are initialized to zero.
+
+* Follow Microsoft best practise guidances:
+  * [Framework Design Guidelines](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/index) - Naming, Design and Usage guidelines including:
+    * [Arrays](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/arrays)
+    * [Collections](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/guidelines-for-collections)
+    * [Exceptions](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/exceptions)
+  * [Best Practices for Developing World-Ready Applications](https://docs.microsoft.com/en-us/dotnet/standard/globalization-localization/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
+  * [Best Practices for System.Net Classes](https://docs.microsoft.com/en-us/dotnet/framework/network-programming/best-practices-for-system-net-classes)
+  * [Best practices for exceptions](https://docs.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions)
+  * [Best Practices for Using Strings in .NET](https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings)
+  * [Best Practices for Regular Expressions in .NET](https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices)
+  * [Serialization guidelines](https://docs.microsoft.com/en-us/dotnet/standard/serialization/serialization-guidelines)
+  * [Managed Threading Best Practices](https://docs.microsoft.com/en-us/dotnet/standard/threading/managed-threading-best-practices)
+
 ## Portable Code
 
 There are 3 primary preprocessor macros we use during builds:
