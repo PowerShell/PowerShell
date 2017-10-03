@@ -432,6 +432,13 @@ journalctl
 SystemD
 #endregion
 
+#region demos/WindowsPowerShellModules/README.md Overrides
+ - demos/WindowsPowerShellModules/README.md
+PowerShellGallery
+PSSnapins
+WindowsPSModulePath
+#endregion
+
 #region docker/README.md Overrides
  - docker/README.md
 andschwa's
