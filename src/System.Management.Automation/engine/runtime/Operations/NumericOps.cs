@@ -45,9 +45,9 @@ namespace System.Management.Automation
             return (double)result;
         }
 
-        internal static object PowerOf(int lhs, int rhs)
+        internal static object Power(int lhs, int rhs)
         {
-            long result = Math.Pow((long)lhs, (long)lrs);
+            double result = Math.Pow((double)lhs, (double)rhs);
             if (result <= int.MaxValue && result >= int.MinValue)
             {
                 return (int)result;
@@ -168,9 +168,9 @@ namespace System.Management.Automation
             return (double)result;
         }
 
-        internal static object PowerOf(uint lhs, uint rhs)
+        internal static object Power(uint lhs, uint rhs)
         {
-            ulong result = Math.Pow((ulong)lhs, (ulong)rhs);
+            double result = Math.Pow((double)lhs, (double)rhs);
             if (result <= uint.MaxValue)
             {
                 return (uint)result;
@@ -255,7 +255,7 @@ namespace System.Management.Automation
             return (double)biResult;
         }
 
-        internal static object PowerOf(long lhs, long rhs)
+        internal static object Power(long lhs, long rhs)
         {
            return Math.Pow(lhs, rhs);
         }
@@ -351,9 +351,9 @@ namespace System.Management.Automation
             return (double)biResult;
         }
 
-        internal static object PowerOf(ulong lhs, ulong rhs)
+        internal static object Power(ulong lhs, ulong rhs)
         {
-            return Math.Pow(lhs, rhs);
+            return Math.Pow((double)lhs, (double)rhs);
         }
 
         internal static object Divide(ulong lhs, ulong rhs)
@@ -429,18 +429,6 @@ namespace System.Management.Automation
             try
             {
                 return checked(lhs * rhs);
-            }
-            catch (OverflowException oe)
-            {
-                throw new RuntimeException(oe.Message, oe);
-            }
-        }
-
-        internal static object PowrOf(decimal lhs, decimal rhs)
-        {
-            try
-            {
-                return checked(Math.Pow(lhs, rhs));
             }
             catch (OverflowException oe)
             {
@@ -695,7 +683,7 @@ namespace System.Management.Automation
             return lhs * rhs;
         }
 
-        internal static object PowerOf(double lhs, double rhs)
+        internal static object Power(double lhs, double rhs)
         {
             return Math.Pow(lhs, rhs);
         }
