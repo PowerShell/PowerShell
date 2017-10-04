@@ -165,4 +165,54 @@ Describe "DSC MOF Compilation" -tags "CI" {
         Remove-Item -Force -Recurse -Path WordPressServer
     }
 
+	It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux) {
+        [Scriptblock]::Create(@"
+        configuration DSCTestConfig
+        {
+            Import-DscResource -ModuleName PSDesiredStateConfiguration
+            Node "localhost" {
+                File f1
+                {
+                    DestinationPath = "$env:SystemDrive\\Test.txt";
+					Ensure = "Present"
+                }
+            }
+        }
+
+        DSCTestConfig
+"@).Invoke()
+
+        Remove-Item -Force -Recurse -Path DSCTestConfig
+    }
+
+	It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux) {
+        [Scriptblock]::Create(@"
+        configuration DSCTestConfig
+        {
+            Import-DscResource -ModuleName PSDesiredStateConfiguration
+            Node "localhost" {
+                File f1
+                {
+                    DestinationPath = "$env:SystemDrive\\Test.txt";
+					Ensure = "Present"
+                }
+				Script s1
+				{
+					GetScript = {return @{}}
+					SetScript = "Write-Verbose Hello"
+					TestScript = {return $false}
+				}
+				Log l1
+				{
+					Message = "This is a log message"
+				}
+            }
+        }
+
+        DSCTestConfig
+"@).Invoke()
+
+        Remove-Item -Force -Recurse -Path DSCTestConfig
+    }
+
 }
