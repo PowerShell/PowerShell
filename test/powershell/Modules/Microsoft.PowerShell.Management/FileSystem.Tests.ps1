@@ -200,21 +200,41 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
              }
          }
 
-         It "Set-Location on Unix succeeds with folder with colon" -Skip:($IsWindows) {
-             New-Item -Path "$testdrive\hello:world" -ItemType Directory > $null
-             Set-Location "$testdrive"
-             Set-Location ".\hello:world"
-             (Get-Location).Path | Should Be "$testdrive/hello:world"
+         It "Set-Location on Unix succeeds with folder with colon: <path>" -Skip:($IsWindows) -TestCases @(
+             @{path="\hello:world"},
+             @{path="\:world"},
+             @{path="/hello:"}
+         ) {
+            param($path)
+            try {
+                New-Item -Path "$testdrive$path" -ItemType Directory > $null
+                Set-Location "$testdrive"
+                Set-Location ".$path"
+                (Get-Location).Path | Should Be "$testdrive/$($path.Substring(1,$path.Length-1))"
+            }
+            finally {
+                Remove-Item -Path "$testdrive$path" -ErrorAction SilentlyContinue
+            }
          }
 
-         It "Get-Content on Unix succeeds with folder and file with colon" -Skip:($IsWindows) {
-            $testPath = "$testdrive/hello:world"
-            New-Item -Path $testPath -ItemType Directory > $null
-            Set-Content -Path "$testPath\foo:bar.txt" -Value "Hello"
-            $files = Get-ChildItem "$testPath"
-            $files.Count | Should Be 1
-            $files[0].Name | Should BeExactly "foo:bar.txt"
-            $files[0] | Get-Content | Should BeExactly "Hello"
+         It "Get-Content on Unix succeeds with folder and file with colon: <path>" -Skip:($IsWindows) -TestCases @(
+             @{path="\foo:bar.txt"},
+             @{path="/foo:"},
+             @{path="\:bar"}
+         ) {
+            param($path)
+            try {
+                $testPath = "$testdrive/hello:world"
+                New-Item -Path "$testPath" -ItemType Directory > $null
+                Set-Content -Path "$testPath$path" -Value "Hello"
+                $files = Get-ChildItem "$testPath"
+                $files.Count | Should Be 1
+                $files[0].Name | Should BeExactly $path.Substring(1,$path.Length-1)
+                $files[0] | Get-Content | Should BeExactly "Hello"
+            }
+            finally {
+                Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
+            }
          }
     }
 
