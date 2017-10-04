@@ -415,7 +415,7 @@ namespace System.Management.Automation.Language
         Colon = 99,
 
         /// <summary>The power of operator '**'.</summary>
-        PowerOf = 100,
+        Power = 100,
 
         #endregion Operators
 
@@ -851,7 +851,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*             PowerOf  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceMultiply | TokenFlags.CanConstantFold,
+            /*               Power  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceMultiply | TokenFlags.CanConstantFold,
             /*     Reserved slot 3  */ TokenFlags.None,
             /*     Reserved slot 4  */ TokenFlags.None,
             /*     Reserved slot 5  */ TokenFlags.None,
@@ -1049,7 +1049,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*            PowerOf   */ "**",
+            /*              Power   */ "**",
             /*    Reserved slot 3   */ "",
             /*    Reserved slot 4   */ "",
             /*    Reserved slot 5   */ "",

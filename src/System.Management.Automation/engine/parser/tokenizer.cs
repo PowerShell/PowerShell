@@ -4016,7 +4016,7 @@ namespace System.Management.Automation.Language
                     if(c1 == '*')
                     {
                         SkipChar();
-                        return CheckOperatorInCommandMode(c, c1, TokenKind.PowerOf);
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.Power);
                     }
 
                     return CheckOperatorInCommandMode(c, TokenKind.Multiply);
