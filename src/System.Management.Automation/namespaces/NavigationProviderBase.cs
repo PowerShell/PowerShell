@@ -426,9 +426,10 @@ namespace System.Management.Automation.Provider
                     StringBuilder builder = new StringBuilder(parent, parent.Length + child.Length + 1);
 #if !UNIX
                     // On Windows, if we have a single backslash for the parent, it's a UNC path so we need to add another backslash back
-                    if (String.Compare(parent, StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) == 0)
+                    if (this.ProviderInfo.FullName.Equals(@"Microsoft.PowerShell.Core\FileSystem", StringComparison.OrdinalIgnoreCase) &&
+                        String.Compare(parent, StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal) == 0)
                     {
-                        builder.Append('\\');
+                        builder.Append(StringLiterals.DefaultPathSeparator);
                     }
 #endif
 
