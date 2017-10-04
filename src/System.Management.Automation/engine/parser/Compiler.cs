@@ -4911,6 +4911,13 @@ namespace System.Management.Automation.Language
                     }
                     binder = PSBinaryOperationBinder.Get(ExpressionType.Multiply);
                     return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
+                case TokenKind.Power:
+                    if(lhs.Type == typeof(double) && rhs.Type == typeof(double))
+                    {
+                        return Expression.Power(lhs, rhs);
+                    }
+                    binder = PSBinaryOperationBinder.Get(ExpressionType.Power);
+                    return DynamicExpression.Dynamic(binder, typeof(object), lhs, rhs);
                 case TokenKind.Divide:
                     if (lhs.Type == typeof(double) && rhs.Type == typeof(double))
                     {
