@@ -40,22 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-#if CORECLR
             JsonObject.ImportJsonDotNetModule(this);
-#else
-            try
-            {
-                System.Reflection.Assembly.Load(new AssemblyName("System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new NotSupportedException(WebCmdletStrings.ExtendedProfileRequired),
-                    "ExtendedProfileRequired",
-                    ErrorCategory.NotInstalled,
-                    null));
-            }
-#endif
         }
 
         /// <summary>
