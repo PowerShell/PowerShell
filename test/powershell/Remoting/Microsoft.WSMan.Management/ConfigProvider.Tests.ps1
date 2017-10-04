@@ -5,6 +5,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
         if ($IsWindows) {
+            Start-Service WinRM
             $badCredentialError = 1326
             $pluginXml = [xml](winrm g winrm/config/plugin?name=microsoft.powershell -format:xml)
             $pluginPath = "WSMan:\localhost\Plugin\microsoft.powershell"
@@ -60,19 +61,6 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $wsmanDrive2 | Should BeOfType System.Management.Automation.PSDriveInfo
             $wsmanDrive2.Name | Should BeExactly "WSMan"
             $wsmanDrive2.Provider.Name | Should BeExactly "WSMan"
-        }
-
-        It "WSMan Config Provider starts WinRM if it is stopped" {
-            try {
-                Stop-Service WinRM
-                Get-ChildItem wsman:\localhost -Force | Should Not BeNullOrEmpty
-                (Get-Service WinRM).Status | Should Be 'Running'
-            }
-            finally {
-                if ((Get-Service WinRM).Status -eq 'stopped') {
-                    Start-Service WinRM
-                }
-            }
         }
     }
 
@@ -168,7 +156,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         It "Set-Item and Clear-Item on plugin RunAsUser should succeed for valid creds" {
             $password = ConvertTo-SecureString $testPass -AsPlainText -Force
             $creds = [pscredential]::new($testUser,$password)
-            Set-Item $testPluginPath\RunAsUser $creds -WarningAction SilentlyContinue
+            Set-Item $testPluginPath\RunAsUser $creds -Force -WarningAction SilentlyContinue
             (Get-Item $testPluginPath\RunAsUser).Value | Should Be $testUser
             (Get-Item $testPluginPath\RunAsPassword).Value | Should Be "System.Security.SecureString"
             Clear-Item $testPluginPath\RunAsUser -WarningAction SilentlyContinue
@@ -202,7 +190,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             @{type="TEXT"}
         ) {
             param ($type)
-            Set-Item $testPluginPath\XmlRenderingType $type -WarningAction SilentlyContinue
+            Set-Item $testPluginPath\XmlRenderingType $type -Force -WarningAction SilentlyContinue
             (Get-Item $testPluginPath\XmlRenderingType).Value | Should Be $type
         }
 
@@ -216,7 +204,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         ) {
             param($property, $value, $expected)
             $resource = Get-ChildItem "$testPluginPath\Resources" | Select-Object -First 1
-            Set-Item "$($resource.PSPath)\$property" $value -WarningAction SilentlyContinue
+            Set-Item "$($resource.PSPath)\$property" $value -Force -WarningAction SilentlyContinue
             (Get-Item "$($resource.PSPath)\$property").Value | Should BeExactly $expected
         }
 
@@ -248,7 +236,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             @{property="psvERSION"; value="5.1"}
         ) {
             param($property, $value)
-            Set-Item "$testPluginPath\InitializationParameters\$property" $value -WarningAction SilentlyContinue
+            Set-Item "$testPluginPath\InitializationParameters\$property" $value -WarningAction SilentlyContinue -Force
             (Get-Item "$testPluginPath\InitializationParameters\$property").Value | Should Be $value
         }
 
@@ -259,8 +247,8 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             @{property="mAXsHELLS"; value=2147483647}
             ) {
             param($property, $value)
-            Set-Item "$testPluginPath\Quotas\$property" $value -WarningAction SilentlyContinue
-            (Get-Item "$testPluginPath\Quotas\$property").Value | Should Be $value
+            Set-Item "$testPluginPath\Quotas\$property" $value -WarningAction SilentlyContinue -Force
+            (Get-Item "$testPluginPath\Quotas\$property" -Force).Value | Should Be $value
         }
 
         It "Set-Item on plugin Quotas out of range on '<property>' property with '<value>' should fail" -TestCases @(
@@ -433,6 +421,30 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             }
             finally {
                 Pop-Location
+            }
+        }
+    }
+}
+
+Describe "ConfigProvider Scenario tests" -Tags Scenario,RequireAdminOnWindows {
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+    }
+
+    AfterAll {
+        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "WSMan Config Provider starts WinRM if it is stopped" {
+        try {
+            Stop-Service WinRM
+            Get-ChildItem wsman:\localhost -Force | Should Not BeNullOrEmpty
+            (Get-Service WinRM).Status | Should Be 'Running'
+        }
+        finally {
+            if ((Get-Service WinRM).Status -eq 'stopped') {
+                Start-Service WinRM
             }
         }
     }

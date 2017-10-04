@@ -34,6 +34,13 @@ try
     {
         Describe "Validate Register-PSSessionConfiguration" -Tags @("CI", 'RequireAdminOnWindows') {
 
+            BeforeAll {
+                if ($IsNotSkipped)
+                {
+                    Start-Service WinRM
+                }
+            }
+
             AfterAll {
                 if ($IsNotSkipped)
                 {

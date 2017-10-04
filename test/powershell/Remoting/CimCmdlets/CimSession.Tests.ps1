@@ -5,6 +5,10 @@ try {
     Describe "New-CimSession" -Tag @("CI") {
         BeforeAll {
             $sessions = @()
+            if ($IsWindows)
+            {
+                Start-Service WinRM
+            }
         }
         AfterEach {
             try {

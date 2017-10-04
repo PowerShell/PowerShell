@@ -481,6 +481,7 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
+            Start-Service WinRM
             $beforeTab = 'wsman::localh'
             $afterTab = 'wsman::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
@@ -1013,6 +1014,10 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        if ($IsWindows)
+        {
+            Start-Service WinRM
+        }
     }
 
     AfterAll {
@@ -1022,7 +1027,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     It "Tab completion works correctly for Listeners" {
         $path = "wsman:\localhost\listener\listener"
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
-        $listener = Get-ChildItem WSMan:\localhost\Listener
+        $listener = Get-ChildItem WSMan:\localhost\Listener -Force
         $res.CompletionMatches.Count | Should Be $listener.Count
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
             $res.CompletionMatches[$i].ListItemText | Should Be $listener[$i].Name

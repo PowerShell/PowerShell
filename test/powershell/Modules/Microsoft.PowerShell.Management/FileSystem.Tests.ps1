@@ -238,45 +238,6 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
          }
     }
 
-    Context "Validate behavior when access is denied" {
-        BeforeAll {
-            $powershell = Join-Path $PSHOME "pwsh"
-            if ($IsWindows)
-            {
-                $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
-                $protectedPath2 = Join-Path $protectedPath "Install"
-                $newItemPath = Join-Path $protectedPath "foo"
-            }
-        }
-
-        It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
-            # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
-            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
-            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
-            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
-            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
-            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
-            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
-        ) {
-            param ($cmdline, $expectedError)
-
-            # generate a filename to use for the error and done text files to avoid test output collision
-            # when a timeout occurs waiting for powershell.
-            $fileNameBase = ([string] $cmdline).GetHashCode().ToString()
-            $errFile = Join-Path -Path $TestDrive -ChildPath "$fileNameBase.error.txt"
-            $doneFile = Join-Path -Path $TestDrive -Childpath "$fileNameBase.done.txt"
-
-            # Seed the error file with text indicating a timeout waiting for the command.
-            "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
-
-            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
-            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 15 -IntervalInMilliseconds 100
-
-            $err = Get-Content $errFile
-            $err | Should Be $expectedError
-        }
-    }
-
     Context "Validate basic host navigation functionality" {
         BeforeAll {
             #build semi-complex directory structure to test navigation within
@@ -1386,6 +1347,47 @@ Describe "UNC paths" -Tags 'CI' {
         }
         finally {
             Set-Location $originalLocation
+        }
+    }
+}
+
+Describe "FileSystem Scenario Tests" -Tags Scenario {
+    Context "Validate behavior when access is denied" {
+        BeforeAll {
+            $powershell = Join-Path $PSHOME "powershell"
+            if ($IsWindows)
+            {
+                $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
+                $protectedPath2 = Join-Path $protectedPath "Install"
+                $newItemPath = Join-Path $protectedPath "foo"
+            }
+        }
+
+        It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+            # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
+            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
+            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
+            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
+            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
+            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
+        ) {
+            param ($cmdline, $expectedError)
+
+            # generate a filename to use for the error and done text files to avoid test output collision
+            # when a timeout occurs waiting for powershell.
+            $fileNameBase = ([string] $cmdline).GetHashCode().ToString()
+            $errFile = Join-Path -Path $TestDrive -ChildPath "$fileNameBase.error.txt"
+            $doneFile = Join-Path -Path $TestDrive -Childpath "$fileNameBase.done.txt"
+
+            # Seed the error file with text indicating a timeout waiting for the command.
+            "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
+
+            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 15 -IntervalInMilliseconds 100
+
+            $err = Get-Content $errFile
+            $err | Should Be $expectedError
         }
     }
 }

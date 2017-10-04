@@ -16,7 +16,7 @@ try
     {
         # Check to see if a default endpoint has been created
         $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
-        $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+        $matchedEndpoint = Get-PSSessionConfiguration $endpointName -Force -ErrorAction SilentlyContinue
 
         if ($matchedEndpoint -eq $null)
         {
@@ -24,7 +24,7 @@ try
             #
             # -SkipNetworkProfileCheck is used in case Docker or another application
             # has created a publich virtual network profile on the system
-            Enable-PSRemoting -SkipNetworkProfileCheck
+            Enable-PSRemoting -SkipNetworkProfileCheck -Force
         }
     }
 
@@ -2009,7 +2009,7 @@ try
         BeforeAll {
             # Skip tests for CoreCLR for now
             # Skip tests if .NET 2.0 and PS 2.0 are not installed on the machine
-            $skipThisTest = $skipTest -or $IsCoreCLR -or 
+            $skipThisTest = $skipTest -or $IsCoreCLR -or
                 (! (Test-Path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727')) -or
                 (! (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'))
 

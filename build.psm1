@@ -845,7 +845,11 @@ function Start-PSPester {
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
-        [switch]$IncludeFailingTest
+        [switch]$IncludeFailingTest,
+        [Parameter(ParameterSetName='RunspacePool')]
+        [switch]$UseRunspacePool,
+        [Parameter(ParameterSetName='RunspacePool')]
+        [int]$MaxRunspacePool = 4
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue))
@@ -857,88 +861,6 @@ Make sure that the proper git submodules are installed by running:
 "@
         return;
     }
-
-    if ($IncludeFailingTest.IsPresent)
-    {
-        $Path += "$PSScriptRoot/tools/failingTests"
-    }
-
-    # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
-    if ($Unelevate)
-    {
-        if (-not $Environment.IsWindows)
-        {
-            throw '-Unelevate is currently not supported on non-Windows platforms'
-        }
-
-        if (-not $Environment.IsAdmin)
-        {
-            throw '-Unelevate cannot be applied because the current user is not Administrator'
-        }
-
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
-            $ExcludeTag += 'RequireAdminOnWindows'
-        }
-    }
-    elseif ($Environment.IsWindows -and (-not $Environment.IsAdmin))
-    {
-        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
-        {
-            $ExcludeTag += 'RequireAdminOnWindows'
-        }
-    }
-
-    Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
-    Publish-PSTestTools | ForEach-Object {Write-Host $_}
-
-    # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $Command = ""
-    if ($Terse)
-    {
-        $Command += "`$ProgressPreference = 'silentlyContinue'; "
-    }
-
-    # Autoload (in subprocess) temporary modules used in our tests
-    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
-
-    # Windows needs the execution policy adjusted
-    if ($Environment.IsWindows) {
-        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
-    }
-
-    $Command += "Import-Module '$Pester'; "
-
-    if ($Unelevate)
-    {
-        $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
-    }
-
-    $Command += "Invoke-Pester "
-
-    $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
-    if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
-    }
-    if ($Tag) {
-        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
-    }
-    # sometimes we need to eliminate Pester output, especially when we're
-    # doing a daily build as the log file is too large
-    if ( $Quiet ) {
-        $Command += "-Quiet "
-    }
-    if ( $PassThru ) {
-        $Command += "-PassThru "
-    }
-
-    $Command += "'" + ($Path -join "','") + "'"
-    if ($Unelevate)
-    {
-        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
-    }
-
-    Write-Verbose $Command
 
     $script:nonewline = $true
     $script:inerror = $false
@@ -983,83 +905,306 @@ Make sure that the proper git submodules are installed by running:
         }
     }
 
-    # To ensure proper testing, the module path must not be inherited by the spawned process
-    try {
-        $originalModulePath = $env:PSModulePath
-        if ($Unelevate)
-        {
-            Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
-            $currentLines = 0
-            while ($true)
-            {
-                $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
-                if ($Terse)
-                {
-                    foreach ($line in $lines)
-                    {
-                        Write-Terse -line $line
-                    }
-                }
-                else
-                {
-                    $lines | Write-Host
-                }
-                if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
-                {
-                    break
-                }
+    if ($IncludeFailingTest.IsPresent)
+    {
+        $Path += "$PSScriptRoot/tools/failingTests"
+    }
 
-                $count = ($lines | measure-object).Count
-                if ($count -eq 0)
-                {
-                    Start-Sleep -Seconds 1
-                }
-                else
-                {
-                    $currentLines += $count
-                }
+    # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
+    if ($Unelevate)
+    {
+        if (-not $Environment.IsWindows)
+        {
+            throw '-Unelevate is currently not supported on non-Windows platforms'
+        }
+
+        if (-not $Environment.IsAdmin)
+        {
+            throw '-Unelevate cannot be applied because the current user is not Administrator'
+        }
+
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
+        {
+            $ExcludeTag += 'RequireAdminOnWindows'
+        }
+    }
+    elseif ($Environment.IsWindows -and (-not $Environment.IsAdmin))
+    {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
+        {
+            $ExcludeTag += 'RequireAdminOnWindows'
+        }
+    }
+
+    Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
+
+    Publish-PSTestTools | ForEach-Object {Write-Host $_}
+
+    # All concatenated commands/arguments are suffixed with the delimiter (space)
+    $Command = ""
+    if ($Terse)
+    {
+        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+    }
+
+    # Autoload (in subprocess) temporary modules used in our tests
+    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
+
+    # Windows needs the execution policy adjusted
+    if ($Environment.IsWindows) {
+        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+    }
+
+    $Command += "Import-Module '$Pester'; "
+
+    if ($Unelevate)
+    {
+        $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+    }
+
+    $testPaths = @{}
+    if ($UseRunspacePool)
+    {
+        # Find all directories that contain .Tests.ps1 files
+        $testScriptPaths = @()
+        foreach ($subPath in $Path)
+        {
+            $testScriptPaths += (Get-ChildItem -Recurse -Path $subPath -Filter *.?ests.ps1 | Select-Object -Property DirectoryName -Unique).DirectoryName
+        }
+        # Remove any child paths included in parents
+        $prevPath = (Get-Random).ToString()
+        foreach ($testPath in $testScriptPaths)
+        {
+            if (!$testPath.Contains($prevPath))
+            {
+                $prevPath = $testPath
+                $testPaths += @{$testPath=$true}
             }
         }
-        else
+    }
+
+    $Command += "Invoke-Pester -OutputFormat ${OutputFormat} "
+    if ($ExcludeTag -and ($ExcludeTag -ne "")) {
+        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+    }
+    if ($Tag) {
+        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+    }
+    # sometimes we need to eliminate Pester output, especially when we're
+    # doing a daily build as the log file is too large
+    if ( $Quiet ) {
+        $Command += "-Quiet "
+    }
+    if ( $PassThru ) {
+        $Command += "-PassThru "
+    }
+
+    if ($UseRunspacePool)
+    {
+        $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+        $runspacePool = [runspacefactory]::CreateRunspacePool(1, $MaxRunspacePool)
+        $null = $runspacePool.Open()
+
+        $testJobs = $testPaths.Keys.Clone()
+        foreach ($testPath in $testJobs)
         {
-            if ($PassThru.IsPresent)
+            $psh = [powershell]::Create()
+            $psh.RunspacePool = $runspacePool
+            $outputFile = New-TemporaryFile
+            $testCommand = $command + "-OutputFile $outputFile -Path $testPath"
+            $null = $psh.AddScript({
+                param($command, $powershell)
+                & $powershell -nop -nologo -c $Command
+            }).AddArgument($testCommand).AddArgument($powershell)
+            # run Remoting tests last
+            $handle = $null
+            if (!$testPath.EndsWith([System.IO.Path]::DirectorySeparatorChar + "Remoting"))
             {
-                $passThruFile = [System.IO.Path]::GetTempFileName()
-                try
+                $handle = $psh.BeginInvoke()
+            }
+            $testPaths[$testPath] = @{PowerShell=$psh;Handle=$handle;OutputFile=$outputFile}
+        }
+        $jobsLeft = $testPaths.Count
+        Write-Host "Total jobs: $jobsLeft" -ForegroundColor Yellow
+        $passed = 0
+        $failed = 0
+        $skipped = 0
+        $pending = 0
+        while ($jobsLeft -gt 0)
+        {
+            $testJobs = $testPaths.Keys.Clone()
+            foreach ($testPath in $testJobs)
+            {
+                $handle = $testPaths[$testPath].Handle
+                if ($handle -eq $null)
                 {
-                    $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    if ($jobsLeft -eq 1)
+                    {
+                        $handle = $testPaths[$testPath].PowerShell.BeginInvoke()
+                        $testPaths[$testPath].Handle = $handle
+                    }
+                }
+                elseif ($handle.IsCompleted -eq "Completed")
+                {
+                    $output = $testPaths[$testPath].PowerShell.EndInvoke($handle)
+                    $jobsLeft--
+                    $resultsFound = $false
+                    [console]::ResetColor()
+                    Write-Host "Jobs Left: $jobsLeft Finished: $testPath" -ForegroundColor Magenta
+                    $inError = $false
+                    $output | ForEach-Object {
+                        $line = $_.Trim()
+                        if ($line -match "Passed: (?<passed>[0-9]*) Failed: (?<failed>[0-9]*) Skipped: (?<skipped>[0-9]*) Pending: (?<pending>[0-9]*)")
+                        {
+                            $passed += $matches["passed"]
+                            $failed += $matches["failed"]
+                            $skipped += $matches["skipped"]
+                            $pending += $matches["pending"]
+                            if ($VerbosePreference -eq "SilentlyContinue")
+                            {
+                                if ($matches["failed"] -gt 0)
+                                {
+                                    Write-Host $line -ForegroundColor Red
+                                }
+                                else
+                                {
+                                    Write-Host $line -ForegroundColor Green
+                                }
+                                $inError = $false
+                            }
+                            $resultsFound = $true
+                        }
+                        elseif ($line.StartsWith("[-]"))
+                        {
+                            $inError = $true
+                        }
+                        elseif ($line.StartsWith("[+]") -or $line.StartsWith("[!]") -or $line.StartsWith("[?]"))
+                        {
+                            $inError = $false
+                        }
+
+                        if ($inError -and ($VerbosePreference -eq "SilentlyContinue"))
+                        {
+                            Write-Host $_ -ForegroundColor Red
+                        }
+
+                        if ($VerbosePreference -eq "Continue")
+                        {
+                            $_
+                        }
+                    }
+                    $testPaths[$testPath].PowerShell.Dispose()
+                    $testPaths.Remove($testPath)
+                    if (!$resultsFound)
+                    {
+                        Write-Host "Job $testPath finished unsuccessfully without results" -ForegroundColor Red
+                    }
+                }
+            }
+            Start-Sleep -Seconds 5
+        }
+        [console]::ResetColor()
+        Write-Host "Totals:"
+        Write-Host "Passed: " -NoNewline
+        Write-Host $passed -ForegroundColor Green -NoNewline
+        Write-Host " Failed: " -NoNewline
+        Write-Host $failed -ForegroundColor Red -NoNewline
+        Write-Host " Skipped: " -NoNewline
+        Write-Host $skipped -ForegroundColor Magenta -NoNewline
+        Write-Host " Pending: " -NoNewline
+        Write-Host $pending -ForegroundColor Cyan
+    }
+    else
+    {
+        $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+        $Command += "-OutputFile ${OutputFile} "
+
+        $Command += "'" + ($Path -join "','") + "'"
+        if ($Unelevate)
+        {
+            $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+        }
+
+        Write-Verbose $Command
+
+        # To ensure proper testing, the module path must not be inherited by the spawned process
+        try {
+            $originalModulePath = $env:PSModulePath
+            if ($Unelevate)
+            {
+                Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
+                $currentLines = 0
+                while ($true)
+                {
+                    $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
                     if ($Terse)
                     {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                        foreach ($line in $lines)
+                        {
+                            Write-Terse -line $line
+                        }
                     }
                     else
                     {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                        $lines | Write-Host
                     }
-                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
-                }
-                finally
-                {
-                    Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                    if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
+                    {
+                        break
+                    }
+
+                    $count = ($lines | measure-object).Count
+                    if ($count -eq 0)
+                    {
+                        Start-Sleep -Seconds 1
+                    }
+                    else
+                    {
+                        $currentLines += $count
+                    }
                 }
             }
             else
             {
-                if ($Terse)
+                if ($PassThru.IsPresent)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                    $passThruFile = [System.IO.Path]::GetTempFileName()
+                    try
+                    {
+                        $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                        if ($Terse)
+                        {
+                            Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                        }
+                        else
+                        {
+                            Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                        }
+                        Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
+                    }
+                    finally
+                    {
+                        Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                    }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                    if ($Terse)
+                    {
+                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                    }
+                    else
+                    {
+                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                    }
                 }
             }
-        }
-    } finally {
-        $env:PSModulePath = $originalModulePath
-        if ($Unelevate)
-        {
-            Remove-Item $outputBufferFilePath
+        } finally {
+            $env:PSModulePath = $originalModulePath
+            if ($Unelevate)
+            {
+                Remove-Item $outputBufferFilePath
+            }
         }
     }
 
@@ -1067,6 +1212,9 @@ Make sure that the proper git submodules are installed by running:
     {
         Test-PSPesterResults -TestResultsFile $OutputFile
     }
+    $stopwatch.Stop()
+    [console]::ResetColor()
+    "Elapsed: " + $stopwatch.Elapsed.ToString()
 }
 
 function script:Start-UnelevatedProcess
