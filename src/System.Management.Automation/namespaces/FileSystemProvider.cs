@@ -98,7 +98,15 @@ namespace Microsoft.PowerShell.Commands
         ///
         private static string NormalizePath(string path)
         {
-            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+#if !UNIX
+            // since this is an absolute path, if it starts with a single backslash, we need to add another to make it a UNC path
+            if (path.Length >= 2 && path[0] == StringLiterals.DefaultPathSeparator && path[1] != StringLiterals.DefaultPathSeparator)
+            {
+                path = StringLiterals.DefaultPathSeparatorString + path;
+            }
+#endif
+            return path;
         } // NormalizePath
 
 
