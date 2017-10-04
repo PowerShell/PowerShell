@@ -1,5 +1,111 @@
 # Changelog
 
+## v6.0.0-beta.8 - 2017-10-05
+
+### Engine updates and fixes
+
+* Make calls to void CodeMethod work (#4850) (Thanks @powercode)
+* Get 'PSVersion' and 'GitCommitId' from the 'ProductVersion' attribute of assembly (#4863) (Thanks @iSazonov)
+* Write an error and return an exit code for powershell -version 2 (#4931) (Thanks @iSazonov)
+* Load the assembly with 'Assembly.LoadFrom' before 'Assembly.Load' when the file path is given (#4196)
+* Add a generic file watcher function in HelpersCommon.psm1 (#4775)
+* Update old links and fix broken links in host-powershell/README.md (#4877)
+* Fix importing remote module using version filters and added tests (#4900)
+* Enable transcription of native commands on non-Windows (#4871)
+* Fix `powershell -version` and help to align with other tools (#4958)
+* Fix incorrect position of a parameter which resulted in the args passed as input instead of as args (#4963)
+* Add a new line to 'CommandNotFoundException' error string (#4934 & #4991)
+
+### General cmdlet updates and fixes
+
+* Added Remove-service to Management module (#4858) (Thanks @joandrsn)
+* Added functionality to set credientials on `Set-Service` command (#4844) (Thanks @joandrsn)
+* `Select-String` changes:
+    * Exclude directories discovered from `-Path` (#4829) (Thanks @iSazonov)
+    * Support more argument completion scenarios by adding `ArgumentCompletionsAttribute` (#4835) (Thanks @iSazonov)
+* Exclude `-Comobject` parameter of `New-Object` on unsupported platforms (#4922) (Thanks @iSazonov)
+* Updated default `ModuleVersion` in `New-ModuleManifest` (#4842) (Thanks @LDSpits)
+* Add Multipart Support to Web Cmdlets (#4782) (Thanks @markekraus)
+* Initialize Web Cmdlets Headers Dictionary Only Once (#4853) (Thanks @markekraus)
+* Change Web Cmdlets UserAgent from `WindowsPowerShell` to `PowerShell` (#4914)
+* Allow * to be used in registry path for `remove-item` (#4866)
+
+### Build and Packaging Improvements
+
+* Make the build output the WiX compilation log if it failed. (#4831) (Thanks @bergmeister)
+* Use a simple file based check in the MSI for the VC++ 2015 redistributables (#4745) (Thanks @bergmeister)
+* Build powershell core using the generic RID 'linux-x64' (#4841)
+* Create generic Linux-x64 packages that are portable to all supported RPM Linux (and more similar for Debian based) distros (#4902 & #4994)
+* Suppress the output of building test tools in Compress-TestContent (#4957)
+* Remove unnecessary error messages from output (#4954)
+* Update travis-ci script so that PRs can fail due to pester tests (#4830)
+* Revert the changes to Pester from merged PR #4184 (#4881)
+* Move release build definition into PowerShell (#4884)
+* Fix credential scan issues (#4927)
+* Add line secret suppression (#4935)
+* Enable security flags in native compiler (#4933)
+* Add VS 2017 solution file for powershell-win-core (#4748)
+
+### Code Cleanup
+
+* Remove remainder of Utility.Activities (Workflow code) (#4880)
+* Remove Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll (#4868)
+* Remove unsupported -showwindow switch (#4903)
+* Enable auto EOL on git repo side, fix some character encoding issues (#4912)
+* Autocorrected CRLF to LF (#4943)
+* Change CRLF to LF for files that are already in repository (#4956)
+* Removed leading whitespace (#4991)
+
+### DSC Language
+
+* Update version of PSDesiredStateConfiguration in project files (#4979)
+
+### Test
+
+* Replace httpbin.org tests with WebListener (Thanks @markekraus)
+    * headers (#4799)
+    * user-agent (#4798)
+    * redirect (#4852)
+    * encoding (#4869)
+    * delay (#4905)
+    * gzip & enable deflate (#4948)
+    * related changes and fixes (#4920)
+* Fix for Linux platform PowerShell exit on error during SSH remoting connection (#4993)
+* Port tests for constrained language mode (#4816)
+* Enable `Select-String` test from a Network path (#4921) (Thanks @iSazonov)
+* Reformat Measure-Object test (#4972) (Thanks @iSazonov)
+* Mitigate intermittent failures in access denied tests. (#4788)
+* Fix tests that incorrectly use ShouldBeErrorId (#4793)
+* Fix a test issue that causes tests to be skipped in Travis CI run (#4891)
+* Skip Web CmdLet Certificate Authentication tests on CentOS and Mac (#4822)
+* Validate product resource strings against resx files (#4811 & #4861)
+* Add the timezone offset correctly in CDXML tests (#4867)
+* Add source files for coverage run (#4925)
+* Be sure to change psdefaultparametervalue in the global scope (#4977 & #4892)
+* Fix set-service failing test (#4802)
+* Reduce output of pester for CI (#4855)
+* Add tests for
+    * `Get-Content` (#4723) (Thanks @sarithsutha)
+    * Remoting and Jobs (#4928)
+    * `Get-Help` (#4895)
+    * `Get-Command -ShowCommandInfo` (#4906)
+    * `Get-Content -Tail` (#4790)
+    * `Get-Module` over remoting (#4787)
+    * Start/stop/suspend/resume/restart service cmdlets (#4774)
+    * WSMan Config provider tests (#4756)
+    * CDXML CIM DateTime test (#4796)
+
+### Documentation and Graphics
+
+* New icon for PowerShell Core (#4848)
+* Sort .spelling  (Thanks @markekraus)
+* Improve the guideline for perf consideration (#4824)
+* Fix issues with expression redirected to file (#4847)
+* Add setup steps for MacOS to use PSRP over SSH (#4872)
+* Instructions to demo PowerShell Core on Raspbian (#4882)
+* Added instructions to get permission to use assets (#4938)
+* Added demo for using Windows PowerShell modules (#4886)
+
 ## v6.0.0-beta.7 - 2017-09-13
 
 ### Breaking change
