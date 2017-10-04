@@ -14,7 +14,6 @@ if ($IsWindows)
         # -SkipNetworkProfileCheck is used in case Docker or another application
         # has created a publich virtual network profile on the system
         Enable-PSRemoting -SkipNetworkProfileCheck
-        $endpointCreated = $true
     }
 }
 
@@ -2109,7 +2108,7 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
         }
         else
         {
-            $configName = "restricted_102F"
+            $configName = "restricted_" + (Get-RandomFileName)
             New-PSSessionConfigurationFile -Path $TestDrive\restricted.pssc -SessionType RestrictedRemoteServer
             Register-PSSessionConfiguration -Path $TestDrive\restricted.pssc -Name $configName -Force
             $session = New-RemoteSession -ConfigurationName $configName
@@ -2132,8 +2131,15 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
     It "Verifies that Import-PSSession works on a restricted session" {
 
         $errorVariable = $null
-        $module = Import-PSSession -Session $session -AllowClobber -ErrorVariable $errorVariable -CommandName Get-Help
+        try
+        {
+            $module = Import-PSSession -Session $session -AllowClobber -ErrorVariable $errorVariable -CommandName Get-Help
+        }
+        finally
+        {
+            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+        }
+
         $errorVariable | Should BeNullOrEmpty
-        if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
     }
 }
