@@ -1665,13 +1665,15 @@ namespace System.Management.Automation
 
                 if (index > 0)
                 {
-                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);
+                    // see if there are any path separators before the colon which would mean the
+                    // colon is part of a file or folder name and not a drive: ./foo:bar vs foo:bar
+                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index-1);
                     if (separator == -1)
                     {
-                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
+                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
                     }
                     if (separator == -1 || index < separator)
-                    {                        
+                    {
                         // We must have a drive specified
                         result = true;
                     }
