@@ -1,4 +1,24 @@
-﻿Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
+﻿#
+# Ensure WinRM remoting is enabled
+#
+if ($IsWindows)
+{
+    # Check to see if a default endpoint has been created
+    $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
+    $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+
+    if ($matchedEndpoint -eq $null)
+    {
+        # An endpoint for this instance of PowerShell does not exist.
+        #
+        # -SkipNetworkProfileCheck is used in case Docker or another application
+        # has created a publich virtual network profile on the system
+        Enable-PSRemoting -SkipNetworkProfileCheck
+        $endpointCreated = $true
+    }
+}
+
+Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
 
     BeforeAll {
 
@@ -2089,9 +2109,10 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
         }
         else
         {
+            $configName = "restricted_102F"
             New-PSSessionConfigurationFile -Path $TestDrive\restricted.pssc -SessionType RestrictedRemoteServer
-            Register-PSSessionConfiguration -Path $TestDrive\restricted.pssc -Name restricted -Force
-            $session = New-PSSession -ComputerName localhost -ConfigurationName restricted
+            Register-PSSessionConfiguration -Path $TestDrive\restricted.pssc -Name $configName -Force
+            $session = New-RemoteSession -ConfigurationName $configName
         }
     }
 
@@ -2104,17 +2125,15 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
         else
         {
             if ($session -ne $null) { Remove-PSSession -Session $session -ErrorAction SilentlyContinue }
-            Unregister-PSSessionConfiguration -Name restricted -Force -ErrorAction SilentlyContinue
+            Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
         }
     }
 
-    # Blocked by https://github.com/PowerShell/PowerShell/issues/4275
-    # Need a way to created restricted endpoint based on a different endpoint other than microsoft.powershell which points
-    # to Windows PowerShell 5.1
-    It "Verifies that Import-PSSession works on a restricted session" -Pending {
+    It "Verifies that Import-PSSession works on a restricted session" {
 
         $errorVariable = $null
-        Import-PSSession -Session $session -AllowClobber -ErrorVariable $errorVariable
+        $module = Import-PSSession -Session $session -AllowClobber -ErrorVariable $errorVariable -CommandName Get-Help
         $errorVariable | Should BeNullOrEmpty
+        if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
     }
 }
