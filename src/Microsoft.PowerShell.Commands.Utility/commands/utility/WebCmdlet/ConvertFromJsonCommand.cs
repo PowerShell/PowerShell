@@ -36,14 +36,6 @@ namespace Microsoft.PowerShell.Commands
         #region overrides
 
         /// <summary>
-        /// Prerequisite checks
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            JsonObject.ImportJsonDotNetModule(this);
-        }
-
-        /// <summary>
         ///  Buffers InputObjet contents available in the pipeline.
         /// </summary>
         protected override void ProcessRecord()

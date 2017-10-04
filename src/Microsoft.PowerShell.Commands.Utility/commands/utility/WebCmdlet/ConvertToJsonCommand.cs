@@ -83,7 +83,6 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidOperation,
                                 null));
             }
-            JsonObject.ImportJsonDotNetModule(this);
         }
 
         private List<object> _inputObjects = new List<object>();
