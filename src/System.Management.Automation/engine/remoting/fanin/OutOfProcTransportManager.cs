@@ -1488,18 +1488,26 @@ namespace System.Management.Automation.Remoting.Client
             var stdErrReader = _stdErrReader;
             if (stdErrReader != null) { stdErrReader.Dispose(); }
 
-            try
+            // The CloseConnection() method can be called multiple times from multiple places.
+            // Set the _sshProcessId to zero here so that we go through the work of finding
+            // and terminating the SSH process just once.
+            var sshProcessId = _sshProcessId;
+            _sshProcessId = 0;
+            if (sshProcessId != 0)
             {
-                var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId);
-                if ((sshProcess != null) && !sshProcess.HasExited)
+                try
                 {
-                    sshProcess.Kill();
+                    var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId);
+                    if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                    {
+                        sshProcess.Kill();
+                    }
                 }
+                catch (ArgumentException) { }
+                catch (InvalidOperationException) { }
+                catch (NotSupportedException) { }
+                catch (System.ComponentModel.Win32Exception) { }
             }
-            catch (ArgumentException) { }
-            catch (InvalidOperationException) { }
-            catch (NotSupportedException) { }
-            catch (System.ComponentModel.Win32Exception) { }
         }
 
         private void StartErrorThread(
