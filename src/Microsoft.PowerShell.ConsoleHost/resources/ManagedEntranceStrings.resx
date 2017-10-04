@@ -122,9 +122,15 @@
 Copyright (C) Microsoft Corporation. All rights reserved.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
-    <value>PowerShell[.exe] [options]
+    <value>Usage: powershell[.exe] [[-File] &lt;filePath&gt; [args]]
+                        [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
+                                      | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+                        [-ConfigurationName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                        [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                        [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                        [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
 
-PowerShell[.exe] -h | -Help | -? | /?
+       powershell[.exe] -h | -Help | -? | /?
 
 PowerShell Online Help https://aka.ms/pscore6-docs
 
