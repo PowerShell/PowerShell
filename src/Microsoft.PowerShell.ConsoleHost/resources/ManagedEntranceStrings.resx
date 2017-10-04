@@ -126,9 +126,9 @@ Copyright (C) Microsoft Corporation. All rights reserved.</value>
 
 PowerShell[.exe] -h | -Help | -? | /?
 
-PowerShell Online Help https://docs.microsoft.com/en-us/powershell/scripting/powershell-scripting?view=powershell-6
+PowerShell Online Help https://aka.ms/pscore6-docs
 
-All parameters is case-insensitive.
+All parameters are case-insensitive.
 
 -Command | -c
     Executes the specified commands (and any parameters) as though they were typed
