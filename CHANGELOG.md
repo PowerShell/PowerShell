@@ -25,7 +25,7 @@
 ### General cmdlet updates and fixes
 
 * Added Remove-service to Management module (#4858) (Thanks @joandrsn)
-* Added functionality to set credientials on `Set-Service` command (#4844) (Thanks @joandrsn)
+* Added functionality to set credentials on `Set-Service` command (#4844) (Thanks @joandrsn)
 * `Select-String` changes:
     * Exclude directories discovered from `-Path` (#4829) (Thanks @iSazonov)
     * Support more argument completion scenarios by adding `ArgumentCompletionsAttribute` (#4835) (Thanks @iSazonov)
