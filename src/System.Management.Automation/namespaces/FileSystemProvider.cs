@@ -98,15 +98,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         private static string NormalizePath(string path)
         {
-            path = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-#if !UNIX
-            // since this is an absolute path, if it starts with a single backslash, we need to add another to make it a UNC path
-            if (path.Length >= 2 && path[0] == StringLiterals.DefaultPathSeparator && path[1] != StringLiterals.DefaultPathSeparator)
-            {
-                path = StringLiterals.DefaultPathSeparatorString + path;
-            }
-#endif
-            return path;
+            return path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
         } // NormalizePath
 
 
@@ -4825,6 +4817,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 parentPath = EnsureDriveIsRooted(parentPath);
             }
+#if !UNIX
+            else if (parentPath.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+            {
+                // make sure we return two backslashes so it still results in a UNC path
+                parentPath = "\\\\";
+            }
+#endif
             return parentPath;
         } // GetParentPath
 
