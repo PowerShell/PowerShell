@@ -76,3 +76,11 @@ cp shared/Microsoft.NetCore.App/2.1.0-preview1-25719-04/* ~/powershell
 ```
 
 Note that until arm32 is [fully supported by CoreCLR](https://github.com/dotnet/coreclr/issues/3977), it's not supported by PowerShell Core.
+
+If you get an error complaining about `libunwind.so.8` not being found, you'll need to install it as it's required by CoreCLR.
+
+```bash
+sudo apt install libunwind8
+```
+
+Have fun!
