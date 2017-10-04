@@ -54,7 +54,7 @@ function ConvertTo-CodeCovJson
     $progress=0
     foreach($f in $keys)
     {
-        Write-Progress -Id 1 -Activity "Converting to JSON" -Status 'Converting' -PercentComplete ($progress * 100 / $keys.Count) 
+        Write-Progress -Id 1 -Activity "Converting to JSON" -Status 'Converting' -PercentComplete ($progress * 100 / $keys.Count)
         $fileCoverage = GetSequencePointsForFile -fileId $f
         $fileName = $Script:fileTable[$f]
         $previousFileCoverage = $totalCoverage.coverage.${fileName}
@@ -151,24 +151,50 @@ try
 
     $oldErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Stop'
+    $oldProgressPreference = $ProgressPreference
+    $ProgressPreference = 'SilentlyContinue'
     Write-LogPassThru -Message "Starting downloads."
+
+    $CoverageZipFilePath = "$outputBaseFolder\PSCodeCoverage.zip"
+    if(Test-Path $CoverageZipFilePath)
+    {
+        Remove-Item $CoverageZipFilePath -Force
+    }
     Invoke-WebRequest -uri $codeCoverageZip -outfile "$outputBaseFolder\PSCodeCoverage.zip"
-    Invoke-WebRequest -uri $testContentZip -outfile "$outputBaseFolder\tests.zip"
-    Invoke-WebRequest -uri $openCoverZip -outfile "$outputBaseFolder\OpenCover.zip"
+
+    $TestsZipFilePath = "$outputBaseFolder\tests.zip"
+    if(Test-Path $TestsZipFilePath)
+    {
+        Remove-Item $TestsZipFilePath -Force
+    }
+    Invoke-WebRequest -uri $testContentZip -outfile $TestsZipFilePath
+
+    $OpenCoverZipFilePath = "$outputBaseFolder\OpenCover.zip"
+    if(Test-Path $OpenCoverZipFilePath)
+    {
+        Remove-Item $OpenCoverZipFilePath -Force
+    }
+    Invoke-WebRequest -uri $openCoverZip -outfile $OpenCoverZipFilePath
+
     Write-LogPassThru -Message "Downloads complete. Starting expansion"
 
-    Expand-Archive -path "$outputBaseFolder\PSCodeCoverage.zip" -destinationpath "$psBinPath" -Force
-    Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testRootPath -Force
-    Expand-Archive -path "$outputBaseFolder\OpenCover.zip" -destinationpath $openCoverPath -Force
+    if(Test-Path $psBinPath)
+    {
+        Remove-Item -Force -Recurse $psBinPath
+    }
+    Expand-Archive -path $CoverageZipFilePath -destinationpath "$psBinPath" -Force
 
-    ## Download Coveralls.net uploader
-    $coverallsToolsUrl = 'https://github.com/csMACnz/coveralls.net/releases/download/0.7.0/coveralls.net.0.7.0.nupkg'
-    $coverallsPath = "$outputBaseFolder\coveralls"
+    if(Test-Path $testRootPath)
+    {
+        Remove-Item -Force -Recurse $testRootPath
+    }
+    Expand-Archive -path $TestsZipFilePath -destinationpath $testRootPath -Force
 
-    ## Saving the nupkg as zip so we can expand it.
-    Invoke-WebRequest -uri $coverallsToolsUrl -outfile "$outputBaseFolder\coveralls.zip"
-    Expand-Archive -Path "$outputBaseFolder\coveralls.zip" -DestinationPath $coverallsPath -Force
-
+    if(Test-Path $openCoverPath)
+    {
+        Remove-Item -Force -Recurse $openCoverPath
+    }
+    Expand-Archive -path $OpenCoverZipFilePath -destinationpath $openCoverPath -Force
     Write-LogPassThru -Message "Expansion complete."
 
     Import-Module "$openCoverPath\OpenCover" -Force
@@ -216,6 +242,10 @@ try
         {
             remove-item -force -recurse "${outputBaseFolder}/src"
         }
+        if ( Test-Path "$outputBaseFolder/assests" )
+        {
+            remove-item -force -recurse "${outputBaseFolder}/assets"
+        }
         Write-LogPassThru -Message "initializing repo in $outputBaseFolder"
         & $gitexe init
         Write-LogPassThru -Message "git operation 'init' returned $LASTEXITCODE"
@@ -230,6 +260,7 @@ try
 
         Write-LogPassThru -Message "pulling sparse repo"
         "src" | out-file -encoding ascii .git\info\sparse-checkout
+        "assets" | out-file -encoding ascii .git\info\ -Append
         & $gitexe pull origin master
         Write-LogPassThru -Message "git operation 'pull' returned $LASTEXITCODE"
 
@@ -261,28 +292,8 @@ try
 
     Write-LogPassThru -Message $commitId
 
-    $coverallsPath = "$outputBaseFolder\coveralls"
-
     $commitInfo = Invoke-RestMethod -Method Get "https://api.github.com/repos/powershell/powershell/git/commits/$commitId"
     $message = ($commitInfo.message).replace("`n", " ")
-    $author = $commitInfo.author.name
-    $email = $commitInfo.author.email
-
-    $coverallsExe = Join-Path $coverallsPath "tools\csmacnz.Coveralls.exe"
-    $coverallsParams = @("--opencover",
-        "-i $outputLog",
-        "--repoToken $coverallsToken",
-        "--commitId $commitId",
-        "--commitBranch master",
-        "--commitAuthor `"$author`"",
-        "--commitEmail $email",
-        "--commitMessage `"$message`""
-    )
-
-    $coverallsParams | ForEach-Object { Write-LogPassThru -Message $_ }
-
-    Write-LogPassThru -Message "Uploading to CoverAlls"
-    & $coverallsExe """$coverallsParams"""
 
     Write-LogPassThru -Message "Uploading to CodeCov"
     if ( test-path $outputLog ) {
@@ -303,7 +314,7 @@ finally
 {
     # the powershell execution should be done, be sure that there are no PowerShell test executables running because
     # they will cause subsequent coverage runs to behave poorly. Make sure that the path is properly formatted, and
-    # we need to use like rather than match because on Windows, there will be "\" as path separators which would need 
+    # we need to use like rather than match because on Windows, there will be "\" as path separators which would need
     # escaping for -match
     $ResolvedPSBinPath = (Resolve-Path ${psbinpath}).Path
     Get-Process PowerShell | Where-Object { $_.Path -like "*${ResolvedPSBinPath}*" } | Stop-Process -Force -ErrorAction Continue
@@ -328,4 +339,5 @@ finally
     ## Disable the cleanup till we stabilize.
     #Remove-Item -recurse -force -path $outputBaseFolder
     $ErrorActionPreference = $oldErrorActionPreference
+    $ProgressPreference = $oldProgressPreference
 }

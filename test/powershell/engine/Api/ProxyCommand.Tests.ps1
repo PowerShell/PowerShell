@@ -82,7 +82,25 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         Set-Item -Path function:\TestHelpComment -Value $bodySB
         $newHelpObj = Get-Help TestHelpComment -Full
 
-        $helpObj.Synopsis | Should Be $newHelpObj.Synopsis
+        if($helpObj.Synopsis.Contains("`r`n"))
+        {
+            $helpObjText = ($helpObj.Synopsis).replace("`r`n", [System.Environment]::NewLine).trim()
+        }
+        else
+        {
+            $helpObjText = ($helpObj.Synopsis).replace("`n", [System.Environment]::NewLine).trim()
+        }
+
+        if($newHelpObj.Synopsis.Contains("`r`n"))
+        {
+            $newHelpObjText = ($newHelpObj.Synopsis).replace("`r`n", [System.Environment]::NewLine).trim()
+        }
+        else
+        {
+            $newHelpObjText = ($newHelpObj.Synopsis).replace("`n", [System.Environment]::NewLine).trim()
+        }
+
+        $helpObjText | Should Be $newHelpObjText
         $oldDespText = GetSectionText $helpObj.description
         $newDespText = GetSectionText $newHelpObj.description
         $oldDespText | Should Be $newDespText

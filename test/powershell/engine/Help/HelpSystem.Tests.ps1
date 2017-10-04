@@ -188,10 +188,14 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+        ## This is needed for getting about topics. We use -Force, so we always update.
+        Update-Help -Force
     }
 
     AfterAll {
         Remove-Item $modulePath -Recurse -Force
+        # Remove all the help content.
+        Get-ChildItem -Path $PSHOME -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
     It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {

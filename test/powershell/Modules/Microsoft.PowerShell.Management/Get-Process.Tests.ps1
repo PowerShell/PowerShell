@@ -1,6 +1,6 @@
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
-        (Get-Process powershell -IncludeUserName | Select-Object -First 1).UserName | Should Match $env:USERNAME
+        (Get-Process -Id $pid -IncludeUserName).UserName | Should Match $env:USERNAME
     }
 }
 
