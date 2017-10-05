@@ -3,9 +3,9 @@ FROM fedora:24
 # TODO: Until a release of PowerShell for Fedora 24 is available,
 # this Dockerfile installs the CentOS 7 version for compatibility.
 
-ARG POWERSHELL_VERSION=6.0.0-beta.7
-ARG POWERSHELL_RELEASE=v6.0.0-beta.7
-ARG POWERSHELL_PACKAGE=powershell-6.0.0_beta.7-1.el7.x86_64.rpm
+ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_RELEASE=v6.0.0-beta.8
+ARG POWERSHELL_PACKAGE=powershell-6.0.0_beta.8-1.rhel.7.x86_64.rpm
 ARG IMAGE_NAME=microsoft/powershell:fedora24
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

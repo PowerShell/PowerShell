@@ -1,10 +1,10 @@
 # Docker image file that describes an OpenSUSE 42.1 (AKA leap 42.1) image with PowerShell installed from PowerShell Release
 FROM opensuse:42.2
 
-ARG POWERSHELL_VERSION=6.0.0_beta.6
-ARG POWERSHELL_RELEASE=v6.0.0-beta.6
+ARG POWERSHELL_VERSION=6.0.0_beta.8
+ARG POWERSHELL_RELEASE=v6.0.0-beta.8
 ARG FORK=PowerShell
-ARG POWERSHELL_PACKAGE=powershell-$POWERSHELL_VERSION-1.suse.42.1.x86_64.rpm
+ARG POWERSHELL_PACKAGE=powershell-6.0.0_beta.8-1.rhel.7.x86_64.rpm
 ARG IMAGE_NAME=microsoft/powershell:opensuse42.2
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

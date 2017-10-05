@@ -13,7 +13,7 @@ get_url() {
 }
 
 fork="PowerShell"
-release=v6.0.0-beta.7
+release=v6.0.0-beta.8
 # Get OS specific asset ID and package name
 case "$OSTYPE" in
     linux*)
@@ -26,7 +26,7 @@ case "$OSTYPE" in
                     sudo yum install -y curl
                 fi
 
-                package=powershell-6.0.0_beta.7-1.el7.x86_64.rpm
+                powershell-6.0.0_beta.8-1.rhel.7.x86_64.rpm
                 ;;
             ubuntu)
                 if ! hash curl 2>/dev/null; then
@@ -36,10 +36,10 @@ case "$OSTYPE" in
 
                 case "$VERSION_ID" in
                     14.04)
-                        package=powershell_6.0.0-beta.7-1ubuntu1.14.04.1_amd64.deb
+                        package=powershell_6.0.0-beta.8-1.ubuntu.14.04_amd64.deb
                         ;;
                     16.04)
-                        package=powershell_6.0.0-beta.7-1ubuntu1.16.04.1_amd64.deb
+                        package=powershell_6.0.0-beta.8-1.ubuntu.16.04_amd64.deb
                         ;;
                     *)
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
@@ -70,7 +70,7 @@ case "$OSTYPE" in
         ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
-        package=powershell-6.0.0-beta.7-osx.10.12-x64.pkg
+        package=powershell-6.0.0-beta.8-osx.10.12-x64.pkg
         ;;
     *)
         echo "$OSTYPE is not supported!" >&2
