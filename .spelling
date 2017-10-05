@@ -239,6 +239,7 @@ beta.8
 binding
 bool
 charset
+CI
 cleanup
 CodeMethod
 CodeOwner
@@ -299,6 +300,7 @@ powercode
 PowerShellProperties
 preview1-24530-04
 ProductVersion
+PRs
 PSDrive
 PseudoParameterBinder
 PSReadLine
@@ -308,6 +310,7 @@ PVS-Studio
 Pwrshplughin.dll
 rc2-24027
 rc3-24011
+Raspbian
 README.md
 RelationLink
 richardszalay
@@ -329,6 +332,7 @@ TimCurwick
 timestamp
 TimeZone
 TPA
+Travis
 TTY's
 UserAgent
 UserData

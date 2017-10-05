@@ -21,17 +21,18 @@
 * Enable transcription of native commands on non-Windows platforms. (#4871)
 * Add a new line to `CommandNotFoundException` error string. (#4934 & #4991)
 * Fix bug where PowerShell would exit with an error within an SSH remoting connection on Linux. (#4993)
+* Fix issues with expression redirected to file. (#4847)
 
 ### General cmdlet updates and fixes
 
 * Added `Remove-Service` to Management module. (#4858) (Thanks @joandrsn)
 * Added functionality to set credentials on `Set-Service` command. (#4844) (Thanks @joandrsn)
-* `Select-String` changes:
-    * Exclude directories (as opposed to individual files) discovered from `-Path`. (#4829) (Thanks @iSazonov)
-    * Support more argument completion scenarios by adding `ArgumentCompletionsAttribute`. (#4835) (Thanks @iSazonov)
+* Fix `Select-String` to exclude directories (as opposed to individual files) discovered from `-Path`. (#4829) (Thanks @iSazonov)
+* `Get-Date` now supports more argument completion scenarios by adding `ArgumentCompletionsAttribute`. (#4835) (Thanks @iSazonov)
 * Exclude `-ComObject` parameter of `New-Object` on unsupported (currently non-Windows) platforms. (#4922) (Thanks @iSazonov)
 * Updated default `ModuleVersion` in `New-ModuleManifest` to `0.0.1` to align with SemVer. (#4842) (Thanks @LDSpits)
 * Add Multipart support to web cmdlets. (#4782) (Thanks @markekraus)
+* Add `-ResponseHeadersVariable` to `Invoke-RestMethod` to enable the capture of response headers. (#4888) (Thanks @markekraus) 
 * Initialize web cmdlets headers dictionary only once. (#4853) (Thanks @markekraus)
 * Change web cmdlets `UserAgent` from `WindowsPowerShell` to `PowerShell`. (#4914)
 
@@ -44,7 +45,7 @@
 * Create generic Linux-x64 packages that are portable to all supported RPM Linux distros (and more similar for Debian based distros). (#4902 & #4994)
 * Suppress the output of building test tools in `Compress-TestContent`. (#4957)
 * Remove unnecessary error messages from output. (#4954)
-* Update travis-ci script so that PRs can fail due to Pester tests. (#4830)
+* Update Travis CI script so that PRs can fail due to Pester tests. (#4830)
 * Move release build definition into PowerShell. (#4884)
 * Fix credential scan issues. (#4927 & #4935)
 * Enable security flags in native compiler. (#4933)
@@ -93,13 +94,12 @@
     * `Get-Module` over remoting (#4787)
     * `Start/Stop/Suspend/Resume/Restart-Service` cmdlets (#4774)
     * WSMan Config provider tests (#4756)
-    * CDXML CIM DateTime test (#4796)
+    * CDXML CIM `DateTime` test (#4796)
 
 ### Documentation and Graphics
 
 * Sort `.spelling` (Thanks @markekraus)
-* Improve the guideline for perf consideration. (#4824)
-* Fix issues with expression redirected to file. (#4847)
+* Improve the guideline for performance consideration. (#4824)
 * Add setup steps for MacOS to use PSRP over SSH. (#4872)
 * Instructions to demo PowerShell Core on Raspbian. (#4882)
 * Added instructions to get permission to use PowerShell image assets. (#4938)
