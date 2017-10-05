@@ -238,6 +238,7 @@ beta.6
 beta.8
 binding
 bool
+CDXML
 charset
 CI
 cleanup

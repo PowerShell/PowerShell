@@ -32,9 +32,9 @@
 * Exclude `-ComObject` parameter of `New-Object` on unsupported (currently non-Windows) platforms. (#4922) (Thanks @iSazonov)
 * Updated default `ModuleVersion` in `New-ModuleManifest` to `0.0.1` to align with SemVer. (#4842) (Thanks @LDSpits)
 * Add Multipart support to web cmdlets. (#4782) (Thanks @markekraus)
-* Add `-ResponseHeadersVariable` to `Invoke-RestMethod` to enable the capture of response headers. (#4888) (Thanks @markekraus) 
+* Add `-ResponseHeadersVariable` to `Invoke-RestMethod` to enable the capture of response headers. (#4888) (Thanks @markekraus)
 * Initialize web cmdlets headers dictionary only once. (#4853) (Thanks @markekraus)
-* Change web cmdlets `UserAgent` from `WindowsPowerShell` to `PowerShell`. (#4914)
+* Change web cmdlets `UserAgent` from `WindowsPowerShell` to `PowerShell`. (#4914) (Thanks @markekraus)
 
 ### Build and Packaging Improvements
 
