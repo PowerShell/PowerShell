@@ -168,7 +168,7 @@ All parameters are case-insensitive.
     Example: powershell -configurationmame AdminRoles
 
 -EncodedCommand | -e | -ec
-    Accepts a base-64-encoded string version of a command. Use this parameter to submit
+    Accepts a base64 encoded string version of a command. Use this parameter to submit
     commands to PowerShell that require complex quotation marks or curly braces.
 
     Example:
