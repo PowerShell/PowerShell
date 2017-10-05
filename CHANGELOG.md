@@ -81,8 +81,8 @@
 * Fix a test issue that causes tests to be skipped in Travis CI run (#4891)
 * Skip web cmdlet certificate authentication tests on CentOS and Mac. (#4822)
 * Validate product resource strings against resx files. (#4811 & #4861)
-* Add the timezone offset correctly in `CDXML` tests. (#4867)
 * Add source files for coverage run. (#4925)
+* Add the UTC offset correctly in tests for CDXML cmdlets. (#4867)
 * Be sure to change `PSDefaultParameterValue` in the global scope. (#4977 & #4892)
 * Reduce output of Pester for CI. (#4855)
 * Add tests for
