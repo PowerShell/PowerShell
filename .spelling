@@ -557,8 +557,10 @@ sample-dotnet2
 
 #region docs/installation/linux.md Overrides
  - docs/installation/linux.md
+libcurl
 OpenSUSE
 TravisEz13
+zypper
 #endregion
 
 #region docs/installation/windows.md Overrides
