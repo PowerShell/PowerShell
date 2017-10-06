@@ -59,7 +59,7 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
     </UI>
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Win8 and above">
+    <Condition Message="Supported only on Win7 and above">
       <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
     </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
@@ -74,8 +74,13 @@
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
     </Feature>
-    <!--We need to show EULA, and provide option to customize download location-->
+    <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <!-- Get the real major version of the OS. This registry value name only exists on Win10 -->
+    <Property Id="WIN10_MAJOR_VERSION">
+      <RegistrySearch Id="Win10MajorVersion" Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+                      Name="CurrentMajorVersionNumber" Type="raw" />
+    </Property>
     <!-- Prerequisite check for Windows Universal C runtime -->
     <Property Id="UNIVERSAL_C_RUNTIME_INSTALLED" Secure="yes">
       <DirectorySearch Id="WindowsDirectory" Path="[WindowsFolder]">
@@ -94,7 +99,7 @@
       </DirectorySearchRef>
     </Property>
     <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
-      <![CDATA[Installed OR VISUAL_CPP_RUNTIME_INSTALLED]]>
+      <![CDATA[Installed OR VISUAL_CPP_RUNTIME_INSTALLED OR WIN10_MAJOR_VERSION ]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
