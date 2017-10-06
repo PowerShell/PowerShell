@@ -2,7 +2,7 @@
 
 FROM ubuntu:trusty
 
-ARG POWERSHELL_VERSION=6.0.0-beta.7
+ARG POWERSHELL_VERSION=6.0.0-beta.8
 ARG IMAGE_NAME=microsoft/powershell:ubuntu14.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

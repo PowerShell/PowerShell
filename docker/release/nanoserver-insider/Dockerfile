@@ -10,7 +10,7 @@ ARG NanoServerRepo=microsoft/nanoserver-insider
 FROM ${WindowsServerCoreRepo}:$WindowsServerCoreVersion  AS installer-env
 
 # Arguments for installing powershell, must be defined in the container they are used
-ARG PS_VERSION=6.0.0-beta.7
+ARG PS_VERSION=6.0.0-beta.8
 
 ENV PS_DOWNLOAD_URL https://github.com/PowerShell/PowerShell/releases/download/v$PS_VERSION/PowerShell-$PS_VERSION-win-x64.zip
 
@@ -23,7 +23,7 @@ RUN Expand-Archive powershell.zip -DestinationPath \PowerShell
 FROM ${NanoServerRepo}:$NanoServerVersion
 
 ARG VCS_REF="none"
-ARG PS_VERSION=6.0.0-beta.7
+ARG PS_VERSION=6.0.0-beta.8
 ARG IMAGE_NAME=microsoft/nanoserver-insider-powershell
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
