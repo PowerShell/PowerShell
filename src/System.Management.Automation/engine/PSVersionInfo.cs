@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Collections;
 using System.Globalization;
 using System.Management.Automation.Internal;
+using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -384,12 +386,18 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
+        private static readonly string s_VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
+        private static readonly string s_LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
+        private static readonly string s_LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*?$";
+        private const string PreLabelPropertyName = "PSSemanticVersionPreLabel";
+        private const string BuildLabelPropertyName = "PSSemanticVersionBuildLabel";
+        private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
+        private string versionString;
+
         /// <summary>
         /// Construct a SemanticVersion from a string.
         /// </summary>
         /// <param name="version">The version to parse</param>
-        /// <exception cref="PSArgumentException"></exception>
-        /// <exception cref="ValidationMetadataException"></exception>
         /// <exception cref="FormatException"></exception>
         /// <exception cref="OverflowException"></exception>
         public SemanticVersion(string version)
@@ -398,8 +406,47 @@ namespace System.Management.Automation
 
             Major = v.Major;
             Minor = v.Minor;
-            Patch = v.Patch;
-            Label = v.Label;
+            Patch = v.Patch < 0 ? 0 : v.Patch;
+            PreLabel = v.PreLabel;
+            BuildLabel = v.BuildLabel;
+        }
+
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <param name="minor">The minor version</param>
+        /// <param name="patch">The minor version</param>
+        /// <param name="preLabel">The preLabel for the version</param>
+        /// <param name="buildLabel">The buildLabel for the version</param>
+        /// <exception cref="FormatException">
+        /// If <paramref name="preLabel"/> starts with '-' ot contains '+'.
+        /// If <paramref name="buildLabel"/> contains '+'.
+        /// </exception>
+        public SemanticVersion(int major, int minor, int patch, string preLabel, string buildLabel)
+            : this(major, minor, patch)
+        {
+            if (!string.IsNullOrEmpty(preLabel))
+            {
+                if (preLabel.StartsWith('-') || preLabel.Contains("+")) throw new FormatException(nameof(preLabel));
+
+                PreLabel = preLabel;
+            }
+            else
+            {
+                PreLabel = null;
+            }
+
+            if (!string.IsNullOrEmpty(buildLabel))
+            {
+                if (buildLabel.StartsWith('-') || buildLabel.Contains("+")) throw new FormatException(nameof(buildLabel));
+
+                BuildLabel = buildLabel;
+            }
+            else
+            {
+                BuildLabel = null;
+            }
         }
 
         /// <summary>
@@ -410,17 +457,27 @@ namespace System.Management.Automation
         /// <param name="patch">The minor version</param>
         /// <param name="label">The label for the version</param>
         /// <exception cref="PSArgumentException">
-        /// If <paramref name="major"/>, <paramref name="minor"/>, or <paramref name="patch"/> is less than 0.
-        /// </exception>
-        /// <exception cref="PSArgumentNullException">
-        /// If <paramref name="label"/> is null or an empty string.
+        /// <exception cref="FormatException">
+        /// If <paramref name="label"/> starts with '-'.
         /// </exception>
         public SemanticVersion(int major, int minor, int patch, string label)
             : this(major, minor, patch)
         {
-            if (string.IsNullOrEmpty(label)) throw PSTraceSource.NewArgumentNullException(nameof(label));
+            if (!string.IsNullOrEmpty(label))
+            {
+                if ((label.StartsWith('-') || label.StartsWith('.'))) throw new FormatException(nameof(label));
 
-            Label = label;
+                var match = Regex.Match(label, s_LabelRegEx);
+                if (!match.Success) throw new FormatException(nameof(label));
+
+                PreLabel = match.Groups["preLabel"].Value;
+                BuildLabel = match.Groups["buildLabel"].Value;
+            }
+            else
+            {
+                PreLabel = null;
+                BuildLabel = null;
+            }
         }
 
         /// <summary>
@@ -441,7 +498,8 @@ namespace System.Management.Automation
             Major = major;
             Minor = minor;
             Patch = patch;
-            Label = null;
+            PreLabel = null;
+            BuildLabel = null;
         }
 
         /// <summary>
@@ -463,43 +521,66 @@ namespace System.Management.Automation
         /// </exception>
         public SemanticVersion(int major) : this(major, 0, 0) {}
 
-        private const string LabelPropertyName = "PSSemanticVersionLabel";
-
         /// <summary>
         /// Construct a <see cref="SemanticVersion"/> from a <see cref="Version"/>,
         /// copying the NoteProperty storing the label if the expected property exists.
         /// </summary>
         /// <param name="version">The version.</param>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="version"/> is null.
+        /// </exception>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="version.Revision"/> is more than 0.
+        /// </exception>
         public SemanticVersion(Version version)
         {
+            if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
             if (version.Revision > 0) throw PSTraceSource.NewArgumentException(nameof(version));
 
             Major = version.Major;
             Minor = version.Minor;
             Patch = version.Build == -1 ? 0 : version.Build;
             var psobj = new PSObject(version);
-            var labelNote = psobj.Properties[LabelPropertyName];
-            if (labelNote != null)
+            var preLabelNote = psobj.Properties[PreLabelPropertyName];
+            if (preLabelNote != null)
             {
-                Label = labelNote.Value as string;
+                PreLabel = preLabelNote.Value as string;
+            }
+            var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
+            if (buildLabelNote != null)
+            {
+                BuildLabel = buildLabelNote.Value as string;
             }
         }
 
         /// <summary>
         /// Convert a <see cref="SemanticVersion"/> to a <see cref="Version"/>.
-        /// If there is a <see cref="Label"/>, it is added as a NoteProperty to the
-        /// result so that you can round trip back to a <see cref="SemanticVersion"/>
-        /// without losing the label.
+        /// If there is a <see cref="PreLabel"/> or/and a <see cref="BuildLabel"/>,
+        /// it is added as a NoteProperty to the result so that you can round trip
+        /// back to a <see cref="SemanticVersion"/> without losing the label.
         /// </summary>
         /// <param name="semver"></param>
         public static implicit operator Version(SemanticVersion semver)
         {
+            PSObject psobj;
+
             var result = new Version(semver.Major, semver.Minor, semver.Patch);
 
-            if (!string.IsNullOrEmpty(semver.Label))
+            if (!string.IsNullOrEmpty(semver.PreLabel) || !string.IsNullOrEmpty(semver.BuildLabel))
             {
-                var psobj = new PSObject(result);
-                psobj.Properties.Add(new PSNoteProperty(LabelPropertyName, semver.Label));
+                psobj = new PSObject(result);
+
+                if (!string.IsNullOrEmpty(semver.PreLabel))
+                {
+                    psobj.Properties.Add(new PSNoteProperty(PreLabelPropertyName, semver.PreLabel));
+                }
+
+                if (!string.IsNullOrEmpty(semver.BuildLabel))
+                {
+                    psobj.Properties.Add(new PSNoteProperty(BuildLabelPropertyName, semver.BuildLabel));
+                }
+
+                psobj.TypeNames.Insert(0, TypeNameForVersionWithLabel);
             }
 
             return result;
@@ -521,9 +602,16 @@ namespace System.Management.Automation
         public int Patch { get; }
 
         /// <summary>
-        /// The last component in a SemanticVersion - may be null if not specified.
+        ///
         /// </summary>
-        public string Label { get; }
+        //public string Label { get; }
+
+        public string PreLabel { get; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string BuildLabel { get; }
 
         /// <summary>
         /// Parse <paramref name="version"/> and return the result if it is a valid <see cref="SemanticVersion"/>, otherwise throws an exception.
@@ -531,12 +619,12 @@ namespace System.Management.Automation
         /// <param name="version">The string to parse</param>
         /// <returns></returns>
         /// <exception cref="PSArgumentException"></exception>
-        /// <exception cref="ValidationMetadataException"></exception>
         /// <exception cref="FormatException"></exception>
         /// <exception cref="OverflowException"></exception>
         public static SemanticVersion Parse(string version)
         {
             if (version == null) throw PSTraceSource.NewArgumentNullException(nameof(version));
+            if (version == String.Empty) throw new FormatException(nameof(version));
 
             var r = new VersionResult();
             r.Init(true);
@@ -571,77 +659,127 @@ namespace System.Management.Automation
 
         private static bool TryParseVersion(string version, ref VersionResult result)
         {
+            if (version.EndsWith('-') || version.EndsWith('+') || version.EndsWith('.'))
+            {
+                result.SetFailure(ParseFailureKind.FormatException);
+                return false;
+            }
+
+            string versionSansLabel = null;
+            var major=0;
+            var minor=0;
+            var patch=0;
+            string preLabel = null;
+            string buildLabel = null;
+
             var dashIndex = version.IndexOf('-');
+            var plusIndex = version.IndexOf('+');
 
-            // Empty label?
-            if (dashIndex == version.Length - 1)
+            if (dashIndex > plusIndex)
             {
-                result.SetFailure(ParseFailureKind.ArgumentException);
+                if (plusIndex == -1)
+                {
+                    // No buildLabel - buildLabel == null;
+                    preLabel = version.Substring(dashIndex+1);
+                    versionSansLabel = version.Substring(0, dashIndex);
+                }
+                else
+                {
+                    // No preLabel - preLabel == null;
+                    buildLabel = version.Substring(plusIndex+1);
+                    versionSansLabel = version.Substring(0, plusIndex);
+                    dashIndex = -1;
+                }
+            }
+            else
+            {
+                if (dashIndex == -1)
+                {
+                    // Here dashIndex == plusIndex == -1
+                    // No preLabel - preLabel == null;
+                    // No buildLabel - buildLabel == null;
+                    versionSansLabel = version;
+                }
+                else
+                {
+                    preLabel = version.Substring(dashIndex+1, plusIndex-dashIndex-1);
+                    buildLabel = version.Substring(plusIndex+1);
+                    versionSansLabel = version.Substring(0, dashIndex);
+                }
+            }
+
+            if ((dashIndex != - 1 && String.IsNullOrEmpty(preLabel))   ||
+                (plusIndex != - 1 && String.IsNullOrEmpty(buildLabel)) ||
+                String.IsNullOrEmpty(versionSansLabel))
+            {
+                // We have dash and no preLabel or
+                // we have plus and no buildLabel or
+                // we have no main version part (versionSansLabel==null)
+                result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            var versionSansLabel = (dashIndex < 0) ? version : version.Substring(0, dashIndex);
-            string[] parsedComponents = versionSansLabel.Split(Utils.Separators.Dot);
-            if (parsedComponents.Length > 3)
+            var match = Regex.Match(versionSansLabel, s_VersionSansRegEx);
+            if (!match.Success)
             {
-                result.SetFailure(ParseFailureKind.ArgumentException);
+                result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            int major = 0, minor = 0, patch = 0;
-            if (!TryParseComponent(parsedComponents[0], "major", ref result, out major))
+            if (!int.TryParse(match.Groups["major"].Value, out major))
             {
+                result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            if (parsedComponents.Length >= 2 && !TryParseComponent(parsedComponents[1], "minor", ref result, out minor))
+            if (match.Groups["minor"].Success && !int.TryParse(match.Groups["minor"].Value, out minor))
             {
+                result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            if (parsedComponents.Length == 3 && !TryParseComponent(parsedComponents[2], "patch", ref result, out patch))
+            if (match.Groups["patch"].Success && !int.TryParse(match.Groups["patch"].Value, out patch))
             {
+                result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            result._parsedVersion = dashIndex < 0
-                ? new SemanticVersion(major, minor, patch)
-                : new SemanticVersion(major, minor, patch, version.Substring(dashIndex + 1));
-            return true;
-        }
-
-        private static bool TryParseComponent(string component, string componentName, ref VersionResult result, out int parsedComponent)
-        {
-            if (!Int32.TryParse(component, NumberStyles.Integer, CultureInfo.InvariantCulture, out parsedComponent))
+            if (preLabel != null && !Regex.IsMatch(preLabel, s_LabelUnitRegEx) ||
+               (buildLabel != null && !Regex.IsMatch(buildLabel, s_LabelUnitRegEx)))
             {
-                result.SetFailure(ParseFailureKind.FormatException, component);
+                result.SetFailure(ParseFailureKind.FormatException);
                 return false;
             }
 
-            if (parsedComponent < 0)
-            {
-                result.SetFailure(ParseFailureKind.ArgumentOutOfRangeException, componentName);
-                return false;
-            }
-
+            result._parsedVersion = new SemanticVersion(major, minor, patch, preLabel, buildLabel);
             return true;
         }
 
         /// <summary>
-        /// ToString
+        /// Implement ToString()
         /// </summary>
         public override string ToString()
         {
-            if (Patch < 0)
+            if (versionString == null)
             {
-                return string.IsNullOrEmpty(Label)
-                    ? StringUtil.Format("{0}.{1}", Major, Minor)
-                    : StringUtil.Format("{0}.{1}-{2}", Major, Minor, Label);
+                StringBuilder result = new StringBuilder();
+
+                result.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
+
+                if (!string.IsNullOrEmpty(PreLabel))
+                {
+                    result.Append("-").Append(PreLabel);
+                }
+
+                if (!string.IsNullOrEmpty(BuildLabel))
+                {
+                    result.Append("+").Append(BuildLabel);
+                }
+
+                versionString = result.ToString();
             }
 
-            return string.IsNullOrEmpty(Label)
-                ? StringUtil.Format("{0}.{1}.{2}", Major, Minor, Patch)
-                : StringUtil.Format("{0}.{1}.{2}-{3}", Major, Minor, Patch, Label);
+            return versionString;
         }
 
         /// <summary>
@@ -664,7 +802,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implement <see cref="IComparable{T}.CompareTo"/>
+        /// Implement <see cref="IComparable{T}.CompareTo"/>.
+        /// Meets SymVer 2.0 p.11 http://semver.org/
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
@@ -680,16 +819,14 @@ namespace System.Management.Automation
             if (Patch != value.Patch)
                 return Patch > value.Patch ? 1 : -1;
 
-            if (Label == null)
-                return value.Label == null ? 0 : 1;
+            if (PreLabel == null)
+                return value.PreLabel == null ? 0 : 1;
 
-            if (value.Label == null)
+            if (value.PreLabel == null)
                 return -1;
 
-            if (!string.Equals(Label, value.Label, StringComparison.Ordinal))
-                return string.Compare(Label, value.Label, StringComparison.Ordinal);
-
-            return 0;
+            // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
+            return ComparePreLabel(this.PreLabel, value.PreLabel);
         }
 
         /// <summary>
@@ -705,9 +842,10 @@ namespace System.Management.Automation
         /// </summary>
         public bool Equals(SemanticVersion other)
         {
+            // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return other != null &&
                    (Major == other.Major) && (Minor == other.Minor) && (Patch == other.Patch) &&
-                   string.Equals(Label, other.Label, StringComparison.Ordinal);
+                   string.Equals(PreLabel, other.PreLabel, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -715,11 +853,7 @@ namespace System.Management.Automation
         /// </summary>
         public override int GetHashCode()
         {
-            return Utils.CombineHashCodes(
-                Major.GetHashCode(),
-                Minor.GetHashCode(),
-                Patch.GetHashCode(),
-                Label == null ? 0 : Label.GetHashCode());
+            return versionString.GetHashCode();
         }
 
         /// <summary>
@@ -748,7 +882,6 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <(SemanticVersion v1, SemanticVersion v2)
         {
-            if ((object)v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
             return (v1.CompareTo(v2) < 0);
         }
 
@@ -757,7 +890,6 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
         {
-            if ((object)v1 == null) throw PSTraceSource.NewArgumentException(nameof(v1));
             return (v1.CompareTo(v2) <= 0);
         }
 
@@ -766,7 +898,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator >(SemanticVersion v1, SemanticVersion v2)
         {
-            return (v2 < v1);
+            return (v1.CompareTo(v2) > 0);
         }
 
         /// <summary>
@@ -774,7 +906,42 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
         {
-            return (v2 <= v1);
+            return (v1.CompareTo(v2) >= 0);
+        }
+
+        private static int ComparePreLabel(string preLabel1, string preLabel2)
+        {
+            if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
+            if (String.IsNullOrEmpty(preLabel2)) { return -1; }
+
+            var units1 = preLabel1.Split('.');
+            var units2 = preLabel2.Split('.');
+
+            var minLength = units1.Length < units2.Length ? units1.Length : units2.Length;
+
+            for (int i = 0; i < minLength; i++)
+            {
+                var ac = units1[i];
+                var bc = units2[i];
+                int number1, number2;
+                var isNumber1 = Int32.TryParse(ac, out number1);
+                var isNumber2 = Int32.TryParse(bc, out number2);
+
+                if (isNumber1 && isNumber2)
+                {
+                    if (number1 != number2) { return number1 < number2 ? -1 : 1; }
+                }
+                else
+                {
+                    if (isNumber1) { return -1; }
+                    if (isNumber2) { return 1; }
+
+                    int result = String.CompareOrdinal(ac, bc);
+                    if (result != 0) { return result; }
+                }
+            }
+
+            return units1.Length.CompareTo(units2.Length);
         }
 
         internal enum ParseFailureKind
