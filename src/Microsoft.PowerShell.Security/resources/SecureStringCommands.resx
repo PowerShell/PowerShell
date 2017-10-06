@@ -121,6 +121,6 @@
     <value>Enter secret: </value>
   </data>
   <data name="ForceRequired" xml:space="preserve">
-    <value>The system cannot protect plain text input. To suppress this warning and convert the plain text to a SecureString, reissue the command specifying the Force parameter. For more information ,type: get-help ConvertTo-SecureString.</value>
+    <value>The system cannot protect plain text input. To suppress this warning and convert the plain text to a SecureString, reissue the command specifying the Force parameter. For more information, type: get-help ConvertTo-SecureString.</value>
   </data>
 </root>
