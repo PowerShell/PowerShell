@@ -454,7 +454,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
-    It "Invoke-WebRequest returns Correct User-Agent on MacOSX" -Pending:(!$IsMacOS) {
+    It "Invoke-WebRequest returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
         
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
@@ -467,7 +467,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should MatchExactly '.*\(Macintosh;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
-    It "Invoke-WebRequest returns Correct User-Agent on Linux" -Pending:(!$IsLinux) {
+    It "Invoke-WebRequest returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
         
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
@@ -480,7 +480,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should MatchExactly '.*\(Linux;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
-    It "Invoke-WebRequest returns Correct User-Agent on Windows" -Pending:(!$IsWindows) {
+    It "Invoke-WebRequest returns Correct User-Agent on Windows" -Skip:(!$IsWindows) {
 
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
@@ -1333,7 +1333,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
-    It "Invoke-RestMethod returns Correct User-Agent on MacOSX" -Pending:(!$IsMacOS) {
+    It "Invoke-RestMethod returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
         
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
@@ -1344,7 +1344,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Output.headers.'User-Agent' | Should MatchExactly '.*\(Macintosh;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
-    It "Invoke-RestMethod returns Correct User-Agent on Linux" -Pending:(!$IsLinux) {
+    It "Invoke-RestMethod returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
         
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
@@ -1355,7 +1355,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Output.headers.'User-Agent' | Should MatchExactly '.*\(Linux;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
-    It "Invoke-RestMethod returns Correct User-Agent on Windows" -Pending:(!$IsWindows) {
+    It "Invoke-RestMethod returns Correct User-Agent on Windows" -Skip:(!$IsWindows) {
 
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
