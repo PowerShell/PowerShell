@@ -12,13 +12,8 @@ using System.Text;
 using System.Globalization;
 using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
-#if CORECLR
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-#else
-using System.Collections.Specialized;
-using System.Web.Script.Serialization;
-#endif
 
 // FxCop suppressions for resource strings:
 [module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "WebCmdletStrings.resources", MessageId = "json")]
@@ -88,22 +83,6 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidOperation,
                                 null));
             }
-#if CORECLR
-            JsonObject.ImportJsonDotNetModule(this);
-#else
-            try
-            {
-                System.Reflection.Assembly.Load(new AssemblyName("System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"));
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                ThrowTerminatingError(new ErrorRecord(
-                    new NotSupportedException(WebCmdletStrings.ExtendedProfileRequired),
-                    "ExtendedProfileRequired",
-                    ErrorCategory.NotInstalled,
-                    null));
-            }
-#endif
         }
 
         private List<object> _inputObjects = new List<object>();
@@ -130,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
                 object preprocessedObject = ProcessValue(objectToProcess, 0);
-#if CORECLR
                 JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
                 if (EnumsAsStrings)
                 {
@@ -142,17 +120,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 string output = JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
                 WriteObject(output);
-#else
-                // In Full CLR, we use the JavaScriptSerializer for which RecursionLimit was set to the default value of 100 (the actual recursion limit is 99 since
-                // at 100 the exception is thrown). See https://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer.recursionlimit(v=vs.110).aspx
-                // ProcessValue creates an object to be serialized from 1 to depth. However, the properties of the object at 'depth' should also be serialized,
-                // and from the perspective of the serializer, this means it needs to support serializing depth + 1. For the JavaScriptSerializer to support this,
-                // RecursionLimit needs to be set to depth + 2.
-                JavaScriptSerializer helper = new JavaScriptSerializer() { RecursionLimit = (maxDepthAllowed + 2) };
-                helper.MaxJsonLength = Int32.MaxValue;
-                string output = helper.Serialize(preprocessedObject);
-                WriteObject(Compress ? output : ConvertToPrettyJsonString(output));
-#endif
             }
         }
 
@@ -517,11 +484,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-#if CORECLR
                                 rv = ProcessCustomObject<JsonIgnoreAttribute>(obj, depth);
-#else
-                                rv = ProcessCustomObject<ScriptIgnoreAttribute>(obj, depth);
-#endif
                                 isCustomObj = true;
                             }
                         }

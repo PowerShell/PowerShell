@@ -69,8 +69,6 @@ namespace Microsoft.PowerShell.Commands
                         );
                         bool convertSuccess = false;
 
-                        // On CoreCLR, we need to explicitly load Json.NET
-                        JsonObject.ImportJsonDotNetModule(this);
                         if (returnType == RestReturnType.Json)
                         {
                             convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
