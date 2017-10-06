@@ -1031,8 +1031,13 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $result | Should BeNullOrEmpty
         }
 
-        It "Verify no error if wildcard doesn't match" {
-            { Remove-Item "TestDrive:\*.foo" } | Should Not Throw
+        It "Verify no error if wildcard doesn't match: <path>" -TestCases @(
+            @{path="TestDrive:\*.foo"},
+            @{path="TestDrive:\[z]"},
+            @{path="TestDrive:\z.*"}
+        ) {
+            param($path)
+            { Remove-Item $path } | Should Not Throw
         }
     }
 
