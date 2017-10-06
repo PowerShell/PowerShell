@@ -551,7 +551,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest error with -Proxy option set - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
+        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '6' -Https:$($protocol -eq 'https')
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -Proxy '${proxy_address}' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
@@ -564,7 +564,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
+        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '6' -Https:$($protocol -eq 'https')
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
@@ -1400,7 +1400,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         # Configure the environment variable.
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
+        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '6' -Https:$($protocol -eq 'https')
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
