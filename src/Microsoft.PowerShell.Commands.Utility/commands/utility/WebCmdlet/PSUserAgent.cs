@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
                     // only generate the windows user agent once
                     if(s_windowsUserAgent == null){
                         // find the version in the windows operating system description
-                        string versionText = OS.TrimEnd().Substring(OS.LastIndexOf(" ") +1);
+                        string versionText = OS.Substring(OS.LastIndexOf(" ") +1);
                         Version windowsPlatformversion = new Version(versionText);
                         s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
                     }
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return RuntimeInformation.OSDescription;
+                return RuntimeInformation.OSDescription.Trim();
             }
         }
 
