@@ -52,7 +52,7 @@ You can download and install a PowerShell package for any of the following platf
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.14.04_amd64.deb
 [rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.debian.8_amd64.deb
 [rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.debian.9_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0_beta.8-1.el7.x86_64.rpm
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0_beta.8-1.rhel.7.x86_64.rpm
 [rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-x86_64.AppImage
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0-beta.8-osx.10.12-x64.pkg
 
