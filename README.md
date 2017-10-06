@@ -5,7 +5,7 @@ PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and c
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
-[logo]: assets/Powershell_64.png
+[logo]: assets/Powershell_black_64.png
 
 ## Windows PowerShell vs PowerShell Core
 
