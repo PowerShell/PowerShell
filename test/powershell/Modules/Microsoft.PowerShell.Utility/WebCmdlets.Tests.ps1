@@ -527,8 +527,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest validate timeout option" {
 
-        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '6'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+        $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -552,7 +552,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         param($proxy_address, $name, $protocol)
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -Proxy '${proxy_address}' -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -Proxy '${proxy_address}' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -565,7 +565,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -1401,7 +1401,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -SkipCertificateCheck"
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
