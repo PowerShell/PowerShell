@@ -377,7 +377,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
         }
 
-        It "Remove-Item -LiteralPath should succeed for file with asterisk in name" {
+        It "Remove-Item -LiteralPath should succeed for file with asterisk in name" -Skip:($IsWindows) {
             $testPath = "$testdrive\foo*"
             $testPath2 = "$testdrive\foo*2"
             New-Item -Path $testPath -ItemType File
