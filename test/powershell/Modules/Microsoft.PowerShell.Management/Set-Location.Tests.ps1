@@ -55,4 +55,42 @@ Describe "Set-Location" -Tags "CI" {
             (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
         }
     }
+
+    Context 'Set-Location with last location history' {
+        
+            It 'Should go to last location when specifying minus as a path' {
+                $initialLocation = Get-Location
+                Set-Location ([System.IO.Path]::GetTempPath())
+                Set-Location -
+                (Get-Location).Path | Should Be ($initialLocation).Path
+            }
+
+            It 'Should go to last location when specifying minus as a path using alias' {
+                $initialLocation = Get-Location
+                Set-Location ([System.IO.Path]::GetTempPath())
+                cd -
+                (Get-Location).Path | Should Be ($initialLocation).Path
+            }
+    
+            It 'Should go back to original location when specifying minus as a path twice' {
+                $tempPath = ([System.IO.Path]::GetTempPath())
+                Set-Location $tempLocation
+                $tempLocation = Get-Location
+                Set-Location -
+                Set-Location -
+                (Get-Location).Path | Should Be ($tempLocation).Path
+            }
+
+            It 'Should fail if there is no last location' {
+                [System.Environment]::SetEnvironmentVariable('OLDPWD', [string]::Empty)
+                try
+                {
+                    Set-Location -
+                }
+                catch
+                {
+                    $_.FullyQualifiedErrorId | should be "SetLocationInvalidArgument,Microsoft.PowerShell.Commands.SetLocationCommand"
+                }
+            }
+    }
 }
