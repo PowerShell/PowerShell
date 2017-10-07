@@ -102,7 +102,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         @{parameter = "StartupType"    ; value = "Manual"},
         @{parameter = "StartupType"    ; value = "System"},
         @{parameter = "Credential"     ; value = (
-                [System.Management.Automation.PSCredential]::new("username", 
+                [System.Management.Automation.PSCredential]::new("username",
                     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
                     (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
         }
@@ -214,7 +214,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
-    It "Remove-Service can accept pipeline input of a ServiceController" {
+    It "Remove-Service can accept a ServiceController as pipeline input" {
         try {
             $servicename = "testremoveservice"
             $parameters = @{
@@ -236,7 +236,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
-    It "Set-Service can accept pipeline input of a ServiceController" {
+    It "Set-Service can accept a ServiceController as pipeline input" {
         try {
             $servicename = "testsetservice"
             $newdisplayname = "newdisplayname"
@@ -255,9 +255,29 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
+    It "Set-Service can accept a ServiceController as positional input" {
+        try {
+            $servicename = "testsetservice"
+            $newdisplayname = "newdisplayname"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\powershell.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $script = { Set-Service $service -DisplayName $newdisplayname }
+            { & $script } | Should Not Throw
+            $service = Get-Service -Name $servicename
+            $service.DisplayName | Should BeExactly $newdisplayname
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
-            [System.Management.Automation.PSCredential]::new("username", 
+            [System.Management.Automation.PSCredential]::new("username",
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)));
             errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
@@ -271,7 +291,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         param($cmdlet, $name, $parameter, $value, $errorid)
         $parameters = @{$parameter = $value; Name = $name; ErrorAction = "Stop"}
         if ($cmdlet -eq "New-Service") {
-            $parameters += @{Binary = "$PSHOME\powershell.exe"}; 
+            $parameters += @{Binary = "$PSHOME\powershell.exe"};
         }
         { & $cmdlet @parameters } | ShouldBeErrorId $errorid
     }
