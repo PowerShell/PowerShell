@@ -45,4 +45,19 @@ Describe "Out-String" -Tags "CI" {
 
 	$streamoutputlength | Should BeLessThan $nonstreamoutputlength
     }
+
+    It "Should not print a newline when the nonewline switch is used" {
+        $testArray = "a", "b"
+        $testArray | Out-String -NoNewLine | Should Be "ab"
+    }
+
+    It "Should preserve embedded newline when the nonewline switch is used" {
+        $testArray = "a$nl", "b"
+        $testArray | Out-String -NoNewLine | Should Be "a${nl}b"
+    }
+
+    It "Should throw error when NoNewLine and Stream are used together" {
+        $testArray = "a", "b"
+        { $testArray | Out-String -NoNewLine -Stream }| ShouldBeErrorId  "AmbiguousParameterSet,Microsoft.PowerShell.Commands.OutStringCommand"
+    }
 }
