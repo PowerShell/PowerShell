@@ -93,7 +93,7 @@
         <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
       </DirectorySearchRef>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or higher to be installed to enable remoting over WinRM. You can find download links here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
+    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or above to be installed to enable remoting over WinRM. You can find download links here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
       <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
