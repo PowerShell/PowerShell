@@ -1402,6 +1402,9 @@ function Start-PSBootstrap {
             }
         }
 
+        # Try to locate dotnet-SDK before installing it
+        Find-Dotnet
+
         # Install dotnet-SDK
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
