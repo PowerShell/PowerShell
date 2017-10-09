@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Management.Automation;
 using System.Net;
 using System.IO;
@@ -70,7 +69,11 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowUnencryptedAuthorization { get; set; }
 
         /// <summary>
-        /// Gets or sets the Authorization property used to determin the Authorization method for the web session.!--
+        /// Gets or sets the Authorization property used to determin the Authorization method for the web session. 
+        /// Authorization does not work with UseDefaultCredentials.
+        /// Authorization over unencrypted sessions requires AllowUnencryptedAuthorization.
+        /// Basic: Requires Credential
+        /// OAuth/Bearer: Requires Token
         /// </summary>
         [Parameter]
         [ValidateSet("Basic","Bearer","OAuth")]
@@ -121,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         /// <summary>
-        /// gets or sets the Token property
+        /// gets or sets the Token property. Token is required by Authorization OAuth and Bearer.
         /// </summary>
         [Parameter]
         public virtual SecureString Token { get; set; }
@@ -758,7 +761,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                Debug.Assert(false, String.Format("Unrecognized Authorization value: {0}", Authorization));
+                Diagnostics.Assert(false, String.Format("Unrecognized Authorization value: {0}", Authorization));
             }
         }
 

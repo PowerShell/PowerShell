@@ -1293,6 +1293,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $credential = [pscredential]::new("testuser",$token)
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+            $testCases = @(
+                @{authorization = "bearer"}
+                @{authorization = "OAuth"}
+            )
         }
 
         It "Verifies Invoke-WebRequest -Authorization Basic" {
@@ -1308,10 +1312,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization <authorization>" -TestCases @(
-            @{ authorization = "bearer"}
-            @{ authorization = "OAuth"}
-        ) {
+        It "Verifies Invoke-WebRequest -Authorization <authorization>" -TestCases $testCases {
             param($authorization)
             $params = @{
                 Uri = $httpsUri
@@ -1349,10 +1350,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthorizationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization <authorization> requires -Token" -TestCases @(
-            @{ authorization = "bearer"}
-            @{ authorization = "OAuth"}
-        ) {
+        It "Verifies Invoke-WebRequest -Authorization <authorization> requires -Token" -TestCases $testCases {
             param($authorization)
             $params = @{
                 Uri = $httpsUri
@@ -2215,6 +2213,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $credential = [pscredential]::new("testuser",$token)
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+            $testCases = @(
+                @{authorization = "bearer"}
+                @{authorization = "OAuth"}
+            )
         }
 
         It "Verifies Invoke-RestMethod -Authorization Basic" {
@@ -2229,10 +2231,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization <authorization>" -TestCases @(
-            @{ authorization = "Bearer"}
-            @{ authorization = "OAuth"}
-        ) {
+        It "Verifies Invoke-RestMethod -Authorization <authorization>" -TestCases $testCases {
             param($authorization)
             $params = @{
                 Uri = $httpsUri
@@ -2269,10 +2268,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthorizationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization <authorization> requires -Token" -TestCases @(
-            @{ authorization = "Bearer"}
-            @{ authorization = "OAuth"}
-        ) {
+        It "Verifies Invoke-RestMethod -Authorization <authorization> requires -Token" -TestCases $testCases {
             param($authorization)
             $params = @{
                 Uri = $httpsUri
