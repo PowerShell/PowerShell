@@ -39,8 +39,9 @@ Returns a static HTML page containing links and descriptions of the available te
 Returns a JSON object containing the details of the Client Certificate if one is provided in the request.
 
 ```powershell
-$uri = Get-WebListenerUrl -Test 'Compression' -Https -Certificate $certificate
-Invoke-RestMethod -Uri $uri
+$certificate = Get-WebListenerClientCertificate
+$uri = Get-WebListenerUrl -Test 'Cert' -Https 
+Invoke-RestMethod -Uri $uri -Certificate $certificate
 ```
 
 Response when certificate is provided in request:
