@@ -74,6 +74,7 @@ function Register-WinRmPlugin
     Write-Verbose "Performing WinRM registration with: $fileName"
     reg.exe import .\$fileName
 
+    # Clean up
     Remove-Item .\$fileName
 }
 
