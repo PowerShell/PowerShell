@@ -15,11 +15,7 @@ param
 (
     [parameter(Mandatory = $true, ParameterSetName = "ByPath")]
     [string]
-    $PowerShellHome,
-
-    [parameter(Mandatory = $true, ParameterSetName = "ByPath")]
-    [string]
-    $PowerShellVersion = "6.0.0-alpha.8"
+    $PowerShellHome
 )
 
 function Register-WinRmPlugin
@@ -123,16 +119,16 @@ if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity
 if ($PsCmdlet.ParameterSetName -eq "ByPath")
 {
     $targetPsHome = $PowerShellHome
-    $targetPsVersion = $PowershellVersion
+    $targetPsVersion = & "$targetPsHome\powershell" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
 }
 else
 {
     ## Get the PSHome and PSVersion using the current powershell instance
     $targetPsHome = $PSHOME
     $targetPsVersion = $PSVersionTable.PSVersion.ToString()
-
-    Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
 }
+
+Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
 
 $pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $targetPsVersion
 
