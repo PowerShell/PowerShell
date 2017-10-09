@@ -537,7 +537,7 @@ sudo dnf remove powershell
 
 PowerShell is available from the [Arch Linux][] User Repository (AUR).
 
-* It can be compiled with the latest [tagged release][arch-release]
+* It can be compiled with the [latest tagged release][arch-release]
 * It can be compiled from the [latest commit to master][arch-git]
 * It can be installed using the [latest release binary][arch-bin]
 
