@@ -1368,3 +1368,24 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         }
     }
 }
+
+Describe "UNC paths" -Tags 'CI' {
+    It "Can Get-ChildItems from a UNC location using <cmdlet>" -Skip:(!$IsWindows) -TestCases @(
+        @{cmdlet="Push-Location"},
+        @{cmdlet="Set-Location"}
+    ) {
+        param($cmdlet)
+        $originalLocation = Get-Location
+        try {
+            $systemDrive = ($env:SystemDrive).Replace(":","$")
+            $testPath = Join-Path "\\localhost" $systemDrive
+            & $cmdlet $testPath
+            Get-Location | Should BeExactly "Microsoft.PowerShell.Core\FileSystem::$testPath"
+            $children = { Get-ChildItem -ErrorAction Stop } | Should Not Throw
+            $children.Count | Should BeGreaterThan 0
+        }
+        finally {
+            Set-Location $originalLocation
+        }
+    }
+}
