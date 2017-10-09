@@ -24,7 +24,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke() | Should Not Throw;
+"@).Invoke() 
+
+		Test-Path -Path .\DSCTestConfig\localhost.mof | Should Be $True
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
@@ -46,7 +48,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke() | Should Not Throw;
+"@).Invoke() 
+
+		Test-Path -Path .\DSCTestConfig\localhost.mof | Should Be $True		
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
@@ -160,7 +164,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
 	}
         WordPressServer
-"@).Invoke() | Should Not Throw;
+"@).Invoke() 
+
+		Test-Path -Path .\WordPressServer\localhost.mof | Should Be $True
 
         Remove-Item -Force -Recurse -Path WordPressServer
     }
@@ -180,7 +186,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke() | Should Not Throw;
+"@).Invoke()
+
+		Test-Path -Path .\DSCTestConfig\localhost.mof | Should Be $True
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
@@ -210,7 +218,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke() | Should Not Throw;
+"@).Invoke()
+
+		Test-Path -Path .\DSCTestConfig\localhost.mof | Should Be $True
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
