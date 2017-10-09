@@ -24,7 +24,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke()
+"@).Invoke() | Should Not Throw;
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
@@ -46,7 +46,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke()
+"@).Invoke() | Should Not Throw;
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
@@ -160,7 +160,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
 	}
         WordPressServer
-"@).Invoke()
+"@).Invoke() | Should Not Throw;
 
         Remove-Item -Force -Recurse -Path WordPressServer
     }
@@ -180,7 +180,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke()
+"@).Invoke() | Should Not Throw;
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
@@ -210,7 +210,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke()
+"@).Invoke() | Should Not Throw;
 
         Remove-Item -Force -Recurse -Path DSCTestConfig
     }
