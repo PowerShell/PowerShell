@@ -34,7 +34,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Returned data structure is a Hashtable instead a CustomPSObject.
         /// </summary>
-        [Parameter(Mandatory = false)]
         public SwitchParameter AsHashtable { get; set; }
 
         #endregion parameters
