@@ -1665,9 +1665,18 @@ namespace System.Management.Automation
 
                 if (index > 0)
                 {
-                    // We must have a drive specified
-
-                    result = true;
+                    // see if there are any path separators before the colon which would mean the
+                    // colon is part of a file or folder name and not a drive: ./foo:bar vs foo:bar
+                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index-1);
+                    if (separator == -1)
+                    {
+                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
+                    }
+                    if (separator == -1 || index < separator)
+                    {
+                        // We must have a drive specified
+                        result = true;
+                    }
                 }
             } while (false);
 
@@ -3404,21 +3413,27 @@ namespace System.Management.Automation
 
             string result = path;
 
-            // Find the drive separator
+            // Find the drive separator only if it's before a path separator
 
             int index = path.IndexOf(":", StringComparison.Ordinal);
-
             if (index != -1)
             {
-                // Remove the \ or / if it follows the drive indicator
-
-                if (path[index + 1] == '\\' ||
-                    path[index + 1] == '/')
+                int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);
+                if (separator == -1)
                 {
-                    ++index;
+                    separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
                 }
+                if (separator == -1 || index < separator)
+                {
+                    // Remove the \ or / if it follows the drive indicator
+                    if (path[index + 1] == '\\' ||
+                        path[index + 1] == '/')
+                    {
+                        ++index;
+                    }
 
-                result = path.Substring(index + 1);
+                    result = path.Substring(index + 1);
+                }
             }
 
             return result;

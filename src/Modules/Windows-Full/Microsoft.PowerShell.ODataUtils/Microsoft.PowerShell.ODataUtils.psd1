@@ -1,4 +1,4 @@
-﻿#
+#
 # Module manifest for module 'Microsoft.PowerShell.ODataUtils'
 #
 # Generated on: 8/15/2013

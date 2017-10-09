@@ -136,10 +136,13 @@ namespace Microsoft.PowerShell
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
             string path = Environment.GetEnvironmentVariable("PATH");
-            string pshome = Utils.DefaultPowerShellAppBase;
-            if (!path.Contains(pshome))
+            if (path != null)
             {
-                Environment.SetEnvironmentVariable("PATH", pshome + Path.PathSeparator + path);
+                string pshome = Utils.DefaultPowerShellAppBase;
+                if (!path.Contains(pshome))
+                {
+                    Environment.SetEnvironmentVariable("PATH", pshome + Path.PathSeparator + path);
+                }
             }
 
             try
@@ -200,7 +203,7 @@ namespace Microsoft.PowerShell
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
                     // or start up the engine and retrieve the information via $psversiontable.GitCommitId
                     // but this returns the semantic version and avoids executing a script
-                    s_theConsoleHost.UI.WriteLine("powershell " + PSVersionInfo.GitCommitId);
+                    s_theConsoleHost.UI.WriteLine("PowerShell " + PSVersionInfo.GitCommitId);
                     return 0;
                 }
 

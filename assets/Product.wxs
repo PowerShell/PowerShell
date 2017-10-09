@@ -1,12 +1,9 @@
 ﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-
   <!-- MSI installs on Win7 and above -->
   <?define MinOSVersionSupported = "VersionNT >= 601" ?>
-
   <!-- The URL for add/remove programs -->
   <!-- TBD:Point to the actual release -->
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
-
   <?define ProductName = "$(env.ProductName)" ?>
   <?define ProductGuid = "$(env.ProductGuid)" ?>
   <?define ProductVersion = "$(env.ProductVersion)" ?>
@@ -15,52 +12,70 @@
   <?define ProductSemanticVersionWithName = "$(var.ProductName)-$(env.ProductSemanticVersion)"?>
   <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
   <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
-
   <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
   <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
   <!-- Otherwise, updates won't occur -->
   <Product Id="$(var.ProductGuid)" Name="$(var.ProductSemanticVersionWithName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="{f7ba3e58-0be8-443b-ac91-f99dd1e7bd3b}">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(var.ProductTargetArchitecture)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
-
     <!-- Add PowerShell icon for executable -->
-    <Icon Id="PowerShellExe.ico" SourceFile="assets\Powershell_256.ico" />
-
+    <Icon Id="PowerShellExe.ico" SourceFile="assets\Powershell_black.ico" />
     <!-- Add PowerShell icon in Add/Remove Programs -->
     <Property Id="ARPPRODUCTICON" Value="PowerShellExe.ico" />
-
     <!-- Set properties for add/remove programs -->
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
-
-	<!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
-	<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
-	<!-- Default value of Checkbox of starting PowerShell after installation -->  
-	<Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]PowerShell.exe"/>
-	<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
-	<UI><Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish></UI>
-    
+    <!-- custom images -->
+    <WixVariable Id="WixUIBannerBmp" Value="assets\WixUIBannerBmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="assets\WixUIDialogBmp.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="assets\WixUIInfoIco.bmp" />
+    <WixVariable Id="WixUIInfoIco" Value="assets\WixUIInfoIco.bmp" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
+    <!-- Default value of Checkbox of starting PowerShell after installation -->
+    <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]PowerShell.exe"/>
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    <UI>
+      <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+        <Control Id="Finish" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUIFinish)" />
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUICancel)" />
+        <Control Id="Bitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="234" TabSkip="no" Text="!(loc.ExitDialogBitmap)" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Disabled="yes" Text="!(loc.WixUIBack)" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Description" Type="Text" X="135" Y="70" Width="220" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogDescription)" />
+        <Control Id="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Transparent="yes" NoPrefix="yes" Text="!(loc.ExitDialogTitle)" />
+        <!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
+        <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch PowerShell">
+          <Condition Action="show">NOT Installed</Condition>
+        </Control>
+      </Dialog>
+      <InstallUISequence>
+          <Show Dialog="MyExitDialog" OnExit="success" />
+      </InstallUISequence>
+      <AdminUISequence>
+          <Show Dialog="MyExitDialog" OnExit="success" />
+      </AdminUISequence>
+      <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+    </UI>
+    <UI>
+      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
+    </UI>
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Win8 and above"><![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]></Condition>
-
+    <Condition Message="Supported only on Win8 and above">
+      <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
+    </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
     <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(env.ProductName) is already installed." />
-    
     <!-- Embed Cabinet Files in Product-->
     <MediaTemplate EmbedCab="yes" />
-    
-    <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->    
+    <!-- In Your Wix Setup Project, Add A Reference To WixUIExtension.dll -->
     <UIRef Id="WixUI_InstallDir" />
-
     <!-- Features are mandatory.  Need At Least One. -->
     <Feature Id="ProductFeature" Title="PowerShell" Level="1">
       <ComponentGroupRef Id="$(var.ProductVersionWithName)"/>
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
     </Feature>
-
-    <!--We need to show EULA, and provide option to customize download location-->        
+    <!--We need to show EULA, and provide option to customize download location-->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-
     <!-- Prerequisite check for Windows Universal C runtime -->
     <Property Id="UNIVERSAL_C_RUNTIME_INSTALLED" Secure="yes">
       <DirectorySearch Id="WindowsDirectory" Path="[WindowsFolder]">
@@ -68,21 +83,19 @@
           <FileSearch Id="ucrtbase" Name="ucrtbase.dll"/>
         </DirectorySearch>
       </DirectorySearch>
-    </Property>	
+    </Property>
     <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
       <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
     </Condition>
-
-     <!-- Prerequisite check for Visual Studio 2015 C++ redistributables -->
-     <Property Id="VISUAL_CPP_RUNTIME_INSTALLED" Secure="yes">
+    <!-- Prerequisite check for Visual Studio 2015 C++ redistributables -->
+    <Property Id="VISUAL_CPP_RUNTIME_INSTALLED" Secure="yes">
       <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
         <FileSearch Id="vcruntime140" Name="vcruntime140.dll"/>
       </DirectorySearchRef>
-    </Property>	
+    </Property>
     <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
       <![CDATA[Installed OR VISUAL_CPP_RUNTIME_INSTALLED]]>
     </Condition>
-
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
         <Directory Id="INSTALLFOLDER" Name="PowerShell">
@@ -91,29 +104,18 @@
               <CreateFolder/>
             </Component>
           </Directory>
-        </Directory>        
+        </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductSemanticVersionWithName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut"
-              Name="$(var.ProductSemanticVersionWithName)"
-              Description="$(var.ProductSemanticVersionWithName)"
-              Target="[$(var.ProductVersionWithName)]PowerShell.exe"
-              WorkingDirectory="$(var.ProductVersionWithName)"
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="[$(var.ProductVersionWithName)]PowerShell.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
-
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-
-            <RegistryValue Root="HKCU"
-                           Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut"
-                           Name="installed"
-                           Type="integer"
-                           Value="1" KeyPath="yes"/>
+            <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
         </Directory>
       </Directory>
     </Directory>
-
   </Product>
 </Wix>

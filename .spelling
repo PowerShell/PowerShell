@@ -97,6 +97,7 @@ isnot
 json
 korygill
 labeled
+linux-x64
 lockfile
 macOS
 md
@@ -146,6 +147,7 @@ psobjects
 psproxyjobs
 PSReadline
 PSSessionConfiguration
+redistributables
 Register-EngineEvent
 Register-PSSessionConfiguration
 registryprovider
@@ -192,6 +194,7 @@ whitespace
 Win32
 win7
 WinRM
+WiX
 writingpestertests.md
 WSMan
 wsmansessionoption.cs
@@ -223,6 +226,7 @@ alpha.14
 alpha.16
 alpha.17
 alpha.18
+args
 behavioral
 bergmeister
 beta.1
@@ -231,11 +235,16 @@ beta.3
 beta.4
 beta.5
 beta.6
+beta.8
 binding
 bool
+CDXML
 charset
+CI
 cleanup
+CodeMethod
 CodeOwner
+CommandNotFoundException
 ContentType
 ConvertTo-Html
 CoreConsoleHost
@@ -251,7 +260,9 @@ FileCatalog
 FilterHashtable
 foreach
 GetParentProcess
+GitCommitId
 globbing
+HelpersCommon.psm1
 honors
 hostname
 IncludeUserName
@@ -261,14 +272,17 @@ iSazonov
 IsCore
 IsCoreCLR
 jeffbi
+joandrsn
 JsonConfigFileAccessor
 KeyFileParameter
 KeyHandler
 KirkMunro
 kittholland
 kwiknick
+LDSpits
 Lee303
 libpsl-native
+LoadFrom
 markekraus
 meta
 MiaRomero
@@ -286,20 +300,28 @@ PetSerAl
 powercode
 PowerShellProperties
 preview1-24530-04
+ProductVersion
+PRs
 PSDrive
 PseudoParameterBinder
 PSReadLine
 PSScriptAnalyzer
+PSVersion
 PVS-Studio
 Pwrshplughin.dll
 rc2-24027
 rc3-24011
+Raspbian
+README.md
 RelationLink
 richardszalay
 rkeithhill
+SemVer
 shebang
 ShellExecute
+showwindow
 startup
+startuptype
 stdin
 StringBuilder
 SxS
@@ -311,7 +333,9 @@ TimCurwick
 timestamp
 TimeZone
 TPA
+Travis
 TTY's
+UserAgent
 UserData
 Utf8
 UTF8NoBOM
@@ -432,6 +456,13 @@ journalctl
 SystemD
 #endregion
 
+#region demos/WindowsPowerShellModules/README.md Overrides
+ - demos/WindowsPowerShellModules/README.md
+PowerShellGallery
+PSSnapins
+WindowsPSModulePath
+#endregion
+
 #region docker/README.md Overrides
  - docker/README.md
 andschwa's
@@ -550,8 +581,10 @@ sample-dotnet2
 
 #region docs/installation/linux.md Overrides
  - docs/installation/linux.md
+libcurl
 OpenSUSE
 TravisEz13
+zypper
 #endregion
 
 #region docs/installation/windows.md Overrides
@@ -654,7 +687,6 @@ PowerShellCore
 Ronn
 Toolset
 v6
-WiX
 #endregion
 
 #region docs/testing-guidelines/PowerShellCoreTestStatus.md Overrides

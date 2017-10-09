@@ -3107,7 +3107,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
-                        if (null != LiteralPath && 0 == resolvedPSPaths.Count)
+                        if (true == SuppressWildcardExpansion && 0 == resolvedPSPaths.Count)
                         {
                             ItemNotFoundException pathNotFound =
                                 new ItemNotFoundException(

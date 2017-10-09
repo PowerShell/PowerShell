@@ -359,7 +359,7 @@ function ExecuteRestMethod
     return $result
 }
 
-function GetMultipartBody 
+function GetMultipartBody
 {
     param
     (
@@ -389,7 +389,7 @@ function GetMultipartBody
         $multipartContent.Add($fileContent)
     }
     # unary comma required to prevent $multipartContent from being unwrapped/enumerated
-    return ,$multipartContent 
+    return ,$multipartContent
 }
 
 <#
@@ -453,7 +453,34 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Output.Content | Should Not Be $null
     }
 
-    It "Invoke-WebRequest returns User-Agent" {
+    #User-Agent changes on different platforms, so tests should only be run if on the correct platform
+    It "Invoke-WebRequest returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
+        
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        # Validate response content
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.'User-Agent' | Should MatchExactly '.*\(Macintosh;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-WebRequest returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
+        
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        # Validate response content
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.'User-Agent' | Should MatchExactly '.*\(Linux;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-WebRequest returns Correct User-Agent on Windows" -Skip:(!$IsWindows) {
 
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
@@ -463,7 +490,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'User-Agent' | Should MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
+        $jsonContent.headers.'User-Agent' | Should MatchExactly '.*\(Windows NT \d+\.\d*;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     It "Invoke-WebRequest returns headers dictionary" {
@@ -528,7 +555,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Invoke-WebRequest validate timeout option" {
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -552,7 +579,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         param($proxy_address, $name, $protocol)
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -Proxy '${proxy_address}' -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -Proxy '${proxy_address}' -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -565,7 +592,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
@@ -592,29 +619,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
-    #                 Note: These are the supported options, but we do not have a web service to test them all.
-    # $dataEncodings = @("gzip", "deflate") --> Currently there is a bug for deflate encoding. Please see '7976639:Invoke-WebRequest does not support -TransferEncoding deflate' for more info.
-    $dataEncodings = @("gzip")
-    foreach ($data in $dataEncodings)
-    {
-        It "Invoke-WebRequest supports request that returns $data-encoded data." {
+    # Note: These are the supported options, but we do not have a web service to test them all.
+    It "Invoke-WebRequest supports request that returns <DataEncoding>-encoded data." -TestCases @(
+        @{ DataEncoding = "gzip"}
+        @{ DataEncoding = "deflate"}
+    ) {
+        param($dataEncoding)
+        $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
-            $command = "Invoke-WebRequest -Uri http://httpbin.org/$data -TimeoutSec 5"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
 
-            $result = ExecuteWebCommand -command $command
-            ValidateResponse -response $result
-
-            # Validate response content
-            $jsonContent = $result.Output.Content | ConvertFrom-Json
-            if ($data -eq "gzip")
-            {
-                $jsonContent.gzipped | Should Match $true
-            }
-            else
-            {
-                $jsonContent.deflated | Should Match $true
-            }
-        }
+        # Validate response content
+        $result.Output.Headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding
+        $jsonContent = $result.Output.Content | ConvertFrom-Json        
+        $jsonContent.Headers.Host | Should BeExactly $uri.Authority
     }
 
     # Perform the following operation for Invoke-WebRequest using the following content types: "text/plain", "application/xml", "application/xml"
@@ -1190,42 +1210,42 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $command = "Invoke-WebRequest -Uri '$Uri'"
             $result = ExecuteWebCommand -command $command
             $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-            
+
             # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
             $Uri = Get-WebListenerUrl -Https
             $command = "Invoke-WebRequest -Uri '$Uri' -SkipCertificateCheck"
             $result = ExecuteWebCommand -command $command
             $result.Error | Should BeNullOrEmpty
         }
-        
+
         It "Validate Invoke-WebRequest returns native HTTPS error message in exception" {
             $uri = Get-WebListenerUrl -Https
             $command = "Invoke-WebRequest -Uri '$uri'"
             $result = ExecuteWebCommand -command $command
-            
+
             # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
             $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
             $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
-        
+
         It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
-            $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
+            $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck |
                 Select-Object -ExpandProperty Content |
                 ConvertFrom-Json
-            
+
             $result.Status | Should Be 'FAILED'
         }
-        
+
         # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
         It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
-            $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
+            $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck |
                 Select-Object -ExpandProperty Content |
                 ConvertFrom-Json
-            
+
             $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
         }
@@ -1305,7 +1325,30 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.PowerShell.Dispose()
     }
 
-    It "Invoke-RestMethod returns User-Agent" {
+    #User-Agent changes on different platforms, so tests should only be run if on the correct platform
+    It "Invoke-RestMethod returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
+        
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Output.headers.'User-Agent' | Should MatchExactly '.*\(Macintosh;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-RestMethod returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
+        
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Output.headers.'User-Agent' | Should MatchExactly '.*\(Linux;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-RestMethod returns Correct User-Agent on Windows" -Skip:(!$IsWindows) {
 
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
@@ -1313,7 +1356,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'User-Agent' | Should MatchExactly '(?<!Windows)PowerShell\/\d+\.\d+\.\d+.*'
+        $result.Output.headers.'User-Agent' | Should MatchExactly '.*\(Windows NT \d+\.\d*;.*\) PowerShell\/\d+\.\d+\.\d+.*'
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -1365,7 +1408,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
         $command = "Invoke-RestMethod -Uri '$uri'"
 
-        $result = ExecuteWebCommand -command $command        
+        $result = ExecuteWebCommand -command $command
         $Result.Output | Should Match '⡌⠁⠧⠑ ⠼⠁⠒  ⡍⠜⠇⠑⠹⠰⠎ ⡣⠕⠌'
     }
 
@@ -1408,7 +1451,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -SkipCertificateCheck"
+        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
@@ -1433,27 +1476,18 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
-    #                 Note: These are the supported options, but we do not have a web service to test them all.
-    # $dataEncodings = @("gzip", "deflate") --> Currently there is a bug for deflate encoding. Please see '7976639:Invoke-RestMethod does not support -TransferEncoding deflate' for more info.
-    $dataEncodings = @("gzip")
-    foreach ($data in $dataEncodings)
-    {
-        It "Invoke-RestMethod supports request that returns $data-encoded data." {
+    # Note: These are the supported options, but we do not have a web service to test them all.
+    It "Invoke-RestMethod supports request that returns <DataEncoding>-encoded data." -TestCases @(
+        @{ DataEncoding = "gzip"}
+        @{ DataEncoding = "deflate"}
+    ) {
+        param($dataEncoding)
+        $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
+        $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
-            $command = "Invoke-RestMethod -Uri http://httpbin.org/$data -TimeoutSec 5"
-
-            $result = ExecuteWebCommand -command $command
-
-            # Validate response
-            if ($data -eq "gzip")
-            {
-                $result.Output.gzipped | Should Match $true
-            }
-            else
-            {
-                $result.Output.deflated | Should Match $true
-            }
-        }
+        # Validate response content
+        $headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding      
+        $result.Headers.Host | Should BeExactly $uri.Authority
     }
 
     # Perform the following operation for Invoke-RestMethod using the following content types: "text/plain", "application/xml", "application/xml"
@@ -1757,37 +1791,37 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $command = "Invoke-RestMethod -Uri '$uri' -Method HEAD"
             $result = ExecuteWebCommand -command $command
             $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-            
+
             # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
             $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -Method HEAD"
             $result = ExecuteWebCommand -command $command
             $result.Error | Should BeNullOrEmpty
         }
-        
+
         It "Validate Invoke-RestMethod returns native HTTPS error message in exception" {
             $uri = Get-WebListenerUrl -Https
             $command = "Invoke-RestMethod -Uri '$uri'"
             $result = ExecuteWebCommand -command $command
-            
+
             # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
             $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
             $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
-        
+
         It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
-            
+
             $result.Status | Should Be 'FAILED'
         }
-        
+
         # Test skipped on macOS and CentOS pending support for Client Certificate Authentication
         # https://github.com/PowerShell/PowerShell/issues/4650
         It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$PendingCertificateTest {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
-            
+
             $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
         }
@@ -2051,7 +2085,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $headers.'Content-Type' | Should Be 'text/html; charset=utf-8'
             $headers.Server | Should Be 'Kestrel'
         }
-        
+
         It "Verifies Invoke-RestMethod supports -ResponseHeadersVariable overwriting existing variable" {
             $uri = Get-WebListenerUrl -Test '/'
             $headers = 'prexisting'

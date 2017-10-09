@@ -1436,7 +1436,7 @@ namespace Microsoft.PowerShell.Commands
         /// service name
         /// </summary>
         /// <value></value>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Name")]
+        [Parameter(Mandatory = true, ParameterSetName = "Name", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("ServiceName", "SN")]
         public new String Name
         {
@@ -1448,6 +1448,14 @@ namespace Microsoft.PowerShell.Commands
         }
         internal String serviceName = null;
 
+        /// <summary>
+        /// The following is the definition of the input parameter "InputObject".
+        /// Specifies a ServiceController object that represents the service to change.
+        /// Enter a variable that contains the objects or type a command or expression
+        /// that gets the objects.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "InputObject", Position = 0, ValueFromPipeline = true)]
+        public new ServiceController InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "DisplayName".
@@ -1538,16 +1546,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         internal string serviceStatus = null;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "InputObject".
-        /// Specifies ServiceController object representing the services to be stopped.
-        /// Enter a variable that contains the objects or type a command or expression
-        /// that gets the objects.
-        /// </summary>
-        [Parameter(ValueFromPipeline = true,
-                   ParameterSetName = "InputObject")]
-        public new ServiceController InputObject { get; set; }
 
         /// <summary>
         /// This is not a parameter for this cmdlet.
@@ -1688,7 +1686,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Modify startup type or display name or credential
                         if (!String.IsNullOrEmpty(DisplayName)
-                            || (ServiceStartMode)(-1) != StartupType || null != Credential) 
+                            || (ServiceStartMode)(-1) != StartupType || null != Credential)
                         {
                             DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                             if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))

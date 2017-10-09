@@ -165,17 +165,15 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $actual | Should Be $expected
         }
 
-        It "-Version should return the engine version" {
+        It "-Version should return the engine version using: -version <value>" -TestCases @(
+            @{value = ""},
+            @{value = "2"},
+            @{value = "-command 1-1"}
+        ) {
             $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version
+            $observed = & $powershell -version $value 2>&1
             $observed | should be $currentVersion
-        }
-
-        It "-Version should ignore other parameters" {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version -command get-date
-            # no extraneous output
-            $observed | should be $currentVersion
+            $LASTEXITCODE | Should Be 0
         }
 
         It "-File should be default parameter" {
@@ -240,7 +238,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should Be $BoolValue
         }
 
-        It "-File should return exit code from script"  -TestCases @(
+        It "-File '<filename>' should return exit code from script"  -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
@@ -491,6 +489,10 @@ foo
     Context "PATH environment variable" {
         It "`$PSHOME should be in front so that powershell.exe starts current running PowerShell" {
             powershell -v | Should Match $psversiontable.GitCommitId
+        }
+
+        It "powershell starts if PATH is not set" -Skip:($IsWindows) {
+            bash -c "unset PATH;$powershell -c '1+1'" | Should BeExactly 2
         }
     }
 
