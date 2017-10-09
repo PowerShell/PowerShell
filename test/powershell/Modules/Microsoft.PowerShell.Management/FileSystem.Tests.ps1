@@ -407,9 +407,24 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Copy-Item -LiteralPath $file.FullName -Destination $newPath
             Test-Path -LiteralPath $newPath | Should Be $true
         }
+    }
 
-        It "Remove-Item -LiteralPath should fail if it contains asterisk" {
+    Context "Handle asterisks in name" {
+        It "Remove-Item -LiteralPath should fail if it contains asterisk and file doesn't exist" {
             { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+        }
+
+        It "Remove-Item -LiteralPath should succeed for file with asterisk in name" -Skip:($IsWindows) {
+            $testPath = "$testdrive\foo*"
+            $testPath2 = "$testdrive\foo*2"
+            New-Item -Path $testPath -ItemType File
+            New-Item -Path $testPath2 -ItemType File
+            Test-Path -LiteralPath $testPath | Should Be $true
+            Test-Path -LiteralPath $testPath2 | Should Be $true
+            { Remove-Item -LiteralPath $testPath } | Should Not Throw
+            Test-Path -LiteralPath $testPath | Should Be $false
+            # make sure wildcard wasn't applied so this file should still exist
+            Test-Path -LiteralPath $testPath2 | Should Be $true
         }
     }
 }
@@ -1026,7 +1041,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Filter" {
             Remove-Item "TestDrive:\*" -Filter "*.txt"
-            $result = Get-Item "*.txt"
+            $result = Get-Item "TestDrive:\*.txt"
             $result | Should BeNullOrEmpty
         }
 
@@ -1045,6 +1060,21 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file2 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file1 | Should BeNullOrEmpty
             $file2.Name | Should Be $testFile2
+        }
+
+        It "Verify Path can accept wildcard" {
+            Remove-Item "TestDrive:\*.txt" -Recurse -Force
+            $result = Get-ChildItem "TestDrive:\*.txt"
+            $result | Should BeNullOrEmpty
+        }
+
+        It "Verify no error if wildcard doesn't match: <path>" -TestCases @(
+            @{path="TestDrive:\*.foo"},
+            @{path="TestDrive:\[z]"},
+            @{path="TestDrive:\z.*"}
+        ) {
+            param($path)
+            { Remove-Item $path } | Should Not Throw
         }
     }
 
