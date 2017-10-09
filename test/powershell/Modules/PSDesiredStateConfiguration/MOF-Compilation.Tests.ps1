@@ -173,8 +173,8 @@ Describe "DSC MOF Compilation" -tags "CI" {
             Node "localhost" {
                 File f1
                 {
-					        DestinationPath = "$env:SystemDrive\\Test.txt";
-					        Ensure = "Present"
+					DestinationPath = "$env:SystemDrive\\Test.txt";
+					Ensure = "Present"
                 }
             }
         }
@@ -193,19 +193,19 @@ Describe "DSC MOF Compilation" -tags "CI" {
             Node "localhost" {
                 File f1
                 {
-                  DestinationPath = "$env:SystemDrive\\Test.txt";
-					        Ensure = "Present"
+                	DestinationPath = "$env:SystemDrive\\Test.txt";
+					Ensure = "Present"
                 }
-				        Script s1
-				        {
-					        GetScript = {return @{}}
-					        SetScript = "Write-Verbose Hello"
-					        TestScript = {return $false}
-				        }
-				        Log l1
-				        {
-					        Message = "This is a log message"
-				        }
+				Script s1
+				{
+					GetScript = {return @{}}
+					SetScript = "Write-Verbose Hello"
+					TestScript = {return $false}
+				}
+				Log l1
+				{
+					Message = "This is a log message"
+				}
             }
         }
 
