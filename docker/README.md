@@ -25,7 +25,7 @@ and about 120 megabytes of .NET Core and bootstrapping dependencies.
 
 ## Community
 
-The docker files in the community folder were contributed by the community and are not yet officially supporetd.
+The docker files in the community folder were contributed by the community and are not yet officially supported.
 
 ## Examples
 
