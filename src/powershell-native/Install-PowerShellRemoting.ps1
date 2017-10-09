@@ -2,10 +2,14 @@
 #
 # Registers the WinRM endpoint for this instance of PowerShell.
 #
+# If the parameters '-PowerShellHome' were specified, it means that the script will be registering
+# an instance of PowerShell from another instance of PowerShell.
+#
+# If no parameter is specified, it means that this instance of PowerShell is registering itself.
+#
 # Assumptions:
-#     1. This script is run from within the PowerShell that it will register as a WinRM endpoint.
-#     2. The CoreCLR and the the PowerShell assemblies are side-by-side in $PSHOME
-#     3. Plugins are registered by version number. Only one plugin can be automatically registered
+#     1. The CoreCLR and the the PowerShell assemblies are side-by-side in $PSHOME
+#     2. Plugins are registered by version number. Only one plugin can be automatically registered
 #        per PowerShell version. However, multiple endpoints may be manually registered for a given
 #        plugin.
 #
@@ -32,7 +36,7 @@ function Register-WinRmPlugin
         $pluginAbsolutePath,
 
         #
-        # Expected Example: microsoft.powershell-core.6.0
+        # Expected Example: powershell.6.0.0-beta.3
         #
         [string]
         [parameter(Mandatory=$true)]
@@ -69,9 +73,6 @@ function Register-WinRmPlugin
 
     Write-Verbose "Performing WinRM registration with: $fileName"
     reg.exe import .\$fileName
-
-    # Clean up
-#    Remove-Item .\$fileName
 }
 
 function Generate-PluginConfigFile
@@ -109,13 +110,6 @@ if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity
     Break
 }
 
-#
-# If the parameters were specified, it means that the script will be registering
-# an instance of PowerShell from another instance of PowerShell.
-#
-# If no parameters are specified, it means that this instance of PowerShell is
-# registering itself.
-#
 if ($PsCmdlet.ParameterSetName -eq "ByPath")
 {
     $targetPsHome = $PowerShellHome
