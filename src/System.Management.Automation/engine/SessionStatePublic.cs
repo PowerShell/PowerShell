@@ -35,12 +35,6 @@ namespace System.Management.Automation
             }
 
             _sessionState = sessionState;
-
-#if RELATIONSHIP_SUPPORTED
-    // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-            this.relationship = new RelationshipProviderManagementIntrinsics (sessionState);
-#endif
         } // SessionState
 
         /// <summary>
@@ -305,28 +299,6 @@ namespace System.Management.Automation
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);
         }
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        /// <summary>
-        /// The state APIs to access relationship providers in session state.
-        /// </summary>
-        ///
-        public RelationshipProviderManagementIntrinsics Relationship
-        {
-            get
-            {
-                using (tracer.TraceProperty())
-                {
-                    Dbg.Diagnostics.Assert (
-                        relationship != null,
-                        "The only constructor for this class should always set the relationship field");
-
-                    return relationship;
-                } // TraceProperty
-            } // get
-        } // RelationshipProvider
-#endif
         #endregion Public methods
 
         #region Internal methods
@@ -348,12 +320,6 @@ namespace System.Management.Automation
         private CmdletProviderManagementIntrinsics _provider;
         private PathIntrinsics _path;
         private PSVariableIntrinsics _variable;
-
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        private RelationshipProviderManagementIntrinsics relationship = null;
-#endif
 
         #endregion private data
     } // SessionStatePublic

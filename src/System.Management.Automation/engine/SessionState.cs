@@ -485,20 +485,6 @@ namespace System.Management.Automation
             return SessionStateEntryVisibility.Private;
         }
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        /// <summary>
-        /// Gets the collection of relationship providers
-        /// </summary>
-        ///
-        internal RelationshipProviderCollection Relationships
-        {
-            get { return relationships; }
-        }
-        private RelationshipProviderCollection relationships = null;
-#endif
-
         #endregion Private data
 
         /// <summary>
