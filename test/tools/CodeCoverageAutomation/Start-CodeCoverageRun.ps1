@@ -77,7 +77,7 @@ function ConvertTo-CodeCovJson
 
     Write-Progress -Id 1 -Completed -Activity "Converting to JSON"
 
-    $totalCoverage | ConvertTo-Json -Depth 5 -Compress | out-file $DestinationPath -Encoding ascii
+    $totalCoverage | ConvertTo-Json -Depth 5 -Compress | Out-File $DestinationPath -Encoding ascii
 }
 
 function Write-LogPassThru
@@ -236,15 +236,15 @@ try
         # clean up partial repo clone before starting
         if ( Test-Path "$outputBaseFolder/.git" )
         {
-            remove-item -force -recurse "${outputBaseFolder}/.git"
+            Remove-Item -Force -Recurse "${outputBaseFolder}/.git"
         }
         if ( Test-Path "$outputBaseFolder/src" )
         {
-            remove-item -force -recurse "${outputBaseFolder}/src"
+            Remove-Item -Force -Recurse "${outputBaseFolder}/src"
         }
         if ( Test-Path "$outputBaseFolder/assests" )
         {
-            remove-item -force -recurse "${outputBaseFolder}/assets"
+            Remove-Item -Force -Recurse "${outputBaseFolder}/assets"
         }
         Write-LogPassThru -Message "initializing repo in $outputBaseFolder"
         & $gitexe init
@@ -259,8 +259,8 @@ try
         Write-LogPassThru -Message "git operation 'set sparse-checkout' returned $LASTEXITCODE"
 
         Write-LogPassThru -Message "pulling sparse repo"
-        "src" | out-file -encoding ascii .git\info\sparse-checkout
-        "assets" | out-file -encoding ascii .git\info\ -Append
+        "src" | Out-File -Encoding ascii .git\info\sparse-checkout
+        "assets" | Out-File -Encoding ascii .git\info\ -Append
         & $gitexe pull origin master
         Write-LogPassThru -Message "git operation 'pull' returned $LASTEXITCODE"
 
@@ -296,7 +296,7 @@ try
     $message = ($commitInfo.message).replace("`n", " ")
 
     Write-LogPassThru -Message "Uploading to CodeCov"
-    if ( test-path $outputLog ) {
+    if ( Test-Path $outputLog ) {
         ConvertTo-CodeCovJson -Path $outputLog -DestinationPath $jsonFile
         Push-CodeCovData -file $jsonFile -CommitID $commitId -token $codecovToken -Branch 'master'
 
