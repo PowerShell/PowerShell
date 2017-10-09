@@ -25,10 +25,10 @@ thisinstallerdistro=osx
 repobased=true
 gitscriptname="installpsh-osx.sh"
 
-echo "\n*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Current PowerShell Core Version: $currentpshversion"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
-echo "\n*** Arguments used: $* \n\n"
+echo "*** Arguments used: $*"
 
 # Let's quit on interrupt of subcommands
 trap '
@@ -93,14 +93,13 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
-
-    $SUDO -v
-    if [ $? -ne 0]; then
-      echo "ERROR: You must either be root or be able to use sudo" >&2
-      exit 5
-    fi
-fi
+#if [[ "$SUDO" -eq "sudo" ]]; then
+#    $SUDO -v
+#    if [ $? -ne 0 ]; then
+#      echo "ERROR: You must either be root or be able to use sudo" >&2
+#      exit 5
+#    fi
+#fi
 
 #END Collect any variation details if required for this distro
 
@@ -110,7 +109,7 @@ fi
 
 ##END Check requirements and prerequisites
 
-echo "\n*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell Core for $DistroBasedOn..."
 
 #release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
 
@@ -127,19 +126,19 @@ if ! hash brew 2>/dev/null; then
 fi
 
 # Suppress output, it's very noisy on travis-ci
+echo "Refreshing Homebrew cache..."
+if ! brew update > /dev/null; then
+    echo "ERROR: Refreshing Homebrew cache failed..." >&2
+    exit 2
+fi
+
+# Suppress output, it's very noisy on travis-ci
 if [[ ! -d $(brew --prefix cask) ]]; then
     echo "Installing cask..."
     if ! brew tap caskroom/cask >/dev/null; then
         echo "ERROR: Cask failed to install! Cannot install powershell..." >&2
         exit 2
     fi
-fi
-
-# Suppress output, it's very noisy on travis-ci
-echo "Refreshing Homebrew cache..."
-if ! brew update >/dev/null; then
-    echo "ERROR: Refreshing Homebrew cache failed..." >&2
-    exit 2
 fi
 
 if ! hash powershell 2>/dev/null; then
@@ -152,7 +151,7 @@ else
 fi
 
 if [[ "'$*'" =~ includeide ]] ; then
-    echo "\n*** Installing VS Code PowerShell IDE..."
+    echo "*** Installing VS Code PowerShell IDE..."
     if [[ ! -d $(brew --prefix visual-studio-code) ]]; then
         if ! brew cask install visual-studio-code; then
             echo "ERROR: Visual Studio Code failed to install..." >&2
@@ -162,7 +161,7 @@ if [[ "'$*'" =~ includeide ]] ; then
         brew upgrade visual-studio-code
     fi
 
-    echo "\n*** Installing VS Code PowerShell Extension"
+    echo "*** Installing VS Code PowerShell Extension"
     code --install-extension ms-vscode.PowerShell
 fi
 

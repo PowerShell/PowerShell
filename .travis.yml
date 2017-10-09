@@ -20,12 +20,15 @@ addons:
       - pester-tests.xml
 
 install:
+  # Default 2.0.0 Ruby is buggy
+  # Default bundler version is buggy
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      rvm install ruby-2.3.3;
+      rvm --default use 2.3.3;
+    fi
   - pushd tools
   - ./install-powershell.sh
   - popd
-  # Default 2.0.0 Ruby is buggy
-  # Default bundler version is buggy
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm install ruby-2.3.1; rvm use 2.3.1; fi
   # spellcheck
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       nvm install 6.4.0 &&
