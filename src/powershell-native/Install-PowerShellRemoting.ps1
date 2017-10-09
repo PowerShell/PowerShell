@@ -73,6 +73,8 @@ function Register-WinRmPlugin
 
     Write-Verbose "Performing WinRM registration with: $fileName"
     reg.exe import .\$fileName
+
+    Remove-Item .\$fileName
 }
 
 function Generate-PluginConfigFile
