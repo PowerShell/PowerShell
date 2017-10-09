@@ -848,6 +848,10 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
+    if (-not (Test-Path $Pester)) {
+        Write-Warning "Pester module not found. Make sure that the proper git submodules are installed by running:`r`n`r`ngit submodule init --update`r`n "
+    }
+
     if ($IncludeFailingTest.IsPresent)
     {
         $Path += "$PSScriptRoot/tools/failingTests"
