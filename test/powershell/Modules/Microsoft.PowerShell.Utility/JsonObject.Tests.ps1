@@ -1,7 +1,5 @@
 ﻿Describe 'Unit tests for JsonObject' -tags "CI" {
 
-    $TestCasesForReturnHashTableParameter = @($true, $false)
-
     $validStrings = @(
         @{ name = "empty";  str = "";      ReturnHashTable = $true  }
         @{ name = "spaces"; str = "  ";    ReturnHashTable = $true  }
@@ -11,7 +9,7 @@
         @{ name = "object"; str = "{a:1}"; ReturnHashTable = $false }
     )
 
-    It 'no error for valid string - <name> when ReturnHashTable is <ReturnHashTable>' -TestCase $validStrings {
+    It 'no error for valid string ''<name>'' with -ReturnHashTable:$<ReturnHashTable>' -TestCase $validStrings {
         param ($str, $ReturnHashTable)
         $errRecord = $null
         [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord)
@@ -25,7 +23,7 @@
         @{ name = "part";       str = '{"a" :';    ReturnHashTable = $false }
     )
 
-    It 'throw ArgumentException for invalid string - <name> when ReturnHashTable is <ReturnHashTable>' -TestCase $invalidStrings  {
+    It 'throw ArgumentException for invalid string ''<name>'' with -ReturnHashTable:$<ReturnHashTable>' -TestCase $invalidStrings  {
         param ($str, $ReturnHashTable)
         $errRecord = $null
         { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord) } | ShouldBeErrorId "ArgumentException"

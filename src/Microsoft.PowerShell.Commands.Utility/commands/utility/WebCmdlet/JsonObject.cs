@@ -27,6 +27,18 @@ namespace Microsoft.PowerShell.Commands
         private const int maxDepthAllowed = 100;
 
         /// <summary>
+        /// Convert a Json string back to an object of type PSObject.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="error"></param>
+        /// <returns>A PSObject.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        public static object ConvertFromJson(string input, out ErrorRecord error)
+        {
+            return ConvertFromJson(input, false, out error);
+        }
+
+        /// <summary>
         /// Convert a Json string back to an object of type PSObject or Hashtable depending on parameter <paramref name="returnHashTable"/>.
         /// </summary>
         /// <param name="input"></param>
