@@ -285,3 +285,28 @@ baz
         }
     }
 }
+
+Describe "Get-Content -Raw test" -Tags "CI" {
+    BeforeAll {
+        $lfTextUnterminated = "a`nb"
+        $lfText = "a`nb`n"
+        $crlfTextUnterminated = "a`r`nb"
+        $crlfText = "a`r`nb`r`n"
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\lf.txt" -value $lfText
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\crlf.txt" -value $crlfText
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\lf-nt.txt" -value $lfTextUnterminated
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\crlf-nt.txt" -value $crlfTextUnterminated
+    }
+    It "Reads LF-terminated files in full." {
+        Get-Content -Raw "$TestDrive\lf.txt" | Should BeExactly $lfText
+    }
+    It "Reads CRLF-terminated files in full." {
+        Get-Content -Raw "$TestDrive\crlf.txt" | Should BeExactly $crlfText
+    }
+    It "Reads LF-separated files without trailing newline in full." {
+        Get-Content -Raw "$TestDrive\lf-nt.txt" | Should BeExactly $lfTextUnterminated
+    }
+    It "Reads CRLF-separated files without trailing newline in full." {
+        Get-Content -Raw "$TestDrive\crlf-nt.txt" | Should BeExactly $crlfTextUnterminated
+    }
+}
