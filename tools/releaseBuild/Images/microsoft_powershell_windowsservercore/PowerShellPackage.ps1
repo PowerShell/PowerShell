@@ -75,6 +75,11 @@ try{
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
+    else 
+    {
+        $pspackageParams += @{'IncludeSymbols' = $true}
+        
+    }
 
     $pspackageParams['Type']='zip'
     Write-Verbose "Starting powershell packaging(zip)..." -verbose
