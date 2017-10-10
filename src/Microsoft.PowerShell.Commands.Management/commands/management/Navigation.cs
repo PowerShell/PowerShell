@@ -745,11 +745,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string stackSet = "Stack";
 
-        /// <summary>
-        /// When using this command an environment variable gets set in order to be able to easily go back to the last location.
-        /// </summary>
-        private const string environmentVariableNameForPreviousLocation = "OLDPWD";
-
 #if RELATIONSHIP_SUPPORTED
         // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
 
@@ -920,10 +915,11 @@ namespace Microsoft.PowerShell.Commands
                             Path = SessionState.Internal.GetSingleProvider(Commands.FileSystemProvider.ProviderName).Home;
                         }
 
-                        Path = ReplacePathWithLastLocationIfApplicable(Path);
-                        var initialPath = SessionState.Path.CurrentLocation.Path;
                         result = SessionState.Path.SetLocation(Path, CmdletProviderContext);
-                        Environment.SetEnvironmentVariable(environmentVariableNameForPreviousLocation, initialPath);
+#if UNIX
+                        // Be consistent with most Unix shells that set the environment variable 'OLDPWD' when changing location
+                        Environment.SetEnvironmentVariable("OLDPWD", Path);
+#endif
                     }
                     catch (PSNotSupportedException notSupported)
                     {
@@ -967,10 +963,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // Change the default location stack
-                        StackName = ReplacePathWithLastLocationIfApplicable(StackName);
-                        var initialPath = SessionState.Path.CurrentLocation.Path;
                         result = SessionState.Path.SetDefaultLocationStack(StackName);
-                        Environment.SetEnvironmentVariable(environmentVariableNameForPreviousLocation, initialPath);
                     }
                     catch (ItemNotFoundException itemNotFound)
                     {
@@ -988,16 +981,13 @@ namespace Microsoft.PowerShell.Commands
                 case relationshipSet:
                     string relationshipPath = null;
                     try
-                    {   
-                        relationshipPath = ReplacePathWithLastLocationIfApplicable(relationshipPath);
-                        var initialPath = SessionState.Path.CurrentLocation.Path;
+                    {
                         relationshipPath =
                             InvokeProvider.Relationship.Resolve(
                                 Relationship,
                                 Path,
                                 Property,
                                 Target);
-                        Environment.SetEnvironmentVariable(environmentVariableNameForPreviousLocation, initialPath);
                     }
                     catch (PSArgumentException argException)
                     {
@@ -1010,10 +1000,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        relationshipPath = ReplacePathWithLastLocationIfApplicable(relationshipPath);
-                        var initialPath = SessionState.Path.CurrentLocation;
-                        result = SessionState.Path.SetLocation(relationshipPath, CmdletProviderContext);
-                        Environment.SetEnvironmentVariable(environmentVariableNameForPreviousLocation, initialPath);
+                        result = SessionState.Path.SetLocation (relationshipPath, CmdletProviderContext);
                     }
                     catch (PSNotSupportedException notSupported)
                     {
@@ -1070,29 +1057,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(result);
             }
         } // ProcessRecord
-
-        private string ReplacePathWithLastLocationIfApplicable(string path)
-        {
-            Environment.SetEnvironmentVariable("DEBUG_PATH", Path);
-            if (Path.Equals("-"))            
-            {
-                var lastPath = Environment.GetEnvironmentVariable(environmentVariableNameForPreviousLocation);
-                if (string.IsNullOrEmpty(lastPath))
-                {
-                    ThrowTerminatingError(
-                        new ErrorRecord(
-                            new ArgumentException(
-                                StringUtil.Format(LocationStrings.NoLocationHistory,
-                                     environmentVariableNameForPreviousLocation)),
-                                "SetLocationInvalidArgument",
-                                ErrorCategory.InvalidArgument,
-                                path));
-                    return path;
-                }
-                return lastPath;
-            }
-            return path;
-        }
 
         #endregion Command code
     } // SetLocationCommand

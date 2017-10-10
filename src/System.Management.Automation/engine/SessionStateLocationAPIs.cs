@@ -231,6 +231,15 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             string providerId = null;
 
+
+            const string locationStackHistoryId = "SetLocationHistoryStack";
+            // Replace path with last working directory when '-' was passed.
+            if (originalPath.Equals("-"))            
+            {
+                return PopLocation(locationStackHistoryId);
+            }
+            PushCurrentLocation(locationStackHistoryId);
+
             PSDriveInfo previousWorkingDrive = CurrentDrive;
 
             // First check to see if the path is a home path
