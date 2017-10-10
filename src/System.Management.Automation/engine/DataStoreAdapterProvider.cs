@@ -420,9 +420,6 @@ namespace System.Management.Automation
             HelpFile = helpFile;
             PSSnapIn = psSnapIn;
 
-#if SUPPORTS_CMDLETPROVIDER_FILE
-            LoadProviderFromPath(path);
-#endif
             // Create the hidden drive. The name doesn't really
             // matter since we are not adding this drive to a scope.
 
@@ -443,58 +440,6 @@ namespace System.Management.Automation
                 VolumeSeparatedByColon = false;
             }
         }
-
-#if SUPPORTS_CMDLETPROVIDER_FILE
-        /// <summary>
-        /// Loads the provider from the specified path.
-        /// </summary>
-        ///
-        /// <param name="path">
-        /// The path to a .cmdletprovider file to load the provider from.
-        /// </param>
-        ///
-        /// <exception cref="ArgumentException">
-        /// If <paramref name="path"/> is null or empty.
-        /// </exception>
-        ///
-        /// <exception cref="FileLoadException">
-        /// The file specified by <paramref name="path"/> could
-        /// not be loaded as an XML document.
-        /// </exception>
-        ///
-        /// <exception cref="FormatException">
-        /// If <paramref name="path"/> refers to a file that does
-        /// not adhere to the appropriate CmdletProvider file format.
-        /// </exception>
-        ///
-        private void LoadProviderFromPath(string path)
-        {
-            if (String.IsNullOrEmpty(path))
-            {
-                throw tracer.NewArgumentException("path");
-            }
-
-            Internal.CmdletProviderFileReader reader =
-                Internal.CmdletProviderFileReader.CreateCmdletProviderFileReader(path);
-
-            // Read the assembly info from the file
-            assemblyInfo = reader.AssemblyInfo;
-
-            // Read the type name from the file
-            providerImplementationClassName = reader.TypeName;
-
-            helpFile = reader.HelpFilePath;
-
-            // Read the capabilities from the file
-            capabilities = reader.Capabilities;
-            capabilitiesRead = true;
-
-            if (String.IsNullOrEmpty(name))
-            {
-                name = reader.Name;
-            }
-        } // LoadProviderFromPath
-#endif
 
         /// <summary>
         /// Determines if the passed in name is either the fully-qualified pssnapin name or

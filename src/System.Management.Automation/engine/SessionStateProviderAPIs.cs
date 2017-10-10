@@ -1436,14 +1436,6 @@ namespace System.Management.Automation
                 }
             }
 
-#if RELATIONSHIP_SUPPORTED
-    // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-            // Make sure the delay-load relationships get updated for the new provider
-
-            relationships.ProcessDelayLoadRelationships (provider.Name);
-#endif
-
             // Now write out the result
 
             return provider;
@@ -1761,13 +1753,6 @@ namespace System.Management.Automation
 
                     RemoveProviderFromCollection(provider);
                     ProvidersCurrentWorkingDrive.Remove(provider);
-
-#if RELATIONSHIP_SUPPORTED
-    // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-                   // Now make sure no relationship reference this provider
-                    relationships.ProcessRelationshipsOnCmdletProviderRemoval (providerName);
-#endif
                 }
             }
         } // RemoveProvider
