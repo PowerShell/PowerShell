@@ -51,23 +51,18 @@
         }
     }
 
-    It "Should have descriptions for all verbs" {
-        $allVerbs = Get-Verb
-        $verbsWithDescription = $allVerbs | Where-Object { -not [string]::IsNullOrEmpty($_.Description) }
-        $verbsWithDescription.count | Should be $allVerbs.count
+    It "Should not have verbs without descriptions" {
+        $noDescVerbs = (Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.Description) }).Verb -join ", "
+        $noDescVerbs | Should BeNullOrEmpty
     }
 
-    It "Should have alias prefixes for all verbs" {
-        $allVerbs = Get-Verb
-        $verbsWithPrefix = $allVerbs | Where-Object { -not [string]::IsNullOrEmpty($_.AliasPrefix) }
-        $verbsWithPrefix.count | Should be $allVerbs.count
+    It "Should not have verbs without alias prefixes" {
+        $noPrefixVerbs = (Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.AliasPrefix) }).Verb -join ", "
+        $noPrefixVerbs | Should BeNullOrEmpty
     }
 
-    It "Should have unique alias prefixes" {
-        $allPrefixes = Get-Verb | Select-Object AliasPrefix
-        $uniquePrefixes = $allPrefixes |
-            Select-Object -Property * -Unique
-
-        $uniquePrefixes.Count | Should be $allPrefixes.Count
+    It "Should not have duplicate alias prefixes" {
+        $dupPrefixVerbs = ((Get-Verb | Group-Object -Property AliasPrefix | Where-Object Count -gt 1).Group).Verb -join ", "
+        $dupPrefixVerbs | Should BeNullOrEmpty
     }
 }
