@@ -23,6 +23,10 @@ and about 120 megabytes of .NET Core and bootstrapping dependencies.
 
 [docker-release]: https://hub.docker.com/r/microsoft/powershell/
 
+## Community
+
+The docker files in the community folder were contributed by the community and are not yet officially supported.
+
 ## Examples
 
 To run PowerShell from using a container:

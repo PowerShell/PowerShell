@@ -535,15 +535,20 @@ sudo dnf remove powershell
 
 ## Arch Linux
 
-PowerShell is available from the [Arch Linux][] User Repository (AUR) as a [release][arch-release] or the [latest development build][arch-git].
+PowerShell is available from the [Arch Linux][] User Repository (AUR).
+
+* It can be compiled with the [latest tagged release][arch-release]
+* It can be compiled from the [latest commit to master][arch-git]
+* It can be installed using the [latest release binary][arch-bin]
 
 Packages in the AUR are community maintained - there is no official support.
 
-For more information on installing packages from the AUR, see the [Arch Linux wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages).
+For more information on installing packages from the AUR, see the [Arch Linux wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages) or the community [DockerFile](https://github.com/PowerShell/PowerShell/blob/master/docker/community/archlinux/Dockerfile).
 
 [Arch Linux]: https://www.archlinux.org/download/
 [arch-release]: https://aur.archlinux.org/packages/powershell/
 [arch-git]: https://aur.archlinux.org/packages/powershell-git/
+[arch-bin]: https://aur.archlinux.org/packages/powershell-bin/
 
 ## Linux AppImage
 
