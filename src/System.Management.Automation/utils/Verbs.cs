@@ -601,7 +601,7 @@ namespace System.Management.Automation
         /// </summary>
         public static string GetVerbDescription(string verb)
         {
-            return VerbDescriptionStrings.ResourceManager.GetString(verb + "VerbDescription");
+            return VerbDescriptionStrings.ResourceManager.GetString(verb);
         }
     }//VerbDescriptions
 
