@@ -166,7 +166,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         WordPressServer
 "@).Invoke() 
 
-        ".\WordPressServer\localhost.mof" | Should Exist
+        ".\WordPressServer\CentOS.mof" | Should Exist
 
         Remove-Item -Force -Recurse -Path WordPressServer
     }
