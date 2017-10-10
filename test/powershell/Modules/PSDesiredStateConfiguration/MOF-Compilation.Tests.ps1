@@ -24,7 +24,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke() 
+"@) | should not throw
 
         ".\DSCTestConfig\localhost.mof" | Should Exist
 
@@ -48,7 +48,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke() 
+"@) | should not throw
 
         ".\DSCTestConfig\localhost.mof" | Should Exist
 
@@ -164,7 +164,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
     }
         WordPressServer
-"@).Invoke() 
+"@) | should not throw
 
         ".\WordPressServer\CentOS.mof" | Should Exist
 
@@ -186,7 +186,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke()
+"@) | should not throw
 
         ".\DSCTestConfig\localhost.mof" | Should Exist
 
@@ -218,7 +218,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig
-"@).Invoke()
+"@) | should not throw
 
         ".\DSCTestConfig\localhost.mof" | Should Exist
 
