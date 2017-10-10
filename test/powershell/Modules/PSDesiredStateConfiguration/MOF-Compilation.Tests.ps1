@@ -3,6 +3,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
     AfterAll {
         $env:PSModulePath = $_modulePath
     }
+
     BeforeAll {
         $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
         $_modulePath = $env:PSModulePath
@@ -23,12 +24,10 @@ Describe "DSC MOF Compilation" -tags "CI" {
             }
         }
 
-        DSCTestConfig
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig1
 "@) | should not throw
 
-        ".\DSCTestConfig\localhost.mof" | Should Exist
-
-        Remove-Item -Force -Recurse -Path DSCTestConfig
+        "TestDrive:\DscTestConfig1\localhost.mof" | Should Exist
     }
 
     It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows) {
@@ -47,12 +46,10 @@ Describe "DSC MOF Compilation" -tags "CI" {
             }
         }
 
-        DSCTestConfig
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig2
 "@) | should not throw
 
-        ".\DSCTestConfig\localhost.mof" | Should Exist
-
-        Remove-Item -Force -Recurse -Path DSCTestConfig
+        "TestDrive:\DscTestConfig2\localhost.mof" | Should Exist
     }
 
     It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows) {
@@ -163,12 +160,10 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
     }
-        WordPressServer
+        WordPressServer -OutputPath TestDrive:\DscTestConfig3
 "@) | should not throw
 
-        ".\WordPressServer\CentOS.mof" | Should Exist
-
-        Remove-Item -Force -Recurse -Path WordPressServer
+        "TestDrive:\DscTestConfig3\CentOS.mof" | Should Exist
     }
 
     It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux) {
@@ -185,12 +180,10 @@ Describe "DSC MOF Compilation" -tags "CI" {
             }
         }
 
-        DSCTestConfig
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig4
 "@) | should not throw
 
-        ".\DSCTestConfig\localhost.mof" | Should Exist
-
-        Remove-Item -Force -Recurse -Path DSCTestConfig
+        "TestDrive:\DscTestConfig4\localhost.mof" | Should Exist
     }
 
     It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux) {
@@ -217,12 +210,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
             }
         }
 
-        DSCTestConfig
+        DSCTestConfig -OutputPath TestDrive:\DscTestConfig5
 "@) | should not throw
 
-        ".\DSCTestConfig\localhost.mof" | Should Exist
-
-        Remove-Item -Force -Recurse -Path DSCTestConfig
+        "TestDrive:\DscTestConfig5\localhost.mof" | Should Exist
     }
-
 }
