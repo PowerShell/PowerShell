@@ -120,19 +120,19 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access to the path '{0}' is denied.</value>
   </data>
-  <data name="AllowUnencryptedAuthorizationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To supress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthorization parameter.</value>
+  <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
+    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To supress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
   </data>
-  <data name="AuthorizationConflict" xml:space="preserve">
-    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authorization and UseDefaultCredentials. Authorization does not support Default Credentials. Specify either Authorization or UseDefaultCredentials, then retry.</value>
+  <data name="AuthenticationConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
   </data>
-  <data name="AuthorizationCredentialNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authorization type requires a Credential. Specify Credential, then retry.</value>
+  <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
   </data>
-    <data name="AuthorizationTokenNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authorization type requires a Token. Specify Token, then retry.</value>
+    <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
   </data>
-  <data name="AuthorizationTokenConflict" xml:space="preserve">
+  <data name="AuthenticationTokenConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
   </data>
   <data name="BodyConflict" xml:space="preserve">

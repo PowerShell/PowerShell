@@ -1286,7 +1286,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
     }
 
-    Context "Invoke-WebRequest -Authorization tests" {
+    Context "Invoke-WebRequest -Authentication tests" {
         BeforeAll {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
@@ -1294,15 +1294,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
             $testCases = @(
-                @{authorization = "bearer"}
-                @{authorization = "OAuth"}
+                @{Authentication = "bearer"}
+                @{Authentication = "OAuth"}
             )
         }
 
-        It "Verifies Invoke-WebRequest -Authorization Basic" {
+        It "Verifies Invoke-WebRequest -Authentication Basic" {
             $params = @{
                 Uri = $httpsUri
-                Authorization = "Basic"
+                Authentication = "Basic"
                 Credential = $credential
                 SkipCertificateCheck = $true
             }
@@ -1312,11 +1312,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization <authorization>" -TestCases $testCases {
-            param($authorization)
+        It "Verifies Invoke-WebRequest -Authentication <Authentication>" -TestCases $testCases {
+            param($Authentication)
             $params = @{
                 Uri = $httpsUri
-                Authorization = $authorization 
+                Authentication = $Authentication 
                 Token = $token
                 SkipCertificateCheck = $true
             }
@@ -1326,67 +1326,67 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization does not support -UseDefaultCredentials" {
+        It "Verifies Invoke-WebRequest -Authentication does not support -UseDefaultCredentials" {
             $params = @{
                 Uri = $httpsUri
                 Token = $token
-                Authorization = "OAuth"
+                Authentication = "OAuth"
                 UseDefaultCredentials = $true
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthorizationConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization does not support Both -Credential and -Token" {
+        It "Verifies Invoke-WebRequest -Authentication does not support Both -Credential and -Token" {
             $params = @{
                 Uri = $httpsUri
                 Token = $token
                 Credential = $credential
-                Authorization = "OAuth"
+                Authentication = "OAuth"
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthorizationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization <authorization> requires -Token" -TestCases $testCases {
-            param($authorization)
+        It "Verifies Invoke-WebRequest -Authentication <Authentication> requires -Token" -TestCases $testCases {
+            param($Authentication)
             $params = @{
                 Uri = $httpsUri
-                Authorization = $authorization
+                Authentication = $Authentication
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthorizationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization Basic requires -Credential" {
+        It "Verifies Invoke-WebRequest -Authentication Basic requires -Credential" {
             $params = @{
                 Uri = $httpsUri
-                Authorization = "Basic"
+                Authentication = "Basic"
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthorizationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization Requires HTTPS" {
+        It "Verifies Invoke-WebRequest -Authentication Requires HTTPS" {
             $params = @{
                 Uri = $httpUri
                 Token = $token
-                Authorization = "OAuth"
+                Authentication = "OAuth"
                 ErrorAction = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthorizationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authorization Can us HTTP with -AllowUnencryptedAuthorization" {
+        It "Verifies Invoke-WebRequest -Authentication Can us HTTP with -AllowUnencryptedAuthentication" {
             $params = @{
                 Uri = $httpUri
                 Token = $token
-                Authorization = "OAuth"
-                AllowUnencryptedAuthorization = $true
+                Authentication = "OAuth"
+                AllowUnencryptedAuthentication = $true
             }
             $Response = Invoke-WebRequest @params
             $result = $response.Content | ConvertFrom-Json
@@ -2206,7 +2206,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         }
     }
 
-    Context "Invoke-RestMethod -Authorization tests" {
+    Context "Invoke-RestMethod -Authentication tests" {
         BeforeAll {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
@@ -2214,15 +2214,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
             $testCases = @(
-                @{authorization = "bearer"}
-                @{authorization = "OAuth"}
+                @{Authentication = "bearer"}
+                @{Authentication = "OAuth"}
             )
         }
 
-        It "Verifies Invoke-RestMethod -Authorization Basic" {
+        It "Verifies Invoke-RestMethod -Authentication Basic" {
             $params = @{
                 Uri = $httpsUri
-                Authorization = "Basic"
+                Authentication = "Basic"
                 Credential = $credential
                 SkipCertificateCheck = $true
             }
@@ -2231,11 +2231,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization <authorization>" -TestCases $testCases {
-            param($authorization)
+        It "Verifies Invoke-RestMethod -Authentication <Authentication>" -TestCases $testCases {
+            param($Authentication)
             $params = @{
                 Uri = $httpsUri
-                Authorization = $authorization 
+                Authentication = $Authentication 
                 Token = $token
                 SkipCertificateCheck = $true
             }
@@ -2244,67 +2244,67 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization does not support -UseDefaultCredentials" {
+        It "Verifies Invoke-RestMethod -Authentication does not support -UseDefaultCredentials" {
             $params = @{
                 Uri = $httpsUri
                 Token = $token
-                Authorization = "OAuth"
+                Authentication = "OAuth"
                 UseDefaultCredentials = $true
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthorizationConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization does not support Both -Credential and -Token" {
+        It "Verifies Invoke-RestMethod -Authentication does not support Both -Credential and -Token" {
             $params = @{
                 Uri = $httpsUri
                 Token = $token
                 Credential = $credential
-                Authorization = "OAuth"
+                Authentication = "OAuth"
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthorizationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization <authorization> requires -Token" -TestCases $testCases {
-            param($authorization)
+        It "Verifies Invoke-RestMethod -Authentication <Authentication> requires -Token" -TestCases $testCases {
+            param($Authentication)
             $params = @{
                 Uri = $httpsUri
-                Authorization = $authorization
+                Authentication = $Authentication
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthorizationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization Basic requires -Credential" {
+        It "Verifies Invoke-RestMethod -Authentication Basic requires -Credential" {
             $params = @{
                 Uri = $httpsUri
-                Authorization = "Basic"
+                Authentication = "Basic"
                 ErrorAction = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthorizationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization Requires HTTPS" {
+        It "Verifies Invoke-RestMethod -Authentication Requires HTTPS" {
             $params = @{
                 Uri = $httpUri
                 Token = $token
-                Authorization = "OAuth"
+                Authentication = "OAuth"
                 ErrorAction = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthorizationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authorization Can us HTTP with -AllowUnencryptedAuthorization" {
+        It "Verifies Invoke-RestMethod -Authentication Can us HTTP with -AllowUnencryptedAuthentication" {
             $params = @{
                 Uri = $httpUri
                 Token = $token
-                Authorization = "OAuth"
-                AllowUnencryptedAuthorization = $true
+                Authentication = "OAuth"
+                AllowUnencryptedAuthentication = $true
             }
             $result = Invoke-RestMethod @params
 

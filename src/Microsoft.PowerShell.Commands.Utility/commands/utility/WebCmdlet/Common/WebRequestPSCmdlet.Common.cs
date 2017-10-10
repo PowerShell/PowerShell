@@ -63,32 +63,32 @@ namespace Microsoft.PowerShell.Commands
         #region Authorization and Credentials
 
         /// <summary>
-        /// gets or sets the AllowUnencryptedAuthorization property
+        /// gets or sets the AllowUnencryptedAuthentication property
         /// </summary>
         [Parameter]
-        public virtual SwitchParameter AllowUnencryptedAuthorization { get; set; }
+        public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
 
         /// <summary>
-        /// Gets or sets the Authorization property used to determin the Authorization method for the web session. 
-        /// Authorization does not work with UseDefaultCredentials.
-        /// Authorization over unencrypted sessions requires AllowUnencryptedAuthorization.
+        /// Gets or sets the Authentication property used to determin the Authentication method for the web session. 
+        /// Authentication does not work with UseDefaultCredentials.
+        /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
         /// Basic: Requires Credential
         /// OAuth/Bearer: Requires Token
         /// </summary>
         [Parameter]
         [ValidateSet("Basic","Bearer","OAuth")]
-        public virtual string Authorization 
+        public virtual string Authentication 
         { 
             get
             {
-                return _authorization;
+                return _authentication;
             } 
             set
             {
-                _authorization = value.ToLower();
+                _authentication = value.ToLower();
             }
         }
-        private string _authorization;
+        private string _authentication;
         
         /// <summary>
         /// gets or sets the Credential property
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         /// <summary>
-        /// gets or sets the Token property. Token is required by Authorization OAuth and Bearer.
+        /// gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
         /// </summary>
         [Parameter]
         public virtual SecureString Token { get; set; }
@@ -309,35 +309,35 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // Authorization
-            if (UseDefaultCredentials && (null != Authorization))
+            // Authentication
+            if (UseDefaultCredentials && (null != Authentication))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthorizationConflict,
-                                                       "WebCmdletAuthorizationConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict,
+                                                       "WebCmdletAuthenticationConflictException");
                 ThrowTerminatingError(error);
             }
-            if ((null != Authorization) && (null != Token) && (null != Credential))
+            if ((null != Authentication) && (null != Token) && (null != Credential))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthorizationTokenConflict,
-                                                       "WebCmdletAuthorizationTokenConflictException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict,
+                                                       "WebCmdletAuthenticationTokenConflictException");
                 ThrowTerminatingError(error);
             }
-            if ((Authorization == "basic") && (null == Credential))
+            if ((Authentication == "basic") && (null == Credential))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthorizationCredentialNotSupplied,
-                                                       "WebCmdletAuthorizationCredentialNotSuppliedException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied,
+                                                       "WebCmdletAuthenticationCredentialNotSuppliedException");
                 ThrowTerminatingError(error);
             }
-            if ((Authorization == "oauth" || Authorization == "bearer") && (null == Token))
+            if ((Authentication == "oauth" || Authentication == "bearer") && (null == Token))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthorizationTokenNotSupplied,
-                                                       "WebCmdletAuthorizationTokenNotSuppliedException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied,
+                                                       "WebCmdletAuthenticationTokenNotSuppliedException");
                 ThrowTerminatingError(error);
             }
-            if (!AllowUnencryptedAuthorization && (null != Authorization) && (Uri.Scheme != "https"))
+            if (!AllowUnencryptedAuthentication && (null != Authentication) && (Uri.Scheme != "https"))
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthorizationRequired,
-                                                       "WebCmdletAllowUnencryptedAuthorizationRequiredException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
+                                                       "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
 
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle credentials
             //
-            if (null != Credential && null == Authorization)
+            if (null != Credential && null == Authentication)
             {
                 // get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
@@ -465,9 +465,9 @@ namespace Microsoft.PowerShell.Commands
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
             }
-            else if ((null != Credential || null!= Token) && null != Authorization)
+            else if ((null != Credential || null!= Token) && null != Authentication)
             {
-                ProcessAuthorization();
+                ProcessAuthentication();
             }
             else if (UseDefaultCredentials)
             {
@@ -749,19 +749,19 @@ namespace Microsoft.PowerShell.Commands
             return String.Format("Bearer {0}", new NetworkCredential(String.Empty, Token).Password);
         }
 
-        private void ProcessAuthorization()
+        private void ProcessAuthentication()
         {
-            if(Authorization == "basic")
+            if(Authentication == "basic")
             {
                 WebSession.Headers["Authorization"] = GetBasicAuthorizationHeader();
             }
-            else if (Authorization == "bearer" || Authorization == "oauth")
+            else if (Authentication == "bearer" || Authentication == "oauth")
             {
                 WebSession.Headers["Authorization"] = GetBearerAuthorizationHeader();
             }
             else
             {
-                Diagnostics.Assert(false, String.Format("Unrecognized Authorization value: {0}", Authorization));
+                Diagnostics.Assert(false, String.Format("Unrecognized Authentication value: {0}", Authentication));
             }
         }
 
