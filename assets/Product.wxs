@@ -84,7 +84,7 @@
         </DirectorySearch>
       </DirectorySearch>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
+    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: http://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
     </Condition>
     <!-- Prerequisite check for Windows Management Framework -->
@@ -93,7 +93,7 @@
         <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
       </DirectorySearchRef>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or above to be installed to enable remoting over WinRM. You can find download links here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
+    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: http://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">

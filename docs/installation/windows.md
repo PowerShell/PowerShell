@@ -20,7 +20,7 @@ To enable PowerShell remoting over WinRM, the following prerequisites need to be
   It is available via direct download or Windows Update.
   Fully patched (including optional packages), supported systems will already have this installed.
 * Install the Windows Management Framework (WMF) [4.0](https://www.microsoft.com/en-us/download/details.aspx?id=40855)
-  or above ([5.0](https://www.microsoft.com/en-us/download/details.aspx?id=50395),
+  or newer ([5.0](https://www.microsoft.com/en-us/download/details.aspx?id=50395),
   [5.1](https://www.microsoft.com/en-us/download/details.aspx?id=54616)) on Windows 7.
 
 ## Deploying on Nano Server
