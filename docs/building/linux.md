@@ -144,9 +144,9 @@ cd src/powershell-unix
 dotnet build --configuration Linux
 ```
 
-The executable will be in `./bin/[configuration]/[framework]/[rid]/[binary name]`,
-where our configuration is `Linux`, framework is `netcoreapp1.1`,
-runtime identifier is `ubuntu.14.04-x64`, and binary name is `powershell`.
+The executable will be in `./bin/[configuration]/[framework]/[rid]/publish/[binary name]`,
+where our configuration is `Linux`, framework is `netcoreapp2.0`,
+runtime identifier is `linux-x64`, and binary name is `powershell`.
 The function `Get-PSOutput` will return the path to the executable;
 thus you can execute the development copy via `& (Get-PSOutput)`.
 
