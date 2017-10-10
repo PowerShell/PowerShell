@@ -59,7 +59,7 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
     </UI>
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Win8 and above">
+    <Condition Message="Supported only on Windows 7 and above">
       <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
     </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
@@ -74,7 +74,7 @@
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
     </Feature>
-    <!--We need to show EULA, and provide option to customize download location-->
+    <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <!-- Prerequisite check for Windows Universal C runtime -->
     <Property Id="UNIVERSAL_C_RUNTIME_INSTALLED" Secure="yes">
@@ -84,17 +84,17 @@
         </DirectorySearch>
       </DirectorySearch>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
+    <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed to enable remoting over WinRM. You can find a download link to it here: https://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR UNIVERSAL_C_RUNTIME_INSTALLED]]>
     </Condition>
-    <!-- Prerequisite check for Visual Studio 2015 C++ redistributables -->
-    <Property Id="VISUAL_CPP_RUNTIME_INSTALLED" Secure="yes">
+    <!-- Prerequisite check for Windows Management Framework -->
+    <Property Id="PWRSHPLUGIN_VERSION" Secure="yes">
       <DirectorySearchRef Id="System32" Parent="WindowsDirectory" Path="System32">
-        <FileSearch Id="vcruntime140" Name="vcruntime140.dll"/>
+        <FileSearch Id="pwrshplugin" Name="pwrshplugin.dll" MinVersion="6.3.9600.16383"/>
       </DirectorySearchRef>
     </Property>
-    <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can find a download link to it here: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites">
-      <![CDATA[Installed OR VISUAL_CPP_RUNTIME_INSTALLED]]>
+    <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
+      <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
