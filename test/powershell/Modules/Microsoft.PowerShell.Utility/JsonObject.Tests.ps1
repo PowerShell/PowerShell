@@ -1,9 +1,11 @@
 ﻿Describe 'Unit tests for JsonObject' -tags "CI" {
 
     $validStrings = @(
+        @{ name = "null";   str = $null;   ReturnHashTable = $true  }
         @{ name = "empty";  str = "";      ReturnHashTable = $true  }
         @{ name = "spaces"; str = "  ";    ReturnHashTable = $true  }
         @{ name = "object"; str = "{a:1}"; ReturnHashTable = $true  }
+        @{ name = "null";   str = $null;   ReturnHashTable = $false }
         @{ name = "empty";  str = "";      ReturnHashTable = $false }
         @{ name = "spaces"; str = "  ";    ReturnHashTable = $false }
         @{ name = "object"; str = "{a:1}"; ReturnHashTable = $false }
