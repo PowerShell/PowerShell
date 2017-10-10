@@ -119,7 +119,11 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
     }
 
-
+    It 'Should complete about help topic' {
+        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+        $res.CompletionMatches.Count | Should BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
+    }
 
     Context NativeCommand {
         BeforeAll {
@@ -420,7 +424,8 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$global:max'; expected = '$global:MaximumHistoryCount'; setup = $null }
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
-                @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME 'Modules'; setup = $null }
+                ## if $PSHOME contains a space tabcompletion adds ' around the path
+                @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
                 @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
@@ -901,13 +906,13 @@ dir -Recurse `
                 @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
                 @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Int*ro'; expected = 'root/Interop' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop/'; expected = 'root/Interop/ms_409' }
-                @{ inputStr = 'New-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Invoke-CimMethod -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Get-CimClass -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'New-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Invoke-CimMethod -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimClass -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Inter'; expected = 'root/Interop' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
                 @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
@@ -1053,23 +1058,5 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     ) {
         # https://github.com/PowerShell/PowerShell/issues/4744
         # TODO: move to test cases above once working
-    }
-}
-
-Describe "TabCompletion tests requiring elevation" -Tags Feature,RequireAdminOnWindows {
-
-    It 'Should complete about help topic' {
-
-        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
-
-        ## If help content does not exist, tab completion will not work. So update it first.
-        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
-        {
-            Update-Help -Force -ErrorAction SilentlyContinue
-        }
-
-        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-        $res.CompletionMatches.Count | Should BeGreaterThan 0
-        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
     }
 }
