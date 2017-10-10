@@ -59,7 +59,7 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
     </UI>
     <!-- Prerequisites -->
-    <Condition Message="Supported only on Win7 and above">
+    <Condition Message="Supported only on Windows 7 and above">
       <![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]>
     </Condition>
     <!-- Information About When Older Versions Are Trying To Be Installed-->
