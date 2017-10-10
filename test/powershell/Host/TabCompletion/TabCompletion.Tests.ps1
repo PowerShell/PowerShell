@@ -119,6 +119,8 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
     }
 
+
+
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
@@ -452,6 +454,7 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -480,6 +483,7 @@ Describe "TabCompletion" -Tags CI {
                 $afterTab = 'filesystem::/usr' -f $env:SystemDrive
             }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -1065,7 +1069,7 @@ Describe "TabCompletion tests requiring elevation" -Tags Feature,RequireAdminOnW
         }
 
         $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-        $res.CompletionMatches.Count | Should Be 1
+        $res.CompletionMatches.Count | Should BeGreaterThan 0
         $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
     }
 }

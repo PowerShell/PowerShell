@@ -197,6 +197,21 @@ try
     Expand-Archive -path $OpenCoverZipFilePath -destinationpath $openCoverPath -Force
     Write-LogPassThru -Message "Expansion complete."
 
+    if(Test-Path $elevatedLogs)
+    {
+        Remove-Item -Force -Recurse $elevatedLogs
+    }
+
+    if(Test-Path $unelevatedLogs)
+    {
+        Remove-Item -Force -Recurse $unelevatedLogs
+    }
+
+    if(Test-Path $outputLog)
+    {
+        Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
+    }
+
     Import-Module "$openCoverPath\OpenCover" -Force
     Install-OpenCover -TargetDirectory $openCoverTargetDirectory -force
     Write-LogPassThru -Message "OpenCover installed."
@@ -259,8 +274,8 @@ try
         Write-LogPassThru -Message "git operation 'set sparse-checkout' returned $LASTEXITCODE"
 
         Write-LogPassThru -Message "pulling sparse repo"
-        "src" | Out-File -Encoding ascii .git\info\sparse-checkout
-        "assets" | Out-File -Encoding ascii .git\info\ -Append
+        "src" | Out-File -Encoding ascii .git\info\sparse-checkout -Force
+        "assets" | Out-File -Encoding ascii .git\info\sparse-checkout -Append
         & $gitexe pull origin master
         Write-LogPassThru -Message "git operation 'pull' returned $LASTEXITCODE"
 
@@ -276,10 +291,6 @@ try
     $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
 
-    if(Test-Path $outputLog)
-    {
-        Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
-    }
     # now invoke opencover
     Invoke-OpenCover @openCoverParams
 
