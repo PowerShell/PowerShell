@@ -482,34 +482,6 @@ namespace System.Management.Automation
 
         #endregion Private data
 
-        /// <summary>
-        /// Notification for SessionState to do cleanup
-        /// before runspace is closed.
-        /// </summary>
-        ///
-        internal void RunspaceClosingNotification()
-        {
-            if (this != ExecutionContext.TopLevelSessionState && Providers.Count > 0)
-            {
-                // Remove all providers at the top level...
-
-                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-
-                Collection<string> keys = new Collection<string>();
-                foreach (string key in Providers.Keys)
-                {
-                    keys.Add(key);
-                }
-
-                foreach (string providerName in keys)
-                {
-                    // All errors are ignored.
-
-                    RemoveProvider(providerName, true, context);
-                }
-            }
-        }
-
         #region Errors
 
         /// <summary>

@@ -638,6 +638,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void DoOpenHelper()
         {
+            Dbg.Assert(InitialSessionState != null, "InitialSessionState should not be null");
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
             {

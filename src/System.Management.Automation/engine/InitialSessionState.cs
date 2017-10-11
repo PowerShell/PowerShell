@@ -5047,19 +5047,6 @@ if($paths) {
 
             return result;
         }
-
-        internal void SaveAsConsoleFile(string path)
-        {
-            if (null == path)
-            {
-                throw PSTraceSource.NewArgumentNullException("path");
-            }
-
-            if (!path.EndsWith(StringLiterals.PowerShellConsoleFileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                throw PSTraceSource.NewArgumentException("path", ConsoleInfoErrorStrings.BadConsoleExtension);
-            }
-        }
     }
 
     /// <summary>

@@ -1079,8 +1079,6 @@ namespace System.Management.Automation
 
         internal void RunspaceClosingNotification()
         {
-            EngineSessionState.RunspaceClosingNotification();
-
             if (_debugger != null)
             {
                 _debugger.Dispose();
@@ -1114,7 +1112,7 @@ namespace System.Management.Automation
             set
             {
                 _typeTable = value;
-                _typeTableWeakReference = value != null ? new WeakReference<TypeTable>(value) : null;
+                _typeTableWeakReference = (value != null) ? new WeakReference<TypeTable>(value) : null;
             }
         }
 
@@ -1433,21 +1431,6 @@ namespace System.Management.Automation
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Constructs an Execution context object for Automation Engine
-        /// </summary>
-        ///
-        /// <param name="engine">
-        /// Engine that hosts this execution context
-        /// </param>
-        /// <param name="hostInterface">
-        /// Interface that should be used for interaction with host
-        /// </param>
-        internal ExecutionContext(AutomationEngine engine, PSHost hostInterface)
-        {
-            InitializeCommon(engine, hostInterface);
         }
 
         /// <summary>

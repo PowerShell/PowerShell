@@ -84,6 +84,7 @@ namespace System.Management.Automation.Runspaces.Internal
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
+            _initialSessionState = InitialSessionState.CreateDefault();
         }
 
         /// <summary>
@@ -1249,14 +1250,10 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         protected Runspace CreateRunspace()
         {
+            Dbg.Assert(null != _initialSessionState, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
-            Runspace result = null;
-
-            // if host is null we are already throwing an
-            // exception, hence a check is not required at this
-            // point
-            result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
+            Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
 #if !CORECLR // No ApartmentState In CoreCLR

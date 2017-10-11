@@ -1694,10 +1694,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // If -iss has been specified, then there won't be a runspace
-                // configuration to get the shell ID from, so we'll use the default...
-                string shellId = null;
-                shellId = "Microsoft.PowerShell"; // TODO: what will happen for custom shells built using Make-Shell.exe
+                string shellId = "Microsoft.PowerShell";
 
                 // If the system lockdown policy says "Enforce", do so. Do this after types / formatting, default functions, etc
                 // are loaded so that they are trusted. (Validation of their signatures is done in F&O)

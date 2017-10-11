@@ -59,25 +59,14 @@ namespace Microsoft.PowerShell
             //      and stuff the EXCEPINFO field with the message of the exception.
             //      The native code will print this out and exit the process.
 #if DEBUG
-// Special switches for debug mode to allow self-hosting on InitialSessionState instead
-// of runspace configuration...
-            if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-iss", StringComparison.OrdinalIgnoreCase))
-            {
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-            }
-            else if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
+            // Special switch for debug mode
+            if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
             {
                 Console.WriteLine("Attach the debugger and hit enter to continue:");
                 Console.ReadLine();
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
             }
-            else
-            {
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-            }
-#else
-            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
 #endif
+            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
             int exitCode = 0;
             try
             {
