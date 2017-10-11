@@ -184,13 +184,13 @@
     <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Writing web request completed. (Number of bytes remaining: {0})</value>
+    <value>Web request completed. (Number of bytes processed: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Writing web request</value>
+    <value>Web request status</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Writing request stream... (Number of bytes written: {0})</value>
+    <value>Number of bytes processed: {0}</value>
   </data>
   <data name="JsonNetModuleRequired" xml:space="preserve">
     <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the 'Json.Net' module. {0}</value>
