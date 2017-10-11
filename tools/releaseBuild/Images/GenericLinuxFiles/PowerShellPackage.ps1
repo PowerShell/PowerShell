@@ -43,21 +43,10 @@ finally
     Pop-Location
 }
 
-$linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm
-
+$linuxPackages = Get-ChildItem "$location/powershell*" -Include *.deb,*.rpm,*.AppImage,*.tar.gz
 foreach ($linuxPackage in $linuxPackages)
 {
-    Copy-Item -Path $linuxPackage.FullName -Destination $destination -force
-}
-
-$extraPackages = @()
-switch ($ExtraPackage)
-{
-    "AppImage" { $extraPackages += @(Get-ChildItem -Path $location -Filter '*.AppImage') }
-    "tar"      { $extraPackages += @(Get-ChildItem -Path $location -Filter '*.tar.gz') }
-}
-
-foreach ($extraPkgFile in $extraPackages)
-{
-    Copy-Item -Path $extraPkgFile.FullName -Destination $destination -force
+    $filePath = $linuxPackage.FullName
+    Write-Verbose "Copying $filePath to $destination" -Verbose
+    Copy-Item -Path $filePath -Destination $destination -force
 }
