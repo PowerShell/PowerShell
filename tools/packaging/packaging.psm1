@@ -20,7 +20,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "deb-arm")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -34,6 +34,10 @@ function Start-PSPackage {
 
         [Switch] $SkipReleaseChecks
     )
+
+    # The package type 'deb-arm' is current disabled for '-Type' parameter because 'New-UnixPackage' doesn't support
+    # creating package for 'deb-arm'. It should be added back to the ValidateSet of '-Type' once the implementation
+    # of creating 'deb-arm' package is done.
 
     # Runtime and Configuration settings required by the package
     ($Runtime, $Configuration) = if ($WindowsRuntime) {
@@ -151,15 +155,13 @@ function Start-PSPackage {
                 Force = $Force
             }
 
-            if($pscmdlet.ShouldProcess("Create Zip Package"))
-            {
+            if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
                 New-ZipPackage @Arguments
             }
         }
         "msi" {
             $TargetArchitecture = "x64"
-            if ($Runtime -match "-x86")
-            {
+            if ($Runtime -match "-x86") {
                 $TargetArchitecture = "x86"
             }
 
@@ -175,14 +177,12 @@ function Start-PSPackage {
                 Force = $Force
             }
 
-            if($pscmdlet.ShouldProcess("Create MSI Package"))
-            {
+            if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
                 New-MSIPackage @Arguments
             }
         }
         "AppImage" {
-            if($IncludeSymbols.IsPresent)
-            {
+            if ($IncludeSymbols.IsPresent) {
                 throw "AppImage does not support packaging '-IncludeSymbols'"
             }
 
@@ -207,9 +207,20 @@ function Start-PSPackage {
                 Force = $Force
             }
 
-            if($pscmdlet.ShouldProcess("Create NuPkg Package"))
-            {
+            if ($PSCmdlet.ShouldProcess("Create NuPkg Package")) {
                 New-NugetPackage @Arguments
+            }
+        }
+        'tar' {
+            $Arguments = @{
+                PackageSourcePath = $Source
+                Name = $Name
+                Version = $Version
+                Force = $Force
+            }
+
+            if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                New-TarballPackage @Arguments
             }
         }
         'deb' {
@@ -222,7 +233,9 @@ function Start-PSPackage {
             }
             foreach ($Distro in $Script:DebianDistributions) {
                 $Arguments["Distribution"] = $Distro
-                New-UnixPackage @Arguments
+                if ($PSCmdlet.ShouldProcess("Create DEB Package for $Distro")) {
+                    New-UnixPackage @Arguments
+                }
             }
         }
         default {
@@ -234,11 +247,74 @@ function Start-PSPackage {
                 Force = $Force
             }
 
-            if($pscmdlet.ShouldProcess("Create $_ Package"))
-            {
+            if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
                 New-UnixPackage @Arguments
             }
         }
+    }
+}
+
+function New-TarballPackage {
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param (
+        [Parameter(Mandatory)]
+        [string] $PackageSourcePath,
+
+        # Must start with 'powershell' but may have any suffix
+        [Parameter(Mandatory)]
+        [ValidatePattern("^powershell")]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [switch] $Force
+    )
+
+    $packageName = "$Name-$Version-{0}-x64.tar.gz"
+    if ($Environment.IsWindows) {
+        throw "Must be on Linux or macOS to build 'tar.gz' packages!"
+    } elseif ($Environment.IsLinux) {
+        $packageName = $packageName -f "linux"
+    } elseif ($Environment.IsMacOS) {
+        $packageName = $packageName -f "osx"
+    }
+
+    $packagePath = Join-Path -Path $PWD -ChildPath $packageName
+    Write-Verbose "Create package $packageName"
+    Write-Verbose "Package destination path: $packagePath"
+
+    if (Test-Path -Path $packagePath) {
+        if ($Force -or $PSCmdlet.ShouldProcess("Overwrite existing package file")) {
+            Write-Verbose "Overwrite existing package file at $packagePath" -Verbose
+            Remove-Item -Path $packagePath -Force -ErrorAction Stop -Confirm:$false
+        }
+    }
+
+    if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
+        if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
+            $options = "-czf"
+            if ($PSBoundParameters.ContainsKey('Verbose') -and $PSBoundParameters['Verbose'].IsPresent) {
+                # Use the verbose mode '-v' if '-Verbose' is specified
+                $options = "-czvf"
+            }
+
+            try {
+                Push-Location -Path $PackageSourcePath
+                tar $options $packagePath .
+            } finally {
+                Pop-Location
+            }
+
+            if (Test-Path -Path $packagePath) {
+                log "You can find the tarball package at $packagePath"
+                return $packagePath
+            } else {
+                throw "Failed to create $packageName"
+            }
+        }
+    } else {
+        throw "Failed to create the package because the application 'tar' cannot be found"
     }
 }
 

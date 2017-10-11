@@ -29,7 +29,7 @@
     {
         "Name": "ubuntu.14.04",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage AppImage",
         "BuildDockerOptions": [
             "--cap-add",
             "SYS_ADMIN",
@@ -43,7 +43,7 @@
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerImageName": "ps-ubunutu-14-04"
     },
-    {  
+    {
         "Name": "ubuntu.16.04",
         "RepoDestinationPath": "/PowerShell",
         "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
@@ -51,10 +51,10 @@
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu16.04/Dockerfile",
         "DockerImageName": "ps-ubunutu-16-04"
     },
-    {  
+    {
         "Name": "centos.7",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage tar",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
         "DockerImageName": "ps-centos-7"

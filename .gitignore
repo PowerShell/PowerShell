@@ -38,6 +38,7 @@ dotnet-uninstall-debian-packages.sh
 
 # Ignore packages
 *.deb
+*.tar.gz
 *.zip
 *.rpm
 *.pkg
