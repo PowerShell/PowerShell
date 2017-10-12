@@ -10,7 +10,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "SetServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
-        @{parameter = "ComputerName"; value = "foo"},
         @{parameter = "Name"        ; value = "bar"},
         @{parameter = "DisplayName" ; value = "hello"},
         @{parameter = "Description" ; value = "hello world"},

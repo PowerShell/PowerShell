@@ -47,8 +47,7 @@
     @{ parameter = "Include"     ; value = "foo","bar" },
     @{ parameter = "Exclude"     ; value = "bar","foo" },
     @{ parameter = "InputObject" ; script = { Get-Service | Select-Object -First 1 } },
-    @{ parameter = "Name"        ; value = "foo","bar" },
-    @{ parameter = "ComputerName"; value = "bar","foo" }
+    @{ parameter = "Name"        ; value = "foo","bar" }
   ) {
     param($parameter, $value, $script)
     if ($script -ne $null) {
