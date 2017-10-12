@@ -1,25 +1,27 @@
 # Building a C# Cmdlet
 
 This demonstrates how to build your own C# cmdlet for PowerShell Core with Visual Studio.
+
 We will use free Visual Studio Community 2017 that can be downloaded from [https://www.visualstudio.com/downloads](https://www.visualstudio.com/downloads)
 
-1. When installing Visual Studio 2017 make sure that '.NET Core cross-platform development' is selected under 'Other Toolsets':
+1. When installing Visual Studio 2017 make sure that `.NET Core cross-platform development` is selected under `Other Toolsets`
 ![1](https://user-images.githubusercontent.com/11860095/31471799-7ca192f4-ae9f-11e7-9731-03fb24ba949c.png)
 
 2. Create new C# project `SendGreeting` of type `Class Library (.NET Core)`
 ![2](https://user-images.githubusercontent.com/11860095/31471800-7cba3c28-ae9f-11e7-9d05-48fcddb8af85.png)
 
 3. Now we need to setup PowerShell Core reference assemblies.
-In `Solution Explorer` right click on project `Dependencies` and select 'Manage NuGet Packages...'
+In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
 In the top-right corner of the package manager click on the small `Settings` sprocket icon that is to the right from `Package source` dropdown.
 By default, there will be only `nuget.org` package source in `Available package sources` list.
 Add another package source with name `powershell-core` and source `https://powershell.myget.org/F/powershell-core/api/v3/index.json`
 ![3](https://user-images.githubusercontent.com/11860095/31471801-7cd0d186-ae9f-11e7-9a87-2c9326d7f446.png)
-In the package manager select new `powershell-core` in `Package source` dropdown, select 'Browse' tab, type in `System.Management.Automation` in the search and select `Include prerelease`.
+
+In the package manager select new `powershell-core` in `Package source` dropdown, select `Browse` tab, type in `System.Management.Automation` in the search and select `Include prerelease`.
 It should find `System.Management.Automation` package, select it and it will show package details; install it using `Install` button.
 ![4](https://user-images.githubusercontent.com/11860095/31471802-7ce85bf8-ae9f-11e7-97c8-afa09b64aced.png)
 
-4. Add the code of a cmdlet:
+4. Add the code of cmdlet:
 ```CSharp
 using System.Management.Automation;  // PowerShell namespace.
 
