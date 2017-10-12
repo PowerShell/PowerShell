@@ -23,7 +23,7 @@ one on the path.
 Example:
 
 ```powershell
-    $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+    $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     & $powershell -noprofile -command "ExampleCommand" | Should Be "ExampleOutput"
 ```
 

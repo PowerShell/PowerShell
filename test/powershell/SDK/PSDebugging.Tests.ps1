@@ -4,7 +4,7 @@ using namespace System.Management.Automation.Internal
 Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     }
 
     function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)

@@ -4,7 +4,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         if ($IsWindows)
         {
-            $powershell = "$PSHOME\powershell.exe"
+            $powershell = "$PSHOME\pwsh.exe"
             $ProductName = "WindowsPowerShell"
             if ($IsCoreCLR -and ($PSHOME -notlike "*Windows\System32\WindowsPowerShell\v1.0"))
             {
@@ -15,7 +15,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
         else
         {
-            $powershell = "$PSHOME/powershell"
+            $powershell = "$PSHOME/pwsh"
             $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $expectedSharedPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES")
         }

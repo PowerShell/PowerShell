@@ -1,7 +1,7 @@
 Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
-        $powershell = Join-Path $PSHOME "powershell"
+        $powershell = Join-Path $PSHOME "pwsh"
         $notEnglish = $false
         $IsToBeSkipped = !$IsWindows;
 

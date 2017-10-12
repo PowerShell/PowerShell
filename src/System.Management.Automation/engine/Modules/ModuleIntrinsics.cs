@@ -768,9 +768,9 @@ namespace System.Management.Automation
         private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath, string psHomeModulePath)
         {
 #if UNIX
-            const string powershellExeName = "powershell";
+            const string powershellExeName = "pwsh";
 #else
-            const string powershellExeName = "powershell.exe";
+            const string powershellExeName = "pwsh.exe";
 #endif
             StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
             char[] invalidPathChars = Path.GetInvalidPathChars();

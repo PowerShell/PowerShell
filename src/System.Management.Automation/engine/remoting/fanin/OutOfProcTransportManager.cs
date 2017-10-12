@@ -948,7 +948,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Overrides
 
         /// <summary>
-        /// Launch a new Process (PowerShell.exe -s) to perform remoting. This is used by *-Job cmdlets
+        /// Launch a new Process (pwsh -s) to perform remoting. This is used by *-Job cmdlets
         /// to support background jobs without depending on WinRM (WinRM has complex requirements like
         /// elevation to support local machine remoting)
         /// </summary>

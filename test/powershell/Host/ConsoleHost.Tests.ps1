@@ -9,7 +9,7 @@ using namespace System.Diagnostics
 Describe 'minishell for native executables' -Tag 'CI' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     }
 
     Context 'Streams from minishell' {
@@ -51,7 +51,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
 Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
         $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
@@ -152,7 +152,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "PowerShell[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
             }
         }
 
@@ -170,7 +170,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             @{value = "2"},
             @{value = "-command 1-1"}
         ) {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
+            $currentVersion = "PowerShell " + $PSVersionTable.GitCommitId.ToString()
             $observed = & $powershell -version $value 2>&1
             $observed | should be $currentVersion
             $LASTEXITCODE | Should Be 0
@@ -487,8 +487,8 @@ foo
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that powershell.exe starts current running PowerShell" {
-            powershell -v | Should Match $psversiontable.GitCommitId
+        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
+            pwsh -v | Should Match $psversiontable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -568,7 +568,7 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
-        $ps = Start-Process powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+        $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
         $startTime = Get-Date
         $showCmd = "Unknown"
         while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
@@ -581,7 +581,7 @@ public enum ShowWindowCommands : int
     }
 
     It "Invalid -WindowStyle returns error" {
-        powershell -WindowStyle invalid
+        pwsh -WindowStyle invalid
         $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
     }
 }

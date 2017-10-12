@@ -1,5 +1,5 @@
 Describe "Native streams behavior with PowerShell" -Tags 'CI' {
-    $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+    $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
 
     Context "Error stream" {
         # we are using powershell itself as an example of a native program.

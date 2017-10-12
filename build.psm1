@@ -187,7 +187,7 @@ function Start-BuildNativeWindowsBinaries {
         return
     }
 
-    # cmake is needed to build powershell.exe
+    # cmake is needed to build pwsh.exe
     if (-not (precheck 'cmake' $null)) {
         throw 'cmake not found. Run "Start-PSBootstrap -BuildWindowsNative". You can also install it from https://chocolatey.org/packages/cmake'
     }
@@ -497,7 +497,7 @@ Fix steps:
         Start-TypeGen
     }
 
-    # Get the folder path where powershell.exe is located.
+    # Get the folder path where pwsh.exe is located.
     $publishPath = Split-Path $Options.Output -Parent
     try {
         # Relative paths do not work well if cwd is not changed to project
@@ -507,7 +507,7 @@ Fix steps:
 
         if ($CrossGen) {
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-            log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
+            log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             log "PowerShell output: $($Options.Output)"
         }
@@ -680,9 +680,9 @@ function New-PSOptions {
     }
 
     $Executable = if ($Environment.IsLinux -or $Environment.IsMacOS) {
-        "powershell"
+        "pwsh"
     } elseif ($Environment.IsWindows) {
-        "powershell.exe"
+        "pwsh.exe"
     }
 
     # Build the Output path
@@ -837,7 +837,7 @@ function Start-PSPester {
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [string]$binDir = (Split-Path (New-PSOptions).Output),
-        [string]$powershell = (Join-Path $binDir 'powershell'),
+        [string]$powershell = (Join-Path $binDir 'pwsh'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
@@ -848,7 +848,7 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue)) 
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue))
     {
         Write-Warning @"
 Pester module not found.
