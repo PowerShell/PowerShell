@@ -1,5 +1,8 @@
 <!--
 
+For Windows PowerShell 5.1 issues, suggestions, or feature requests please use the following link instead:
+https://windowsserver.uservoice.com/forums/301869-powershell
+
 If it is a bug report:
 - make sure you are able to repro it on the latest released version. 
 You can install the latest version from https://github.com/PowerShell/PowerShell/releases
