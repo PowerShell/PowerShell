@@ -78,7 +78,6 @@ try{
     else 
     {
         $pspackageParams += @{'IncludeSymbols' = $true}
-        
     }
 
     $pspackageParams['Type']='zip'
