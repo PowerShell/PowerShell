@@ -1638,8 +1638,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.PermissionDenied);
                     }
 
-                    // If '-Status' parameter is specified, do the necessary action to bring about the desired result
-
+                    // Handle the '-Status' parameter
                     if (!string.IsNullOrEmpty(Status))
                     {
                         if (Status.Equals("Running", StringComparison.OrdinalIgnoreCase))
@@ -1674,16 +1673,16 @@ namespace Microsoft.PowerShell.Commands
                                     WriteNonTerminatingError(service, null, "ServiceIsDependentOnNoForce", ServiceResources.ServiceIsDependentOnNoForce, ErrorCategory.InvalidOperation);
                                     return;
                                 }
-                                //stop service,give the force parameter always true as we have already checked for the dependent services
-                                //Specify NoWait parameter as always false since we are not adding this switch to this cmdlet
-                                DoStopService(service, true, true);
+                                // Stop service, pass 'true' to the force parameter as we have already checked for the dependent services.
+                                DoStopService(service, force: true, waitForServiceToStop: true);
                             }
                         }
                         else if (Status.Equals("Paused", StringComparison.CurrentCultureIgnoreCase))
                         {
                             if (!service.Status.Equals(ServiceControllerStatus.Paused))
-                                //pause service
+                            {
                                 DoPauseService(service);
+                            }
                         }
                     }
                     if (PassThru.IsPresent)
