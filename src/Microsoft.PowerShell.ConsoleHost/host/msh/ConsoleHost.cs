@@ -890,11 +890,7 @@ namespace Microsoft.PowerShell
             {
                 lock (hostGlobalLock)
                 {
-#if !CORECLR
-                    return NativeCultureResolver.Culture;
-#else
                     return CultureInfo.CurrentCulture;
-#endif
                 }
             }
         }
@@ -915,11 +911,7 @@ namespace Microsoft.PowerShell
             {
                 lock (hostGlobalLock)
                 {
-#if !CORECLR
-                    return NativeCultureResolver.UICulture;
-#else
                     return CultureInfo.CurrentUICulture;
-#endif
                 }
             }
         }
@@ -1115,10 +1107,8 @@ namespace Microsoft.PowerShell
             this.ui = new ConsoleHostUserInterface(this);
             _consoleWriter = new ConsoleTextWriter(ui);
 
-#if !CORECLR // CurrentDomain.UnhandledException not supported on CoreCLR
             UnhandledExceptionEventHandler handler = new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
             AppDomain.CurrentDomain.UnhandledException += handler;
-#endif
         }
 
         private void BindBreakHandler()
@@ -1131,7 +1121,6 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-#if !CORECLR // Not used on NanoServer: CurrentDomain.UnhandledException not supported on CoreCLR
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
             // FYI: sender is a reference to the source app domain
@@ -1155,7 +1144,6 @@ namespace Microsoft.PowerShell
                 ConsoleHostStrings.UnhandledExceptionShutdownMessage);
             ui.WriteLine();
         }
-#endif
 
         /// <summary>
         ///
@@ -2891,7 +2879,7 @@ namespace Microsoft.PowerShell
                 base(message)
             {
             }
-#if !CORECLR // ApplicationException & System.Runtime.Serialization.SerializationInfo are Not In CoreCLR
+
             protected
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
@@ -2900,7 +2888,7 @@ namespace Microsoft.PowerShell
                 base(info, context)
             {
             }
-#endif
+
             internal
             ConsoleHostStartupException(string message, Exception innerException)
                 :
@@ -2931,23 +2919,7 @@ namespace Microsoft.PowerShell
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
 
-#if CORECLR
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
-#else
-        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() =>
-        {
-            // This is a workaround for a full clr issue that causes a hang when calling PowerShell from ruby.
-            // They use named pipes instead of anonymous pipes, and for some reason that triggers a hang
-            // reading from Console.In.
-            var inputHandle = ConsoleControl.NativeMethods.GetStdHandle(-10);
-            var s = new FileStream(new ConsoleHandle(inputHandle, false), FileAccess.Read);
-
-            uint codePage = (uint) ConsoleControl.NativeMethods.GetConsoleCP();
-            Encoding encoding = Encoding.GetEncoding((int) codePage);
-
-            return TextReader.Synchronized(new StreamReader(s, encoding, false));
-        });
-#endif
 
         private string _savedWindowTitle = "";
         private Version _ver = PSVersionInfo.PSVersion;

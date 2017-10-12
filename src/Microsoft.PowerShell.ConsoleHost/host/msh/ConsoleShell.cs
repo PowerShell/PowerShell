@@ -15,7 +15,6 @@ namespace Microsoft.PowerShell
     public static
     class ConsoleShell
     {
-#if CORECLR
         /// <summary>Entry point in to ConsoleShell. This method is called by main of minishell.</summary>
         /// <param name="bannerText">Banner text to be displayed by ConsoleHost</param>
         /// <param name="helpText">Help text for minishell. This is displayed on 'minishell -?'.</param>
