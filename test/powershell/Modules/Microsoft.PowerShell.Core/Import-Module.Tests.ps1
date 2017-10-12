@@ -124,3 +124,56 @@ namespace ModuleCmdlets
     }
  }
 
+Describe "Import-Module should be case insensitive on Unix" -Tags 'CI' {
+    BeforeAll {
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
+        $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
+        $originalPSModulePath = $env:PSModulePath.Clone()
+        $modulesPath = "$TestDrive\Modules"
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesPath
+        $PSModuleAutoloadingPreference = "none"
+        $PSDefaultParameterValues["it:skip"] = !$IsLinux
+    }
+    AfterAll {
+        $global:PSDefaultParameterValues = $defaultParamValues
+        $global:PSModuleAutoloadingPreference = $defaultPSModuleAutoloadingPreference
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    It "Import-Module can import a module using different casing using '<modulePath>' and manifest:<manifest>" -TestCases @(
+        @{modulePath="TESTMODULE/1.1"; manifest=$true},
+        @{modulePath="TESTMODULE/1.1"; manifest=$false},
+        @{modulePath="TESTMODULE"    ; manifest=$true},
+        @{modulePath="TESTMODULE"    ; manifest=$false}
+        ) {
+        param ($modulePath, $manifest)
+        New-Item -ItemType Directory -Path "$modulesPath/$modulePath" -Force
+        if ($manifest) {
+            New-ModuleManifest -Path "$modulesPath/$modulePath/TESTMODULE.psd1" -RootModule "TESTMODULE.psm1" -ModuleVersion 1.1
+        }
+        Set-Content -Path "$modulesPath/$modulePath/TESTMODULE.psm1" -Value "function mytest { 'hello' }"
+        Import-Module testMODULE
+        $m = Get-Module TESTmodule
+        $m | Should BeOfType "System.Management.Automation.PSModuleInfo"
+        $m.Name | Should BeExactly "TESTMODULE"
+        mytest | Should BeExactly "hello"
+        Remove-Module TestModule
+        Get-Module tESTmODULE | Should BeNullOrEmpty
+    }
+
+    It "Import-Module will import exact casing if available" {
+        New-Item -ItemType Directory -Path "$modulesPath\Test" -Force
+        Set-Content -Path "$modulesPath\Test\Test.psm1" -Value "function casetest { 'first' }"
+        New-Item -ItemType Directory -Path "$modulesPath\tEST" -Force
+        Set-Content -Path "$modulesPath\tEST\tEST.psm1" -Value "function casetest { 'second' }"
+        Import-Module Test
+        casetest | Should BeExactly 'first'
+        Remove-Module test
+        Import-Module test
+        casetest | Should BeExactly 'second'
+        Remove-Module test
+        Import-Module tEST
+        casetest | Should BeExactly 'second'
+        Remove-Module test
+    }
+}

@@ -323,6 +323,46 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            if (!found)
+            {
+                // try a case-insensitive search for the module folder
+                foreach (string path in modulePath)
+                {
+                    foreach (string folder in Directory.EnumerateDirectories(path))
+                    {
+                        if (String.Compare(Path.GetFileName(folder), name, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            module = LoadUsingMultiVersionModuleBase(folder, manifestProcessingFlags, options, out found);
+                            if (!found)
+                            {
+                                // try a case-insensitive search for the module file
+                                foreach (string file in Directory.EnumerateFiles(folder))
+                                {
+                                    string fileName = Path.GetFileNameWithoutExtension(file);
+                                    if (String.Compare(fileName, name, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        string qualifiedPath = Path.Combine(folder, fileName);
+                                        module = LoadUsingExtensions(parentModule, fileName, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                                    }
+                                    if (found)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (found)
+                        {
+                            break;
+                        }
+                    }
+                    if (found)
+                    {
+                        break;
+                    }
+                }
+            }
+
             if (found)
             {
                 // Cache the module's exported commands after importing it, or if the -Refresh flag is used on
