@@ -2101,14 +2101,14 @@ namespace Microsoft.PowerShell.Commands
             catch (ArgumentException ex)
             {
                 // Cannot use WriteNonterminatingError as service is null
-                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, computer);
+                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
             catch (InvalidOperationException ex)
             {
                 // Cannot use WriteNonterminatingError as service is null
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, computer);
+                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
                 WriteError(er);
                 return;
             }
