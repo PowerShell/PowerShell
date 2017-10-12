@@ -10,7 +10,8 @@
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
-        "DockerImageName": "ps-winsrvcore"
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "release"
     },
     {
         "Name": "win7-x86",
@@ -22,7 +23,8 @@
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
-        "DockerImageName": "ps-winsrvcore"
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "release"
     },
     {
         "Name": "win7-x64-symbols",
@@ -34,7 +36,8 @@
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
-        "DockerImageName": "ps-winsrvcore"
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "symbols"
     },
     {
         "Name": "win7-x86-symbols",
@@ -46,7 +49,8 @@
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
-        "DockerImageName": "ps-winsrvcore"
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "symbols"
     }
   ],
   "Linux": [
@@ -65,7 +69,8 @@
         ],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu14.04/Dockerfile",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
-        "DockerImageName": "ps-ubunutu-14-04"
+        "DockerImageName": "ps-ubunutu-14-04",
+        "BinaryBucket": "release"
     },
     {
         "Name": "ubuntu.16.04",
@@ -73,7 +78,8 @@
         "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu16.04/Dockerfile",
-        "DockerImageName": "ps-ubunutu-16-04"
+        "DockerImageName": "ps-ubunutu-16-04",
+        "BinaryBucket": "release"
     },
     {
         "Name": "centos.7",
@@ -81,7 +87,8 @@
         "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage tar",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
-        "DockerImageName": "ps-centos-7"
+        "DockerImageName": "ps-centos-7",
+        "BinaryBucket": "release"
     }
   ]
 }
