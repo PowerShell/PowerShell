@@ -3,12 +3,12 @@ param(
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
     [string]$ReleaseTag,
 
-    [ValidateSet('win7-x86','win7-x64','ubuntu.14.04','ubuntu.16.04','centos.7')]
+    [ValidateSet('win7-x86','win7-x64','win7-x86-symbols','win7-x64-symbols','ubuntu.14.04','ubuntu.16.04','centos.7')]
     [String]
     $Name
 )
-$ErrorActionPreference = 'Stop'
 
+$ErrorActionPreference = 'Stop'
 
 $psReleaseBranch = 'master'
 $psReleaseFork = 'PowerShell'
