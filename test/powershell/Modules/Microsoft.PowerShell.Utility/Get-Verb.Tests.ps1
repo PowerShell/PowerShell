@@ -50,4 +50,19 @@
             {Get-Verb -Group $group} | Should Not Throw
         }
     }
+
+    It "Should not have verbs without descriptions" {
+        $noDescVerbs = (Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.Description) }).Verb -join ", "
+        $noDescVerbs | Should BeNullOrEmpty
+    }
+
+    It "Should not have verbs without alias prefixes" {
+        $noPrefixVerbs = (Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.AliasPrefix) }).Verb -join ", "
+        $noPrefixVerbs | Should BeNullOrEmpty
+    }
+
+    It "Should not have duplicate alias prefixes" {
+        $dupPrefixVerbs = ((Get-Verb | Group-Object -Property AliasPrefix | Where-Object Count -gt 1).Group).Verb -join ", "
+        $dupPrefixVerbs | Should BeNullOrEmpty
+    }
 }
