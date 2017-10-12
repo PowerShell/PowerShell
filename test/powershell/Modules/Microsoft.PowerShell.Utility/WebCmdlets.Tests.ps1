@@ -1610,23 +1610,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             }
             { Invoke-WebRequest @Params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
-
-        It "Verifies Invoke-WebRequest -CertificateValidationScript Creates the <Name> automatic variable" -TestCases @(
-            @{ Name = "HttpRequestMessage"; Type = "System.Net.Http.HttpRequestMessage" }
-            @{ Name = "X509Certificate2"; Type = "System.Security.Cryptography.X509Certificates.X509Certificate2" }
-            @{ Name = "X509Chain"; Type = "System.Security.Cryptography.X509Certificates.X509Chain" }
-            @{ Name = "SslPolicyErrors"; Type = "System.Net.Security.SslPolicyErrors" }
-        ) {
-            param($name, $type)
-            $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https
-                ErrorAction = 'Stop'
-                CertificateValidationScript = { (Get-Variable -Name $name -ValueOnly) -is $type }
-            }
-            $result = Invoke-WebRequest @Params
-            $jsonResult = $result.Content | ConvertFrom-Json
-            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
-        }
     }
 
     BeforeEach {
@@ -2750,22 +2733,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 CertificateValidationScript = { throw 'Bad Cert' }
             }
             { Invoke-RestMethod @Params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
-        }
-
-        It "Verifies Invoke-RestMethod -CertificateValidationScript Creates the <Name> automatic variable" -TestCases @(
-            @{ Name = "HttpRequestMessage"; Type = "System.Net.Http.HttpRequestMessage" }
-            @{ Name = "X509Certificate2"; Type = "System.Security.Cryptography.X509Certificates.X509Certificate2" }
-            @{ Name = "X509Chain"; Type = "System.Security.Cryptography.X509Certificates.X509Chain" }
-            @{ Name = "SslPolicyErrors"; Type = "System.Net.Security.SslPolicyErrors" }
-        ) {
-            param($name, $type)
-            $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https
-                ErrorAction = 'Stop'
-                CertificateValidationScript = { (Get-Variable -Name $name -ValueOnly) -is $type }
-            }
-            $result = Invoke-RestMethod @Params
-            $result.Headers.Host | Should BeExactly $params.Uri.Authority
         }
     }
 
