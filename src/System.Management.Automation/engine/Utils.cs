@@ -1219,7 +1219,7 @@ namespace System.Management.Automation
 
 
         // BigEndianUTF32 encoding is possible, but requires creation
-        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(true,true);
+        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto

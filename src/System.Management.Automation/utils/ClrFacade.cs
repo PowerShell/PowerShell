@@ -104,7 +104,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for getting OEM encoding
-        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows 
+        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {

@@ -549,7 +549,7 @@ namespace System.Management.Automation
         internal class ByteEncoding : System.Text.Encoding
         {
             // the encoding for this is not bigendian and not BOM
-            public Encoding ActualEncoding = new UnicodeEncoding(false, false);
+            public Encoding ActualEncoding = new UnicodeEncoding(bigEndian: false, byteOrderMark: false);
             public override unsafe int GetByteCount(char* c, int i1) { throw new NotImplementedException(); }
             public override int GetByteCount(char[] c, int i1, int i2) { throw new NotImplementedException(); }
             public override int GetByteCount(string s) { throw new NotImplementedException(); }

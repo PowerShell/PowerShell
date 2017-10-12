@@ -7616,29 +7616,13 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
         /// if the stream was opened with "Byte" encoding, false otherwise.
         /// </summary>
-        public bool UsingByteEncoding
-        {
-            get { return _usingByteEncoding; }
-            set { _usingByteEncoding = value; }
-        } // UsingByteEncoding
-        private bool _usingByteEncoding;
+        public bool UsingByteEncoding { get; set; }
 
         /// <summary>
         /// Gets the status of the StreamType parameter.  Returns true
         /// if the stream was opened with a user-specified encoding, false otherwise.
         /// </summary>
-        public bool WasStreamTypeSpecified
-        {
-            get
-            {
-                return _wasStreamTypeSpecified;
-            }
-            set
-            {
-                _wasStreamTypeSpecified = value;
-            }
-        } // WasStreamTypeSpecified
-        private bool _wasStreamTypeSpecified;
+        public bool WasStreamTypeSpecified { get; set; }
 
     } // class FileSystemContentDynamicParametersBase
 
