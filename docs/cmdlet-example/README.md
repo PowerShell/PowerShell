@@ -4,7 +4,7 @@ This demonstrates how to build your own C# cmdlet for PowerShell Core with Visua
 
 We will use free Visual Studio Community 2017 that can be downloaded from [https://www.visualstudio.com/downloads](https://www.visualstudio.com/downloads)
 
-1. When installing Visual Studio 2017 make sure that `.NET Core cross-platform development` is selected under `Other Toolsets`
+1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
 ![1](https://user-images.githubusercontent.com/11860095/31471799-7ca192f4-ae9f-11e7-9731-03fb24ba949c.png)
 
 2. Create new C# project `SendGreeting` of type `Class Library (.NET Core)`
