@@ -4013,6 +4013,11 @@ namespace System.Management.Automation.Language
 
                         return NewFileRedirectionToken(0, append: false, fromSpecifiedExplicitly: false);
                     }
+                    if(c1 == '*')
+                    {
+                        SkipChar();
+                        return CheckOperatorInCommandMode(c, c1, TokenKind.Power);
+                    }
 
                     return CheckOperatorInCommandMode(c, TokenKind.Multiply);
 

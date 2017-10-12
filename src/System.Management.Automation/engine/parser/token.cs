@@ -414,6 +414,9 @@ namespace System.Management.Automation.Language
         /// <summary>The PS class base class and implemented interfaces operator ':'. Also used in base class ctor calls.</summary>
         Colon = 99,
 
+        /// <summary>The power of operator '**'.</summary>
+        Power = 100,
+
         #endregion Operators
 
         #region Keywords
@@ -610,7 +613,7 @@ namespace System.Management.Automation.Language
         BinaryPrecedenceAdd = 4,
 
         /// <summary>
-        /// The precedence of the operators '*', '/', and '%'.
+        /// The precedence of the operators '*', '/', '%', and '**'.
         /// </summary>
         BinaryPrecedenceMultiply = 5,
 
@@ -848,7 +851,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                  Shr */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.CanConstantFold,
             /*                Colon */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
-            /*     Reserved slot 2  */ TokenFlags.None,
+            /*               Power  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceMultiply | TokenFlags.CanConstantFold,
             /*     Reserved slot 3  */ TokenFlags.None,
             /*     Reserved slot 4  */ TokenFlags.None,
             /*     Reserved slot 5  */ TokenFlags.None,
@@ -1046,7 +1049,7 @@ namespace System.Management.Automation.Language
             /*                  Shl */ "-shl",
             /*                  Shr */ "-shr",
             /*                Colon */ ":",
-            /*    Reserved slot 2   */ "",
+            /*              Power   */ "**",
             /*    Reserved slot 3   */ "",
             /*    Reserved slot 4   */ "",
             /*    Reserved slot 5   */ "",

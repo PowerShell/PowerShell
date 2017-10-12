@@ -45,6 +45,16 @@ namespace System.Management.Automation
             return (double)result;
         }
 
+        internal static object Power(int lhs, int rhs)
+        {
+            double result = Math.Pow((double)lhs, (double)rhs);
+            if (result <= int.MaxValue && result >= int.MinValue)
+            {
+                return (int)result;
+            }
+            return (double)result;
+        }
+
         internal static object Divide(int lhs, int rhs)
         {
             // TBD: is it better to cover the special cases explicitly, or
@@ -158,6 +168,16 @@ namespace System.Management.Automation
             return (double)result;
         }
 
+        internal static object Power(uint lhs, uint rhs)
+        {
+            double result = Math.Pow((double)lhs, (double)rhs);
+            if (result <= uint.MaxValue)
+            {
+                return (uint)result;
+            }
+            return (double)result;
+        }
+
         internal static object Divide(uint lhs, uint rhs)
         {
             // TBD: is it better to cover the special cases explicitly, or
@@ -233,6 +253,11 @@ namespace System.Management.Automation
                 return (long)biResult;
             }
             return (double)biResult;
+        }
+
+        internal static object Power(long lhs, long rhs)
+        {
+           return Math.Pow(lhs, rhs);
         }
 
         internal static object Divide(long lhs, long rhs)
@@ -324,6 +349,11 @@ namespace System.Management.Automation
                 return (ulong)biResult;
             }
             return (double)biResult;
+        }
+
+        internal static object Power(ulong lhs, ulong rhs)
+        {
+            return Math.Pow((double)lhs, (double)rhs);
         }
 
         internal static object Divide(ulong lhs, ulong rhs)
@@ -651,6 +681,11 @@ namespace System.Management.Automation
         internal static object Multiply(double lhs, double rhs)
         {
             return lhs * rhs;
+        }
+
+        internal static object Power(double lhs, double rhs)
+        {
+            return Math.Pow(lhs, rhs);
         }
 
         internal static object Divide(double lhs, double rhs)
