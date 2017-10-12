@@ -1558,7 +1558,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     Context "Invoke-WebRequest CertificateValidationScript Tests" {
-        It "Verifies Invoke-WebRequest -CertificateValidationScript can accept all certificates" {
+        It "Verifies Invoke-WebRequest -CertificateValidationScript can accept all certificates" -Pending:$PendingCertificateTest {
             $params = @{
                 Uri = Get-WebListenerUrl -Test 'Get' -Https
                 ErrorAction = 'Stop'
@@ -1583,7 +1583,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
         }
 
-        It "Verifies Invoke-WebRequest -CertificateValidationScript script has access to the calling scope" {
+        It "Verifies Invoke-WebRequest -CertificateValidationScript script has access to the calling scope" -Pending:$PendingCertificateTest {
             # WebListener's Certificate Thumbprint
             $thumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
             $scriptHash = @{Subject = $null}
@@ -1602,7 +1602,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $scriptHash.Subject | Should BeExactly 'CN=localhost'
         }
 
-        It "Verifies Invoke-WebRequest -CertificateValidationScript treats exceptions as Certificate failures" {
+        It "Verifies Invoke-WebRequest -CertificateValidationScript treats exceptions as Certificate failures" -Pending:$PendingCertificateTest {
             $params = @{
                 Uri = Get-WebListenerUrl -Test 'Get' -Https
                 ErrorAction = 'Stop'
@@ -2685,7 +2685,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Invoke-RestMethod CertificateValidationScript Tests" {
-        It "Verifies Invoke-RestMethod -CertificateValidationScript can accept all certificates" {
+        It "Verifies Invoke-RestMethod -CertificateValidationScript can accept all certificates" -Pending:$PendingCertificateTest {
             $params = @{
                 Uri = Get-WebListenerUrl -Test 'Get' -Https
                 ErrorAction = 'Stop'
@@ -2708,7 +2708,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Headers.Host | Should BeExactly $params.Uri.Authority
         }
         
-        It "Verifies Invoke-RestMethod -CertificateValidationScript script has access to the calling scope" {
+        It "Verifies Invoke-RestMethod -CertificateValidationScript script has access to the calling scope" -Pending:$PendingCertificateTest {
             # WebListener's Certificate Thumbprint
             $thumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
             $scriptHash = @{Subject = $null}
@@ -2726,7 +2726,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $scriptHash.Subject | Should BeExactly 'CN=localhost'
         }
 
-        It "Verifies Invoke-RestMethod -CertificateValidationScript treats exceptions as Certificate failures" {
+        It "Verifies Invoke-RestMethod -CertificateValidationScript treats exceptions as Certificate failures" -Pending:$PendingCertificateTest {
             $params = @{
                 Uri = Get-WebListenerUrl -Test 'Get' -Https
                 ErrorAction = 'Stop'
