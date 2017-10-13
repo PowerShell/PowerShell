@@ -39,7 +39,7 @@ RUN yum install -y \
     && yum clean all
 
 # Get the InstallTarballPackage.sh script
-ADD InstallTarballPackage.sh /InstallTarballPackage.sh
+ADD https://raw.githubusercontent.com/PowerShell/PowerShell/master/docker/InstallTarballPackage.sh /InstallTarballPackage.sh
 
 # Add execution permission
 RUN chmod +x /InstallTarballPackage.sh
