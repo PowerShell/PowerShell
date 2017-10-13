@@ -1,10 +1,9 @@
-# Docker image file that describes an OpenSUSE 42.2 image with PowerShell installed from PowerShell Release
+# Docker image file that describes an fedora 25 image with PowerShell installed from Microsoft YUM Repo
 
-FROM opensuse:42.2
+FROM fedora:25
 
 ARG POWERSHELL_VERSION=6.0.0-beta.8
-ARG POWERSHELL_PACKAGE=powershell-6.0.0-beta.8-linux-x64.tar.gz
-ARG IMAGE_NAME=microsoft/powershell:opensuse42.2
+ARG IMAGE_NAME=microsoft/powershell:fedora25
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
       readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" \
@@ -23,35 +22,22 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
-# Update, Install packages to generate localedef and CURL which is used by RPM
-# add the Microsoft key as trusted to install packgages using RPM
-# Install PowerShell then clean up
-RUN zypper --non-interactive update --skip-interactive \
-    && zypper --non-interactive install \
-        glibc-locale \
-        glibc-i18ndata \
-        tar \
+# Install dependencies and clean up
+RUN dnf install -y \       
         curl \
-        libunwind \
-        libicu \
-        openssl \
-    && zypper --non-interactive clean --all
+        glibc-locale-source \
+    && dnf clean all
 
 # Setup the locale
 ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
-# Get the InstallTarballPackage.sh script
-ADD https://raw.githubusercontent.com/PowerShell/PowerShell/master/docker/InstallTarballPackage.sh /InstallTarballPackage.sh
+# Download and configure Microsoft Repository config file
+RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
 
-# Add execution permission
-RUN chmod +x /InstallTarballPackage.sh
+# Install latest powershell from Microsoft YUM Repo
+RUN dnf install -y powershell
 
-# Install powershell from tarball package
-RUN /InstallTarballPackage.sh $POWERSHELL_VERSION $POWERSHELL_PACKAGE
-
-# Remove the script
-RUN rm -f /InstallTarballPackage.sh
-
+# Use array to avoid Docker prepending /bin/sh -c
 CMD [ "powershell" ]

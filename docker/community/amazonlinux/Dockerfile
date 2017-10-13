@@ -1,8 +1,9 @@
-# Docker image file that describes an Centos7 image with PowerShell installed from Microsoft YUM Repo
+# Docker image file that describes an Amazon Linux image with PowerShell installed from PowerShell Release
 
 FROM amazonlinux:latest
 
 ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_PACKAGE=powershell-6.0.0-beta.8-linux-x64.tar.gz
 ARG IMAGE_NAME=microsoft/powershell:amazonlinux
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -30,15 +31,24 @@ RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 # Install dependencies and clean up
 RUN yum install -y \       
         curl \
+        libunwind \
+        libicu \
+        libcurl \
+        openssl \
         libuuid.x86_64 \
     && yum clean all
 
-# Download and configure Microsoft Repository config file
-RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
+# Get the InstallTarballPackage.sh script
+ADD https://raw.githubusercontent.com/PowerShell/PowerShell/master/docker/InstallTarballPackage.sh /InstallTarballPackage.sh
 
-# Install latest powershell from Microsoft YUM Repo
-RUN yum install -y \
-        powershell
+# Add execution permission
+RUN chmod +x /InstallTarballPackage.sh
+
+# Install powershell from tarball package
+RUN /InstallTarballPackage.sh $POWERSHELL_VERSION $POWERSHELL_PACKAGE
+
+# Remove the script
+RUN rm -f /InstallTarballPackage.sh
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
