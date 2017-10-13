@@ -7,10 +7,10 @@ We will use free [Visual Studio Community 2017](https://www.visualstudio.com/dow
 1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
 ![Step1](./Images/Step1.png)
 
-2. Create new C# project `SendGreeting` of type `Class Library (.NET Core)`
+1. Create new C# project `SendGreeting` of type `Class Library (.NET Core)`
 ![Step2](./Images/Step2.png)
 
-3. Now we need to setup PowerShell Core reference assemblies.
+1. Now we need to setup PowerShell Core reference assemblies.
 In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
 In the top-right corner of the package manager click on the small `Settings` sprocket icon that is to the right from `Package source` dropdown.
 By default, there will be only `nuget.org` package source in `Available package sources` list.
@@ -21,7 +21,7 @@ In the package manager select new `powershell-core` in `Package source` dropdown
 It should find `System.Management.Automation` package, select it and it will show package details; install it using `Install` button.
 ![Step4](./Images/Step4.png)
 
-4. Add the code of cmdlet:
+1. Add the code of cmdlet:
 ```CSharp
 using System.Management.Automation;  // PowerShell namespace.
 
@@ -50,11 +50,10 @@ namespace SendGreeting
 At this point everything should look like this:
 ![Step5](./Images/Step5.png)
 
-5. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
+1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
 ![Step6](./Images/Step6.png)
 
-6. Start PowerShell Core, run `Import-Module` on DLL path from previous step and run cmdlet:
-![Step7](./Images/Step7.png)
-
+1. Start PowerShell Core, run `Import-Module` on DLL path from previous step and run cmdlet:
+![Step7](./Images/Step7.png)  
 You can also run the same cmdlet on Linux and other systems that PowerShell Core supports:
 ![Step8](./Images/Step8.png)
