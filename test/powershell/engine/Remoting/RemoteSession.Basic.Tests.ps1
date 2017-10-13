@@ -280,3 +280,17 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $result | Should Be 100
     }
 }
+
+Describe "Verify remoting cmdlets that should not be implemented under non-windows platform" -Tags @("CI") {
+    It "Get-PSHostProcessInfo should be removed under non-windows platform" -Skip $IsWindows {
+        try 
+        {
+            Get-Command -Name Get-PSHostProcessInfo
+            throw "Command should be removed under this platform."
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+        }
+    }    
+}
