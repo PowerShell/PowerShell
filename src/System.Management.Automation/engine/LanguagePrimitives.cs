@@ -440,18 +440,12 @@ namespace System.Management.Automation
 
         internal static bool IsTypeEnumerable(Type type)
         {
+            if (type == null) { return false; }
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(type);
             return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
         }
 
-        /// <summary>
-        /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable
-        /// </summary>
-        /// <param name="obj">
-        /// IEnumerable or IEnumerable-like object
-        /// </param>
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
-        public static IEnumerable GetEnumerable(object obj)
+        internal static Type GetBaseObjectType(object obj)
         {
             if (obj == null)
             {
@@ -472,6 +466,33 @@ namespace System.Management.Automation
                 objectType = obj.GetType();
             }
 
+            return objectType;
+        }
+
+        /// <summary>
+        /// Returns True if the language considers obj to be IEnumerable
+        /// </summary>
+        /// <param name="obj">
+        /// IEnumerable or IEnumerable-like object
+        /// </param>
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
+        public static bool IsObjectEnumerable(object obj)
+        {
+            return IsTypeEnumerable(GetBaseObjectType(obj));
+        }
+
+
+        /// <summary>
+        /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable
+        /// </summary>
+        /// <param name="obj">
+        /// IEnumerable or IEnumerable-like object
+        /// </param>
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
+        public static IEnumerable GetEnumerable(object obj)
+        {
+            Type objectType = GetBaseObjectType(obj);
+            if (objectType == null) { return null; }
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(objectType);
             return getEnumerable(obj);
         }
