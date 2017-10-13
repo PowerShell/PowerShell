@@ -111,8 +111,8 @@ At this point everything should look like this:
 
 6. Now cmdlet can be run on systems supported by PowerShell Standard; for example:
 On PowerShell Core on Windows:
-![StdImage61](./Images/Step61.png)  
+![StdImage61](./Images/Std61.png)  
 On PowerShell Core on Linux:
-![StdImage62](./Images/Step62.png)  
+![StdImage62](./Images/Std62.png)  
 On Windows PowerShell on Windows (this requires [.NET Framework 4.7.1](https://github.com/Microsoft/dotnet-framework-early-access/blob/master/instructions.md)):
-![StdImage63](./Images/Step63.png)  
+![StdImage63](./Images/Std63.png)  
