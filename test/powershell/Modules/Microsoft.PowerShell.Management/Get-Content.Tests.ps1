@@ -285,3 +285,17 @@ baz
         }
     }
 }
+
+Describe "Get-Content -Raw test" -Tags "CI" {
+
+    It "Reads - <testname> in full" -TestCases @( 
+      @{character = "a`nb`n"; testname = "LF-terminated files"; filename = "lf.txt"}
+      @{character = "a`r`nb`r`n"; testname = "CRLF-terminated files"; filename = "crlf.txt"}
+      @{character = "a`nb"; testname = "LF-separated files without trailing newline"; filename = "lf-nt.txt"}
+      @{character = "a`r`nb"; testname = "CRLF-separated files without trailing newline"; filename = "crlf-nt.txt"}        
+    ) {
+        param ($character, $filename)
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\$filename" -value $character
+        Get-Content -Raw "$TestDrive\$filename" | Should BeExactly $character
+    }
+}
