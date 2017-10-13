@@ -1691,7 +1691,7 @@ namespace System.Management.Automation
                         //     Set-ClusterOwnerNode foo bar
                         //     Set-ClusterOwnerNode foo,bar
                         // we unwrap our List, but only if there is a single argument of type object[].
-                        if (valueFromRemainingArguments.Count == 1 && valueFromRemainingArguments[0] is object[])
+                        if (valueFromRemainingArguments.Count == 1 && null != LanguagePrimitives.GetEnumerable(valueFromRemainingArguments[0]))
                         {
                             cpi.SetArgumentValue(UnboundArguments[0].ArgumentExtent, valueFromRemainingArguments[0]);
                         }
