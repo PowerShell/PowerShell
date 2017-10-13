@@ -20,7 +20,7 @@ In the package manager select new `powershell-core` in `Package source` dropdown
 It should find `System.Management.Automation` package, select it and it will show package details; install it using `Install` button.
 ![Step4](./Images/Step4.png)
 
-1. Add the code of cmdlet:
+1. Add the code of cmdlet:  
 ```CSharp
 using System.Management.Automation;  // PowerShell namespace.
 
@@ -46,7 +46,7 @@ namespace SendGreeting
     }
 }
 ```  
-At this point everything should look like this:
+At this point everything should look like this:  
 ![Step5](./Images/Step5.png)  
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
