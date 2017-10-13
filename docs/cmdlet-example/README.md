@@ -67,9 +67,9 @@ We will use free [Visual Studio Community 2017](https://www.visualstudio.com/dow
 ![StdImage1](./Images/Step1.png)
 
 2. Create new C# project `SendGreetingStd` of type `Class Library (.NET Standard)`
-![StdImage21](./Images/Std1_1.png)  
+![StdImage21](./Images/Std21.png)  
 On project properties verify that `Target framework` is `.NET Standard 2.0`:
-![StdImage22](./Images/Std1_2.png)
+![StdImage22](./Images/Std22.png)
 
 3. Now we need to setup reference assemblies.
 In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
@@ -111,8 +111,8 @@ At this point everything should look like this:
 
 6. Now cmdlet can be run on systems supported by PowerShell Standard; for example:
 On PowerShell Core on Windows:
-![StdImage61](./Images/Step6_1.png)  
+![StdImage61](./Images/Step61.png)  
 On PowerShell Core on Linux:
-![StdImage62](./Images/Step6_2.png)  
+![StdImage62](./Images/Step62.png)  
 On Windows PowerShell on Windows (this requires [.NET Framework 4.7.1](https://github.com/Microsoft/dotnet-framework-early-access/blob/master/instructions.md)):
-![StdImage63](./Images/Step6_3.png)  
+![StdImage63](./Images/Step63.png)  
