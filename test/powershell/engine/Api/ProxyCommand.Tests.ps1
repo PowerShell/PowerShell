@@ -3,6 +3,21 @@ using namespace System.Collections.ObjectModel
 
 Describe 'ProxyCommand Tests' -Tags "CI" {
     BeforeAll {
+        function NormalizeCRLF {
+            param ($helpObj)
+
+            if($helpObj.Synopsis.Contains("`r`n"))
+            {
+                $helpObjText = ($helpObj.Synopsis).replace("`r`n", [System.Environment]::NewLine).trim()
+            }
+            else
+            {
+                $helpObjText = ($helpObj.Synopsis).replace("`n", [System.Environment]::NewLine).trim()
+            }
+
+            return $helpObjText
+        }
+
         function GetSectionText {
             param ($object)
             $texts = $object | Out-String -Stream | ForEach-Object {
@@ -82,7 +97,10 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         Set-Item -Path function:\TestHelpComment -Value $bodySB
         $newHelpObj = Get-Help TestHelpComment -Full
 
-        $helpObj.Synopsis | Should Be $newHelpObj.Synopsis
+        $helpObjText = NormalizeCRLF -helpObj $helpObj
+        $newHelpObjText = NormalizeCRLF -helpObj $newHelpObj
+
+        $helpObjText | Should Be $newHelpObjText
         $oldDespText = GetSectionText $helpObj.description
         $newDespText = GetSectionText $newHelpObj.description
         $oldDespText | Should Be $newDespText
