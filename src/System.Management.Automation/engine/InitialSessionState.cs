@@ -1600,6 +1600,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
         /// The default cmdlets, provider, etc are loaded via Modules
+        /// For loading Microsoft.PowerShell.Core module.  Is slower than CreateDefault()
         /// </summary>
         /// <returns></returns>
         public static InitialSessionState CreateDefault2()

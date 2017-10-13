@@ -55,9 +55,6 @@ namespace Microsoft.PowerShell
             Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
-            //      PSSnapInException will cause the control to return back to the native code
-            //      and stuff the EXCEPINFO field with the message of the exception.
-            //      The native code will print this out and exit the process.
 #if DEBUG
             // Special switch for debug mode
             if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))

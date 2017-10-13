@@ -1079,6 +1079,8 @@ namespace System.Management.Automation
 
         internal void RunspaceClosingNotification()
         {
+            EngineSessionState.RunspaceClosingNotification();
+            
             if (_debugger != null)
             {
                 _debugger.Dispose();

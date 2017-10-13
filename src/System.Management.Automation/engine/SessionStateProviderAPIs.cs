@@ -1468,7 +1468,7 @@ namespace System.Management.Automation
                 return count;
             }
         } // ProviderCount
-    } // SessionStateInternal class}
+    } // SessionStateInternal class
 }
 
 #pragma warning restore 56500

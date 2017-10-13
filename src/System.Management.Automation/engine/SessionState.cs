@@ -379,23 +379,6 @@ namespace System.Management.Automation
                     RunspaceInit.PSHOMEDescription);
 
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
-
-            // $Console - set the console file for this shell, if there is one, "" otherwise...
-            SetConsoleVariable();
-        }
-
-        /// <summary>
-        /// Set the $Console variable in this session state instance...
-        /// </summary>
-        internal void SetConsoleVariable()
-        {
-            // $Console - set the console file for this shell, if there is one, "" otherwise...
-            string consoleFileName = string.Empty;
-            PSVariable v = new PSVariable(SpecialVariables.ConsoleFileName,
-                    consoleFileName,
-                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,
-                    RunspaceInit.ConsoleDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
         }
 
         /// <summary>
@@ -481,6 +464,16 @@ namespace System.Management.Automation
         }
 
         #endregion Private data
+
+        /// <summary>
+        /// Notification for SessionState to do cleanup
+        /// before runspace is closed.
+        /// </summary>
+        ///
+        internal void RunspaceClosingNotification()
+        {
+            // previously only used with RunspaceConfiguration
+        }
 
         #region Errors
 

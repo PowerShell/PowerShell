@@ -38,19 +38,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="host">
         /// The explicit PSHost implementation
         /// </param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        internal LocalRunspace(PSHost host)
-            : base(host)
-        {
-        }
-
-        /// <summary>
-        /// Construct an instance of an Runspace using a custom implementation
-        /// of PSHost.
-        /// </summary>
-        /// <param name="host">
-        /// The explicit PSHost implementation
-        /// </param>
         /// <param name="initialSessionState">
         /// configuration information for this minshell.
         /// </param>
