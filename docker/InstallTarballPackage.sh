@@ -27,7 +27,7 @@ fi
 POWERSHELL_LINKFILE=/usr/bin/powershell
 
 # Download the powershell .tar.gz package
-curl -L -o /tmp/powershell.tar.gz https://github.com/daxian-dbw/PowerShell/releases/download/v$POWERSHELL_VERSION/$POWERSHELL_PACKAGE
+curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v$POWERSHELL_VERSION/$POWERSHELL_PACKAGE
 
 # Create the target folder where powershell will be placed
 mkdir -p /opt/microsoft/powershell/$POWERSHELL_VERSION
