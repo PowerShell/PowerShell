@@ -124,7 +124,7 @@ namespace ModuleCmdlets
     }
  }
 
-Describe "Import-Module should be case insensitive on Unix" -Tags 'CI' {
+Describe "Import-Module should be case insensitive on Linux" -Tags 'CI' {
     BeforeAll {
         $defaultParamValues = $PSDefaultParameterValues.Clone()
         $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
@@ -147,7 +147,7 @@ Describe "Import-Module should be case insensitive on Unix" -Tags 'CI' {
         @{modulePath="TESTMODULE"    ; manifest=$false}
         ) {
         param ($modulePath, $manifest)
-        New-Item -ItemType Directory -Path "$modulesPath/$modulePath" -Force
+        New-Item -ItemType Directory -Path "$modulesPath/$modulePath" -Force > $null
         if ($manifest) {
             New-ModuleManifest -Path "$modulesPath/$modulePath/TESTMODULE.psd1" -RootModule "TESTMODULE.psm1" -ModuleVersion 1.1
         }
@@ -162,9 +162,9 @@ Describe "Import-Module should be case insensitive on Unix" -Tags 'CI' {
     }
 
     It "Import-Module will import exact casing if available" {
-        New-Item -ItemType Directory -Path "$modulesPath\Test" -Force
+        New-Item -ItemType Directory -Path "$modulesPath\Test" -Force > $null
         Set-Content -Path "$modulesPath\Test\Test.psm1" -Value "function casetest { 'first' }"
-        New-Item -ItemType Directory -Path "$modulesPath\tEST" -Force
+        New-Item -ItemType Directory -Path "$modulesPath\tEST" -Force > $null
         Set-Content -Path "$modulesPath\tEST\tEST.psm1" -Value "function casetest { 'second' }"
         Import-Module Test
         casetest | Should BeExactly 'first'

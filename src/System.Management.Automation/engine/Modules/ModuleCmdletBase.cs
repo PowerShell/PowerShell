@@ -323,32 +323,23 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+#if UNIX    // case-sensitive filesystems are predominately used only on Unix
             if (!found)
             {
                 // try a case-insensitive search for the module folder
+                // based on PSGet, we can assume the module file casing matches the folder
                 foreach (string path in modulePath)
                 {
                     foreach (string folder in Directory.EnumerateDirectories(path))
                     {
-                        if (String.Compare(Path.GetFileName(folder), name, StringComparison.OrdinalIgnoreCase) == 0)
+                        string fileName = Path.GetFileName(folder);
+                        if (String.Compare(fileName, name, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             module = LoadUsingMultiVersionModuleBase(folder, manifestProcessingFlags, options, out found);
                             if (!found)
                             {
-                                // try a case-insensitive search for the module file
-                                foreach (string file in Directory.EnumerateFiles(folder))
-                                {
-                                    string fileName = Path.GetFileNameWithoutExtension(file);
-                                    if (String.Compare(fileName, name, StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        string qualifiedPath = Path.Combine(folder, fileName);
-                                        module = LoadUsingExtensions(parentModule, fileName, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
-                                    }
-                                    if (found)
-                                    {
-                                        break;
-                                    }
-                                }
+                                string qualifiedPath = Path.Combine(folder, fileName);
+                                module = LoadUsingExtensions(parentModule, fileName, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
                             }
                         }
                         if (found)
@@ -362,6 +353,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#endif
 
             if (found)
             {
