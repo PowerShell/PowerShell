@@ -20,7 +20,7 @@
     The path to the directory to use to create the C# code file.
 
 .EXAMPLE
-    .\ResxGet.ps1 -Manifest .\Microsoft-Windows-PowerShell-Instrumentation.man -Name EventMessages -Namespace 'System.Management.Automation.Tracing' -ResxPath ..\..\src\System.Management.Automation\resources -CodePath  ..\..\src\System.Management.Automation\CoreCLR
+    .\ResxGen.ps1 -Manifest .\PowerShell-Core-Instrumentation.man -ResxPath ..\..\src\System.Management.Automation\resources -CodePath  ..\..\src\System.Management.Automation\CoreCLR
 #>
 [CmdletBinding()]
 param
