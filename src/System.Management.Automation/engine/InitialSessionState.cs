@@ -1600,7 +1600,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
         /// The default cmdlets, provider, etc are loaded via Modules
-        /// For loading Microsoft.PowerShell.Core module.  Is slower than CreateDefault()
+        /// For loading Microsoft.PowerShell.Core module only.
         /// </summary>
         /// <returns></returns>
         public static InitialSessionState CreateDefault2()
@@ -4766,10 +4766,6 @@ end
                         "Clear-Host",      "", ScopedItemOptions.AllScope),
 //#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore
 #if !CORECLR
-                    new SessionStateAliasEntry("asnp",
-                        "Add-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gsnp",
-                        "Get-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("gwmi",
                         "Get-WmiObject",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("iwmi",

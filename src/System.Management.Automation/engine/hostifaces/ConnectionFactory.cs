@@ -65,7 +65,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("host");
             }
 
-            return new LocalRunspace(host, InitialSessionState.CreateDefault());
+            return new LocalRunspace(host, InitialSessionState.CreateDefault2());
         }
 
         /// <summary>

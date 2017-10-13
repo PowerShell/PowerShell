@@ -84,7 +84,7 @@ namespace System.Management.Automation.Runspaces.Internal
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
-            _initialSessionState = InitialSessionState.CreateDefault();
+            _initialSessionState = InitialSessionState.CreateDefault2();
         }
 
         /// <summary>

@@ -43,7 +43,7 @@ namespace System.Management.Automation.Runspaces
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
-            InitialSessionState = InitialSessionState.CreateDefault();
+            InitialSessionState = InitialSessionState.CreateDefault2();
             Host = host;
         }
 

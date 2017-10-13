@@ -55,14 +55,6 @@ namespace Microsoft.PowerShell
             Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
             Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
-#if DEBUG
-            // Special switch for debug mode
-            if (args.Length > 0 && !String.IsNullOrEmpty(args[0]) && args[0].Equals("-isswait", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("Attach the debugger and hit enter to continue:");
-                Console.ReadLine();
-            }
-#endif
             ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
             int exitCode = 0;
             try
