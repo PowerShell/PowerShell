@@ -16,11 +16,10 @@ In the top-right corner of the package manager click on the small `Settings` spr
 By default, there will be only `nuget.org` package source in `Available package sources` list.
 Add another package source with name `powershell-core` and source `https://powershell.myget.org/F/powershell-core/api/v3/index.json`
 ![Step3](./Images/Step3.png)  
-  
 In the package manager select new `powershell-core` in `Package source` dropdown, select `Browse` tab, type in `System.Management.Automation` in the search and select `Include prerelease`.
 It should find `System.Management.Automation` package, select it and it will show package details; install it using `Install` button.
 ![Step4](./Images/Step4.png)
-  
+
 1. Add the code of cmdlet:
 ```CSharp
 using System.Management.Automation;  // PowerShell namespace.
@@ -46,7 +45,7 @@ namespace SendGreeting
         }
     }
 }
-```
+```  
 At this point everything should look like this:
 ![Step5](./Images/Step5.png)
 
