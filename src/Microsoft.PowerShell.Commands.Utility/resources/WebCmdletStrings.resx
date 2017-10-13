@@ -198,9 +198,6 @@
   <data name="ThumbprintNotFound" xml:space="preserve">
     <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
   </data>
-    <data name="UnencryptedCredentialWarning" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To supress this warning reissue the command with a Uri that beings with 'https://' or specify the AllowUnencryptedAuthentication parameter.</value>
-  </data>
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Writing web request completed. (Number of bytes remaining: {0})</value>
   </data>

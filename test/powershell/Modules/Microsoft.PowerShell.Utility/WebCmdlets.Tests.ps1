@@ -1393,31 +1393,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
         }
-
-        It "Verifies Invoke-WebRequest -Credential produces a warning on HTTP requests" {
-            $params = @{
-                Uri = $httpUri
-                Credential = $credential
-                WarningVariable = 'warnings'
-                WarningAction =  'SilentlyContinue'
-            }
-            $Response = Invoke-WebRequest @params
-
-            $warnings.Count | should be 1
-        }
-
-        It "Verifies Invoke-WebRequest -Credential suppresses a warning on HTTP requests with -AllowUnencryptedAuthentication " {
-            $params = @{
-                Uri = $httpUri
-                Credential = $credential
-                WarningVariable = 'warnings'
-                WarningAction =  'SilentlyContinue'
-                AllowUnencryptedAuthentication = $true
-            }
-            $Response = Invoke-WebRequest @params
-
-            $warnings.Count | should be 0
-        }
     }
 
     BeforeEach {
@@ -2334,31 +2309,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
-        }
-
-        It "Verifies Invoke-RestMethod -Credential produces a warning on HTTP requests" {
-            $params = @{
-                Uri = $httpUri
-                Credential = $credential
-                WarningVariable = 'warnings'
-                WarningAction =  'SilentlyContinue'
-            }
-            $Response = Invoke-RestMethod @params
-
-            $warnings.Count | should be 1
-        }
-
-        It "Verifies Invoke-RestMethod -Credential suppresses a warning on HTTP requests with -AllowUnencryptedAuthentication " {
-            $params = @{
-                Uri = $httpUri
-                Credential = $credential
-                WarningVariable = 'warnings'
-                WarningAction =  'SilentlyContinue'
-                AllowUnencryptedAuthentication = $true
-            }
-            $Response = Invoke-RestMethod @params
-
-            $warnings.Count | should be 0
         }
     }
 
