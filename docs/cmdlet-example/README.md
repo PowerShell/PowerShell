@@ -1,4 +1,4 @@
-# Building a C# Cmdlet
+# Building a C# Cmdlet for PowerShell Core
 
 This demonstrates how to build your own C# cmdlet for PowerShell Core with Visual Studio.
 
@@ -56,3 +56,63 @@ At this point everything should look like this:
 ![Step7](./Images/Step7.png)  
 You can also run the same cmdlet on Linux and other systems that PowerShell Core supports:
 ![Step8](./Images/Step8.png)
+
+
+# Building a C# Cmdlet for PowerShell Standard 3.0
+Steps below show how to build your own C# cmdlet for PowerShell Standard 3.0 with Visual Studio.
+
+We will use free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
+
+1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
+![StdImage1](./Images/Step1.png)
+
+2. Create new C# project `SendGreetingStd` of type `Class Library (.NET Standard)`
+![StdImage21](./Images/Std1_1.png)  
+On project properties verify that `Target framework` is `.NET Standard 2.0`:
+![StdImage22](./Images/Std1_2.png)
+
+3. Now we need to setup reference assemblies.
+In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
+In the top-right corner of the package manager select `nuget.org` package source, select `Browse` tab, type in `PowerShellStandard.Library` in the search and select `Include prerelease`.
+It should find `PowerShellStandard.Library` package, select it and it will show package details; install it using `Install` button.
+![StdImage3](./Images/Std3.png)
+
+4. Add the code of cmdlet:  
+```CSharp
+using System.Management.Automation;  // PowerShell namespace.
+
+namespace SendGreeting
+{
+    // Declare the class as a cmdlet and specify and 
+    // appropriate verb and noun for the cmdlet name.
+    [Cmdlet(VerbsCommunications.Send, "Greeting")]
+    public class SendGreetingCommand : Cmdlet
+    {
+        // Declare the parameters for the cmdlet.
+        [Parameter(Mandatory = true)]
+        public string Name { get; set; }
+
+        // Overide the ProcessRecord method to process
+        // the supplied user name and write out a 
+        // greeting to the user by calling the WriteObject
+        // method.
+        protected override void ProcessRecord()
+        {
+            WriteObject("Hello " + Name + "!");
+        }
+    }
+}
+```  
+At this point everything should look like this:  
+![StdImage4](./Images/Std4.png)  
+
+5. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
+![StdImage5](./Images/Std5.png)
+
+6. Now cmdlet can be run on systems supported by PowerShell Standard; for example:
+On PowerShell Core on Windows:
+![StdImage61](./Images/Step6_1.png)  
+On PowerShell Core on Linux:
+![StdImage62](./Images/Step6_2.png)  
+On Windows PowerShell on Windows (this requires [.NET Framework 4.7.1](https://github.com/Microsoft/dotnet-framework-early-access/blob/master/instructions.md)):
+![StdImage63](./Images/Step6_3.png)  
