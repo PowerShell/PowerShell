@@ -47,7 +47,7 @@ namespace SendGreeting
 }
 ```  
 At this point everything should look like this:
-![Step5](./Images/Step5.png)
+![Step5](./Images/Step5.png)  
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
 ![Step6](./Images/Step6.png)
