@@ -3,8 +3,8 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
     Context "SSHConnectionInfo Class Tests" {
 
         BeforeAll {
-            ## Skip the test if ssh.exe is not present.
-            $skipTest = (Get-Command 'ssh' -ErrorAction SilentlyContinue) -eq $null
+            ## Skip the test if ssh is not present.
+            $skipTest = (Get-Command 'ssh' -CommandType Application -ErrorAction SilentlyContinue) -eq $null
         }
 
         AfterEach {
