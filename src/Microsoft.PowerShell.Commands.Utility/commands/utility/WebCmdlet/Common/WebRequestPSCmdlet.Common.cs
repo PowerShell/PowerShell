@@ -472,6 +472,10 @@ namespace Microsoft.PowerShell.Commands
             //
             if (null != Credential && Authentication == WebAuthenticationType.None)
             {
+                if (Uri.Scheme != "https" && !AllowUnencryptedAuthentication)
+                {
+                    WriteWarning(WebCmdletStrings.UnencryptedCredentialWarning);
+                }
                 // get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
                 WebSession.Credentials = netCred;

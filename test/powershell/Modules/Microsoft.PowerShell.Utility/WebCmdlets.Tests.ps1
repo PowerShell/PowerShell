@@ -1381,7 +1381,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
-        It "Verifies Invoke-WebRequest -Authentication Can us HTTP with -AllowUnencryptedAuthentication" {
+        It "Verifies Invoke-WebRequest -Authentication Can use HTTP with -AllowUnencryptedAuthentication" {
             $params = @{
                 Uri = $httpUri
                 Token = $token
@@ -1392,6 +1392,31 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result = $response.Content | ConvertFrom-Json
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
+        }
+
+        It "Verifies Invoke-WebRequest -Credential produces a warning on HTTP requests" {
+            $params = @{
+                Uri = $httpUri
+                Credential = $credential
+                WarningVariable = 'warnings'
+                WarningAction =  'SilentlyContinue'
+            }
+            $Response = Invoke-WebRequest @params
+
+            $warnings.Count | should be 1
+        }
+
+        It "Verifies Invoke-WebRequest -Credential suppresses a warning on HTTP requests with -AllowUnencryptedAuthentication " {
+            $params = @{
+                Uri = $httpUri
+                Credential = $credential
+                WarningVariable = 'warnings'
+                WarningAction =  'SilentlyContinue'
+                AllowUnencryptedAuthentication = $true
+            }
+            $Response = Invoke-WebRequest @params
+
+            $warnings.Count | should be 0
         }
     }
 
@@ -2299,7 +2324,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
-        It "Verifies Invoke-RestMethod -Authentication Can us HTTP with -AllowUnencryptedAuthentication" {
+        It "Verifies Invoke-RestMethod -Authentication Can use HTTP with -AllowUnencryptedAuthentication" {
             $params = @{
                 Uri = $httpUri
                 Token = $token
@@ -2309,6 +2334,31 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
+        }
+
+        It "Verifies Invoke-RestMethod -Credential produces a warning on HTTP requests" {
+            $params = @{
+                Uri = $httpUri
+                Credential = $credential
+                WarningVariable = 'warnings'
+                WarningAction =  'SilentlyContinue'
+            }
+            $Response = Invoke-RestMethod @params
+
+            $warnings.Count | should be 1
+        }
+
+        It "Verifies Invoke-RestMethod -Credential suppresses a warning on HTTP requests with -AllowUnencryptedAuthentication " {
+            $params = @{
+                Uri = $httpUri
+                Credential = $credential
+                WarningVariable = 'warnings'
+                WarningAction =  'SilentlyContinue'
+                AllowUnencryptedAuthentication = $true
+            }
+            $Response = Invoke-RestMethod @params
+
+            $warnings.Count | should be 0
         }
     }
 
