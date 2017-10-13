@@ -24,7 +24,7 @@ Dummy dependencies allows us to build just `$Top` folder, instead of building se
 ### Dummy dependencies rules
 
 If assembly is part of CoreCLR build,
-it should be listed as a dependency for $Top folder (src\powershell-unix or src\powershell-win-core)
+it should be listed as a dependency for `$Top` folder (`src\powershell-unix` or `src\powershell-win-core`)
 
 ## Preliminary steps
 
@@ -59,9 +59,7 @@ you likely need to delete the `gen` folders and re-run the tool.
 
 ### Type Catalog
 
-As a work-around for the lack of `GetAssemblies()`,
-our custom assembly load context takes a pre-generated catalog of C# types
-(for PowerShell type resolution).
+A pre-generated catalog of C# types is used in PowerShell to help type resolution.
 Generating this catalog is a pre-build step that is run via `Start-TypeGen`,
 which `Start-PSBuild` calls.
 Again, however, PowerShell is not required.
