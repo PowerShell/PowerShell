@@ -323,9 +323,9 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    if(!(Test-Path "$env:CoreOutput\powershell.exe"))
+    if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
-        throw "CoreCLR PowerShell.exe was not built"
+        throw "CoreCLR pwsh.exe was not built"
     }
 
     if(-not (Test-DailyBuild))
