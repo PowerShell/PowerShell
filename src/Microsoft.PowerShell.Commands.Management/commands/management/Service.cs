@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (null == innerException) ? "" : innerException.Message);
+                (null == innerException) ? String.Empty : innerException.Message);
 
             var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteNonTerminatingError(
                         pattern,
-                        "",
+                        String.Empty,
                         pattern,
                         null,
                         "NoServiceFoundForGivenName",
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!found && !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     WriteNonTerminatingError(
-                        "",
+                        String.Empty,
                         pattern,
                         pattern,
                         null,
@@ -1856,7 +1856,7 @@ namespace Microsoft.PowerShell.Commands
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(DisplayName ?? "", Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? String.Empty, Name))
             {
                 return;
             }
