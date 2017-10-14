@@ -1,12 +1,12 @@
 # Creating a cross-platform binary module with the .NET Core command-line interface tools
 
-This example uses the [.NET Core command-line interface][dotnet-cli] tools, a.k.a the
+This example uses the [.NET Core command-line interface tools][dotnet-cli], a.k.a the
 `dotnet CLI`, to demonstrate how to create a binary module that is portable across operating
 systems supported by `PowerShell Core` as well as `Windows PowerShell` version 3 and higher.
 
-Because the binary module's assembly will be created as a `.NET Standard 2.0` class library,
-the same assembly can be imported into Windows PowerShell as well as PowerShell Core.
-This means you don't have to build separate assemblies to target these two different
+Because the binary module's assembly will be created as a `.NET Standard 2.0 class library`,
+the same assembly can be imported into `Windows PowerShell` as well as `PowerShell Core`.
+This means you do not have to build separate assemblies to target these two different
 implementations of PowerShell.
 
 ## Prerequisites
@@ -18,14 +18,14 @@ implementations of PowerShell.
   PowerShell repo's [README.md][readme] file.
 
   Note: On Windows 10 Anniversary Update or higher, you can use the [Windows Subsystem for
-  Linux][wsl] console to build the module. In order to import and use the module, you'll need
+  Linux][wsl] (WSL) console to build the module. In order to import and use the module, you'll need
   to install `PowerShell Core` for the version of `Ubuntu` you're running.  You can get that
   version info by running the command `lsb_release -a` from the WSL console.
 
 * .NET Core 2.0 SDK
 
   Download and install the [.NET Core 2.0 SDK][net-core-sdk] for your operating system.
-  It is recommended to use a package manager to install the SDK on Linux.
+  It is recommended that you use a package manager to install the SDK on Linux.
   See these [instructions][linux-install] on how to install the SDK on Linux.
   Be sure to pick your distribution of Linux e.g. RHEL, Debian, etc so you get the
   appropriate instructions for your platform.
@@ -39,8 +39,8 @@ implementations of PowerShell.
    ```
 
 2. Add a `global.json` file to your project that specifies that the project requires the
-   `2.0.0` version of the `.NET Core SDK`.  This is to prevent issues if you have more than
-   one version of the .NET Core SDK installed.
+   `2.0.0` version of the `.NET Core SDK`.  This is necessary to prevent issues if you
+   have more than one version of the .NET Core SDK installed.
 
    ```powershell
    cd mymodule
@@ -48,7 +48,8 @@ implementations of PowerShell.
    ```
 
 3. Add the [PowerShell Standard Library][ps-stdlib] package to the project file.
-   This package provides the System.Management.Automation assembly.
+   This package provides the `System.Management.Automation` assembly.
+
    Note: as newer versions of this library are released, update the version number
    in this command to match the latest version.
 
@@ -96,10 +97,10 @@ implementations of PowerShell.
    ```
 
 ## Running a .NET Standard 2.0 based module in Windows PowerShell
-You may have heard that .NET class libraries compiled as `.NET Standard 2.0` class
-libraries will load into both `.NET Core 2.0` applications such as PowerShell Core
+You may have heard that .NET class libraries compiled as a `.NET Standard 2.0 class
+library` will load into both `.NET Core 2.0` applications such as PowerShell Core
 and `.NET Framework 4.6.1` (or higher) applications such as Windows PowerShell.
-This allows you to build a single, portable binary module.
+This allows you to build a single, cross-platform binary module.
 
 Unfortunately, this works best when the .NET Framework application has been compiled
 against the .NET Standard 2.0 library.  The compiler can provide the appropriate
