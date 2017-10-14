@@ -472,7 +472,19 @@ namespace System.Management.Automation
         ///
         internal void RunspaceClosingNotification()
         {
-            // previously only used with RunspaceConfiguration
+            if (this != ExecutionContext.TopLevelSessionState && Providers.Count > 0)
+            {
+                // Remove all providers at the top level...
+
+                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+
+                foreach (string providerName in Providers.Keys)
+                {
+                    // All errors are ignored.
+
+                    RemoveProvider(providerName, true, context);
+                }
+            }
         }
 
         #region Errors

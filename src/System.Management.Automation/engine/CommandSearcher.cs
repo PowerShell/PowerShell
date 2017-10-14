@@ -1019,7 +1019,7 @@ namespace System.Management.Automation
             if (!_matchingCmdlet.MoveNext())
             {
                 // Advance the state
-                _currentState = SearchState.SearchingBuiltinScripts;
+                _currentState = SearchState.StartSearchingForExternalCommands;
 
                 _matchingCmdlet = null;
             }
@@ -1570,9 +1570,6 @@ namespace System.Management.Automation
 
             // the searcher has finished function resolution and is now searching for cmdlets
             SearchingCmdlets,
-
-            // the search has finished cmdlet resolution and is now searching for builtin scripts
-            SearchingBuiltinScripts,
 
             // the search has finished builtin script resolution and is now searching for external commands
             StartSearchingForExternalCommands,

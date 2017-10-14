@@ -972,7 +972,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (ExecutionContext.IsSingleShell && !String.IsNullOrEmpty(providerName.PSSnapInName))
+            if (!String.IsNullOrEmpty(providerName.PSSnapInName))
             {
                 // Be sure the PSSnapin/Module name matches
 
@@ -1451,6 +1451,285 @@ namespace System.Management.Automation
         }
 
         #endregion NewProvider
+
+        #region Remove Provider
+
+        private void RemoveProvider(ProviderConfigurationEntry entry)
+        {
+            try
+            {
+                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
+
+                string providerName = GetProviderName(entry);
+                RemoveProvider(providerName, true, context);
+
+                context.ThrowFirstErrorOrDoNothing();
+            }
+            catch (LoopFlowException)
+            {
+                throw;
+            }
+            catch (PipelineStoppedException)
+            {
+                throw;
+            }
+            catch (ActionPreferenceStopException)
+            {
+                throw;
+            }
+            catch (Exception e) // Catch-all OK, 3rd party callout
+            {
+                // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
+                this.ExecutionContext.ReportEngineStartupError(e);
+            }
+        }
+
+        private string GetProviderName(ProviderConfigurationEntry entry)
+        {
+            string name = entry.Name;
+            if (entry.PSSnapIn != null)
+            {
+                name =
+                    string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "{0}\\{1}",
+                        entry.PSSnapIn.Name,
+                        entry.Name);
+            }
+            return name;
+        }
+
+        /// <summary>
+        /// Removes the provider of the given name.
+        /// </summary>
+        ///
+        /// <param name="providerName">
+        /// The name of the provider to remove.
+        /// </param>
+        ///
+        /// <param name="force">
+        /// Determines if the provider should be removed forcefully even if there were
+        /// drives present or errors.
+        /// </param>
+        ///
+        /// <param name="context">
+        /// The context under which the command is being run.
+        /// </param>
+        ///
+        /// <error cref="ArgumentNullException">
+        /// If <paramref name="providerName"/> is null.
+        /// </error>
+        ///
+        /// <error cref="SessionStateException">
+        /// There are still drives associated with this provider,
+        /// and the "force" option was not specified.
+        /// </error>
+        ///
+        /// <error cref="ProviderNotFoundException">
+        /// A provider with name <paramref name="providerName"/> could not be found.
+        /// </error>
+        ///
+        /// <error>
+        /// If a provider throws an exception it gets written to the <paramref name="context"/>.
+        /// </error>
+        ///
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="providerName"/> is null or empty.
+        /// </exception>
+        ///
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="context"/> is null.
+        /// </exception>
+        ///
+        /// <remarks>
+        /// All drives associated with the provider must be removed before the provider
+        /// can be removed. Call SessionState.GetDrivesForProvider() to determine if there
+        /// are any drives associated with the provider. A SessionStateException
+        /// will be written to the context if any such drives do exist.
+        /// </remarks>
+        ///
+        internal void RemoveProvider(
+            string providerName,
+            bool force,
+            CmdletProviderContext context)
+        {
+            if (context == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("context");
+            }
+
+            if (String.IsNullOrEmpty(providerName))
+            {
+                throw PSTraceSource.NewArgumentException("providerName");
+            }
+
+            bool errors = false;
+
+            ProviderInfo provider = null;
+
+            try
+            {
+                provider = GetSingleProvider(providerName);
+            }
+            catch (ProviderNotFoundException)
+            {
+                return;
+            }
+
+            try
+            {
+                // First get an instance of the provider to make sure it exists
+                Provider.CmdletProvider providerBase = GetProviderInstance(provider);
+
+                if (providerBase == null)
+                {
+                    ProviderNotFoundException e = new ProviderNotFoundException(
+                        providerName,
+                        SessionStateCategory.CmdletProvider,
+                        "ProviderNotFound",
+                        SessionStateStrings.ProviderNotFound);
+                    context.WriteError(new ErrorRecord(e.ErrorRecord, e));
+
+                    errors = true;
+                }
+                else
+                {
+                    // See if there are any drives present for the provider
+
+                    int driveCount = 0;
+                    foreach (PSDriveInfo drive in GetDrivesForProvider(providerName))
+                    {
+                        if (drive != null)
+                        {
+                            ++driveCount;
+                            break;
+                        }
+                    }
+
+                    if (driveCount > 0)
+                    {
+                        if (force)
+                        {
+                            // Forcefully remove all the drives
+
+                            foreach (PSDriveInfo drive in GetDrivesForProvider(providerName))
+                            {
+                                if (drive != null)
+                                {
+                                    RemoveDrive(drive, true, null);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            errors = true;
+
+                            // Since there are still drives associated with the provider
+                            // the provider cannot be removed
+
+                            SessionStateException e = new SessionStateException(
+                                providerName,
+                                SessionStateCategory.CmdletProvider,
+                                "RemoveDrivesBeforeRemovingProvider",
+                                SessionStateStrings.RemoveDrivesBeforeRemovingProvider,
+                                ErrorCategory.InvalidOperation);
+                            context.WriteError(new ErrorRecord(e.ErrorRecord, e));
+
+                            return;
+                        }
+                    }
+
+                    // Now tell the provider that they are going to be removed by
+                    // calling the Stop method
+
+                    try
+                    {
+                        providerBase.Stop(context);
+                    }
+                    catch (LoopFlowException)
+                    {
+                        throw;
+                    }
+                    catch (PipelineStoppedException)
+                    {
+                        throw;
+                    }
+                    catch (ActionPreferenceStopException)
+                    {
+                        throw;
+                    }
+                }
+            }
+            catch (LoopFlowException)
+            {
+                throw;
+            }
+            catch (PipelineStoppedException)
+            {
+                throw;
+            }
+            catch (ActionPreferenceStopException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                errors = true;
+                context.WriteError(
+                    new ErrorRecord(
+                        e,
+                        "RemoveProviderUnexpectedException",
+                        ErrorCategory.InvalidArgument,
+                        providerName));
+            }
+            finally
+            {
+                if (force || !errors)
+                {
+                    // Log the provider stopped event
+
+                    MshLog.LogProviderLifecycleEvent(
+                        this.ExecutionContext,
+                        providerName,
+                        ProviderState.Stopped);
+
+                    RemoveProviderFromCollection(provider);
+                    ProvidersCurrentWorkingDrive.Remove(provider);
+                }
+            }
+        } // RemoveProvider
+
+        /// <summary>
+        /// Removes the provider from the providers dictionary.
+        /// </summary>
+        ///
+        /// <param name="provider">
+        /// The provider to be removed.
+        /// </param>
+        ///
+        /// <remarks>
+        /// If there are multiple providers with the same name, then only the provider
+        /// from the matching PSSnapin is removed.
+        /// If the last provider of that name is removed the entry is removed from the dictionary.
+        /// </remarks>
+        ///
+        private void RemoveProviderFromCollection(ProviderInfo provider)
+        {
+            List<ProviderInfo> matchingProviders;
+            if (Providers.TryGetValue(provider.Name, out matchingProviders))
+            {
+                if (matchingProviders.Count == 1 &&
+                    matchingProviders[0].NameEquals(provider.FullName))
+                {
+                    Providers.Remove(provider.Name);
+                }
+                else
+                {
+                    matchingProviders.Remove(provider);
+                }
+            }
+        }
+        #endregion RemoveProvider
 
         /// <summary>
         /// Gets the count of the number of providers that are loaded

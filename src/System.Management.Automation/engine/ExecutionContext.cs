@@ -172,18 +172,6 @@ namespace System.Management.Automation
         internal InitialSessionState InitialSessionState { get; }
 
         /// <summary>
-        /// True if the InitialSessionState is for a single shell or false otherwise.
-        /// </summary>
-        ///
-        internal bool IsSingleShell
-        {
-            get
-            {
-                return InitialSessionState != null;
-            }
-        }
-
-        /// <summary>
         /// Added for Win8: 336382
         /// Contains the name of the previous module that was processed. This
         /// allows you to skip this module when doing a lookup.
@@ -253,14 +241,7 @@ namespace System.Management.Automation
             {
                 if (_providerNames == null)
                 {
-                    if (IsSingleShell)
-                    {
-                        _providerNames = new SingleShellProviderNames();
-                    }
-                    else
-                    {
-                        _providerNames = new CustomShellProviderNames();
-                    }
+                    _providerNames = new SingleShellProviderNames();
                 }
                 return _providerNames;
             }
@@ -1158,7 +1139,7 @@ namespace System.Management.Automation
                 }
                 return _formatDBManager;
             }
-
+            
             set
             {
                 _formatDBManager = value;

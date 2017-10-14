@@ -329,56 +329,6 @@ namespace System.Management.Automation
             return processor;
         }
 
-        //Minishell ExternalScriptInfo scriptInfo
-
-        internal CommandProcessorBase CreateScriptProcessorForMiniShell(ExternalScriptInfo scriptInfo, bool useLocalScope, SessionStateInternal sessionState)
-        {
-            VerifyScriptRequirements(scriptInfo, Context);
-
-            if (String.IsNullOrEmpty(scriptInfo.RequiresApplicationID))
-            {
-                if (scriptInfo.RequiresPSSnapIns != null && scriptInfo.RequiresPSSnapIns.Any())
-                {
-                    Collection<string> requiresMissingPSSnapIns = GetPSSnapinNames(scriptInfo.RequiresPSSnapIns);
-
-                    ScriptRequiresException scriptRequiresException =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            requiresMissingPSSnapIns,
-                            "ScriptRequiresMissingPSSnapIns",
-                            true);
-                    throw scriptRequiresException;
-                }
-
-                return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
-            }
-            else
-            {
-                if (String.Equals(
-                       Context.ShellID,
-                       scriptInfo.RequiresApplicationID,
-                       StringComparison.OrdinalIgnoreCase))
-                {
-                    return CreateCommandProcessorForScript(scriptInfo, Context, useLocalScope, sessionState);
-                }
-                else
-                {
-                    // Throw a runtime exception
-
-                    string shellPath = GetShellPathFromRegistry(scriptInfo.RequiresApplicationID);
-
-                    ScriptRequiresException sre =
-                        new ScriptRequiresException(
-                            scriptInfo.Name,
-                            scriptInfo.RequiresApplicationID,
-                            shellPath,
-                            "ScriptRequiresUnmatchedShellId");
-
-                    throw sre;
-                }
-            }
-        }
-
         internal static void VerifyRequiredModules(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
             // Check Required Modules
@@ -708,16 +658,7 @@ namespace System.Management.Automation
                     scriptInfo.SignatureChecked = true;
                     try
                     {
-                        if (!Context.IsSingleShell)
-                        {
-                            // in minishell mode
-                            processor = CreateScriptProcessorForMiniShell(scriptInfo, useLocalScope ?? true, sessionState);
-                        }
-                        else
-                        {
-                            // single shell mode
-                            processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState);
-                        }
+                        processor = CreateScriptProcessorForSingleShell(scriptInfo, Context, useLocalScope ?? true, sessionState);
                     }
                     catch (ScriptRequiresSyntaxException reqSyntaxException)
                     {

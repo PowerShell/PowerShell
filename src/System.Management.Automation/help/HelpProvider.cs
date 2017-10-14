@@ -241,15 +241,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper function which checks whether PSSnapIns are supported in current invocation.
-        /// </summary>
-        /// <returns>true if supported,false otherwise.</returns>
-        internal bool AreSnapInsSupported()
-        {
-            return false;
-        }
-
-        /// <summary>
         /// Gets the search paths. If the current shell is single-shell based, then the returned
         /// search path contains all the directories of currently active PSSnapIns
         /// </summary>

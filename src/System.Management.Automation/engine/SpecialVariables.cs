@@ -217,7 +217,6 @@ namespace System.Management.Automation
 
         #region AllScope variables created in every session
 
-        internal const string ConsoleFileName = "ConsoleFileName";
         internal const string ExecutionContext = "ExecutionContext";
         internal const string Home = "HOME";
         internal const string Host = "Host";
@@ -232,7 +231,6 @@ namespace System.Management.Automation
 
         internal static List<string> AllScopeSessionVariables = new List<string>
         {
-            ConsoleFileName,
             ExecutionContext,
             Home,
             Host,
@@ -297,7 +295,6 @@ namespace System.Management.Automation
         // also exists.
         internal static readonly string[] AllScopeVariables = {
                                                                   SpecialVariables.Question,
-                                                                  SpecialVariables.ConsoleFileName,
                                                                   SpecialVariables.ExecutionContext,
                                                                   SpecialVariables.False,
                                                                   SpecialVariables.Home,
