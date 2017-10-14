@@ -445,28 +445,20 @@ namespace System.Management.Automation
             return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
         }
 
-        internal static Type GetBaseObjectType(object obj)
+        private static object GetBaseObject(object obj)
         {
             if (obj == null)
             {
                 return null;
             }
 
-            Type objectType = obj.GetType();
-
-            // if the object passed is an PSObject,
-            // look at the base object. Notice that, if the
-            // object has been serialized, the base object
-            // will be there as an ArrayList if the original
-            // object was IEnumerable
-            if (objectType == typeof(PSObject))
+            var psobj = obj as PSObject;
+            if (null != psobj)
             {
-                PSObject mshObj = (PSObject)obj;
-                obj = mshObj.BaseObject;
-                objectType = obj.GetType();
+                obj = psobj.BaseObject;
             }
 
-            return objectType;
+            return obj;
         }
 
         /// <summary>
@@ -478,7 +470,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static bool IsObjectEnumerable(object obj)
         {
-            return IsTypeEnumerable(GetBaseObjectType(obj));
+            return IsTypeEnumerable(GetBaseObject(obj)?.GetType());
         }
 
 
@@ -491,9 +483,9 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static IEnumerable GetEnumerable(object obj)
         {
-            Type objectType = GetBaseObjectType(obj);
-            if (objectType == null) { return null; }
-            GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(objectType);
+            obj = GetBaseObject(obj);
+            if (obj == null) { return null; }
+            GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(obj.GetType());
             return getEnumerable(obj);
         }
 
