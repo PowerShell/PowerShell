@@ -60,7 +60,7 @@ implementations of PowerShell.
 4. Add the [PowerShell Standard Library][ps-stdlib] package to the project file.
    This package provides the `System.Management.Automation` assembly.
 
-   Note: as newer versions of this library are released, update the version number
+   Note: As newer versions of this library are released, update the version number
    in this command to match the latest version.
 
    ```
@@ -100,7 +100,7 @@ implementations of PowerShell.
 
 7. Load the binary and invoke the new command.
 
-   Note: the previous steps could have been performed in a different shell such as
+   Note: The previous steps could have been performed in a different shell such as
    Bash if you're on Linux.  For this step, make sure you are running PowerShell Core.
 
    ```powershell
@@ -181,6 +181,10 @@ If you copy `netstandard.dll` from this directory to the directory containing
    Write-TimestampedMessage "Test message."
    ```
    Now the command should succeed.
+
+   Note: If it fails, restart Windows PowerShell to make sure
+   you don't have a previously loaded verion of the assembly in the session and repeat
+   step 4.
 
 If you use additional libraries there may be more work involved. This approach has
 been successfully tested using types from `System.Xml` and `System.Web`.
