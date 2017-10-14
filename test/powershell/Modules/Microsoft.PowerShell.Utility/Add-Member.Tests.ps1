@@ -276,6 +276,14 @@
         $results = add-member -InputObject a 16 sp {1+1} -passthru
         $results.sp | Should Be 2
     }
+
+    It "Verify Add-Member error message is not empty" {
+        $object = @(1,2)
+        Add-Member -InputObject $object "ABC" "Value1"
+        Add-Member -InputObject $object "ABC" "Value2" -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        $errorVar.Exception | Should BeOfType "System.InvalidOperationException"
+        $errorVar.Exception.Message | Should Not BeNullOrEmpty
+    }
 }
 
 Describe "Add-Member" -Tags "CI" {

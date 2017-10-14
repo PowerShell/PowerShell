@@ -381,10 +381,8 @@ namespace Microsoft.PowerShell.Commands
 
         private ErrorRecord NewError()
         {
-            ErrorDetails details = new ErrorDetails(this.GetType().GetTypeInfo().Assembly,
-                "WebCmdletStrings", "JsonStringInBadFormat");
             ErrorRecord errorRecord = new ErrorRecord(
-                new InvalidOperationException(details.Message),
+                new InvalidOperationException(WebCmdletStrings.JsonStringInBadFormat),
                 "JsonStringInBadFormat",
                 ErrorCategory.InvalidOperation,
                 InputObject);
