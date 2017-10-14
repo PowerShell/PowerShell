@@ -156,6 +156,8 @@ This error indicates that the `mymodule.dll` assembly can't find the `netstandar
 "implementation" assembly for the version of the `.NET Framework` that
 Windows PowerShell is using.
 
+### The fix for missing netstandard.dll
+
 If you install (or already have) the `.NET Core 2.0 SDK for Windows`, you can
 find the `netstandard.dll` implementation assembly for .NET 4.6.1 in the following directory:
 `C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
