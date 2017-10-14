@@ -769,8 +769,10 @@ namespace System.Management.Automation
         {
 #if UNIX
             const string powershellExeName = "pwsh";
+            const string oldPowershellExeName = "powershell";
 #else
             const string powershellExeName = "pwsh.exe";
+            const string oldPowershellExeName = "powershell.exe";
 #endif
             StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
             char[] invalidPathChars = Path.GetInvalidPathChars();
@@ -791,8 +793,9 @@ namespace System.Management.Automation
                 {
                     string parentDir = Path.GetDirectoryName(trimedPath);
                     string psExePath = Path.Combine(parentDir, powershellExeName);
+                    string oldExePath = Path.Combine(parentDir, oldPowershellExeName);
                     string psDepsPath = Path.Combine(parentDir, "powershell.deps.json");
-                    if (File.Exists(psExePath) && File.Exists(psDepsPath))
+                    if ((File.Exists(psExePath) || File.Exists(oldExePath)) && File.Exists(psDepsPath))
                     {
                         // Path is a PSHome module path from a different powershell core instance. Ignore it.
                         continue;

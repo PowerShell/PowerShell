@@ -3166,7 +3166,7 @@ namespace System.Management.Automation.Runspaces
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
                     //
                     cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        @"{{""CommandLine"": ""pwsh.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
+                        @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",
                         (RuntimeId != Guid.Empty) ? "-so -NoProfile" : "-NamedPipeServerMode",
                         String.IsNullOrEmpty(ConfigurationName) ? String.Empty : String.Concat("-Config ", ConfigurationName),
                         (RunAsAdmin) ? "false" : "true");
