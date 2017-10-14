@@ -31,14 +31,24 @@ implementations of PowerShell.
   appropriate instructions for your platform.
 
 ## Create the .NET Standard 2.0 Binary Module
-1. Use the `dotnet CLI` to create a starter `classlib` project based on `.NET Standard 2.0`
+
+1. Verify you are running the 2.0.0 version of the dotnet CLI.
+
+   ```
+   dotnet --version
+   ```
+
+   This should output `2.0.0` or higher. If it returns 1.x.x, make sure you have installed
+   the .NET Core 2.0 SDK and have re-started your shell to get this newer version of the SDK tools.
+
+2. Use the `dotnet CLI` to create a starter `classlib` project based on `.NET Standard 2.0`
    (the default for classlib projects).
 
    ```powershell
    dotnet new classlib --name mymodule
    ```
 
-2. Add a `global.json` file that specifies that the project requires the `2.0.0` version of
+3. Add a `global.json` file that specifies that the project requires the `2.0.0` version of
    the `.NET Core SDK`.  This is necessary to prevent issues if you have more than one
    version of the .NET Core SDK installed.
 
@@ -47,7 +57,7 @@ implementations of PowerShell.
    dotnet new globaljson --sdk-version 2.0.0
    ```
 
-3. Add the [PowerShell Standard Library][ps-stdlib] package to the project file.
+4. Add the [PowerShell Standard Library][ps-stdlib] package to the project file.
    This package provides the `System.Management.Automation` assembly.
 
    Note: as newer versions of this library are released, update the version number
@@ -57,7 +67,7 @@ implementations of PowerShell.
    dotnet add package PowerShellStandard.Library --version 3.0.0-preview-01
    ```
 
-4. Add source code for a simple PowerShell command to the `Class1.cs` file by opening
+5. Add source code for a simple PowerShell command to the `Class1.cs` file by opening
    that file in an editor and replacing the existing code with the following code.
 
    ```csharp
@@ -82,18 +92,21 @@ implementations of PowerShell.
    }
    ```
 
-5. Build the project.
+6. Build the project.
 
    ```powershell
    dotnet build
    ```
 
-6. Load the binary and invoke the new command.
+7. Load the binary and invoke the new command.
+
+   Note: the previous steps could have been performed in a different shell such as
+   Bash if you're on Linux.  For this step, make sure you are running PowerShell Core.
 
    ```powershell
    cd 'bin/Debug/netstandard2.0'
    Import-Module ./mymodule.dll
-   Write-TimestampedMessage "Test message"
+   Write-TimestampedMessage "Test message."
    ```
 
 ## Running a .NET Standard 2.0 based module in Windows PowerShell
