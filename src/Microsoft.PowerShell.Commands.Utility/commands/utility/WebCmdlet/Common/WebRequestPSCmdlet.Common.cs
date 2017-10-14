@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         /// OAuth/Bearer: Requires Token
         /// </summary>
         [Parameter]
-        public virtual WebAuthenticationType Authentication { get; set; }
+        public virtual WebAuthenticationType Authentication { get; set; } = WebAuthenticationType.None;
         
         /// <summary>
         /// gets or sets the Credential property
