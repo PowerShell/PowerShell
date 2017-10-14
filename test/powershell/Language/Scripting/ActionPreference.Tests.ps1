@@ -126,4 +126,12 @@
                     }
             $num | Should Be 2
         }
+
+        It '-Verbose does not take precedence over $ErrorActionPreference' {
+            $ErrorActionPreference = "SilentlyContinue"
+            New-Item -ItemType File -Path "$testdrive\test.txt"
+            { New-Item -ItemType File -Path "$testdrive\test.txt" -Verbose } | Should Not Throw
+            $ErrorActionPreference = "Stop"
+            { New-Item -ItemType File -Path "$testdrive\test.txt" -Verbose } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
 }

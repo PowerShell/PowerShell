@@ -3212,13 +3212,10 @@ namespace System.Management.Automation
                 if (IsErrorActionSet)
                     return _errorAction;
 
-                // Debug takes preference over Verbose
+                // Debug takes preference
                 if (Debug)
                     return ActionPreference.Inquire;
-                if (Verbose)
-                    return ActionPreference.Continue;
 
-                // fall back to $ErrorAction
                 if (!_isErrorActionPreferenceCached)
                 {
                     bool defaultUsed = false;
