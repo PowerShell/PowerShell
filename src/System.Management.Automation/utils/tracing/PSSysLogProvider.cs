@@ -81,7 +81,7 @@ namespace System.Management.Automation.Tracing
             payload.AppendLine();
             AppendAdditionalInfo(payload, additionalInfo);
 
-            s_provider.Log(PSEventId.Engine_Health, PSChannel.Operational, PSOpcode.Exception, PSTask.ExecutePipeline, PSLevel.Informational, logContext, payload.ToString());
+            WriteEvent(PSEventId.Engine_Health, PSChannel.Operational, PSOpcode.Exception, PSTask.ExecutePipeline, logContext, payload.ToString());
         }
 
         /// <summary>
@@ -410,8 +410,11 @@ namespace System.Management.Automation.Tracing
         /// <param name="payLoad"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
-            WriteEvent(id, channel, opcode, GetPSLevelFromSeverity(logContext.Severity), task, (PSKeyword)0x0,
-                LogContextToString(logContext), GetPSLogUserData(logContext.ExecutionContext), payLoad);
+            s_provider.Log
+            (
+                (int) id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity),
+                LogContextToString(logContext), GetPSLogUserData(logContext.ExecutionContext), payLoad
+            );
         }
 
         /// <summary>
@@ -426,7 +429,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
         {
-            s_provider.Log(id, channel, opecode, task, level, args);
+            s_provider.Log((int) id, channel, task, opcode, level, args);
         }
 
         /// <summary>

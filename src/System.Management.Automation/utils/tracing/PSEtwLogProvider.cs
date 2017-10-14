@@ -15,7 +15,7 @@ namespace System.Management.Automation.Tracing
     internal class PSEtwLogProvider : LogProvider
     {
         private static EventProvider etwProvider;
-        private static readonly string PowerShellEventProviderGuid = "A0C1853B-5C40-4b15-8766-3CF1C58F985A";
+        internal static readonly Guid ProviderGuid = new Guid("F90714A8-5509-434A-BF6D-B1624C8A19A2");
         private static EventDescriptor _xferEventDescriptor = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
         private static class Strings
@@ -46,7 +46,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         static PSEtwLogProvider()
         {
-            etwProvider = new EventProvider(new Guid(PowerShellEventProviderGuid));
+            etwProvider = new EventProvider(new Guid(ProviderGuid));
         }
 
         /// <summary>

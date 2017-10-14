@@ -4,7 +4,12 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Resources;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Tracing
 {
@@ -17,10 +22,10 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         static readonly int _processId;
-        static string _gitCmmitId;
+        static string _gitCommitId;
         static readonly int _commitId;
-        [StaThread]
-        static GUID _activity = Guid.NewGuid();
+        [ThreadStatic]
+        static Guid _activity = Guid.NewGuid();
 
         static SysLogProvider()
         {
@@ -33,7 +38,8 @@ namespace System.Management.Automation.Tracing
 
         public SysLogProvider()
         {
-            // TODO: Open/init syslog.
+            NativeMethods.OpenLog("powershell");
+            LogCommit();
         }
 
         #region resource manager
@@ -45,18 +51,34 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (object.ReferenceEquals(resourceManager, null))
+                if (object.ReferenceEquals(_resourceManager, null))
                 {
-                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(Strings).GetTypeInfo().Assembly);
-                    resourceManager = temp;
+                    _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).GetTypeInfo().Assembly);
                 }
-                return resourceManager;
+                return _resourceManager;
+            }
+        }
+
+        /// <summary>
+        ///   Overrides the current threads CurrentUICulture property for all
+        ///   resource lookups using this strongly typed resource class.
+        /// </summary>
+        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        internal static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
+                return _resourceCulture;
+            }
+            set
+            {
+                _resourceCulture = value;
             }
         }
 
         private static string GetResourceString(string resourceName)
         {
-            string value = ResourceManager.GetString(resourceName, CultureInfo.CurrentCulture);
+            string value = ResourceManager.GetString(resourceName, Culture);
             if (string.IsNullOrEmpty(value))
             {
                 value = string.Format(CultureInfo.InvariantCulture, "Unknown resource: {0}", resourceName);
@@ -70,16 +92,17 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Gets the EventMessage for a given event.
         /// </summary>
+        /// <param name="sb">The StringBuilder to append.</param>
         /// <param name="eventId">The id of the event to retrieve.</param>
-        /// <returns>A string message for the event formatted with the specified args.</returns>
-        public static void GetEventMessage(int eventId, params string[] args )
+        /// <param name="args">An array of zero or more payload objects</param>
+        private static void GetEventMessage(StringBuilder sb, int eventId, params object[] args )
         {
             EventResource resource = EventResource.GetMessage(eventId);
 
             if (resource == null)
             {
                 resource = EventResource.GetMissingEventMessage();
-                string resourceValue = GetResourceString(resourceName, CultureInfo.CurrentCulture);
+                string resourceValue = GetResourceString(resource.Name);
                 sb.AppendFormat(CultureInfo.InvariantCulture, resourceValue, eventId);
 
                 // If an event id was specified that is not found in the event resource lookup table,
@@ -88,7 +111,7 @@ namespace System.Management.Automation.Tracing
             }
             else
             {
-                string resourceValue = GetResourceString(resourceName);
+                string resourceValue = GetResourceString(resource.Name);
                 if (resource.ParameterCount > 0)
                 {
                     sb.AppendFormat(resourceValue, args);
@@ -113,37 +136,73 @@ namespace System.Management.Automation.Tracing
             NativeMethods.SysLogPriority.Info
         };
 
-        public static void LogTransfer(Guid parentActivityId)
+        /// <summary>
+        /// Logs a activity transfer
+        /// </summary>
+        /// <param name="parentActivityId">The </param>
+        public void LogTransfer(Guid parentActivityId)
         {
-            int threadId = Thread.CurrentThread().ManagedThreadId;
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+            string message = string.Format
+            (
+                CultureInfo.InvariantCulture,
+                "{0:X}:{1:X}:{2:X} Transfer: {3} {4}", _commitId, _processId, threadId,
+                parentActivityId.ToString("D"),
+                _activity.ToString("D")
+            );
 
-            string message = string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2} Transfer: {3} {4}", _commitId, _processId, threadId, parentActivityId, _activity);
-
-            NativeMethods.SysLog(SysLogPriority.Info | SysLogPriority.User, message)
+            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info | NativeMethods.SysLogPriority.User, message);
         }
 
-        public static void Log(PSEventId eventId, PSChannel channel, PSTask task, PSOpcode opcode, PSLevel level, params string args)
+        /// <summary>
+        /// Logs the activity identifier for the current thread.
+        /// </summary>
+        /// <param name="activity">The Guid activity identifier</param>
+        public void SetActivity(Guid activity)
         {
-            int threadId = Thread.CurrentThread().ManagedThreadId;
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+            _activity = activity;
+            string message = string.Format(CultureInfo.InvariantCulture, "{0:X}:{1:X}:{2:X} Activity: {3}", _commitId, _processId, threadId, activity.ToString("D"));
+
+            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info | NativeMethods.SysLogPriority.User, message);
+        }
+
+        static void LogCommit()
+        {
+            string message = string.Format(CultureInfo.InvariantCulture, "{0:X}:{1:X} GitCommitId: {3} Hash: {0:X}", _commitId, _processId, _gitCommitId);
+            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info | NativeMethods.SysLogPriority.User, message);
+        }
+
+        /// <summary>
+        /// Writes a log entry
+        /// </summary>
+        /// <param name="eventId">The event id of the log entry.</param>
+        /// <param name="channel">The channel to log</param>
+        /// <param name="task">The task for the log entry</param>
+        /// <param name="opcode">The operation for the log entry</param>
+        /// <param name="level">The logging level.</param>
+        /// <param name="args">The payload for the log message</param>
+        public void Log(int eventId, PSChannel channel, PSTask task, PSOpcode opcode, PSLevel level, params object[] args)
+        {
+            int threadId = Thread.CurrentThread.ManagedThreadId;
 
             StringBuilder sb = new StringBuilder();
 
             // add the message preamble
-            sb.AppendFormat(CultureInfo.InvariantCulture, "{0}:{1}:{2} {3}.{4}.{5}.{6}:", _commitId, _processId, threadId, eventId, task, opcode, level);
+            sb.AppendFormat(CultureInfo.InvariantCulture, "{0:X}:{1:X}:{2:X} {3:X}.{4:G}.{5:G}.{6:G}:", _commitId, _processId, threadId, eventId, task, opcode, level);
 
             // add the message
             GetEventMessage(sb, eventId, args);
 
-            SysLogPriority priority;
-            if ((uint) Level < _levels.Length)
+            NativeMethods.SysLogPriority priority = NativeMethods.SysLogPriority.User;
+            if ((int) level <= _levels.Length)
             {
-                priority = _levels[(uint)Level];
+                priority |= _levels[(int)level];
             }
             else
             {
-                priority = SysLogPriority.Info;
+                priority |= NativeMethods.SysLogPriority.Info;
             }
-            priority |= SysLogPriority.User;
             // log it.
             NativeMethods.SysLog(priority, sb.ToString());
         }
@@ -171,8 +230,14 @@ namespace System.Management.Automation.Tracing
         /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry
         /// </param>
         /// <param name="message">The message to put in the log entry</param>
-        [DllImport("psl-native", EntryPoint = "NativeSysLog")]
+        [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
         internal static extern void SysLog(SysLogPriority priority, string message);
+
+        [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
+        internal static extern void OpenLog(string ident);
+
+        [DllImport("psl-native", EntryPoint = "Native_CloseLog")]
+        internal static extern void CloseLog();
 
         [Flags]
         internal enum SysLogPriority : uint

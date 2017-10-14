@@ -783,29 +783,6 @@ namespace System.Management.Automation.Tracing
         }
     }
 
-    internal static class PSEtwLog
-    {
-        static internal void LogAnalyticError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void LogAnalyticWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword,
-            Int64 objectId,
-            Int64 fragmentId,
-            int isStartFragment,
-            int isEndFragment,
-            UInt32 fragmentLength,
-            PSETWBinaryBlob fragmentData)
-        { }
-        static internal void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void SetActivityIdForCurrentThread(Guid newActivityId) { }
-        static internal void LogOperationalVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void LogOperationalWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void ReplaceActivityIdForCurrentThread(Guid newActivityId, PSEventId eventForOperationalChannel, PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task) { }
-        static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad) { }
-        static internal void LogAnalyticInformational(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-        static internal void LogOperationalInformation(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args) { }
-    }
-
     public enum PowerShellTraceTask
     {
         /// <summary>
