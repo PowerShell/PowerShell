@@ -15,7 +15,7 @@ implementations of PowerShell.
   For this example, you can use any operating system that is supported by PowerShell Core.
   To see if your operating system is supported and to get instructions on how to install
   PowerShell Core on your operating system, see the [Get PowerShell][pscore-os] topic in
-  PowerShell repo's [README.md][readme] file.
+  the PowerShell repo's [README.md][readme] file.
 
   Note: On Windows 10 Anniversary Update or higher, you can use the [Windows Subsystem for
   Linux][wsl] (WSL) console to build the module. In order to import and use the module, you'll need
@@ -42,7 +42,7 @@ implementations of PowerShell.
    the `.NET Core SDK`.  This is necessary to prevent issues if you have more than one
    version of the .NET Core SDK installed.
 
-   ```powershell
+   ```
    cd mymodule
    dotnet new globaljson --sdk-version 2.0.0
    ```
@@ -53,7 +53,7 @@ implementations of PowerShell.
    Note: as newer versions of this library are released, update the version number
    in this command to match the latest version.
 
-   ```powershell
+   ```
    dotnet add package PowerShellStandard.Library --version 3.0.0-preview-01
    ```
 
@@ -91,7 +91,7 @@ implementations of PowerShell.
 6. Load the binary and invoke the new command.
 
    ```powershell
-   cd bin/Debug/netstandard2.0
+   cd 'bin/Debug/netstandard2.0'
    Import-Module ./mymodule.dll
    Write-TimestampedMessage "Test message"
    ```
@@ -116,7 +116,7 @@ First, let's see what happens when you use this module in `Windows PowerShell`.
 2. Import the module.
 
    ```powershell
-   Import-Module .\mymodule.dd
+   Import-Module .\mymodule.dll
    ```
 
    Note: the module should import without errors.
@@ -158,6 +158,7 @@ If you copy `netstandard.dll` from this directory to the directory containing
 
 3. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
    ```powershell
+   cd 'path-to-where-you-copied-module.dll'
    Copy-Item 'C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
    ```
 
