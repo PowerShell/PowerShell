@@ -11,12 +11,6 @@ Describe "NativeLinuxCommands" -tags "CI" {
         $env:PATH = $originalPath
     }
 
-    It "Should return a type of 'string' for hostname cmdlet" {
-        $result = hostname
-        $result | Should Not BeNullOrEmpty
-        $result | Should BeOfType string
-    }
-
     It "Should find Application grep" {
         (get-command grep).CommandType | Should Be Application
     }
