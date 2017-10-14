@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
-    Generates a resx file and code file from an ETW manifest.
+    Generates a resx file and code file from an ETW manifest
+    for use with UNIX builds.
 
 .PARAMETER Manifest
     The path to the ETW manifest file to read.
@@ -20,7 +21,7 @@
     The path to the directory to use to create the C# code file.
 
 .EXAMPLE
-    .\ResxGen.ps1 -Manifest .\PowerShell-Core-Instrumentation.man -ResxPath ..\..\src\System.Management.Automation\resources -CodePath  ..\..\src\System.Management.Automation\CoreCLR
+    .\ResxGen.ps1 -Manifest ./PowerShell-Core-Instrumentation.man -ResxPath ../../src/System.Management.Automation\resources -CodePath  ../../src/System.Management.Automation/CoreCLR
 #>
 [CmdletBinding()]
 param
