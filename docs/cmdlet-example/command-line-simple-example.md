@@ -38,9 +38,9 @@ implementations of PowerShell.
    dotnet new classlib --name mymodule
    ```
 
-2. Add a `global.json` file to your project that specifies that the project requires the
-   `2.0.0` version of the `.NET Core SDK`.  This is necessary to prevent issues if you
-   have more than one version of the .NET Core SDK installed.
+2. Add a `global.json` file that specifies that the project requires the `2.0.0` version of
+   the `.NET Core SDK`.  This is necessary to prevent issues if you have more than one
+   version of the .NET Core SDK installed.
 
    ```powershell
    cd mymodule
