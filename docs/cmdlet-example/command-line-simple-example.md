@@ -190,8 +190,13 @@ Early testing indicates that Windows systems with `.NET 4.7.1` installed or Wind
 Fall Creators Update and higher, will load the binary module without the need to have
 `netstandard.dll` copied beside the module's assembly.
 
+For more information on `.NET Standard`, check out the [documentation][net-std-docs]
+and the [.NET Standard YouTube channel][net-std-chan].
+
 [dotnet-cli]:    https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x
 [net-core-sdk]:  https://www.microsoft.com/net/download/core
+[net-std-docs]:  https://docs.microsoft.com/en-us/dotnet/standard/net-standard
+[net-std-chan]:  https://www.youtube.com/playlist?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY
 [pscore-os]:     https://github.com/powershell/powershell#get-powershell
 [readme]:        ../../README.md
 [linux-install]: https://www.microsoft.com/net/core#linuxubuntu
