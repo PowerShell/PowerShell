@@ -15,6 +15,9 @@ namespace TestExe
                     case "-echoargs":
                         EchoArgs(args);
                         break;
+                    case "-echostderr":
+                        EchoStderr(args);
+                        break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
                         break;
@@ -37,6 +40,17 @@ namespace TestExe
             for (int i = 1; i < args.Length; i++)
             {
                 Console.WriteLine("Arg {0} is <{1}>", i-1, args[i]);
+            }
+        }
+
+        // <Summary>
+        // Echos back to stderr the arguments passed in
+        // </Summary>
+        static void EchoStderr(string[] args)
+        {
+            for (int i = 1; i < args.Length; i++)
+            {
+                Console.Error.WriteLine("{0}", args[i]);
             }
         }
 

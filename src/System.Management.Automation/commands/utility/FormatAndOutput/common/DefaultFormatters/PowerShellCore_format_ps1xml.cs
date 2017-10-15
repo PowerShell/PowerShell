@@ -789,7 +789,6 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         $indent = 4
-                                        $width = $host.UI.RawUI.BufferSize.Width - $indent - 2
 
                                         $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
                                         if ($null -ne $errorCategoryMsg)
@@ -800,19 +799,16 @@ namespace System.Management.Automation.Runspaces
                                         {
                                             $indentString = ""+ CategoryInfo          : "" + $_.CategoryInfo
                                         }
-                                        $posmsg += ""`n""
-                                        foreach($line in @($indentString -split ""(.{$width})"")) { if($line) { $posmsg += ("" "" * $indent + $line) } }
+                                        $posmsg += ""`n"" + $indentString
 
                                         $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
-                                        $posmsg += ""`n""
-                                        foreach($line in @($indentString -split ""(.{$width})"")) { if($line) { $posmsg += ("" "" * $indent + $line) } }
+                                        $posmsg += ""`n"" + $indentString
 
                                         $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
                                         if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                         {
                                             $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n""
-                                            foreach($line in @($indentString -split ""(.{$width})"")) { if($line) { $posmsg += ("" "" * $indent + $line) } }
+                                            $posmsg += ""`n"" + $indentString
                                         }
 
                                         if ($ErrorView -eq ""CategoryView"") {

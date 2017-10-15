@@ -49,6 +49,17 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         It 'preserves error stream as is with Out-String' {
             ($out | Out-String).Replace("`r", '') | Should Be "foo`n`nbar`n`nbazmiddlefoo`n`nbar`n`nbaz`n"
         }
+
+        It 'does not get truncated or split when redirected' {
+            $longtext = "0123456789"
+            while ($longtext.Length -lt [console]::WindowWidth) {
+                $longtext += $longtext
+            }
+            testexe -echostderr $longtext 2>&1 > $testdrive\error.txt
+            $e = Get-Content -Path $testdrive\error.txt
+            $e.Count | Should BeExactly 1
+            $e | Should Match $longtext
+        }
     }
 }
 

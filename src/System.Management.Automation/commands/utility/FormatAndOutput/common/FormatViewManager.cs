@@ -567,6 +567,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             FormatEntryData fed = outOfBandViewGenerator.GeneratePayload(so, enumerationLimit);
+            if (typeNames.Contains("System.Management.Automation.ErrorRecord"))
+            {
+                fed.isErrorRecord = true;
+            }
             fed.outOfBand = true;
             fed.SetStreamTypeFromPSObject(so);
 
