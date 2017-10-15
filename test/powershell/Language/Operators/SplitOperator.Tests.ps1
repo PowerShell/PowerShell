@@ -30,13 +30,18 @@ Describe "Split Operator" -Tags CI {
             $res[1] | Should Be "b"
             $res[2] | Should Be "c"
             $res[3] | Should Be "d"
+        }
+
+        It "Binary split operator works with negative substring limit" {
+            $res = "a b c d" -split " ", -3
+            $res.count | Should Be 3
+            $res[0] | Should Be "a b"
+            $res[1] | Should Be "c"
+            $res[2] | Should Be "d"
 
             $res = "a b c d" -split " ", -1
-            $res.count | Should Be 4
-            $res[0] | Should Be "a"
-            $res[1] | Should Be "b"
-            $res[2] | Should Be "c"
-            $res[3] | Should Be "d"
+            $res.count | Should Be 1
+            $res[0] | Should Be "a b c d"
         }
 
         It "Binary split operator can works with freeform delimiter" {
@@ -101,6 +106,20 @@ Describe "Split Operator" -Tags CI {
             $res[0] | Should Be "a::"
             $res[1] | Should Be "::"
             $res[2] | Should Be "::d"
+        }
+
+        It "Binary split operator works with script block and substring limit" {
+            $res = "a::b::c::d" -split {$_ -eq "b" -or $_ -eq "C"}, 2
+            $res.count | Should Be 2
+            $res[0] | Should Be "a::"
+            $res[1] | Should Be "::c::d"
+        }
+
+        It "Binary split operator works with script block and negative substring limit" {
+            $res = "a::b::c::d" -split {$_ -eq "b" -or $_ -eq "C"}, -2
+            $res.count | Should Be 2
+            $res[0] | Should Be "a::b::"
+            $res[1] | Should Be "::d"
         }
 
     }
