@@ -293,67 +293,49 @@ namespace Microsoft.PowerShell.Commands
             // Now search using the module path...
             foreach (string path in modulePath)
             {
-                // a name takes the form of .../moduleDir/moduleName.<ext>
-                // if only one name has been specified, then the moduleDir
-                // and moduleName are identical and repeated...
-                // Also append th ename if the path currently points at a directory
-                string qualifiedPath = Path.Combine(path, fileBaseName);
-
-                // Load the latest valid version if it is a multi-version module directory
-                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-
-                if (!found)
+#if UNIX
+                foreach (string folder in Directory.EnumerateDirectories(path))
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    string fileName = Path.GetFileName(folder);
+                    if (String.Compare(fileName, name, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                    }
-                    else if (Directory.Exists(qualifiedPath))
-                    {
-                        // if it points to a directory, add the basename back onto the path...
-                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                    }
-
-                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
-                }
-
-                if (found)
-                {
-                    break;
-                }
-            }
-
-#if UNIX    // case-sensitive filesystems are predominately used only on Unix
-            if (!found)
-            {
-                // try a case-insensitive search for the module folder
-                // based on PSGet, we can assume the module file casing matches the folder
-                foreach (string path in modulePath)
-                {
-                    foreach (string folder in Directory.EnumerateDirectories(path))
-                    {
-                        string fileName = Path.GetFileName(folder);
-                        if (String.Compare(fileName, name, StringComparison.OrdinalIgnoreCase) == 0)
+                        string qualifiedPath = folder;
+                        name = fileName;
+#else
+                        string qualifiedPath = Path.Combine(path, fileBaseName);
+#endif
+                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                        if (!found)
                         {
-                            module = LoadUsingMultiVersionModuleBase(folder, manifestProcessingFlags, options, out found);
-                            if (!found)
+                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
                             {
-                                string qualifiedPath = Path.Combine(folder, fileName);
-                                module = LoadUsingExtensions(parentModule, fileName, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+#if UNIX
+                                qualifiedPath = Path.Combine(folder, fileName);
+#else
+                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+#endif
                             }
+                            else if (Directory.Exists(qualifiedPath))
+                            {
+                                // if it points to a directory, add the basename back onto the path...
+                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                            }
+
+                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
                         }
-                        if (found)
-                        {
-                            break;
-                        }
+#if UNIX
                     }
                     if (found)
                     {
                         break;
                     }
                 }
-            }
+                if (found)
+                {
+                    break;
+                }
 #endif
+            }
 
             if (found)
             {
