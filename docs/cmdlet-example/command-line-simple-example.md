@@ -6,8 +6,8 @@ systems supported by `PowerShell Core` as well as `Windows PowerShell` version 3
 
 Because the binary module's assembly will be created as a `.NET Standard 2.0 class library`,
 the same assembly can be imported into both PowerShell Core and Windows PowerShell.
-This means you do not have to build separate assemblies to target these two different
-implementations of PowerShell.
+This means you do not have to build and distribute separate assemblies that target these two
+different implementations of PowerShell.
 
 ## Prerequisites
 * PowerShell Core and/or Windows PowerShell
@@ -39,7 +39,7 @@ implementations of PowerShell.
    ```
 
    This should output `2.0.0` or higher. If it returns a major version of 1, make sure you have
-   installed the .NET Core 2.0 SDK and have re-started your shell to get the newer version of
+   installed the .NET Core 2.0 SDK and have restarted your shell to get the newer version of
    the SDK tools.
 
 2. Use the `dotnet CLI` to create a starter `classlib` project based on `.NET Standard 2.0`
@@ -99,7 +99,7 @@ implementations of PowerShell.
    dotnet build
    ```
 
-7. Load the binary and invoke the new command.
+7. Import the binary module and invoke the new command.
 
    Note: The previous steps could have been performed in a different shell such as
    Bash if you're on Linux.  For this step, make sure you are running PowerShell Core.
@@ -110,20 +110,29 @@ implementations of PowerShell.
    Write-TimestampedMessage "Test message."
    ```
 
-## Running a .NET Standard 2.0 based module in Windows PowerShell
-You may have heard that .NET class libraries compiled as a `.NET Standard 2.0 class
-library` will load into both `.NET Core 2.0` applications such as PowerShell Core
-and `.NET Framework 4.6.1` (or higher) applications such as Windows PowerShell.
+## Using a .NET Standard 2.0 based binary module in Windows PowerShell
+You may have heard that a .NET assembly compiled as a `.NET Standard 2.0 class library`
+will load into both `.NET Core 2.0` applications such as PowerShell Core and
+`.NET Framework 4.6.1` (or higher) applications such as Windows PowerShell.
 This allows you to build a single, cross-platform binary module.
 
-Unfortunately, this works best when the .NET Framework application has been compiled
-against the .NET Standard 2.0 library.  The compiler can provide the appropriate
-facade/shim assemblies so the library can find the required .NET Framework types.
+Unfortunately, this works best when the .NET Framework application, in this case
+Windows PowerShell, has either been compiled against a .NET Standard 2.0 library or with
+support declared for .NET Standard libraries.  In which case, the build system can provide the
+appropriate binding redirects and facade and shim assemblies so that the .NET Standard 2.0
+library can find the .NET Framework types it needs within the context of the running
+application.
 
-For **existing** `Windows PowerShell` installations, this means your portable
-binary module needs help to run correctly in Windows PowerShell.
+Fortunately, this has been fixed in .NET Framework 4.7.1 and in the Windows 10 Fall
+Creators Update. This version of the .NET Framework allows existing applications to
+"just work" without the need to modify and/or re-compile them. On these systems, a
+.NET Standard 2.0 based binary module will work in Windows PowerShell.
 
-First, let's see what happens when you use this module in `Windows PowerShell`.
+However, for Windows systems that have not been updated to .NET Framework 4.7.1 such a
+binary module will not run correctly in Windows PowerShell.
+
+Let's see what happens when you attempt use this module in `Windows PowerShell` on
+Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
 1. Copy `mymodule.dll` to a folder on a Windows machine.
 
@@ -133,7 +142,7 @@ First, let's see what happens when you use this module in `Windows PowerShell`.
    Import-Module .\mymodule.dll
    ```
 
-   Note: the module should import without errors.
+   Note: The module should import without errors.
 
 3. Execute the `Write-TimestampedMessage` command.
 
@@ -153,9 +162,10 @@ First, let's see what happens when you use this module in `Windows PowerShell`.
        + FullyQualifiedErrorId : System.IO.FileNotFoundException
    ```
 
-This error indicates that the `mymodule.dll` assembly can't find the `netstandard.dll`
-"implementation" assembly for the version of the `.NET Framework` that
-Windows PowerShell is using.
+If the command worked, congratulations! You're system was probably updated to
+.NET Framework 4.7.1.  Otherwise, this error indicates that the `mymodule.dll` assembly
+can't find the `netstandard.dll` "implementation" assembly for the version of the
+`.NET Framework` that Windows PowerShell is using.
 
 ### The fix for missing netstandard.dll
 
@@ -192,10 +202,13 @@ If you copy `netstandard.dll` from this directory to the directory containing
 If you use additional libraries there may be more work involved. This approach has
 been successfully tested using types from `System.Xml` and `System.Web`.
 
-## .NET 4.7.1
-Early testing indicates that Windows systems with `.NET 4.7.1` installed or Windows 10
-Fall Creators Update and higher, will load the binary module without the need to have
-`netstandard.dll` copied beside the module's assembly.
+## Wrapup
+In a few steps, we have built a PowerShell binary module using a .NET Standard 2.0
+class library that will run in PowerShell Core on multiple operating systems.
+It will also run in Windows PowerShell on Windows systems that have been updated to
+.NET Framework 4.7.1 as well as the Windows 10 Fall Creators Update which comes with that
+version pre-installed.  Furthermore, this binary module can be built on Linux
+and macOS as well as Windows using the .NET Core 2.0 SDK command-line tools.
 
 For more information on `.NET Standard`, check out the [documentation][net-std-docs]
 and the [.NET Standard YouTube channel][net-std-chan].
