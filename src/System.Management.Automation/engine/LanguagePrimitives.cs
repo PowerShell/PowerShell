@@ -445,22 +445,6 @@ namespace System.Management.Automation
             return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
         }
 
-        private static object GetBaseObject(object obj)
-        {
-            if (obj == null)
-            {
-                return null;
-            }
-
-            var psobj = obj as PSObject;
-            if (null != psobj)
-            {
-                obj = psobj.BaseObject;
-            }
-
-            return obj;
-        }
-
         /// <summary>
         /// Returns True if the language considers obj to be IEnumerable
         /// </summary>
@@ -470,7 +454,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static bool IsObjectEnumerable(object obj)
         {
-            return IsTypeEnumerable(GetBaseObject(obj)?.GetType());
+            return IsTypeEnumerable(PSObject.Base(obj)?.GetType());
         }
 
 
@@ -483,7 +467,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static IEnumerable GetEnumerable(object obj)
         {
-            obj = GetBaseObject(obj);
+            obj = PSObject.Base(obj);
             if (obj == null) { return null; }
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(obj.GetType());
             return getEnumerable(obj);
