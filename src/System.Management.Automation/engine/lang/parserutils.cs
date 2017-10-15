@@ -637,6 +637,12 @@ namespace System.Management.Automation
             {
                 List<string> split = new List<String>();
 
+                bool rightToLeft = false;
+                if(limit < 0){
+                    rightToLeft = true;
+                    limit = System.Math.Abs(limit);
+                }
+
                 if (limit == 1)
                 {
                     // Don't bother with looking for any delimiters,
@@ -646,8 +652,14 @@ namespace System.Management.Automation
                 }
 
                 StringBuilder buf = new StringBuilder();
-                for (int strIndex = 0; strIndex < item.Length; strIndex++)
+                int strIndex = 0;
+                for (int cursor = 0; cursor < item.Length; cursor++)
                 {
+                    if(rightToLeft){
+                        strIndex = item.Length - 1 - cursor;
+                    } else {
+                        strIndex = cursor;
+                    }
                     object isDelimChar = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
@@ -667,9 +679,12 @@ namespace System.Management.Automation
                             // and add it as the last item, otherwise
                             // add an empty string if there was
                             // a delimiter at the end.
-                            if ((strIndex + 1) < item.Length)
+                            if ((cursor + 1) < item.Length)
                             {
-                                split.Add(item.Substring(strIndex + 1));
+                                if(rightToLeft)
+                                    split.Add(item.Substring(0, strIndex));
+                                else
+                                    split.Add(item.Substring(strIndex + 1));
                             }
                             else
                             {
@@ -681,23 +696,29 @@ namespace System.Management.Automation
                         // If this delimiter is at the end of the string,
                         // add an empty string to denote the item "after"
                         // it.
-                        if (strIndex == (item.Length - 1))
+                        if (cursor == (item.Length - 1))
                         {
                             split.Add("");
                         }
                     }
                     else
                     {
-                        buf.Append(item[strIndex]);
+                        if(rightToLeft)
+                            buf.Insert(0, item[strIndex]);
+                        else
+                            buf.Append(item[strIndex]);
                     }
                 }
 
                 // Add any remainder, if we're under the limit.
                 if (buf.Length > 0 &&
-                    (limit <= 0 || split.Count < limit))
+                    (limit == 0 || split.Count < limit))
                 {
                     split.Add(buf.ToString());
                 }
+
+                if(rightToLeft)
+                    split.Reverse();
 
                 ExtendList(results, split);
             }
@@ -728,20 +749,22 @@ namespace System.Management.Automation
                 separatorPattern = Regex.Escape(separatorPattern);
             }
 
+            RegexOptions regexOptions = parseRegexOptions(options);
+
             if (limit < 0)
             {
-                // Regex only allows 0 to signify "no limit", whereas
-                // we allow any integer <= 0.
-                limit = 0;
+                // If user-suppplied limit is negative we
+                // interpret it as "split Right-to-Left".
+                regexOptions |= RegexOptions.RightToLeft;
+                limit = System.Math.Abs(limit);
             }
 
-            RegexOptions regexOptions = parseRegexOptions(options);
             Regex regex = NewRegex(separatorPattern, regexOptions);
 
             List<string> results = new List<string>();
             foreach (string item in content)
             {
-                string[] split = regex.Split(item, limit, 0);
+                string[] split = regex.Split(item, limit);
                 ExtendList(results, split);
             }
 
