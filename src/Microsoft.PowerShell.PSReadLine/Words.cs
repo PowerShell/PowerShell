@@ -109,23 +109,11 @@ namespace Microsoft.PowerShell
             if (!InWord(i, wordDelimiters))
             {
                 // Scan to end of current non-word region
-                while (i < _buffer.Length)
-                {
-                    if (InWord(i, wordDelimiters))
-                    {
-                        break;
-                    }
-                    i += 1;
-                }
+                for (; i < _buffer.Length && !InWord(i, wordDelimiters); i++) ;
             }
-            while (i < _buffer.Length)
-            {
-                if (!InWord(i, wordDelimiters))
-                {
-                    break;
-                }
-                i += 1;
-            }
+
+            for (; i < _buffer.Length && InWord(i, wordDelimiters); i++) ;
+
             return i;
         }
 
@@ -143,24 +131,10 @@ namespace Microsoft.PowerShell
             if (InWord(i, wordDelimiters))
             {
                 // Scan to end of current word region
-                while (i < _singleton._buffer.Length)
-                {
-                    if (!InWord(i, wordDelimiters))
-                    {
-                        break;
-                    }
-                    i += 1;
-                }
+                for (; i < _singleton._buffer.Length && InWord(i, wordDelimiters); i++) ;
             }
 
-            while (i < _singleton._buffer.Length)
-            {
-                if (InWord(i, wordDelimiters))
-                {
-                    break;
-                }
-                i += 1;
-            }
+            for (; i < _singleton._buffer.Length && !InWord(i, wordDelimiters); i++) ;
             return i;
         }
 
@@ -178,23 +152,16 @@ namespace Microsoft.PowerShell
             if (!InWord(i, wordDelimiters))
             {
                 // Scan backwards until we are at the end of the previous word.
-                while (i > 0)
-                {
-                    if (InWord(i, wordDelimiters))
-                    {
-                        break;
-                    }
-                    i -= 1;
-                }
+                for (; i > 0 && !InWord(i, wordDelimiters); i--) ;
             }
             while (i > 0)
             {
                 if (!InWord(i, wordDelimiters))
                 {
-                    i += 1;
+                    i++;
                     break;
                 }
-                i -= 1;
+                i--;
             }
             return i;
         }

@@ -1173,10 +1173,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteJobResults(false);
 
                         // finally dispose the job.
-                        if (!_asjob)
-                        {
-                            _job.Dispose();
-                        }
+                        _job.Dispose();
 
                         // We no longer need to call ClearInvokeCommandOnRunspaces() here because
                         // this command might finish before the foreach block finishes. previously,
@@ -1223,10 +1220,8 @@ namespace Microsoft.PowerShell.Commands
                             WriteJobResults(false);
 
                             // finally dispose the job.
-                            if (!_asjob)
-                            {
-                                _job.Dispose();
-                            }
+                            _job.Dispose();
+
                         } // if (needToCollect...
                     }// else - job == null
                 }

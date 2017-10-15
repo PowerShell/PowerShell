@@ -4432,11 +4432,7 @@ namespace System.Management.Automation
                 finally
                 {
                     RunningExtraCommands = false;
-
-                    if (_isBatching)
-                    {
-                        EndAsyncBatchExecution();
-                    }
+                    EndAsyncBatchExecution();
                 }
             }
             else

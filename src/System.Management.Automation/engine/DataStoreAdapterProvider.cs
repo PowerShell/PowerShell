@@ -405,11 +405,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("name");
             }
 
-
-            if (String.IsNullOrEmpty(name))
-            {
-                throw PSTraceSource.NewArgumentException("name");
-            }
+            // FIXME: Other checks?
 
             _sessionState = sessionState;
 

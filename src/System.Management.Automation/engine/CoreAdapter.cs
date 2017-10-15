@@ -862,10 +862,7 @@ namespace System.Management.Automation
                         return 0;
                     }
                 }
-            }
 
-            if (betterCount == 0)
-            {
                 // Apply tie breaking rules, related to expanded parameters
                 if (candidate1.expandedParameters != null && candidate2.expandedParameters != null)
                 {
@@ -880,10 +877,8 @@ namespace System.Management.Automation
                 {
                     return 1;
                 }
-            }
 
-            if (betterCount == 0)
-            {
+
                 // Apply tie breaking rules, related to specificity of parameters
                 betterCount = CompareTypeSpecificity(candidate1, candidate2);
             }

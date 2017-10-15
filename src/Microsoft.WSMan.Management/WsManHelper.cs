@@ -496,19 +496,13 @@ namespace Microsoft.WSMan.Management
         internal string GetXmlNs(string resUri)
         {
 
-            string tmpNs = null;
+            string tmpNs = StripParams(resUri);
 
-            if (resUri.ToLowerInvariant().Contains(URI_IPMI) || (resUri.ToLowerInvariant().Contains(URI_WMI)))
-                tmpNs = StripParams(resUri);
-            else
-            {
-                //tmpNs = StripParams(resUri) + ".xsd";
-                //This was reported by Intel as an interop issue. So now we are not appending a .xsd in the end.
-                tmpNs = StripParams(resUri);
-            }
+            //if (!(resUri.ToLowerInvariant().Contains(URI_IPMI) || resUri.ToLowerInvariant().Contains(URI_WMI)))
+            //    tmpNs += ".xsd";
+            //This was reported by Intel as an interop issue. So now we are not appending a .xsd in the end.
 
             return (@"xmlns:p=""" + tmpNs + @"""");
-
         }
 
         internal XmlNode GetXmlNode(string xmlString, string xpathpattern, string xmlnamespace)
