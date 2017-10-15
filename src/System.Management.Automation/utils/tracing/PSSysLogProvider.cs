@@ -39,12 +39,23 @@ namespace System.Management.Automation.Tracing
 
         private static SysLogProvider s_provider;
 
+        // by default, do not include analytic events
+        const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
+
         /// <summary>
         /// Class constructor
         /// </summary>
         static PSSysLogProvider()
         {
-            s_provider = new SysLogProvider();
+            // FUTURE: Read applicationId, level, keywords, and channels from configuration.
+            s_provider = new SysLogProvider
+            (
+                applicationId: "powershell",
+                level: PSLevel.Informational,
+                keywords: DefaultKeywords,
+                // By default, supress logging analytic events.
+                channels: PSChannel.Operational
+            );
         }
 
         /// <summary>
@@ -61,8 +72,7 @@ namespace System.Management.Automation.Tracing
         /// </remarks>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            // TODO: Read configuration for level and, optionally, keywords.
-            return true;
+            return s_provider.IsEnabled(level, keywords);
         }
 
         /// <summary>
@@ -412,8 +422,10 @@ namespace System.Management.Automation.Tracing
         {
             s_provider.Log
             (
-                (int) id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity),
-                LogContextToString(logContext), GetPSLogUserData(logContext.ExecutionContext), payLoad
+                id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity), DefaultKeywords,
+                LogContextToString(logContext),
+                GetPSLogUserData(logContext.ExecutionContext),
+                payLoad
             );
         }
 
@@ -429,7 +441,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
         {
-            s_provider.Log((int) id, channel, task, opcode, level, args);
+            s_provider.Log(id, channel, task, opcode, level, keyword, args);
         }
 
         /// <summary>

@@ -19,27 +19,123 @@ namespace System.Management.Automation.Tracing
     /// static dictionary containing the event id mapped to the associated event meta data
     /// and resource string reference.
     /// </summary>
+    /// <remarks>
+    /// This component logs ETW trace events to syslog.
+    /// The log entries use the following common format
+    ///     (commitId:threadId:channelid) [context] payload
+    /// Where:
+    ///     commitId: A hash code of the full git commit id string
+    ///     threadid: The thread identifier of calling code.
+    ///     channelid: The identifier for the output channel. See PSChannel for values.
+    ///     context: Dependent on the type of log entry
+    ///     payload: Dependent on the type of log entry.
+    /// Note:
+    ///     commitId, threadId, and eventId are logged as HEX without a leading
+    ///     '0x'.
+    ///
+    /// 4 types of log entries are produced.
+    /// NOTE: Where constant string are logged, the template places the string in
+    /// double quotes. For example, the GitCommitId log entry uses "GitCommitId"
+    /// for the context value.
+    ///
+    /// Note that the examples illustrate the output from SysLogProvider.Log,
+    /// Data automatically prepended by syslog, such as timestamp, hostname, ident,
+    /// and processid are not shown
+    ///
+    /// GitCommitId
+    ///   This is the first log entry for a session. It provides a correlation
+    ///   between teh full git commit id string and a hash code used for subsequent
+    ///   log entries.
+    ///   Context: "GitCommitId"
+    ///   Payload: string "Hash:" hashcode
+    ///    where string is the full git commit id string and hashcode is the integer
+    ///    hash code for the string in HEX.
+    ///   Example: (19E1025:3:10) [GitCommitId] {eaa9aec8-5b5f-4f68-b045-5e9ae3cfc0b5} Hash:193E1025
+    ///
+    /// Transfer
+    ///   A log entry to record a transfer event.
+    ///   Context: "Transfer"
+    ///   The playload is two, space separated string guids, the first being the
+    ///   parent activityid followed by the new activityid
+    ///   Example: (19E1025:3:10) [Transfer] {de168a71-6bb9-47e4-8712-bc02506d98be} {ab0077f6-c042-4728-be76-f688cfb1b054}
+    ///
+    /// Activity
+    ///   A log entry for when activity is set.
+    ///   Context: "Activity"
+    ///   Payload: The string guid of the activity id.
+    ///   Example: (19E1025:3:10) [Activity] {ab0077f6-c042-4728-be76-f688cfb1b054}
+    ///
+    ///  Event
+    ///   Application logging (Events)
+    ///   Context: EventId:taskname.opcodename.levelname
+    ///   Payload: The event's message text formatted with arguments from the caller.
+    ///   Example: (19E1025:3:10) [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational] PowerShell console is starting up
+    /// </remarks>
     internal class SysLogProvider
     {
-        static readonly int _processId;
+        // The full git commit id string
         static string _gitCommitId;
+        // The hash code for the git commit id.
         static readonly int _commitId;
+
         [ThreadStatic]
         static Guid _activity = Guid.NewGuid();
 
+        // Ensure the string pointer is not garbage collected.
+        static IntPtr _nativeSyslogIdent = IntPtr.Zero;
+        static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.User;
+
+        byte _channelFilter;
+        ulong _keywordFilter;
+        byte _levelFilter;
+
         static SysLogProvider()
         {
-            _processId = Process.GetCurrentProcess().Id;
             // full git commit id string. Will be logged with the associated hash code.
             _gitCommitId = PSVersionInfo.GitCommitId;
             // has value for the commit id string.
             _commitId = _gitCommitId.GetHashCode();
         }
 
-        public SysLogProvider()
+        public SysLogProvider(string applicationId, PSLevel level, PSKeyword keywords, PSChannel channels)
         {
-            NativeMethods.OpenLog("powershell");
+            _nativeSyslogIdent = Marshal.StringToHGlobalAnsi("powershell");
+            NativeMethods.OpenLog(_nativeSyslogIdent, _facility);
+            _keywordFilter = (ulong)keywords;
+            _levelFilter = (byte) level;
+            _channelFilter = (byte) channels;
             LogCommit();
+        }
+
+        /// <summary>
+        /// Gets the value indicating if the specified level and keywords are enabled for logging
+        /// </summary>
+        /// <param name="level">The PSLevel to check.</param>
+        /// <param name="keywords">The PSKeyword to check.</param>
+        /// <returns>true if the specified level and keywords are enabled for logging.</returns>
+        internal bool IsEnabled(PSLevel level, PSKeyword keywords)
+        {
+            return
+            (
+                ((ulong) keywords & _keywordFilter) != 0
+                &&
+                ((int) level <= _levelFilter)
+            );
+        }
+
+        // NOTE: There are a number of places where PowerShell code sends analytic events
+        // to the operational channel. This is a side-effect of the custom wrappers that
+        // use flags that are not consistent with the event definition.
+        // To ensure filtering of analytic events is consistent, both keyword and channel
+        // filtering is performed to suppress analytic events.
+        private bool ShouldLog(PSLevel level, PSKeyword keywords, PSChannel channel)
+        {
+            return
+            (
+                (_channelFilter & (ulong)channel) != 0
+                &&
+                IsEnabled(level, keywords)
+            );
         }
 
         #region resource manager
@@ -95,15 +191,15 @@ namespace System.Management.Automation.Tracing
         /// <param name="sb">The StringBuilder to append.</param>
         /// <param name="eventId">The id of the event to retrieve.</param>
         /// <param name="args">An array of zero or more payload objects</param>
-        private static void GetEventMessage(StringBuilder sb, int eventId, params object[] args )
+        private static void GetEventMessage(StringBuilder sb, PSEventId eventId, params object[] args )
         {
-            EventResource resource = EventResource.GetMessage(eventId);
+            EventResource resource = EventResource.GetMessage((int) eventId);
 
             if (resource == null)
             {
                 resource = EventResource.GetMissingEventMessage();
                 string resourceValue = GetResourceString(resource.Name);
-                sb.AppendFormat(CultureInfo.InvariantCulture, resourceValue, eventId);
+                sb.AppendFormat(CultureInfo.InvariantCulture, resourceValue, (int) eventId);
 
                 // If an event id was specified that is not found in the event resource lookup table,
                 // use a placeholder message that includes the event id.
@@ -142,16 +238,17 @@ namespace System.Management.Automation.Tracing
         /// <param name="parentActivityId">The </param>
         public void LogTransfer(Guid parentActivityId)
         {
+            // NOTE: always log
             int threadId = Thread.CurrentThread.ManagedThreadId;
             string message = string.Format
             (
                 CultureInfo.InvariantCulture,
-                "{0:X}:{1:X}:{2:X} Transfer: {3} {4}", _commitId, _processId, threadId,
-                parentActivityId.ToString("D"),
-                _activity.ToString("D")
+                "({0:X}:{1:X}:{2:X}) [Transfer]:{3} {4}", _commitId, threadId, PSChannel.Operational,
+                parentActivityId.ToString("B"),
+                _activity.ToString("B")
             );
 
-            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info | NativeMethods.SysLogPriority.User, message);
+            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
         /// <summary>
@@ -162,15 +259,21 @@ namespace System.Management.Automation.Tracing
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
             _activity = activity;
-            string message = string.Format(CultureInfo.InvariantCulture, "{0:X}:{1:X}:{2:X} Activity: {3}", _commitId, _processId, threadId, activity.ToString("D"));
 
-            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info | NativeMethods.SysLogPriority.User, message);
+            // NOTE: always log
+            string message = string.Format(CultureInfo.InvariantCulture, "({0:X}:{1:X}:{2:X}) [Activity] {3}", _commitId, threadId, PSChannel.Operational, activity.ToString("B"));
+            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
+        /// <summary>
+        /// Logs a message that provides a correlation between the full git commit id string and a hash code used for subsequent log entries.
+        /// </summary>
         static void LogCommit()
         {
-            string message = string.Format(CultureInfo.InvariantCulture, "{0:X}:{1:X} GitCommitId: {3} Hash: {0:X}", _commitId, _processId, _gitCommitId);
-            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info | NativeMethods.SysLogPriority.User, message);
+            int threadId = Thread.CurrentThread.ManagedThreadId;
+            // NOTE: always log
+            string message = string.Format(CultureInfo.InvariantCulture, "({0:X}:{1:X}:{2:X}) [GitCommitId] {3} Hash: {0:X}", _commitId, threadId, PSChannel.Operational, _gitCommitId);
+            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
         /// <summary>
@@ -181,30 +284,34 @@ namespace System.Management.Automation.Tracing
         /// <param name="task">The task for the log entry</param>
         /// <param name="opcode">The operation for the log entry</param>
         /// <param name="level">The logging level.</param>
+        /// <param name="keyword">The keyword(s) for the event.</param>
         /// <param name="args">The payload for the log message</param>
-        public void Log(int eventId, PSChannel channel, PSTask task, PSOpcode opcode, PSLevel level, params object[] args)
+        public void Log(PSEventId eventId, PSChannel channel, PSTask task, PSOpcode opcode, PSLevel level, PSKeyword keyword, params object[] args)
         {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
-
-            StringBuilder sb = new StringBuilder();
-
-            // add the message preamble
-            sb.AppendFormat(CultureInfo.InvariantCulture, "{0:X}:{1:X}:{2:X} {3:X}.{4:G}.{5:G}.{6:G}:", _commitId, _processId, threadId, eventId, task, opcode, level);
-
-            // add the message
-            GetEventMessage(sb, eventId, args);
-
-            NativeMethods.SysLogPriority priority = NativeMethods.SysLogPriority.User;
-            if ((int) level <= _levels.Length)
+            if (ShouldLog(level, keyword, channel))
             {
-                priority |= _levels[(int)level];
+                int threadId = Thread.CurrentThread.ManagedThreadId;
+
+                StringBuilder sb = new StringBuilder();
+
+                // add the message preamble
+                sb.AppendFormat(CultureInfo.InvariantCulture, "({0:X}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ", _commitId, threadId, channel, eventId, task, opcode, level);
+
+                // add the message
+                GetEventMessage(sb, eventId, args);
+
+                NativeMethods.SysLogPriority priority;
+                if ((int) level <= _levels.Length)
+                {
+                    priority = _levels[(int)level];
+                }
+                else
+                {
+                    priority = NativeMethods.SysLogPriority.Info;
+                }
+                // log it.
+                NativeMethods.SysLog(priority, sb.ToString());
             }
-            else
-            {
-                priority |= NativeMethods.SysLogPriority.Info;
-            }
-            // log it.
-            NativeMethods.SysLog(priority, sb.ToString());
         }
 
         #endregion logging
@@ -234,7 +341,7 @@ namespace System.Management.Automation.Tracing
         internal static extern void SysLog(SysLogPriority priority, string message);
 
         [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
-        internal static extern void OpenLog(string ident);
+        internal static extern void OpenLog(IntPtr ident, SysLogPriority facility);
 
         [DllImport("psl-native", EntryPoint = "Native_CloseLog")]
         internal static extern void CloseLog();
