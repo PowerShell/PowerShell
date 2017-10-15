@@ -178,6 +178,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Resolve { get; set; }
 
         /// <summary>
+        /// Determines the depth of the split operatrion.
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        public Int Depth { get; set; }
+
+        /// <summary>
         /// Determines if the path is an absolute path.
         /// </summary>
         [Parameter(ParameterSetName = isAbsoluteSet)]
@@ -360,6 +367,7 @@ namespace Microsoft.PowerShell.Commands
                             result =
                                 SessionState.Path.ParseParent(
                                     pathsToParse[index],
+                                    Depth,
                                     String.Empty,
                                     CmdletProviderContext,
                                     true);

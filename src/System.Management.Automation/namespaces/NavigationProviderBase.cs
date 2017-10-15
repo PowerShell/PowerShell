@@ -110,6 +110,7 @@ namespace System.Management.Automation.Provider
         ///
         internal string GetParentPath(
             string path,
+            int depth,
             string root,
             CmdletProviderContext context)
         {
@@ -117,7 +118,7 @@ namespace System.Management.Automation.Provider
 
             // Call virtual method
 
-            return GetParentPath(path, root);
+            return GetParentPath(path, depth, root);
         } // GetParentPath
 
         /// <summary>
@@ -492,7 +493,7 @@ namespace System.Management.Automation.Provider
         /// for the provider namespace. For example, the file system provider should look
         /// for the last "\" and return everything to the left of the "\".
         /// </remarks>
-        protected virtual string GetParentPath(string path, string root)
+        protected virtual string GetParentPath(string path,int depth, string root)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
@@ -536,22 +537,28 @@ namespace System.Management.Automation.Provider
                 }
                 else
                 {
-                    int lastIndex = path.LastIndexOf(StringLiterals.DefaultPathSeparator);
+                    parentPath = path;
+                    for (int i = 0; i <= depth ; i++)
+			        {
 
-                    if (lastIndex != -1)
-                    {
-                        if (lastIndex == 0)
+                        int lastIndex = parentPath.LastIndexOf(StringLiterals.DefaultPathSeparator);
+
+                        if (lastIndex != -1)
                         {
-                            ++lastIndex;
-                        }
-                        // Get the parent directory
+                            if (lastIndex == 0)
+                            {
+                                ++lastIndex;
+                            }
+                            // Get the parent directory
 
-                        parentPath = path.Substring(0, lastIndex);
-                    }
-                    else
-                    {
-                        parentPath = String.Empty;
-                    }
+                            parentPath = parentPath.Substring(0, lastIndex);
+                        }
+                        else
+                        {
+                            parentPath = String.Empty;
+                        }
+
+			        }
                 }
                 return parentPath;
             }
