@@ -640,7 +640,7 @@ namespace System.Management.Automation
                 bool rightToLeft = false;
                 if(limit < 0){
                     rightToLeft = true;
-                    limit = System.Math.Abs(limit) + 1;
+                    limit = System.Math.Abs(limit);
                 }
 
                 if (limit == 1)
@@ -756,7 +756,7 @@ namespace System.Management.Automation
                 // If user-suppplied limit is negative we
                 // interpret it as "split Right-to-Left".
                 regexOptions |= RegexOptions.RightToLeft;
-                limit = System.Math.Abs(limit) + 1;
+                limit = System.Math.Abs(limit);
             }
 
             Regex regex = NewRegex(separatorPattern, regexOptions);
