@@ -301,9 +301,9 @@
         $ruCastResult = [System.Management.Automation.LanguagePrimitives]::ConvertTo("1/11/1111", [datetime], $ruCulture)
 
         # Implict parameter argument conversion should also use 'InvariantCulture'
+        $oldCulture = [CultureInfo]::CurrentCulture
         $csharpCmdlet, $scriptFunction, $scriptCmdlet = try {
-            $oldCulture = [CultureInfo]::CurrentCulture
-            [CultureInfo]::CurrentCulture = 'ru-RU'
+            [CultureInfo]::CurrentCulture = $ruCulture
             Get-Date -Date 1/11/1111
             Test-Function  1/11/1111
             Test-ScriptCmdlet 1/11/1111

@@ -24,8 +24,8 @@ Describe 'conversion syntax' -Tags "CI" {
     It "language conversion uses 'InvariantCulture' by default" {
         $dateString = "1/11/1111"
         $expected = [System.Management.Automation.LanguagePrimitives]::ConvertTo($dateString, [datetime], [cultureinfo]::InvariantCulture)
+        $oldCulture = [CultureInfo]::CurrentCulture
         $result = try {
-            $oldCulture = [CultureInfo]::CurrentCulture
             [CultureInfo]::CurrentCulture = 'ru-RU'
             [datetime] $dateString
         } finally {
