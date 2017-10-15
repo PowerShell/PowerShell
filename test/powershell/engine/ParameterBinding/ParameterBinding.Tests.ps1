@@ -293,20 +293,23 @@
             $date
         }
 
-        # Explict type cast use 'InvariantCulture' by default
-        $expected = [datetime] "1/11/1111"
+        # Explict type cast using 'InvariantCulture'
+        $expected = [System.Management.Automation.LanguagePrimitives]::ConvertTo("1/11/1111", [datetime], [cultureinfo]::InvariantCulture)
 
         # Cast result with ru-RU culture
         $ruCulture = [cultureinfo]::GetCultureInfo("ru-RU")
         $ruCastResult = [System.Management.Automation.LanguagePrimitives]::ConvertTo("1/11/1111", [datetime], $ruCulture)
 
         # Implict parameter argument conversion should also use 'InvariantCulture'
-        $csharpCmdlet, $scriptFunction, $scriptCmdlet = @(
+        $csharpCmdlet, $scriptFunction, $scriptCmdlet = try {
+            $oldCulture = [CultureInfo]::CurrentCulture
             [CultureInfo]::CurrentCulture = 'ru-RU'
             Get-Date -Date 1/11/1111
             Test-Function  1/11/1111
             Test-ScriptCmdlet 1/11/1111
-        )
+        } finally {
+            [CultureInfo]::CurrentCulture = $oldCulture
+        }
 
         $expected | Should Not Be $ruCastResult
         $csharpCmdlet | Should Be $expected
