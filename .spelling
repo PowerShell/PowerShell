@@ -486,6 +486,15 @@ src
 preview3
 #endregion
 
+#region docs/cmdlet-example/command-line-simple-example.md Overrides
+- docs/cmdlet-example/command-line-simple-example.md
+aka
+classlib
+dotnet
+netstandard.dll
+wsl
+#endregion
+
 #region docs/community/governance.md Overrides
  - docs/community/governance.md
 Aiello
