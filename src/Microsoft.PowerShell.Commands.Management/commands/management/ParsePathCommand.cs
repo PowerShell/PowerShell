@@ -70,6 +70,14 @@ namespace Microsoft.PowerShell.Commands
         private const string literalPathSet = "LiteralPathSet";
 
         /// <summary>
+        /// Limits the depth of split operation;
+        /// Value '0' will split the given path by the defaul path seperator once;
+        /// Value '1' will split 1 level back, etc...;
+        /// Default is 0.
+        /// </summary>
+        private int _depth = 0;
+
+        /// <summary>
         /// Gets or sets the path parameter to the command
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = parentSet, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
@@ -182,7 +190,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter]
-        public Int Depth { get; set; }
+        public int Depth
+        {
+            get
+            {
+                return this._depth;
+            }
+            set
+            {
+                this._depth = value;
+            }
+        }
 
         /// <summary>
         /// Determines if the path is an absolute path.
@@ -367,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
                             result =
                                 SessionState.Path.ParseParent(
                                     pathsToParse[index],
-                                    Depth,
+                                    _depth,
                                     String.Empty,
                                     CmdletProviderContext,
                                     true);
