@@ -59,6 +59,7 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the new member
         /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = "MemberSet")]
+        [AllowEmptyString]
         public string Name
         {
             set { _memberName = value; }

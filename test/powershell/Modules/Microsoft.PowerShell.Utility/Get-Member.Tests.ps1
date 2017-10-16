@@ -1,50 +1,59 @@
 Describe "Get-Member" -Tags "CI" {
     It "Should be able to be called on string objects, ints, arrays, etc" {
-	$a = 1 #test numbers
-	$b = 1.3
-	$c = $false #test bools
-	$d = @(1,3) # test arrays
-	$e = "anoeduntodeu" #test strings
-	$f = 'asntoheusth' #test strings
+        $a = 1 #test numbers
+        $b = 1.3
+        $c = $false #test bools
+        $d = @(1,3) # test arrays
+        $e = "anoeduntodeu" #test strings
+        $f = 'asntoheusth' #test strings
 
-	Get-Member -InputObject $a | Should Not BeNullOrEmpty
-	Get-Member -InputObject $b | Should Not BeNullOrEmpty
-	Get-Member -InputObject $c | Should Not BeNullOrEmpty
-	Get-Member -InputObject $d | Should Not BeNullOrEmpty
-	Get-Member -InputObject $e | Should Not BeNullOrEmpty
-	Get-Member -InputObject $f | Should Not BeNullOrEmpty
+        Get-Member -InputObject $a | Should Not BeNullOrEmpty
+        Get-Member -InputObject $b | Should Not BeNullOrEmpty
+        Get-Member -InputObject $c | Should Not BeNullOrEmpty
+        Get-Member -InputObject $d | Should Not BeNullOrEmpty
+        Get-Member -InputObject $e | Should Not BeNullOrEmpty
+        Get-Member -InputObject $f | Should Not BeNullOrEmpty
     }
 
     It "Should be able to extract a field from string objects, ints, arrays, etc" {
-	$a = 1 #test numbers
-	$b = 1.3
-	$c = $false #test bools
-	$d = @(1,3) # test arrays
-	$e = "anoeduntodeu" #test strings
-	$f = 'asntoheusth' #test strings
+        $a = 1 #test numbers
+        $b = 1.3
+        $c = $false #test bools
+        $d = @(1,3) # test arrays
+        $e = "anoeduntodeu" #test strings
+        $f = 'asntoheusth' #test strings
 
-	$a | Should BeOfType 'Int32'
-	$b | Should BeOfType 'Double'
-	$c | Should BeOfType 'Boolean'
-	,$d | Should BeOfType 'Object[]'
-	$e | Should BeOfType 'String'
-	$f | Should BeOfType 'String'
+        $a | Should BeOfType 'Int32'
+        $b | Should BeOfType 'Double'
+        $c | Should BeOfType 'Boolean'
+        ,$d | Should BeOfType 'Object[]'
+        $e | Should BeOfType 'String'
+        $f | Should BeOfType 'String'
+        }
+
+        It "Should be able to be called on a newly created PSObject" {
+        $o = New-Object psobject
+        # this creates a dependency on the Add-Member cmdlet.
+        Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
+
+        Get-Member -InputObject $o | Should Not BeNullOrEmpty
     }
 
-    It "Should be able to be called on a newly created PSObject" {
-	$o = New-Object psobject
-	# this creates a dependency on the Add-Member cmdlet.
-	Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
-
-	Get-Member -InputObject $o | Should Not BeNullOrEmpty
+    It "Should show members where name is empty string" {
+        $obj = [pscustomobject]@{""="hello"}
+        $member = $obj | Get-Member -Name ""
+        $member.Name | Should BeExactly ""
+        $member.MemberType | Should BeExactly "NoteProperty"
+        $member.Definition | Should BeExactly "string =hello"
     }
 }
 
 Describe "Get-Member DRT Unit Tests" -Tags "CI" {
     Context "Verify Get-Member with Class" {
-		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
-		{
-			Add-Type -TypeDefinition @"
+        BeforeAll {
+            if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
+            {
+                Add-Type -TypeDefinition @"
         public class Employee
         {
             private string firstName;
@@ -97,10 +106,10 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
             }
         }
 "@
-		}
+            }
 
-        $fileToDeleteName = Join-Path $TestDrive -ChildPath "getMemberTest.ps1xml"
-        $XMLFile= @"
+            $fileToDeleteName = Join-Path $TestDrive -ChildPath "getMemberTest.ps1xml"
+            $XMLFile= @"
 <Types>
     <Type>
     <Name>Employee</Name>
@@ -145,8 +154,9 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
 </Types>
 "@
 
-        $XMLFile > $fileToDeleteName
-        Update-TypeData -AppendPath $fileToDeleteName
+            $XMLFile > $fileToDeleteName
+            Update-TypeData -AppendPath $fileToDeleteName
+        }
 
         It "Fail to get member without any input" {
             try

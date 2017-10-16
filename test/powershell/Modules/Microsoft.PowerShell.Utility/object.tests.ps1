@@ -19,6 +19,13 @@
             $TeeObjectLiteralPathShouldWorkForSpecialFilename | Should Be (Get-Content -LiteralPath $path)
         }
     }
+
+    Context "ForEach-Object" {
+        It "with member named empty string" {
+            $obj = [pscustomobject]@{""="hello"},[pscustomobject]@{""="world"}
+            $obj | ForEach-Object -MemberName "" | Should Be "hello","world"
+        }
+    }
 }
 
 Describe "Object cmdlets" -Tags "CI" {

@@ -137,6 +137,7 @@
 	    $obj.PSTypeNames.Count | Should Be 3
 	    $obj.PSTypeNames[0] | Should Be 'System.Object'
     }
+
     It "new-object should fail to create object for System.Management.Automation.PSCustomObject" {
 
         $errorObj = $null
@@ -152,6 +153,11 @@
         }
         $obj | should be $null
         $errorObj.FullyQualifiedErrorId | should be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+    }
+
+    It "Empty string is allowed for property name" {
+        $obj = [PSCustomObject] @{"" = "hello"}
+        $obj."" | Should BeExactly "hello"
     }
 }
 
