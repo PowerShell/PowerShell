@@ -1,10 +1,10 @@
 # Creating a cross-platform binary module with the .NET Core command-line interface tools
 
 This example uses the [.NET Core command-line interface tools][dotnet-cli] (aka
-`dotnet CLI`) to demonstrate how to create a binary module that is portable across operating
-systems supported by `PowerShell Core` as well as `Windows PowerShell` version 3 and higher.
+`dotnet` CLI) to demonstrate how to create a binary module that is portable across operating
+systems supported by PowerShell Core as well as Windows PowerShell version 3 and higher.
 
-Because the binary module's assembly will be created as a `.NET Standard 2.0 class library`,
+Because the binary module's assembly will be created as a .NET Standard 2.0 class library,
 the same assembly can be imported into both PowerShell Core and Windows PowerShell.
 This means you do not have to build and distribute separate assemblies that target these two
 different implementations of PowerShell.
@@ -19,7 +19,7 @@ different implementations of PowerShell.
 
   Note: On Windows 10 Anniversary Update or higher, you can use the [Windows Subsystem for
   Linux][wsl] (WSL) console to build the module. In order to import and use the module, you'll need
-  to install `PowerShell Core` for the distribution and version of Linux you're running.
+  to install PowerShell Core for the distribution and version of Linux you're running.
   You can get that version info by running the command `lsb_release -a` from the WSL console.
 
 * .NET Core 2.0 SDK
@@ -32,7 +32,7 @@ different implementations of PowerShell.
 
 ## Create the .NET Standard 2.0 Binary Module
 
-1. Verify you are running the 2.0.0 version of the dotnet CLI.
+1. Verify you are running the 2.0.0 version of the `dotnet` CLI.
 
    ```
    dotnet --version
@@ -42,7 +42,7 @@ different implementations of PowerShell.
    installed the .NET Core 2.0 SDK and have restarted your shell to get the newer version of
    the SDK tools.
 
-2. Use the `dotnet CLI` to create a starter `classlib` project based on `.NET Standard 2.0`
+2. Use the `dotnet` CLI to create a starter `classlib` project based on .NET Standard 2.0
    (the default for classlib projects).
 
    ```powershell
@@ -50,7 +50,7 @@ different implementations of PowerShell.
    ```
 
 3. Add a `global.json` file that specifies that the project requires the `2.0.0` version of
-   the `.NET Core SDK`.  This is necessary to prevent issues if you have more than one
+   the .NET Core SDK.  This is necessary to prevent issues if you have more than one
    version of the .NET Core SDK installed.
 
    ```
@@ -165,11 +165,11 @@ Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 If the command worked, congratulations! You're system was probably updated to
 .NET Framework 4.7.1.  Otherwise, this error indicates that the `mymodule.dll` assembly
 can't find the `netstandard.dll` "implementation" assembly for the version of the
-`.NET Framework` that Windows PowerShell is using.
+.NET Framework that Windows PowerShell is using.
 
 ### The fix for missing netstandard.dll
 
-If you install (or already have) the `.NET Core 2.0 SDK for Windows`, you can
+If you install (or already have) the .NET Core 2.0 SDK for Windows, you can
 find the `netstandard.dll` implementation assembly for .NET 4.6.1 in the following directory:
 `C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
 
@@ -178,7 +178,7 @@ If you copy `netstandard.dll` from this directory to the directory containing
 
 1. Install the [.NET Core SDK 2.0 for Windows][net-core-sdk], if it isn't already installed.
 
-2. Start a new `Windows PowerShell` console. Remember that once a binary assembly is
+2. Start a new Windows PowerShell console. Remember that once a binary assembly is
    loaded into PowerShell it can't be unloaded. Restarting PowerShell is necessary to
    get it to reload `mymodule.dll`.
 
@@ -202,7 +202,7 @@ If you copy `netstandard.dll` from this directory to the directory containing
 If you use additional libraries there may be more work involved. This approach has
 been successfully tested using types from `System.Xml` and `System.Web`.
 
-## Wrapup
+## Wrap-up
 In a few steps, we have built a PowerShell binary module using a .NET Standard 2.0
 class library that will run in PowerShell Core on multiple operating systems.
 It will also run in Windows PowerShell on Windows systems that have been updated to
@@ -210,7 +210,7 @@ It will also run in Windows PowerShell on Windows systems that have been updated
 version pre-installed.  Furthermore, this binary module can be built on Linux
 and macOS as well as Windows using the .NET Core 2.0 SDK command-line tools.
 
-For more information on `.NET Standard`, check out the [documentation][net-std-docs]
+For more information on .NET Standard, check out the [documentation][net-std-docs]
 and the [.NET Standard YouTube channel][net-std-chan].
 
 [dotnet-cli]:    https://docs.microsoft.com/en-us/dotnet/core/tools/?tabs=netcore2x
