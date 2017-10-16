@@ -309,11 +309,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (name.IndexOfAny(Utils.Separators.Directory) == -1)
                             {
-#if UNIX
-                                qualifiedPath = Path.Combine(folder, fileName);
-#else
                                 qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-#endif
                             }
                             else if (Directory.Exists(qualifiedPath))
                             {

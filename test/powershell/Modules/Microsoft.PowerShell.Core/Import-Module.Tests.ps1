@@ -160,20 +160,4 @@ Describe "Import-Module should be case insensitive on Linux" -Tags 'CI' {
         Remove-Module TestModule
         Get-Module tESTmODULE | Should BeNullOrEmpty
     }
-
-    It "Import-Module will import exact casing if available" {
-        New-Item -ItemType Directory -Path "$modulesPath\Test" -Force > $null
-        Set-Content -Path "$modulesPath\Test\Test.psm1" -Value "function casetest { 'first' }"
-        New-Item -ItemType Directory -Path "$modulesPath\tEST" -Force > $null
-        Set-Content -Path "$modulesPath\tEST\tEST.psm1" -Value "function casetest { 'second' }"
-        Import-Module Test
-        casetest | Should BeExactly 'first'
-        Remove-Module test
-        Import-Module test
-        casetest | Should BeExactly 'second'
-        Remove-Module test
-        Import-Module tEST
-        casetest | Should BeExactly 'second'
-        Remove-Module test
-    }
 }
