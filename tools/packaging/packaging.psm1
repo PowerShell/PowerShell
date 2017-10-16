@@ -437,7 +437,7 @@ function New-UnixPackage {
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
         if ($pscmdlet.ShouldProcess("Create staging folder")) {
-            New-StagingFolder -StagingPath $Staging -Name $Name
+            New-StagingFolder -StagingPath $Staging
         }
 
         # Follow the Filesystem Hierarchy Standard for Linux and macOS
@@ -456,7 +456,7 @@ function New-UnixPackage {
 
         if($pscmdlet.ShouldProcess("Create package file system"))
         {
-            New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
+            New-Item -Force -ItemType SymbolicLink -Path "/tmp/pwsh" -Target "$Destination/$Name" >$null
 
             if ($Environment.IsRedHatFamily) {
                 # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
@@ -468,14 +468,14 @@ function New-UnixPackage {
 
                 $AfterInstallScript = [io.path]::GetTempFileName()
                 $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.RedHatAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.RedHatAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+                $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
             }
             elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
                 $AfterInstallScript = [io.path]::GetTempFileName()
                 $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.UbuntuAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+                $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
             }
 
 
@@ -584,7 +584,7 @@ function New-UnixPackage {
         $Arguments += @(
             "$Staging/=$Destination/",
             "$GzipFile=$ManFile",
-            "/tmp/$Name=$Link"
+            "/tmp/pwsh=$Link"
         )
         # Build package
         try {
@@ -639,32 +639,11 @@ function New-StagingFolder
     param(
         [Parameter(Mandatory)]
         [string]
-        $StagingPath,
-
-        # Must start with 'powershell' but may have any suffix
-        [Parameter(Mandatory)]
-        [ValidatePattern("^powershell")]
-        [string]
-        $Name
+        $StagingPath
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
     Copy-Item -Recurse $PackageSourcePath $StagingPath
-
-    # Rename files to given name if not "powershell"
-    if ($Name -ne "powershell") {
-        $Files = @("powershell",
-                "powershell.dll",
-                "powershell.deps.json",
-                "powershell.pdb",
-                "powershell.runtimeconfig.json",
-                "powershell.xml")
-
-        foreach ($File in $Files) {
-            $NewName = $File -replace "^powershell", $Name
-            Move-Item "$StagingPath/$File" "$StagingPath/$NewName"
-        }
-    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -790,7 +769,7 @@ function New-NugetPackage
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
     if ($pscmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $contentFolder -Name $Name
+        New-StagingFolder -StagingPath $contentFolder
     }
 
     $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'

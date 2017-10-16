@@ -25,7 +25,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $fakePSHome = Join-Path -Path $TestDrive -ChildPath 'FakePSHome'
         $fakePSHomeModuleDir = Join-Path -Path $fakePSHome -ChildPath 'Modules'
         $fakePowerShell = Join-Path -Path $fakePSHome -ChildPath (Split-Path -Path $powershell -Leaf)
-        $fakePSDepsFile = Join-Path -Path $fakePSHome -ChildPath "powershell.deps.json"
+        $fakePSDepsFile = Join-Path -Path $fakePSHome -ChildPath "pwsh.deps.json"
 
         New-Item -Path $fakePSHome -ItemType Directory > $null
         New-Item -Path $fakePSHomeModuleDir -ItemType Directory > $null
@@ -56,7 +56,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR) {
 
-        ## Create 'powershell' and 'powershell.deps.json' in the fake PSHome folder,
+        ## Create 'powershell' and 'pwsh.deps.json' in the fake PSHome folder,
         ## so that the module path calculation logic would believe it's real.
         New-Item -Path $fakePowerShell -ItemType File -Force > $null
         New-Item -Path $fakePSDepsFile -ItemType File -Force > $null
@@ -75,7 +75,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         } finally {
 
-            ## Remove 'powershell' and 'powershell.deps.json' from the fake PSHome folder
+            ## Remove 'powershell' and 'pwsh.deps.json' from the fake PSHome folder
             Remove-Item -Path $fakePowerShell -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $fakePSDepsFile -Force -ErrorAction SilentlyContinue
         }

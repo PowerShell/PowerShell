@@ -775,7 +775,7 @@ namespace System.Management.Automation
             const string oldPowershellExeName = "powershell.exe";
 #endif
             const string powershellDepsName = "pwsh.deps.json";
-            const string oldPowerShellDepsName = "powershell.deps.json";
+            const string oldPowershellDepsName = "powershell.deps.json";
 
             StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
             char[] invalidPathChars = Path.GetInvalidPathChars();
