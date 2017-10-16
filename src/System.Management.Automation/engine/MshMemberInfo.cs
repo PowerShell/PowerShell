@@ -3518,7 +3518,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("memberList");
             }
 
-            if (String.IsNullOrEmpty(name))
+            if (null == name)
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3709,7 +3709,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(name))
+                if (null == name)
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -3725,7 +3725,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (null == name)
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3741,7 +3741,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (null == name)
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4625,7 +4625,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name)
         {
-            if (String.IsNullOrEmpty(name))
+            if (null == name)
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4641,7 +4641,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         public override ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes)
         {
-            if (String.IsNullOrEmpty(name))
+            if (null == name)
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -4660,7 +4660,7 @@ namespace System.Management.Automation
         {
             using (PSObject.memberResolution.TraceScope("Matching \"{0}\"", name))
             {
-                if (String.IsNullOrEmpty(name))
+                if (null == name)
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }

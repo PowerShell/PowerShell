@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// The member names to be retrieved
         /// </summary>
         [Parameter(Position = 0)]
-        [ValidateNotNullOrEmpty]
+        [ValidateNotNull]
         public string[] Name { set; get; } = new string[] { "*" };
 
 
