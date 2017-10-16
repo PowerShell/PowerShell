@@ -2,7 +2,7 @@
 
 This example uses the [.NET Core command-line interface tools][dotnet-cli] (aka
 `dotnet` CLI) to demonstrate how to create a binary module that is portable across operating
-systems supported by PowerShell Core as well as Windows PowerShell version 3 and higher.
+systems supported by **PowerShell Core** as well as **Windows PowerShell** version 3 and higher.
 
 Because the binary module's assembly will be created as a .NET Standard 2.0 class library,
 the same assembly can be imported into both PowerShell Core and Windows PowerShell.
@@ -131,7 +131,7 @@ Creators Update. This version of the .NET Framework allows existing applications
 However, for Windows systems that have not been updated to .NET Framework 4.7.1 such a
 binary module will not run correctly in Windows PowerShell.
 
-Let's see what happens when you attempt use this module in `Windows PowerShell` on
+Let's see what happens when you attempt use this module in **Windows PowerShell** on
 Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
 1. Copy `mymodule.dll` to a folder on a Windows machine.
