@@ -13,4 +13,9 @@ Describe 'ConvertFrom-Json' -tags "CI" {
         $json = @('{"a" :', '"x"}') | ConvertFrom-Json
         $json.a | Should Be 'x'
     }
+
+    It 'can support empty string named property' {
+        $json = '{"" : "hello"}' | ConvertFrom-Json
+        $json."" | Should BeExactly "hello"
+    }
 }

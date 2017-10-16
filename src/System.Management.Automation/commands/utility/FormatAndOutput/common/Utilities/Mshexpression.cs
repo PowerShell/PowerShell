@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <exception cref="ArgumentNullException"></exception>
         internal MshExpression(string s, bool isResolved)
         {
-            if (string.IsNullOrEmpty(s))
+            if (null == s)
             {
                 throw PSTraceSource.NewArgumentNullException("s");
             }
