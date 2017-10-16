@@ -40,21 +40,19 @@ namespace System.Management.Automation.Tracing
         private static SysLogProvider s_provider;
 
         // by default, do not include analytic events
-        const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
+        internal const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
 
         /// <summary>
         /// Class constructor
         /// </summary>
         static PSSysLogProvider()
         {
-            // FUTURE: Read applicationId, level, keywords, and channels from configuration.
             s_provider = new SysLogProvider
             (
-                applicationId: "powershell",
-                level: PSLevel.Informational,
-                keywords: DefaultKeywords,
-                // By default, supress logging analytic events.
-                channels: PSChannel.Operational
+                ConfigPropertyAccessor.Instance.GetSysLogIdent(),
+                ConfigPropertyAccessor.Instance.GetLogLevel(),
+                ConfigPropertyAccessor.Instance.GetLogKeywords(),
+                ConfigPropertyAccessor.Instance.GetLogChannels()
             );
         }
 

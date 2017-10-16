@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Threading;
 
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using Microsoft.Win32;
 
 using Newtonsoft.Json;
@@ -101,6 +102,51 @@ namespace System.Management.Automation
         internal abstract string GetDefaultSourcePath();
         internal abstract void SetDefaultSourcePath(string defaultPath);
 
+#if UNIX
+        /// <summary>
+        /// Gets the identity name to use for writing to syslog.
+        /// </summary>
+        /// <returns>
+        /// The string identity to use for writing to syslog.
+        /// <para>
+        /// The default value is 'powershell'
+        /// </para>
+        /// </returns>
+        internal abstract string GetSysLogIdent();
+
+        /// <summary>
+        /// Gets the log level filter.
+        /// </summary>
+        /// <returns>One of the PSLevel values indicating the level to log.
+        /// <para>
+        /// The default value is PSLevel.Informational
+        /// </para>
+        /// </returns>
+        internal abstract PSLevel GetLogLevel();
+
+        /// <summary>
+        /// Gets the bitmask of the PSChannel values to log.
+        /// </summary>
+        /// <returns>
+        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic
+        /// <para>
+        /// The default value is PSChannel.Operational
+        /// </para>
+        /// </returns>
+        internal abstract PSChannel GetLogChannels();
+
+        /// <summary>
+        /// Gets the bitmask of keywords to log.
+        /// </summary>
+        /// <returns>
+        /// A bitmask of PSKeyword values.
+        /// <para>
+        /// The default value is all keywords other than UseAlwaysAnalytic
+        /// </para>
+        /// </returns>
+        internal abstract PSKeyword GetLogKeywords();
+
+#endif // UNIX
         #endregion // Interface Methods
     }
 
@@ -309,6 +355,160 @@ namespace System.Management.Automation
 
             WriteValueToFile<string>(fileName, "DefaultSourcePath", defaultPath);
         }
+
+#if UNIX
+        /// <summary>
+        /// Gets the identity name to use for writing to syslog.
+        /// </summary>
+        /// <returns>
+        /// The string identity to use for writing to syslog.
+        /// <para>
+        /// The default value is 'powershell'
+        /// </para>
+        /// </returns>
+        internal override string GetSysLogIdent()
+        {
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
+            string identity = ReadValueFromFile<string>(fileName, "LogIdentity");
+            if
+            (
+                string.IsNullOrEmpty(identity)
+                ||
+                StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, identity) == 0
+            )
+            {
+                identity = "powershell";
+            }
+            return identity;
+        }
+
+        /// <summary>
+        /// Gets the log level filter.
+        /// </summary>
+        /// <returns>One of the PSLevel values indicating the level to log.
+        /// <para>
+        /// The default value is PSLevel.Informational
+        /// </para>
+        /// </returns>
+        internal override PSLevel GetLogLevel()
+        {
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
+            string levelName = ReadValueFromFile<string>(fileName, "LogLevel");
+            PSLevel level;
+            if
+            (
+                StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, levelName) == 0
+                ||
+                !Enum.TryParse<PSLevel>(levelName, true, out level )
+            )
+            {
+                level = PSLevel.Informational;
+            }
+            return level;
+        }
+
+        /// <summary>
+        /// The supported separator characters for listing channels and keywords in configuration.
+        /// </summary>
+        static readonly char[] s_valueSeparators = new char[] {' ', ',', '|'};
+
+        /// <summary>
+        /// Provides a string name to indicate the default for a configuration setting.
+        /// </summary>
+        const string LogDefaultValueName = "default";
+
+        const PSChannel DefaultChannels = PSChannel.Operational;
+
+        /// <summary>
+        /// Gets the bitmask of the PSChannel values to log.
+        /// </summary>
+        /// <returns>
+        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic
+        /// <para>
+        /// The default value is PSChannel.Operational
+        /// </para>
+        /// </returns>
+        internal override PSChannel GetLogChannels()
+        {
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
+            string values = ReadValueFromFile<string>(fileName, "LogChannels");
+
+            PSChannel result = 0;
+            if (!string.IsNullOrEmpty(values))
+            {
+                string[] names = values.Split(s_valueSeparators, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string name in names)
+                {
+                    if (StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, name) == 0)
+                    {
+                        result = 0;
+                        break;
+                    }
+
+                    PSChannel value;
+                    if (Enum.TryParse<PSChannel>(name, true, out value))
+                    {
+                        result |= value;
+                    }
+                }
+            }
+
+            if (result == 0)
+            {
+                result = DefaultChannels;
+            }
+
+            return result;
+        }
+
+        // by default, do not include analytic events
+        const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
+
+        /// <summary>
+        /// Gets the bitmask of keywords to log.
+        /// </summary>
+        /// <returns>
+        /// A bitmask of PSKeyword values.
+        /// <para>
+        /// The default value is all keywords other than UseAlwaysAnalytic
+        /// </para>
+        /// </returns>
+        internal override PSKeyword GetLogKeywords()
+        {
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
+            string values = ReadValueFromFile<string>(fileName, "LogKeywords");
+
+            PSKeyword result = 0;
+            if (!string.IsNullOrEmpty(values))
+            {
+                string[] names = values.Split(s_valueSeparators, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string name in names)
+                {
+                    if (StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, name) == 0)
+                    {
+                        result = 0;
+                        break;
+                    }
+
+                    PSKeyword value;
+                    if (Enum.TryParse<PSKeyword>(name, true, out value))
+                    {
+                        result |= value;
+                    }
+                }
+            }
+
+            if (result == 0)
+            {
+                result = DefaultKeywords;
+            }
+
+            return result;
+        }
+
+#endif // UNIX
 
         private T ReadValueFromFile<T>(string fileName, string key)
         {
