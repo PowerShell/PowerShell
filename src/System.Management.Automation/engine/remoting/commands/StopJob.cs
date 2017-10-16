@@ -161,17 +161,6 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         job.StopJob();
-                        var parentJob = job as ContainerParentJob;
-                        if (parentJob != null && parentJob.ExecutionError.Count > 0)
-                        {
-                            foreach (
-                                var e in
-                                    parentJob.ExecutionError.Where(
-                                        e => e.FullyQualifiedErrorId == "ContainerParentJobStopError"))
-                            {
-                                WriteError(e);
-                            }
-                        }
                     }
                 }
             }
