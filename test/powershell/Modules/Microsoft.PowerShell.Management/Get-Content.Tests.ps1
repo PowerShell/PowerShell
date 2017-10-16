@@ -144,7 +144,7 @@ baz
         $result.Length    | Should Be 3
         $expected = "rld3${nl}Hell", '4,W', "rld4${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -encoding:Byte -tail 10
+        $result=get-content -path $testPath -Byte -tail 10
         $result.Length    | Should Be 10
         if ($IsWindows) {
             $expected =      52, 44, 87, 111, 114, 108, 100, 52, 13, 10

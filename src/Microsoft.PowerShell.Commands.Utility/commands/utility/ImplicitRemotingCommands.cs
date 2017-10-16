@@ -79,25 +79,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding
-        {
-            get
-            {
-                return _encoding;
-            }
-            set
-            {
-                if ( value == EncodingConversion.byteEncoding )
-                {
-                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
-                }
-                else
-                {
-                    _encoding = value;
-                }
-            }
-        }
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
 
         #endregion Parameters
 
@@ -152,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> generatedFiles = GenerateProxyModule(
                 tempDirectory,
                 Path.GetFileName(directory.FullName),
-                _encoding,
+                Encoding,
                 _force,
                 listOfCommandMetadata,
                 alias2resolvedCommandName,

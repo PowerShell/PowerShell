@@ -1204,25 +1204,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding
-        {
-            get
-            {
-                return _textEncoding;
-            }
-            set
-            {
-                if ( value == EncodingConversion.byteEncoding )
-                {
-                    _textEncoding = EncodingConversion.byteEncoding.ActualEncoding;
-                }
-                else
-                {
-                    _textEncoding = value;
-                }
-            }
-        }
-        private System.Text.Encoding _textEncoding = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// The number of context lines to collect. If set to a
@@ -1433,7 +1415,7 @@ namespace Microsoft.PowerShell.Commands
 
                 using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (StreamReader sr = new StreamReader(fs, _textEncoding))
+                    using (StreamReader sr = new StreamReader(fs, Encoding))
                     {
                         String line;
                         int lineNo = 0;

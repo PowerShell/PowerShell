@@ -6614,7 +6614,7 @@ namespace Microsoft.PowerShell.Commands
                         delimiter = dynParams.Delimiter;
 
                     // Get the stream type
-                    usingByteEncoding = dynParams.UsingByteEncoding;
+                    usingByteEncoding = dynParams.Byte;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
 
                     if (streamTypeSpecified)
@@ -6765,7 +6765,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (dynParams != null)
                 {
-                    usingByteEncoding = dynParams.UsingByteEncoding;
+                    usingByteEncoding = dynParams.Byte;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
 
                     if (streamTypeSpecified)
@@ -7590,20 +7590,19 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                if ( value == EncodingConversion.byteEncoding )
-                {
-                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
-                    UsingByteEncoding = true;
-                }
-                else
-                {
-                    _encoding = value;
-                }
+                _encoding = value;
                 // If an encoding was explicitly set, be sure to capture that.
                 WasStreamTypeSpecified = true;
             }
         }
         private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+
+        /// <summary>
+        /// Return file contents as a byte stream or create file from a series of bytes
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Byte { get; set; }
+
 #if !UNIX
         /// <summary>
         /// A parameter to return a stream of an item.
@@ -7611,12 +7610,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public String Stream { get; set; }
 #endif
-
-        /// <summary>
-        /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
-        /// if the stream was opened with "Byte" encoding, false otherwise.
-        /// </summary>
-        public bool UsingByteEncoding { get; set; }
 
         /// <summary>
         /// Gets the status of the StreamType parameter.  Returns true
@@ -7680,13 +7673,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _delimiter;
-            } // get
+            }
 
             set
             {
                 DelimiterSpecified = true;
                 _delimiter = value;
-            } // set
+            }
         }
         private string _delimiter = "\n";
 

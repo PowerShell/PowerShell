@@ -214,25 +214,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding
-        {
-            get
-            {
-                return _encoding;
-            }
-            set
-            {
-                if ( value == EncodingConversion.byteEncoding )
-                {
-                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
-                }
-                else
-                {
-                    _encoding = value;
-                }
-            }
-        }
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -598,25 +580,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding
-        {
-            get
-            {
-                return _encoding;
-            }
-            set
-            {
-                if ( value == EncodingConversion.byteEncoding )
-                {
-                    _encoding = EncodingConversion.byteEncoding.ActualEncoding;
-                }
-                else
-                {
-                    _encoding = value;
-                }
-            }
-        }
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are

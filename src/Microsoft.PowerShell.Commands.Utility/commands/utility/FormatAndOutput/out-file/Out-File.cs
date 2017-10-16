@@ -75,13 +75,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1)]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding
-        {
-            get { return _encoding; }
-            set { _encoding = value; }
-        }
-
-        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -187,7 +181,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     FilePath,
-                    _encoding,
+                    Encoding,
                     false, // defaultEncoding
                     Append,
                     Force,
