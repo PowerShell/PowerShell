@@ -15,7 +15,7 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Should be a string when exporting via pipe" {
-	$testObject | Export-Csv $testCsv
+	$testObject | Export-Csv $testCsv -IncludeTypeInformation
 
 	$piped = Get-Content $testCsv
 
@@ -23,15 +23,15 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Should be an object when exporting via the inputObject switch" {
-	Export-Csv -InputObject $testObject -Path $testCsv
+	Export-Csv -InputObject $testObject -Path $testCsv -IncludeTypeInformation
 
-	$switch = Get-Content $testCsv
+	$switch = Get-Content $testCsv 
 
 	$switch[0] | Should Match ".Object"
     }
 
     It "Should output a csv file containing a string of all the lengths of each element when piped input is used" {
-	$testObject | Export-Csv -Path $testCsv
+	$testObject | Export-Csv -Path $testCsv -IncludeTypeInformation
 
 	$first    = "`"" + $testObject[0].Length.ToString() + "`""
 	$second   = "`"" + $testObject[1].Length.ToString() + "`""
@@ -62,6 +62,23 @@ Describe "Export-Csv" -Tags "CI" {
 
 	# Clean up after yourself
 	Remove-Item $aliasObject -Force
+    }
+
+    It "Does not include type information by default" {
+        $testObject | Export-Csv -Path $testCsv
+
+        $(Get-Content $testCsv)[0] | Should Not Match 'System\.String'
+    }
+
+    It "Includes type information when -IncludeTypeInformation is supplied" {
+        $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation
+
+        $(Get-Content $testCsv)[0] | Should BeExactly "#TYPE System.String"
+    }
+
+    It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
+        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } | 
+            ShouldBeErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 }
 

@@ -67,9 +67,29 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// NoTypeInformation : should the #TYPE line be generated
+        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
         /// </summary>
         [Parameter]
+        [Alias("ITI")]
+        public SwitchParameter IncludeTypeInformation
+        {
+            get
+            {
+                return _includeTypeInformation;
+            }
+            set
+            {
+                _includeTypeInformation = value;
+                _includeTypeInformationIsSet = true;
+            }
+        }
+        private bool _includeTypeInformation;
+        private bool _includeTypeInformationIsSet;
+
+        /// <summary>
+        /// NoTypeInformation : The #TYPE line should not be generated. Default is true. Cannot specify with IncludeTypeInformation.
+        /// </summary>
+        [Parameter(DontShow = true)]
         [Alias("NTI")]
         public SwitchParameter NoTypeInformation
         {
@@ -80,9 +100,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _noTypeInformation = value;
+                _noTypeInformationIsSet = true;
             }
         }
-        private bool _noTypeInformation;
+        private bool _noTypeInformation = true;
+        private bool _noTypeInformationIsSet;
 
         #endregion Command Line Parameters
 
@@ -100,6 +122,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (_noTypeInformationIsSet && _includeTypeInformationIsSet)
+            {
+                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+            if (_includeTypeInformationIsSet)
+            {
+                _noTypeInformation = !_includeTypeInformation;
+            }
             _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
         }
     }
