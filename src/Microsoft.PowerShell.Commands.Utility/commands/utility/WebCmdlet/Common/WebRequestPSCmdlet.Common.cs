@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         #region Authorization and Credentials
 
         /// <summary>
-        /// gets or sets the AllowUnencryptedAuthentication property
+        /// Gets or sets the AllowUnencryptedAuthentication property
         /// </summary>
         [Parameter]
         public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
 
         /// <summary>
-        /// gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
+        /// Gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
         /// </summary>
         [Parameter]
         public virtual SecureString Token { get; set; }
