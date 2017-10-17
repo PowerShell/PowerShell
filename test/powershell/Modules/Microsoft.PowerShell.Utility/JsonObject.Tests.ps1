@@ -32,14 +32,14 @@
     }
 
     $jsonWithEmptyKey = '{"": "Value"}'
-    It 'throw InvalidOperationException for string ''jsonWithEmptyKey'' with empty key name' {
+    It 'throw InvalidOperationException when json contains empty key name' {
         $errorRecord = $null
         [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, [ref]$errorRecord)
-        $errorRecord.Exception | Should Be InvalidOperationException
+        $errorRecord.Exception.GetType() | Should Be System.InvalidOperationException
         $errorRecord.FullyQualifiedErrorId | Should Be EmptyKeyInJsonString
     }
 
-    It 'not throw for string ''jsonWithEmptyKey'' with empty key name when returnHashTable is used' {
+    It 'not throw when json contains empty key na' {
         $errorRecord = $null
         $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
         $result | Should Not Be $null
