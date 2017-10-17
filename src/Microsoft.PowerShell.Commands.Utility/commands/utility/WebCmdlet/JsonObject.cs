@@ -121,6 +121,18 @@ namespace Microsoft.PowerShell.Commands
             PSObject result = new PSObject();
             foreach (var entry in entries)
             {
+                if (string.IsNullOrEmpty(entry.Key))
+                {
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                                                    WebCmdletStrings.EmptyKeyInJsonString);
+                    error = new ErrorRecord(
+                        new InvalidOperationException(errorMsg),
+                        "EmptyKeyInJsonString",
+                        ErrorCategory.InvalidOperation,
+                        null);
+                    return null;
+                }
+
                 PSPropertyInfo property = result.Properties[entry.Key];
                 if (property != null)
                 {

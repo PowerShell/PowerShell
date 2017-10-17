@@ -30,4 +30,18 @@
         $errRecord = $null
         { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord) } | ShouldBeErrorId "ArgumentException"
     }
+
+    $jsonWithEmptyKey = '{"": "Value"}'
+    It 'throw InvalidOperationException for string ''jsonWithEmptyKey'' with empty key name' {
+        $errorRecord = $null
+        [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, [ref]$errorRecord)
+        $errorRecord.Exception | Should Be InvalidOperationException
+        $errorRecord.FullyQualifiedErrorId | Should Be EmptyKeyInJsonString
+    }
+
+    It 'not throw for string ''jsonWithEmptyKey'' with empty key name when returnHashTable is used' {
+        $errorRecord = $null
+        $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
+        $result | Should Not Be $null
+    }
 }
