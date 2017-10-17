@@ -3212,10 +3212,6 @@ namespace System.Management.Automation
                 if (IsErrorActionSet)
                     return _errorAction;
 
-                // Debug takes preference
-                if (Debug)
-                    return ActionPreference.Inquire;
-
                 if (!_isErrorActionPreferenceCached)
                 {
                     bool defaultUsed = false;

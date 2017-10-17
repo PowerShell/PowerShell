@@ -127,11 +127,22 @@
             $num | Should Be 2
         }
 
-        It '-Verbose does not take precedence over $ErrorActionPreference' {
+        It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(
+            @{switch="-Verbose"},
+            @{switch="-Debug"}
+        ) {
+            param($switch)
             $ErrorActionPreference = "SilentlyContinue"
-            New-Item -ItemType File -Path "$testdrive\test.txt"
-            { New-Item -ItemType File -Path "$testdrive\test.txt" -Verbose } | Should Not Throw
+            $params = @{
+                ItemType = "File";
+                Path = "$testdrive\test.txt";
+                Confirm = $false
+            }
+            New-Item @params
+            $params += @{$switch=$true}
+            { New-Item @params } | Should Not Throw
             $ErrorActionPreference = "Stop"
-            { New-Item -ItemType File -Path "$testdrive\test.txt" -Verbose } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
+            { New-Item @params } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
+            Remove-Item "$testdrive\test.txt" -Force
         }
 }
