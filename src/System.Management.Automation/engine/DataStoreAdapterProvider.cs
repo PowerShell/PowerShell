@@ -405,8 +405,6 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("name");
             }
 
-            // FIXME: Other checks?
-
             _sessionState = sessionState;
 
             Name = name;

@@ -305,8 +305,6 @@ namespace System.Diagnostics.Eventing.Reader
                     }
                     else
                     {
-                        //if inside the current buffer (_currentIndex + offset >= 0), we still cannot read the events, as the handles.
-                        //may have already been closed.
                         SeekCommon(offset);
                     }
                     return;
