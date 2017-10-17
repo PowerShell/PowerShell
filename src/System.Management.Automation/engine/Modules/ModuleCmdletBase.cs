@@ -296,14 +296,12 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
-                    string fileName = Path.GetFileName(folder);
-                    if (String.Compare(fileName, name, StringComparison.OrdinalIgnoreCase) == 0)
+                    string moduleName = Path.GetFileName(folder);
+                    if (String.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        string qualifiedPath = folder;
-                        name = fileName;
-#else
-                        string qualifiedPath = Path.Combine(path, fileBaseName);
+                        fileBaseName = moduleName;
 #endif
+                        string qualifiedPath = Path.Combine(path, fileBaseName);
                         module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
                         if (!found)
                         {

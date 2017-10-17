@@ -103,7 +103,7 @@ using System.Management.Automation;           // Windows PowerShell namespace.
 
 namespace ModuleCmdlets
 {
-  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]   
+  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
   public class TestBinaryModuleCmdlet1Command : Cmdlet
   {
     protected override void BeginProcessing()
@@ -124,25 +124,26 @@ namespace ModuleCmdlets
     }
  }
 
-Describe "Import-Module should be case insensitive on Linux" -Tags 'CI' {
+Describe "Import-Module should be case insensitive" -Tags 'CI' {
     BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
         $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
         $originalPSModulePath = $env:PSModulePath.Clone()
         $modulesPath = "$TestDrive\Modules"
         $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesPath
         $PSModuleAutoloadingPreference = "none"
-        $PSDefaultParameterValues["it:skip"] = !$IsLinux
     }
+
     AfterAll {
-        $global:PSDefaultParameterValues = $defaultParamValues
         $global:PSModuleAutoloadingPreference = $defaultPSModuleAutoloadingPreference
         $env:PSModulePath = $originalPSModulePath
     }
 
+    AfterEach {
+        Remove-Item -Recurse -Path $modulesPath -Force -ErrorAction SilentlyContinue
+    }
+
     It "Import-Module can import a module using different casing using '<modulePath>' and manifest:<manifest>" -TestCases @(
         @{modulePath="TESTMODULE/1.1"; manifest=$true},
-        @{modulePath="TESTMODULE/1.1"; manifest=$false},
         @{modulePath="TESTMODULE"    ; manifest=$true},
         @{modulePath="TESTMODULE"    ; manifest=$false}
         ) {
@@ -155,7 +156,7 @@ Describe "Import-Module should be case insensitive on Linux" -Tags 'CI' {
         Import-Module testMODULE
         $m = Get-Module TESTmodule
         $m | Should BeOfType "System.Management.Automation.PSModuleInfo"
-        $m.Name | Should BeExactly "TESTMODULE"
+        $m.Name | Should Be "TESTMODULE"
         mytest | Should BeExactly "hello"
         Remove-Module TestModule
         Get-Module tESTmODULE | Should BeNullOrEmpty
