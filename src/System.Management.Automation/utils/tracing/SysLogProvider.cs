@@ -83,7 +83,7 @@ namespace System.Management.Automation.Tracing
 
         // Ensure the string pointer is not garbage collected.
         static IntPtr _nativeSyslogIdent = IntPtr.Zero;
-        static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.User;
+        static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
 
         byte _channelFilter;
         ulong _keywordFilter;
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Tracing
 
         public SysLogProvider(string applicationId, PSLevel level, PSKeyword keywords, PSChannel channels)
         {
-            _nativeSyslogIdent = Marshal.StringToHGlobalAnsi("powershell");
+            _nativeSyslogIdent = Marshal.StringToHGlobalAnsi(applicationId);
             NativeMethods.OpenLog(_nativeSyslogIdent, _facility);
             _keywordFilter = (ulong)keywords;
             _levelFilter = (byte) level;
