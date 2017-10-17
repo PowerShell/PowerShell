@@ -10,6 +10,7 @@ This means you do not have to build and distribute separate assemblies that targ
 different implementations of PowerShell.
 
 ## Prerequisites
+
 * PowerShell Core and/or Windows PowerShell
 
   For this example, you can use any operating system that is supported by PowerShell Core.
@@ -111,6 +112,7 @@ different implementations of PowerShell.
    ```
 
 ## Using a .NET Standard 2.0 based binary module in Windows PowerShell
+
 You may have heard that a .NET assembly compiled as a .NET Standard 2.0 class library
 will load into both .NET Core 2.0 applications such as PowerShell Core and
 .NET Framework 4.6.1 (or higher) applications such as Windows PowerShell.
@@ -152,7 +154,7 @@ Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
    This will result in the following error:
 
-   ```
+   ```text
    Write-TimestampedMessage : Could not load file or assembly 'netstandard, Version=2.0.0.0, Culture=neutral,
    PublicKeyToken=cc7b13ffcd2ddd51' or one of its dependencies. The system cannot find the file specified.
    At line:1 char:1
@@ -203,6 +205,7 @@ If you use additional libraries there may be more work involved. This approach h
 been successfully tested using types from `System.Xml` and `System.Web`.
 
 ## Wrap-up
+
 In a few steps, we have built a PowerShell binary module using a .NET Standard 2.0
 class library that will run in PowerShell Core on multiple operating systems.
 It will also run in Windows PowerShell on Windows systems that have been updated to
