@@ -46,7 +46,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         static PSEtwLogProvider()
         {
-            etwProvider = new EventProvider(new Guid(ProviderGuid));
+            etwProvider = new EventProvider(ProviderGuid);
         }
 
         /// <summary>
