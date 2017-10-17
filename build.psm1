@@ -543,6 +543,12 @@ Fix steps:
         }
     }
 
+    if ($Environment.IsUbuntu)
+    {
+        # psrp 1.3* now depends on libgssapi_krb5 for Kerberos support.
+        $null = New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2" -Path "$publishPath/libgssapi_krb5.so" -ErrorAction Stop
+    }
+
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
