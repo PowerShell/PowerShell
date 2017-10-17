@@ -254,13 +254,6 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
-#if !CORECLR
-                    // The default font face used for Powershell Console is Lucida Console.
-                    // However certain CJK locales dont support Lucida Console font. Hence for such
-                    // locales the console font is updated to Raster dynamically.
-                    ConsoleControl.UpdateLocaleSpecificFont();
-#endif
-
                     s_theConsoleHost.BindBreakHandler();
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
@@ -900,11 +893,7 @@ namespace Microsoft.PowerShell
             {
                 lock (hostGlobalLock)
                 {
-#if !CORECLR
-                    return NativeCultureResolver.Culture;
-#else
                     return CultureInfo.CurrentCulture;
-#endif
                 }
             }
         }
@@ -925,11 +914,7 @@ namespace Microsoft.PowerShell
             {
                 lock (hostGlobalLock)
                 {
-#if !CORECLR
-                    return NativeCultureResolver.UICulture;
-#else
                     return CultureInfo.CurrentUICulture;
-#endif
                 }
             }
         }
@@ -1125,10 +1110,8 @@ namespace Microsoft.PowerShell
             this.ui = new ConsoleHostUserInterface(this);
             _consoleWriter = new ConsoleTextWriter(ui);
 
-#if !CORECLR // CurrentDomain.UnhandledException not supported on CoreCLR
             UnhandledExceptionEventHandler handler = new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
             AppDomain.CurrentDomain.UnhandledException += handler;
-#endif
         }
 
         private void BindBreakHandler()
@@ -1141,7 +1124,6 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-#if !CORECLR // Not used on NanoServer: CurrentDomain.UnhandledException not supported on CoreCLR
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
         {
             // FYI: sender is a reference to the source app domain
@@ -1165,7 +1147,6 @@ namespace Microsoft.PowerShell
                 ConsoleHostStrings.UnhandledExceptionShutdownMessage);
             ui.WriteLine();
         }
-#endif
 
         /// <summary>
         ///
@@ -1438,7 +1419,11 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ImportSystemModules, cpp.ConfigurationName);
+#if STAMODE
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
+#else
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, false, cpp.ConfigurationName);
+#endif
             }
             while (false);
 
@@ -1472,14 +1457,13 @@ namespace Microsoft.PowerShell
         /// The process exit code to be returned by Main.
         ///
         /// </returns>
-        private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode,
-            bool importSystemModules, string configurationName)
+        private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName)
         {
             ExitCode = ExitCodeSuccess;
 
             while (!ShouldEndSession)
             {
-                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, importSystemModules, configurationName, initialCommandArgs);
+                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
                 CreateRunspace(args);
 
                 if (ExitCode == ExitCodeInitFailure) { break; }
@@ -1518,10 +1502,12 @@ namespace Microsoft.PowerShell
 
                 _runspaceRef.Runspace.Close();
                 _runspaceRef = null;
+#if STAMODE
                 if (staMode) // don't recycle the Runspace in STA mode
                 {
                     ShouldEndSession = true;
                 }
+#endif
             }
 
             return ExitCode;
@@ -1559,7 +1545,11 @@ namespace Microsoft.PowerShell
             {
                 args = runspaceCreationArgs as RunspaceCreationEventArgs;
                 Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ImportSystemModules, args.ConfigurationName, args.InitialCommandArgs);
+#if STAMODE
+                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
+#else
+                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, false, args.ConfigurationName, args.InitialCommandArgs);
+#endif
             }
             catch (ConsoleHostStartupException startupException)
             {
@@ -1574,7 +1564,7 @@ namespace Microsoft.PowerShell
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         private void InitializeRunspace(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs)
         {
-            DoCreateRunspace(initialCommand, skipProfiles, staMode: false, importSystemModules: false, configurationName: null, initialCommandArgs: initialCommandArgs);
+            DoCreateRunspace(initialCommand, skipProfiles, staMode: false, configurationName: null, initialCommandArgs: initialCommandArgs);
         }
 
         private bool LoadPSReadline()
@@ -1597,8 +1587,7 @@ namespace Microsoft.PowerShell
         ///
         /// </summary>
 
-        //private void CreateRunspace(string initialCommand, bool skipProfiles, bool staMode, Collection<CommandParameter> initialCommandArgs)
-        private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, bool importSystemModules, string configurationName, Collection<CommandParameter> initialCommandArgs)
+        private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             Dbg.Assert(_runspaceRef == null, "runspace should be null");
 #if !DEBUG
@@ -1685,11 +1674,12 @@ namespace Microsoft.PowerShell
             // Record how long it took from process start to runspace open for telemetry.
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
 
-            DoRunspaceInitialization(importSystemModules, skipProfiles, initialCommand, configurationName, initialCommandArgs);
+            DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
         }
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
+#if STAMODE
             // staMode will have following values:
             // On FullPS: 'true'/'false' = default('true'=STA) + possibility of overload through cmdline parameter '-mta'
             // On NanoPS: always 'false' = default('false'=MTA) + NO possibility of overload through cmdline parameter '-mta'
@@ -1697,12 +1687,10 @@ namespace Microsoft.PowerShell
             if (staMode)
             {
                 // we can't change ApartmentStates on CoreCLR
-#if !CORECLR
                 runspace.ApartmentState = ApartmentState.STA;
-#endif
-                runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             }
-
+#endif
+            runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
@@ -1710,7 +1698,7 @@ namespace Microsoft.PowerShell
             runspace.Open();
         }
 
-        private void DoRunspaceInitialization(bool importSystemModules, bool skipProfiles, string initialCommand, string configurationName, Collection<CommandParameter> initialCommandArgs)
+        private void DoRunspaceInitialization(bool skipProfiles, string initialCommand, string configurationName, Collection<CommandParameter> initialCommandArgs)
         {
             if (_runspaceRef.Runspace.Debugger != null)
             {
@@ -1719,12 +1707,6 @@ namespace Microsoft.PowerShell
             }
 
             Executor exec = new Executor(this, false, false);
-
-            // Run import system modules command
-            if (importSystemModules)
-            {
-                Exception exception = InitializeRunspaceHelper("ImportSystemModules", exec, Executor.ExecutionOptions.None);
-            }
 
             if (!string.IsNullOrEmpty(configurationName))
             {
@@ -2900,7 +2882,7 @@ namespace Microsoft.PowerShell
                 base(message)
             {
             }
-#if !CORECLR // ApplicationException & System.Runtime.Serialization.SerializationInfo are Not In CoreCLR
+
             protected
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
@@ -2909,7 +2891,7 @@ namespace Microsoft.PowerShell
                 base(info, context)
             {
             }
-#endif
+
             internal
             ConsoleHostStartupException(string message, Exception innerException)
                 :
@@ -2940,23 +2922,7 @@ namespace Microsoft.PowerShell
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
 
-#if CORECLR
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
-#else
-        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() =>
-        {
-            // This is a workaround for a full clr issue that causes a hang when calling PowerShell from ruby.
-            // They use named pipes instead of anonymous pipes, and for some reason that triggers a hang
-            // reading from Console.In.
-            var inputHandle = ConsoleControl.NativeMethods.GetStdHandle(-10);
-            var s = new FileStream(new ConsoleHandle(inputHandle, false), FileAccess.Read);
-
-            uint codePage = (uint) ConsoleControl.NativeMethods.GetConsoleCP();
-            Encoding encoding = Encoding.GetEncoding((int) codePage);
-
-            return TextReader.Synchronized(new StreamReader(s, encoding, false));
-        });
-#endif
 
         private string _savedWindowTitle = "";
         private Version _ver = PSVersionInfo.PSVersion;
@@ -3018,28 +2984,28 @@ namespace Microsoft.PowerShell
         /// <param name="initialCommand"> </param>
         /// <param name="skipProfiles"></param>
         /// <param name="staMode"></param>
-        /// <param name="importSystemModules"></param>
         /// <param name="configurationName"></param>
         /// <param name="initialCommandArgs"></param>
         internal RunspaceCreationEventArgs(string initialCommand,
                                            bool skipProfiles,
                                            bool staMode,
-                                           bool importSystemModules,
                                            string configurationName,
                                            Collection<CommandParameter> initialCommandArgs)
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;
+#if STAMODE
             StaMode = staMode;
-            ImportSystemModules = importSystemModules;
+#endif
             ConfigurationName = configurationName;
             InitialCommandArgs = initialCommandArgs;
         }
 
         internal string InitialCommand { get; set; }
         internal bool SkipProfiles { get; set; }
+#if STAMODE
         internal bool StaMode { get; set; }
-        internal bool ImportSystemModules { get; set; }
+#endif
         internal string ConfigurationName { get; set; }
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }

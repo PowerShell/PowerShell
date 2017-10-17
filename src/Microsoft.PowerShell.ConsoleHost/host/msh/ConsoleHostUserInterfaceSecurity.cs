@@ -78,127 +78,61 @@ namespace Microsoft.PowerShell
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
-            if (!PromptUsingConsole())
+            PSCredential cred = null;
+            SecureString password = null;
+            string userPrompt = null;
+            string passwordPrompt = null;
+
+            if (!string.IsNullOrEmpty(caption))
             {
-                IntPtr mainWindowHandle = GetMainWindowHandle();
-                return HostUtilities.CredUIPromptForCredential(caption, message, userName, targetName, allowedCredentialTypes, options, mainWindowHandle);
-            }
-            else
-            {
-                PSCredential cred = null;
-                SecureString password = null;
-                string userPrompt = null;
-                string passwordPrompt = null;
+                // Should be a skin lookup
 
-                if (!string.IsNullOrEmpty(caption))
-                {
-                    // Should be a skin lookup
-
-                    WriteLineToConsole();
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                    WriteLineToConsole();
-                }
-
-                if (!string.IsNullOrEmpty(message))
-                {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message));
-                }
-
-                if (string.IsNullOrEmpty(userName))
-                {
-                    userPrompt = ConsoleHostUserInterfaceSecurityResources.PromptForCredential_User;
-
-                    //
-                    // need to prompt for user name first
-                    //
-                    do
-                    {
-                        WriteToConsole(userPrompt, true);
-                        userName = ReadLine();
-                        if (userName == null)
-                        {
-                            return null;
-                        }
-                    }
-                    while (userName.Length == 0);
-                }
-
-                passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
-                );
-
-                //
-                // now, prompt for the password
-                //
-                WriteToConsole(passwordPrompt, true);
-                password = ReadLineAsSecureString();
-                if (password == null)
-                {
-                    return null;
-                }
                 WriteLineToConsole();
-
-                cred = new PSCredential(userName, password);
-
-                return cred;
+                WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
+                WriteLineToConsole();
             }
-        }
 
-        private IntPtr GetMainWindowHandle()
-        {
-#if CORECLR // No System.Diagnostics.Process.MainWindowHandle on CoreCLR;
-            // Returned WindowHandle is used only in 1 case - prompting for credential using GUI dialog, which is not used on Nano,
-            // because on Nano we prompt for credential using console (different code path in 'PromptForCredential' function)
-            return IntPtr.Zero;
-#else
-            System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-            IntPtr mainWindowHandle = currentProcess.MainWindowHandle;
-
-            while ((mainWindowHandle == IntPtr.Zero) && (currentProcess != null))
+            if (!string.IsNullOrEmpty(message))
             {
-                currentProcess = PsUtils.GetParentProcess(currentProcess);
-                if (currentProcess != null)
+                WriteLineToConsole(WrapToCurrentWindowWidth(message));
+            }
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                userPrompt = ConsoleHostUserInterfaceSecurityResources.PromptForCredential_User;
+
+                //
+                // need to prompt for user name first
+                //
+                do
                 {
-                    mainWindowHandle = currentProcess.MainWindowHandle;
+                    WriteToConsole(userPrompt, true);
+                    userName = ReadLine();
+                    if (userName == null)
+                    {
+                        return null;
+                    }
                 }
+                while (userName.Length == 0);
             }
 
-            return mainWindowHandle;
-#endif
-        }
+            passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
+            );
 
-        // Determines whether we should prompt using the Console prompting
-        // APIs
-        private bool PromptUsingConsole()
-        {
-#if CORECLR
-            // on Nano there is no other way to prompt except by using console
-            return true;
-#else
-            bool promptUsingConsole = false;
-            // Get the configuration setting
-            try
+            //
+            // now, prompt for the password
+            //
+            WriteToConsole(passwordPrompt, true);
+            password = ReadLineAsSecureString();
+            if (password == null)
             {
-                promptUsingConsole = ConfigPropertyAccessor.Instance.GetConsolePrompting();
+                return null;
             }
-            catch (System.Security.SecurityException e)
-            {
-                s_tracer.TraceError("Could not read CredUI registry key: " + e.Message);
-                return promptUsingConsole;
-            }
-            catch (InvalidCastException e)
-            {
-                s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
-                return promptUsingConsole;
-            }
-            catch (FormatException e)
-            {
-                s_tracer.TraceError("Could not parse CredUI registry key: " + e.Message);
-                return promptUsingConsole;
-            }
+            WriteLineToConsole();
 
-            s_tracer.WriteLine("DetermineCredUIPolicy: policy == {0}", promptUsingConsole);
-            return promptUsingConsole;
-#endif
+            cred = new PSCredential(userName, password);
+
+            return cred;
         }
     }
 }

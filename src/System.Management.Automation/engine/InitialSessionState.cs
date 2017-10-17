@@ -4163,14 +4163,6 @@ End
         ";
 
         /// <summary>
-        /// This is the default function to use for 'Import System Modules'.
-        /// </summary>
-        /// <remarks>
-        /// Win8: 320909. Retaining the original definition to ensure backward compatability.
-        /// </remarks>
-        private static string s_importSystemModulesText = @"";
-
-        /// <summary>
         /// This is the default function to use for clear-host. On Windows it rewrites the
         /// host, and on Linux, it delegates to the native binary, 'clear'.
         /// </summary>
@@ -4971,8 +4963,6 @@ if($paths) {
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
-            // Win8: 320909. Retaining the original definition to ensure backward compatability.
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("ImportSystemModules", s_importSystemModulesText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true)
         };
