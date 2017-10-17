@@ -21,6 +21,7 @@ add_library(psl-native SHARED
   createhardlink.cpp
   createsymlink.cpp
   followsymlink.cpp
-  createprocess.cpp)
+  createprocess.cpp
+  nativesyslog.cpp)
 
 target_include_directories(psl-native PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
