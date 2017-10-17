@@ -34,7 +34,7 @@ different implementations of PowerShell.
 
 1. Verify you are running the 2.0.0 version of the `dotnet` CLI.
 
-   ```
+   ```powershell
    dotnet --version
    ```
 
@@ -46,15 +46,15 @@ different implementations of PowerShell.
    (the default for classlib projects).
 
    ```powershell
-   dotnet new classlib --name mymodule
+   dotnet new classlib --name MyModule
    ```
 
 3. Add a `global.json` file that specifies that the project requires the `2.0.0` version of
    the .NET Core SDK.  This is necessary to prevent issues if you have more than one
    version of the .NET Core SDK installed.
 
-   ```
-   cd mymodule
+   ```powershell
+   cd MyModule
    dotnet new globaljson --sdk-version 2.0.0
    ```
 
@@ -64,7 +64,7 @@ different implementations of PowerShell.
    Note: As newer versions of this library are released, update the version number
    in this command to match the latest version.
 
-   ```
+   ```powershell
    dotnet add package PowerShellStandard.Library --version 3.0.0-preview-01
    ```
 
@@ -106,14 +106,14 @@ different implementations of PowerShell.
 
    ```powershell
    cd 'bin/Debug/netstandard2.0'
-   Import-Module ./mymodule.dll
+   Import-Module ./MyModule.dll
    Write-TimestampedMessage "Test message."
    ```
 
 ## Using a .NET Standard 2.0 based binary module in Windows PowerShell
-You may have heard that a .NET assembly compiled as a `.NET Standard 2.0 class library`
-will load into both `.NET Core 2.0` applications such as PowerShell Core and
-`.NET Framework 4.6.1` (or higher) applications such as Windows PowerShell.
+You may have heard that a .NET assembly compiled as a .NET Standard 2.0 class library
+will load into both .NET Core 2.0 applications such as PowerShell Core and
+.NET Framework 4.6.1 (or higher) applications such as Windows PowerShell.
 This allows you to build a single, cross-platform binary module.
 
 Unfortunately, this works best when the .NET Framework application, in this case
@@ -134,12 +134,12 @@ binary module will not run correctly in Windows PowerShell.
 Let's see what happens when you attempt use this module in **Windows PowerShell** on
 Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
-1. Copy `mymodule.dll` to a folder on a Windows machine.
+1. Copy `MyModule.dll` to a folder on a Windows machine.
 
 2. Import the module.
 
    ```powershell
-   Import-Module .\mymodule.dll
+   Import-Module .\MyModule.dll
    ```
 
    Note: The module should import without errors.
@@ -163,7 +163,7 @@ Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
    ```
 
 If the command worked, congratulations! You're system was probably updated to
-.NET Framework 4.7.1.  Otherwise, this error indicates that the `mymodule.dll` assembly
+.NET Framework 4.7.1.  Otherwise, this error indicates that the `MyModule.dll` assembly
 can't find the `netstandard.dll` "implementation" assembly for the version of the
 .NET Framework that Windows PowerShell is using.
 
@@ -174,13 +174,13 @@ find the `netstandard.dll` implementation assembly for .NET 4.6.1 in the followi
 `C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib`.
 
 If you copy `netstandard.dll` from this directory to the directory containing
-`mymodule.dll`, the `Write-TimestampedMessage` command will work.  Let's try that.
+`MyModule.dll`, the `Write-TimestampedMessage` command will work.  Let's try that.
 
 1. Install the [.NET Core SDK 2.0 for Windows][net-core-sdk], if it isn't already installed.
 
 2. Start a new Windows PowerShell console. Remember that once a binary assembly is
    loaded into PowerShell it can't be unloaded. Restarting PowerShell is necessary to
-   get it to reload `mymodule.dll`.
+   get it to reload `MyModule.dll`.
 
 3. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
    ```powershell
@@ -190,7 +190,7 @@ If you copy `netstandard.dll` from this directory to the directory containing
 
 4. Import the module and execute the command:
    ```powershell
-   Import-Module .\mymodule.dll
+   Import-Module .\MyModule.dll
    Write-TimestampedMessage "Test message."
    ```
    Now the command should succeed.
