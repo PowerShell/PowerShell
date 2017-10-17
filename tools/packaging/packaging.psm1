@@ -456,7 +456,7 @@ function New-UnixPackage {
 
         if($pscmdlet.ShouldProcess("Create package file system"))
         {
-            New-Item -Force -ItemType SymbolicLink -Path "/tmp/pwsh" -Target "$Destination/$Name" >$null
+            New-Item -Force -ItemType SymbolicLink -Path "/tmp/pwsh" -Target "$Destination/pwsh" >$null
 
             if ($Environment.IsRedHatFamily) {
                 # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
@@ -483,7 +483,7 @@ function New-UnixPackage {
             # if the target of the powershell symlink exists, `fpm` aborts
             # with a `utime` error on macOS.
             # so we move it to make symlink broken
-            $symlink_dest = "$Destination/$Name"
+            $symlink_dest = "$Destination/pwsh"
             $hack_dest = "./_fpm_symlink_hack_powershell"
             if ($Environment.IsMacOS) {
                 if (Test-Path $symlink_dest) {
@@ -501,10 +501,8 @@ function New-UnixPackage {
             Start-NativeExecution { ronn --roff $RonnFile }
 
             # Setup for side-by-side man pages (noop if primary package)
-            $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
-            if ($Name -ne "powershell") {
-                Move-Item $RoffFile $FixedRoffFile
-            }
+            $FixedRoffFile = $RoffFile -replace "powershell.1$", "pwsh.1"
+            Move-Item $RoffFile $FixedRoffFile
 
             # gzip in assets directory
             $GzipFile = "$FixedRoffFile.gz"
@@ -517,7 +515,7 @@ function New-UnixPackage {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $GzipFile
-                chmod 755 "$Staging/$Name" # only the executable should be executable
+                chmod 755 "$Staging/pwsh" # only the executable should be executable
             }
         }
 
@@ -576,10 +574,10 @@ function New-UnixPackage {
             $Arguments += @("--depends", $Dependency)
         }
         if ($AfterInstallScript) {
-        $Arguments += @("--after-install", $AfterInstallScript)
+            $Arguments += @("--after-install", $AfterInstallScript)
         }
         if ($AfterRemoveScript) {
-        $Arguments += @("--after-remove", $AfterRemoveScript)
+            $Arguments += @("--after-remove", $AfterRemoveScript)
         }
         $Arguments += @(
             "$Staging/=$Destination/",
@@ -600,11 +598,12 @@ function New-UnixPackage {
                 }
             }
             if ($AfterInstallScript) {
-            Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
             }
             if ($AfterRemoveScript) {
-            Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
             }
+            Remove-Item -Path $GzipFile -Force -ErrorAction SilentlyContinue
         }
 
         # Magic to get path output
