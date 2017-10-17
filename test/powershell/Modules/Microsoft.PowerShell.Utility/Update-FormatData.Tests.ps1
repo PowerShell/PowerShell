@@ -57,7 +57,7 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
         { Update-FormatData -Prepend $testfile -WhatIf } | Should Not Throw
     }
 
-    It "Update with invalid format xml should fail" {
+    It "Update with invalid format xml should fail" -Pending {
         $xmlContent = @"
 <Configuration>
     <ViewDefinitions>

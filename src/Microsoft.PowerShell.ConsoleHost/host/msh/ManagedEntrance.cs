@@ -63,15 +63,9 @@ namespace Microsoft.PowerShell
                     Thread.Sleep(100);
                 }
                 System.Diagnostics.Debugger.Break();
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
             }
-            else
-            {
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-            }
-#else
-            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
 #endif
+            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
 
             int exitCode = 0;
             try

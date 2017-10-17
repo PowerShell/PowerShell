@@ -1454,51 +1454,6 @@ namespace System.Management.Automation
 
         #region Remove Provider
 
-        private void RemoveProvider(ProviderConfigurationEntry entry)
-        {
-            try
-            {
-                CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-
-                string providerName = GetProviderName(entry);
-                RemoveProvider(providerName, true, context);
-
-                context.ThrowFirstErrorOrDoNothing();
-            }
-            catch (LoopFlowException)
-            {
-                throw;
-            }
-            catch (PipelineStoppedException)
-            {
-                throw;
-            }
-            catch (ActionPreferenceStopException)
-            {
-                throw;
-            }
-            catch (Exception e) // Catch-all OK, 3rd party callout
-            {
-                // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
-                this.ExecutionContext.ReportEngineStartupError(e);
-            }
-        }
-
-        private string GetProviderName(ProviderConfigurationEntry entry)
-        {
-            string name = entry.Name;
-            if (entry.PSSnapIn != null)
-            {
-                name =
-                    string.Format(
-                        System.Globalization.CultureInfo.InvariantCulture,
-                        "{0}\\{1}",
-                        entry.PSSnapIn.Name,
-                        entry.Name);
-            }
-            return name;
-        }
-
         /// <summary>
         /// Removes the provider of the given name.
         /// </summary>

@@ -839,24 +839,22 @@ namespace System.Management.Automation.Runspaces
 
                 if ((hostRunspace == null) || (this == hostRunspace))
                 {
-                    bool openRunspaces = false;
                     // We should close transcripting only if we are closing the last opened runspace.
                     foreach (Runspace runspace in RunspaceList)
                     {
                         // At this stage, the last opened runspace should be at closing state.
                         if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                         {
-                            openRunspaces = true;
-                            break;
+                            return;
                         }
                     }
 
                     PSHostUserInterface host = executionContext.EngineHostInterface.UI;
-                    if (host != null && openRunspaces == false)
+                    if (host != null)
                     {
                         host.StopAllTranscribing();
-                        AmsiUtils.Uninitialize();
                     }
+                    AmsiUtils.Uninitialize();
                 }
             }
 
