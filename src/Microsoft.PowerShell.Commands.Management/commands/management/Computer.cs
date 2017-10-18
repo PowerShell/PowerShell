@@ -35,330 +35,6 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace Microsoft.PowerShell.Commands
 {
-#region Test-Connection
-
-    /// <summary>
-    /// This cmdlet is used to test whether a particular host is reachable across an
-    /// IP network. It works by sending ICMP "echo request" packets to the target
-    /// host and listening for ICMP "echo response" replies. This cmdlet prints a
-    /// statistical summary when finished.
-    /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = RegularParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266", RemotingCapability = RemotingCapability.OwnedByCommand)]
-    [OutputType(typeof(Boolean))]
-    [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_PingStatus")]
-    public class TestConnectionCommand : PSCmdlet
-    {
-#region "Parameters"
-
-        private const string RegularParameterSet = "Default";
-        private const string SourceParameterSet = "Source";
-
-        /// <summary>
-        /// The authentication options for CIM_WSMan connection
-        /// </summary>
-        [Parameter]
-        [ValidateSet(
-            "Default",
-            "Basic",
-            "Negotiate", // can be used with and without credential (without -> PSRP mapped to NegotiateWithImplicitCredential)
-            "CredSSP",
-            "Digest",
-            "Kerberos")] // can be used with and without credential (not sure about implications)
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public string WsmanAuthentication { get; set; } = "Default";
-
-        /// <summary>
-        /// The following is the definition of the input parameter "BufferSize".
-        /// Buffer size sent with the this command. The default value is 32.
-        /// </summary>
-        [Parameter]
-        [Alias("Size", "Bytes", "BS")]
-        [ValidateRange((int)0, (int)65500)]
-        public Int32 BufferSize { get; set; } = 32;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "TimeOut".
-        /// Time-out value in milliseconds. If a response is not received in this time, no response is assumed. The default is 1000 milliseconds.
-        /// </summary>
-        [Parameter]
-        [ValidateRange((int)1, Int32.MaxValue)]
-        public Int32 TimeOut { get; set; } = 1000;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "ComputerName".
-        /// Value of the address requested. The form of the value can be either the
-        /// computer name ("wxyz1234"), IPv4 address ("192.168.177.124"), or IPv6
-        /// address ("2010:836B:4179::836B:4179").
-        /// </summary>
-        [Parameter(Mandatory = true,
-                   Position = 0,
-                   ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [Alias("CN", "IPAddress", "__SERVER", "Server", "Destination")]
-        public String[] ComputerName { get; set; }
-
-        /// <summary>
-        /// The following is the definition of the input parameter "Count".
-        /// Number of echo requests to send.
-        /// </summary>
-        [Parameter]
-        [ValidateRange(1, UInt32.MaxValue)]
-        public Int32 Count { get; set; } = 4;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "Credential".
-        /// Specifies a user account that has permission to perform this action. Type a
-        /// user-name, such as "User01" or "Domain01\User01", or enter a PSCredential
-        /// object, such as one from the Get-Credential cmdlet
-        /// </summary>
-        [Parameter(ParameterSetName = SourceParameterSet, Mandatory = false)]
-        [ValidateNotNullOrEmpty]
-        [Credential]
-        public PSCredential Credential { get; set; }
-
-        /// <summary>
-        /// The following is the definition of the input parameter "FromComputerName".
-        /// Specifies the Computer names where the ping request is originated from.
-        /// </summary>
-        [Parameter(Position = 1, ParameterSetName = SourceParameterSet, Mandatory = true)]
-        [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [Alias("FCN", "SRC")]
-        public String[] Source { get; set; } = new string[] { "." };
-
-        /// <summary>
-        /// The following is the definition of the input parameter "TimeToLive".
-        /// Life span of the packet in seconds. The value is treated as an upper limit.
-        /// All routers must decrement this value by 1 (one). When this value becomes 0
-        /// (zero), the packet is dropped by the router. The default value is 80
-        /// seconds. The hops between routers rarely take this amount of time.
-        /// </summary>
-        [Parameter]
-        [ValidateRange(1, (int)255)]
-        [Alias("TTL")]
-        public Int32 TimeToLive { get; set; } = 80;
-
-        /// <summary>
-        /// delay parameter
-        /// </summary>
-        [Parameter]
-        [ValidateRange(1, 60)]
-        public Int32 Delay { get; set; } = 1;
-
-        /// <summary>
-        /// Quiet parameter
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Quiet { get; set; }
-
-#endregion "parameters"
-#region "Overrides"
-
-        private readonly CancellationTokenSource cancel = new CancellationTokenSource();
-        private Dictionary<string, bool> quietResults = new Dictionary<string, bool>();
-
-        /// <summary>
-        /// Process Record
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            ProcessWSManProtocolForTestConnection();
-        }
-        /// <summary>
-        /// to implement ^C
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            try
-            {
-                cancel.Cancel();
-            }
-            catch (ObjectDisposedException) { }
-            catch (AggregateException) { }
-        }
-#endregion
-
-#region "Private Methods"
-        private string QueryString(string[] machinenames, bool escaperequired, bool selectrequired)
-        {
-            StringBuilder FilterString = new StringBuilder();
-            if (selectrequired)
-            {
-                FilterString.Append("Select * from ");
-                FilterString.Append(ComputerWMIHelper.WMI_Class_PingStatus);
-                FilterString.Append(" where ");
-            }
-            FilterString.Append("((");
-            for (int i = 0; i <= machinenames.Length - 1; i++)
-            {
-                FilterString.Append("Address='");
-                string EscapeComp = machinenames[i].ToString();
-                if (EscapeComp.Equals(".", StringComparison.CurrentCultureIgnoreCase))
-                    EscapeComp = "localhost";
-                if (escaperequired)
-                {
-                    EscapeComp = EscapeComp.Replace("\\", "\\\\'").ToString();
-                    EscapeComp = EscapeComp.Replace("'", "\\'").ToString();
-                }
-                FilterString.Append(EscapeComp.ToString());
-                FilterString.Append("'");
-                if (i < machinenames.Length - 1)
-                {
-                    FilterString.Append(" Or ");
-                }
-            }
-            FilterString.Append(")");
-            FilterString.Append(" And ");
-            FilterString.Append("TimeToLive=");
-            FilterString.Append(TimeToLive);
-            FilterString.Append(" And ");
-            FilterString.Append("BufferSize=");
-            FilterString.Append(BufferSize);
-            FilterString.Append(" And ");
-            FilterString.Append("TimeOut=");
-            FilterString.Append(TimeOut);
-            FilterString.Append(")");
-            return FilterString.ToString();
-        }
-
-        private void ProcessPingStatus(Object pingStatusObj)
-        {
-            Dbg.Diagnostics.Assert(pingStatusObj != null, "Caller should verify that pingStatus != null");
-            //Dbg.Diagnostics.Assert(pingStatusObj.ClassPath.ClassName.Equals("Win32_PingStatus"), "Caller should verify that pingStatus is a Win32_PingStatus object");
-            string destinationAddress = null;
-            UInt32 primaryAddressResolutionStatus;
-            UInt32 statusCode;
-            CimInstance pingStatus = (CimInstance)pingStatusObj;
-            destinationAddress = (string)LanguagePrimitives.ConvertTo(
-                    pingStatus.CimInstanceProperties["Address"].Value.ToString(),
-                    typeof(string),
-                    CultureInfo.InvariantCulture);
-            primaryAddressResolutionStatus = (UInt32)LanguagePrimitives.ConvertTo(
-                    pingStatus.CimInstanceProperties["PrimaryAddressResolutionStatus"].Value,
-                    typeof(UInt32),
-                    CultureInfo.InvariantCulture);
-            statusCode = (UInt32)LanguagePrimitives.ConvertTo(
-                    pingStatus.CimInstanceProperties["StatusCode"].Value,
-                    typeof(UInt32),
-                    CultureInfo.InvariantCulture);
-
-            if (primaryAddressResolutionStatus != 0)
-            {
-                if (!Quiet)
-                {
-                    Win32Exception win32Exception = new Win32Exception(unchecked((int)primaryAddressResolutionStatus));
-                    string message = StringUtil.Format(ComputerResources.NoPingResult, destinationAddress, win32Exception.Message);
-                    Exception pingException = new System.Net.NetworkInformation.PingException(message, win32Exception);
-                    ErrorRecord errorRecord = new ErrorRecord(pingException, "TestConnectionException", ErrorCategory.ResourceUnavailable, destinationAddress);
-                    WriteError(errorRecord);
-                }
-            }
-            else
-            {
-                if (statusCode != 0)
-                {
-                    if (!Quiet)
-                    {
-                        Win32Exception win32Exception = new Win32Exception(unchecked((int)statusCode));
-                        string message = StringUtil.Format(ComputerResources.NoPingResult, destinationAddress, win32Exception.Message);
-                        Exception pingException = new System.Net.NetworkInformation.PingException(message, win32Exception);
-                        ErrorRecord errorRecord = new ErrorRecord(pingException, "TestConnectionException", ErrorCategory.ResourceUnavailable, destinationAddress);
-                        WriteError(errorRecord);
-                    }
-                }
-                else
-                {
-                    this.quietResults[destinationAddress] = true;
-                    if (!Quiet)
-                    {
-                        WriteObject(pingStatusObj);
-                    }
-                }
-            }
-        }
-
-        private void ProcessWSManProtocolForTestConnection()
-        {
-            var operationOptions = new CimOperationOptions
-            {
-                Timeout = TimeSpan.FromMilliseconds(2000),
-                CancellationToken = cancel.Token
-            };
-            int destCount = 0;
-            int sourceCount = 0;
-            foreach (string sourceComp in Source)
-            {
-                try
-                {
-                    sourceCount++;
-                    string sourceMachine;
-                    if ((sourceComp.Equals("localhost", StringComparison.CurrentCultureIgnoreCase)) || (sourceComp.Equals(".", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        sourceMachine = Dns.GetHostName();
-                    }
-                    else
-                    {
-                        sourceMachine = sourceComp;
-                    }
-
-                    destCount++;
-                    string querystring = QueryString(ComputerName, true, true);
-                    WriteDebug(querystring);
-
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, WsmanAuthentication, cancel.Token, this))
-                    {
-                        WriteVerbose(String.Format("WMI query {0} sent to {1}", querystring, sourceComp));
-                        for (int echoRequestCount = 0; echoRequestCount < Count; echoRequestCount++)
-                        {
-                            IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
-                                                                    ComputerWMIHelper.CimOperatingSystemNamespace,
-                                                                    ComputerWMIHelper.CimQueryDialect,
-                                                                    querystring,
-                                                                    operationOptions);
-                            int total = mCollection.ToList().Count;
-                            int cimInsCount = 1;
-                            foreach (CimInstance obj in mCollection)
-                            {
-                                ProcessPingStatus(obj);
-                                cimInsCount++;
-                                // to delay the request, if case to avoid the delay for the last pingrequest
-                                if (cimInsCount < total || echoRequestCount < Count - 1 || sourceCount < Source.Length)
-                                    Thread.Sleep(Delay * 1000);
-                            }
-                        }
-                    }
-                }
-                catch (CimException ex)
-                {
-                    ErrorRecord errorRecord = new ErrorRecord(ex, "TestConnectionException", ErrorCategory.InvalidOperation, null);
-                    WriteError(errorRecord);
-                    continue;
-                }
-                catch (System.Runtime.InteropServices.COMException e)
-                {
-                    ErrorRecord errorRecord = new ErrorRecord(e, "TestConnectionException", ErrorCategory.InvalidOperation, null);
-                    WriteError(errorRecord);
-                    continue;
-                }
-            }
-
-            if (Quiet)
-            {
-                foreach (string destinationAddress in this.ComputerName)
-                {
-                    bool destinationResult = false;
-                    this.quietResults.TryGetValue(destinationAddress, out destinationResult);
-                    WriteObject(destinationResult);
-                }
-            }
-        }
-
-#endregion "Private Methods"
-    }
-#endregion Test-Connection
-
 #region Restart-Computer
 
     /// <summary>
@@ -502,6 +178,7 @@ namespace Microsoft.PowerShell.Commands
 #region "Parameters and PrivateData"
 
         private const string DefaultParameterSet = "DefaultSet";
+        private const int forcedReboot = 6; // see https://msdn.microsoft.com/en-us/library/aa394058(v=vs.85).aspx
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -513,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
             "Negotiate", // can be used with and without credential (without -> PSRP mapped to NegotiateWithImplicitCredential)
             "CredSSP",
             "Digest",
-            "Kerberos")] // can be used with and without credential (not sure about implications)
+            "Kerberos")] // can be used with explicit or implicit credential
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; }
 
@@ -623,23 +300,17 @@ $result = @{}
 foreach ($computerName in $array[1])
 {
     $ret = $null
-    if ($null -eq $array[0])
-    {
-        $ret = Invoke-Command -ComputerName $computerName {$true} -SessionOption (New-PSSessionOption -NoMachineProfile) -ErrorAction SilentlyContinue
+    $arguments = @{
+        ComputerName = $computerName
+        ScriptBlock = { $true }
+        SessionOption = NewPSSessionOption -NoMachineProfile
+        ErrorAction = 'SilentlyContinue'
     }
-    else
+    if ( $null -ne $array[0] )
     {
-        $ret = Invoke-Command -ComputerName $computerName {$true} -SessionOption (New-PSSessionOption -NoMachineProfile) -ErrorAction SilentlyContinue -Credential $array[0]
+        $arguments['Credential'] = $array[0]
     }
-
-    if ($ret -eq $true)
-    {
-        $result[$computerName] = $true
-    }
-    else
-    {
-        $result[$computerName] = $false
-    }
+    $result[$computerName] = (Invoke-Command @arguments) -as [bool]
 }
 $result
 ";
@@ -1157,7 +828,7 @@ $result
             ValidateComputerNames();
 
             object[] flags = new object[] { 2, 0 };
-            if (Force) flags[0] = 6;
+            if (Force) flags[0] = forcedReboot;
 
             if (ParameterSetName.Equals(DefaultParameterSet, StringComparison.OrdinalIgnoreCase))
             {
@@ -1436,6 +1107,7 @@ $result
 #region Private Members
 
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
+        private const int forcedShutdown = 5; // See https://msdn.microsoft.com/en-us/library/aa394058(v=vs.85).aspx
 
 #endregion
 
@@ -1451,7 +1123,7 @@ $result
             "Negotiate", // can be used with and without credential (without -> PSRP mapped to NegotiateWithImplicitCredential)
             "CredSSP",
             "Digest",
-            "Kerberos")] // can be used with and without credential (not sure about implications)
+            "Kerberos")] // can be used with explicit or implicit credential
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; } = "Default";
 
@@ -1513,7 +1185,7 @@ $result
         {
             object[] flags = new object[] { 1, 0 };
             if (Force.IsPresent)
-                flags[0] = 5;
+                flags[0] = forcedShutdown;
 
             ProcessWSManProtocol(flags);
         }//End Processrecord
@@ -1674,7 +1346,7 @@ $result
             "Negotiate", // can be used with and without credential (without -> PSRP mapped to NegotiateWithImplicitCredential)
             "CredSSP",
             "Digest",
-            "Kerberos")] // can be used with and without credential (not sure about implications)
+            "Kerberos")] // can be used with implicit or explicit credential
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; } = "Default";
 

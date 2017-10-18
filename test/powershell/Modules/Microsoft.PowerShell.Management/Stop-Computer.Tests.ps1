@@ -44,7 +44,8 @@ try
 
         It "Should support -computer parameter" {
             Set-HookResult -result $defaultResultValue
-            Stop-Computer -computer (hostname) -ea Stop| Should BeNullOrEmpty
+            $computerNames = "localhost",(hostname)
+            Stop-Computer -computer $computerNames -ea Stop| Should BeNullOrEmpty
         }
     
         It "Should support WsmanAuthentication types" {
