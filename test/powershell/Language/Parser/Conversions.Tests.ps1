@@ -21,6 +21,19 @@ Describe 'conversion syntax' -Tags "CI" {
         ([System.Management.Automation.ActionPreference]"Stop").ToString() | Should Be "Stop"
     }
 
+    It "language conversion uses 'InvariantCulture' by default" {
+        $dateString = "1/11/1111"
+        $expected = [System.Management.Automation.LanguagePrimitives]::ConvertTo($dateString, [datetime], [cultureinfo]::InvariantCulture)
+        $oldCulture = [CultureInfo]::CurrentCulture
+        $result = try {
+            [CultureInfo]::CurrentCulture = 'ru-RU'
+            [datetime] $dateString
+        } finally {
+            [CultureInfo]::CurrentCulture = $oldCulture
+        }
+        $result | Should Be $expected
+    }
+
     Context "Cast object[] to more narrow generic collection" {
         BeforeAll {
             $testCases1 = @(

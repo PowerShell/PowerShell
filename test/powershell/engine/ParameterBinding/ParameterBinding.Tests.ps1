@@ -281,6 +281,42 @@
         }
     }
 
+    It "Verify implicit argument conversion uses InvariantCulture" {
+        function Test-Function {
+            param([DateTime] $date)
+            $date
+        }
+
+        function Test-ScriptCmdlet {
+            [CmdletBinding()]
+            param([DateTime] $date)
+            $date
+        }
+
+        # Explict type cast using 'InvariantCulture'
+        $expected = [System.Management.Automation.LanguagePrimitives]::ConvertTo("1/11/1111", [datetime], [cultureinfo]::InvariantCulture)
+
+        # Cast result with ru-RU culture
+        $ruCulture = [cultureinfo]::GetCultureInfo("ru-RU")
+        $ruCastResult = [System.Management.Automation.LanguagePrimitives]::ConvertTo("1/11/1111", [datetime], $ruCulture)
+
+        # Implict parameter argument conversion should also use 'InvariantCulture'
+        $oldCulture = [CultureInfo]::CurrentCulture
+        $csharpCmdlet, $scriptFunction, $scriptCmdlet = try {
+            [CultureInfo]::CurrentCulture = $ruCulture
+            Get-Date -Date 1/11/1111
+            Test-Function  1/11/1111
+            Test-ScriptCmdlet 1/11/1111
+        } finally {
+            [CultureInfo]::CurrentCulture = $oldCulture
+        }
+
+        $expected | Should Not Be $ruCastResult
+        $csharpCmdlet | Should Be $expected
+        $scriptFunction | Should Be $expected
+        $scriptFunction | Should Be $expected
+    }
+
     Context "Use automatic variables as default value for parameters" {
         BeforeAll {
             ## Explicit use of 'CmdletBinding' make it a script cmdlet

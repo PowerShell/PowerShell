@@ -1282,7 +1282,7 @@ namespace System.Management.Automation
                                 _context.LanguageMode = PSLanguageMode.FullLanguage;
                             }
 
-                            result = LanguagePrimitives.ConvertTo(currentValue, toType, CultureInfo.CurrentCulture);
+                            result = LanguagePrimitives.ConvertTo(currentValue, toType, CultureInfo.InvariantCulture);
                         }
                         finally
                         {
