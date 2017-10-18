@@ -28,15 +28,15 @@ Describe "Certificate Provider tests" -Tags "CI" {
         if(!$IsWindows)
         {
             # Skip for non-Windows platforms
-            $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSdefaultParameterValues = @{ "it:skip" = $true }
+            $defaultParamValues = $global:PSDefaultParameterValues.Clone()
+            $global:PSDefaultParameterValues = @{ "it:skip" = $true }
         }        
     }
 
     AfterAll {
         if(!$IsWindows)
         {
-            $global:PSdefaultParameterValues = $defaultParamValues
+            $global:PSDefaultParameterValues = $defaultParamValues
         }
     }
 
@@ -85,8 +85,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         else
         {
             # Skip for non-Windows platforms
-            $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSdefaultParameterValues = @{ "it:skip" = $true }
+            $defaultParamValues = $global:PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues = @{ "it:skip" = $true }
         }        
     }
     
@@ -98,7 +98,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         }
         else
         {
-            $global:PSdefaultParameterValues = $defaultParamValues
+            $global:PSDefaultParameterValues = $defaultParamValues
         }
     }
 

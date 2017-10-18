@@ -469,6 +469,22 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $result."$testPropertyName" | Should Be $testPropertyValue
         }
     }
+
+    Context "Validate -LiteralPath" {
+        It "Verify New-Item and Remove-Item work with asterisk" {
+            try {
+                $tempPath = "HKCU:\_tmp"
+                $testPath = "$tempPath\*\sub"
+                $null = New-Item -Force $testPath
+                $testPath | Should Exist
+                Remove-Item -LiteralPath $testPath
+                $testPath | Should Not Exist
+            }
+            finally {
+                Remove-Item -Recurse $tempPath -ErrorAction SilentlyContinue
+            }
+        }
+    }
 }
 
 } finally {

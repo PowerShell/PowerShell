@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Description>PowerShell top-level project with .NET CLI host</Description>
-    <AssemblyName>powershell</AssemblyName>
+    <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>linux-x64;osx.10.12-x64;</RuntimeIdentifiers>
   </PropertyGroup>
@@ -16,7 +16,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="*.so;*.dylib;..\..\license_thirdparty_proprietary.txt;..\..\powershell.version;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
+    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -28,8 +28,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="libpsl" Version="6.0.0-*" />
     <PackageReference Include="psrp" Version="1.1.0-*" />
-    <PackageReference Include="PSDesiredStateConfiguration" Version="1.0.0-alpha01" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
   </ItemGroup>
 

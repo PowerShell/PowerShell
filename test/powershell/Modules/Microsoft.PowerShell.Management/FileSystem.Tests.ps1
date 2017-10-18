@@ -199,11 +199,48 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
+
+         It "Set-Location on Unix succeeds with folder with colon: <path>" -Skip:($IsWindows) -TestCases @(
+             @{path="\hello:world"},
+             @{path="\:world"},
+             @{path="/hello:"}
+         ) {
+            param($path)
+            try {
+                New-Item -Path "$testdrive$path" -ItemType Directory > $null
+                Set-Location "$testdrive"
+                Set-Location ".$path"
+                (Get-Location).Path | Should Be "$testdrive/$($path.Substring(1,$path.Length-1))"
+            }
+            finally {
+                Remove-Item -Path "$testdrive$path" -ErrorAction SilentlyContinue
+            }
+         }
+
+         It "Get-Content on Unix succeeds with folder and file with colon: <path>" -Skip:($IsWindows) -TestCases @(
+             @{path="\foo:bar.txt"},
+             @{path="/foo:"},
+             @{path="\:bar"}
+         ) {
+            param($path)
+            try {
+                $testPath = "$testdrive/hello:world"
+                New-Item -Path "$testPath" -ItemType Directory > $null
+                Set-Content -Path "$testPath$path" -Value "Hello"
+                $files = Get-ChildItem "$testPath"
+                $files.Count | Should Be 1
+                $files[0].Name | Should BeExactly $path.Substring(1,$path.Length-1)
+                $files[0] | Get-Content | Should BeExactly "Hello"
+            }
+            finally {
+                Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
+            }
+         }
     }
 
     Context "Validate behavior when access is denied" {
         BeforeAll {
-            $powershell = Join-Path $PSHOME "powershell"
+            $powershell = Join-Path $PSHOME "pwsh"
             if ($IsWindows)
             {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
@@ -369,6 +406,25 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         It "Copy-Item -LiteralPath can copy a file with Unix globbing characters" {
             Copy-Item -LiteralPath $file.FullName -Destination $newPath
             Test-Path -LiteralPath $newPath | Should Be $true
+        }
+    }
+
+    Context "Handle asterisks in name" {
+        It "Remove-Item -LiteralPath should fail if it contains asterisk and file doesn't exist" {
+            { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+        }
+
+        It "Remove-Item -LiteralPath should succeed for file with asterisk in name" -Skip:($IsWindows) {
+            $testPath = "$testdrive\foo*"
+            $testPath2 = "$testdrive\foo*2"
+            New-Item -Path $testPath -ItemType File
+            New-Item -Path $testPath2 -ItemType File
+            Test-Path -LiteralPath $testPath | Should Be $true
+            Test-Path -LiteralPath $testPath2 | Should Be $true
+            { Remove-Item -LiteralPath $testPath } | Should Not Throw
+            Test-Path -LiteralPath $testPath | Should Be $false
+            # make sure wildcard wasn't applied so this file should still exist
+            Test-Path -LiteralPath $testPath2 | Should Be $true
         }
     }
 }
@@ -985,7 +1041,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Filter" {
             Remove-Item "TestDrive:\*" -Filter "*.txt"
-            $result = Get-Item "*.txt"
+            $result = Get-Item "TestDrive:\*.txt"
             $result | Should BeNullOrEmpty
         }
 
@@ -1004,6 +1060,21 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file2 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file1 | Should BeNullOrEmpty
             $file2.Name | Should Be $testFile2
+        }
+
+        It "Verify Path can accept wildcard" {
+            Remove-Item "TestDrive:\*.txt" -Recurse -Force
+            $result = Get-ChildItem "TestDrive:\*.txt"
+            $result | Should BeNullOrEmpty
+        }
+
+        It "Verify no error if wildcard doesn't match: <path>" -TestCases @(
+            @{path="TestDrive:\*.foo"},
+            @{path="TestDrive:\[z]"},
+            @{path="TestDrive:\z.*"}
+        ) {
+            param($path)
+            { Remove-Item $path } | Should Not Throw
         }
     }
 
@@ -1294,6 +1365,27 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
                 throw "Expected exception not thrown"
             }
             catch { $_.FullyQualifiedErrorId | Should Be "Argument,Microsoft.PowerShell.Commands.PopLocationCommand" }
+        }
+    }
+}
+
+Describe "UNC paths" -Tags 'CI' {
+    It "Can Get-ChildItems from a UNC location using <cmdlet>" -Skip:(!$IsWindows) -TestCases @(
+        @{cmdlet="Push-Location"},
+        @{cmdlet="Set-Location"}
+    ) {
+        param($cmdlet)
+        $originalLocation = Get-Location
+        try {
+            $systemDrive = ($env:SystemDrive).Replace(":","$")
+            $testPath = Join-Path "\\localhost" $systemDrive
+            & $cmdlet $testPath
+            Get-Location | Should BeExactly "Microsoft.PowerShell.Core\FileSystem::$testPath"
+            $children = { Get-ChildItem -ErrorAction Stop } | Should Not Throw
+            $children.Count | Should BeGreaterThan 0
+        }
+        finally {
+            Set-Location $originalLocation
         }
     }
 }

@@ -5,7 +5,7 @@ PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and c
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
-[logo]: assets/Powershell_64.png
+[logo]: assets/Powershell_black_64.png
 
 ## Windows PowerShell vs PowerShell Core
 
@@ -29,39 +29,49 @@ You can download and install a PowerShell package for any of the following platf
 | ---------------------------------- | ---------------------- | ----------------------------- |
 | Windows (x64)                      | [.msi][rl-windows-64]  | [Instructions][in-windows]    |
 | Windows (x86)                      | [.msi][rl-windows-86]  | [Instructions][in-windows]    |
+| Ubuntu 17.04                       | [.deb][rl-ubuntu17]    | [Instructions][in-ubuntu17]   |
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
-| Debian 8                           | [.deb][rl-ubuntu14]    | [Instructions][in-deb8]       |
+| Debian 8                           | [.deb][rl-debian8]     | [Instructions][in-deb8]       |
+| Debian 9                           | [.deb][rl-debian9]     | [Instructions][in-deb9]       |
 | CentOS 7                           | [.rpm][rl-centos]      | [Instructions][in-centos]     |
 | Red Hat Enterprise Linux 7         | [.rpm][rl-centos]      | [Instructions][in-rhel7]      |
-| OpenSUSE 42.1                      | [.rpm][rl-opensuse421] | [Instructions][in-opensuse421]|
+| OpenSUSE 42.2                      | [.rpm][rl-centos]      | [Instructions][in-opensuse422]|
+| Fedora 25                          | [.rpm][rl-centos]      | [Instructions][in-fedora25]   |
+| Fedora 26                          | [.rpm][rl-centos]      | [Instructions][in-fedora26]   |
 | Arch Linux                         |                        | [Instructions][in-archlinux]  |
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | macOS 10.12                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
 | Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]
 
-[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win-x64.msi
-[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-win-x86.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell_6.0.0-beta.7-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell_6.0.0-beta.7-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell-6.0.0_beta.7-1.el7.x86_64.rpm
-[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/PowerShell-6.0.0-beta.7-x86_64.AppImage
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.7/powershell-6.0.0-beta.7-osx.10.12-x64.pkg
-[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/powershell-6.0.0_beta.6-1.suse.42.1.x86_64.rpm
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x86.msi
+[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.17.04_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.16.04_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.14.04_amd64.deb
+[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.debian.8_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.debian.9_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0_beta.8-1.rhel.7.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0-beta.8-osx.10.12-x64.pkg
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
 [in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
+[in-ubuntu17]: docs/installation/linux.md#ubuntu-1704
 [in-deb8]: docs/installation/linux.md#debian-8
+[in-deb9]: docs/installation/linux.md#debian-9
 [in-centos]: docs/installation/linux.md#centos-7
 [in-rhel7]: docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
+[in-opensuse422]: docs/installation/linux.md#opensuse-422
+[in-fedora25]: docs/installation/linux.md#fedora-25
+[in-fedora26]: docs/installation/linux.md#fedora-26
 [in-archlinux]: docs/installation/linux.md#arch-linux
 [in-appimage]: docs/installation/linux.md#linux-appimage
 [in-macos]: docs/installation/linux.md#macos-1012
 [in-docker]: docker
-[in-opensuse421]: docs/installation/linux.md#opensuse-421
 [in-kali]: docs/installation/linux.md#kali
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).

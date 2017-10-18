@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Management.Automation;
+using System.Runtime.InteropServices;
 using System.Globalization;
 
 namespace Microsoft.PowerShell.Commands
@@ -13,6 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public static class PSUserAgent
     {
+
+        private static string s_windowsUserAgent;
+
         internal static string UserAgent
         {
             get
@@ -20,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) {4}",
-                    Compatibility, Platform, OS, Culture, App);
+                    Compatibility, PlatformName, OS, Culture, App);
                 return (userAgent);
             }
         }
@@ -35,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} (compatible; MSIE 9.0; {1}; {2}; {3})",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -50,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) Gecko/20100401 Firefox/4.0",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -65,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.500.0 Safari/534.6",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -80,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "Opera/9.70 ({0}; {1}; {2}) Presto/2.2.1",
-                    Platform, OS, Culture);
+                    PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -95,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 // format the user-agent string from the various component parts
                 string userAgent = string.Format(CultureInfo.InvariantCulture,
                     "{0} ({1}; {2}; {3}) AppleWebKit/533.16 (KHTML, like Gecko) Version/5.0 Safari/533.16",
-                    Compatibility, Platform, OS, Culture);
+                    Compatibility, PlatformName, OS, Culture);
                 return (userAgent);
             }
         }
@@ -113,16 +117,41 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 string app = string.Format(CultureInfo.InvariantCulture,
-                    "WindowsPowerShell/{0}", PSVersionInfo.PSVersion);
+                    "PowerShell/{0}", PSVersionInfo.PSVersion);
                 return (app);
             }
         }
 
-        internal static string Platform
+        internal static string PlatformName
         {
             get
             {
-                return ("Windows NT");
+                if (Platform.IsWindows)
+                {
+                    // only generate the windows user agent once
+                    if(s_windowsUserAgent == null){
+                        // find the version in the windows operating system description
+                        string versionText = OS.Substring(OS.LastIndexOf(" ") +1);
+                        Version windowsPlatformversion = new Version(versionText);
+                        s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
+                    }
+
+                    return s_windowsUserAgent;
+                }
+                else if (Platform.IsMacOS)
+                {
+                    return "Macintosh";
+                }
+                else if (Platform.IsLinux)
+                {
+                    return "Linux";
+                }
+                else
+                {
+                    // unknown/unsupported platform
+                    Diagnostics.Assert(false, "Unable to determine Operating System Platform");
+                    return String.Empty;
+                }
             }
         }
 
@@ -130,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+                return RuntimeInformation.OSDescription.Trim();
             }
         }
 

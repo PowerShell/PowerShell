@@ -1,4 +1,4 @@
-﻿# Base class definitions used by the actual Adapter modules
+# Base class definitions used by the actual Adapter modules
 $global:BaseClassDefinitions = @"
 using System;
 

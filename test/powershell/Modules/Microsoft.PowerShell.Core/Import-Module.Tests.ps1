@@ -21,10 +21,16 @@
         { Import-Module -ModuleInfo $a } | Should Not Throw
         (Get-Module -Name $moduleName).Name | Should Be $moduleName
     }
+
+    It "should be able to load an already loaded module" {
+        Import-Module $moduleName
+        { $script:module = Import-Module $moduleName -PassThru } | Should Not Throw
+        Get-Module -Name $moduleName | Should Be $script:module
+    }
 }
 
 Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
-    
+
     BeforeAll {
         $moduleRootPath = Join-Path $TestDrive 'TestModules'
         New-Item $moduleRootPath -ItemType Directory -Force | Out-Null
@@ -67,11 +73,11 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
 Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
     Context "Modules are not loaded from GAC" {
         BeforeAll {
-            [System.Management.Automation.PowerShellAssemblyLoadContextTestHooks]::SetTestHook('AllowGACLoading', $false)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('DisableGACLoading', $true)
         }
 
         AfterAll {
-            [System.Management.Automation.PowerShellAssemblyLoadContextTestHooks]::SetTestHook('AllowGACLoading', $true)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('DisableGACLoading', $false)
         }
 
         It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
@@ -88,3 +94,33 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
         }
     }
 }
+
+Describe "Import-Module for Binary Modules" -Tags 'CI' {
+
+    It "PS should try to load the assembly from file path first" {
+ $src = @"
+using System.Management.Automation;           // Windows PowerShell namespace.
+
+namespace ModuleCmdlets
+{
+  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
+  public class TestBinaryModuleCmdlet1Command : Cmdlet
+  {
+    protected override void BeginProcessing()
+    {
+      WriteObject("BinaryModuleCmdlet1 exported by the ModuleCmdlets module.");
+    }
+  }
+}
+"@
+
+    Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
+    $results = pwsh -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
+
+    #Ignore slash format difference under windows/Unix
+    $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
+    $results[0] | Should Be $path
+    $results[1] | Should BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
+    }
+ }
+

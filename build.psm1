@@ -131,9 +131,13 @@ function Get-EnvironmentInformation
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
+        $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
+        $environment += @{'IsDebian8' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '8'}
+        $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
+        $environment += @{'IsUbuntu17' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '17.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -183,7 +187,7 @@ function Start-BuildNativeWindowsBinaries {
         return
     }
 
-    # cmake is needed to build powershell.exe
+    # cmake is needed to build pwsh.exe
     if (-not (precheck 'cmake' $null)) {
         throw 'cmake not found. Run "Start-PSBootstrap -BuildWindowsNative". You can also install it from https://chocolatey.org/packages/cmake'
     }
@@ -262,6 +266,70 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
     }
 }
 
+function Start-BuildNativeUnixBinaries {
+    param (
+        [switch] $BuildLinuxArm
+    )
+
+    if (-not $Environment.IsLinux -and -not $Environment.IsMacOS) {
+        Write-Warning -Message "'Start-BuildNativeUnixBinaries' is only supported on Linux/macOS platforms"
+        return
+    }
+
+    if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
+    # Verify we have all tools in place to do the build
+    $precheck = $true
+    foreach ($Dependency in 'cmake', 'make', 'g++') {
+        $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+    }
+
+    if ($BuildLinuxArm) {
+        foreach ($Dependency in 'arm-linux-gnueabihf-gcc', 'arm-linux-gnueabihf-g++') {
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+        }
+    }
+
+    # Abort if any precheck failed
+    if (-not $precheck) {
+        return
+    }
+
+    # Build native components
+    $Ext = if ($Environment.IsLinux) {
+        "so"
+    } elseif ($Environment.IsMacOS) {
+        "dylib"
+    }
+
+    $Native = "$PSScriptRoot/src/libpsl-native"
+    $Lib = "$PSScriptRoot/src/powershell-unix/libpsl-native.$Ext"
+    log "Start building $Lib"
+
+    git clean -qfdX $Native
+
+    try {
+        Push-Location $Native
+        if ($BuildLinuxArm) {
+            Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
+            Start-NativeExecution { make -j }
+        }
+        else {
+            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+            Start-NativeExecution { make -j }
+            Start-NativeExecution { ctest --verbose }
+        }
+    } finally {
+        Pop-Location
+    }
+
+    if (-not (Test-Path $Lib)) {
+        throw "Compilation of $Lib failed"
+    }
+}
+
 function Start-PSBuild {
     [CmdletBinding()]
     param(
@@ -299,6 +367,10 @@ function Start-PSBuild {
         [string]$ReleaseTag
     )
 
+    if ($Runtime -eq "linux-arm" -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
     function Stop-DevPowerShell {
         Get-Process powershell* |
             Where-Object {
@@ -325,36 +397,14 @@ function Start-PSBuild {
         }
     }
 
-    # save git commit id to file for PowerShell to include in PSVersionTable
-    $gitCommitId = $ReleaseTag
-    if (-not $gitCommitId) {
-        # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = Get-PSCommitId -WarningAction SilentlyContinue
-    }
-    $gitCommitId > "$psscriptroot/powershell.version"
-
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    # Verify we have all tools in place to do the build
+    # Verify we have .NET SDK in place to do the build, and abort if the precheck failed
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
-
-    if ($Environment.IsLinux -or $Environment.IsMacOS) {
-        foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
-        }
-    }
-
-    if ($RunTime -eq "linux-arm") {
-        foreach ($Dependency in 'arm-linux-gnueabihf-gcc', 'arm-linux-gnueabihf-g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
-        }
-    }
-
-    # Abort if any precheck failed
     if (-not $precheck) {
         return
     }
@@ -441,45 +491,13 @@ Fix steps:
         Start-ResGen
     }
 
-    # Build native components
-    if (($Environment.IsLinux -or $Environment.IsMacOS) -and -not $SMAOnly) {
-        $Ext = if ($Environment.IsLinux) {
-            "so"
-        } elseif ($Environment.IsMacOS) {
-            "dylib"
-        }
-
-        $Native = "$PSScriptRoot/src/libpsl-native"
-        $Lib = "$($Options.Top)/libpsl-native.$Ext"
-        log "Start building $Lib"
-
-        try {
-            Push-Location $Native
-            if ($Runtime -eq "linux-arm") {
-                Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
-                Start-NativeExecution { make -j }
-            }
-            else {
-                Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
-                Start-NativeExecution { make -j }
-                Start-NativeExecution { ctest --verbose }
-            }
-        } finally {
-            Pop-Location
-        }
-
-        if (-not (Test-Path $Lib)) {
-            throw "Compilation of $Lib failed"
-        }
-    }
-
     # handle TypeGen
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs")) {
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen
     }
 
-    # Get the folder path where powershell.exe is located.
+    # Get the folder path where pwsh.exe is located.
     $publishPath = Split-Path $Options.Output -Parent
     try {
         # Relative paths do not work well if cwd is not changed to project
@@ -489,7 +507,7 @@ Fix steps:
 
         if ($CrossGen) {
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-            log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
+            log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             log "PowerShell output: $($Options.Output)"
         }
@@ -553,7 +571,7 @@ function Compress-TestContent {
         $Destination
     )
 
-    Publish-PSTestTools
+    $null = Publish-PSTestTools
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -662,9 +680,9 @@ function New-PSOptions {
     }
 
     $Executable = if ($Environment.IsLinux -or $Environment.IsMacOS) {
-        "powershell"
+        "pwsh"
     } elseif ($Environment.IsWindows) {
-        "powershell.exe"
+        "pwsh.exe"
     }
 
     # Build the Output path
@@ -819,7 +837,7 @@ function Start-PSPester {
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [string]$binDir = (Split-Path (New-PSOptions).Output),
-        [string]$powershell = (Join-Path $binDir 'powershell'),
+        [string]$powershell = (Join-Path $binDir 'pwsh'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
@@ -829,6 +847,16 @@ function Start-PSPester {
         [switch]$PassThru,
         [switch]$IncludeFailingTest
     )
+
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue))
+    {
+        Write-Warning @"
+Pester module not found.
+Make sure that the proper git submodules are installed by running:
+    git submodule update --init
+"@
+        return;
+    }
 
     if ($IncludeFailingTest.IsPresent)
     {
@@ -1384,6 +1412,9 @@ function Start-PSBootstrap {
             }
         }
 
+        # Try to locate dotnet-SDK before installing it
+        Find-Dotnet
+
         # Install dotnet-SDK
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
@@ -1515,7 +1546,6 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.ConsoleHost',
 'Microsoft.PowerShell.Security',
 'System.Management.Automation',
-'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
 'Microsoft.PowerShell.CoreCLR.Eventing',
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
@@ -1621,7 +1651,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs powershell.inc
+        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershell.inc
     } finally {
         Pop-Location
     }
@@ -2060,7 +2090,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
         "Microsoft.PowerShell.PSReadLine.dll",

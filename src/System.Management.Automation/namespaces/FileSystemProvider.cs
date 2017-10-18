@@ -4817,6 +4817,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 parentPath = EnsureDriveIsRooted(parentPath);
             }
+#if !UNIX
+            else if (parentPath.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+            {
+                // make sure we return two backslashes so it still results in a UNC path
+                parentPath = "\\\\";
+            }
+#endif
             return parentPath;
         } // GetParentPath
 

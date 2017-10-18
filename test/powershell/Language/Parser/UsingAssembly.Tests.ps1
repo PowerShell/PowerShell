@@ -79,26 +79,26 @@ public class ABC {}
         }
 #>
         It "Assembly loaded at runtime" -pending {
-            $assemblies = powershell -noprofile -command @"
+            $assemblies = pwsh -noprofile -command @"
     using assembly .\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $true
 
-            $assemblies = powershell -noprofile -command @"
+            $assemblies = pwsh -noprofile -command @"
     using assembly $PSScriptRoot\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $true
 
 
-            $assemblies = powershell -noprofile -command @"
+            $assemblies = pwsh -noprofile -command @"
     using assembly System.Drawing
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "System.Drawing" | Should Be $true
 
-            $assemblies = powershell -noprofile -command @"
+            $assemblies = pwsh -noprofile -command @"
     using assembly 'System.Drawing, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@

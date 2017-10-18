@@ -114,14 +114,21 @@ function Get-WebListenerUrl {
         [switch]$Https,
         [ValidateSet(
             'Cert',
-            'Encoding/Utf8',
+            'Compression',
+            'Delay',
+            'Encoding',
             'Get',
             'Home',
             'Multipart',
-            'Redirect/3',
+            'Redirect',
+            'ResponseHeaders',
             '/'
         )]
-        [String]$Test
+        [String]$Test,
+
+        [String]$TestValue,
+
+        [System.Collections.IDictionary]$Query
     )
     process {
         $runningListener = Get-WebListener
@@ -138,7 +145,25 @@ function Get-WebListenerUrl {
             $Uri.Port = $runningListener.HttpsPort
             $Uri.Scheme = 'Https'
         }
-        $Uri.Path = $Test
+
+        if ($TestValue)
+        {
+            $Uri.Path = '{0}/{1}' -f $Test, $TestValue
+        }
+        else 
+        {
+            $Uri.Path = $Test
+        }
+        $StringBuilder = [System.Text.StringBuilder]::new()
+        foreach ($key in $Query.Keys)
+        {
+            $null = $StringBuilder.Append([System.Net.WebUtility]::UrlEncode($key))
+            $null = $StringBuilder.Append('=')
+            $null = $StringBuilder.Append([System.Net.WebUtility]::UrlEncode($Query[$key].ToString()))
+            $null = $StringBuilder.Append('&')
+        }
+        $Uri.Query = $StringBuilder.ToString()
+
         return [Uri]$Uri.ToString()
     }
 }

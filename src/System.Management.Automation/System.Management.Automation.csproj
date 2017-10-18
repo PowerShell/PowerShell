@@ -7,10 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0" />
     <PackageReference Include="System.Security.AccessControl" Version="4.4.0" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0" />

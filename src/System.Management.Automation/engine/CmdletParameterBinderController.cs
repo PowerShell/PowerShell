@@ -1684,33 +1684,31 @@ namespace System.Management.Automation
                         var cpi = CommandParameterInternal.CreateParameterWithArgument(
                             PositionUtilities.EmptyExtent, varargsParameter.Parameter.Name, "-" + varargsParameter.Parameter.Name + ":",
                             argumentExtent, valueFromRemainingArguments, false);
+
+                        // To make all of the following work similarly (the first is handled elsewhere, but second and third are
+                        // handled here):
+                        //     Set-ClusterOwnerNode -Owners foo,bar
+                        //     Set-ClusterOwnerNode foo bar
+                        //     Set-ClusterOwnerNode foo,bar
+                        // we unwrap our List, but only if there is a single argument of type object[].
+                        if (valueFromRemainingArguments.Count == 1 && valueFromRemainingArguments[0] is object[])
+                        {
+                            cpi.SetArgumentValue(UnboundArguments[0].ArgumentExtent, valueFromRemainingArguments[0]);
+                        }
+
                         try
                         {
                             BindParameter(cpi, varargsParameter, ParameterBindingFlags.ShouldCoerceType);
                         }
                         catch (ParameterBindingException pbex)
                         {
-                            // To make all of the following work similarly (the first is handled elsewhere, but second and third are
-                            // handled here):
-                            //     Set-ClusterOwnerNode -Owners foo,bar
-                            //     Set-ClusterOwnerNode foo bar
-                            //     Set-ClusterOwnerNode foo,bar
-                            // we make one additional attempt at converting, but only if there is a single argument of type object[].
-                            if (valueFromRemainingArguments.Count == 1 && valueFromRemainingArguments[0] is object[])
+                            if (!DefaultParameterBindingInUse)
                             {
-                                cpi.SetArgumentValue(UnboundArguments[0].ArgumentExtent, valueFromRemainingArguments[0]);
-                                BindParameter(cpi, varargsParameter, ParameterBindingFlags.ShouldCoerceType);
+                                throw;
                             }
                             else
                             {
-                                if (!DefaultParameterBindingInUse)
-                                {
-                                    throw;
-                                }
-                                else
-                                {
-                                    ThrowElaboratedBindingException(pbex);
-                                }
+                                ThrowElaboratedBindingException(pbex);
                             }
                         }
                         UnboundArguments.Clear();

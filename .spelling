@@ -60,6 +60,7 @@ debughandler
 DevOps
 DockerFile
 DockerFiles
+DotNetCore
 DottedScopes
 eBook
 enum
@@ -96,6 +97,7 @@ isnot
 json
 korygill
 labeled
+linux-x64
 lockfile
 macOS
 md
@@ -145,6 +147,8 @@ psobjects
 psproxyjobs
 PSReadline
 PSSessionConfiguration
+pwsh
+redistributables
 Register-EngineEvent
 Register-PSSessionConfiguration
 registryprovider
@@ -191,6 +195,7 @@ whitespace
 Win32
 win7
 WinRM
+WiX
 writingpestertests.md
 WSMan
 wsmansessionoption.cs
@@ -222,6 +227,7 @@ alpha.14
 alpha.16
 alpha.17
 alpha.18
+args
 behavioral
 bergmeister
 beta.1
@@ -230,11 +236,16 @@ beta.3
 beta.4
 beta.5
 beta.6
+beta.8
 binding
 bool
+CDXML
 charset
+CI
 cleanup
+CodeMethod
 CodeOwner
+CommandNotFoundException
 ContentType
 ConvertTo-Html
 CoreConsoleHost
@@ -250,7 +261,9 @@ FileCatalog
 FilterHashtable
 foreach
 GetParentProcess
+GitCommitId
 globbing
+HelpersCommon.psm1
 honors
 hostname
 IncludeUserName
@@ -260,14 +273,17 @@ iSazonov
 IsCore
 IsCoreCLR
 jeffbi
+joandrsn
 JsonConfigFileAccessor
 KeyFileParameter
 KeyHandler
 KirkMunro
 kittholland
 kwiknick
+LDSpits
 Lee303
 libpsl-native
+LoadFrom
 markekraus
 meta
 MiaRomero
@@ -285,20 +301,28 @@ PetSerAl
 powercode
 PowerShellProperties
 preview1-24530-04
+ProductVersion
+PRs
 PSDrive
 PseudoParameterBinder
 PSReadLine
 PSScriptAnalyzer
+PSVersion
 PVS-Studio
 Pwrshplughin.dll
 rc2-24027
 rc3-24011
+Raspbian
+README.md
 RelationLink
 richardszalay
 rkeithhill
+SemVer
 shebang
 ShellExecute
+showwindow
 startup
+startuptype
 stdin
 StringBuilder
 SxS
@@ -310,7 +334,9 @@ TimCurwick
 timestamp
 TimeZone
 TPA
+Travis
 TTY's
+UserAgent
 UserData
 Utf8
 UTF8NoBOM
@@ -378,6 +404,14 @@ _script.ps1
 _script.ps1.
 #endregion
 
+#region demos/Raspberry-Pi/README.md Overrides
+ - demos/Raspberry-Pi/README.md
+2.0.x
+2.1.x
+Raspbian
+toolchain
+#endregion
+
 #region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
@@ -421,6 +455,13 @@ usr
 Get-SystemDJournal
 journalctl
 SystemD
+#endregion
+
+#region demos/WindowsPowerShellModules/README.md Overrides
+ - demos/WindowsPowerShellModules/README.md
+PowerShellGallery
+PSSnapins
+WindowsPSModulePath
 #endregion
 
 #region docker/README.md Overrides
@@ -541,8 +582,10 @@ sample-dotnet2
 
 #region docs/installation/linux.md Overrides
  - docs/installation/linux.md
+libcurl
 OpenSUSE
 TravisEz13
+zypper
 #endregion
 
 #region docs/installation/windows.md Overrides
@@ -645,7 +688,6 @@ PowerShellCore
 Ronn
 Toolset
 v6
-WiX
 #endregion
 
 #region docs/testing-guidelines/PowerShellCoreTestStatus.md Overrides
@@ -1148,4 +1190,9 @@ Start-CodeCoverageRun
 tests.zip
 v5.0
 v6.0.
+#endregion
+
+#region test/tools/WebListener/README.md Overrides
+ - test/tools/WebListener/README.md
+ResponseHeaders
 #endregion

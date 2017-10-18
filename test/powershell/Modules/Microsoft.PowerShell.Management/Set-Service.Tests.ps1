@@ -20,7 +20,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "SetServiceCommand can be used as API for '<parameter>' with '<value>'" -TestCases @(
-        @{parameter = "ComputerName"; value = "foo"},
         @{parameter = "Name"        ; value = "bar"},
         @{parameter = "DisplayName" ; value = "hello"},
         @{parameter = "Description" ; value = "hello world"},
@@ -108,7 +107,8 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         @{parameter = "StartupType"    ; value = "Disabled"},
         @{parameter = "StartupType"    ; value = "Manual"},
         @{parameter = "Credential"     ; value = (
-                [System.Management.Automation.PSCredential]::new("username", 
+                [System.Management.Automation.PSCredential]::new("username",
+                    #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
                     (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)))
         }
         @{parameter = "DependsOn"      ; value = "foo", "bar"}
@@ -132,7 +132,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $creds = [pscredential]::new(".\$startUsername", $password)
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe";
+                BinaryPathName = "$PSHOME\pwsh.exe";
                 StartupType    = "Manual";
                 Credential     = $creds
             }
@@ -162,7 +162,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         try {
             $parameters = @{
                 Name           = $name;
-                BinaryPathName = "$PSHOME\powershell.exe";
+                BinaryPathName = "$PSHOME\pwsh.exe";
                 StartupType    = $startupType;
             }
             if ($description) {
@@ -206,7 +206,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $servicename = "testremoveservice"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -219,12 +219,12 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
-    It "Remove-Service can accept pipeline input of a ServiceController" {
+    It "Remove-Service can accept a ServiceController as pipeline input" {
         try {
             $servicename = "testremoveservice"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -268,13 +268,13 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
-    It "Set-Service can accept pipeline input of a ServiceController" {
+    It "Set-Service can accept a ServiceController as pipeline input" {
         try {
             $servicename = "testsetservice"
             $newdisplayname = "newdisplayname"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -287,9 +287,30 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     }
 
+    It "Set-Service can accept a ServiceController as positional input" {
+        try {
+            $servicename = "testsetservice"
+            $newdisplayname = "newdisplayname"
+            $parameters = @{
+                Name           = $servicename;
+                BinaryPathName = "$PSHOME\pwsh.exe"
+            }
+            $service = New-Service @parameters
+            $service | Should Not BeNullOrEmpty
+            $script = { Set-Service $service -DisplayName $newdisplayname }
+            { & $script } | Should Not Throw
+            $service = Get-Service -Name $servicename
+            $service.DisplayName | Should BeExactly $newdisplayname
+        }
+        finally {
+            Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
+        }
+    }
+
     It "Using bad parameters will fail for '<name>' where '<parameter>' = '<value>'" -TestCases @(
         @{cmdlet="New-Service"; name = 'credtest'    ; parameter = "Credential" ; value = (
-            [System.Management.Automation.PSCredential]::new("username", 
+            [System.Management.Automation.PSCredential]::new("username",
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             (ConvertTo-SecureString "PlainTextPassword" -AsPlainText -Force)));
             errorid = "CouldNotNewService,Microsoft.PowerShell.Commands.NewServiceCommand"},
         @{cmdlet="New-Service"; name = 'badstarttype'; parameter = "StartupType"; value = "System";
@@ -302,7 +323,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         param($cmdlet, $name, $parameter, $value, $errorid)
         $parameters = @{$parameter = $value; Name = $name; ErrorAction = "Stop"}
         if ($cmdlet -eq "New-Service") {
-            $parameters += @{Binary = "$PSHOME\powershell.exe"}; 
+            $parameters += @{Binary = "$PSHOME\pwsh.exe"};
         }
         { & $cmdlet @parameters } | ShouldBeErrorId $errorid
     }

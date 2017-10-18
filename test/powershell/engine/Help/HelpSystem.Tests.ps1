@@ -188,10 +188,14 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+        ## This is needed for getting about topics. We use -Force, so we always update.
+        Update-Help -Force
     }
 
     AfterAll {
         Remove-Item $modulePath -Recurse -Force
+        # Remove all the help content.
+        Get-ChildItem -Path $PSHOME -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
     It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
@@ -219,7 +223,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
         {
             $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue
         }
-        
+
         try
         {
             $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
@@ -234,11 +238,11 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
 }
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
-    
-    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally. 
+
+    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally.
     # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
     # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
-  
+
   BeforeAll {
     $helpFile1 = "about_testCase1.help.txt"
     $helpFile2 = "about_testCase.2.help.txt"
@@ -249,7 +253,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue -Force
     # Create at least one help file matches "about*" pattern
     $null = New-Item -ItemType File -Path $helpFilePath1 -Value "about_test1" -ErrorAction SilentlyContinue
-    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue 
+    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue
   }
 
   # Remove the test files
@@ -271,6 +275,30 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
             $result
         )
         $command.Invoke() | Should Be $result
+    }
+}
+
+  Describe "Get-Help should find pattern alias" -Tags "CI" {
+    # Remove test alias
+    AfterAll {
+        Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
+    }
+
+    It "Get-Help should find alias as command" {
+       (Get-Help where).Name | Should BeExactly "Where-Object"
+    }
+
+    It "Get-Help should find alias with ? pattern" {
+       $help = Get-Help wher?
+       $help.Category | Should BeExactly "Alias"
+       $help.Synopsis | Should BeExactly "Where-Object"
+    }
+
+    It "Get-Help should find alias with * pattern" {
+       Set-Alias -Name testAlias1 -Value Where-Object
+       $help = Get-Help testAlias1*
+       $help.Category | Should BeExactly "Alias"
+       $help.Synopsis | Should BeExactly "Where-Object"
     }
 
 }

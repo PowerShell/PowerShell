@@ -1,10 +1,9 @@
-# Docker image file that describes an OpenSUSE 42.1 (AKA leap 42.1) image with PowerShell installed from PowerShell Release
+# Docker image file that describes an OpenSUSE 42.2 image with PowerShell installed from PowerShell Release
+
 FROM opensuse:42.2
 
-ARG POWERSHELL_VERSION=6.0.0_beta.6
-ARG POWERSHELL_RELEASE=v6.0.0-beta.6
-ARG FORK=PowerShell
-ARG POWERSHELL_PACKAGE=powershell-$POWERSHELL_VERSION-1.suse.42.1.x86_64.rpm
+ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_PACKAGE=powershell-6.0.0-beta.8-linux-x64.tar.gz
 ARG IMAGE_NAME=microsoft/powershell:opensuse42.2
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -31,14 +30,28 @@ RUN zypper --non-interactive update --skip-interactive \
     && zypper --non-interactive install \
         glibc-locale \
         glibc-i18ndata \
+        tar \
         curl \
-    && rpm --import https://packages.microsoft.com/keys/microsoft.asc \
-    && zypper --non-interactive install https://github.com/$FORK/PowerShell/releases/download/$POWERSHELL_RELEASE/$POWERSHELL_PACKAGE \
+        libunwind \
+        libicu \
+        openssl \
     && zypper --non-interactive clean --all
 
 # Setup the locale
 ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
+
+# Get the InstallTarballPackage.sh script
+ADD https://raw.githubusercontent.com/PowerShell/PowerShell/master/docker/InstallTarballPackage.sh /InstallTarballPackage.sh
+
+# Add execution permission
+RUN chmod +x /InstallTarballPackage.sh
+
+# Install powershell from tarball package
+RUN /InstallTarballPackage.sh $POWERSHELL_VERSION $POWERSHELL_PACKAGE
+
+# Remove the script
+RUN rm -f /InstallTarballPackage.sh
 
 CMD [ "powershell" ]

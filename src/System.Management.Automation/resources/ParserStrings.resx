@@ -420,10 +420,12 @@ Possible matches are</value>
     <value>Missing statement block in switch statement clause.</value>
   </data>
   <data name="MissingForeachExpression" xml:space="preserve">
-    <value>Missing expression in foreach loop.</value>
+    <value>Missing expression in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingForeachStatement" xml:space="preserve">
-    <value>Missing statement body in foreach loop.</value>
+    <value>Missing statement body in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="OnlyOneParameterListAllowed" xml:space="preserve">
     <value>The param statement cannot be used if arguments were specified in the function declaration.</value>
@@ -516,13 +518,16 @@ Possible matches are</value>
     <value>Missing '{' in switch statement.</value>
   </data>
   <data name="MissingVariableNameAfterForeach" xml:space="preserve">
-    <value>Missing variable name after foreach.</value>
+    <value>Missing variable name after foreach.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingInInForeach" xml:space="preserve">
-    <value>Missing 'in' after variable in foreach loop.</value>
+    <value>Missing 'in' after variable in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
-    <value>Missing closing ')' after expression part of foreach loop.</value>
+    <value>Missing closing ')' after expression part of foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
     <value>Missing opening '(' after keyword '{0}'.</value>

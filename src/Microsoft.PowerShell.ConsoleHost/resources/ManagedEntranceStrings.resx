@@ -122,123 +122,119 @@
 Copyright (C) Microsoft Corporation. All rights reserved.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
-    <value>PowerShell[.exe] [-PSConsoleFile &lt;file&gt; | -Version &lt;version&gt;]
-    [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive] [-Interactive]
-    [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}]
-    [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
-    [-ConfigurationName &lt;string&gt;]
-    [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
-                  | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
-    [-File &lt;filePath&gt; &lt;args&gt;] [-ExecutionPolicy &lt;ExecutionPolicy&gt;]
+    <value>Usage: powershell[.exe] [[-File] &lt;filePath&gt; [args]]
+                        [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
+                                      | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+                        [-ConfigurationName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                        [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                        [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                        [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
 
-PowerShell[.exe] -Help | -? | /?
+       powershell[.exe] -h | -Help | -? | /?
 
--PSConsoleFile
-    Loads the specified PowerShell console file. To create a console
-    file, use Export-Console in PowerShell.
+PowerShell Online Help https://aka.ms/pscore6-docs
 
--Version
-    Starts the specified version of PowerShell.
-    Enter a version number with the parameter, such as "-version 2.0".
+All parameters are case-insensitive.
 
--NoLogo
-    Hides the copyright banner at startup.
+-Command | -c
+    Executes the specified commands (and any parameters) as though they were typed
+    at the PowerShell command prompt, and then exits, unless NoExit is specified.
+    The value of Command can be "-", a string. or a script block.
 
--NoExit
-    Does not exit after running startup commands.
-
--Sta
-    Starts the shell using a single-threaded apartment.
-    Single-threaded apartment (STA) is the default.
-
--Mta
-    Start the shell using a multithreaded apartment.
-
--NoProfile
-    Does not load the PowerShell profile.
-
--NonInteractive
-    Does not present an interactive prompt to the user.
-
--Interactive
-    Present an interactive prompt to the user.
-
--InputFormat
-    Describes the format of data sent to PowerShell. Valid values are
-    "Text" (text strings) or "XML" (serialized CLIXML format).
-
--OutputFormat
-    Determines how output from PowerShell is formatted. Valid values
-    are "Text" (text strings) or "XML" (serialized CLIXML format).
-
--WindowStyle
-    Sets the window style to Normal, Minimized, Maximized or Hidden.
-
--EncodedCommand
-    Accepts a base-64-encoded string version of a command. Use this parameter
-    to submit commands to PowerShell that require complex quotation
-    marks or curly braces.
-
--ConfigurationName
-    Specifies a configuration endpoint in which PowerShell is run.
-    This can be any endpoint registered on the local machine including the
-    default PowerShell remoting endpoints or a custom endpoint having
-    specific user role capabilities.
-
--File
-    Runs the specified script in the local scope ("dot-sourced"), so that the
-    functions and variables that the script creates are available in the
-    current session. Enter the script file path and any parameters.
-    File must be the last parameter in the command, because all characters
-    typed after the File parameter name are interpreted
-    as the script file path followed by the script parameters.
-
--ExecutionPolicy
-    Sets the default execution policy for the current session and saves it
-    in the $env:PSExecutionPolicyPreference environment variable.
-    This parameter does not change the PowerShell execution policy
-    that is set in the registry.
-
--Command
-    Executes the specified commands (and any parameters) as though they were
-    typed at the PowerShell command prompt, and then exits, unless
-    NoExit is specified. The value of Command can be "-", a string. or a
-    script block.
-
-    If the value of Command is "-", the command text is read from standard
-    input.
+    If the value of Command is "-", the command text is read from standard input.
 
     If the value of Command is a script block, the script block must be enclosed
-    in braces ({}). You can specify a script block only when running PowerShell.exe
+    in braces ({}). You can specify a script block only when running 'powershell'
     in PowerShell. The results of the script block are returned to the
     parent shell as deserialized XML objects, not live objects.
 
-    If the value of Command is a string, Command must be the last parameter
-    in the command , because any characters typed after the command are
-    interpreted as the command arguments.
+    If the value of Command is a string, Command must be the last parameter in the command,
+    because any characters typed after the command are interpreted as the command arguments.
 
     To write a string that runs a PowerShell command, use the format:
     "&amp; {&lt;command&gt;}"
     where the quotation marks indicate a string and the invoke operator (&amp;)
     causes the command to be executed.
 
--Help, -?, /?
-    Shows this message. If you are typing a PowerShell.exe command in Windows
-    PowerShell, prepend the command parameters with a hyphen (-), not a forward
-    slash (/). You can use either a hyphen or forward slash in Cmd.exe.
+    Example:
+        powershell -Command {Get-WinEvent -LogName security}
+        powershell -command "&amp; {Get-WinEvent -LogName security}"
 
-EXAMPLES
-    PowerShell -PSConsoleFile SqlSnapIn.Psc1
-    PowerShell -version 2.0 -NoLogo -InputFormat text -OutputFormat XML
-    PowerShell -ConfigurationName AdminRoles
-    PowerShell -Command {Get-EventLog -LogName security}
-    PowerShell -Command "&amp; {Get-EventLog -LogName security}"
-    PowerShell HelloWorld.ps1
+-ConfigurationName | -config
+    Specifies a configuration endpoint in which PowerShell is run.
+    This can be any endpoint registered on the local machine including the default PowerShell
+    remoting endpoints or a custom endpoint having specific user role capabilities.
 
-    # To use the -EncodedCommand parameter:
-    $command = 'dir "c:\program files" '
-    $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
-    $encodedCommand = [Convert]::ToBase64String($bytes)
-    powershell.exe -encodedCommand $encodedCommand</value>
+    Example: powershell -configurationmame AdminRoles
+
+-EncodedCommand | -e | -ec
+    Accepts a base64 encoded string version of a command. Use this parameter to submit
+    commands to PowerShell that require complex quotation marks or curly braces.
+
+    Example:
+        $command = 'dir "c:\program files" '
+        $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+        $encodedCommand = [Convert]::ToBase64String($bytes)
+        powershell -encodedcommand $encodedCommand
+
+-ExecutionPolicy | -ex | -ep
+    Sets the default execution policy for the current session and saves it
+    in the $env:PSExecutionPolicyPreference environment variable.
+    This parameter does not change the PowerShell execution policy
+    that is set in the registry.
+
+    Example: powershell -ExecutionPolicy RemoteSigned
+
+-File | -f
+    Default parameter if no parameters is present but any values is present in the command line.
+    Runs the specified script in the local scope ("dot-sourced"), so that the functions
+    and variables that the script creates are available in the current session.
+    Enter the script file path and any parameters. File must be the last parameter
+    in the command, because all characters typed after the File parameter name are interpreted
+    as the script file path followed by the script parameters.
+
+    Example: powershell HelloWorld.ps1
+
+-Help | -h | -? | /?
+    Shows this message. If you are typing a 'powershell' command in PowerShell on Windows
+    system, prepend the command parameters with a hyphen (-), not a forward slash (/).
+    You can use either a hyphen or forward slash in Cmd.exe.
+
+-InputFormat | -in | -if
+    Describes the format of data sent to PowerShell.
+    Valid values are "Text" (text strings) or "XML" (serialized CLIXML format).
+
+-Interactive | -i
+    Present an interactive prompt to the user. Inverse for NonInteractive parameter.
+
+-NoExit | -noe
+    Does not exit after running startup commands.
+
+    Example: powershell.exe -NoExit -Command Get-Date
+
+-NoLogo | -nol
+    Hides the copyright banner at startup.
+
+-NonInteractive | -noni
+    Does not present an interactive prompt to the user. Inverse for Interactive parameter.
+
+-NoProfile | -nop
+    Does not load the PowerShell profiles.
+
+-OutputFormat | -o | -of
+    Determines how output from PowerShell is formatted. Valid values
+    are "Text" (text strings) or "XML" (serialized CLIXML format).
+    Default is "Text".
+
+    Example: powershell -o XML -c Get-Date
+
+-Version | -v
+    Shows the version of PowerShell and exits. Additional arguments are ignored.
+
+    Example: powershell -v
+
+-WindowStyle | -w
+    Sets the window style to Normal, Minimized, Maximized or Hidden.
+    </value>
   </data>
 </root>

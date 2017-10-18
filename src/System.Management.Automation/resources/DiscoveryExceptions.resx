@@ -136,7 +136,8 @@
     <value>Cannot retrieve an instance of CommandDiscovery.</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>The term '{0}' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
     <value>Argument '{0}' is not recognized as a cmdlet: {1}</value>

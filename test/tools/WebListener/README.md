@@ -38,6 +38,12 @@ Returns a static HTML page containing links and descriptions of the available te
 
 Returns a JSON object containing the details of the Client Certificate if one is provided in the request.
 
+```powershell
+$certificate = Get-WebListenerClientCertificate
+$uri = Get-WebListenerUrl -Test 'Cert' -Https 
+Invoke-RestMethod -Uri $uri -Certificate $certificate
+```
+
 Response when certificate is provided in request:
 ```json
 {
@@ -59,9 +65,79 @@ Response when certificate is not provided in request:
 }
 ```
 
+## /Compression/Deflate/
+Returns the same results as the Get test with deflate compression.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Compression' -TestValue 'Deflate'
+Invoke-RestMethod -Uri $uri
+```
+
+```json
+{
+  "args": {},
+  "origin": "127.0.0.1",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) PowerShell/6.0.0",
+    "Host": "localhost:8083"
+  },
+  "url": "http://localhost:8083/Compression/Deflate"
+}
+```
+
+## /Compression/Gzip/
+Returns the same results as the Get test with gzip compression.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Compression' -TestValue 'Gzip'
+Invoke-RestMethod -Uri $uri
+```
+
+```json
+{
+  "args": {},
+  "origin": "127.0.0.1",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) PowerShell/6.0.0",
+    "Host": "localhost:8083"
+  },
+  "url": "http://localhost:8083/Compression/Gzip"
+}
+```
+
+## /Delay/
+
+Returns the same results as the Get test. If a number is supplied, the server will wait that many seconds before returning a response. This can be used to test timeouts.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
+Invoke-RestMethod -Uri $uri
+```
+
+After 5 Seconds:
+
+```json
+{
+  "args": {
+    
+  },
+  "origin": "127.0.0.1",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.15063.608",
+    "Host": "localhost:8083"
+  },
+  "url": "http://localhost:8083/Delay/5"
+}
+```
+
 ## /Encoding/Utf8/
 
 Returns page containing UTF-8 data.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
+Invoke-RestMethod -Uri $uri
+```
 
 
 ## /Get/
@@ -69,7 +145,8 @@ Returns page containing UTF-8 data.
 Returns a JSON object containing the Request URL, Request Headers, GET Query Fields and Values, and Origin IP. This emulates the functionality of [HttpBin's get test](https://httpbin.org/get).
 
 ```powershell
-Invoke-WebRequest -Uri 'http://localhost:8083/Get/' -Body @{TestField = 'TestValue'}
+$uri = Get-WebListenerUrl -Test 'Get'
+Invoke-RestMethod -Uri $uri -Body @{TestField = 'TestValue'}
 ```
 
 ```json
@@ -94,6 +171,11 @@ Provides an HTML form for `multipart/form-data` submission.
 
 ### POST
 Accepts a `multipart/form-data` submission and returns a JSON object containing information about the submission including the items and files submitted.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Multipart'
+Invoke-RestMethod -Uri $uri -Body $multipartData -Method 'POST'
+```
 
 ```json
 {
@@ -135,7 +217,13 @@ Accepts a `multipart/form-data` submission and returns a JSON object containing 
 
 Will 302 redirect to `/Get/`. If a number is supplied, redirect will occur that many times. Can be used to test maximum redirects.
 
+```powershell
+$uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '2'
+Invoke-RestMethod -Uri $uri
+```
+
 Request 1:
+
 ```none
 GET http://localhost:8083/Redirect/2 HTTP/1.1
 Connection: Keep-Alive
@@ -144,6 +232,7 @@ Host: localhost:8083
 ```
 
 Response 1:
+
 ```none
 HTTP/1.1 302 Found
 Date: Fri, 15 Sep 2017 10:46:41 GMT
@@ -179,4 +268,35 @@ Location: /Get/
 <title>Redirecting...</title>
 <h1>Redirecting...</h1>
 <p>You should be redirected automatically to target URL: <a href="/Get/">/Get/</a>.  If not click the link.
+```
+
+## /ResponseHeaders/
+
+Will return the response headers passed in query string. The response body will be the supplied headers as a JSON object.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = 'custom'; 'x-header-01' = 'value01'; 'x-header-02' = 'value02'}
+Invoke-RestMethod -Uri $uri 
+```
+
+Response Headers:
+
+```none
+HTTP/1.1 200 OK
+Date: Sun, 08 Oct 2017 18:20:38 GMT
+Transfer-Encoding: chunked
+Server: Kestrel
+x-header-02: value02
+x-header-01: value01
+Content-Type: custom
+```
+
+Body:
+
+```json
+{
+    "Content-Type": "custom",
+    "x-header-02": "value02",
+    "x-header-01": "value01"
+}
 ```

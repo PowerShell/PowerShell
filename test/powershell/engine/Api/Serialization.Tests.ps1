@@ -83,6 +83,7 @@ Describe "Serialization Tests" -tags "CI" {
     }
 
     It 'Test SecureString serialize and deserialize work as expected.' {
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $inputObject = Convertto-Securestring -String "PowerShellRocks!" -AsPlainText -Force
         SerializeAndDeserialize($inputObject).Length | Should be $inputObject.Length
 

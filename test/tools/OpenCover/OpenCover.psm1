@@ -611,7 +611,7 @@ function Install-OpenCover
 .Synopsis
    Invoke-OpenCover runs tests under OpenCover to collect code coverage.
 .Description
-   Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
+   Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell located at $PowerShellExeDirectory.
 .EXAMPLE
    Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win7-x64
 #>
@@ -654,8 +654,8 @@ function Invoke-OpenCover
         }
     }
 
-    # check to be sure that powershell.exe is present
-    $target = "${PowerShellExeDirectory}\powershell.exe"
+    # check to be sure that pwsh.exe is present
+    $target = "${PowerShellExeDirectory}\pwsh.exe"
     if ( ! (test-path $target) )
     {
         throw "$target does not exist, use 'Start-PSBuild -configuration CodeCoverage'"
@@ -664,8 +664,10 @@ function Invoke-OpenCover
     # create the arguments for OpenCover
 
     $updatedEnvPath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
+    $testToolsExePath = (Resolve-Path(Join-Path $TestPath -ChildPath "..\tools\TestExe\bin")).Path
+    $updatedProcessEnvPath = "${testToolsExePath};${env:PATH}"
 
-    $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}';"
+    $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}'; `$env:Path = '${updatedProcessEnvPath}';"
     $targetArgs = "${startupArgs}", "Invoke-Pester","${TestPath}","-OutputFormat $PesterLogFormat"
 
     if ( $CIOnly )
@@ -700,12 +702,12 @@ function Invoke-OpenCover
             # '&' invoke caused issues with cmdline parameters for opencover.console.exe
             $elevatedFile = "$env:temp\elevated.ps1"
             "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -force
-            powershell.exe -file $elevatedFile
+            pwsh.exe -file $elevatedFile
 
             # invoke OpenCover unelevated and poll for completion
             $unelevatedFile = "$env:temp\unelevated.ps1"
             "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
-            runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
+            runas.exe /trustlevel:0x20000 "pwsh.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
             # timeout of 6 hours
             # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.

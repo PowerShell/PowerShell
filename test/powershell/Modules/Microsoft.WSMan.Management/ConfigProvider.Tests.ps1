@@ -158,6 +158,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         }
 
         It "Set-Item on plugin RunAsUser should fail for invalid creds" {
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
             $creds = [pscredential]::new((Get-Random),$password)
             $exception = { Set-Item $testPluginPath\RunAsUser $creds } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
@@ -176,6 +177,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         }
 
         It "Set-Item on plugin RunAsUser should fail for invalid password" {
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
             $creds = [pscredential]::new($testUser,$password)
             $exception = { Set-Item $testPluginPath\RunAsUser $creds } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
@@ -183,7 +185,9 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         }
 
         It "Set-Item on password without user on plugin should fail for <password>" -TestCases @(
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             @{password=(ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force)},
+            #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             @{password="hello"}
         ) {
             param($password)
@@ -292,11 +296,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 # not a .Net type so can't use BeOfType
                 $newItem.PSObject.TypeNames[0] | Should Be "Microsoft.WSMan.Management.WSManConfigContainerElement#ComputerLevel"
                 $newItem.Name | Should Be $expected
-                Remove-Item WSMan:\$name
+                Remove-Item WSMan:\$name -Recurse -Force
                 "WSMan:\$name" | Should Not Exist
             }
             finally {
-                Remove-Item WSMan:\$name -Force -ErrorAction SilentlyContinue
+                Remove-Item WSMan:\$name -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -314,11 +318,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                         $property.Value | Should Be $listenerXml.Listener.$($property.Name)
                     }
                 }
-                Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Force
+                Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Recurse -Force
                 $newListener.PSPath | Should Not Exist
             }
             finally {
-                Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Force -ErrorAction SilentlyContinue
+                Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -332,11 +336,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                     -RunAsCredential $creds
                 $expectedMissingProperties = @("InitializationParameters")
                 Test-Plugin -Plugin $plugin -expectedMissingProperties $expectedMissingProperties
-                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\
+                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Recurse -Force
                 "WSMan:\localhost\Plugin\TestPlugin2" | Should Not Exist
             }
             finally {
-                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Force -ErrorAction SilentlyContinue
+                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -363,11 +367,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             try {
                 $plugin = New-Item -Path WSMan:\localhost\Plugin -File $testdrive\plugin.xml -Name TestPlugin2
                 Test-Plugin -Plugin $plugin
-                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\
+                Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Recurse -Force
                 "WSMan:\localhost\Plugin\TestPlugin2\" | Should Not Exist
             }
             finally {
-                Remove-Item "WSMan:\localhost\Plugin\TestPlugin2\" -Force -ErrorAction SilentlyContinue
+                Remove-Item "WSMan:\localhost\Plugin\TestPlugin2\" -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -379,11 +383,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $properties = Get-ChildItem $resource.PSPath
                 ($properties | Where-Object { $_.Name -eq "ResourceUri" }).Value | Should Be "http://foo/"
                 ($properties | Where-Object { $_.Name -eq "Capability" })[0].Value | Should Be "shell"
-                Remove-Item $resource.PSPath
+                Remove-Item $resource.PSPath -Recurse -Force
                 $resource.PSPath | Should Not Exist
             }
             finally {
-                Remove-Item $resource.PSPath -Force -ErrorAction SilentlyContinue
+                Remove-Item $resource.PSPath -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -394,7 +398,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $parameterObj = Get-Item $parameter.PSPath
                 $parameterObj.Name | Should Be "foo"
                 $parameterObj.Value | Should Be "bar"
-                Remove-Item $parameter.PSPath
+                Remove-Item $parameter.PSPath -Force
                 $parameter.PSPath | Should Not Exist
             }
             finally {
@@ -407,16 +411,16 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $sddl = "O:NSG:BAD:P(A;;GA;;;BA)"
                 $resource = Get-ChildItem -Path WSMan:\localhost\Plugin\TestPlugin\Resources\ | Select-Object -First 1
                 # remove existing security resource since the folder name is just a hash of the resource uri
-                Get-ChildItem "$($resource.PSPath)\Security" | Remove-Item
+                Get-ChildItem "$($resource.PSPath)\Security" | Remove-Item -Recurse -Force
                 $security = New-Item "$($resource.PSPath)\Security" -SDDL $sddl -Force
                 $security.PSPath | Should Exist
                 $securityObj = Get-Item $security.PSPath
                 (Get-ChildItem $securityObj.PSPath | Where-Object { $_.Name -eq 'sddl' }).Value | Should Be $sddl
-                Remove-Item $security.PSPath
+                Remove-Item $security.PSPath -Recurse -Force
                 $security.PSPath | Should Not Exist
             }
             finally {
-                Remove-Item $security.PSPath -Force -ErrorAction SilentlyContinue
+                Remove-Item $security.PSPath -Recurse -Force -ErrorAction SilentlyContinue
             }
         }
     }

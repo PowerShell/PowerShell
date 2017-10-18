@@ -785,13 +785,6 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(RemotingErrorIdStrings.AsJobAndDisconnectedError);
             }
 
-            if (this.InvokeAndDisconnect &&
-                (this.ComputerName == null || this.ComputerName.Length == 0) &&
-                (this.ConnectionUri == null || this.ConnectionUri.Length == 0))
-            {
-                throw new InvalidOperationException(RemotingErrorIdStrings.InvokeDisconnectedWithoutComputerName);
-            }
-
             if (MyInvocation.BoundParameters.ContainsKey("SessionName") && !this.InvokeAndDisconnect)
             {
                 throw new InvalidOperationException(RemotingErrorIdStrings.SessionNameWithoutInvokeDisconnected);

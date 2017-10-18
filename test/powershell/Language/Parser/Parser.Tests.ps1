@@ -317,7 +317,7 @@ foo``u{2195}abc
 
 '@
 "@
-            $result | should be "`r`nfoo``u{2195}abc`r`n"
+            $result | should match "\r?\nfoo``u\{2195\}abc\r?\n"
         }
 
         It "Test that two consecutive Unicode escape sequences are tokenized correctly." {

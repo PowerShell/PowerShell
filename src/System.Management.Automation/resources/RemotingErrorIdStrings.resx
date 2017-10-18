@@ -911,9 +911,6 @@ Do you want to continue?</value>
   <data name="JobIdentifierNull" xml:space="preserve">
     <value>The JobIdentifier provided must not be null. Please provide a valid JobIdentifier.</value>
   </data>
-  <data name="InvokeDisconnectedWithoutComputerName" xml:space="preserve">
-    <value>No computer names or connection Uris were specified.  You must provide a computer name or connection Uri when invoking a command with the -Disconnected switch.</value>
-  </data>
   <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
     <value>The Wait-Job cmdlet cannot finish working, because one or more jobs are blocked waiting for user interaction.  Process interactive job output by using the Receive-Job cmdlet, and then try again.</value>
   </data>

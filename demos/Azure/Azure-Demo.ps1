@@ -28,6 +28,8 @@ New-AzureRmResourceGroup -Name $resourceGroupName -Location "West US"
 ### http://armviz.io/#/?load=https:%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2F101-vm-simple-linux%2Fazuredeploy.json
 $dnsLabelPrefix = $resourceGroupName | ForEach-Object tolower
 $dnsLabelPrefix
+
+#[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc secret.")]
 $password = ConvertTo-SecureString -String "PowerShellRocks!" -AsPlainText -Force
 New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile ./Compute-Linux.json -adminUserName psuser -adminPassword $password -dnsLabelPrefix $dnsLabelPrefix
 

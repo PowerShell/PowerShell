@@ -355,7 +355,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
                 @{ inputStr = '$MaximumHistoryCount.'; expected = 'CompareTo('; setup = $null }
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
-                @{ inputStr = '$x= gps powershell;$x.*pm'; expected = 'NPM'; setup = $null }
+                @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
                 @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }
@@ -418,7 +418,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'gmo -list PackageM'; expected = 'PackageManagement'; setup = $null }
                 @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
                 @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }
-                @{ inputStr = 'Get-Process powersh'; expected = 'powershell'; setup = $null }
+                @{ inputStr = 'Get-Process pws'; expected = 'pwsh'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.ProcessN"; expected = 'ProcessName'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.LastAc"; expected = 'LastAccessTime'; setup = $null }
                 @{ inputStr = "& 'get-comm"; expected = "'Get-Command'"; setup = $null }
@@ -433,7 +433,8 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$global:max'; expected = '$global:MaximumHistoryCount'; setup = $null }
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
-                @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME 'Modules'; setup = $null }
+                ## if $PSHOME contains a space tabcompletion adds ' around the path
+                @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
                 @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
@@ -467,7 +468,7 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -496,7 +497,7 @@ Describe "TabCompletion" -Tags CI {
                 $afterTab = 'filesystem::/usr' -f $env:SystemDrive
             }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -914,13 +915,13 @@ dir -Recurse `
                 @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
                 @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Int*ro'; expected = 'root/Interop' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop/'; expected = 'root/Interop/ms_409' }
-                @{ inputStr = 'New-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Invoke-CimMethod -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Get-CimClass -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'New-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Invoke-CimMethod -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimClass -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Inter'; expected = 'root/Interop' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
                 @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }

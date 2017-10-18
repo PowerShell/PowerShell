@@ -170,11 +170,10 @@ namespace Microsoft.PowerShell
     internal class CommandLineParameterParser
     {
         internal static string[] validParameters = {
-            "psconsoleFile",
             "version",
             "nologo",
             "noexit",
-#if !CORECLR
+#if STAMODE
             "sta",
             "mta",
 #endif
@@ -248,14 +247,6 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(_dirty, "Parse has not been called yet");
 
                 return _noExit;
-            }
-        }
-
-        internal bool ImportSystemModules
-        {
-            get
-            {
-                return _importSystemModules;
             }
         }
 
@@ -400,15 +391,9 @@ namespace Microsoft.PowerShell
 
         private void ShowHelp()
         {
+            Dbg.Assert(_helpText != null, "_helpText should not be null");
             _hostUI.WriteLine("");
-            if (_helpText == null)
-            {
-                _hostUI.WriteLine(CommandLineParameterParserStrings.DefaultHelp);
-            }
-            else
-            {
-                _hostUI.Write(_helpText);
-            }
+            _hostUI.Write(_helpText);
             _hostUI.WriteLine("");
         }
 
@@ -422,6 +407,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#if STAMODE
         internal bool StaMode
         {
             get
@@ -432,17 +418,14 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-#if CORECLR
                     // Nano doesn't support STA COM apartment, so on Nano powershell has to use MTA as the default.
-                    return false;
-#else
+                    // return false;
                     // Win8: 182409 PowerShell 3.0 should run in STA mode by default
                     return true;
-#endif
                 }
             }
         }
-
+#endif
 
         /// <summary>
         ///
@@ -550,9 +533,7 @@ namespace Microsoft.PowerShell
                     _noExit = false;
                     break;
                 }
-
-
-                if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
+                else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
                     _abortStartup = true;
@@ -561,10 +542,6 @@ namespace Microsoft.PowerShell
                 {
                     _noExit = true;
                     noexitSeen = true;
-                }
-                else if (MatchSwitch(switchKey, "importsystemmodules", "imp"))
-                {
-                    _importSystemModules = true;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
@@ -736,7 +713,8 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !CORECLR  // explicit setting of the ApartmentState Not supported on NanoServer
+#if STAMODE
+                // explicit setting of the ApartmentState Not supported on NanoServer
                 else if (MatchSwitch(switchKey, "sta", "s"))
                 {
                     if (_staMode.HasValue)
@@ -1192,6 +1170,7 @@ namespace Microsoft.PowerShell
         private string _helpText;
         private bool _abortStartup;
         private bool _skipUserInit;
+#if STAMODE
         // Win8: 182409 PowerShell 3.0 should run in STA mode by default
         // -sta and -mta are mutually exclusive..so tracking them using nullable boolean
         // if true, then sta is specified on the command line.
@@ -1199,6 +1178,7 @@ namespace Microsoft.PowerShell
         // if null, then none is specified on the command line..use default in this case
         // default is sta.
         private bool? _staMode = null;
+#endif
         private bool _noExit = true;
         private bool _explicitReadCommandsFromStdin;
         private bool _noPrompt;
@@ -1211,7 +1191,6 @@ namespace Microsoft.PowerShell
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string _file;
         private string _executionPolicy;
-        private bool _importSystemModules = false;
     }
 }   // namespace
 

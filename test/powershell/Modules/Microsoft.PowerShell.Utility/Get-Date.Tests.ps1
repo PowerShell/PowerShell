@@ -37,6 +37,14 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date 1/1/0030 -uformat %S%T%u%U%V%w%W%x%X%y%Y%% | Should be "0000:00:002012001/01/3000:00:00300030%"
     }
 
+    It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
+        @{ name = "`$null"      ; value = $null }
+        @{ name = "empty string"; value = "" }
+    ) {
+        param($value)
+        { Get-date -Date 1/1/1970 -uformat $value -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+    }
+
     It "Get-date works with pipeline input" {
         $x = new-object System.Management.Automation.PSObject
         $x | add-member NoteProperty Date ([DateTime]::Now)

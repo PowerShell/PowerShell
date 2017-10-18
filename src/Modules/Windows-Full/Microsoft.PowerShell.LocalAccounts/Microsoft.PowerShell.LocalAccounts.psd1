@@ -1,4 +1,4 @@
-﻿@{
+@{
 RootModule = 'Microsoft.Powershell.LocalAccounts'
 ModuleVersion = '1.0.0.0'
 GUID = '8e362604-2c0b-448f-a414-a6a690a644e2'

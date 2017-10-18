@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Core on Windows top-level project</Description>
-    <AssemblyName>powershell</AssemblyName>
+    <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
@@ -19,7 +19,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\powershell.version;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
+    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -34,9 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PSDesiredStateConfiguration" Version="1.0.0-alpha01" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
-    <PackageReference Include="psrp.windows" Version="6.0.0-beta.2" />
+    <PackageReference Include="psrp.windows" Version="6.0.0-*" />
   </ItemGroup>
 
   <PropertyGroup>

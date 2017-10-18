@@ -5,8 +5,8 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 		$testAliases        = "TestAliases"
     	$fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 
-		remove-item alias:abcd* -force
-		remove-item alias:ijkl* -force
+		remove-item alias:abcd* -force -ErrorAction SilentlyContinue
+		remove-item alias:ijkl* -force -ErrorAction SilentlyContinue
 		set-alias abcd01 efgh01
 		set-alias abcd02 efgh02
 		set-alias abcd03 efgh03
@@ -18,8 +18,8 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 	}
 
 	AfterAll {
-		remove-item alias:abcd* -force
-		remove-item alias:ijkl* -force
+		remove-item alias:abcd* -force -ErrorAction SilentlyContinue
+		remove-item alias:ijkl* -force -ErrorAction SilentlyContinue
 	}
 
     BeforeEach {
