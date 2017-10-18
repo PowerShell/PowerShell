@@ -635,10 +635,10 @@ namespace System.Management.Automation
             List<string> results = new List<string>();
             foreach (string item in content)
             {
-                List<string> split = new List<String>();
-
                 bool rightToLeft = false;
                 if(limit < 0){
+                    // User supplied a negative Max-substrings argument,
+                    // employ Right-to-Left splitting instead
                     rightToLeft = true;
                     limit = System.Math.Abs(limit);
                 }
@@ -650,14 +650,29 @@ namespace System.Management.Automation
                     results.Add(item);
                     continue;
                 }
-
+                
+                List<string> split; 
+                if(limit == 0)
+                {
+                    split = new List<String>();
+                }
+                else
+                {
+                    // Limit was specified by the user
+                    // instantiate list with maximum needed capacity
+                    split = new List<String>(limit);
+                }
+                
                 StringBuilder buf = new StringBuilder();
                 int strIndex = 0;
                 for (int cursor = 0; cursor < item.Length; cursor++)
                 {
-                    if(rightToLeft){
+                    if(rightToLeft)
+                    {
                         strIndex = item.Length - 1 - cursor;
-                    } else {
+                    }
+                    else
+                    {
                         strIndex = cursor;
                     }
                     object isDelimChar = predicate.DoInvokeReturnAsIs(
@@ -682,9 +697,13 @@ namespace System.Management.Automation
                             if ((cursor + 1) < item.Length)
                             {
                                 if(rightToLeft)
+                                {
                                     split.Add(item.Substring(0, strIndex));
+                                }
                                 else
+                                {
                                     split.Add(item.Substring(strIndex + 1));
+                                }
                             }
                             else
                             {
@@ -704,9 +723,13 @@ namespace System.Management.Automation
                     else
                     {
                         if(rightToLeft)
+                        {
                             buf.Insert(0, item[strIndex]);
+                        }
                         else
+                        {
                             buf.Append(item[strIndex]);
+                        }
                     }
                 }
 
@@ -718,8 +741,11 @@ namespace System.Management.Automation
                 }
 
                 if(rightToLeft)
+                {
+                    // We want to preserve the order from the
+                    // original string (always output chunks left-to-right)
                     split.Reverse();
-
+                }
                 ExtendList(results, split);
             }
 
