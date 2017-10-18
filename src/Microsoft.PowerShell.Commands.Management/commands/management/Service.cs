@@ -700,9 +700,6 @@ namespace Microsoft.PowerShell.Commands
             NakedWin32Handle hService = IntPtr.Zero;
             int lastError = 0;
             PSObject serviceAsPSObj = PSObject.AsPSObject(service);
-            IntPtr descriptionStructPtr = IntPtr.Zero;
-            IntPtr delayedAutoStartStuctPtr = IntPtr.Zero;
-            IntPtr serviceConfigStructPtr = IntPtr.Zero;
             try
             {
                 hScManager = NativeMethods.OpenSCManagerW(
@@ -737,14 +734,14 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                 }
 
-                bool querySuccessful = NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out descriptionStructPtr);
-                NativeMethods.SERVICE_DESCRIPTIONW description = (NativeMethods.SERVICE_DESCRIPTIONW)Marshal.PtrToStructure(descriptionStructPtr, typeof(NativeMethods.SERVICE_DESCRIPTIONW));
+                NativeMethods.SERVICE_DESCRIPTIONW description = new NativeMethods.SERVICE_DESCRIPTIONW();
+                bool querySuccessful = NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DESCRIPTIONW>(hService, NativeMethods.SERVICE_CONFIG_DESCRIPTION, out description);
 
-                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig2(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out delayedAutoStartStuctPtr);
-                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = (NativeMethods.SERVICE_DELAYED_AUTO_START_INFO)Marshal.PtrToStructure(delayedAutoStartStuctPtr, typeof(NativeMethods.SERVICE_DELAYED_AUTO_START_INFO));
+                NativeMethods.SERVICE_DELAYED_AUTO_START_INFO autostartInfo = new NativeMethods.SERVICE_DELAYED_AUTO_START_INFO();
+                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig2<NativeMethods.SERVICE_DELAYED_AUTO_START_INFO>(hService, NativeMethods.SERVICE_CONFIG_DELAYED_AUTO_START_INFO, out autostartInfo);
 
-                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceConfigStructPtr);
-                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(serviceConfigStructPtr, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
+                NativeMethods.QUERY_SERVICE_CONFIG serviceInfo = new NativeMethods.QUERY_SERVICE_CONFIG();
+                querySuccessful = querySuccessful && NativeMethods.QueryServiceConfig(hService, out serviceInfo);
 
                 if(!querySuccessful) {
                     WriteNonTerminatingError(
@@ -778,9 +775,6 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                Marshal.FreeCoTaskMem(descriptionStructPtr);
-                Marshal.FreeCoTaskMem(delayedAutoStartStuctPtr);
-                Marshal.FreeCoTaskMem(serviceConfigStructPtr);
                 if (IntPtr.Zero != hService) {
                     bool succeeded = NativeMethods.CloseServiceHandle(hService);
                     if (!succeeded) {
@@ -2821,10 +2815,10 @@ namespace Microsoft.PowerShell.Commands
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
 
-        internal static bool QueryServiceConfig(NakedWin32Handle hService, out IntPtr structurePointer)
+        internal static bool QueryServiceConfig(NakedWin32Handle hService, out NativeMethods.QUERY_SERVICE_CONFIG configStructure)
         {
             IntPtr lpBuffer = IntPtr.Zero;
-            structurePointer = IntPtr.Zero;
+            configStructure = default(NativeMethods.QUERY_SERVICE_CONFIG);
             DWORD bufferSize, bufferSizeNeeded = 0;
             bool status = NativeMethods.QueryServiceConfigW(
                 hSCManager: hService,
@@ -2836,23 +2830,31 @@ namespace Microsoft.PowerShell.Commands
                 return status;
             }
 
-            lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
-            bufferSize = bufferSizeNeeded;
+            try
+            {
+                lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
+                bufferSize = bufferSizeNeeded;
 
-            status = NativeMethods.QueryServiceConfigW(
-                hService,
-                lpBuffer,
-                bufferSize,
-                out bufferSizeNeeded);
-            structurePointer = lpBuffer;
+                status = NativeMethods.QueryServiceConfigW(
+                    hService,
+                    lpBuffer,
+                    bufferSize,
+                    out bufferSizeNeeded);
+                configStructure = (NativeMethods.QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(lpBuffer, typeof(NativeMethods.QUERY_SERVICE_CONFIG));
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(lpBuffer);
+            }
             return status;
         }
 
-        internal static bool QueryServiceConfig2(NakedWin32Handle hService, DWORD infolevel, out IntPtr structurePointer)
+        internal static bool QueryServiceConfig2<T>(NakedWin32Handle hService, DWORD infolevel, out T configStructure)
         {
             IntPtr lpBuffer = IntPtr.Zero;
-            structurePointer = IntPtr.Zero;
+            configStructure = default(T);
             DWORD bufferSize, bufferSizeNeeded = 0;
+
             bool status = NativeMethods.QueryServiceConfig2W(
                 hService: hService,
                 dwInfoLevel: infolevel,
@@ -2864,16 +2866,23 @@ namespace Microsoft.PowerShell.Commands
                 return status;
             }
 
-            lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
-            bufferSize = bufferSizeNeeded;
+            try
+            {
+                lpBuffer = Marshal.AllocCoTaskMem((int)bufferSizeNeeded);
+                bufferSize = bufferSizeNeeded;
 
-            status = NativeMethods.QueryServiceConfig2W(
-                hService,
-                infolevel,
-                lpBuffer,
-                bufferSize,
-                out bufferSizeNeeded);
-            structurePointer = lpBuffer;
+                status = NativeMethods.QueryServiceConfig2W(
+                    hService,
+                    infolevel,
+                    lpBuffer,
+                    bufferSize,
+                    out bufferSizeNeeded);
+                configStructure = (T)Marshal.PtrToStructure(lpBuffer, typeof(T));
+            }
+            finally
+            {
+                Marshal.FreeCoTaskMem(lpBuffer);
+            }
             return status;
         }
 
