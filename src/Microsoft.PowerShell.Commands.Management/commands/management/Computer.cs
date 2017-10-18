@@ -52,34 +52,7 @@ namespace Microsoft.PowerShell.Commands
 #region "Parameters"
 
         private const string RegularParameterSet = "Default";
-        private const string QuietParameterSet = "Quiet";
         private const string SourceParameterSet = "Source";
-
-        /// <summary>
-        ///
-        /// </summary>
-        [Parameter(ParameterSetName = SourceParameterSet)]
-        [Parameter(ParameterSetName = RegularParameterSet)]
-        public SwitchParameter AsJob { get; set; } = false;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "DcomAuthentication".
-        /// Specifies the authentication level to be used with WMI connection. Valid
-        /// values are:
-        ///
-        /// Unchanged = -1,
-        /// Default = 0,
-        /// None = 1,
-        /// Connect = 2,
-        /// Call = 3,
-        /// Packet = 4,
-        /// PacketIntegrity = 5,
-        /// PacketPrivacy = 6.
-        /// </summary>
-
-        [Parameter]
-        [Alias("Authentication")]
-        public AuthenticationLevel DcomAuthentication { get; set; } = AuthenticationLevel.Packet;
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -94,13 +67,6 @@ namespace Microsoft.PowerShell.Commands
             "Kerberos")] // can be used with and without credential (not sure about implications)
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; } = "Default";
-
-        /// <summary>
-        /// Specify the protocol to use
-        /// </summary>
-        [Parameter]
-        [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol { get; set; } = ComputerWMIHelper.WsmanProtocol;
 
         /// <summary>
         /// The following is the definition of the input parameter "BufferSize".
@@ -163,35 +129,6 @@ namespace Microsoft.PowerShell.Commands
         public String[] Source { get; set; } = new string[] { "." };
 
         /// <summary>
-        /// The following is the definition of the input parameter "Impersonation".
-        /// Specifies the impersonation level to use when calling the WMI method. Valid
-        /// values are:
-        ///
-        /// Default = 0,
-        /// Anonymous = 1,
-        /// Identify = 2,
-        /// Impersonate = 3,
-        /// Delegate = 4.
-        /// </summary>
-        [Parameter]
-        public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "ThrottleLimit".
-        /// The number of concurrent computers on which the command will be allowed to
-        /// execute
-        /// </summary>
-        [Parameter(ParameterSetName = SourceParameterSet)]
-        [Parameter(ParameterSetName = RegularParameterSet)]
-        [ValidateRange((int)1, (int)1000)]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttlelimit; }
-            set { _throttlelimit = value; }
-        }
-        private Int32 _throttlelimit = 32;
-
-        /// <summary>
         /// The following is the definition of the input parameter "TimeToLive".
         /// Life span of the packet in seconds. The value is treated as an upper limit.
         /// All routers must decrement this value by 1 (one). When this value becomes 0
@@ -211,81 +148,23 @@ namespace Microsoft.PowerShell.Commands
         public Int32 Delay { get; set; } = 1;
 
         /// <summary>
-        /// quiet parameter
+        /// Quiet parameter
         /// </summary>
-        [Parameter(ParameterSetName = QuietParameterSet)]
-        public SwitchParameter Quiet
-        {
-            get { return quiet; }
-            set { quiet = value; }
-        }
-        private bool quiet = false;
+        [Parameter]
+        public SwitchParameter Quiet { get; set; }
 
 #endregion "parameters"
 #region "Overrides"
 
-        private TransportProtocol _transportProtocol = TransportProtocol.DCOM;
         private readonly CancellationTokenSource cancel = new CancellationTokenSource();
         private Dictionary<string, bool> quietResults = new Dictionary<string, bool>();
-        /// <summary>
-        /// To begin processing Test-connection
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-            // Verify parameter set
 
-            bool haveProtocolParam = this.MyInvocation.BoundParameters.ContainsKey("Protocol");
-            bool haveWsmanAuthenticationParam = this.MyInvocation.BoundParameters.ContainsKey("WsmanAuthentication");
-            bool haveDcomAuthenticationParam = this.MyInvocation.BoundParameters.ContainsKey("DcomAuthentication");
-            bool haveDcomImpersonation = this.MyInvocation.BoundParameters.ContainsKey("Impersonation");
-            _transportProtocol = (this.Protocol.Equals(ComputerWMIHelper.WsmanProtocol, StringComparison.OrdinalIgnoreCase) || (haveWsmanAuthenticationParam && !haveProtocolParam)) ?
-                                 TransportProtocol.WSMan : TransportProtocol.DCOM;
-
-            if (haveWsmanAuthenticationParam && (haveDcomAuthenticationParam || haveDcomImpersonation))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandParamWSManAuthConflict, ComputerResources.StopCommandParamMessage);
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(errMsg),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-
-            if ((_transportProtocol == TransportProtocol.DCOM) && haveWsmanAuthenticationParam)
-            {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandWSManAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(errMsg),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-
-            if ((_transportProtocol == TransportProtocol.WSMan) && (haveDcomAuthenticationParam || haveDcomImpersonation))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(errMsg),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-        }
         /// <summary>
         /// Process Record
         /// </summary>
         protected override void ProcessRecord()
         {
-            switch (_transportProtocol)
-            {
-                case TransportProtocol.WSMan:
-                    ProcessWSManProtocolForTestConnection();
-                    break;
-            }
+            ProcessWSManProtocolForTestConnection();
         }
         /// <summary>
         /// to implement ^C
@@ -301,7 +180,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endregion
 
-#region "Private Methods "
+#region "Private Methods"
         private string QueryString(string[] machinenames, bool escaperequired, bool selectrequired)
         {
             StringBuilder FilterString = new StringBuilder();
@@ -343,6 +222,7 @@ namespace Microsoft.PowerShell.Commands
             FilterString.Append(")");
             return FilterString.ToString();
         }
+
         private void ProcessPingStatus(Object pingStatusObj)
         {
             Dbg.Diagnostics.Assert(pingStatusObj != null, "Caller should verify that pingStatus != null");
@@ -366,7 +246,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (primaryAddressResolutionStatus != 0)
             {
-                if (!quiet)
+                if (!Quiet)
                 {
                     Win32Exception win32Exception = new Win32Exception(unchecked((int)primaryAddressResolutionStatus));
                     string message = StringUtil.Format(ComputerResources.NoPingResult, destinationAddress, win32Exception.Message);
@@ -379,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (statusCode != 0)
                 {
-                    if (!quiet)
+                    if (!Quiet)
                     {
                         Win32Exception win32Exception = new Win32Exception(unchecked((int)statusCode));
                         string message = StringUtil.Format(ComputerResources.NoPingResult, destinationAddress, win32Exception.Message);
@@ -391,7 +271,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     this.quietResults[destinationAddress] = true;
-                    if (!quiet)
+                    if (!Quiet)
                     {
                         WriteObject(pingStatusObj);
                     }
@@ -401,13 +281,6 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessWSManProtocolForTestConnection()
         {
-            if (AsJob)
-            {
-                // TODO:  Need job for MI.Net WSMan protocol
-                // Early return of job object.
-                throw new PSNotSupportedException();
-            }
-
             var operationOptions = new CimOperationOptions
             {
                 Timeout = TimeSpan.FromMilliseconds(2000),
@@ -429,31 +302,30 @@ namespace Microsoft.PowerShell.Commands
                     {
                         sourceMachine = sourceComp;
                     }
-                    foreach (var tocomp in ComputerName)
-                    {
-                        destCount++;
-                        string querystring = QueryString(new string[] { tocomp }, true, true);
 
-                        using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, WsmanAuthentication, cancel.Token, this))
+                    destCount++;
+                    string querystring = QueryString(ComputerName, true, true);
+                    WriteDebug(querystring);
+
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, WsmanAuthentication, cancel.Token, this))
+                    {
+                        WriteVerbose(String.Format("WMI query {0} sent to {1}", querystring, sourceComp));
+                        for (int echoRequestCount = 0; echoRequestCount < Count; echoRequestCount++)
                         {
-                            WriteVerbose(String.Format("WMI query {0} sent to {1}", querystring, sourceComp));
-                            for (int echoRequestCount = 0; echoRequestCount < Count; echoRequestCount++)
+                            IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
+                                                                    ComputerWMIHelper.CimOperatingSystemNamespace,
+                                                                    ComputerWMIHelper.CimQueryDialect,
+                                                                    querystring,
+                                                                    operationOptions);
+                            int total = mCollection.ToList().Count;
+                            int cimInsCount = 1;
+                            foreach (CimInstance obj in mCollection)
                             {
-                                IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
-                                                                     ComputerWMIHelper.CimOperatingSystemNamespace,
-                                                                     ComputerWMIHelper.CimQueryDialect,
-                                                                     querystring,
-                                                                     operationOptions);
-                                int total = mCollection.ToList().Count;
-                                int cimInsCount = 1;
-                                foreach (CimInstance obj in mCollection)
-                                {
-                                    ProcessPingStatus(obj);
-                                    cimInsCount++;
-                                    // to delay the request, if case to avoid the delay for the last pingrequest
-                                    if (cimInsCount < total || echoRequestCount < Count - 1 || sourceCount < Source.Length || destCount < ComputerName.Length)
-                                        Thread.Sleep(Delay * 1000);
-                                }
+                                ProcessPingStatus(obj);
+                                cimInsCount++;
+                                // to delay the request, if case to avoid the delay for the last pingrequest
+                                if (cimInsCount < total || echoRequestCount < Count - 1 || sourceCount < Source.Length)
+                                    Thread.Sleep(Delay * 1000);
                             }
                         }
                     }
@@ -472,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (quiet)
+            if (Quiet)
             {
                 foreach (string destinationAddress in this.ComputerName)
                 {
@@ -483,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#endregion  "Private Methods "
+#endregion "Private Methods"
     }
 #endregion Test-Connection
 
@@ -630,67 +502,6 @@ namespace Microsoft.PowerShell.Commands
 #region "Parameters and PrivateData"
 
         private const string DefaultParameterSet = "DefaultSet";
-        private const string AsJobParameterSet = "AsJobSet";
-
-        /// <summary>
-        /// Used to start a command remotely as a Job. The Job results are collected
-        /// and stored in the global cache on the client machine.
-        /// </summary>
-        [Parameter(ParameterSetName = AsJobParameterSet)]
-        public SwitchParameter AsJob { get; set; } = false;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "Authentication".
-        /// Specifies the authentication level to be used with WMI connection. Valid
-        /// values are:
-        ///
-        /// Unchanged = -1,
-        /// Default = 0,
-        /// None = 1,
-        /// Connect = 2,
-        /// Call = 3,
-        /// Packet = 4,
-        /// PacketIntegrity = 5,
-        /// PacketPrivacy = 6.
-        /// </summary>
-        [Parameter]
-        [Alias("Authentication")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        public AuthenticationLevel DcomAuthentication
-        {
-            get { return _dcomAuthentication; }
-            set
-            {
-                _dcomAuthentication = value;
-                _isDcomAuthenticationSpecified = true;
-            }
-        }
-        private AuthenticationLevel _dcomAuthentication = AuthenticationLevel.Packet;
-        private bool _isDcomAuthenticationSpecified = false;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "Impersonation".
-        /// Specifies the impersonation level to use when calling the WMI method. Valid
-        /// values are:
-        ///
-        /// Default = 0,
-        /// Anonymous = 1,
-        /// Identify = 2,
-        /// Impersonate = 3,
-        /// Delegate = 4.
-        /// </summary>
-        [Parameter]
-        public ImpersonationLevel Impersonation
-        {
-            get { return _impersonation; }
-            set
-            {
-                _impersonation = value;
-                _isImpersonationSpecified = true;
-            }
-        }
-        private ImpersonationLevel _impersonation = ImpersonationLevel.Impersonate;
-        private bool _isImpersonationSpecified = false;
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -705,26 +516,6 @@ namespace Microsoft.PowerShell.Commands
             "Kerberos")] // can be used with and without credential (not sure about implications)
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; }
-
-        /// <summary>
-        /// Specify the protocol to use
-        /// </summary>
-        [Parameter(ParameterSetName = DefaultParameterSet)]
-        [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol
-        {
-            get { return _protocol; }
-            set
-            {
-                _protocol = value;
-                _isProtocolSpecified = true;
-            }
-        }
-
-        //CoreClr does not support DCOM protocol
-        // This change makes sure that the the command works seamlessly if user did not explicitly entered the protocol
-        private string _protocol = ComputerWMIHelper.WsmanProtocol;
-        private bool _isProtocolSpecified = false;
 
         /// <summary>
         /// Specifies the computer (s)Name on which this command is executed.
@@ -761,20 +552,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("f")]
         public SwitchParameter Force { get; set; }
-
-        /// <summary>
-        /// Allows the user of the cmdlet to specify a throttling value
-        /// for throttling the number of remote operations that can
-        /// be executed simultaneously.
-        /// </summary>
-        [Parameter(ParameterSetName = AsJobParameterSet)]
-        [ValidateRange((int)1, (int)1000)]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttlelimit; }
-            set { _throttlelimit = value; }
-        }
-        private Int32 _throttlelimit = 32;
 
         /// <summary>
         /// Specify the Wait parameter. Prompt will be blocked is the Timeout is not 0
@@ -1332,72 +1109,6 @@ $result
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (ParameterSetName.Equals(DefaultParameterSet, StringComparison.OrdinalIgnoreCase))
-            {
-                if (WsmanAuthentication != null && (_isDcomAuthenticationSpecified || _isImpersonationSpecified))
-                {
-                    string errorMsg = StringUtil.Format(ComputerResources.ParameterConfliction,
-                                                        ComputerResources.ParameterUsage);
-                    InvalidOperationException ex = new InvalidOperationException(errorMsg);
-                    ThrowTerminatingError(new ErrorRecord(ex, "ParameterConfliction", ErrorCategory.InvalidOperation, null));
-                }
-
-                bool usingDcom = Protocol.Equals(ComputerWMIHelper.DcomProtocol, StringComparison.OrdinalIgnoreCase);
-                bool usingWsman = Protocol.Equals(ComputerWMIHelper.WsmanProtocol, StringComparison.OrdinalIgnoreCase);
-
-                if (_isProtocolSpecified && usingDcom && WsmanAuthentication != null)
-                {
-                    string errorMsg = StringUtil.Format(ComputerResources.InvalidParameterForDCOM,
-                                                        ComputerResources.ParameterUsage);
-                    InvalidOperationException ex = new InvalidOperationException(errorMsg);
-                    ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterForDCOM", ErrorCategory.InvalidOperation, null));
-                }
-
-                if (_isProtocolSpecified && usingWsman && (_isDcomAuthenticationSpecified || _isImpersonationSpecified))
-                {
-                    string errorMsg = StringUtil.Format(ComputerResources.InvalidParameterForWSMan,
-                                                        ComputerResources.ParameterUsage);
-                    InvalidOperationException ex = new InvalidOperationException(errorMsg);
-                    ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterForWSMan", ErrorCategory.InvalidOperation, null));
-                }
-
-                if (!_isProtocolSpecified && WsmanAuthentication != null)
-                {
-                    // Change the protocol to be WSMan if the WsmanAuthentication is specified
-                    Protocol = ComputerWMIHelper.WsmanProtocol;
-                }
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey("DcomAuthentication"))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.InvalidParameterForCoreClr, "DcomAuthentication");
-                PSArgumentException ex = new PSArgumentException(errMsg, ComputerResources.InvalidParameterForCoreClr);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterForCoreClr", ErrorCategory.InvalidArgument, null));
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey("Impersonation"))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.InvalidParameterForCoreClr, "Impersonation");
-                PSArgumentException ex = new PSArgumentException(errMsg, ComputerResources.InvalidParameterForCoreClr);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterForCoreClr", ErrorCategory.InvalidArgument, null));
-            }
-
-            // DCOM Authentication is not supported for CoreCLR. Throw an error
-            // and request that the user specify WSMan Authentication.
-            if (_isDcomAuthenticationSpecified ||
-                Protocol.Equals(ComputerWMIHelper.DcomProtocol, StringComparison.OrdinalIgnoreCase))
-            {
-                InvalidOperationException ex = new InvalidOperationException(ComputerResources.InvalidParameterDCOMNotSupported);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterDCOMNotSupported", ErrorCategory.InvalidOperation, null));
-            }
-
-            // TODO:CORECLR This should be re-visited if we decide to add double hop remoting to CoreCLR (outgoing connections)
-            if (ParameterSetName.Equals(AsJobParameterSet, StringComparison.OrdinalIgnoreCase))
-            {
-                InvalidOperationException ex = new InvalidOperationException(ComputerResources.InvalidParameterSetAsJob);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterSetAsJob", ErrorCategory.InvalidOperation, null));
-            }
-
             // Timeout, For, Delay, Progress cannot be present if Wait is not present
             if ((_timeoutSpecified || _waitForSpecified || _delaySpecified) && !Wait)
             {
@@ -1465,7 +1176,6 @@ $result
                     {
                         compname = _shortLocalMachineName;
                         isLocal = true;
-
                     }
                     else
                     {
@@ -1726,35 +1436,10 @@ $result
 #region Private Members
 
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        private TransportProtocol _transportProtocol = TransportProtocol.DCOM;
 
 #endregion
 
 #region "Parameters"
-
-        /// <summary>
-        /// parameter
-        /// </summary>
-        [Parameter]
-        public SwitchParameter AsJob { get; set; } = false;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "DcomAuthentication".
-        /// Specifies the authentication level to be used with WMI connection. Valid
-        /// values are:
-        ///
-        /// Unchanged = -1,
-        /// Default = 0,
-        /// None = 1,
-        /// Connect = 2,
-        /// Call = 3,
-        /// Packet = 4,
-        /// PacketIntegrity = 5,
-        /// PacketPrivacy = 6.
-        /// </summary>
-        [Parameter]
-        [Alias("Authentication")]
-        public AuthenticationLevel DcomAuthentication { get; set; } = AuthenticationLevel.Packet;
 
         /// <summary>
         /// The authentication options for CIM_WSMan connection
@@ -1769,13 +1454,6 @@ $result
             "Kerberos")] // can be used with and without credential (not sure about implications)
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; } = "Default";
-
-        /// <summary>
-        /// Specify the protocol to use
-        /// </summary>
-        [Parameter]
-        [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol { get; set; } = ComputerWMIHelper.WsmanProtocol;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -1800,34 +1478,6 @@ $result
         [ValidateNotNullOrEmpty]
         [Credential]
         public PSCredential Credential { get; set; }
-
-        /// <summary>
-        /// The following is the definition of the input parameter "Impersonation".
-        /// Specifies the impersonation level to use when calling the WMI method. Valid
-        /// values are:
-        ///
-        /// Default = 0,
-        /// Anonymous = 1,
-        /// Identify = 2,
-        /// Impersonate = 3,
-        /// Delegate = 4.
-        /// </summary>
-        [Parameter]
-        public ImpersonationLevel Impersonation { get; set; } = ImpersonationLevel.Impersonate;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "ThrottleLimit".
-        /// The number of concurrent computers on which the command will be allowed to
-        /// execute
-        /// </summary>
-        [Parameter]
-        [ValidateRange((int)1, (int)1000)]
-        public Int32 ThrottleLimit
-        {
-            get { return _throttlelimit; }
-            set { _throttlelimit = value; }
-        }
-        private Int32 _throttlelimit = 32;
 
         /// <summary>
         /// Force the operation to take place if possible
@@ -1856,75 +1506,6 @@ $result
 #region "Overrides"
 
         /// <summary>
-        /// BeginProcessing
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-
-            // Verify parameter set
-            bool haveProtocolParam = this.MyInvocation.BoundParameters.ContainsKey("Protocol");
-            bool haveWsmanAuthenticationParam = this.MyInvocation.BoundParameters.ContainsKey("WsmanAuthentication");
-            bool haveDcomAuthenticationParam = this.MyInvocation.BoundParameters.ContainsKey("DcomAuthentication");
-            bool haveDcomImpersonation = this.MyInvocation.BoundParameters.ContainsKey("Impersonation");
-            _transportProtocol = (this.Protocol.Equals(ComputerWMIHelper.WsmanProtocol, StringComparison.OrdinalIgnoreCase) || (haveWsmanAuthenticationParam && !haveProtocolParam)) ?
-                                 TransportProtocol.WSMan : TransportProtocol.DCOM;
-
-            if (haveWsmanAuthenticationParam && (haveDcomAuthenticationParam || haveDcomImpersonation))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandParamWSManAuthConflict, ComputerResources.StopCommandParamMessage);
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(errMsg),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-
-            if ((_transportProtocol == TransportProtocol.DCOM) && haveWsmanAuthenticationParam)
-            {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandWSManAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(errMsg),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-
-            if ((_transportProtocol == TransportProtocol.WSMan) && (haveDcomAuthenticationParam || haveDcomImpersonation))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.StopCommandAuthProtocolConflict, ComputerResources.StopCommandParamMessage);
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(errMsg),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey("DcomAuthentication"))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.InvalidParameterForCoreClr, "DcomAuthentication");
-                PSArgumentException ex = new PSArgumentException(errMsg, ComputerResources.InvalidParameterForCoreClr);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterForCoreClr", ErrorCategory.InvalidArgument, null));
-            }
-
-            if (this.MyInvocation.BoundParameters.ContainsKey("Impersonation"))
-            {
-                string errMsg = StringUtil.Format(ComputerResources.InvalidParameterForCoreClr, "Impersonation");
-                PSArgumentException ex = new PSArgumentException(errMsg, ComputerResources.InvalidParameterForCoreClr);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterForCoreClr", ErrorCategory.InvalidArgument, null));
-            }
-
-            if(this.Protocol.Equals(ComputerWMIHelper.DcomProtocol , StringComparison.OrdinalIgnoreCase))
-            {
-                InvalidOperationException ex = new InvalidOperationException(ComputerResources.InvalidParameterDCOMNotSupported);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterDCOMNotSupported", ErrorCategory.InvalidOperation, null));
-            }
-        }
-
-        /// <summary>
         /// ProcessRecord
         /// </summary>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
@@ -1934,12 +1515,7 @@ $result
             if (Force.IsPresent)
                 flags[0] = 5;
 
-            switch (_transportProtocol)
-            {
-                case TransportProtocol.WSMan:
-                    ProcessWSManProtocol(flags);
-                    break;
-            }
+            ProcessWSManProtocol(flags);
         }//End Processrecord
 
         /// <summary>
@@ -1961,13 +1537,6 @@ $result
 
         private void ProcessWSManProtocol(object[] flags)
         {
-            if (AsJob.IsPresent)
-            {
-                // TODO:  Need job for MI.Net WSMan protocol
-                // Early return of job object.
-                throw new PSNotSupportedException();
-            }
-
             foreach (string computer in ComputerName)
             {
                 string compname = string.Empty;
@@ -2028,8 +1597,6 @@ $result
 
         private bool _containsLocalHost = false;
         private string _newNameForLocalHost = null;
-
-        private TransportProtocol _transportProtocol = TransportProtocol.DCOM;
 
         private readonly string _shortLocalMachineName = Dns.GetHostName();
         private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync("").Result.HostName;
@@ -2111,12 +1678,6 @@ $result
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public string WsmanAuthentication { get; set; } = "Default";
 
-        /// <summary>
-        /// Specify the protocol to use
-        /// </summary>
-        [Parameter]
-        [ValidateSet(ComputerWMIHelper.DcomProtocol, ComputerWMIHelper.WsmanProtocol)]
-        public string Protocol { get; set; } = ComputerWMIHelper.WsmanProtocol;
 #endregion
 
 #region "Private Methods"
@@ -2175,12 +1736,7 @@ $result
                 }
             }
 
-            switch (_transportProtocol)
-            {
-                case TransportProtocol.WSMan:
-                    DoRenameComputerWsman(computer, computerName, newName, isLocalhost);
-                    break;
-            }
+            DoRenameComputerWsman(computer, computerName, newName, isLocalhost);
         }
 
         private void DoRenameComputerWsman(string computer, string computerName, string newName, bool isLocalhost)
@@ -2330,38 +1886,6 @@ $result
 #endregion "Private Methods"
 
 #region "Override Methods"
-
-        /// <summary>
-        /// Begin Processing
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-
-            bool haveWsmanAuthenticationParam = this.MyInvocation.BoundParameters.ContainsKey("WsmanAuthentication");
-            bool haveProtocolParam = this.MyInvocation.BoundParameters.ContainsKey("Protocol");
-            _transportProtocol = (this.Protocol.Equals(ComputerWMIHelper.WsmanProtocol, StringComparison.OrdinalIgnoreCase) || (haveWsmanAuthenticationParam && !haveProtocolParam)) ?
-                                  TransportProtocol.WSMan : TransportProtocol.DCOM;
-
-            // Verify parameter set
-            if ((_transportProtocol == TransportProtocol.DCOM) && haveWsmanAuthenticationParam)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSArgumentException(ComputerResources.RenameCommandWsmanAuthParamConflict),
-                        "InvalidParameter",
-                        ErrorCategory.InvalidArgument,
-                        this));
-            }
-
-            // DCOM Authentication is not supported for CoreCLR. Throw an error
-            // and request that the user specify WSMan Authentication.
-            if (_transportProtocol == TransportProtocol.DCOM)
-            {
-                PSArgumentException ex = new PSArgumentException(ComputerResources.InvalidParameterDCOMNotSupported);
-                ThrowTerminatingError(new ErrorRecord(ex, "InvalidParameterDCOMNotSupported", ErrorCategory.InvalidArgument, null));
-            }
-        }
 
         /// <summary>
         /// ProcessRecord method.
@@ -2549,16 +2073,6 @@ $result
         /// The name of the privilege to shutdown a remote system
         /// </summary>
         internal const string SE_REMOTE_SHUTDOWN_NAME = "SeRemoteShutdownPrivilege";
-
-        /// <summary>
-        /// DCOM protocol
-        /// </summary>
-        internal const string DcomProtocol = "DCOM";
-
-        /// <summary>
-        /// WSMan protocol
-        /// </summary>
-        internal const string WsmanProtocol = "WSMan";
 
         /// <summary>
         /// CimUriPrefix
@@ -3046,15 +2560,6 @@ $result
     }
 #endregion Helper
 
-#region Internal Enums
-
-    internal enum TransportProtocol
-    {
-        DCOM = 1,
-        WSMan = 2
-    }
-
-#endregion
 }//End namespace
 
 #endif

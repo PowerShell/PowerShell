@@ -47,11 +47,6 @@ try
             Stop-Computer -computer (hostname) -ea Stop| Should BeNullOrEmpty
         }
     
-        It "Should support Wsman protocol" {
-            Set-HookResult -result $defaultResultValue
-            Stop-Computer -Protocol Wsman -ea Stop| Should BeNullOrEmpty
-        }
-
         It "Should support WsmanAuthentication types" {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
@@ -64,30 +59,6 @@ try
                 Set-HookResult -result 0x300000
                 Stop-Computer -ev StopError 2>$null
                 $StopError.Exception.Message | Should match 0x300000
-            }
-
-            It "Should produce an error when DcomAuth is specified" {
-                $expected = "InvalidParameter,Microsoft.PowerShell.Commands.StopComputerCommand"
-                $authChoices = "Default", "None", "Connect", "Call", "Packet", "PacketIntegrity", "PacketPrivacy", "Unchanged"
-                foreach ($auth in $authChoices) {
-                   { Stop-Computer -DcomAuth $auth } | ShouldBeErrorId $expected 
-               }
-            }
-
-            It "Should not support impersonations" {
-               { Stop-Computer -Impersonation Default } | ShouldBeErrorId "InvalidParameter,Microsoft.PowerShell.Commands.StopComputerCommand"
-            }
-
-            It "Should produce an error when 'DCOM' protocol is specified" {
-                { Stop-Computer -Protocol DCOM } | ShouldBeErrorId "InvalidParameterDCOMNotSupported,Microsoft.PowerShell.Commands.StopComputerCommand"
-            }
-
-            It "Should produce an error when WsmanAuth and DComAuth are both specified" {
-                { Stop-Computer -Wsmanauthentication Default -DComAuth Default } | ShouldBeErrorId "InvalidParameter,Microsoft.PowerShell.Commands.StopComputerCommand"
-            }
-
-            It "Should produce an error when 'AsJob' is specified" {
-                { Stop-Computer -AsJob } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.StopComputerCommand"
             }
 
         }

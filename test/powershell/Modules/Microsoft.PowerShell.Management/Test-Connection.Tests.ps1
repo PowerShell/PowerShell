@@ -36,8 +36,4 @@ Describe "Test-Connection" -Tags "CI" {
         param($computername, $result)
         Test-Connection -ComputerName $computername -Count 1 -Quiet | Should Be $result
     }
-
-    It "The AsJob parameter throws the appropriate error" {
-        { Test-Connection -ComputerName . -AsJob } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.TestConnectionCommand"
-    }
 }

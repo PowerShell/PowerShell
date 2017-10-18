@@ -236,6 +236,8 @@ namespace System.Management.Automation.Runspaces
             td24.Members.Add("IPV6Address",
                 new ScriptPropertyData(@"IPV6Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
           $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
+            td24.Members.Add("Destination",
+                new AliasPropertyData("Destination","Address"));
             yield return td24;
 
             var td25 = new TypeData(@"System.Management.ManagementObject#root\cimv2\Win32_Process", true);
@@ -1380,6 +1382,8 @@ namespace System.Management.Automation.Runspaces
             td167.Members.Add("IPV6Address",
                 new ScriptPropertyData(@"IPV6Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
           $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
+            td167.Members.Add("Destination",
+                new AliasPropertyData("Destination","Address"));
             yield return td167;
 
             var td168 = new TypeData(@"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process", true);
