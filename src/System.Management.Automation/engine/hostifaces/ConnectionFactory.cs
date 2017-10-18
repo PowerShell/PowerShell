@@ -34,8 +34,6 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a runspace using host of type <see cref="DefaultHost"/>.
-        /// This runspace is created using the <see cref="RunspaceConfiguration"/> information
-        /// from EntryAssembly.
         /// </summary>
         /// <returns>
         /// A runspace object.
@@ -67,68 +65,8 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewArgumentNullException("host");
             }
 
-            return CreateRunspace(host, RunspaceConfiguration.Create());
+            return new LocalRunspace(host, InitialSessionState.CreateDefault());
         }
-
-        /// <summary>
-        /// Creates a runspace using <see cref="DefaultHost"/>
-        /// </summary>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration information for the runspace.
-        /// </param>
-        /// <returns>
-        /// A runspace object
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when runspaceConfiguration is null
-        /// </exception>
-        internal static Runspace CreateRunspace(RunspaceConfiguration runspaceConfiguration)
-        {
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-
-            PSHost host = new DefaultHost(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
-
-            return CreateRunspace(host, runspaceConfiguration);
-        }
-
-        /// <summary>
-        /// Creates a runspace using specified PSHost and RunspaceConfiguration
-        /// </summary>
-        /// <param name="host">
-        /// Host implementation for runspace.
-        /// </param>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration information for the runspace.
-        /// </param>
-        /// <returns>
-        /// A runspace object
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when host is null
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when runspaceConfiguration is null
-        /// </exception>
-        internal static Runspace CreateRunspace(PSHost host, RunspaceConfiguration runspaceConfiguration)
-        {
-            if (host == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("host");
-            }
-
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-
-            return new LocalRunspace(host, runspaceConfiguration);
-        }
-
-        //=========================================================
-        // Create runspaces with InitialSessionState instead of RunspaceConfig objects...
 
         /// <summary>
         /// Creates a runspace using <see cref="DefaultHost"/>
@@ -228,22 +166,15 @@ namespace System.Management.Automation.Runspaces
         #region RunspacePool Factory
 
         /// <summary>
-        /// Creates a RunspacePool using default RunspaceConfiguration
-        /// with MaxRunspaces 1 and MinRunspaces 1.
+        /// Creates a RunspacePool with MaxRunspaces 1 and MinRunspaces 1.
         /// </summary>
         public static RunspacePool CreateRunspacePool()
         {
-            return CreateRunspacePool(1, 1,
-                RunspaceConfiguration.Create(),
-                new DefaultHost
-                (
-                    CultureInfo.CurrentCulture,
-                    CultureInfo.CurrentUICulture
-                ));
+            return CreateRunspacePool(1, 1);
         }
 
         /// <summary>
-        /// Creates a RunspacePool using default RunspaceConfiguration.
+        /// Creates a RunspacePool
         /// <paramref name="maxRunspaces"/>
         /// limits the number of Runspaces that can exist in this
         /// pool. The minimum pool size is set to <paramref name="minPoolSoze"/>.
@@ -263,7 +194,6 @@ namespace System.Management.Automation.Runspaces
         public static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces)
         {
             return CreateRunspacePool(minRunspaces, maxRunspaces,
-                RunspaceConfiguration.Create(),
                 new DefaultHost
                 (
                     CultureInfo.CurrentCulture,
@@ -281,7 +211,7 @@ namespace System.Management.Automation.Runspaces
         /// Runspace in the pool.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
+        /// InitialSessionState is null.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static RunspacePool CreateRunspacePool(InitialSessionState initialSessionState)
@@ -318,44 +248,7 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         public static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces, PSHost host)
         {
-            return CreateRunspacePool(minRunspaces, maxRunspaces, RunspaceConfiguration.Create(), host);
-        }
-
-        /// <summary>
-        /// Creates a RunspacePool using the supplied <paramref name="configuration"/>,
-        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>
-        /// </summary>
-        /// <param name="minRunspaces">
-        /// The minimum number of Runspaces that can exist in this pool.
-        /// Should be greater than or equal to 1.
-        /// </param>
-        /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool.
-        /// Should be greater than or equal to 1.
-        /// </param>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration to use when creating a new Runspace in the
-        /// pool.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
-        /// </exception>
-        /// <param name="host">
-        /// The explicit PSHost implementation.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="runspaceConfiguration"/> is null.
-        /// <paramref name="host"/> is null.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        /// Maximum runspaces is less than 1.
-        /// Minimum runspaces is less than 1.
-        /// </exception>
-        private static RunspacePool CreateRunspacePool(int minRunspaces, int maxRunspaces,
-            RunspaceConfiguration runspaceConfiguration, PSHost host)
-        {
-            return new RunspacePool(minRunspaces,
-                maxRunspaces, runspaceConfiguration, host);
+            return new RunspacePool(minRunspaces, maxRunspaces, host);
         }
 
         /// <summary>
@@ -375,13 +268,13 @@ namespace System.Management.Automation.Runspaces
         /// pool.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
+        /// InitialSessionState is null.
         /// </exception>
         /// <param name="host">
         /// The explicit PSHost implementation.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="runspaceConfiguration"/> is null.
+        /// <paramref name="initialSessionState"/> is null.
         /// <paramref name="host"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">

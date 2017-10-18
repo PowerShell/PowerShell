@@ -133,18 +133,6 @@ namespace System.Management.Automation
                 }
 
                 // Advance the state
-                _currentState = SearchState.SearchingBuiltinScripts;
-            }
-
-            if (_currentState == SearchState.SearchingBuiltinScripts)
-            {
-                _currentMatch = SearchForBuiltinScripts();
-                if (_currentMatch != null)
-                {
-                    return true;
-                }
-
-                // Advance the state
                 _currentState = SearchState.StartSearchingForExternalCommands;
             }
 
@@ -296,18 +284,6 @@ namespace System.Management.Automation
             if ((_commandTypes & CommandTypes.Cmdlet) != 0)
             {
                 currentMatch = GetNextCmdlet();
-            }
-
-            return currentMatch;
-        }
-
-        private CommandInfo SearchForBuiltinScripts()
-        {
-            CommandInfo currentMatch = null;
-
-            if ((_commandTypes & CommandTypes.Script) != 0)
-            {
-                currentMatch = GetNextBuiltinScript();
             }
 
             return currentMatch;
@@ -1043,7 +1019,7 @@ namespace System.Management.Automation
             if (!_matchingCmdlet.MoveNext())
             {
                 // Advance the state
-                _currentState = SearchState.SearchingBuiltinScripts;
+                _currentState = SearchState.StartSearchingForExternalCommands;
 
                 _matchingCmdlet = null;
             }
@@ -1067,86 +1043,6 @@ namespace System.Management.Automation
             }
             return result;
         }
-
-        /// <summary>
-        /// Gets the next builtin script from the collection of matching scripts.
-        /// If the collection doesn't exist yet it is created and the
-        /// enumerator is moved to the first item in the collection.
-        /// </summary>
-        ///
-        /// <returns>
-        /// A ScriptInfo for the next matching script or null if there are
-        /// no more matches.
-        /// </returns>
-        ///
-        private ScriptInfo GetNextBuiltinScript()
-        {
-            ScriptInfo result = null;
-
-            if ((_commandResolutionOptions & SearchResolutionOptions.CommandNameIsPattern) != 0)
-            {
-                if (_matchingScript == null)
-                {
-                    // Generate the enumerator of matching script names
-
-                    Collection<string> matchingScripts =
-                        new Collection<string>();
-
-                    WildcardPattern scriptMatcher =
-                        WildcardPattern.Get(
-                            _commandName,
-                            WildcardOptions.IgnoreCase);
-
-                    WildcardPattern scriptExtensionMatcher =
-                        WildcardPattern.Get(
-                            _commandName + StringLiterals.PowerShellScriptFileExtension,
-                            WildcardOptions.IgnoreCase);
-
-                    // Get the script cache enumerator. This acquires the cache lock,
-                    // so be sure to dispose.
-
-                    foreach (string scriptName in _context.CommandDiscovery.ScriptCache.Keys)
-                    {
-                        if (scriptMatcher.IsMatch(scriptName) ||
-                            scriptExtensionMatcher.IsMatch(scriptName))
-                        {
-                            matchingScripts.Add(scriptName);
-                        }
-                    }
-                    _matchingScript = matchingScripts.GetEnumerator();
-                }
-
-                if (!_matchingScript.MoveNext())
-                {
-                    // Advance the state
-                    _currentState = SearchState.StartSearchingForExternalCommands;
-
-                    _matchingScript = null;
-                }
-                else
-                {
-                    result = _context.CommandDiscovery.GetScriptInfo(_matchingScript.Current);
-                }
-            }
-            else
-            {
-                // Advance the state
-                _currentState = SearchState.StartSearchingForExternalCommands;
-
-                result = _context.CommandDiscovery.GetScriptInfo(_commandName) ??
-                         _context.CommandDiscovery.GetScriptInfo(_commandName + StringLiterals.PowerShellScriptFileExtension);
-            }
-
-            if (result != null)
-            {
-                CommandDiscovery.discoveryTracer.WriteLine(
-                    "Script found: {0}",
-                    result.Name);
-            }
-            return result;
-        }
-        private IEnumerator<string> _matchingScript;
-
 
         private string DoPowerShellRelativePathLookup()
         {
@@ -1632,7 +1528,6 @@ namespace System.Management.Automation
             _currentState = SearchState.SearchingAliases;
             _matchingAlias = null;
             _matchingCmdlet = null;
-            _matchingScript = null;
         } // Reset
 
         internal CommandOrigin CommandOrigin
@@ -1675,9 +1570,6 @@ namespace System.Management.Automation
 
             // the searcher has finished function resolution and is now searching for cmdlets
             SearchingCmdlets,
-
-            // the search has finished cmdlet resolution and is now searching for builtin scripts
-            SearchingBuiltinScripts,
 
             // the search has finished builtin script resolution and is now searching for external commands
             StartSearchingForExternalCommands,

@@ -138,7 +138,7 @@ namespace System.Management.Automation
                 {
                     string fileName = Path.GetFileName(filePath);
                     if (wildcardPattern.IsMatch(fileName))
-                    {             
+                    {
                         result.Add(filePath);
                     }
                 }
@@ -335,8 +335,7 @@ namespace System.Management.Automation
         /// Get the file in different search paths corresponding to current culture.
         ///
         /// The file name to search is the filename part of path parameter. (Normally path
-        /// parameter should contain only the filename part. But it is possible for
-        /// RunspaceConfiguration to directly specify a hard coded path for help file there).
+        /// parameter should contain only the filename part).
         ///
         /// </summary>
         /// <param name="file">This is the path to the file. If it has a path, we need to search under that path first</param>
