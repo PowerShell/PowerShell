@@ -103,7 +103,7 @@ using System.Management.Automation;           // Windows PowerShell namespace.
 
 namespace ModuleCmdlets
 {
-  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]   
+  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
   public class TestBinaryModuleCmdlet1Command : Cmdlet
   {
     protected override void BeginProcessing()
@@ -115,7 +115,7 @@ namespace ModuleCmdlets
 "@
 
     Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
-    $results = powershell -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
+    $results = pwsh -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
 
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName

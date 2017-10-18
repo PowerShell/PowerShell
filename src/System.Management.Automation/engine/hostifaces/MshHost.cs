@@ -43,7 +43,7 @@ namespace System.Management.Automation.Host
     public abstract class PSHost
     {
         /// <summary>
-        /// The powershell.exe spec states that 128 is the maximum nesting depth.
+        /// The powershell spec states that 128 is the maximum nesting depth.
         /// </summary>
         internal const int MaximumNestedPromptLevel = 128;
         internal static bool IsStdOutputRedirected;

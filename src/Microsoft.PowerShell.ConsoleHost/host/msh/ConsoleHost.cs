@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell
         /// </param>
         /// <param name = "args">
         ///
-        /// Command line parameters to powershell.exe
+        /// Command line parameters to pwsh.exe
         ///
         /// </param>
         /// <returns>

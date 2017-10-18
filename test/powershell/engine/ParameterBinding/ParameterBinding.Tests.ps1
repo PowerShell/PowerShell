@@ -302,7 +302,7 @@
             $test2File = Join-Path -Path $tempDir -ChildPath "test2.ps1"
 
             $expected = "[$tempDir]"
-            $psPath = "$PSHOME\powershell"
+            $psPath = "$PSHOME\pwsh"
 
             $null = New-Item -Path $tempDir -ItemType Directory -Force
             Set-Content -Path $test1File -Value $test1 -Force

@@ -147,6 +147,7 @@ psobjects
 psproxyjobs
 PSReadline
 PSSessionConfiguration
+pwsh
 redistributables
 Register-EngineEvent
 Register-PSSessionConfiguration

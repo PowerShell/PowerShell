@@ -31,7 +31,7 @@
     <WixVariable Id="WixUIInfoIco" Value="assets\WixUIInfoIco.bmp" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
-    <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]PowerShell.exe"/>
+    <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
@@ -73,6 +73,8 @@
       <ComponentGroupRef Id="$(var.ProductVersionWithName)"/>
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
+      <ComponentRef Id="RegistryEntries"/>
+      <ComponentRef Id="SetPath"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -103,13 +105,23 @@
             <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">
               <CreateFolder/>
             </Component>
+            <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
+            <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
+                <RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                    <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
+                </RegistryKey>
+            </Component>
+            <!-- add ourselvs to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
+            <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}">
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductVersionWithName)]"/>
+            </Component>
           </Directory>
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductSemanticVersionWithName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="[$(var.ProductVersionWithName)]PowerShell.exe" WorkingDirectory="$(var.ProductVersionWithName)"
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
             <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>

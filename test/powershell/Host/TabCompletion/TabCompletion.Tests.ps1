@@ -355,7 +355,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
                 @{ inputStr = '$MaximumHistoryCount.'; expected = 'CompareTo('; setup = $null }
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
-                @{ inputStr = '$x= gps powershell;$x.*pm'; expected = 'NPM'; setup = $null }
+                @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
                 @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }
@@ -418,7 +418,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'gmo -list PackageM'; expected = 'PackageManagement'; setup = $null }
                 @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
                 @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }
-                @{ inputStr = 'Get-Process powersh'; expected = 'powershell'; setup = $null }
+                @{ inputStr = 'Get-Process pws'; expected = 'pwsh'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.ProcessN"; expected = 'ProcessName'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.LastAc"; expected = 'LastAccessTime'; setup = $null }
                 @{ inputStr = "& 'get-comm"; expected = "'Get-Command'"; setup = $null }
