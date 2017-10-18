@@ -178,7 +178,7 @@ function Get-ContainerPowerShellVersion
     }
 
     $runParams += $imageTag
-    $runParams += 'powershell'
+    $runParams += 'pwsh'
     $runParams += '-c'
     $runParams += ('$PSVersionTable.PSVersion.ToString() | out-string | out-file -encoding ascii -FilePath '+$testContext.containerLogPath)
 

@@ -37,19 +37,19 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
       org.label-schema.vendor="PowerShell" `
       org.label-schema.version=${PS_VERSION} `
       org.label-schema.schema-version="1.0" `
-      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" `
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} pwsh -c '$psversiontable'" `
       org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" `
-      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" `
-      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} pwsh -c Invoke-Pester" `
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} pwsh -c Get-Help"
 
-# Copy Powershell from the installer containter
+# Copy Powershell Core from the installer containter
 ENV ProgramFiles C:\Program Files
 COPY --from=installer-env ["\\PowerShell\\", "$ProgramFiles\\PowerShell"]
 
 # Persist %PSCORE% ENV variable for user convenience
-ENV PSCORE="$ProgramFiles\PowerShell\PowerShell.exe"
+ENV PSCORE="$ProgramFiles\PowerShell\pwsh.exe"
 
 # Set the path
 RUN setx PATH "%PATH%;%ProgramFiles%\PowerShell"
 
-CMD ["PowerShell.exe"]
+CMD ["pwsh.exe"]

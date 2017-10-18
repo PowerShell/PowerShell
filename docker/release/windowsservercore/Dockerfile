@@ -15,10 +15,10 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
       org.label-schema.vendor="PowerShell" `
       org.label-schema.version=${POWERSHELL_VERSION} `
       org.label-schema.schema-version="1.0" `
-      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" `
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} pwsh -c '$psversiontable'" `
       org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" `
-      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" `
-      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} pwsh -c Invoke-Pester" `
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} pwsh -c Get-Help"
 
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
@@ -42,12 +42,12 @@ RUN $ErrorActionPreference='Stop'; `
     $log=get-content -Path C:\PowerShell-win-x64.msi.log -Last 10 ; `
     if ($log -match 'Installation success or error status: 0') { `
       Remove-Item -Path $MsiFile ; `
-      $psexe=Get-Item -Path $Env:ProgramFiles\PowerShell\*\powershell.exe ; `
+      $psexe=Get-Item -Path $Env:ProgramFiles\PowerShell\*\pwsh.exe ; `
       New-Item -Type SymbolicLink -Path $Env:ProgramFiles\PowerShell\ -Name latest -Value $psexe.DirectoryName `
     } else { throw 'Installation failed!  See c:\PowerShell-win-x64.msi.log' } ;
 
-# Verify New Powershell.exe runs
-SHELL ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe", "-command"]
+# Verify New pwsh.exe runs
+SHELL ["C:\\Program Files\\PowerShell\\latest\\pwsh.exe", "-command"]
 RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; `
     $ErrorActionPreference='Stop'; `
     Write-Output $PSVersionTable ; `
@@ -56,6 +56,6 @@ RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; 
     } ;
 
 # Persist %PSCORE% ENV variable for user convenience
-ENV PSCORE='"C:\Program Files\PowerShell\latest\PowerShell.exe"'
+ENV PSCORE='"C:\Program Files\PowerShell\latest\pwsh.exe"'
 
-CMD ["PowerShell.exe"]
+CMD ["pwsh.exe"]
