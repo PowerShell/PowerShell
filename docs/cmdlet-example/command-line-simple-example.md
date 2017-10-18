@@ -164,7 +164,7 @@ Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
        + FullyQualifiedErrorId : System.IO.FileNotFoundException
    ```
 
-If the command worked, congratulations! You're system was probably updated to
+If the command worked, congratulations! Your system was probably updated to
 .NET Framework 4.7.1.  Otherwise, this error indicates that the `MyModule.dll` assembly
 can't find the `netstandard.dll` "implementation" assembly for the version of the
 .NET Framework that Windows PowerShell is using.
