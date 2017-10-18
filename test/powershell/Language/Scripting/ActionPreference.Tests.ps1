@@ -138,7 +138,7 @@
                 Path = "$testdrive\test.txt";
                 Confirm = $false
             }
-            New-Item @params
+            New-Item @params > $null
             $params += @{$switch=$true}
             { New-Item @params } | Should Not Throw
             $ErrorActionPreference = "Stop"
