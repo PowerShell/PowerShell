@@ -1632,7 +1632,7 @@ namespace Microsoft.PowerShell.Commands
 
                 NakedWin32Handle hScManager = IntPtr.Zero;
                 NakedWin32Handle hService = IntPtr.Zero;
-                    IntPtr delayedAutoStartInfoBuffer = IntPtr.Zero;
+                IntPtr delayedAutoStartInfoBuffer = IntPtr.Zero;
                 try
                 {
                     hScManager = NativeMethods.OpenSCManagerW(
