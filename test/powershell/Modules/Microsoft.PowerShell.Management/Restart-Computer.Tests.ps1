@@ -44,7 +44,8 @@ try
 
         It "Should support -computer parameter" {
             Set-HookResult -result $defaultResultValue
-            Restart-Computer -computer (hostname) -ea Stop| Should BeNullOrEmpty
+            $computerNames = "localhost",(hostname)
+            Restart-Computer -Computer $computerNames -ea Stop| Should BeNullOrEmpty
         }
 
         It "Should support Wsman protocol" {

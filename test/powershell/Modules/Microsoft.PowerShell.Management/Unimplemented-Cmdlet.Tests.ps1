@@ -16,8 +16,6 @@ Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
 
         "Get-ComputerInfo",
 
-        "Test-Connection",
-
         "Set-TimeZone"
     )
 

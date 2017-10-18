@@ -218,7 +218,6 @@ Stop-Transcript,https://go.microsoft.com/fwlink/?LinkID=113415
 Suspend-Service,https://go.microsoft.com/fwlink/?LinkID=113416
 Tee-Object,https://go.microsoft.com/fwlink/?LinkID=113417
 Test-ComputerSecureChannel,https://go.microsoft.com/fwlink/?LinkID=137749
-Test-Connection,https://go.microsoft.com/fwlink/?LinkID=135266
 Test-ModuleManifest,https://go.microsoft.com/fwlink/?LinkID=141557
 Test-Path,https://go.microsoft.com/fwlink/?LinkID=113418
 Test-WSMan,https://go.microsoft.com/fwlink/?LinkID=141464
