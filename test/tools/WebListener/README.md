@@ -269,3 +269,34 @@ Location: /Get/
 <h1>Redirecting...</h1>
 <p>You should be redirected automatically to target URL: <a href="/Get/">/Get/</a>.  If not click the link.
 ```
+
+## /ResponseHeaders/
+
+Will return the response headers passed in query string. The response body will be the supplied headers as a JSON object.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = 'custom'; 'x-header-01' = 'value01'; 'x-header-02' = 'value02'}
+Invoke-RestMethod -Uri $uri 
+```
+
+Response Headers:
+
+```none
+HTTP/1.1 200 OK
+Date: Sun, 08 Oct 2017 18:20:38 GMT
+Transfer-Encoding: chunked
+Server: Kestrel
+x-header-02: value02
+x-header-01: value01
+Content-Type: custom
+```
+
+Body:
+
+```json
+{
+    "Content-Type": "custom",
+    "x-header-02": "value02",
+    "x-header-01": "value01"
+}
+```

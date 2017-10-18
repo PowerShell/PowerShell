@@ -737,7 +737,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
 
         #Validate that exception is not thrown when response headers are missing Content-Type.
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/response-headers?Content-Type='"
+        $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = ''}
+        $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
@@ -1697,7 +1698,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
 
         #Validate that exception is not thrown when response headers are missing Content-Type.
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/response-headers?Content-Type='"
+        $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = ''}
+        $command = "Invoke-RestMethod -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
