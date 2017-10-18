@@ -1,17 +1,19 @@
 Describe "Export-Csv" -Tags "CI" {
-    $testObject = @("test","object","array")
-    $testCsv = Join-Path -Path $TestDrive -ChildPath "output.csv"
+    BeforeAll {
+        $testObject = @("test","object","array")
+        $testCsv = Join-Path -Path $TestDrive -ChildPath "output.csv"
+    }
 
     AfterEach {
         Remove-Item $testCsv -Force -ErrorAction SilentlyContinue
     }
 
     It "Should be able to be called without error" {
-        { $testObject | Export-Csv $testCsv } | Should Not Throw
+        { $testObject | Export-Csv $testCsv -ErrorAction Stop } | Should Not Throw
     }
 
     It "Should throw if an output file isn't specified" {
-        { $testObject | Export-Csv -ErrorAction SilentlyContinue } | ShouldBeErrorId "CannotSpecifyPathAndLiteralPath,Microsoft.PowerShell.Commands.ExportCsvCommand"
+        { $testObject | Export-Csv -ErrorAction Stop } | ShouldBeErrorId "CannotSpecifyPathAndLiteralPath,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
     It "Should be a string when exporting via pipe" {
@@ -19,7 +21,7 @@ Describe "Export-Csv" -Tags "CI" {
 
         $piped = Get-Content $testCsv
 
-        $piped[0] | Should be "#TYPE System.String"
+        $piped[0] | Should BeExactly "#TYPE System.String"
     }
 
     It "Should be an object when exporting via the inputObject switch" {
@@ -27,7 +29,7 @@ Describe "Export-Csv" -Tags "CI" {
 
         $switch = Get-Content $testCsv
 
-        $switch[0] | Should Match ".Object"
+        $switch[0] | Should BeExactly "#TYPE System.Object[]" 
     }
 
     It "Should output a csv file containing a string of all the lengths of each element when piped input is used" {
@@ -41,10 +43,6 @@ Describe "Export-Csv" -Tags "CI" {
         for ( $i = 0; $i -lt $testCsv.Length; $i++) {
          $(Get-Content $testCsv)[$i] | Should Be $expected[$i]
         }
-    }
-
-    It "Should be able to use the epcsv alias without error" {
-        { $testObject | epcsv -Path $testCsv } | Should Not Throw
     }
 
     It "Should have the same information when using the alias vs the cmdlet" {
