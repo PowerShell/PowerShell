@@ -40,8 +40,8 @@ Describe "Export-Csv" -Tags "CI" {
         $third    = "`"" + $testObject[2].Length.ToString() + "`""
         $expected = @("#TYPE System.String", "`"Length`"", $first , $second, $third)
 
-        for ( $i = 0; $i -lt $expected.Count; $i++) {
-         $(Get-Content $testCsv)[$i] | Should Be $expected[$i]
+        for ($i = 0; $i -lt $expected.Count; $i++) {
+            $(Get-Content $testCsv)[$i] | Should Be $expected[$i]
         }
     }
 }
