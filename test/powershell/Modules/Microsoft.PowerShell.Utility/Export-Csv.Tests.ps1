@@ -40,20 +40,8 @@ Describe "Export-Csv" -Tags "CI" {
         $third    = "`"" + $testObject[2].Length.ToString() + "`""
         $expected = @("#TYPE System.String", "`"Length`"", $first , $second, $third)
 
-        for ( $i = 0; $i -lt $testCsv.Length; $i++) {
+        for ( $i = 0; $i -lt $expected.Count; $i++) {
          $(Get-Content $testCsv)[$i] | Should Be $expected[$i]
-        }
-    }
-
-    It "Should have the same information when using the alias vs the cmdlet" {
-        $testObject | Export-Csv -Path $testCsv
-
-        $aliasObject = Join-Path -Path $TestDrive -ChildPath "alias.csv"
-
-        $testObject | epcsv -Path $aliasObject
-
-        for ( $i = 0; $i -lt $testCsv.Length; $i++) {
-            $(Get-Content $testCsv)[$i] | Should Be $(Get-Content $aliasObject)[$i]
         }
     }
 }
