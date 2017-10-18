@@ -284,7 +284,7 @@ function Start-PSPackage {
 
         if($IncludeSymbols.IsPresent)
         {
-            Remove-Item -Path $Source -Recurse -Force
+            Remove-Item -Path $Source -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
 }
