@@ -1,0 +1,3 @@
+# testablescript.ps1 used in Get-FileHash tests.
+# It need to be checked-out without any conversion.
+/testablescript.ps1 binary
