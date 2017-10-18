@@ -58,7 +58,7 @@ function Start-PSPackage {
             log 'setting IncludeSymbols'
             $IncludeSymbols = $PSBoundParameters['IncludeSymbols']
         }
-        log "$($IncludeSymbols.IsPresent):$IncludeSymbols"
+
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
