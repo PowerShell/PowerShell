@@ -71,4 +71,11 @@ Describe "Write-Output" -Tags "CI" {
 	    $singleCollection | Should Be 1
 	}
     }
+
+    Context "Singular objects" {
+        It "Write-Object -NoEnumerate should not wrap singular objects" {
+            Write-Output -NoEnumerate 1 | Should BeOfType [int]
+            1 | Write-Output -NoEnumerate | Should BeOfType [int]
+        }
+    }
 }
