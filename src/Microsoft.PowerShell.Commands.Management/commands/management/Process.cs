@@ -69,12 +69,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal MatchMode myMode = MatchMode.All;
 
-        /// <summary>
-        /// The computer from which to retrieve processes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        protected string[] SuppliedComputerName { get; set; } = Utils.EmptyArray<string>();
-
         /// <remarks>
         /// The Name parameter is declared in subclasses,
         /// since it is optional for GetProcess and mandatory for StopProcess.
@@ -228,19 +222,8 @@ namespace Microsoft.PowerShell.Commands
                 Process process;
                 try
                 {
-                    if (SuppliedComputerName.Length > 0)
-                    {
-                        foreach (string computerName in SuppliedComputerName)
-                        {
-                            process = Process.GetProcessById(processId, computerName);
-                            AddIdempotent(process);
-                        }
-                    }
-                    else
-                    {
-                        process = Process.GetProcessById(processId);
-                        AddIdempotent(process);
-                    }
+                    process = Process.GetProcessById(processId);
+                    AddIdempotent(process);
                 }
                 catch (ArgumentException)
                 {
@@ -292,19 +275,7 @@ namespace Microsoft.PowerShell.Commands
                 if (null == _allProcesses)
                 {
                     List<Process> processes = new List<Process>();
-
-                    if (SuppliedComputerName.Length > 0)
-                    {
-                        foreach (string computerName in SuppliedComputerName)
-                        {
-                            processes.AddRange(Process.GetProcesses(computerName));
-                        }
-                    }
-                    else
-                    {
-                        processes.AddRange(Process.GetProcesses());
-                    }
-
+                    processes.AddRange(Process.GetProcesses());
                     _allProcesses = processes.ToArray();
                 }
                 return _allProcesses;
@@ -555,29 +526,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _includeUserName = false;
 
-
-        /// <summary>
-        /// gets/sets the destination computer name
-        /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = NameParameterSet, ValueFromPipelineByPropertyName = true)]
-        [Parameter(Mandatory = false, ParameterSetName = IdParameterSet, ValueFromPipelineByPropertyName = true)]
-        [Parameter(Mandatory = false, ParameterSetName = InputObjectParameterSet, ValueFromPipelineByPropertyName = true)]
-        [Alias("Cn")]
-        [ValidateNotNullOrEmpty()]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get
-            {
-                return SuppliedComputerName;
-            }
-            set
-            {
-                SuppliedComputerName = value;
-            }
-        }
-
-
         ///<summary>
         ///To display the modules of a process
         ///</summary>
@@ -621,13 +569,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (ComputerName.Length > 0 && (FileVersionInfo.IsPresent || Module.IsPresent))
-            {
-                Exception ex = new InvalidOperationException(ProcessResources.NoComputerNameWithFileVersion);
-                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, ComputerName);
-                ThrowTerminatingError(er);
-            }
-
             foreach (Process process in MatchingProcesses())
             {
                 //if module and fileversion are to be displayed
