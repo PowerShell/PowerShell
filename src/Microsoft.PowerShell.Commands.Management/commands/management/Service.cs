@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                         service,
                         service.MachineName,
                         exception,
-                        "ComputerAccessDenied",
+                        "FailToOpenServiceControlManager",
                         ServiceResources.ComputerAccessDenied,
                         ErrorCategory.PermissionDenied);
                 }
