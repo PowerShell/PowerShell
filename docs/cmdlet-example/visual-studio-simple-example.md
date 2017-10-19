@@ -78,6 +78,7 @@ We will use the free [Visual Studio Community 2017](https://www.visualstudio.com
   ![StdImage21](./Images/Std21.png)
 
 1. On project properties verify that `Target framework` is `.NET Standard 2.0`:
+
   ![StdImage22](./Images/Std22.png)
 
 1. Now we need to setup reference assemblies.
