@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                             }
-                            else if (Directory.Exists(qualifiedPath))
+                            else if (Utils.NativeDirectoryExists(qualifiedPath))
                             {
                                 // if it points to a directory, add the basename back onto the path...
                                 qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
