@@ -1,2 +1,2 @@
 #!/bin/bash
-open /usr/local/bin/powershell
+open /usr/local/bin/pwsh
