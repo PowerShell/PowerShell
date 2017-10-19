@@ -13,6 +13,5 @@ CLRVersion = '4.0'
 FunctionsToExport = 'PSConsoleHostReadline'
 CmdletsToExport = 'Get-PSReadlineKeyHandler','Set-PSReadlineKeyHandler','Remove-PSReadlineKeyHandler',
                   'Get-PSReadlineOption','Set-PSReadlineOption'
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855966
-'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855966'
 }
