@@ -12,13 +12,13 @@ This demonstrates how to build your own C# cmdlet for PowerShell Core with Visua
 We will use the free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
 
 1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
-![Step1](./Images/Step1.png)
+  ![Step1](./Images/Step1.png)
 
 1. Create new C# project `SendGreeting` of type `Class Library (.NET Core)`
-![Step2](./Images/Step2.png)
+  ![Step2](./Images/Step2.png)
 
 1. Now we need to setup PowerShell Core reference assemblies.
-In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
+  In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
 In the top-right corner of the package manager click on the small `Settings` sprocket icon that is to the right from `Package source` dropdown.
 By default, there will be only `nuget.org` package source in `Available package sources` list.
 Add another package source with name `powershell-core` and source `https://powershell.myget.org/F/powershell-core/api/v3/index.json`
@@ -57,10 +57,10 @@ It should find `System.Management.Automation` package, select it and it will sho
     ![Step5](./Images/Step5.png)
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
-![Step6](./Images/Step6.png)
+  ![Step6](./Images/Step6.png)
 
 1. Start PowerShell Core, run `Import-Module` on DLL path from previous step and run cmdlet:
-![Step7](./Images/Step7.png)
+  ![Step7](./Images/Step7.png)
 You can also run the same cmdlet on Linux and other systems that PowerShell Core supports:
 ![Step8](./Images/Step8.png)
 
@@ -71,15 +71,15 @@ Steps below show how to build your own C# cmdlet for PowerShell Standard 3.0 wit
 We will use the free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
 
 1. When installing Visual Studio 2017 select `.NET Core cross-platform development` under `Other Toolsets`
-![StdImage1](./Images/Step1.png)
+  ![StdImage1](./Images/Step1.png)
 
 1. Create new C# project `SendGreetingStd` of type `Class Library (.NET Standard)`
-![StdImage21](./Images/Std21.png)
+  ![StdImage21](./Images/Std21.png)
 On project properties verify that `Target framework` is `.NET Standard 2.0`:
 ![StdImage22](./Images/Std22.png)
 
 1. Now we need to setup reference assemblies.
-In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
+  In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
 In the top-right corner of the package manager select `nuget.org` package source, select `Browse` tab, type in `PowerShellStandard.Library` in the search and select `Include prerelease`.
 It should find `PowerShellStandard.Library` package, select it and it will show package details; install it using `Install` button.
 ![StdImage3](./Images/Std3.png)
@@ -114,10 +114,10 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
     ![StdImage4](./Images/Std4.png)
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
-![StdImage5](./Images/Std5.png)
+  ![StdImage5](./Images/Std5.png)
 
 1. Now cmdlet can be run on systems supported by PowerShell Standard; for example:
-On PowerShell Core on Windows:
+  On PowerShell Core on Windows:
 ![StdImage61](./Images/Std61.png)
 On PowerShell Core on Linux:
 ![StdImage62](./Images/Std62.png)
