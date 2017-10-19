@@ -24,8 +24,8 @@ By default, there will be only `nuget.org` package source in `Available package 
 Add another package source with name `powershell-core` and source `https://powershell.myget.org/F/powershell-core/api/v3/index.json`
 ![Step3](./Images/Step3.png)
 
-  In the package manager select new `powershell-core` in `Package source` dropdown, select `Browse` tab, type in `System.Management.Automation` in the search and select `Include prerelease`.
-It should find `System.Management.Automation` package, select it and it will show package details; install it using `Install` button.
+1. In the package manager select new `powershell-core` in `Package source` dropdown, select `Browse` tab, type in `System.Management.Automation` in the search and select `Include prerelease`.
+  It should find `System.Management.Automation` package, select it and it will show package details; install it using `Install` button.
 ![Step4](./Images/Step4.png)
 
 1. Add the code of cmdlet:
@@ -76,8 +76,9 @@ We will use the free [Visual Studio Community 2017](https://www.visualstudio.com
 
 1. Create new C# project `SendGreetingStd` of type `Class Library (.NET Standard)`
   ![StdImage21](./Images/Std21.png)
-On project properties verify that `Target framework` is `.NET Standard 2.0`:
-![StdImage22](./Images/Std22.png)
+
+1. On project properties verify that `Target framework` is `.NET Standard 2.0`:
+  ![StdImage22](./Images/Std22.png)
 
 1. Now we need to setup reference assemblies.
   In `Solution Explorer` right click on project `Dependencies` and select `Manage NuGet Packages...`
@@ -117,7 +118,8 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
   ![StdImage5](./Images/Std5.png)
 
-1. Now cmdlet can be run on systems supported by PowerShell Standard; for example:
+1. Now cmdlet can be run on systems supported by PowerShell Standard;
+  For example:
   On PowerShell Core on Windows:
 ![StdImage61](./Images/Std61.png)
 On PowerShell Core on Linux:
