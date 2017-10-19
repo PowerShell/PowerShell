@@ -43,6 +43,7 @@ dotnet-uninstall-debian-packages.sh
 *.rpm
 *.pkg
 *.nupkg
+*.AppImage
 
 # ignore the telemetry semaphore file
 DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
