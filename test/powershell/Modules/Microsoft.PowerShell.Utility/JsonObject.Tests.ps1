@@ -4,7 +4,6 @@
         $jsonWithEmptyKey = '{"": "Value"}'
     }
 
-
     It 'No error for valid string ''<name>'' with -ReturnHashTable:$<ReturnHashTable>' -TestCase @(
         @{ name = "null";   str = $null;   ReturnHashTable = $true  }
         @{ name = "empty";  str = "";      ReturnHashTable = $true  }
