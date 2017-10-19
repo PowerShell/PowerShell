@@ -218,22 +218,6 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// runspaceConfiguration information for this runspace
-        /// </summary>
-        internal override RunspaceConfiguration RunspaceConfiguration
-        {
-            get
-            {
-#pragma warning disable 56503
-
-                throw PSTraceSource.NewNotImplementedException();
-
-#pragma warning restore 56503
-            }
-        }
-
-
-        /// <summary>
         /// initialsessionstate information for this runspace
         /// </summary>
         public override InitialSessionState InitialSessionState

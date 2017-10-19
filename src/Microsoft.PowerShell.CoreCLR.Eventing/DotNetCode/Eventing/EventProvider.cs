@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <copyright file="etwprovider.cs" company="Microsoft">
+// <copyright company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------

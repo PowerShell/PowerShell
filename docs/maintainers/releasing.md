@@ -35,7 +35,7 @@ This is to help track the release preparation work.
      Delete the `docker` branch once the builds succeed.
    - Windows: queue a new build in `PowerShell Windows Docker Build` on VSTS.
 1. Verify the generated docker container images.
-1. [Update the homebrew formula](#homebrew) for the OSX package.
+1. [Update the homebrew formula](#homebrew) for the macOS package.
    This task usually will be taken care of by the community,
    so we can wait for one day or two and see if the homebrew formula has already been updated,
    and only do the update if it hasn't.
@@ -43,7 +43,7 @@ This is to help track the release preparation work.
 ## Building Packages
 
 > Note: Linux and Windows packages are taken care of by our release build pipeline in VSTS,
-while the OSX package needs to be built separately on a macOS.
+while the macOS package needs to be built separately on a macOS.
 
 The release build should be started based on the `release` branch.
 The release Git tag won't be created until all release preparation tasks are done,

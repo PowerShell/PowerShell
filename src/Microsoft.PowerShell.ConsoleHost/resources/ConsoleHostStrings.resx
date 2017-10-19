@@ -136,11 +136,11 @@
     <value>The shell cannot be started. A failure occurred during initialization:</value>
   </data>
   <data name="UnhandledExceptionShutdownMessage" xml:space="preserve">
-    <value>An error has occurred that was not properly handled. Additional information is shown below. The Windows PowerShell process will exit.</value>
+    <value>An error has occurred that was not properly handled. Additional information is shown below. The PowerShell process will exit.</value>
   </data>
   <data name="TranscriptPrologue" xml:space="preserve">
     <value>**********************
-Windows PowerShell transcript start
+PowerShell transcript start
 Start time: {0:yyyyMMddHHmmss}
 Username  : {1}\{2}
 Machine   : {3} ({4})
@@ -148,7 +148,7 @@ Machine   : {3} ({4})
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
     <value>**********************
-Windows PowerShell transcript end
+PowerShell transcript end
 End time: {0:yyyyMMddHHmmss}
 **********************</value>
   </data>
@@ -156,7 +156,7 @@ End time: {0:yyyyMMddHHmmss}
     <value>An instance of the ConsoleHost class has already been created for this process.</value>
   </data>
   <data name="InitialCommandNotExecuted" xml:space="preserve">
-    <value>Command '{0}' could not be run because some Windows PowerShell Snap-Ins did not load.</value>
+    <value>Command '{0}' could not be run because some PowerShell Snap-Ins did not load.</value>
   </data>
   <data name="CommandNotExecuted" xml:space="preserve">
     <value>Command '{0}' was not run as the session in which it was intended to run was either closed or broken</value>

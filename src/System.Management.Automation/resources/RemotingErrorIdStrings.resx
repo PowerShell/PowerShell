@@ -172,7 +172,7 @@
     <value>Only administrators can override the Thread Options remotely.</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedCaption" xml:space="preserve">
-    <value>Windows PowerShell Credential Request: {0}</value>
+    <value>PowerShell Credential Request: {0}</value>
   </data>
   <data name="RemoteHostPromptForCredentialModifiedMessage" xml:space="preserve">
     <value>Warning: A script or application on the remote computer {0} is requesting your credentials. Enter your credentials only if you trust the remote computer and the application or script that is requesting them.
@@ -183,7 +183,7 @@
     <value>A script or application on the remote computer {0} is asking to read a line securely. Enter sensitive information, such as your credentials, only if you trust the remote computer and the application or script that is requesting it.</value>
   </data>
   <data name="RemoteHostGetBufferContents" xml:space="preserve">
-    <value>A script or application on the remote computer {0} is attempting to read the buffer contents on the Windows PowerShell host. For security reasons, this is not allowed; the call has been suppressed.</value>
+    <value>A script or application on the remote computer {0} is attempting to read the buffer contents on the PowerShell host. For security reasons, this is not allowed; the call has been suppressed.</value>
   </data>
   <data name="RemoteHostPromptSecureStringPrompt" xml:space="preserve">
     <value>A script or application on the remote computer {0} is sending a prompt request. When you are prompted, enter sensitive information, such as credentials or passwords, only if you trust the remote computer and the application or script that is requesting the data.</value>
@@ -270,7 +270,7 @@
     <value>Error in decoding Maximum runspaces.</value>
   </data>
   <data name="DecodingErrorForPowerShellStateInfo" xml:space="preserve">
-    <value>Error in decoding Windows PowerShellStateInfo.</value>
+    <value>Error in decoding PowerShellStateInfo.</value>
   </data>
   <data name="CantCastPropertyToExpectedType" xml:space="preserve">
     <value>Unexpected type of {0} property (expected {1}, got {2}).</value>
@@ -294,31 +294,31 @@
     <value>The client negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
   </data>
   <data name="ClientNegotiationFailed" xml:space="preserve">
-    <value>Windows PowerShell client does not support the {0} {1} negotiated by the server. Make sure the server is compatible with the build {2} and the protocol version {3} of Windows PowerShell.</value>
+    <value>PowerShell client does not support the {0} {1} negotiated by the server. Make sure the server is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
   </data>
   <data name="ClientNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the server failed. Make sure the server is compatible with the build {1} and the protocol version {2} of Windows PowerShell.</value>
+    <value>{0}. Negotiation with the server failed. Make sure the server is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
   </data>
   <data name="ServerRequestedToCloseSession" xml:space="preserve">
     <value>The destination server has sent a request to close the session.</value>
   </data>
   <data name="ServerNegotiationFailed" xml:space="preserve">
-    <value>The server that is running Windows PowerShell does not support the {0} {1} negotiated by the client computer. Verify that the client computer is compatible with the build {2} and the protocol version {3} of Windows PowerShell.</value>
+    <value>The server that is running PowerShell does not support the {0} {1} negotiated by the client computer. Verify that the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
   </data>
   <data name="ServerConnectFailedOnNegotiation" xml:space="preserve">
-    <value>The server that is running Windows PowerShell does not support connect operations on the {0} {1}  that is negotiated by the client computer. Make sure the client computer is compatible with the build {2} and the protocol version {3} of Windows PowerShell.</value>
+    <value>The server that is running PowerShell does not support connect operations on the {0} {1}  that is negotiated by the client computer. Make sure the client computer is compatible with the build {2} and the protocol version {3} of PowerShell.</value>
   </data>
   <data name="ServerConnectFailedOnInputValidation" xml:space="preserve">
-    <value>The server that is running Windows PowerShell cannot process the connect operation because the following information is not found or not valid: Client Capability information and Connect RunspacePool information.</value>
+    <value>The server that is running PowerShell cannot process the connect operation because the following information is not found or not valid: Client Capability information and Connect RunspacePool information.</value>
   </data>
   <data name="ServerConnectFailedOnServerStateValidation" xml:space="preserve">
-    <value>The server that is running Windows PowerShell cannot process the connect operation because the server has either not been started, or it is shutting down.</value>
+    <value>The server that is running PowerShell cannot process the connect operation because the server has either not been started, or it is shutting down.</value>
   </data>
   <data name="ServerConnectFailedOnMismatchedRunspacePoolProperties" xml:space="preserve">
-    <value>The server that is running Windows PowerShell cannot process the connect operation because the server runspace pool properties did not match the client computer specified properties.</value>
+    <value>The server that is running PowerShell cannot process the connect operation because the server runspace pool properties did not match the client computer specified properties.</value>
   </data>
   <data name="ServerNotFoundCapabilityProperties" xml:space="preserve">
-    <value>{0}. Negotiation with the client failed. Make sure the client is compatible with the build {1} and the protocol version {2} of Windows PowerShell.</value>
+    <value>{0}. Negotiation with the client failed. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
   </data>
   <data name="ServerNegotiationTimeout" xml:space="preserve">
     <value>The server negotiation timer has expired. The negotiation time-out interval is {0} milliseconds.</value>
@@ -327,7 +327,7 @@
     <value>The client computer has sent a request to close the session.</value>
   </data>
   <data name="FatalErrorCausingClose" xml:space="preserve">
-    <value>An error has occurred which Windows PowerShell cannot handle. A remote session might have ended.</value>
+    <value>An error has occurred which PowerShell cannot handle. A remote session might have ended.</value>
   </data>
   <data name="ClientKeyExchangeFailed" xml:space="preserve">
     <value>The server did not respond with an encrypted session key within the specified time-out period.</value>
@@ -342,7 +342,7 @@
     <value>Attempting to close the session.</value>
   </data>
   <data name="ForceClosed" xml:space="preserve">
-    <value>Windows PowerShell cannot close the remote session properly. The session is in an undefined state because it was not opened or connected after being disconnected. Windows PowerShell will try to force the session to close on the local computer, but the session might not be closed on the remote computer. To close a remote session properly, first open it or connect it.</value>
+    <value>PowerShell cannot close the remote session properly. The session is in an undefined state because it was not opened or connected after being disconnected. PowerShell will try to force the session to close on the local computer, but the session might not be closed on the remote computer. To close a remote session properly, first open it or connect it.</value>
   </data>
   <data name="CloseFailed" xml:space="preserve">
     <value>Could not close the session.</value>
@@ -459,10 +459,10 @@
     <value>Inter-process communication (IPC) transport does not support connect operations.</value>
   </data>
   <data name="NonExistentInitialSessionStateProvider" xml:space="preserve">
-    <value>An EndpointConfiguration with Id {0} does not exist on the remote server. Contact your Windows PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>An EndpointConfiguration with Id {0} does not exist on the remote server. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
   </data>
   <data name="InitialSessionStateNull" xml:space="preserve">
-    <value>The EndpointConfiguration with the {0} identifier is not in a valid initial session state on the remote computer. Contact your Windows PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
+    <value>The EndpointConfiguration with the {0} identifier is not in a valid initial session state on the remote computer. Contact your PowerShell administrator, or the owner or creator of the endpoint configuration.</value>
   </data>
   <data name="MandatoryValueNotPresent" xml:space="preserve">
     <value>The mandatory value {0} is not specified for the {1} registry key.</value>
@@ -471,7 +471,7 @@
     <value>The mandatory value {0} is not in the correct format for registry key {1}. The expected format is 'string'.</value>
   </data>
   <data name="StartupScriptNotCorrect" xml:space="preserve">
-    <value>"{0}" must specify a Windows PowerShell script file that ends with extension ".ps1".</value>
+    <value>"{0}" must specify a PowerShell script file that ends with extension ".ps1".</value>
   </data>
   <data name="DuplicateInitializationParameterFound" xml:space="preserve">
     <value>The {0} parameter is already specified in the {1} section. Contact your administrator to make sure that {0} is specified only once.</value>
@@ -552,7 +552,7 @@
     <value>The path specified as the value of the FilePath parameter is not from the FileSystem provider.</value>
   </data>
   <data name="FilePathShouldPS1Extension" xml:space="preserve">
-    <value>The value of the FilePath parameter must be a Windows PowerShell script file. Enter the path to a file with a .ps1 file name extension and try the command again.</value>
+    <value>The value of the FilePath parameter must be a PowerShell script file. Enter the path to a file with a .ps1 file name extension and try the command again.</value>
   </data>
   <data name="InvalidComputerName" xml:space="preserve">
     <value>One or more computer names are not valid. If you are trying to pass a URI, use the -ConnectionUri parameter, or pass URI objects instead of strings.</value>
@@ -582,7 +582,7 @@
     <value>Remote Command: {0}, associated with a job that has an ID of "{1}".</value>
   </data>
   <data name="ComputerNameParamNotSupported" xml:space="preserve">
-    <value>The command cannot retrieve the jobs of the specified computers. The ComputerName parameter can be used only with jobs created by using Windows PowerShell remoting.</value>
+    <value>The command cannot retrieve the jobs of the specified computers. The ComputerName parameter can be used only with jobs created by using PowerShell remoting.</value>
   </data>
   <data name="RunspaceParamNotSupported" xml:space="preserve">
     <value>The Session parameter can be used only with PSRemotingJob objects.</value>
@@ -654,7 +654,7 @@
     <value>Session configuration "{0}" was not found.</value>
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
-    <value>Session configuration "{0}" is not a Windows PowerShell-based shell.</value>
+    <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
 </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
     <value>Session configuration "{0}" is a PowerShell Core-based shell. Please use PowerShell Core to modify it.</value>
@@ -672,13 +672,13 @@
     <value>Name: {0}</value>
   </data>
   <data name="CSShouldProcessTargetAdminEnable" xml:space="preserve">
-    <value>Name: {0}. This lets administrators remotely run Windows PowerShell commands on this computer.</value>
+    <value>Name: {0}. This lets administrators remotely run PowerShell commands on this computer.</value>
   </data>
   <data name="NcsCannotDeleteFile" xml:space="preserve">
     <value>Cannot delete temporary file {0}. Reason for failure: {1}.</value>
   </data>
   <data name="NcsCannotDeleteFileAfterInstall" xml:space="preserve">
-    <value>The new shell was successfully registered, but Windows PowerShell cannot delete the temporary file {0}. Reason for failure: {1}.</value>
+    <value>The new shell was successfully registered, but PowerShell cannot delete the temporary file {0}. Reason for failure: {1}.</value>
   </data>
   <data name="NcsCannotWritePluginContent" xml:space="preserve">
     <value>Cannot write the shell configuration data into the temporary file {0}. Reason for failure: {1}.</value>
@@ -687,13 +687,13 @@
     <value>Running command "{0}" to create a new session configuration.</value>
   </data>
   <data name="NcsShouldProcessTargetSDDL" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run Windows PowerShell commands on this computer.</value>
+    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
   </data>
   <data name="RcsScriptMessageV" xml:space="preserve">
     <value>Running command "{0}" to remove a session configuration.</value>
   </data>
   <data name="GcsScriptMessageV" xml:space="preserve">
-    <value>Running command "{0}" to get Windows PowerShell-based session configurations.</value>
+    <value>Running command "{0}" to get PowerShell-based session configurations.</value>
   </data>
   <data name="ScsScriptMessageV" xml:space="preserve">
     <value>Running command "{0}" to update the session configuration properties.</value>
@@ -721,7 +721,7 @@ Do you want to continue?</value>
     <value>Performing operation "{0}".</value>
   </data>
   <data name="EcsShouldProcessTarget" xml:space="preserve">
-    <value>Name: {0} SDDL: {1}. This lets selected users remotely run Windows PowerShell commands on this computer.</value>
+    <value>Name: {0} SDDL: {1}. This lets selected users remotely run PowerShell commands on this computer.</value>
   </data>
   <data name="DcsScriptMessageV" xml:space="preserve">
     <value>Running command "{0}" to disable the session configuration.</value>
@@ -737,7 +737,7 @@ Do you want to continue?</value>
     4. Restore the value of the LocalAccountTokenFilterPolicy to 0, which restricts remote access to members of the Administrators group on the computer.</value>
   </data>
   <data name="EDcsRequiresElevation" xml:space="preserve">
-    <value>Access is denied. To run this cmdlet, start Windows PowerShell with the "Run as administrator" option.</value>
+    <value>Access is denied. To run this cmdlet, start PowerShell with the "Run as administrator" option.</value>
   </data>
   <data name="RestartWSManServiceMessageV" xml:space="preserve">
     <value>Restarting WinRM service</value>
@@ -846,7 +846,7 @@ Do you want to continue?</value>
     <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
   </data>
   <data name="PowerShellNotInstalled" xml:space="preserve">
-    <value>Windows PowerShell {0} is not installed. Install Windows PowerShell {0}, and then try again.</value>
+    <value>PowerShell {0} is not installed. Install PowerShell {0}, and then try again.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
     <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
@@ -911,9 +911,6 @@ Do you want to continue?</value>
   <data name="JobIdentifierNull" xml:space="preserve">
     <value>The JobIdentifier provided must not be null. Please provide a valid JobIdentifier.</value>
   </data>
-  <data name="InvokeDisconnectedWithoutComputerName" xml:space="preserve">
-    <value>No computer names or connection Uris were specified.  You must provide a computer name or connection Uri when invoking a command with the -Disconnected switch.</value>
-  </data>
   <data name="JobBlockedSoWaitJobCannotContinue" xml:space="preserve">
     <value>The Wait-Job cmdlet cannot finish working, because one or more jobs are blocked waiting for user interaction.  Process interactive job output by using the Receive-Job cmdlet, and then try again.</value>
   </data>
@@ -933,14 +930,14 @@ Do you want to continue?</value>
     <value>The command cannot find a PSSession that has the name "{0}".</value>
   </data>
   <data name="WinPERemotingNotSupported" xml:space="preserve">
-    <value>Windows PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
+    <value>PowerShell remoting is not supported in the Windows Preinstallation Environment (WinPE).</value>
   </data>
   <data name="WinRMRequiresRestart" xml:space="preserve">
     <value>Changes made by {0} cannot take effect until the WinRM service is restarted.</value>
   </data>
   <data name="WinRMRestartWarning" xml:space="preserve">
     <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
-All WinRM sessions connected to Windows PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
+All WinRM sessions connected to PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
   </data>
   <data name="WinRMForceRestartWarning" xml:space="preserve">
     <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
@@ -1030,7 +1027,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>Modules to import when applied to a session</value>
   </data>
   <data name="DISCPowerShellVersionComment" xml:space="preserve">
-    <value>Version of the Windows PowerShell engine to use when applied to a session</value>
+    <value>Version of the PowerShell engine to use when applied to a session</value>
   </data>
   <data name="DISCProcessorArchitectureComment" xml:space="preserve">
     <value>Processor architecture to use when applied to a session</value>
@@ -1196,7 +1193,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The PSSession is in a disconnected state and is not available for connection.</value>
   </data>
   <data name="HyperVModuleNotAvailable" xml:space="preserve">
-    <value>The Hyper-V Module for Windows PowerShell is not available on this machine.</value>
+    <value>The Hyper-V Module for PowerShell is not available on this machine.</value>
   </data>
   <data name="CannotCreateProcessInContainer" xml:space="preserve">
     <value>Failed to launch PowerShell process inside container with id {0}.</value>
@@ -1318,7 +1315,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>One or more jobs are in a suspended or disconnected state, and cannot continue without additional user input.  Specify the -Force parameter to continue to a completed, failed, or stopped state.</value>
   </data>
   <data name="RunAsSessionConfigurationSecurityWarning" xml:space="preserve">
-    <value>When RunAs is enabled in a Windows PowerShell session configuration, the Windows security model cannot enforce a security boundary between different user sessions that are created by using this endpoint. Verify that the Windows PowerShell runspace configuration is restricted to only the necessary set of cmdlets and capabilities.</value>
+    <value>When RunAs is enabled in a PowerShell session configuration, the Windows security model cannot enforce a security boundary between different user sessions that are created by using this endpoint. Verify that the PowerShell runspace configuration is restricted to only the necessary set of cmdlets and capabilities.</value>
   </data>
   <data name="ForceSuspendJob" xml:space="preserve">
     <value>The job was suspended successfully by adding the Force parameter.</value>
@@ -1333,7 +1330,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The workflow job "{0}" was stopped. Receive-Job is only displaying partial results.</value>
   </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
-    <value>Disconnected sessions are supported only when the remote computer is running Windows PowerShell 3.0 or a later version of Windows PowerShell.</value>
+    <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
   </data>
   <data name="ThrottlingJobFlowControlMemoryWarning" xml:space="preserve">
     <value>Memory usage of a cmdlet has exceeded a warning level. To avoid this situation, try one of the following: 1) Lower the rate at which CIM operations produce data (for example, by passing a low value to the ThrottleLimit parameter), 2) Increase the rate at which data is consumed by downstream cmdlets, or 3) Use the Invoke-Command cmdlet to run the whole pipeline on the server. The cmdlet that exceeded a warning level of memory usage was started by the following command line: {0}</value>
@@ -1342,7 +1339,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
   </data>
   <data name="RemoteHostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>You are currently in a Windows PowerShell PSSession and cannot use the Enter-PSSession cmdlet to enter another PSSession.</value>
+    <value>You are currently in a PowerShell PSSession and cannot use the Enter-PSSession cmdlet to enter another PSSession.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
     <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
@@ -1354,7 +1351,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>Cannot exit a nested pipeline because the pipeline is not in the nested state.</value>
   </data>
   <data name="PowerShellInvokerInvalidState" xml:space="preserve">
-    <value>The Windows PowerShell server session is not in a valid state for running nested commands.  No nested commands can be run in this session.</value>
+    <value>The PowerShell server session is not in a valid state for running nested commands.  No nested commands can be run in this session.</value>
   </data>
   <data name="CannotInvokeNestedCommandNestedCommandRunning" xml:space="preserve">
     <value>Cannot invoke a nested command on the remote session because a nested command is already running.</value>
@@ -1366,7 +1363,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
-    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running Windows PowerShell {0} or greater.</value>
+    <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running PowerShell {0} or greater.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
     <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
@@ -1408,13 +1405,13 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The Named Pipe server listener used for process attach is already running.</value>
   </data>
   <data name="EnterPSHostProcessCantEnterSameProcess" xml:space="preserve">
-    <value>Enter-PSHostProcess does not support entering the same Windows PowerShell session it is running in.</value>
+    <value>Enter-PSHostProcess does not support entering the same PowerShell session it is running in.</value>
   </data>
   <data name="EnterPSHostProcessMultipleProcessesFoundWithName" xml:space="preserve">
     <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process {0} because it has not loaded the Windows PowerShell engine.</value>
+    <value>Cannot enter process {0} because it has not loaded the PowerShell engine.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
     <value>No process was found with Id: {0}.</value>
@@ -1652,7 +1649,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
       <value>Unable to install plugin {0} to directory {1}.</value>
   </data>
   <data name="PluginDllMissing" xml:space="preserve">
-      <value>The WinRM plugin DLL {0} is missing for PowerShell Core. Please run Enable-PSRemoting and then retry this command.</value>
+      <value>The WinRM plugin DLL {0} is missing for PowerShell. Please run Enable-PSRemoting and then retry this command.</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
     <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>

@@ -56,6 +56,20 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
         { Update-FormatData -Append $testfile -WhatIf } | Should Not Throw
         { Update-FormatData -Prepend $testfile -WhatIf } | Should Not Throw
     }
+
+    It "Update with invalid format xml should fail" -Pending {
+        $xmlContent = @"
+<Configuration>
+    <ViewDefinitions>
+        <View>
+            <Name>T2</Name>
+        </View>
+    </ViewDefinitions>
+</Configuration>
+"@
+        $xmlContent | Out-File -FilePath "$testdrive\test.format.ps1xml" -Encoding ascii
+        { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | ShouldBeErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
+    }
 }
 
 

@@ -480,7 +480,7 @@ namespace System.Management.Automation
                             StringLiterals.PowerShellCmdletizationFileExtension,
                             StringLiterals.WorkflowFileExtension,
                             StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.DependentWorkflowAssemblyExtension};
+                            StringLiterals.PowerShellILAssemblyExtension};
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
         internal static string[] PSModuleExtensions = new string[] {
@@ -489,7 +489,7 @@ namespace System.Management.Automation
                             StringLiterals.PowerShellCmdletizationFileExtension,
                             StringLiterals.WorkflowFileExtension,
                             StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.DependentWorkflowAssemblyExtension};
+                            StringLiterals.PowerShellILAssemblyExtension};
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...
@@ -768,10 +768,15 @@ namespace System.Management.Automation
         private static string RemoveSxSPsHomeModulePath(string currentProcessModulePath, string personalModulePath, string sharedModulePath, string psHomeModulePath)
         {
 #if UNIX
-            const string powershellExeName = "powershell";
+            const string powershellExeName = "pwsh";
+            const string oldPowershellExeName = "powershell";
 #else
-            const string powershellExeName = "powershell.exe";
+            const string powershellExeName = "pwsh.exe";
+            const string oldPowershellExeName = "powershell.exe";
 #endif
+            const string powershellDepsName = "pwsh.deps.json";
+            const string oldPowershellDepsName = "powershell.deps.json";
+
             StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
             char[] invalidPathChars = Path.GetInvalidPathChars();
 
@@ -791,8 +796,10 @@ namespace System.Management.Automation
                 {
                     string parentDir = Path.GetDirectoryName(trimedPath);
                     string psExePath = Path.Combine(parentDir, powershellExeName);
-                    string psDepsPath = Path.Combine(parentDir, "powershell.deps.json");
-                    if (File.Exists(psExePath) && File.Exists(psDepsPath))
+                    string oldExePath = Path.Combine(parentDir, oldPowershellExeName);
+                    string psDepsPath = Path.Combine(parentDir, powershellDepsName);
+                    string oldDepsPath = Path.Combine(parentDir, oldPowershellDepsName);
+                    if ((File.Exists(psExePath) && File.Exists(psDepsPath)) || (File.Exists(oldExePath) && File.Exists(oldDepsPath)))
                     {
                         // Path is a PSHome module path from a different powershell core instance. Ignore it.
                         continue;

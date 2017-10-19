@@ -12,7 +12,7 @@ powershell(1) -- command-line shell and .NET REPL
 ## DESCRIPTION
 
 PowerShell is an automation and configuration management platform.
-It consists of a cross-platform (Windows, Linux and OS X)
+It consists of a cross-platform (Windows, Linux and macOS)
 command-line shell and associated scripting language.
 
 ## OPTIONS

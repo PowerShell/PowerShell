@@ -5,8 +5,8 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 
     BeforeEach {
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force
-		remove-item alias:abcd* -force
-		remove-item alias:ijkl* -force
+		remove-item alias:abcd* -force -ErrorAction SilentlyContinue
+		remove-item alias:ijkl* -force -ErrorAction SilentlyContinue
 		set-alias abcd01 efgh01
 		set-alias abcd02 efgh02
 		set-alias abcd03 efgh03
@@ -18,7 +18,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	AfterEach {
-		Remove-Item -Path $testAliasDirectory -Recurse -Force
+		Remove-Item -Path $testAliasDirectory -Recurse -Force -ErrorAction SilentlyContinue
 	}
 
 	It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {

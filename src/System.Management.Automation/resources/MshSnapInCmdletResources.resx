@@ -121,15 +121,15 @@
     <value>The operation cannot be performed. The specified cmdlet is not supported in a custom shell.</value>
   </data>
   <data name="NoPSSnapInsFound" xml:space="preserve">
-    <value>No Windows PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
+    <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
   </data>
   <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  Windows PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
   </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
-    <value>Cannot add Windows PowerShell snap-in {0} because it is a system Windows PowerShell module. Use Import-Module to load the module.</value>
+    <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
   </data>
   <data name="CustomPSSnapInNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>The custom Windows PowerShell snap-in is not supported in PowerShell Core.</value>
+    <value>The custom PowerShell snap-in is not supported in PowerShell Core.</value>
   </data>
 </root>

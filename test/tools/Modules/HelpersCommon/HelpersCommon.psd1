@@ -16,6 +16,5 @@ Copyright = 'Copyright (C) Microsoft Corporation, All rights reserved.'
 
 Description = 'Temporary module contains functions for using in tests'
 
-FunctionsToExport = 'Wait-UntilTrue', 'Test-IsElevated', 'ShouldBeErrorId'
-
+FunctionsToExport = 'Wait-UntilTrue', 'Test-IsElevated', 'ShouldBeErrorId', 'Wait-FileToBePresent', 'Get-RandomFileName'
 }

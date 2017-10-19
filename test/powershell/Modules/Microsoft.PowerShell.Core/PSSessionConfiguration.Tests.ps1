@@ -1,7 +1,9 @@
-try 
+try
 {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    $originalWarningPreference = $WarningPreference
+    $WarningPreference = "SilentlyContinue"
     $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
@@ -28,17 +30,17 @@ try
         }
     }
 
-    try 
+    try
     {
         Describe "Validate Register-PSSessionConfiguration" -Tags @("CI", 'RequireAdminOnWindows') {
-            
+
             AfterAll {
                 if ($IsNotSkipped)
                 {
                     Get-PSSessionConfiguration -Name "ITTask*" -ErrorAction SilentlyContinue | Unregister-PSSessionConfiguration
                 }
             }
-            
+
             It "Register-PSSessionConfiguration -TransportOption" {
 
                 $ConfigurationName = "ITTask" + (Get-Random -Minimum 10000 -Maximum 99999)
@@ -59,7 +61,7 @@ try
                     # Register new session configuration
                     function RegisterNewConfiguration {
                         param (
-                        
+
                             [string]
                             $Name,
 
@@ -79,7 +81,7 @@ try
                         if($Enabled)
                         {
                             $null = Register-PSSessionConfiguration -Name $Name -Path $ConfigFilePath
-                        } 
+                        }
                         else
                         {
                             $null = Register-PSSessionConfiguration -Name $Name -Path $ConfigFilePath -AccessMode Disabled
@@ -89,7 +91,7 @@ try
                     # Unregister session configuration
                     function UnregisterPSSessionConfiguration{
                         param (
-                        
+
                             [string]
                             $Name
                         )
@@ -99,7 +101,7 @@ try
 
                     # Create new Config File
                     function CreateTestConfigFile {
-                    
+
                         $TestConfigFileLoc = join-path $TestDrive "Remoting"
                         if(-not (Test-path $TestConfigFileLoc))
                         {
@@ -117,7 +119,7 @@ try
             }
 
             Context "Validate Get-PSSessionConfiguration cmdlet" {
-            
+
                 It "Get-PSSessionConfiguration with no parameter" {
 
                     $Result = Get-PSSessionConfiguration
@@ -136,7 +138,7 @@ try
 
                 It "Get-PSSessionConfiguration -Name with wildcard character" {
 
-                    $endpointWildcard = "powershell.*" 
+                    $endpointWildcard = "powershell.*"
 
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
@@ -146,12 +148,12 @@ try
 
                 It "Get-PSSessionConfiguration -Name with Non-Existent session configuration" {
 
-                    try 
+                    try
                     {
                         Get-PSSessionConfiguration -Name "NonExistantSessionConfiguration" -ErrorAction Stop
                         throw "No Exception!"
-                    } 
-                    catch 
+                    }
+                    catch
                     {
                         $_.FullyQualifiedErrorId | Should Be "Microsoft.PowerShell.Commands.WriteErrorException"
                     }
@@ -159,7 +161,7 @@ try
             }
 
             Context "Validate Enable-PSSessionConfiguration and Disable-PSSessionConfiguration" {
-            
+
                 function VerifyEnableAndDisablePSSessionConfig {
                     param (
                         [string]
@@ -186,7 +188,7 @@ try
                         RegisterNewConfiguration -Name $SessionConfigName -ConfigFilePath $ConfigFilePath -Enabled:$InitialSessionStateEnabled
 
                         $TestConfigStateBeforeChange = (Get-PSSessionConfiguration -Name $SessionConfigName).Enabled
-                        
+
                         if($EnablePSSessionConfig)
                         {
                             $isSkipNetworkCheck = $true
@@ -198,11 +200,11 @@ try
                         {
                             Disable-PSSessionConfiguration -Name $SessionConfigName -NoServiceRestart
                         }
-                        
+
                         $TestConfigStateAfterChange = (Get-PSSessionConfiguration -Name $SessionConfigName -ErrorAction SilentlyContinue).Enabled
-                    
+
                         UnregisterPSSessionConfiguration -Name $SessionConfigName
-                    
+
                         $TestConfigStateBeforeChange | Should be "$InitialSessionStateEnabled"
                         $TestConfigStateAfterChange | Should be "$FinalSessionStateEnabled"
                     }
@@ -217,7 +219,7 @@ try
                         TestDescription = "Validate Disable-Configuration cmdlet"
                         EnablePSSessionConfig = $false
                     }
-                    
+
                     @{
                         SessionConfigName = "TestEnablePSSessionConfig"
                         ConfigFilePath = $LocalConfigFilePath
@@ -250,16 +252,16 @@ try
                 function TestUnRegisterPSSsessionConfiguration {
 
                     param ($Description, $SessionConfigName, $ExpectedOutput, $ExpectedError)
-                    
+
                     It "$Description" {
 
                         $Result = [PSObject] @{Output = $true ; Error = $null}
                         $Error.Clear()
-                        try 
+                        try
                         {
                             $null = Unregister-PSSessionConfiguration -name $SessionConfigName -ErrorAction stop
-                        } 
-                        catch 
+                        }
+                        catch
                         {
                             $Result.Error = $_.Exception
                         }
@@ -270,7 +272,7 @@ try
 
                             foreach ($endpoint in $ValidEndpoints)
                             {
-                                # Setting it to false means the unregister was unsuccessful 
+                                # Setting it to false means the unregister was unsuccessful
                                 # and there is still an endpoint with name matching the one we wanted to remove.
                                 if($endpoint.name -like $SessionConfigName)
                                 {
@@ -278,8 +280,8 @@ try
                                     break
                                 }
                             }
-                        } 
-                        else 
+                        }
+                        else
                         {
                             $Result.Output = $false
                         }
@@ -326,7 +328,7 @@ try
                         param ($TestSessionConfigName, $ScriptToExecute, $ExpectedOutput)
 
                         $Result = [PSObject]@{Output= $null; Error = $null}
-                        try 
+                        try
                         {
                             $sn = New-PSSession . -ConfigurationName $TestSessionConfigName -ErrorAction Stop
                             if($sn)
@@ -344,8 +346,8 @@ try
                             {
                                 throw "Unable to create session $TestSessionConfigName"
                             }
-                        } 
-                        catch 
+                        }
+                        catch
                         {
                             $Result.Error = $_.Error.FullyQualifiedErrorId
                         }
@@ -366,16 +368,16 @@ try
                         $ScriptContent = @"
 `$script:testvariable = "testValue"
 "@
-                        
+
                         $TestScript = join-path $script:TestDir "StartupTestScript.ps1"
                         $null = Set-Content -path $TestScript -Value $ScriptContent
-                    
+
                         return $TestScript
                     }
 
                     # Create new Config File
                     function CreateTestConfigFile {
-                    
+
                         $TestConfigFile = join-path $script:TestDir "TestConfigFile.pssc"
                         $null = New-PSSessionConfigurationFile -Path $TestConfigFile -SessionType Default
                         return $TestConfigFile
@@ -397,7 +399,7 @@ Export-ModuleMember IsTestModuleImported
 
                         $TestModuleFile = join-path $TestModuleFileLoc "TestModule.psm1"
                         $null = Set-Content -path $TestModuleFile -Value $ScriptContent
-                    
+
                         return $TestModuleFile
                     }
 
@@ -413,7 +415,7 @@ namespace PowershellTestConfigNamespace
     public sealed class PowershellTestConfig : PSSessionConfiguration
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -421,7 +423,7 @@ namespace PowershellTestConfigNamespace
         {
             return InitialSessionState.CreateDefault();
         }
-        
+
     }
 }
 "@
@@ -469,18 +471,18 @@ namespace PowershellTestConfigNamespace
                         Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                     }
                 }
-                
+
                 AfterEach {
                     Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                 }
-                
+
                 It "Validate Register-PSSessionConfiguration -name -path" {
-                    
+
                     $pssessionthreadoptions = "UseCurrentThread"
                     $psmaximumreceivedobjectsizemb = 20
                     $psmaximumreceiveddatasizepercommandmb = 20
                     $UseSharedProcess = $true
-                    
+
                     Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -MaximumReceivedObjectSizeMB $psmaximumreceivedobjectsizemb -MaximumReceivedDataSizePerCommandMB $psmaximumreceiveddatasizepercommandmb -UseSharedProcess:$UseSharedProcess -ThreadOptions $pssessionthreadoptions
                     $Result = [PSObject]@{Session = Get-PSSessionConfiguration -Name $TestSessionConfigName; Culture = (Get-Item WSMan:\localhost\Plugin\$endpointName\lang -ea SilentlyContinue).value}
 
@@ -494,40 +496,40 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.psmaximumreceiveddatasizepercommandmb | Should be $psmaximumreceiveddatasizepercommandmb
                     $Result.Session.UseSharedProcess | Should be $UseSharedProcess
                 }
-                
+
                 It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -StartupScript $LocalStartupScriptPath -Force
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$script:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
                 }
-                
-                
+
+
                 It "Validate Register-PSSessionConfiguration -AccessMode parameter" {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -AccessMode Disabled -Force
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $null -ExpectedError "RemoteConnectionDisallowed,PSSessionOpenFailed"
                 }
-                
-                
+
+
                 It "Validate Register-PSSessionConfiguration -ModulesToImport parameter" -Pending {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ModulesToImport $LocalTestModulePath -Force
-                    
+
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
                 It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Pending {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
-                    
+
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
                 }
             }
-            
+
             Context "Validate Set-PSSessionConfiguration" {
-            
+
                 BeforeAll {
                     if ($IsNotSkipped)
                     {
@@ -535,22 +537,22 @@ namespace PowershellTestConfigNamespace
                         Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                     }
                 }
-                
+
                 AfterEach {
                     Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                 }
-                
+
                 BeforeEach {
                     Register-PSSessionConfiguration -Name $TestSessionConfigName
                 }
-                
+
                 It "Validate Set-PSSessionConfiguration -name -path -MaximumReceivedObjectSizeMB -MaximumReceivedDataSizePerCommandMB -UseSharedProcess -ThreadOptions parameters" {
-                    
+
                     $pssessionthreadoptions = "UseCurrentThread"
                     $psmaximumreceivedobjectsizemb = 20
                     $psmaximumreceiveddatasizepercommandmb = 20
                     $UseSharedProcess = $true
-                    
+
                     Set-PSSessionConfiguration -Name $TestSessionConfigName -MaximumReceivedObjectSizeMB $psmaximumreceivedobjectsizemb -MaximumReceivedDataSizePerCommandMB $psmaximumreceiveddatasizepercommandmb -UseSharedProcess:$UseSharedProcess -ThreadOptions $pssessionthreadoptions -NoServiceRestart
                     $Result = [PSObject]@{Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName) ; Culture = (Get-Item WSMan:\localhost\Plugin\microsoft.powershell\lang -ea SilentlyContinue).value}
 
@@ -563,38 +565,38 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.psmaximumreceiveddatasizepercommandmb | Should be $psmaximumreceiveddatasizepercommandmb
                     $Result.Session.UseSharedProcess | Should be $UseSharedProcess
                 }
-                
+
                 It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -StartupScript $LocalStartupScriptPath
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$script:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
                 }
-            
+
                 It "Validate Set-PSSessionConfiguration -AccessMode parameter" {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -AccessMode Disabled
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $null -ExpectedError "RemoteConnectionDisallowed,PSSessionOpenFailed"
                 }
-                
+
                 It "Validate Set-PSSessionConfiguration -ModulesToImport parameter" -Pending {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ModulesToImport $LocalTestModulePath -Force
-                    
+
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
                 It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Pending {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
-                    
+
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
                 }
             }
         }
     }
-    finally 
+    finally
     {
         if ($endpointCreated)
         {
@@ -611,7 +613,7 @@ namespace PowershellTestConfigNamespace
             {
                 New-PSSessionConfigurationFile $configFilePath
                 $result = get-content $configFilePath | Out-String
-            } 
+            }
             finally
             {
                 if(Test-Path $configFilePath){ Remove-Item $configFilePath -Force }
@@ -621,7 +623,7 @@ namespace PowershellTestConfigNamespace
             $resultContent.GetType().ToString() | Should Be "System.Collections.Hashtable"
 
             # The default created hashtable in the session configuration file would have the
-            # following keys which we are validating below. 
+            # following keys which we are validating below.
             $resultContent.ContainsKey("SessionType") -and $resultContent.ContainsKey("SchemaVersion") -and $resultContent.ContainsKey("Guid") -and $resultContent.ContainsKey("Author") | Should Be $true
         }
     }
@@ -630,7 +632,7 @@ namespace PowershellTestConfigNamespace
 
         It "Validate FullyQualifiedErrorId from New-PSSessionConfigurationFile when invalid path is provided as input" {
 
-            try 
+            try
             {
                 $filePath = "cert:\foo.pssc"
                 New-PSSessionConfigurationFile $filePath
@@ -649,7 +651,7 @@ namespace PowershellTestConfigNamespace
             if ($IsNotSkipped)
             {
                 $parmMap = @{
-                    # values for PSSessionConfigFile    
+                    # values for PSSessionConfigFile
                     PowerShellVersion = '3.0'
                     SessionType = 'Default'
                     Author = 'User'
@@ -658,10 +660,10 @@ namespace PowershellTestConfigNamespace
                     Description = 'This is a sample session configuration file.'
                     GUID = '73cba863-aa49-4cbf-9917-269ddcf2b1e3'
                     SchemaVersion = '1.0.0.0'
-                    
+
                     # The scope of the test is to validate that a valid SessionConfigurationFile can be validated
                     # The test does not register the session configuration from the created session configuration file.
-                    # The SCRATCH location is not validated. 
+                    # The SCRATCH location is not validated.
                     EnvironmentVariables = @{
                         PSModulePath = '$Env:PSModulePath + ";$env:SystemDrive\ProgramData"';
                         SCRATCH = "\\SomeValidRemoteShare\SharedLocation"
@@ -670,7 +672,7 @@ namespace PowershellTestConfigNamespace
                     # The scope of the test is to validate that a valid SessionConfigurationFile can be validated
                     # The test does not register the session configuration from the created session configuration file.
                     # The AssembliesToLoad are not loaded by this test. The Test only validates that the supplied data
-                    # is used to create a valid Session configuration file.  
+                    # is used to create a valid Session configuration file.
                     AssembliesToLoad = 'SomeValidBinary.dll'
 
                     # The same explanation as above holds good here.
@@ -724,7 +726,7 @@ namespace PowershellTestConfigNamespace
 
                     # The scope of the test is to validate that a valid SessionConfigurationFile can be validated
                     # The test does not register the session configuration from the created session configuration file.
-                    # The existance of the files supplied as input to TypesToProcess, FormatsToProcess, ScriptsToProcess 
+                    # The existance of the files supplied as input to TypesToProcess, FormatsToProcess, ScriptsToProcess
                     # are not validated while creating a valid session configurtation file.
                     # The Test only validates that the supplied data can be successfully used to create a valid Session configuration file.
                     TypesToProcess = '$env:SystemDrive\SampleTypesFile.ps1xml'
@@ -779,7 +781,7 @@ namespace PowershellTestConfigNamespace
                     }
                     else
                     {
-                        $value = $currentDefination[$currentDefinationKey] 
+                        $value = $currentDefination[$currentDefinationKey]
                     }
                     $createdFunctionDefn.Add($currentDefinationKey, $value)
                 }
@@ -845,5 +847,6 @@ namespace PowershellTestConfigNamespace
 finally
 {
     $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    $WarningPreference = $originalWarningPreference
 }
 

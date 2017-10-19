@@ -1,4 +1,4 @@
-﻿Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
+Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
 
 
 # Add .NET classes used by the module

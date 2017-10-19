@@ -1158,6 +1158,23 @@ namespace System.Management.Automation
             return new Pipe(context, PipelineProcessor);
         }
 
+        /// <summary>
+        /// After file redirection is done, we need to call 'DoComplete' on the pipeline processor,
+        /// so that 'EndProcessing' of Out-File can be called to wrap up the file write operation.
+        /// </summary>
+        /// <remark>
+        /// 'StartStepping' is called after creating the pipeline processor.
+        /// 'Step' is called when an object is added to the pipe created with the pipeline processor.
+        /// </remark>
+        internal void CallDoCompleteForExpression()
+        {
+            // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
+            if (PipelineProcessor != null)
+            {
+                PipelineProcessor.DoComplete();
+            }
+        }
+
         private bool _disposed;
 
         public void Dispose()
@@ -1209,40 +1226,6 @@ namespace System.Management.Automation
 
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, functionDefinitionAst.Extent);
                 throw;
-            }
-        }
-
-        internal static void DefineWorkflows(ExecutionContext context, ScriptBlockAst scriptBlockAst)
-        {
-            ParseException parseErrors = null;
-
-            try
-            {
-                var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(context);
-                PSLanguageMode? languageMode = (context != null) ? context.LanguageMode : (PSLanguageMode?) null;
-                var workflows = converterInstance.CompileWorkflows(scriptBlockAst, context.EngineSessionState.Module, null, languageMode, out parseErrors);
-                foreach (var workflow in workflows)
-                {
-                    context.EngineSessionState.SetWorkflowRaw(workflow,
-                                                              context.EngineSessionState.CurrentScope.ScopeOrigin);
-                }
-            }
-            catch (Exception exception)
-            {
-                var rte = exception as RuntimeException;
-                if (rte == null)
-                {
-                    throw ExceptionHandlingOps.ConvertToRuntimeException(exception, scriptBlockAst.Extent);
-                }
-
-                InterpreterError.UpdateExceptionErrorRecordPosition(rte, scriptBlockAst.Extent);
-                throw;
-            }
-
-            if (parseErrors != null && parseErrors.Errors != null)
-            {
-                InterpreterError.UpdateExceptionErrorRecordPosition(parseErrors, scriptBlockAst.Extent);
-                throw parseErrors;
             }
         }
     }

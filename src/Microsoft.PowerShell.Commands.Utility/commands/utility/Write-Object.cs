@@ -55,10 +55,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 enumerate = false;
             }
-            foreach (PSObject inputObject in _inputObjects) // compensate for ValueFromRemainingArguments
-            {
-                WriteObject(inputObject, enumerate);
-            }
+
+            WriteObject(_inputObjects, enumerate);
         }//processrecord
     }//WriteOutputCommand
     #endregion

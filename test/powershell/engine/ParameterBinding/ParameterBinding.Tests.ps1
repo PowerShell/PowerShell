@@ -228,7 +228,7 @@
             [CmdletBinding()]
             param (
             [array]$Parameter1,
-            [int[]]$Parameter2 
+            [int[]]$Parameter2
             )
 
             Process {
@@ -302,7 +302,7 @@
             $test2File = Join-Path -Path $tempDir -ChildPath "test2.ps1"
 
             $expected = "[$tempDir]"
-            $psPath = "$PSHOME\powershell"
+            $psPath = "$PSHOME\pwsh"
 
             $null = New-Item -Path $tempDir -ItemType Directory -Force
             Set-Content -Path $test1File -Value $test1 -Force
@@ -327,6 +327,100 @@
 
             $result = & $psPath -NoProfile -File $test2File
             $result | Should Be $expected
+        }
+    }
+
+    Context "ValueFromRemainingArguments" {
+        BeforeAll {
+            function Test-BindingFunction {
+                param (
+                    [Parameter(ValueFromRemainingArguments)]
+                    [object[]] $Parameter
+                )
+
+                return [pscustomobject] @{
+                    ArgumentCount = $Parameter.Count
+                    Value = $Parameter
+                }
+            }
+
+            # Deliberately not using TestDrive:\ here because Pester will fail to clean it up due to the
+            # assembly being loaded in our process.
+
+            if ($IsWindows)
+            {
+                $tempDir = $env:temp
+            }
+            else
+            {
+                $tempDir = '/tmp'
+            }
+
+            $dllPath = Join-Path $tempDir TestBindingCmdlet.dll
+
+            Add-Type -OutputAssembly $dllPath -TypeDefinition '
+                using System;
+                using System.Management.Automation;
+
+                [Cmdlet("Test", "BindingCmdlet")]
+                public class TestBindingCommand : PSCmdlet
+                {
+                    [Parameter(Position = 0, ValueFromRemainingArguments = true)]
+                    public string[] Parameter { get; set; }
+
+                    protected override void ProcessRecord()
+                    {
+                        PSObject obj = new PSObject();
+
+                        obj.Properties.Add(new PSNoteProperty("ArgumentCount", Parameter.Length));
+                        obj.Properties.Add(new PSNoteProperty("Value", Parameter));
+
+                        WriteObject(obj);
+                    }
+                }
+            '
+
+            Import-Module $dllPath
+        }
+
+        AfterAll {
+            Get-Module TestBindingCmdlet | Remove-Module -Force
+        }
+
+        It "Binds properly when passing an explicit array to an advanced function" {
+            $result = Test-BindingFunction 1,2,3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when passing multiple arguments to an advanced function" {
+            $result = Test-BindingFunction 1 2 3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when passing an explicit array to a cmdlet" {
+            $result = Test-BindingCmdlet 1,2,3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when passing multiple arguments to a cmdlet" {
+            $result = Test-BindingCmdlet 1 2 3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
         }
     }
 }

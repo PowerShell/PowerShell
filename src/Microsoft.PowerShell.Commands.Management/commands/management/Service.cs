@@ -103,48 +103,12 @@ namespace Microsoft.PowerShell.Commands
             string message = StringUtil.Format(errorMessage,
                 serviceName,
                 displayName,
-                (null == innerException) ? "" : innerException.Message
-                );
-            ServiceCommandException exception =
-                new ServiceCommandException(message, innerException);
+                (null == innerException) ? String.Empty : innerException.Message);
+
+            var exception = new ServiceCommandException(message, innerException);
             exception.ServiceName = serviceName;
 
-            if (innerException != null)
-            {
-            }
-            else
-            {
-            }
-
             WriteError(new ErrorRecord(exception, errorId, category, targetObject));
-        }
-
-
-        /// <summary>
-        /// Writes a non-terminating error on computer name.
-        /// </summary>
-        /// <param name="service"></param>
-        /// <param name="computername"></param>
-        /// <param name="innerException"></param>
-        /// <param name="errorId"></param>
-        /// <param name="errorMessage"></param>
-        /// <param name="category"></param>
-        internal void WriteNonTerminatingError(
-            ServiceController service,
-            string computername,
-            Exception innerException,
-            string errorId,
-            string errorMessage,
-            ErrorCategory category)
-        {
-            WriteNonTerminatingError(
-                service.ServiceName,
-                computername,
-                service,
-                innerException,
-                errorId,
-                errorMessage,
-                category);
         }
 
         #endregion Internal
@@ -299,70 +263,31 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (null == _allServices)
                 {
-                    List<ServiceController> services = new List<ServiceController>();
-
-                    if (SuppliedComputerName.Length > 0)
-                    {
-                        foreach (string computerName in SuppliedComputerName)
-                        {
-                            services.AddRange(ServiceController.GetServices(computerName));
-                        }
-                    }
-                    else
-                    {
-                        services.AddRange(ServiceController.GetServices());
-                    }
-
-                    _allServices = services.ToArray();
+                    _allServices = ServiceController.GetServices();
                 }
                 return _allServices;
             }
         }
         private ServiceController[] _allServices = null;
 
-        private void AddIfValidService(IList<ServiceController> listOfValidServices, string nameOfService, string computerName)
-        {
-            try
-            {
-                ServiceController sc = new ServiceController(nameOfService, computerName);
-                ServiceControllerStatus tmp = sc.Status; // this will throw if the service doesn't exist
-
-                // no exceptions = this is an existing, valid service = add
-                listOfValidServices.Add(sc);
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (ArgumentException)
-            {
-            }
-        }
-
-        internal List<ServiceController> OneService(string nameOfService)
+        internal ServiceController GetOneService(string nameOfService)
         {
             Dbg.Assert(!WildcardPattern.ContainsWildcardCharacters(nameOfService), "Caller should verify that nameOfService doesn't contain wildcard characters");
 
-            List<ServiceController> services = new List<ServiceController>();
-            if (SuppliedComputerName.Length > 0)
+            try
             {
-                foreach (string computerName in SuppliedComputerName)
-                {
-                    AddIfValidService(services, nameOfService, computerName);
-                }
-            }
-            else
-            {
-                AddIfValidService(services, nameOfService, ".");
-            }
+                var sc = new ServiceController(nameOfService);
+                // This will throw if the service doesn't exist
+                var unused = sc.Status;
 
-            return services;
+                // No exception, then this is an existing, valid service. Return it.
+                return sc;
+            }
+            catch (InvalidOperationException) { }
+            catch (ArgumentException) { }
+
+            return null;
         }
-
-        /// <summary>
-        /// The computer from which to retrieve processes.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        protected string[] SuppliedComputerName { get; set; } = Utils.EmptyArray<string>();
 
         /// <summary>
         /// Retrieve the list of all services matching the ServiceName,
@@ -440,7 +365,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    foreach (ServiceController service in OneService(pattern))
+                    ServiceController service = GetOneService(pattern);
+                    if (service != null)
                     {
                         found = true;
                         IncludeExcludeAdd(matchingServices, service, true);
@@ -451,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteNonTerminatingError(
                         pattern,
-                        "",
+                        String.Empty,
                         pattern,
                         null,
                         "NoServiceFoundForGivenName",
@@ -493,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!found && !WildcardPattern.ContainsWildcardCharacters(pattern))
                 {
                     WriteNonTerminatingError(
-                        "",
+                        String.Empty,
                         pattern,
                         pattern,
                         null,
@@ -615,27 +541,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 serviceNames = value;
                 selectionMode = SelectionMode.ServiceName;
-            }
-        }
-
-        /// <summary>
-        /// gets/sets the destination computer name
-        /// </summary>
-        [Parameter(
-            Mandatory = false,
-            ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty()]
-        [Alias("Cn")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] ComputerName
-        {
-            get
-            {
-                return SuppliedComputerName;
-            }
-            set
-            {
-                SuppliedComputerName = value;
             }
         }
 
@@ -998,7 +903,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 stoppedServices.Add(serviceController);
             }
-
 
             return stoppedServices;
         }
@@ -1418,25 +1322,10 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// The following is the definition of the input parameter "ComputerName".
-        /// Set the properties of service running on the list of computer names
-        /// specified. The default is the local computer.
-        /// Type the NETBIOS name, an IP address, or a fully-qualified domain name of
-        /// one or more remote computers. To indicate the local computer, use the
-        /// computer name, "localhost" or a dot (.). When the computer is in a different
-        /// domain than the user, the fully-qualified domain name is required.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true)]
-        [ValidateNotNullOrEmpty]
-        [Alias("cn")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ComputerName { get; set; } = new string[] { "." };
-
-        /// <summary>
         /// service name
         /// </summary>
         /// <value></value>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Name")]
+        [Parameter(Mandatory = true, ParameterSetName = "Name", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("ServiceName", "SN")]
         public new String Name
         {
@@ -1448,6 +1337,14 @@ namespace Microsoft.PowerShell.Commands
         }
         internal String serviceName = null;
 
+        /// <summary>
+        /// The following is the definition of the input parameter "InputObject".
+        /// Specifies a ServiceController object that represents the service to change.
+        /// Enter a variable that contains the objects or type a command or expression
+        /// that gets the objects.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "InputObject", Position = 0, ValueFromPipeline = true)]
+        public new ServiceController InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "DisplayName".
@@ -1465,6 +1362,14 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         internal string displayName = null;
+
+        /// <summary>
+        /// Account under which the service should run
+        /// </summary>
+        /// <value></value>
+        [Parameter]
+        [Credential()]
+        public PSCredential Credential { get; set; }
 
 
 
@@ -1511,8 +1416,6 @@ namespace Microsoft.PowerShell.Commands
         internal ServiceStartMode startupType = (ServiceStartMode)(-1);
 
 
-
-
         /// <summary>
         /// The following is the definition of the input parameter "Status".
         /// This specifies what state the service should be in (e.g. Running, Stopped,
@@ -1532,16 +1435,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         internal string serviceStatus = null;
-
-        /// <summary>
-        /// The following is the definition of the input parameter "InputObject".
-        /// Specifies ServiceController object representing the services to be stopped.
-        /// Enter a variable that contains the objects or type a command or expression
-        /// that gets the objects.
-        /// </summary>
-        [Parameter(ValueFromPipeline = true,
-                   ParameterSetName = "InputObject")]
-        public new ServiceController InputObject { get; set; }
 
         /// <summary>
         /// This is not a parameter for this cmdlet.
@@ -1588,85 +1481,127 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             ServiceController service = null;
-            string ServiceComputerName = null;
-            foreach (string computer in ComputerName)
+            IntPtr password = IntPtr.Zero;
+            bool objServiceShouldBeDisposed = false;
+
+            try
             {
-                bool objServiceShouldBeDisposed = false;
+                if (InputObject != null)
+                {
+                    service = InputObject;
+                    Name = service.ServiceName;
+                    objServiceShouldBeDisposed = false;
+                }
+                else
+                {
+                    service = new ServiceController(serviceName);
+                    objServiceShouldBeDisposed = true;
+                }
+                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+
+                // "new ServiceController" will succeed even if
+                // there is no such service.  This checks whether
+                // the service actually exists.
+                string unusedByDesign = service.DisplayName;
+            }
+            catch (ArgumentException ex)
+            {
+                //cannot use WriteNonterminatingError as service is null
+                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
+                WriteError(er);
+                return;
+            }
+            catch (InvalidOperationException ex)
+            {
+                //cannot use WriteNonterminatingError as service is null
+                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
+                WriteError(er);
+                return;
+            }
+
+            try // In finally we ensure dispose, if object not pipelined.
+            {
+                // confirm the operation first
+                // this is always false if WhatIf is set
+                if (!ShouldProcessServiceOperation(service))
+                {
+                    return;
+                }
+
+                NakedWin32Handle hScManager = IntPtr.Zero;
+                NakedWin32Handle hService = IntPtr.Zero;
                 try
                 {
-                    if (_ParameterSetName.Equals("InputObject", StringComparison.OrdinalIgnoreCase) && InputObject != null)
-                    {
-                        service = InputObject;
-                        Name = service.ServiceName;
-                        ServiceComputerName = service.MachineName;
-                        //computer = service.MachineName;
-                        objServiceShouldBeDisposed = false;
-                    }
-                    else
-                    {
-                        ServiceComputerName = computer;
-                        service = new ServiceController(serviceName, ServiceComputerName);
-                        objServiceShouldBeDisposed = true;
-                    }
-                    Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
-                    // "new ServiceController" will succeed even if
-                    // there is no such service.  This checks whether
-                    // the service actually exists.
+                    hScManager = NativeMethods.OpenSCManagerW(
+                        String.Empty,
+                        null,
+                        NativeMethods.SC_MANAGER_CONNECT
+                        );
 
-                    string unusedByDesign = service.DisplayName;
-                }
-                catch (ArgumentException ex)
-                {
-                    //cannot use WriteNonterminatingError as service is null
-                    ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, computer);
-                    WriteError(er);
-                    continue;
-                }
-                catch (InvalidOperationException ex)
-                {
-                    //cannot use WriteNonterminatingError as service is null
-                    ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, computer);
-                    WriteError(er);
-                    continue;
-                }
-
-                try // In finally we ensure dispose, if object not pipelined.
-                {
-                    // confirm the operation first
-                    // this is always false if WhatIf is set
-                    if (!ShouldProcessServiceOperation(service))
+                    if (IntPtr.Zero == hScManager)
                     {
-                        continue;
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "FailToOpenServiceControlManager",
+                            ServiceResources.FailToOpenServiceControlManager,
+                            ErrorCategory.PermissionDenied);
+                        return;
+                    }
+                    hService = NativeMethods.OpenServiceW(
+                        hScManager,
+                        Name,
+                        NativeMethods.SERVICE_CHANGE_CONFIG
+                        );
+                    if (IntPtr.Zero == hService)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "CouldNotSetService",
+                            ServiceResources.CouldNotSetService,
+                            ErrorCategory.PermissionDenied);
+                        return;
                     }
 
-                    NakedWin32Handle hScManager = IntPtr.Zero;
-                    NakedWin32Handle hService = IntPtr.Zero;
-                    try
+                    // Modify startup type or display name or credential
+                    if (!String.IsNullOrEmpty(DisplayName)
+                        || (ServiceStartMode)(-1) != StartupType || null != Credential)
                     {
-                        hScManager = NativeMethods.OpenSCManagerW(
-                            ServiceComputerName,
-                            null,
-                            NativeMethods.SC_MANAGER_CONNECT
-                            );
-                        if (IntPtr.Zero == hScManager)
+                        DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+                        if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
                         {
-                            int lastError = Marshal.GetLastWin32Error();
-                            Win32Exception exception = new Win32Exception(lastError);
-                            WriteNonTerminatingError(
-                                service,
-                                ServiceComputerName,
-                                exception,
-                                "ComputerAccessDenied",
-                                ServiceResources.ComputerAccessDenied,
-                                ErrorCategory.PermissionDenied);
-                            continue;
+                            WriteNonTerminatingError(StartupType.ToString(), "Set-Service", Name,
+                                new ArgumentException(), "CouldNotSetService",
+                                ServiceResources.UnsupportedStartupType,
+                                ErrorCategory.InvalidArgument);
+                            return;
                         }
-                        hService = NativeMethods.OpenServiceW(
-                            hScManager,
-                            Name,
-                            NativeMethods.SERVICE_CHANGE_CONFIG
+
+                        string username = null;
+                        if (null != Credential)
+                        {
+                            username = Credential.UserName;
+                            password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
+                        }
+                        bool succeeded = NativeMethods.ChangeServiceConfigW(
+                            hService,
+                            NativeMethods.SERVICE_NO_CHANGE,
+                            dwStartType,
+                            NativeMethods.SERVICE_NO_CHANGE,
+                            null,
+                            null,
+                            IntPtr.Zero,
+                            null,
+                            username,
+                            password,
+                            DisplayName
                             );
-                        if (IntPtr.Zero == hService)
+                        if (!succeeded)
                         {
                             int lastError = Marshal.GetLastWin32Error();
                             Win32Exception exception = new Win32Exception(lastError);
@@ -1676,70 +1611,93 @@ namespace Microsoft.PowerShell.Commands
                                 "CouldNotSetService",
                                 ServiceResources.CouldNotSetService,
                                 ErrorCategory.PermissionDenied);
-                            continue;
+                            return;
                         }
+                    } // modify startup type or display name
 
-                        // modify startup type or display name
-                        if (!String.IsNullOrEmpty(DisplayName)
-                            || (ServiceStartMode)(-1) != StartupType)
+                    NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
+                    sd.lpDescription = Description;
+                    int size = Marshal.SizeOf(sd);
+                    IntPtr buffer = Marshal.AllocCoTaskMem(size);
+                    Marshal.StructureToPtr(sd, buffer, false);
+
+                    bool status = NativeMethods.ChangeServiceConfig2W(
+                        hService,
+                        NativeMethods.SERVICE_CONFIG_DESCRIPTION,
+                        buffer);
+
+                    if (!status)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "CouldNotSetServiceDescription",
+                            ServiceResources.CouldNotSetServiceDescription,
+                            ErrorCategory.PermissionDenied);
+                    }
+
+                    // Handle the '-Status' parameter
+                    if (!string.IsNullOrEmpty(Status))
+                    {
+                        if (Status.Equals("Running", StringComparison.OrdinalIgnoreCase))
                         {
-                            DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
-                            switch (StartupType)
+                            if (!service.Status.Equals(ServiceControllerStatus.Running))
                             {
-                                case ServiceStartMode.Automatic:
-                                    dwStartType = NativeMethods.SERVICE_AUTO_START;
-                                    break;
-                                case ServiceStartMode.Manual:
-                                    dwStartType = NativeMethods.SERVICE_DEMAND_START;
-                                    break;
-                                case ServiceStartMode.Disabled:
-                                    dwStartType = NativeMethods.SERVICE_DISABLED;
-                                    break;
-                                default:
-                                    Diagnostics.Assert(
-                                        ((ServiceStartMode)(-1)) == StartupType,
-                                        "bad StartupType");
-                                    break;
+                                if (service.Status.Equals(ServiceControllerStatus.Paused))
+                                    //resume service
+                                    DoResumeService(service);
+                                else
+                                    //start service
+                                    DoStartService(service);
                             }
-                            bool succeeded = NativeMethods.ChangeServiceConfigW(
-                                hService,
-                                NativeMethods.SERVICE_NO_CHANGE,
-                                dwStartType,
-                                NativeMethods.SERVICE_NO_CHANGE,
-                                null,
-                                null,
-                                IntPtr.Zero,
-                                null,
-                                null,
-                                IntPtr.Zero,
-                                DisplayName
-                                );
-                            if (!succeeded)
+                        }
+                        else if (Status.Equals("Stopped", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (!service.Status.Equals(ServiceControllerStatus.Stopped))
                             {
-                                int lastError = Marshal.GetLastWin32Error();
-                                Win32Exception exception = new Win32Exception(lastError);
-                                WriteNonTerminatingError(
-                                    service,
-                                    exception,
-                                    "CouldNotSetService",
-                                    ServiceResources.CouldNotSetService,
-                                    ErrorCategory.PermissionDenied);
-                                continue;
+                                //check for the dependent services as set-service dont have force parameter
+                                ServiceController[] dependentServices = service.DependentServices;
+
+                                if ((dependentServices != null) && (dependentServices.Length > 0))
+                                {
+                                    WriteNonTerminatingError(service, null, "ServiceHasDependentServicesNoForce", ServiceResources.ServiceHasDependentServicesNoForce, ErrorCategory.InvalidOperation);
+                                    return;
+                                }
+
+                                ServiceController[] servicedependedon = service.ServicesDependedOn;
+
+                                if ((servicedependedon != null) && (servicedependedon.Length > 0))
+                                {
+                                    WriteNonTerminatingError(service, null, "ServiceIsDependentOnNoForce", ServiceResources.ServiceIsDependentOnNoForce, ErrorCategory.InvalidOperation);
+                                    return;
+                                }
+                                // Stop service, pass 'true' to the force parameter as we have already checked for the dependent services.
+                                DoStopService(service, force: true, waitForServiceToStop: true);
                             }
-                        } // modify startup type or display name
-
-                        NativeMethods.SERVICE_DESCRIPTIONW sd = new NativeMethods.SERVICE_DESCRIPTIONW();
-                        sd.lpDescription = Description;
-                        int size = Marshal.SizeOf(sd);
-                        IntPtr buffer = Marshal.AllocCoTaskMem(size);
-                        Marshal.StructureToPtr(sd, buffer, false);
-
-                        bool status = NativeMethods.ChangeServiceConfig2W(
-                            hService,
-                            NativeMethods.SERVICE_CONFIG_DESCRIPTION,
-                            buffer);
-
-                        if (!status)
+                        }
+                        else if (Status.Equals("Paused", StringComparison.CurrentCultureIgnoreCase))
+                        {
+                            if (!service.Status.Equals(ServiceControllerStatus.Paused))
+                            {
+                                DoPauseService(service);
+                            }
+                        }
+                    }
+                    if (PassThru.IsPresent)
+                    {
+                        // To display the service, refreshing the service would not show the display name after updating
+                        ServiceController displayservice = new ServiceController(Name);
+                        WriteObject(displayservice);
+                    }
+                }
+                finally
+                {
+                    if (IntPtr.Zero != hService)
+                    {
+                        bool succeeded = NativeMethods.CloseServiceHandle(hService);
+                        if (!succeeded)
                         {
                             int lastError = Marshal.GetLastWin32Error();
                             Win32Exception exception = new Win32Exception(lastError);
@@ -1750,112 +1708,38 @@ namespace Microsoft.PowerShell.Commands
                                 ServiceResources.CouldNotSetServiceDescription,
                                 ErrorCategory.PermissionDenied);
                         }
+                    }
 
-
-
-                        //Addition by v-ramch Mar 11 2008
-                        //if Status parameter specified do the necessary action
-                        //to bring about the desired result
-
-                        if (!string.IsNullOrEmpty(Status))
+                    if (IntPtr.Zero != hScManager)
+                    {
+                        bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
+                        if (!succeeded)
                         {
-                            if (Status.Equals("Running", StringComparison.OrdinalIgnoreCase))
-                            {
-                                if (!service.Status.Equals(ServiceControllerStatus.Running))
-                                {
-                                    if (service.Status.Equals(ServiceControllerStatus.Paused))
-                                        //resume service
-                                        DoResumeService(service);
-                                    else
-                                        //start service
-                                        DoStartService(service);
-                                }
-                            }
-                            else if (Status.Equals("Stopped", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                if (!service.Status.Equals(ServiceControllerStatus.Stopped))
-                                {
-                                    //check for the dependent services as set-service dont have force parameter
-                                    ServiceController[] dependentServices = service.DependentServices;
-
-                                    if ((dependentServices != null) && (dependentServices.Length > 0))
-                                    {
-                                        WriteNonTerminatingError(service, null, "ServiceHasDependentServicesNoForce", ServiceResources.ServiceHasDependentServicesNoForce, ErrorCategory.InvalidOperation);
-                                        continue;
-                                    }
-
-                                    ServiceController[] servicedependedon = service.ServicesDependedOn;
-
-                                    if ((servicedependedon != null) && (servicedependedon.Length > 0))
-                                    {
-                                        WriteNonTerminatingError(service, null, "ServiceIsDependentOnNoForce", ServiceResources.ServiceIsDependentOnNoForce, ErrorCategory.InvalidOperation);
-                                        continue;
-                                    }
-                                    //stop service,give the force parameter always true as we have already checked for the dependent services
-                                    //Specify NoWait parameter as always false since we are not adding this switch to this cmdlet
-                                    DoStopService(service, true, true);
-                                }
-                            }
-                            else if (Status.Equals("Paused", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                if (!service.Status.Equals(ServiceControllerStatus.Paused))
-                                    //pause service
-                                    DoPauseService(service);
-                            }
-                        }
-                        if (PassThru.IsPresent)
-                        {
-                            //to display the service,refreshing the service would not show the display name after updating
-                            ServiceController displayservice = new ServiceController(Name, ServiceComputerName);
-                            WriteObject(displayservice);
+                            int lastError = Marshal.GetLastWin32Error();
+                            Win32Exception exception = new Win32Exception(lastError);
+                            WriteNonTerminatingError(
+                                service,
+                                exception,
+                                "CouldNotSetServiceDescription",
+                                ServiceResources.CouldNotSetServiceDescription,
+                                ErrorCategory.PermissionDenied);
                         }
                     }
-                    finally
-                    {
-                        if (IntPtr.Zero != hService)
-                        {
-                            bool succeeded = NativeMethods.CloseServiceHandle(hService);
-                            if (!succeeded)
-                            {
-                                int lastError = Marshal.GetLastWin32Error();
-                                Win32Exception exception = new Win32Exception(lastError);
-                                WriteNonTerminatingError(
-                                    service,
-                                    exception,
-                                    "CouldNotSetServiceDescription",
-                                    ServiceResources.CouldNotSetServiceDescription,
-                                    ErrorCategory.PermissionDenied);
-                            }
-                        }
-
-                        if (IntPtr.Zero != hScManager)
-                        {
-                            bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
-                            if (!succeeded)
-                            {
-                                int lastError = Marshal.GetLastWin32Error();
-                                Win32Exception exception = new Win32Exception(lastError);
-                                WriteNonTerminatingError(
-                                    service,
-                                    exception,
-                                    "CouldNotSetServiceDescription",
-                                    ServiceResources.CouldNotSetServiceDescription,
-                                    ErrorCategory.PermissionDenied);
-                            }
-                        }
-                    } // finally
-                } //End try
-                finally
+                } // finally
+            } //End try
+            finally
+            {
+                if (IntPtr.Zero != password)
                 {
-                    if (objServiceShouldBeDisposed)
-                    {
-                        service.Dispose();
-                    }
+                    Marshal.ZeroFreeCoTaskMemUnicode(password);
                 }
-            }//end for
+                if (objServiceShouldBeDisposed)
+                {
+                    service.Dispose();
+                }
+            }
         }
         #endregion Overrides
-
 
     } // class SetServiceCommand
     #endregion SetServiceCommand
@@ -1972,7 +1856,7 @@ namespace Microsoft.PowerShell.Commands
 
             // confirm the operation first
             // this is always false if WhatIf is set
-            if (!ShouldProcessServiceOperation(DisplayName ?? "", Name))
+            if (!ShouldProcessServiceOperation(DisplayName ?? String.Empty, Name))
             {
                 return;
             }
@@ -2002,25 +1886,14 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.PermissionDenied);
                     return;
                 }
-                DWORD dwStartType = NativeMethods.SERVICE_AUTO_START;
-                switch (StartupType)
+                if (!NativeMethods.TryGetNativeStartupType(StartupType, out DWORD dwStartType))
                 {
-                    case ServiceStartMode.Automatic:
-                        dwStartType = NativeMethods.SERVICE_AUTO_START;
-                        break;
-                    case ServiceStartMode.Manual:
-                        dwStartType = NativeMethods.SERVICE_DEMAND_START;
-                        break;
-                    case ServiceStartMode.Disabled:
-                        dwStartType = NativeMethods.SERVICE_DISABLED;
-                        break;
-                    default:
-                        Diagnostics.Assert(
-                            ((ServiceStartMode)(-1)) == StartupType,
-                            "bad StartupType");
-                        break;
+                    WriteNonTerminatingError(StartupType.ToString(), "New-Service", Name,
+                        new ArgumentException(), "CouldNotNewService",
+                        ServiceResources.UnsupportedStartupType,
+                        ErrorCategory.InvalidArgument);
+                    return;
                 }
-
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
                 if (null != DependsOn)
@@ -2169,6 +2042,174 @@ namespace Microsoft.PowerShell.Commands
     } // class NewServiceCommand
     #endregion NewServiceCommand
 
+    #region RemoveServiceCommand
+    /// <summary>
+    /// This class implements the Remove-Service command
+    /// </summary>
+    [Cmdlet(VerbsCommon.Remove, "Service", SupportsShouldProcess = true, DefaultParameterSetName = "Name")]
+    public class RemoveServiceCommand : ServiceBaseCommand
+    {
+        #region Parameters
+
+        /// <summary>
+        /// Name of the service to remove
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "Name")]
+        [Alias("ServiceName", "SN")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The following is the definition of the input parameter "InputObject".
+        /// Specifies ServiceController object representing the services to be removed.
+        /// Enter a variable that contains the objects or type a command or expression
+        /// that gets the objects.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ParameterSetName = "InputObject")]
+        public ServiceController InputObject { get; set; }
+
+        #endregion Parameters
+
+        #region Overrides
+        /// <summary>
+        /// Remove the service
+        /// </summary>
+        [ArchitectureSensitive]
+        protected override void ProcessRecord()
+        {
+            ServiceController service = null;
+            bool objServiceShouldBeDisposed = false;
+            try
+            {
+                if (InputObject != null)
+                {
+                    service = InputObject;
+                    Name = service.ServiceName;
+                    objServiceShouldBeDisposed = false;
+                }
+                else
+                {
+                    service = new ServiceController(Name);
+                    objServiceShouldBeDisposed = true;
+                }
+                Diagnostics.Assert(!String.IsNullOrEmpty(Name), "null ServiceName");
+
+                // "new ServiceController" will succeed even if there is no such service.
+                // This checks whether the service actually exists.
+                string unusedByDesign = service.DisplayName;
+            }
+            catch (ArgumentException ex)
+            {
+                // Cannot use WriteNonterminatingError as service is null
+                ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.ObjectNotFound, Name);
+                WriteError(er);
+                return;
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Cannot use WriteNonterminatingError as service is null
+                ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.ObjectNotFound, Name);
+                WriteError(er);
+                return;
+            }
+
+            try // In finally we ensure dispose, if object not pipelined.
+            {
+                // Confirm the operation first.
+                // This is always false if WhatIf is set.
+                if (!ShouldProcessServiceOperation(service))
+                {
+                    return;
+                }
+
+                NakedWin32Handle hScManager = IntPtr.Zero;
+                NakedWin32Handle hService = IntPtr.Zero;
+                try
+                {
+                    hScManager = NativeMethods.OpenSCManagerW(
+                        lpMachineName: String.Empty,
+                        lpDatabaseName: null,
+                        dwDesiredAccess: NativeMethods.SC_MANAGER_ALL_ACCESS
+                        );
+                    if (IntPtr.Zero == hScManager)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteObject(exception);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "FailToOpenServiceControlManager",
+                            ServiceResources.FailToOpenServiceControlManager,
+                            ErrorCategory.PermissionDenied);
+                        return;
+                    }
+                    hService = NativeMethods.OpenServiceW(
+                        hScManager,
+                        Name,
+                        NativeMethods.SERVICE_DELETE
+                        );
+                    if (IntPtr.Zero == hService)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "CouldNotRemoveService",
+                            ServiceResources.CouldNotSetService,
+                            ErrorCategory.PermissionDenied);
+                        return;
+                    }
+
+                    bool status = NativeMethods.DeleteService(hService);
+
+                    if (!status)
+                    {
+                        int lastError = Marshal.GetLastWin32Error();
+                        Win32Exception exception = new Win32Exception(lastError);
+                        WriteNonTerminatingError(
+                            service,
+                            exception,
+                            "CouldNotRemoveService",
+                            ServiceResources.CouldNotRemoveService,
+                            ErrorCategory.PermissionDenied);
+                    }
+                }
+                finally
+                {
+                    if (IntPtr.Zero != hService)
+                    {
+                        bool succeeded = NativeMethods.CloseServiceHandle(hService);
+                        if (!succeeded)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Diagnostics.Assert(lastError != 0, "ErrorCode not success");
+                        }
+                    }
+
+                    if (IntPtr.Zero != hScManager)
+                    {
+                        bool succeeded = NativeMethods.CloseServiceHandle(hScManager);
+                        if (!succeeded)
+                        {
+                            int lastError = Marshal.GetLastWin32Error();
+                            Diagnostics.Assert(lastError != 0, "ErrorCode not success");
+                        }
+                    }
+                } // Finally
+            } // End try
+            finally
+            {
+                if (objServiceShouldBeDisposed)
+                {
+                    service.Dispose();
+                }
+            }
+        }
+        #endregion Overrides
+    } // class RemoveServiceCommand
+    #endregion RemoveServiceCommand
+
     #region ServiceCommandException
     /// <summary>
     /// Non-terminating errors occurring in the service noun commands
@@ -2266,8 +2307,10 @@ namespace Microsoft.PowerShell.Commands
         internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
         internal const DWORD SC_MANAGER_CONNECT = 1;
         internal const DWORD SC_MANAGER_CREATE_SERVICE = 2;
+        internal const DWORD SC_MANAGER_ALL_ACCESS = 0xf003f;
         internal const DWORD SERVICE_QUERY_CONFIG = 1;
         internal const DWORD SERVICE_CHANGE_CONFIG = 2;
+        internal const DWORD SERVICE_DELETE = 0x10000;
         internal const DWORD SERVICE_NO_CHANGE = 0xffffffff;
         internal const DWORD SERVICE_AUTO_START = 0x2;
         internal const DWORD SERVICE_DEMAND_START = 0x3;
@@ -2297,6 +2340,12 @@ namespace Microsoft.PowerShell.Commands
         internal static extern
         bool CloseServiceHandle(
             NakedWin32Handle hSCManagerOrService
+            );
+
+        [DllImport(PinvokeDllNames.DeleteServiceDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern
+        bool DeleteService(
+            NakedWin32Handle hService
             );
 
         [DllImport(PinvokeDllNames.ChangeServiceConfigWDllName, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -2410,6 +2459,43 @@ namespace Microsoft.PowerShell.Commands
         public static extern bool QueryInformationJobObject(SafeHandle hJob, int JobObjectInfoClass,
                                     ref JOBOBJECT_BASIC_PROCESS_ID_LIST lpJobObjectInfo,
                                     int cbJobObjectLength, IntPtr lpReturnLength);
+
+        /// <summary>
+        /// Get appropriate win32 StartupType
+        /// </summary>
+        /// <param name="StartupType">
+        /// StartupType provided by the user.
+        /// </param>
+        /// <param name="dwStartType">
+        /// Out parameter of the native win32 StartupType
+        /// </param>
+        /// <returns>
+        /// If a supported StartupType is provided, funciton returns true, otherwise false.
+        /// </returns>
+        internal static bool TryGetNativeStartupType(ServiceStartMode StartupType, out DWORD dwStartType)
+        {
+            bool success = true;
+            dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+            switch (StartupType)
+            {
+                case ServiceStartMode.Automatic:
+                    dwStartType = NativeMethods.SERVICE_AUTO_START;
+                    break;
+                case ServiceStartMode.Manual:
+                    dwStartType = NativeMethods.SERVICE_DEMAND_START;
+                    break;
+                case ServiceStartMode.Disabled:
+                    dwStartType = NativeMethods.SERVICE_DISABLED;
+                    break;
+                case (ServiceStartMode)(-1):
+                    dwStartType = NativeMethods.SERVICE_NO_CHANGE;
+                    break;
+                default:
+                    success = false;
+                    break;
+            }
+            return success;
+        }
     }
     #endregion NativeMethods
 }

@@ -43,6 +43,16 @@ namespace mvc
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+                routes.MapRoute(
+                    name: "redirect",
+                    template: "Redirect/{count?}",
+                    defaults: new {controller = "Redirect", action = "Index"}
+                );
+                routes.MapRoute(
+                    name: "delay",
+                    template: "Delay/{seconds?}",
+                    defaults: new {controller = "Delay", action = "Index"}
+                );
             });
         }
     }

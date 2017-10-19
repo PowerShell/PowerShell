@@ -833,102 +833,6 @@ namespace System.Management.Automation.Runspaces
         public string HelpFile { get; private set; }
     }
 
-#if !CORECLR // Workflow Not Supported On CSS
-    /// <summary>
-    ///
-    /// </summary>
-    public sealed class SessionStateWorkflowEntry : SessionStateCommandEntry
-    {
-        /// <summary>
-        /// Represents a workflow definition in an Initial session state object.
-        /// </summary>
-        /// <param name="name">The name of the workflow</param>
-        /// <param name="definition">The definition of the workflow</param>
-        /// <param name="options">Options controlling scope-related elements of this object</param>
-        /// <param name="helpFile">The name of the help file associated with the workflow</param>
-        public SessionStateWorkflowEntry(string name, string definition, ScopedItemOptions options, string helpFile)
-            : base(name, SessionStateEntryVisibility.Public)
-        {
-            Definition = definition;
-            CommandType = CommandTypes.Workflow;
-            Options = options;
-            HelpFile = helpFile;
-        }
-
-        /// <summary>
-        /// Represents a workflow definition in an Initial session state object.
-        /// </summary>
-        /// <param name="name">The name of the workflow</param>
-        /// <param name="definition">The definition of the workflow</param>
-        /// <param name="helpFile">The name of the help file associated with the workflow</param>
-        public SessionStateWorkflowEntry(string name, string definition, string helpFile)
-            : this(name, definition, ScopedItemOptions.None, helpFile)
-        {
-        }
-
-        /// <summary>
-        /// Represents a workflow definition in an Initial session state object.
-        /// </summary>
-        /// <param name="name">The name of the workflow</param>
-        /// <param name="definition">The definition of the workflow</param>
-        public SessionStateWorkflowEntry(string name, string definition)
-            : this(name, definition, ScopedItemOptions.None, null)
-        {
-        }
-
-        /// <summary>
-        /// This is an internal copy constructor.
-        /// </summary>
-        internal SessionStateWorkflowEntry(string name, string definition, ScopedItemOptions options, SessionStateEntryVisibility visibility, WorkflowInfo workflow, string helpFile)
-            : base(name, visibility)
-        {
-            Definition = definition;
-            Options = options;
-            WorkflowInfo = workflow;
-            HelpFile = helpFile;
-        }
-
-        /// <summary>
-        /// Shallow-clone this object...
-        /// </summary>
-        /// <returns>The cloned object</returns>
-        public override InitialSessionStateEntry Clone()
-        {
-            SessionStateWorkflowEntry entry = new SessionStateWorkflowEntry(Name, Definition, Options, Visibility, WorkflowInfo, HelpFile);
-            entry.SetModule(this.Module);
-            return entry;
-        }
-
-        /// <summary>
-        /// Sets the name of the help file associated with the function.
-        /// </summary>
-        internal void SetHelpFile(string help)
-        {
-            HelpFile = help;
-        }
-
-        /// <summary>
-        /// The string to use to define this function...
-        /// </summary>
-        public string Definition { get; }
-
-        /// <summary>
-        /// The script block for this function.
-        /// </summary>
-        internal WorkflowInfo WorkflowInfo { get; set; }
-
-        /// <summary>
-        /// Options controling scope visibility and setability for this entry.
-        /// </summary>
-        public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
-
-        /// <summary>
-        /// The name of the help file associated with the function.
-        /// </summary>
-        public string HelpFile { get; private set; }
-    }
-#endif
-
     /// <summary>
     ///
     /// </summary>
@@ -1481,29 +1385,6 @@ namespace System.Management.Automation.Runspaces
                 return CreateRestrictedForRemoteServer();
             }
 
-#if CORECLR // Workflow Not Supported On CSS
-            if ((sessionCapabilities & SessionCapabilities.WorkflowServer) == SessionCapabilities.WorkflowServer)
-            {
-                throw PSTraceSource.NewNotSupportedException(ParserStrings.WorkflowNotSupportedInPowerShellCore);
-            }
-#else
-            // only workflow has been requested
-            if (SessionCapabilities.WorkflowServer == sessionCapabilities)
-            {
-                return CreateRestrictedForWorkflowServerMinimum();
-            }
-
-            // workflow server with remoting support has been requested
-            if (sessionCapabilities == (SessionCapabilities.WorkflowServer | SessionCapabilities.RemoteServer))
-            {
-                return CreateRestrictedForWorkflowServer();
-            }
-
-            if (sessionCapabilities == (SessionCapabilities.WorkflowServer | SessionCapabilities.RemoteServer | SessionCapabilities.Language))
-            {
-                return CreateRestrictedForWorkflowServerWithFullLanguage();
-            }
-#endif
             return Create();
         }
 
@@ -1609,296 +1490,6 @@ namespace System.Management.Automation.Runspaces
                 iss.Formats.Add(new SessionStateFormatEntry(Path.Combine(psHome, coreFormat)));
             }
         }
-
-#if !CORECLR // Workflow Not Supported On CSS
-        private static List<string> allowedAliases = new List<string>
-                                          {
-                                              "compare",
-                                              "diff",
-                                              "%",
-                                              "foreach",
-                                              "exsn",
-                                              "fc",
-                                              "fl",
-                                              "ft",
-                                              "fw",
-                                              "gcm",
-                                              "gjb",
-                                              "gmo",
-                                              "gv",
-                                              "group",
-                                              "ipmo",
-                                              "measure",
-                                              "rv",
-                                              "rcjb",
-                                              "rjb",
-                                              "rmo",
-                                              "rujb",
-                                              "select",
-                                              "set",
-                                              "sv",
-                                              "sort",
-                                              "spjb",
-                                              "sujb",
-                                              "wjb",
-                                              "?",
-                                              "where"
-                                          };
-
-        private static InitialSessionState CreateRestrictedForWorkflowServer()
-        {
-            InitialSessionState iss = CreateDefault();
-            iss.LanguageMode = PSLanguageMode.NoLanguage;
-            iss.ThrowOnRunspaceOpenError = true;
-            iss.UseFullLanguageModeInDebugger = false;
-
-            // WIN8:551312 M3P endpoint should have NO application exposed
-            //
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateApplicationEntry)
-                {
-                    iss.Commands.Remove(entry.Name, entry);
-                    break;
-                }
-            }
-
-            //
-            // restrict what gets exposed
-            //
-
-            List<string> allowedCommands = new List<string>();
-            allowedCommands.AddRange(JobCmdlets);
-            allowedCommands.AddRange(ImplicitRemotingCmdlets);
-            allowedCommands.AddRange(MiscCmdlets);
-            allowedCommands.AddRange(AutoDiscoveryCmdlets);
-
-            // make all other commands private
-            MakeDisallowedEntriesPrivate(
-                iss.Commands,
-                allowedCommands,
-                commandEntry => commandEntry.Name);
-
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateAliasEntry)
-                {
-                    if (allowedAliases.Contains(entry.Name, StringComparer.OrdinalIgnoreCase))
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Public;
-                    }
-                    else
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Private;
-                    }
-                }
-            }
-
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
-            RemoveDisallowedEntries(
-                iss.Formats,
-                allowedFormats,
-                formatEntry => IO.Path.GetFileName(formatEntry.FileName));
-
-            // Porting note: type files were deprecated
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.AddRange(DefaultTypeFiles);
-            RemoveDisallowedEntries(
-                iss.Types,
-                allowedTypes,
-                typeEntry => IO.Path.GetFileName(typeEntry.FileName));
-
-            iss.Variables.Clear(); // no variables are needed for workflow server - remove all of them
-
-            return iss;
-        }
-
-        private static InitialSessionState CreateRestrictedForWorkflowServerWithFullLanguage()
-        {
-            InitialSessionState iss = CreateDefault();
-
-            iss.LanguageMode = PSLanguageMode.FullLanguage;
-            iss.ThrowOnRunspaceOpenError = true;
-            iss.UseFullLanguageModeInDebugger = false;
-
-            // WIN8:551312 M3P endpoint should have NO application exposed
-            //
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateApplicationEntry)
-                {
-                    iss.Commands.Remove(entry.Name, entry);
-                    break;
-                }
-            }
-
-            //
-            // restrict what gets exposed
-            //
-
-            List<string> allowedCommands = new List<string>();
-            allowedCommands.AddRange(JobCmdlets);
-            allowedCommands.AddRange(ImplicitRemotingCmdlets);
-            allowedCommands.AddRange(MiscCmdlets);
-            allowedCommands.AddRange(MiscCommands);
-            allowedCommands.AddRange(AutoDiscoveryCmdlets);
-            allowedCommands.AddRange(LanguageHelperCmdlets);
-            // Exposing Debug cmdlets in only Full language WF server
-            // because for debugging one needs full language capabilities
-            allowedCommands.AddRange(DebugCmdlets);
-
-            // make all other commands private
-            MakeDisallowedEntriesPrivate(
-                iss.Commands,
-                allowedCommands,
-                commandEntry => commandEntry.Name);
-
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateAliasEntry)
-                {
-                    if (allowedAliases.Contains(entry.Name, StringComparer.OrdinalIgnoreCase))
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Public;
-                    }
-                    else
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Private;
-                    }
-                }
-            }
-
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
-            RemoveDisallowedEntries(
-                iss.Formats,
-                allowedFormats,
-                formatEntry => IO.Path.GetFileName(formatEntry.FileName));
-
-            // Porting note: type files were deprecated
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.AddRange(DefaultTypeFiles);
-            RemoveDisallowedEntries(
-                iss.Types,
-                allowedTypes,
-                typeEntry => IO.Path.GetFileName(typeEntry.FileName));
-
-            iss.Variables.Clear(); // no variables are needed for workflow server - remove all of them
-            // set a preference variable to indicate Get-Command should show
-            // return only loaded public commands
-            Hashtable parameters = new Hashtable { { "Get-Command:ListImported", true } };
-            iss.Variables.Add(new SessionStateVariableEntry("PSDefaultParameterValues", parameters, "Default Get-Command Action"));
-            return iss;
-        }
-
-        private static InitialSessionState CreateRestrictedForWorkflowServerMinimum()
-        {
-            InitialSessionState iss = CreateDefault();
-            iss.LanguageMode = PSLanguageMode.NoLanguage;
-            iss.ThrowOnRunspaceOpenError = true;
-            iss.UseFullLanguageModeInDebugger = false;
-
-            // WIN8:551312 M3P endpoint should have NO application exposed
-            //
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry.GetType() == typeof(SessionStateApplicationEntry))
-                {
-                    iss.Commands.Remove(entry.Name, entry);
-                    break;
-                }
-            }
-
-            //
-            // restrict what gets exposed
-            //
-
-            // required by implicit remoting and interactive remoting
-            List<string> allowedCommands = new List<string>
-                                               {
-                                                   "Get-Command"
-                                               };
-            allowedCommands.AddRange(JobCmdlets);
-            allowedCommands.AddRange(MiscCmdlets);
-
-            // make all other commands private
-            MakeDisallowedEntriesPrivate(
-                iss.Commands,
-                allowedCommands,
-                commandEntry => commandEntry.Name);
-
-            iss.Formats.Clear();
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.AddRange(DefaultTypeFiles);
-            RemoveDisallowedEntries(
-                iss.Types,
-                allowedTypes,
-                typeEntry => IO.Path.GetFileName(typeEntry.FileName));
-
-            iss.Variables.Clear(); // no variables are needed for workflow server - remove all of them
-
-            // Disable module autodiscovery
-            SessionStateVariableEntry ssve = new SessionStateVariableEntry("PSDisableModuleAutoDiscovery",
-                true, "True if we disable module autodiscovery", ScopedItemOptions.Constant);
-            iss.Variables.Add(ssve);
-
-            return iss;
-        }
-
-        private static readonly string[] JobCmdlets = {
-                                                          "Get-Job", "Stop-Job", "Wait-Job", "Suspend-Job", "Resume-Job",
-                                                          "Remove-Job", "Receive-Job"
-                                                      };
-
-        private static readonly string[] ImplicitRemotingCmdlets = {
-                                                                       "Get-Command", "Select-Object", "Measure-Object",
-                                                                       "Get-Help", "Get-FormatData", "Exit-PSSession",
-                                                                       "Out-Default"
-                                                                   };
-
-        private static readonly string[] AutoDiscoveryCmdlets = { "Get-Module" };
-
-        private static readonly string[] LanguageHelperCmdlets = {
-                                                                     "Compare-Object",
-                                                                     "ForEach-Object",
-                                                                     "Group-Object",
-                                                                     "Sort-Object",
-                                                                     "Where-Object",
-                                                                     "Out-File",
-                                                                     "Out-Null",
-                                                                     "Out-String",
-                                                                     "Format-Custom",
-                                                                     "Format-List",
-                                                                     "Format-Table",
-                                                                     "Format-Wide",
-                                                                     "Remove-Module",
-                                                                     "Get-Variable",
-                                                                     "Set-Variable",
-                                                                     "Remove-Variable",
-                                                                     "Get-Credential",
-                                                                     "Set-StrictMode"
-                                                                 };
-        /// <summary>
-        /// Following cmdlets are needed for debugging support starting WinBlue
-        /// </summary>
-        private static readonly string[] DebugCmdlets = {
-                                                            "Disable-PSBreakpoint",
-                                                            "Enable-PSBreakpoint",
-                                                            "Get-PSBreakpoint",
-                                                            "Remove-PSBreakpoint",
-                                                            "Set-PSBreakpoint"
-                                                        };
-
-        /// <summary>
-        /// this cmdlets are exposed due to some bugs. Need to figure out if
-        /// they are still required
-        /// </summary>
-        private static readonly string[] MiscCmdlets = { "Join-Path", "Import-Module" };
-        private static readonly string[] MiscCommands = { "TabExpansion2" };
-
-        private static readonly string[] DefaultTypeFiles = { "types.ps1xml", "typesv3.ps1xml" };
-#endif
 
         #endregion
 
@@ -2009,6 +1600,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
         /// The default cmdlets, provider, etc are loaded via Modules
+        /// For loading Microsoft.PowerShell.Core module only.
         /// </summary>
         /// <returns></returns>
         public static InitialSessionState CreateDefault2()
@@ -2705,10 +2297,6 @@ namespace System.Management.Automation.Runspaces
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
             if (etwEnabled) RunspaceEventSource.Log.LoadCommandsStart();
 
-#if !CORECLR // Workflow Not Supported On CSS
-            InitialSessionState cloneForWorkflowDefinitions = null;
-#endif
-
             foreach (SessionStateCommandEntry cmd in Commands)
             {
                 if (etwEnabled) RunspaceEventSource.Log.LoadCommandStart(cmd.Name);
@@ -2760,25 +2348,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     continue;
                 }
-#if !CORECLR // Workflow Not Supported On CSS
-                SessionStateWorkflowEntry sswe = cmd as SessionStateWorkflowEntry;
-                if (sswe != null)
-                {
-                    if (cloneForWorkflowDefinitions == null)
-                    {
-                        cloneForWorkflowDefinitions = this.Clone();
-                        var commandsCopy =
-                            cloneForWorkflowDefinitions.Commands.Where(e => !(e is SessionStateWorkflowEntry))
-                                .ToList();
-                        cloneForWorkflowDefinitions.Commands.Clear();
-                        foreach (var c in commandsCopy)
-                        {
-                            cloneForWorkflowDefinitions.Commands.Add(c);
-                        }
-                    }
-                    ss.AddSessionStateEntry(cloneForWorkflowDefinitions, sswe);
-                }
-#endif
+
                 if (etwEnabled) RunspaceEventSource.Log.LoadCommandStop(cmd.Name);
             }
 
@@ -4135,7 +3705,6 @@ namespace System.Management.Automation.Runspaces
             return coreSnapin;
         }
 
-        // WARNING: THIS CODE IS COMPLETELY DUPLICATED IN RunspaceConfigForSingleShell
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
             // See if the snapin is already loaded. If has been then there will be an entry in the
@@ -4594,14 +4163,6 @@ End
         ";
 
         /// <summary>
-        /// This is the default function to use for 'Import System Modules'.
-        /// </summary>
-        /// <remarks>
-        /// Win8: 320909. Retaining the original definition to ensure backward compatability.
-        /// </remarks>
-        private static string s_importSystemModulesText = @"";
-
-        /// <summary>
         /// This is the default function to use for clear-host. On Windows it rewrites the
         /// host, and on Linux, it delegates to the native binary, 'clear'.
         /// </summary>
@@ -4963,8 +4524,8 @@ end
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
-                SpecialVariables.IsOSX,
-                Platform.IsOSX,
+                SpecialVariables.IsMacOS,
+                Platform.IsMacOS,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
@@ -5138,9 +4699,9 @@ end
                         "Invoke-RestMethod",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("iwr",
                         "Invoke-WebRequest",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / OS X
+// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / macOS
 #if !UNIX
-                    // ac is a native command on OS X
+                    // ac is a native command on macOS
                     new SessionStateAliasEntry("ac",
                         "Add-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("compare",
@@ -5205,10 +4766,6 @@ end
                         "Clear-Host",      "", ScopedItemOptions.AllScope),
 //#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore
 #if !CORECLR
-                    new SessionStateAliasEntry("asnp",
-                        "Add-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gsnp",
-                        "Get-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("gwmi",
                         "Get-WmiObject",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("iwmi",
@@ -5402,8 +4959,6 @@ if($paths) {
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
-            // Win8: 320909. Retaining the original definition to ensure backward compatability.
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("ImportSystemModules", s_importSystemModulesText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true)
         };
@@ -5489,22 +5044,6 @@ if($paths) {
 
             return result;
         }
-
-        internal void SaveAsConsoleFile(string path)
-        {
-            if (null == path)
-            {
-                throw PSTraceSource.NewArgumentNullException("path");
-            }
-
-            if (!path.EndsWith(StringLiterals.PowerShellConsoleFileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                throw PSTraceSource.NewArgumentException("path", ConsoleInfoErrorStrings.BadConsoleExtension);
-            }
-
-            //ConsoleFileElement will write to file
-            PSConsoleFileElement.WriteToFile(path, PSVersionInfo.PSVersion, this.ImportedSnapins.Values);
-        }
     }
 
     /// <summary>
@@ -5524,7 +5063,6 @@ if($paths) {
 
             try
             {
-                // WARNING: DUPLICATE CODE see RunspaceConfigForSingleShell
                 assembly = Assembly.Load(new AssemblyName(psSnapInInfo.AssemblyName));
             }
             catch (BadImageFormatException e)
@@ -5966,11 +5504,12 @@ if($paths) {
 #if !UNIX
                 {"Disable-PSRemoting",                new SessionStateCmdletEntry("Disable-PSRemoting", typeof(DisablePSRemotingCommand), helpFile) },
                 {"Enable-PSRemoting",                 new SessionStateCmdletEntry("Enable-PSRemoting", typeof(EnablePSRemotingCommand), helpFile) },
+                {"Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
+                {"Enter-PSHostProcess",               new SessionStateCmdletEntry("Enter-PSHostProcess", typeof(EnterPSHostProcessCommand), helpFile) },
+                {"Exit-PSHostProcess",                new SessionStateCmdletEntry("Exit-PSHostProcess", typeof(ExitPSHostProcessCommand), helpFile) },
 #endif
                 {"Enable-PSSessionConfiguration",     new SessionStateCmdletEntry("Enable-PSSessionConfiguration", typeof(EnablePSSessionConfigurationCommand), helpFile) },
-                {"Enter-PSHostProcess",               new SessionStateCmdletEntry("Enter-PSHostProcess", typeof(EnterPSHostProcessCommand), helpFile) },
                 {"Enter-PSSession",                   new SessionStateCmdletEntry("Enter-PSSession", typeof(EnterPSSessionCommand), helpFile) },
-                {"Exit-PSHostProcess",                new SessionStateCmdletEntry("Exit-PSHostProcess", typeof(ExitPSHostProcessCommand), helpFile) },
                 {"Exit-PSSession",                    new SessionStateCmdletEntry("Exit-PSSession", typeof(ExitPSSessionCommand), helpFile) },
                 {"Export-ModuleMember",               new SessionStateCmdletEntry("Export-ModuleMember", typeof(ExportModuleMemberCommand), helpFile) },
                 {"ForEach-Object",                    new SessionStateCmdletEntry("ForEach-Object", typeof(ForEachObjectCommand), helpFile) },
@@ -5979,7 +5518,6 @@ if($paths) {
                 {"Get-History",                       new SessionStateCmdletEntry("Get-History", typeof(GetHistoryCommand), helpFile) },
                 {"Get-Job",                           new SessionStateCmdletEntry("Get-Job", typeof(GetJobCommand), helpFile) },
                 {"Get-Module",                        new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), helpFile) },
-                {"Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 {"Get-PSSession",                     new SessionStateCmdletEntry("Get-PSSession", typeof(GetPSSessionCommand), helpFile) },
                 {"Get-PSSessionCapability",           new SessionStateCmdletEntry("Get-PSSessionCapability", typeof(GetPSSessionCapabilityCommand), helpFile) },
                 {"Get-PSSessionConfiguration",        new SessionStateCmdletEntry("Get-PSSessionConfiguration", typeof(GetPSSessionConfigurationCommand), helpFile) },

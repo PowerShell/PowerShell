@@ -948,7 +948,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Overrides
 
         /// <summary>
-        /// Launch a new Process (PowerShell.exe -s) to perform remoting. This is used by *-Job cmdlets
+        /// Launch a new Process (pwsh -s) to perform remoting. This is used by *-Job cmdlets
         /// to support background jobs without depending on WinRM (WinRM has complex requirements like
         /// elevation to support local machine remoting)
         /// </summary>
@@ -1403,6 +1403,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamWriter _stdInWriter;
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
+        private bool _connectionEstablished;
         private const string _threadName = "SSHTransport Reader Thread";
 
         #endregion
@@ -1464,7 +1465,12 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CloseAsync()
         {
             base.CloseAsync();
-            CloseConnection();
+
+            if (!_connectionEstablished)
+            {
+                // If the connection is not yet estalished then clean up any existing connection state.
+                CloseConnection();
+            }
         }
 
         #endregion
@@ -1482,18 +1488,26 @@ namespace System.Management.Automation.Remoting.Client
             var stdErrReader = _stdErrReader;
             if (stdErrReader != null) { stdErrReader.Dispose(); }
 
-            try
+            // The CloseConnection() method can be called multiple times from multiple places.
+            // Set the _sshProcessId to zero here so that we go through the work of finding
+            // and terminating the SSH process just once.
+            var sshProcessId = _sshProcessId;
+            _sshProcessId = 0;
+            if (sshProcessId != 0)
             {
-                var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId);
-                if ((sshProcess != null) && !sshProcess.HasExited)
+                try
                 {
-                    sshProcess.Kill();
+                    var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId);
+                    if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                    {
+                        sshProcess.Kill();
+                    }
                 }
+                catch (ArgumentException) { }
+                catch (InvalidOperationException) { }
+                catch (NotSupportedException) { }
+                catch (System.ComponentModel.Win32Exception) { }
             }
-            catch (ArgumentException) { }
-            catch (InvalidOperationException) { }
-            catch (NotSupportedException) { }
-            catch (System.ComponentModel.Win32Exception) { }
         }
 
         private void StartErrorThread(
@@ -1641,6 +1655,9 @@ namespace System.Management.Automation.Remoting.Client
                     }
                     else
                     {
+                        // The first received PSRP message from the server indicates that the connection is established and that PSRP is running.
+                        if (!_connectionEstablished) { _connectionEstablished = true; }
+
                         // Normal output data.
                         HandleOutputDataReceived(data);
                     }
@@ -2410,3 +2427,4 @@ namespace System.Management.Automation.Remoting.Server
         #endregion
     }
 }
+

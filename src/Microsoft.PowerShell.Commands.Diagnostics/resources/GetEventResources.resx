@@ -268,7 +268,7 @@ The defined template is following:
     <value>This cmdlet can be run only on Microsoft Windows 7 and above.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This Windows PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.</value>
+    <value>This PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.</value>
   </data>
   <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
     <value>Cannot find any performance counter sets in the {0} files that match the following: {1}.</value>

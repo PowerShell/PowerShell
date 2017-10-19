@@ -323,9 +323,9 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    if(!(Test-Path "$env:CoreOutput\powershell.exe"))
+    if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
-        throw "CoreCLR PowerShell.exe was not built"
+        throw "CoreCLR pwsh.exe was not built"
     }
 
     if(-not (Test-DailyBuild))
@@ -348,11 +348,11 @@ function Invoke-AppVeyorTest
         Remove-Item -Force ${telemetrySemaphoreFilepath}
     }
 
-    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
+    Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
 
-    Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
+    Start-PSPester -Terse -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 

@@ -14,10 +14,14 @@ There is a shortcut placed in the Start Menu upon installation.
 
 ### Prerequisites
 
+To enable PowerShell remoting over WinRM, the following prerequisites need to be met:
+
 * Install the [Universal C Runtime](https://www.microsoft.com/download/details.aspx?id=50410) on Windows versions prior to Windows 10.
   It is available via direct download or Windows Update.
   Fully patched (including optional packages), supported systems will already have this installed.
-* Install the [Visual C++ Redistributable](https://www.microsoft.com/download/details.aspx?id=48145) for VS2015.
+* Install the Windows Management Framework (WMF) [4.0](https://www.microsoft.com/download/details.aspx?id=40855)
+  or newer ([5.0](https://www.microsoft.com/download/details.aspx?id=50395),
+  [5.1](https://www.microsoft.com/download/details.aspx?id=54616)) on Windows 7.
 
 ## Deploying on Nano Server
 
@@ -49,7 +53,7 @@ $session = New-PSSession -ComputerName <Nano Server IP address> -Credential <An 
 * Copy the file to the Nano Server instance
 
 ```powershell
-Copy-Item <local PS Core download location>\powershell-<version>-win10-win2016-x64.zip c:\ -ToSession $session
+Copy-Item <local PS Core download location>\powershell-<version>-win-x64.zip c:\ -ToSession $session
 ```
 
 * Enter the session
@@ -62,7 +66,7 @@ Enter-PSSession $session
 
 ```powershell
 # Insert the appropriate version.
-Expand-Archive -Path C:\powershell-<version>-win10-win2016-x64.zip -DestinationPath "C:\PowerShellCore_<version>"
+Expand-Archive -Path C:\powershell-<version>-win-x64.zip -DestinationPath "C:\PowerShellCore_<version>"
 ```
 
 * Follow the instructions to create a remoting endpoint using the [another instance technique](#executed-by-another-instance-of-powershell-on-behalf-of-the-instance-that-it-will-register).

@@ -43,7 +43,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             if ( Test-CimTestInstance ) {
                 Get-CimInstance @CimCmdletArgs | Remove-CimInstance
             }
-            # if there's a failure with mofcomp then we will have trouble 
+            # if there's a failure with mofcomp then we will have trouble
             # executing the tests. Keep track of the exit code
             $result = MofComp.exe $deleteMof
             $script:MofCompReturnCode = $LASTEXITCODE
@@ -55,7 +55,17 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         # create the class and instances
         # and track the exitcode for the compilation of the mof file
         # if there's a problem, there's no reason to keep going
-        $result = MofComp.exe ${script:createMof}
+        $testMof = Get-Content -Path ${script:createmof} -Raw
+        $currentTimeZone = [System.TimeZoneInfo]::Local
+
+        # this date is simply the same one used in the test mof
+        # the minutes must be padded to 3 digits proceeded by a '+' or '-'
+        # when east of UTC 0 we must add a '+'
+        $offsetMinutes = ($currentTimeZone.GetUtcOffset([datetime]::new(2008, 01, 01, 0, 0, 0))).TotalMinutes
+        $UTCOffset = "{0:+000;-000}" -f $offsetMinutes
+        $testMof = $testMof.Replace("<UTCOffSet>", $UTCOffset)
+        Set-Content -Path $testDrive\testmof.mof -Value $testMof
+        $result = MofComp.exe $testDrive\testmof.mof
         $script:MofCompReturnCode = $LASTEXITCODE
         if ( $script:MofCompReturnCode -ne 0 ) {
             return
@@ -117,6 +127,12 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             $result = 1,2,4 | foreach-object { [pscustomobject]@{ id = $_ } } | Get-CimTest
             @($result).Count | should be 3
             ( $result.id | sort-object ) -join "," | Should be "1,2,4"
+        }
+
+        It "The Get-CimTest cmdlet should retrieve an object by datetime" @ItSkipOrPending {
+            $result = Get-CimTest -DateTime ([datetime]::new(2008,01,01,0,0,0))
+            @($result).Count | Should Be 1
+            $result.field1 | Should Be "instance 1"
         }
 
         It "The Get-CimTest cmdlet should return the proper error if the instance does not exist" @ItSkipOrPending {

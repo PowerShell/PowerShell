@@ -13,12 +13,12 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # If out-file -encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
-        $oldDefaultParameterValues = $psDefaultParameterValues
+        $oldDefaultParameterValues = $psDefaultParameterValues.Clone()
         $psDefaultParameterValues = @{}
     }
     AfterAll {
         # be sure to tidy up afterwards
-        $psDefaultParameterValues = $oldDefaultParameterValues
+        $global:psDefaultParameterValues = $oldDefaultParameterValues
     }
     BeforeEach {
         # start each test with a clean plate!
@@ -90,5 +90,35 @@ Describe "File redirection mixed with Out-Null" -Tags CI {
 
         echo "some more text" > $TestDrive\out.txt | Out-Null
         Get-Content $TestDrive\out.txt | Should Be "some more text"
+    }
+}
+
+Describe "File redirection should have 'DoComplete' called on the underlying pipeline processor" -Tags CI {
+    It "File redirection should result in the same file as Out-File" {
+        $object = [pscustomobject] @{ one = 1 }
+        $redirectFile = Join-Path $TestDrive fileRedirect.txt
+        $outFile = Join-Path $TestDrive outFile.txt
+
+        $object > $redirectFile
+        $object | Out-File $outFile
+
+        $redirectFileContent = Get-Content $redirectFile -Raw
+        $outFileContent = Get-Content $outFile -Raw
+        $redirectFileContent | Should Be $outFileContent
+    }
+
+    It "File redirection should not mess up the original pipe" {
+        $outputFile = Join-Path $TestDrive output.txt
+        $otherStreamFile = Join-Path $TestDrive otherstream.txt
+
+        $result = & { $(Get-Command NonExist; 1234) > $outputFile *> $otherStreamFile; "Hello" }
+        $result | Should Be "Hello"
+
+        $outputContent = Get-Content $outputFile -Raw
+        $outputContent.Trim() | Should Be '1234'
+
+        $errorContent = Get-Content $otherStreamFile | ForEach-Object { $_.Trim() }
+        $errorContent = $errorContent -join ""
+        $errorContent | Should Match "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
     }
 }

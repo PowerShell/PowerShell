@@ -528,29 +528,23 @@ namespace System.Management.Automation.Runspaces
         /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration to use when creating a new Runspace.
-        /// </param>
         /// <param name="host">
         /// The explicit PSHost implementation.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// RunspaceConfiguration is null.
         /// Host is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// Maximum runspaces is less than 1.
         /// Minimum runspaces is less than 1.
         /// </exception>
-        internal RunspacePool(int minRunspaces, int maxRunspaces,
-            RunspaceConfiguration runspaceConfiguration, PSHost host)
+        internal RunspacePool(int minRunspaces, int maxRunspaces, PSHost host)
         {
             // Currently we support only Local Runspace Pool..
             // this needs to be changed once remote runspace pool
             // is implemented
 
-            _internalPool = new RunspacePoolInternal(minRunspaces,
-                maxRunspaces, runspaceConfiguration, host);
+            _internalPool = new RunspacePoolInternal(minRunspaces, maxRunspaces, host);
         }
 
         /// <summary>

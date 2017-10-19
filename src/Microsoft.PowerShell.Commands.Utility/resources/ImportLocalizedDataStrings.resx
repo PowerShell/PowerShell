@@ -124,18 +124,18 @@
     <value>The FileName parameter was not specified. The FileName parameter is required when Import-LocalizedData is not called from a script file.</value>
   </data>
   <data name="ErrorOpeningFile" xml:space="preserve">
-    <value>The following error occurred while Windows PowerShell was opening the data file '{0}':
+    <value>The following error occurred while PowerShell was opening the data file '{0}':
 {1}.</value>
   </data>
   <data name="ErrorLoadingDataFile" xml:space="preserve">
-    <value>The following error occurred while Windows PowerShell was loading the '{0}' script data file:
+    <value>The following error occurred while PowerShell was loading the '{0}' script data file:
 {1}.</value>
   </data>
   <data name="FileNameParameterCannotHavePath" xml:space="preserve">
     <value>The argument for the FileName parameter should not contain a path.</value>
   </data>
   <data name="CannotFindPsd1File" xml:space="preserve">
-    <value>Cannot find the Windows PowerShell data file '{0}' in directory '{1}', or in any parent culture directories.</value>
+    <value>Cannot find the PowerShell data file '{0}' in directory '{1}', or in any parent culture directories.</value>
   </data>
   <data name="CannotDefineSupportedCommand" xml:space="preserve">
     <value>Cannot import localized data. The definition of additional supported commands is not allowed in this language mode.</value>

@@ -29,6 +29,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.ArgumentCompleterAttribute]
                 }
                 @{
+                    Accelerator = 'ArgumentCompletions'
+                    Type        = [System.Management.Automation.ArgumentCompletionsAttribute]
+                }
+                @{
                     Accelerator = 'array'
                     Type        = [System.Array]
                 }
@@ -368,7 +372,7 @@ Describe "Type accelerators" -Tags "CI" {
         
             if ( $IsCoreCLR )
             {
-                $totalAccelerators = 89 
+                $totalAccelerators = 90 
             }
             else
             {

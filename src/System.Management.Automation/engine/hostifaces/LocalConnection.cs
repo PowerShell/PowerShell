@@ -38,22 +38,6 @@ namespace System.Management.Automation.Runspaces
         /// <param name="host">
         /// The explicit PSHost implementation
         /// </param>
-        /// <param name="runspaceConfig">
-        /// configuration information for this minshell.
-        /// </param>
-        [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
-        internal LocalRunspace(PSHost host, RunspaceConfiguration runspaceConfig)
-            : base(host, runspaceConfig)
-        {
-        }
-
-        /// <summary>
-        /// Construct an instance of an Runspace using a custom implementation
-        /// of PSHost.
-        /// </summary>
-        /// <param name="host">
-        /// The explicit PSHost implementation
-        /// </param>
         /// <param name="initialSessionState">
         /// configuration information for this minshell.
         /// </param>
@@ -641,6 +625,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void DoOpenHelper()
         {
+            Dbg.Assert(InitialSessionState != null, "InitialSessionState should not be null");
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (_disposed)
             {
@@ -653,17 +638,10 @@ namespace System.Management.Automation.Runspaces
             {
                 _transcriptionData = new TranscriptionData();
 
-                if (InitialSessionState != null)
-                {
-                    // All ISS-based configuration of the engine itself is done by AutomationEngine,
-                    // which calls InitialSessionState.Bind(). Anything that doesn't
-                    // require an active and open runspace should be done in ISS.Bind()
-                    _engine = new AutomationEngine(Host, null, InitialSessionState);
-                }
-                else
-                {
-                    _engine = new AutomationEngine(Host, RunspaceConfiguration, null);
-                }
+                // All ISS-based configuration of the engine itself is done by AutomationEngine,
+                // which calls InitialSessionState.Bind(). Anything that doesn't
+                // require an active and open runspace should be done in ISS.Bind()
+                _engine = new AutomationEngine(Host, InitialSessionState);
                 _engine.Context.CurrentRunspace = this;
 
                 //Log engine for start of engine life
@@ -773,14 +751,7 @@ namespace System.Management.Automation.Runspaces
             logContext.HostVersion = Host.Version.ToString();
             logContext.RunspaceId = InstanceId.ToString();
             logContext.Severity = severity.ToString();
-            if (this.RunspaceConfiguration == null)
-            {
-                logContext.ShellId = Utils.DefaultPowerShellShellID;
-            }
-            else
-            {
-                logContext.ShellId = this.RunspaceConfiguration.ShellId;
-            }
+            logContext.ShellId = Utils.DefaultPowerShellShellID;
             MshLog.LogEngineHealthEvent(
                 logContext,
                 id,
@@ -867,7 +838,7 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 if ((hostRunspace == null) || (this == hostRunspace))
-                {                   
+                {
                     // We should close transcripting only if we are closing the last opened runspace.
                     foreach (Runspace runspace in RunspaceList)
                     {
@@ -883,7 +854,6 @@ namespace System.Management.Automation.Runspaces
                     {
                         host.StopAllTranscribing();
                     }
-
                     AmsiUtils.Uninitialize();
                 }
             }
@@ -929,7 +899,7 @@ namespace System.Management.Automation.Runspaces
 
             //Log engine lifecycle event.
             MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
-  
+
             //All pipelines have been canceled. Close the runspace.
             _engine = null;
             _commandFactory = null;

@@ -37,60 +37,15 @@ namespace System.Management.Automation
         /// an instance of the automation engine. It allows you to pass in an
         /// instance of PSHost that provides the host-specific I/O routines, etc.
         /// </summary>
-        internal AutomationEngine(PSHost hostInterface, RunspaceConfiguration runspaceConfiguration, InitialSessionState iss)
+        internal AutomationEngine(PSHost hostInterface, InitialSessionState iss)
         {
-#if !CORECLR// There is no control panel items in CSS
-            // Update the env variable PathEXT to contain .CPL
-            var pathext = Environment.GetEnvironmentVariable("PathEXT");
-            pathext = pathext ?? string.Empty;
-            bool cplExist = false;
-            if (pathext != string.Empty)
-            {
-                string[] entries = pathext.Split(Utils.Separators.Semicolon);
-                foreach (string entry in entries)
-                {
-                    string ext = entry.Trim();
-                    if (ext.Equals(".CPL", StringComparison.OrdinalIgnoreCase))
-                    {
-                        cplExist = true;
-                        break;
-                    }
-                }
-            }
-            if (!cplExist)
-            {
-                pathext = (pathext == string.Empty) ? ".CPL" :
-                    pathext.EndsWith(";", StringComparison.OrdinalIgnoreCase)
-                    ? (pathext + ".CPL") : (pathext + ";.CPL");
-                Environment.SetEnvironmentVariable("PathEXT", pathext);
-            }
-#endif
-            if (runspaceConfiguration != null)
-            {
-                Context = new ExecutionContext(this, hostInterface, runspaceConfiguration);
-            }
-            else
-            {
-                Context = new ExecutionContext(this, hostInterface, iss);
-            }
+            Context = new ExecutionContext(this, hostInterface, iss);
 
             EngineParser = new Language.Parser();
             CommandDiscovery = new CommandDiscovery(Context);
 
-            // Initialize providers before loading types so that any ScriptBlocks in the
-            // types.ps1xml file can be parsed.
-
-            // Bind the execution context with RunspaceConfiguration.
-            // This has the side effect of initializing cmdlet cache and providers from runspace configuration.
-            if (runspaceConfiguration != null)
-            {
-                runspaceConfiguration.Bind(Context);
-            }
-            else
-            {
-                // Load the iss, resetting everything to it's defaults...
-                iss.Bind(Context, /*updateOnly*/ false);
-            }
+            // Load the iss, resetting everything to it's defaults...
+            iss.Bind(Context, /*updateOnly*/ false);
 
             InitialSessionState.SetSessionStateDrive(Context, true);
         }

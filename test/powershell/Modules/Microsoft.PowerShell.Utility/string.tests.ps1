@@ -9,7 +9,13 @@
 
             $fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
 
-            $tempFile = New-TemporaryFile
+            $subDirName = Join-Path $TestDrive 'selectSubDir'
+            New-Item -Path $subDirName -ItemType Directory -Force > $null
+            $pathWithoutWildcard = $TestDrive
+            $pathWithWildcard = Join-Path $TestDrive '*'
+
+            # Here Get-ChildItem adds 'PSDrive' property
+            $tempFile = New-TemporaryFile | Get-Item
             "abc" | Out-File -LiteralPath $tempFile.fullname
 	        "bcd" | Out-File -LiteralPath $tempFile.fullname -Append
 	        "cde" | Out-File -LiteralPath $tempFile.fullname -Append
@@ -24,6 +30,14 @@
             Pop-Location
         }
 
+        It "Select-String does not throw on subdirectory (path without wildcard)" {
+            { select-string -Path  $pathWithoutWildcard "noExists" -ErrorAction Stop } | Should Not Throw
+        }
+
+        It "Select-String does not throw on subdirectory (path with wildcard)" {
+            { select-string -Path  $pathWithWildcard "noExists" -ErrorAction Stop } | Should Not Throw
+        }
+
         It "LiteralPath with relative path" {
             (select-string -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should Be 2
         }
@@ -36,7 +50,7 @@
             (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2
         }
 
-        It "Network path" -skip:($IsCoreCLR) {
+        It "Network path" -skip:(!$IsWindows) {
             (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
         }
 

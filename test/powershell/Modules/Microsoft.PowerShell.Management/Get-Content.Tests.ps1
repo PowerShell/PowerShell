@@ -70,8 +70,45 @@ Describe "Get-Content" -Tags "CI" {
         Pop-Location
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
-    It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
+    It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
         {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+    }
+    It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
+        {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+    It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
+        { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
+    }
+    It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
+        @{EncodingName = 'String'},
+        @{EncodingName = 'Unicode'},
+        @{EncodingName = 'BigEndianUnicode'},
+        @{EncodingName = 'UTF8'},
+        @{EncodingName = 'UTF7'},
+        @{EncodingName = 'UTF32'},
+        @{EncodingName = 'Ascii'}
+        ){
+        param($EncodingName)
+
+        $content = @"
+one
+two
+foo
+bar
+baz
+"@
+        $expected = 'foo'
+        $tailCount = 3
+        [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding] $encoding = $EncodingName
+
+        $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
+        $content | Set-Content -Path $testPath -Encoding $encoding
+        $expected = 'foo'
+
+        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encoding
+        $actual.GetType() | Should Be "System.Object[]"
+        $actual.Length | Should Be $tailCount
+        $actual[0] | Should Be $expected
     }
     It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
         set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
@@ -159,8 +196,106 @@ Describe "Get-Content" -Tags "CI" {
         @{cmdlet="add-content"},
         @{cmdlet="get-item"},
         @{cmdlet="remove-item"}
-        ) {
+    ) {
         param($cmdlet)
         (Get-Command $cmdlet).Parameters["stream"] | Should BeNullOrEmpty
+    }
+ 
+    It "Should return no content when an empty path is used with -Raw switch" {
+        Get-ChildItem $TestDrive -Filter "*.raw" | Get-Content -Raw | Should Be $null
+    }
+
+    It "Should return no content when -TotalCount value is 0" {
+        Get-Content -Path $testPath -TotalCount 0 | Should Be $null
+    }
+
+    It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {
+        { 
+        Get-Content -Path $testPath -Tail 1 -TotalCount 1 -ErrorAction Stop
+        } | ShouldBeErrorId "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+
+    It "Should throw TailNotSupported when -Tail used with an unsupported provider" {
+        Push-Location env:
+        {
+        Get-Content PATH -Tail 1 -ErrorAction Stop
+        } | ShouldBeErrorId "TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
+        Pop-Location
+    }
+
+    It "Should throw InvalidOperation when -Tail and -Raw are used" {
+        {
+        Get-Content -Path $testPath -Tail 1 -ErrorAction Stop -Raw
+        } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+    Context "Check Get-Content containing multi-byte chars" {
+        BeforeAll {
+            $firstLine = "Hello,World"
+            $secondLine = "Hello2,World2"
+            $thirdLine = "Hello3,World3"
+            $fourthLine = "Hello4,World4"
+            $fileContent = $firstLine,$secondLine,$thirdLine,$fourthLine
+        }
+        BeforeEach{
+            Set-content -Path $testPath $fileContent
+        }
+        It "Should return all lines when -Tail value is more than number of lines in the file"{
+            $result = Get-Content -Path $testPath -ReadCount -1 -Tail 5 -Encoding UTF7
+            $result.Length | Should Be 4
+            $expected = $fileContent
+            Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+        }
+        It "Should return last three lines at one time for -ReadCount 0 and -Tail 3"{
+            $result = Get-Content -Path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
+            $result.Length | Should Be 3
+            $expected = $secondLine,$thirdLine,$fourthLine
+            Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+        }
+        It "Should return last three lines reading one at a time for -ReadCount 1 and -Tail 3"{
+            $result = Get-Content -Path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
+            $result.Length | Should Be 3
+            $expected = $secondLine,$thirdLine,$fourthLine
+            Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+        }
+        It "Should return last three lines at one time for -ReadCount 99999 and -Tail 3"{
+            $result = Get-Content -Path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
+            $result.Length | Should Be 3
+            $expected = $secondLine,$thirdLine,$fourthLine
+            Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+        }
+        It "Should return last three lines two lines at a time for -ReadCount 2 and -Tail 3"{
+            $result = Get-Content -Path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
+            $result.Length | Should Be 2
+            $expected = New-Object System.Array[] 2
+            $expected[0] = ($secondLine,$thirdLine)
+            $expected[1] = $fourthLine
+            Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+        }
+        It "Should not return any content when -TotalCount 0"{
+            $result = Get-Content -Path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
+            $result.Length | Should Be 0
+        }
+        It "Should return first three lines two lines at a time for -TotalCount 3 and -ReadCount 2"{
+            $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
+            $result.Length | Should Be 2
+            $expected = New-Object System.Array[] 2
+            $expected[0] = ($firstLine,$secondLine)
+            $expected[1] = $thirdLine
+            Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
+        }
+    }
+}
+
+Describe "Get-Content -Raw test" -Tags "CI" {
+
+    It "Reads - <testname> in full" -TestCases @( 
+      @{character = "a`nb`n"; testname = "LF-terminated files"; filename = "lf.txt"}
+      @{character = "a`r`nb`r`n"; testname = "CRLF-terminated files"; filename = "crlf.txt"}
+      @{character = "a`nb"; testname = "LF-separated files without trailing newline"; filename = "lf-nt.txt"}
+      @{character = "a`r`nb"; testname = "CRLF-separated files without trailing newline"; filename = "crlf-nt.txt"}        
+    ) {
+        param ($character, $filename)
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\$filename" -value $character
+        Get-Content -Raw "$TestDrive\$filename" | Should BeExactly $character
     }
 }

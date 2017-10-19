@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Description" xml:space="preserve">
-    <value>This Windows PowerShell snap-in contains utility cmdlets that are used to view and organize data in different ways.</value>
+    <value>This PowerShell snap-in contains utility cmdlets that are used to view and organize data in different ways.</value>
   </data>
   <data name="Vendor" xml:space="preserve">
     <value>Microsoft Corporation</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Windows PowerShell utility snap-in</value>
+    <value>PowerShell utility snap-in</value>
   </data>
 </root>

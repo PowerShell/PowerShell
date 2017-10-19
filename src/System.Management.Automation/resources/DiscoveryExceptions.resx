@@ -136,7 +136,8 @@
     <value>Cannot retrieve an instance of CommandDiscovery.</value>
   </data>
   <data name="CommandNotFoundException" xml:space="preserve">
-    <value>The term '{0}' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
+    <value>The term '{0}' is not recognized as the name of a cmdlet, function, script file, or operable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
   </data>
   <data name="CmdletNotFoundException" xml:space="preserve">
     <value>Argument '{0}' is not recognized as a cmdlet: {1}</value>
@@ -182,7 +183,7 @@ The #requires statement must be in one of the following formats:
     <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
   </data>
   <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for Windows PowerShell {1}. The version of Windows PowerShell that is required by the script does not match the currently running version of Windows PowerShell {2}.</value>
+    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
     <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
@@ -191,10 +192,10 @@ The #requires statement must be in one of the following formats:
     <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required Windows PowerShell snap-in when running in Windows PowerShell.</value>
+    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current Windows PowerShell session is not running as Administrator. Start Windows PowerShell by using the Run as Administrator option, and then try running the script again.</value>
+    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
     <value>{0} (Version {1})</value>

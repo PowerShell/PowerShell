@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell
 
     /// <summary>
     ///
-    /// ConsoleHostUserInterface implements console-mode user interface for powershell.exe
+    /// ConsoleHostUserInterface implements console-mode user interface for powershell
     ///
     /// </summary>
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]

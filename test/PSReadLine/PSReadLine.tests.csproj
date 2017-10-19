@@ -6,7 +6,7 @@
     <Description>PSReadLine basic tests</Description>
     <AssemblyName>TestPSReadLine</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>ubuntu.14.04-x64;ubuntu.16.04-x64;centos.7-x64;fedora.24-x64;win7-x86;win7-x64;win10-x64;osx.10.12-x64;opensuse.13.2-x64;opensuse.42.1-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>

@@ -11,16 +11,26 @@ function Wait-UntilTrue
 
     # Loop until the script block evaluates to true
     while (-not ($sb.Invoke())) {
-        # Sleep for the specified interval
-        start-sleep -mil $intervalInMilliseconds
-
-        # If the timeout period has passed, throw an exception
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds)
-        {
+        # If the timeout period has passed, return false
+        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
+        # Sleep for the specified interval
+        Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true
+}
+
+function Wait-FileToBePresent
+{
+    [CmdletBinding()]
+    param (
+        [string]$File,
+        [int]$TimeoutInSeconds = 10,
+        [int]$IntervalInMilliseconds = 100
+    )
+
+    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds > $null
 }
 
 function Test-IsElevated
@@ -68,3 +78,7 @@ function ShouldBeErrorId
         }
 }
 
+function Get-RandomFileName
+{
+    [System.IO.Path]::GetFileNameWithoutExtension([IO.Path]::GetRandomFileName())
+}

@@ -160,7 +160,7 @@
     <value>The Disconnect operation is not supported on the server.  The server must be running Windows PowerShell 3.0 or greater for remote runspace pool disconnection support.</value>
   </data>
   <data name="CannotReconstructCommands" xml:space="preserve">
-    <value>This runspace pool {0} is not configured to provide disconnected Windows PowerShell objects for commands running on the remote server.  Use the RunspacePool class GetRunspacePools() static method to query the server and return runspace pool objects that are configured to do this.</value>
+    <value>This runspace pool {0} is not configured to provide disconnected PowerShell objects for commands running on the remote server.  Use the RunspacePool class GetRunspacePools() static method to query the server and return runspace pool objects that are configured to do this.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
     <value>This runspace pool cannot be connected because the corresponding server side runspace pool is connected to another client.</value>

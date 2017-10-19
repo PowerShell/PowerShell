@@ -334,10 +334,10 @@
     <value>(All)</value>
   </data>
   <data name="CannotMatchModulePattern" xml:space="preserve">
-    <value>No Windows PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
+    <value>No PowerShell modules were found that match the following pattern: {0}. Verify the pattern and then try the command again.</value>
   </data>
   <data name="ModuleNotFoundWithFullyQualifiedName" xml:space="preserve">
-    <value>No Windows PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
+    <value>No PowerShell modules were found that match the specified FullyQualifiedModule {0}. Verify the FullyQualifiedModule value and then try the command again.</value>
   </data>
   <data name="HelpContentNotFound" xml:space="preserve">
     <value>Help content cannot be found. Make sure the server is available and the help content location is properly defined in the HelpInfo XML.</value>
@@ -466,7 +466,7 @@ To update help again, add the Force parameter to your command.</value>
     <value>The root level element of the help content must be "helpItems".</value>
   </data>
   <data name="UpdateHelpPromptBody" xml:space="preserve">
-    <value>The Update-Help cmdlet downloads the most current Help files for Windows PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see https://go.microsoft.com/fwlink/?LinkId=210614.</value>
+    <value>The Update-Help cmdlet downloads the most current Help files for PowerShell modules, and installs them on your computer. For more information about the Update-Help cmdlet, see https://go.microsoft.com/fwlink/?LinkId=210614.</value>
   </data>
   <data name="UpdateHelpPromptTitle" xml:space="preserve">
     <value>Do you want to run Update-Help?</value>

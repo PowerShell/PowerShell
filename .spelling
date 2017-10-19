@@ -3,48 +3,75 @@
 # global dictionary is at the start, file overrides afterwards
 # one word per line, to define a file override use ' - filename'
 # where filename is relative to this configuration file
+
+#region Global Dictionary
+2ae5d07
+acl
 ActiveDirectory
+aditya
+adityapatwardhan
 alpha.15
 alpha.7
 alpha.8
 alpha.9
+AlternateStream
+amd64
 analyzing
 AppImage
 AppVeyor
+argumentlist
+arm32
 artifact
 artifacts
 ASP.NET
 AssemblyLoadContext
+authenticodesignature
 behavior
 behaviors
+beta.7
 booleans
 catalog
 cataloged
 CentOS
+childitem
+chucklu
+cimsession
+cimsupport
 cmake
 cmd
 cmdlet
 cmdlets
+codecov.io
 color
 colors
+comobject
 config
 ConsoleHost
 ConvertFrom-Json
+convertto-xml
 CoreCLR
 CoreFX
+credssp
 crontab
 crossgen
+cs
+CsPhysicallyInstalledMemory
+debughandler
 DevOps
 DockerFile
 DockerFiles
+DotNetCore
+DottedScopes
 eBook
 enum
 env
+ergo3114
 exe
 favor
 favorite
 frontload
 FullCLR
+functionprovider
 Get-Acl
 Get-AuthenticodeSignature
 Get-ChildItem
@@ -54,69 +81,27 @@ Get-WinEvent
 github
 hashtable
 hashtables
+helpproviderwithcache
+helpproviderwithfullcache
+helpsystem
 homebrew
 hotfix
+httpbin.org
+HttpBin's
+ifdef'ed
+ilya
 init
 Invoke-RestMethod
 Invoke-WebRequest
+isnot
 json
+korygill
 labeled
+linux-x64
 lockfile
 macOS
+md
 Microsoft.PowerShell.Archive
-MS-PSRP
-myget
-New-PSSessionOption
-New-PSTransportOption
-NuGet
-nuget
-nunit
-NUnit
-nupkg
-nuspec
-OpenCover
-OpenSSH
-PackageManagement
-param
-parameterized
-powershell
-PowerShell
-powershell.exe
-PowerShellGet
-ProgramFiles
-ps1
-PSReadline
-Register-EngineEvent
-Register-PSSessionConfiguration
-remoting
-ResGen
-RFCs
-runas
-Runspace
-runtimes
-SecureString
-Set-Acl
-Set-AuthenticodeSignature
-Set-ExecutionPolicy
-ssh
-StackOverflow
-submodule
-submodules
-sudo
-TeamCity
-toolset
-Unregister-Event
-Unregister-PSSessionConfiguration
-vscode
-walkthrough
-wget
-whitespace
-Win32
-WinRM
-WSMan
-xUnit
-2ae5d07
-codecov.io
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
 microsoft.powershell.commands.utility
@@ -126,67 +111,317 @@ microsoft.powershell.coreclr.eventing
 microsoft.powershell.psreadline
 microsoft.powershell.security
 microsoft.wsman.management
-system.management.automation
 microsoft.wsman.runtime
-wsmansessionoption.cs
-program.cs
-convertto-xml
-psobjects
-argumentlist
-comobject
-debughandler
+MSBuild
+MS-PSRP
+Multipart
+myget
 namedpipe
-acl
-authenticodesignature
-utils.cs
-credssp
-ifdef'ed
-cimsupport
-cimsession
-isnot
+New-PSSessionOption
+New-PSTransportOption
 notcontains
-snapin
-sessionstateitem
-sessionstatecontainer
-childitem
-showcommandinfo
-psproxyjobs
-throttlelimit
-helpsystem
-savehelp
-helpproviderwithcache
-helpproviderwithfullcache
-utils
-registryprovider
-functionprovider
-aditya
+nuget
+NuGet
+NUnit
+nunit
+nupkg
+nuspec
+OpenCover
+OpenSSH
+OpenSUSE
+PackageManagement
+param
+parameterized
 patwardhan
-adityapatwardhan
-ilya
+powershell
+PowerShell
+powershell.exe
+PowerShellGet
+program.cs
+ProgramFiles
+ProxyCommand
+ps1
+PSCredential
+PSObject
+psobjects
+psproxyjobs
+PSReadline
+PSSessionConfiguration
+pwsh
+redistributables
+Register-EngineEvent
+Register-PSSessionConfiguration
+registryprovider
+remoting
+ResGen
+resx
+RFCs
+runas
+Runspace
+runtimes
+sarithsutha
+savehelp
 sazonov
+SecureString
+sessionstatecontainer
+sessionstateitem
+Set-Acl
+Set-AuthenticodeSignature
+Set-ExecutionPolicy
+ShouldBeErrorId
+showcommandinfo
+Singleline
+snapin
+ssh
+StackOverflow
+submodule
+submodules
+sudo
+system.management.automation
+TeamCity
+thenewstellw
+throttlelimit
+toolset
+TraceSource
+Unregister-Event
+Unregister-PSSessionConfiguration
+utils
+utils.cs
+vscode
+walkthrough
+WebCmdlets
+wget
+whitespace
+Win32
+win7
+WinRM
+WiX
+writingpestertests.md
+WSMan
+wsmansessionoption.cs
+xUnit
+#endregion
+
+#region ./tools/install-powershell.readme.md Overrides
+ - ./tools/install-powershell.readme.md
+includeide
+sed
+#endregion
+
+#region CHANGELOG.md Overrides
+ - CHANGELOG.md
+_
+_Jobs
+-Command
+-Exclude
+-File
+-Include
+-Title
+0xfeeddeadbeef
+acceptance
+alpha.10
+alpha.11
+alpha.12
+alpha.13
+alpha.14
+alpha.16
+alpha.17
+alpha.18
+args
+behavioral
+bergmeister
+beta.1
+beta.2
+beta.3
+beta.4
+beta.5
+beta.6
+beta.8
+binding
+bool
+CDXML
+charset
+CI
+cleanup
+CodeMethod
+CodeOwner
+CommandNotFoundException
+ContentType
+ConvertTo-Html
+CoreConsoleHost
+crossgen'ing
+DarwinJS
+dchristian3188
+deserialization
+deserialize
+enums
+ExecutionPolicy
+EXE's
+FileCatalog
+FilterHashtable
+foreach
+GetParentProcess
+GitCommitId
+globbing
+HelpersCommon.psm1
+honors
+hostname
+IncludeUserName
+InformationRecord
+IoT
+iSazonov
+IsCore
+IsCoreCLR
+jeffbi
+joandrsn
+JsonConfigFileAccessor
+KeyFileParameter
+KeyHandler
+KirkMunro
+kittholland
+kwiknick
+LDSpits
+Lee303
+libpsl-native
+LoadFrom
+markekraus
+meta
+MiaRomero
+Microsoft.Management.Infrastructure.Native
+Microsoft.PowerShell.LocalAccounts
+mklement0
+mwrock
+nanoserver-insider
+non-22
+non-CIM
+non-R2
+oising
+oneget.org
+PetSerAl
+powercode
+PowerShellProperties
+preview1-24530-04
+ProductVersion
+PRs
+PSDrive
+PseudoParameterBinder
+PSReadLine
+PSScriptAnalyzer
+PSVersion
+PVS-Studio
+Pwrshplughin.dll
+rc2-24027
+rc3-24011
+Raspbian
+README.md
+RelationLink
+richardszalay
+rkeithhill
+SemVer
+shebang
+ShellExecute
+showwindow
+startup
+startuptype
+stdin
+StringBuilder
+SxS
+system.manage
+Tadas
+TestCase
+TheFlyingCorpse
+TimCurwick
+timestamp
+TimeZone
+TPA
+Travis
+TTY's
+UserAgent
+UserData
+Utf8
+UTF8NoBOM
+v0.1.0
+v0.2.0
+v0.3.0
+v0.4.0
+v0.5.0
+v0.6.0
+v6.0.0
+ValidateNotNullOrEmpty
+WebListener
+WebRequest
+win7-x86
+WindowsVersion
+WSManCredSSP
+XPath
+Youtube
+#endregion
+
+#region CODE_OF_CONDUCT.md Overrides
+ - CODE_OF_CONDUCT.md
+microsoft.com
+opencode
+#endregion
+
+#region demos/Apache/readme.md Overrides
+ - demos/Apache/readme.md
+Get-ApacheModule
+Get-ApacheVHost
+New-ApacheVHost
+Restart-ApacheHTTPserver
+#endregion
+
+#region demos/Azure/README.md Overrides
  - demos/Azure/README.md
 AzureRM.NetCore.Preview
 AzureRM.Profile.NetCore.Preview
 AzureRM.Resources.NetCore.Preview
 ExcludeVersion
 ProviderName
+#endregion
+
+#region demos/crontab/README.md Overrides
  - demos/crontab/README.md
 DayOfWeek
 Get-CronJob
 New-CronJob
 Remove-CronJob
 u
+#endregion
+
+#region demos/DSC/readme.md Overrides
  - demos/DSC/readme.md
+#endregion
+
+#region demos/install/README.md Overrides
  - demos/install/README.md
 download.sh
+#endregion
+
+#region demos/python/README.md Overrides
  - demos/python/README.md
 _script.ps1
 _script.ps1.
+#endregion
+
+#region demos/Raspberry-Pi/README.md Overrides
+ - demos/Raspberry-Pi/README.md
+2.0.x
+2.1.x
+Raspbian
+toolchain
+#endregion
+
+#region demos/rest/README.md Overrides
  - demos/rest/README.md
 rest.ps1
+#endregion
+
+#region demos/SSHRemoting/README.md Overrides
  - demos/SSHRemoting/README.md
 _config
 2kCbnhT2dUE6WCGgVJ8Hyfu1z2wE4lifaJXLO7QJy0Y
+com.openssh.sshd
 ComputerName
 ComputerType
 ConfigurationName
@@ -194,6 +429,7 @@ Enter-PSSession
 HostName
 KeyFilePath
 KeyPath
+launchctl
 New-PSSession
 NoLogo
 NoProfile
@@ -211,10 +447,24 @@ sshs
 TestUser
 UbuntuVM1
 UbuntuVM1s
+usr
+#endregion
+
+#region demos/SystemD/readme.md Overrides
  - demos/SystemD/readme.md
 Get-SystemDJournal
 journalctl
 SystemD
+#endregion
+
+#region demos/WindowsPowerShellModules/README.md Overrides
+ - demos/WindowsPowerShellModules/README.md
+PowerShellGallery
+PSSnapins
+WindowsPSModulePath
+#endregion
+
+#region docker/README.md Overrides
  - docker/README.md
 andschwa's
 CurrentUser
@@ -222,13 +472,31 @@ hub.docker.com
 microsoft
 NanoServer-Insider
 nanoserver-insider-powershell
+#endregion
+
+#region docs/building/internals.md Overrides
  - docs/building/internals.md
 Catalog
-src
-powershell-unix
 MSBuild
+powershell-unix
+src
+#endregion
+
+#region docs/building/macos.md Overrides
  - docs/building/macos.md
 preview3
+#endregion
+
+#region docs/cmdlet-example/command-line-simple-example.md Overrides
+- docs/cmdlet-example/command-line-simple-example.md
+aka
+classlib
+dotnet
+netstandard.dll
+wsl
+#endregion
+
+#region docs/community/governance.md Overrides
  - docs/community/governance.md
 Aiello
 AngelCalvo
@@ -246,6 +514,9 @@ Payette
 PRs
 Snover
 SteveL-MSFT
+#endregion
+
+#region docs/debugging/README.md Overrides
  - docs/debugging/README.md
 CmdletProviderClasses
 CommandDiscovery
@@ -273,48 +544,101 @@ SessionState
 TypeConversion
 TypeMatch
 XTerm
+#endregion
+
+#region docs/dev-process/breaking-change-contract.md Overrides
  - docs/dev-process/breaking-change-contract.md
 cd
 cdxml
 int
 p1
+#endregion
+
+#region docs/dev-process/coding-guidelines.md Overrides
+ - docs/dev-process/coding-guidelines.md
+interop
+PaulHigin
+SMEs
+TravisEz13
+uppercase
+#endregion
+
+#region docs/FAQ.md Overrides
  - docs/FAQ.md
 PoshCode
 SS64.com
 TypeGen
 v6.0.0
+#endregion
+
+#region docs/git/submodules.md Overrides
  - docs/git/submodules.md
 GoogleTest
 superproject
+#endregion
+
+#region docs/host-powershell/README.md Overrides
+ - docs/host-powershell/README.md
+0-powershell
+CorePsAssemblyLoadContext.cs
+Kerberos-based
+NTLM-based
+post-6
+preview1-002106-00
+sample-dotnet1
+sample-dotnet2
+#endregion
+
+#region docs/installation/linux.md Overrides
  - docs/installation/linux.md
+libcurl
 OpenSUSE
 TravisEz13
+zypper
+#endregion
+
+#region docs/installation/windows.md Overrides
  - docs/installation/windows.md
 Install-PowerShellRemoting
 pwrshplugin.dll
 System32
 Win8
 windir
+#endregion
+
+#region docs/KNOWNISSUES.md Overrides
  - docs/KNOWNISSUES.md
 cp
+globbing
 pipelining
 psl-omi-provider
-globbing
 Register-WmiEvent
 System.Management.Automation.SemanticVersion
 System.Timers.Timer
+#endregion
+
+#region docs/learning-powershell/create-powershell-scripts.md Overrides
  - docs/learning-powershell/create-powershell-scripts.md
 NetIP.ps1.
 RemoteSigned
+#endregion
+
+#region docs/learning-powershell/debugging-from-commandline.md Overrides
  - docs/learning-powershell/debugging-from-commandline.md
 _Debuggers
 celsius
 Set-PSBreakpoint
 test.ps1
+#endregion
+
+#region docs/learning-powershell/powershell-beginners-guide.md Overrides
  - docs/learning-powershell/powershell-beginners-guide.md
 dir
 jen
 LastWriteTime
+#endregion
+
+#region docs/learning-powershell/README.md Overrides
  - docs/learning-powershell/README.md
 Lynda.com
 Pluralsight
@@ -322,19 +646,34 @@ PowerShell.com
 PowerShellMagazine.com
 ScriptCenter
 TechNet
+#endregion
+
+#region docs/learning-powershell/using-vscode.md Overrides
  - docs/learning-powershell/using-vscode.md
 helloworld.ps1
 launch.json
 OSs
+#endregion
+
+#region docs/learning-powershell/working-with-powershell-objects.md Overrides
  - docs/learning-powershell/working-with-powershell-objects.md
 ForEach-Object
+#endregion
+
+#region docs/maintainers/issue-management.md Overrides
  - docs/maintainers/issue-management.md
 Microsoft.PowerShell.Core
 Microsoft.PowerShell.Management
 Microsoft.PowerShell.Utility
 omi
+#endregion
+
+#region docs/maintainers/pull-request-process.md Overrides
  - docs/maintainers/pull-request-process.md
 ci-system
+#endregion
+
+#region docs/maintainers/README.md Overrides
  - docs/maintainers/README.md
 andschwa
 daxian-dbw
@@ -345,6 +684,9 @@ Sergei
 TravisEz13
 Vorobev
 vors
+#endregion
+
+#region docs/maintainers/releasing.md Overrides
  - docs/maintainers/releasing.md
 2012r2
 CHANGELOG.md
@@ -355,7 +697,9 @@ PowerShellCore
 Ronn
 Toolset
 v6
-WiX
+#endregion
+
+#region docs/testing-guidelines/PowerShellCoreTestStatus.md Overrides
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Add-LocalGroupMember
 add-on
@@ -512,6 +856,9 @@ Update-FormatData
 Update-ModuleManifest
 Update-ScriptFileInfo
 Update-TypeData
+#endregion
+
+#region docs/testing-guidelines/testing-guidelines.md Overrides
  - docs/testing-guidelines/testing-guidelines.md
 100ms
 Api
@@ -526,6 +873,9 @@ Microsoft.PowerShell.Security
 Microsoft.PowerShell.Utility
 NativeExecution
 TabCompletion
+#endregion
+
+#region docs/testing-guidelines/TestRoadmap.md Overrides
  - docs/testing-guidelines/TestRoadmap.md
 corefx
 DotCover
@@ -537,14 +887,14 @@ OpenCover
 org
 PowerBI
 Syslog
- - demos/Apache/readme.md
-Get-ApacheModule
-Get-ApacheVHost
-New-ApacheVHost
-Restart-ApacheHTTPserver
+#endregion
+
+#region docs/testing-guidelines/WritingPesterTests.md Overrides
  - docs/testing-guidelines/WritingPesterTests.md
+ErrorRecord
 FQErrorId
 FullyQualifiedErrorId
+HelpersCommon.psm1
 nGet-ContentOut-String
 nGet-MultiLineString
 PSDefaultParameterValues-skip
@@ -552,8 +902,9 @@ ShouldShouldIt
 StreamDescribeCIFeatureScenarioDescribeContextItContextContextBeforeAllAfterAllBeforeEachAfterEachshould
 TestDrive
 throw-testcasesItMockDescribe
-HelpersCommon.psm1
-ErrorRecord
+#endregion
+
+#region README.md Overrides
  - README.md
 Gitter
 microsoft.com
@@ -562,11 +913,17 @@ omnisharp-vscode
 opencode
 pkg
 UserVoice
+#endregion
+
+#region src/libpsl-native/README.md Overrides
  - src/libpsl-native/README.md
 Ansi
 C#'s
 codepage
 libpsl-native
+#endregion
+
+#region src/Microsoft.PowerShell.PSReadLine/en-US/PSReadline.md Overrides
  - src/Microsoft.PowerShell.PSReadLine/en-US/PSReadline.md
 _history.txt
 _PSReadline
@@ -619,13 +976,22 @@ ToString
 ValidateAndAcceptLine
 ValidationHandler
 WordDelimiters
+#endregion
+
+#region src/Microsoft.PowerShell.SDK/README.md Overrides
  - src/Microsoft.PowerShell.SDK/README.md
 metapackage
 project.json
+#endregion
+
+#region src/Modules/README.md Overrides
  - src/Modules/README.md
 ps1xml
 psd1
 psm1
+#endregion
+
+#region src/Modules/Shared/Pester/CHANGELOG.md Overrides
  - src/Modules/Shared/Pester/CHANGELOG.md
 _be
 AfterAll
@@ -655,9 +1021,9 @@ ExecutionContext
 ExecutionPolicy
 FunctionName
 fynctions
+GetDynamicParameters
 Get-MockDynamicParameters
 Get-TestDriveItem
-GetDynamicParameters
 GH-100
 GH-102
 GH-107
@@ -793,143 +1159,34 @@ v3
 v3.0
 Validate-Xml
 Write-UsageForNewFixture
+#endregion
+
+#region src/Modules/Shared/Pester/README.md Overrides
  - src/Modules/Shared/Pester/README.md
 hoc
 pester-bdd-for-the-system-administrator
 powershell-bdd-testing-pester-screencast
 v1.0.
+#endregion
+
+#region src/powershell/README.md Overrides
  - src/powershell/README.md
 powershell-unix
+#endregion
+
+#region src/TypeCatalogGen/README.md Overrides
  - src/TypeCatalogGen/README.md
 TypeCatalogGen
+#endregion
+
+#region test/README.md Overrides
  - test/README.md
 csharp
 fullclr
 shebang
- - CHANGELOG.md
-_
-_Jobs
--Command
--Exclude
--File
--Include
--Title
-0xfeeddeadbeef
-acceptance
-alpha.10
-alpha.11
-alpha.12
-alpha.13
-alpha.14
-alpha.16
-alpha.17
-alpha.18
-behavioral
-bergmeister
-beta.1
-beta.2
-beta.3
-beta.4
-beta.5
-beta.6
-binding
-bool
-charset
-cleanup
-CodeOwner
-ContentType
-ConvertTo-Html
-CoreConsoleHost
-crossgen'ing
-DarwinJS
-dchristian3188
-deserialization
-deserialize
-enums
-EXE's
-ExecutionPolicy
-FileCatalog
-FilterHashtable
-foreach
-GetParentProcess
-globbing
-honors
-hostname
-IncludeUserName
-InformationRecord
-IoT
-iSazonov
-IsCore
-IsCoreCLR
-jeffbi
-JsonConfigFileAccessor
-KeyFileParameter
-KeyHandler
-KirkMunro
-kittholland
-kwiknick
-Lee303
-libpsl-native
-markekraus
-meta
-MiaRomero
-Microsoft.Management.Infrastructure.Native
-Microsoft.PowerShell.LocalAccounts
-mklement0
-mwrock
-nanoserver-insider
-non-22
-non-CIM
-non-R2
-oising
-oneget.org
-PetSerAl
-powercode
-PowerShellProperties
-preview1-24530-04
-PSDrive
-PseudoParameterBinder
-PSReadLine
-PSScriptAnalyzer
-PVS-Studio
-Pwrshplughin.dll
-rc2-24027
-rc3-24011
-RelationLink
-richardszalay
-rkeithhill
-shebang
-ShellExecute
-startup
-stdin
-StringBuilder
-SxS
-system.manage
-Tadas
-TestCase
-TheFlyingCorpse
-TimCurwick
-timestamp
-TimeZone
-TPA
-TTY's
-UserData
-UTF8NoBOM
-v0.1.0
-v0.2.0
-v0.3.0
-v0.4.0
-v0.5.0
-v0.6.0
-v6.0.0
-ValidateNotNullOrEmpty
-WebListener
-WebRequest
-win7-x86
-WindowsVersion
-WSManCredSSP
-XPath
-Youtube
+#endregion
+
+#region test/tools/CodeCoverageAutomation/README.md Overrides
  - test/tools/CodeCoverageAutomation/README.md
 CodeCoverage.zip
 Coveralls.exe
@@ -942,18 +1199,9 @@ Start-CodeCoverageRun
 tests.zip
 v5.0
 v6.0.
- - docs/host-powershell/README.md
-CorePsAssemblyLoadContext.cs
-sample-dotnet1
-NTLM-based
-Kerberos-based
-preview1-002106-00
-sample-dotnet2
-0-powershell
-post-6
-- CODE_OF_CONDUCT.md
-opencode
-microsoft.com
- - ./tools/install-powershell.readme.md
-includeide
-sed
+#endregion
+
+#region test/tools/WebListener/README.md Overrides
+ - test/tools/WebListener/README.md
+ResponseHeaders
+#endregion

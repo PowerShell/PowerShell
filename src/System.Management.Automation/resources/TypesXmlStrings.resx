@@ -160,7 +160,7 @@
     <value>Cannot create an instance of the type converter for type {0} due to exception: {1}.</value>
   </data>
   <data name="UnableToInstantiateTypeAdapter" xml:space="preserve">
-    <value>Windows PowerShell cannot create an instance of the type adapter for the type {0} because of the following exception: {1}.</value>
+    <value>PowerShell cannot create an instance of the type adapter for the type {0} because of the following exception: {1}.</value>
   </data>
   <data name="InvalidAdaptedType" xml:space="preserve">
     <value>The adapted type "{0}" is not valid.</value>

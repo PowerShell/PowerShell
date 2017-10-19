@@ -2,7 +2,7 @@
     Context "Group-Object" {
         It "AsHashtable returns a hashtable" {
             $result = Get-Process | Group-Object -Property ProcessName -AsHashTable
-            $result["powershell"].Count | Should BeGreaterThan 0
+            $result["pwsh"].Count | Should BeGreaterThan 0
         }
 
         It "AsString returns a string" {

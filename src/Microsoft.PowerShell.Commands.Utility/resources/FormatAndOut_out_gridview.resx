@@ -121,7 +121,7 @@
     <value>The data format is not supported by Out-GridView.</value>
   </data>
   <data name="RestartPowerShell" xml:space="preserve">
-    <value>Microsoft .NET Framework 4.5 was installed while one or more Windows PowerShell sessions were running. To use the {0} cmdlet, close all Windows PowerShell windows, and then open a new Windows PowerShell window.</value>
+    <value>Microsoft .NET Framework 4.5 was installed while one or more PowerShell sessions were running. To use the {0} cmdlet, close all PowerShell windows, and then open a new PowerShell window.</value>
   </data>
   <data name="TypeColumnName" xml:space="preserve">
     <value>Type</value>

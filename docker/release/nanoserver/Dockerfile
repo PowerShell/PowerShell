@@ -1,8 +1,8 @@
 # escape=`
 FROM microsoft/nanoserver:latest
 
-ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win10-win2016-x64.zip
-ARG POWERSHELL_VERSION=6.0.0-beta.6
+ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x64.zip
+ARG POWERSHELL_VERSION=6.0.0-beta.8
 ARG IMAGE_NAME=microsoft/powershell:nanoserver
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
@@ -25,7 +25,7 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" `
 RUN setx /M PATH "%ProgramFiles%\PowerShell\latest;%PATH%"
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
-ADD $POWERSHELL_ZIP /powershell-win10-x64.zip
+ADD $POWERSHELL_ZIP /powershell-win-x64.zip
 
 # Install PowerShell package and clean up
 RUN $ErrorActionPreference='Stop'; `
@@ -36,7 +36,7 @@ RUN $ErrorActionPreference='Stop'; `
     $VerInfo = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion' ; `
     ('FullBuildString: '+$VerInfo.BuildLabEx) | Write-Output ; `
     ('OperatingSystem:  '+$VerInfo.ProductName+' '+$VerInfo.EditionId+' '+$VerInfo.InstallationType)  | Write-Output ; `
-    [System.IO.FileInfo]$ZipFile = Get-Item -Path ./powershell-win10-x64.zip ; `
+    [System.IO.FileInfo]$ZipFile = Get-Item -Path ./powershell-win-x64.zip ; `
     New-Item -Path $Env:ProgramFiles/PowerShell -ItemType Directory -Force | out-null ; `
     [System.IO.DirectoryInfo]$PsFolder=New-Item -Path $Env:ProgramFiles\PowerShell -ItemType Directory -Force ; `
     Add-Type -AssemblyName System.IO.Compression.ZipFile ; `

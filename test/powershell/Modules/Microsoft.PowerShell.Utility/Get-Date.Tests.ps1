@@ -37,6 +37,14 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date 1/1/0030 -uformat %S%T%u%U%V%w%W%x%X%y%Y%% | Should be "0000:00:002012001/01/3000:00:00300030%"
     }
 
+    It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
+        @{ name = "`$null"      ; value = $null }
+        @{ name = "empty string"; value = "" }
+    ) {
+        param($value)
+        { Get-date -Date 1/1/1970 -uformat $value -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+    }
+
     It "Get-date works with pipeline input" {
         $x = new-object System.Management.Automation.PSObject
         $x | add-member NoteProperty Date ([DateTime]::Now)
@@ -81,34 +89,49 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
 
 Describe "Get-Date" -Tags "CI" {
+    It "-Format FileDate works" {
+        Get-date -Date 0030-01-01T01:02:03.0004 -Format FileDate | Should Be "00300101"
+    }
+
+    It "-Format FileDateTime works" {
+        Get-date -Date 0030-01-01T01:02:03.0004 -Format FileDateTime | Should Be "00300101T0102030004"
+    }
+
+    It "-Format FileDateTimeUniversal works" {
+        Get-date -Date 0030-01-01T01:02:03.0004z -Format FileDateTimeUniversal | Should Be "00300101T0102030004Z"
+    }
+
+    It "-Format FileDateTimeUniversal works" {
+        Get-date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should Be "00300101Z"
+    }
+
     It "Should have colons when ToString method is used" {
-	(Get-Date).ToString().Contains(":")                   | Should be $true
-	(Get-Date -DisplayHint Time).ToString().Contains(":") | Should be $true
-	(Get-Date -DisplayHint Date).ToString().Contains(":") | Should be $true
+        (Get-Date).ToString().Contains(":")                   | Should be $true
+        (Get-Date -DisplayHint Time).ToString().Contains(":") | Should be $true
+        (Get-Date -DisplayHint Date).ToString().Contains(":") | Should be $true
     }
 
     It "Should be able to use the format flag" {
-	# You would think that one could use simple loops here, but apparently powershell in Windows returns different values in loops
+        # You would think that one could use simple loops here, but apparently powershell in Windows returns different values in loops
 
-	(Get-Date -Format d).Contains("/") | Should be $true
-	(Get-Date -Format D).Contains(",") | Should be $true
-	(Get-Date -Format f).Contains(",") -and (Get-Date -Format f).Contains(":") | Should be $true
-	(Get-Date -Format F).Contains(",") -and (Get-Date -Format F).Contains(":") | Should be $true
-	(Get-Date -Format g).Contains("/") -and (Get-Date -Format g).Contains(":") | Should be $true
-	(Get-Date -Format G).Contains("/") -and (Get-Date -Format G).Contains(":") | Should be $true
-	(Get-Date -Format m).Contains(",") -or `
-	  (Get-Date -Format m).Contains(":")  -or `
-	  (Get-Date -Format m).Contains("/") | Should be $false
+        (Get-Date -Format d).Contains("/") | Should be $true
+        (Get-Date -Format D).Contains(",") | Should be $true
+        (Get-Date -Format f).Contains(",") -and (Get-Date -Format f).Contains(":") | Should be $true
+        (Get-Date -Format F).Contains(",") -and (Get-Date -Format F).Contains(":") | Should be $true
+        (Get-Date -Format g).Contains("/") -and (Get-Date -Format g).Contains(":") | Should be $true
+        (Get-Date -Format G).Contains("/") -and (Get-Date -Format G).Contains(":") | Should be $true
+        (Get-Date -Format m).Contains(",") -or `
+        (Get-Date -Format m).Contains(":")  -or `
+        (Get-Date -Format m).Contains("/") | Should be $false
     }
 
     It "Should check that Get-Date can return the correct datetime from the system time" {
-	$timeDifference = $(Get-Date).Subtract([System.DateTime]::Now)
+        $timeDifference = $(Get-Date).Subtract([System.DateTime]::Now)
 
-	$timeDifference.Days         | Should Be 0
-	$timeDifference.Hours        | Should Be 0
-	$timeDifference.Minutes      | Should Be 0
-	$timeDifference.Milliseconds | Should BeLessThan 1
-	$timeDifference.Ticks        | Should BeLessThan 10000
+        $timeDifference.Days         | Should Be 0
+        $timeDifference.Hours        | Should Be 0
+        $timeDifference.Minutes      | Should Be 0
+        $timeDifference.Milliseconds | Should BeLessThan 1
+        $timeDifference.Ticks        | Should BeLessThan 10000
     }
-
 }

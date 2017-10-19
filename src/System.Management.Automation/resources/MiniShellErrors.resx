@@ -117,18 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UndefinedRunspaceConfigurationType" xml:space="preserve">
-    <value>The RunspaceConfiguration-derived type {1} is not defined in assembly {0}.</value>
-  </data>
-  <data name="RunspaceConfigurationAttributeNotExist" xml:space="preserve">
-    <value>Cannot create the RunspaceConfiguration object because an assembly attribute of type RunspaceConfigurationType is not defined in assembly {0}. </value>
-  </data>
-  <data name="RunspaceConfigurationAttributeDuplicate" xml:space="preserve">
-    <value>Cannot create the RunspaceConfiguration object because there is more than one assembly attribute of the type RunspaceConfigurationType defined in the assembly {0}.</value>
-  </data>
-  <data name="InvalidEntryAssembly" xml:space="preserve">
-    <value>Cannot reflect on the entry assembly and determine the value of the RunspaceConfigurationType attribute. </value>
-  </data>
   <data name="UpdateNotSupportedForConfigurationCategory" xml:space="preserve">
     <value>The update is not supported for the runspace configuration category {0}. </value>
   </data>

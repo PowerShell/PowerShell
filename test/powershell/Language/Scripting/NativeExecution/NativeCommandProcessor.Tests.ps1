@@ -1,7 +1,7 @@
 Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     }
 
     It "native | ps | native doesn't block" {
@@ -30,8 +30,8 @@ Describe 'native commands with pipeline' -tags 'Feature' {
             $result = @(ping.exe | findstr.exe count | findstr.exe ping)
             $result[0] | Should Match "Usage: ping"
         } else {
-            $result = @(ps aux | grep powershell | grep -v grep)
-            $result[0] | Should Match "powershell"
+            $result = @(ps aux | grep pwsh | grep -v grep)
+            $result[0] | Should Match "pwsh"
         }
     }
 }
@@ -176,7 +176,7 @@ Categories=Application;
     }
 
     It "Should open text file without error" -Skip:(!$supportedEnvironment) {
-        if ($IsOSX) {
+        if ($IsMacOS) {
             $expectedTitle = Split-Path $TestFile -Leaf
             open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
@@ -196,19 +196,13 @@ Categories=Application;
         elseif ($IsLinux) {
             # Validate on Linux by reassociating default app for text file
             & $TestFile
-            $startTime = Get-Date
             # It may take time for handler to start
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (-not (Test-Path "$HOME/nativeCommandProcessor.Success"))) {
-                Start-Sleep -Milliseconds 100
-            }
+            Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
             Get-Content $HOME/nativeCommandProcessor.Success | Should Be $TestFile
         }
         else {
             & $TestFile
-            $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (!(Test-Path $TestDrive\foo.txt))) {
-                Start-Sleep -Milliseconds 100
-            }
+            Wait-FileToBePresent -File $TestDrive\foo.txt -TimeoutInSeconds 10 -IntervalInMilliseconds 100
             "$TestDrive\foo.txt" | Should Exist
             Get-Content $TestDrive\foo.txt | Should BeExactly $TestFile
         }

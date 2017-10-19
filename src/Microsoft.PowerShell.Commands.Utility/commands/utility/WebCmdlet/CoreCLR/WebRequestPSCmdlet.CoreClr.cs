@@ -389,6 +389,11 @@ namespace Microsoft.PowerShell.Commands
                     byte[] bytes = content as byte[];
                     SetRequestContent(request, bytes);
                 }
+                else if (content is MultipartFormDataContent multipartFormDataContent)
+                {
+                    WebSession.ContentHeaders.Clear();
+                    SetRequestContent(request, multipartFormDataContent);
+                }
                 else
                 {
                     SetRequestContent(request,
@@ -785,6 +790,32 @@ namespace Microsoft.PowerShell.Commands
             request.Content = streamContent;
 
             return streamContent.Headers.ContentLength.Value;
+        }
+
+        /// <summary>
+        /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
+        /// </summary>
+        /// <param name="request">The WebRequest who's content is to be set</param>
+        /// <param name="multipartContent">A MultipartFormDataContent object containing multipart/form-data content.</param>
+        /// <returns>The number of bytes written to the requests RequestStream (and the new value of the request's ContentLength property</returns>
+        /// <remarks>
+        /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
+        /// it should be called one time maximum on a given request.
+        /// </remarks>
+        internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+            if (multipartContent == null)
+            {
+                throw new ArgumentNullException("multipartContent");
+            }
+
+            request.Content = multipartContent;
+
+            return multipartContent.Headers.ContentLength.Value;
         }
 
         internal long SetRequestContent(HttpRequestMessage request, IDictionary content)

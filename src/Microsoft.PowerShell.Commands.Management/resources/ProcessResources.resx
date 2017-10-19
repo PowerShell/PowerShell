@@ -132,6 +132,9 @@
   <data name="ProcessNameForConfirmation" xml:space="preserve">
     <value>{0} ({1})</value>
   </data>
+  <data name="StartProcessTarget" xml:space="preserve">
+    <value>{0} {1}</value>
+  </data>
   <data name="CouldNotEnumerateModules" xml:space="preserve">
     <value>Cannot enumerate the modules of the "{0}" process.</value>
   </data>
@@ -147,7 +150,7 @@
   <data name="UseShell" xml:space="preserve">
     <value>The specified path is not a valid win32 application. Try again with the UseShellExecute.</value>
   </data>
-  <data name="Process is not terminated" xml:space="preserve">
+  <data name="ProcessIsNotTerminated" xml:space="preserve">
     <value>This command stopped operation of "{0} ({1})" because of the following error: {2}.</value>
   </data>
   <data name="RedirectionParams" xml:space="preserve">

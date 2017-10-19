@@ -54,20 +54,32 @@
             }
         }
 
-        It "non filesystem path using <parameter>" -TestCases @(
-            @{parameter="literalPath"},
-            @{parameter="path"}
+        It "Verifies a non filesystem path using <parameter> should fail" -TestCases @(
+            @{parameter="literalPath"; expectedError='ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'},
+            @{parameter="path";        expectedError='ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'}
         ) {
-            param($parameter)
-            $__data = "abcdefg"
-            $params = @{$parameter="variable:__data"}
-            { Select-XML @params "Root" | Should BeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
+            param($parameter, $expectedError)
+            try
+            {
+                $env:xmltestfile = '<a><b>'
+                $file = 'env:xmltestfile'
+                $params = @{$parameter=$file}
+                $err = $null
+                Select-XML @params "Root" -ErrorVariable err
+                $err.FullyQualifiedErrorId | Should Be $expectedError
+            }
+            finally
+            {
+                Remove-Item -Path 'env:xmltestfile'
+            }
         }
 
         It "Invalid xml file" {
             $testfile = "$testdrive/test.xml"
             Set-Content -Path $testfile -Value "<a><b>"
-            { Select-Xml -Path $testfile -XPath foo | ShouldBeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
+            $err = $null
+            Select-Xml -Path $testfile -XPath foo -ErrorVariable err
+            $err.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "-xml works with inputstream" {
@@ -79,12 +91,16 @@
         }
 
         It "Returns error for invalid xmlnamespace" {
+            $err = $null
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
-            { Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} | ShouldBeErrorId "PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand" }
+            Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorVariable err
+            $err.FullyQualifiedErrorId | Should Be 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "Returns error for invalid content" {
-            { Select-Xml -Content "hello" -XPath foo | ShouldBeErrorId "InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand" }
+            $err = $null
+            Select-Xml -Content "hello" -XPath foo -ErrorVariable err
+            $err.FullyQualifiedErrorId | Should Be 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "ToString() works correctly on nested node" {

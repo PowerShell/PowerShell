@@ -120,6 +120,21 @@
   <data name="AccessDenied" xml:space="preserve">
     <value>Access to the path '{0}' is denied.</value>
   </data>
+  <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
+    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To supress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+  </data>
+  <data name="AuthenticationConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
+  </data>
+  <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
+  </data>
+    <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+    <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
+  </data>
+  <data name="AuthenticationTokenConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and Token. Specify either Credential or Token, then retry.</value>
+  </data>
   <data name="BodyConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
   </data>
@@ -184,13 +199,13 @@
     <value>Unable to retrieve certificates because the thumbprint is not valid. Verify the thumbprint and retry. </value>
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
-    <value>Writing web request completed. (Number of bytes remaining: {0})</value>
+    <value>Web request completed. (Number of bytes processed: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
-    <value>Writing web request</value>
+    <value>Web request status</value>
   </data>
   <data name="WriteRequestProgressStatus" xml:space="preserve">
-    <value>Writing request stream... (Number of bytes written: {0})</value>
+    <value>Number of bytes processed: {0}</value>
   </data>
   <data name="JsonNetModuleRequired" xml:space="preserve">
     <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the 'Json.Net' module. {0}</value>

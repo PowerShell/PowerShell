@@ -107,12 +107,12 @@ function Get-EnvironmentInformation
 
         $environment += @{'IsCoreCLR' = $true}
         $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
-        $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
+        $environment += @{'IsMacOS' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
         $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
     } catch {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
-        $environment += @{'IsOSX' = $false}
+        $environment += @{'IsMacOS' = $false}
         $environment += @{'IsWindows' = $true}
     }
 
@@ -131,9 +131,13 @@ function Get-EnvironmentInformation
         $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
         $environment += @{'LinuxInfo' = $LinuxInfo}
+        $environment += @{'IsDebian' = $LinuxInfo.ID -match 'debian'}
+        $environment += @{'IsDebian8' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '8'}
+        $environment += @{'IsDebian9' = $Environment.IsDebian -and $LinuxInfo.VERSION_ID -match '9'}
         $environment += @{'IsUbuntu' = $LinuxInfo.ID -match 'ubuntu'}
         $environment += @{'IsUbuntu14' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'}
         $environment += @{'IsUbuntu16' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'}
+        $environment += @{'IsUbuntu17' = $Environment.IsUbuntu -and $LinuxInfo.VERSION_ID -match '17.04'}
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
@@ -160,14 +164,6 @@ if ( $env:PSModulePath -notcontains $TestModulePath ) {
     $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
-#
-# At the moment, we just support x64 builds. When we support x86 builds, this
-# check may need to verify the SDK for the specified architecture.
-#
-function Get-Win10SDKBinDir {
-    return "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
-}
-
 function Test-Win10SDK {
     # The Windows 10 SDK is installed to "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64",
     # but the directory may exist even if the SDK has not been installed.
@@ -191,7 +187,7 @@ function Start-BuildNativeWindowsBinaries {
         return
     }
 
-    # cmake is needed to build powershell.exe
+    # cmake is needed to build pwsh.exe
     if (-not (precheck 'cmake' $null)) {
         throw 'cmake not found. Run "Start-PSBootstrap -BuildWindowsNative". You can also install it from https://chocolatey.org/packages/cmake'
     }
@@ -270,6 +266,70 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
     }
 }
 
+function Start-BuildNativeUnixBinaries {
+    param (
+        [switch] $BuildLinuxArm
+    )
+
+    if (-not $Environment.IsLinux -and -not $Environment.IsMacOS) {
+        Write-Warning -Message "'Start-BuildNativeUnixBinaries' is only supported on Linux/macOS platforms"
+        return
+    }
+
+    if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
+    # Verify we have all tools in place to do the build
+    $precheck = $true
+    foreach ($Dependency in 'cmake', 'make', 'g++') {
+        $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+    }
+
+    if ($BuildLinuxArm) {
+        foreach ($Dependency in 'arm-linux-gnueabihf-gcc', 'arm-linux-gnueabihf-g++') {
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+        }
+    }
+
+    # Abort if any precheck failed
+    if (-not $precheck) {
+        return
+    }
+
+    # Build native components
+    $Ext = if ($Environment.IsLinux) {
+        "so"
+    } elseif ($Environment.IsMacOS) {
+        "dylib"
+    }
+
+    $Native = "$PSScriptRoot/src/libpsl-native"
+    $Lib = "$PSScriptRoot/src/powershell-unix/libpsl-native.$Ext"
+    log "Start building $Lib"
+
+    git clean -qfdX $Native
+
+    try {
+        Push-Location $Native
+        if ($BuildLinuxArm) {
+            Start-NativeExecution { cmake -DCMAKE_TOOLCHAIN_FILE="./arm.toolchain.cmake" . }
+            Start-NativeExecution { make -j }
+        }
+        else {
+            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+            Start-NativeExecution { make -j }
+            Start-NativeExecution { ctest --verbose }
+        }
+    } finally {
+        Pop-Location
+    }
+
+    if (-not (Test-Path $Lib)) {
+        throw "Compilation of $Lib failed"
+    }
+}
+
 function Start-PSBuild {
     [CmdletBinding()]
     param(
@@ -290,18 +350,11 @@ function Start-PSBuild {
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
-        [ValidateSet("ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
-                     "win7-x64",
+        [ValidateSet("win7-x64",
                      "win7-x86",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64")]
+                     "linux-x64",
+                     "linux-arm")]
         [string]$Runtime,
 
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
@@ -313,6 +366,10 @@ function Start-PSBuild {
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
     )
+
+    if ($Runtime -eq "linux-arm" -and -not $Environment.IsUbuntu) {
+        throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
 
     function Stop-DevPowerShell {
         Get-Process powershell* |
@@ -340,30 +397,14 @@ function Start-PSBuild {
         }
     }
 
-    # save git commit id to file for PowerShell to include in PSVersionTable
-    $gitCommitId = $ReleaseTag
-    if (-not $gitCommitId) {
-        # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = Get-PSCommitId -WarningAction SilentlyContinue
-    }
-    $gitCommitId > "$psscriptroot/powershell.version"
-
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    # Verify we have all tools in place to do the build
+    # Verify we have .NET SDK in place to do the build, and abort if the precheck failed
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
-
-    if ($Environment.IsLinux -or $Environment.IsOSX) {
-        foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
-        }
-    }
-
-    # Abort if any precheck failed
     if (-not $precheck) {
         return
     }
@@ -381,7 +422,7 @@ Fix steps:
 
 1. Remove the installed version from:
     - on windows '`$env:LOCALAPPDATA\Microsoft\dotnet'
-    - on osx and linux '`$env:HOME/.dotnet'
+    - on macOS and linux '`$env:HOME/.dotnet'
 2. Run Start-PSBootstrap or Install-Dotnet
 3. Start-PSBuild -Clean
 `n
@@ -450,39 +491,13 @@ Fix steps:
         Start-ResGen
     }
 
-    # Build native components
-    if (($Environment.IsLinux -or $Environment.IsOSX) -and -not $SMAOnly) {
-        $Ext = if ($Environment.IsLinux) {
-            "so"
-        } elseif ($Environment.IsOSX) {
-            "dylib"
-        }
-
-        $Native = "$PSScriptRoot/src/libpsl-native"
-        $Lib = "$($Options.Top)/libpsl-native.$Ext"
-        log "Start building $Lib"
-
-        try {
-            Push-Location $Native
-            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
-            Start-NativeExecution { make -j }
-            Start-NativeExecution { ctest --verbose }
-        } finally {
-            Pop-Location
-        }
-
-        if (-not (Test-Path $Lib)) {
-            throw "Compilation of $Lib failed"
-        }
-    }
-
     # handle TypeGen
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs")) {
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen
     }
 
-    # Get the folder path where powershell.exe is located.
+    # Get the folder path where pwsh.exe is located.
     $publishPath = Split-Path $Options.Output -Parent
     try {
         # Relative paths do not work well if cwd is not changed to project
@@ -492,7 +507,7 @@ Fix steps:
 
         if ($CrossGen) {
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-            log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
+            log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             log "PowerShell output: $($Options.Output)"
         }
@@ -518,7 +533,7 @@ Fix steps:
     if ($Environment.IsRedHatFamily) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
-        # as Ubuntu has these specific library files in the platform and OSX builds for itself
+        # as Ubuntu has these specific library files in the platform and macOS builds for itself
         # against the correct versions.
         if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
             $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
@@ -556,7 +571,7 @@ function Compress-TestContent {
         $Destination
     )
 
-    Publish-PSTestTools
+    $null = Publish-PSTestTools
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
@@ -576,18 +591,11 @@ function New-PSOptions {
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
-                     "ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
                      "win7-x86",
                      "win7-x64",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64")]
+                     "linux-x64",
+                     "linux-arm")]
         [string]$Runtime,
 
         [switch]$CrossGen,
@@ -602,7 +610,7 @@ function New-PSOptions {
 
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
-        $Configuration = if ($Environment.IsLinux -or $Environment.IsOSX) {
+        $Configuration = if ($Environment.IsLinux -or $Environment.IsMacOS) {
             "Linux"
         } elseif ($Environment.IsWindows) {
             "Debug"
@@ -622,7 +630,7 @@ function New-PSOptions {
                 }
             }
             Default {
-                if ($Environment.IsLinux -or $Environment.IsOSX) {
+                if ($Environment.IsLinux -or $Environment.IsMacOS) {
                     $Configuration = "Linux"
                     Write-Warning ($ConfigWarningMsg -f $switch.Current, $Environment.LinuxInfo.PRETTY_NAME, $Configuration)
                 }
@@ -645,17 +653,23 @@ function New-PSOptions {
     }
 
     if (-not $Runtime) {
-        $Runtime = dotnet --info | ForEach-Object {
-            if ($_ -match "RID") {
-                $_ -split "\s+" | Select-Object -Last 1
+        if ($Environment.IsLinux) {
+            $Runtime = "linux-x64"
+        } else {
+            $RID = dotnet --info | ForEach-Object {
+                if ($_ -match "RID") {
+                    $_ -split "\s+" | Select-Object -Last 1
+                }
             }
-        }
 
-        # We plan to release packages targetting win7-x64 and win7-x86 RIDs, 
-        # which supports all supported windows platforms.
-        # So we, will change the RID to win7-<arch>
-        if ($Environment.IsWindows) {
-            $Runtime = $Runtime -replace "win\d+", "win7"
+            if ($Environment.IsWindows) {
+                # We plan to release packages targetting win7-x64 and win7-x86 RIDs,
+                # which supports all supported windows platforms.
+                # So we, will change the RID to win7-<arch>
+                $Runtime = $RID -replace "win\d+", "win7"
+            } else {
+                $Runtime = $RID
+            }
         }
 
         if (-not $Runtime) {
@@ -665,10 +679,10 @@ function New-PSOptions {
         }
     }
 
-    $Executable = if ($Environment.IsLinux -or $Environment.IsOSX) {
-        "powershell"
+    $Executable = if ($Environment.IsLinux -or $Environment.IsMacOS) {
+        "pwsh"
     } elseif ($Environment.IsWindows) {
-        "powershell.exe"
+        "pwsh.exe"
     }
 
     # Build the Output path
@@ -688,7 +702,7 @@ function New-PSOptions {
 
     if($RootInfo.RepoPath -ne $RootInfo.ValidPath)
     {
-        $RootInfo['Warning'] = "Please ensure you repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
+        $RootInfo['Warning'] = "Please ensure your repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
         $RootInfo['IsValid'] = $false
     }
     else
@@ -823,14 +837,31 @@ function Start-PSPester {
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [string]$binDir = (Split-Path (New-PSOptions).Output),
-        [string]$powershell = (Join-Path $binDir 'powershell'),
+        [string]$powershell = (Join-Path $binDir 'pwsh'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
         [switch]$Quiet,
+        [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
-        [switch]$PassThru
+        [switch]$PassThru,
+        [switch]$IncludeFailingTest
     )
+
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue))
+    {
+        Write-Warning @"
+Pester module not found.
+Make sure that the proper git submodules are installed by running:
+    git submodule update --init
+"@
+        return;
+    }
+
+    if ($IncludeFailingTest.IsPresent)
+    {
+        $Path += "$PSScriptRoot/tools/failingTests"
+    }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
@@ -863,6 +894,10 @@ function Start-PSPester {
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
+    if ($Terse)
+    {
+        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+    }
 
     # Autoload (in subprocess) temporary modules used in our tests
     $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
@@ -905,6 +940,49 @@ function Start-PSPester {
 
     Write-Verbose $Command
 
+    $script:nonewline = $true
+    $script:inerror = $false
+    function Write-Terse([string] $line)
+    {
+        $trimmedline = $line.Trim()
+        if ($trimmedline.StartsWith("[+]")) {
+            Write-Host "+" -NoNewline -ForegroundColor Green
+            $script:nonewline = $true
+            $script:inerror = $false
+        }
+        elseif ($trimmedline.StartsWith("[?]")) {
+            Write-Host "?" -NoNewline -ForegroundColor Cyan
+            $script:nonewline = $true
+            $script:inerror = $false
+        }
+        elseif ($trimmedline.StartsWith("[!]")) {
+            Write-Host "!" -NoNewline -ForegroundColor Gray
+            $script:nonewline = $true
+            $script:inerror = $false
+        }
+        else {
+            if ($script:nonewline) {
+                Write-Host "`n" -NoNewline
+            }
+            if ($trimmedline.StartsWith("[-]") -or $script:inerror) {
+                Write-Host $line -ForegroundColor Red
+                $script:inerror = $true
+            }
+            elseif ($trimmedline.StartsWith("VERBOSE:")) {
+                Write-Host $line -ForegroundColor Yellow
+                $script:inerror = $false
+            }
+            elseif ($trimmedline.StartsWith("Describing") -or $trimmedline.StartsWith("Context")) {
+                Write-Host $line -ForegroundColor Magenta
+                $script:inerror = $false
+            }
+            else {
+                Write-Host $line -ForegroundColor Gray
+            }
+            $script:nonewline = $false
+        }
+    }
+
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
@@ -915,7 +993,17 @@ function Start-PSPester {
             while ($true)
             {
                 $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
-                $lines | Write-Host
+                if ($Terse)
+                {
+                    foreach ($line in $lines)
+                    {
+                        Write-Terse -line $line
+                    }
+                }
+                else
+                {
+                    $lines | Write-Host
+                }
                 if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
                 {
                     break
@@ -937,10 +1025,17 @@ function Start-PSPester {
             if ($PassThru.IsPresent)
             {
                 $passThruFile = [System.IO.Path]::GetTempFileName()
-                try 
+                try
                 {
                     $Command += "|Export-Clixml -Path '$passThruFile' -Force"
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                    if ($Terse)
+                    {
+                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                    }
+                    else
+                    {
+                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                    }
                     Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
@@ -948,9 +1043,16 @@ function Start-PSPester {
                     Remove-Item $passThruFile -ErrorAction SilentlyContinue
                 }
             }
-            else 
+            else
             {
-                Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                if ($Terse)
+                {
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                }
+                else
+                {
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                }
             }
         }
     } finally {
@@ -984,13 +1086,13 @@ function script:Start-UnelevatedProcess
 function Show-PSPesterError
 {
     [CmdletBinding(DefaultParameterSetName='xml')]
-    param ( 
+    param (
         [Parameter(ParameterSetName='xml',Mandatory)]
         [Xml.XmlElement]$testFailure,
         [Parameter(ParameterSetName='object',Mandatory)]
         [PSCustomObject]$testFailureObject
         )
-    
+
     if ($PSCmdLet.ParameterSetName -eq 'xml')
     {
         $description = $testFailure.description
@@ -1046,11 +1148,11 @@ function Test-PSPesterResults
         {
             logerror "TEST FAILURES"
             # switch between methods, SelectNode is not available on dotnet core
-            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) 
+            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] )
             {
                 $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
             }
-            else 
+            else
             {
                 $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
             }
@@ -1065,14 +1167,17 @@ function Test-PSPesterResults
     {
         if ($ResultObject.TotalCount -le 0)
         {
-            logerror 'NO TESTS RUN'
+            throw 'NO TESTS RUN'
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
             logerror 'TEST FAILURES'
+
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
             }
+
+            throw "$($ResultObject.FailedCount) tests in $TestArea failed"
         }
     }
 }
@@ -1088,7 +1193,7 @@ function Start-PSxUnit {
         throw "xUnit tests are only currently supported on Linux / OS X"
     }
 
-    if ($Environment.IsOSX) {
+    if ($Environment.IsMacOS) {
         log "Not yet supported on OS X, pretending they passed..."
         return
     }
@@ -1139,11 +1244,11 @@ function Install-Dotnet {
     $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
-    if ($Environment.IsLinux -or $Environment.IsOSX) {
+    if ($Environment.IsLinux -or $Environment.IsMacOS) {
         # Uninstall all previous dotnet packages
         $uninstallScript = if ($Environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
-        } elseif ($Environment.IsOSX) {
+        } elseif ($Environment.IsMacOS) {
             "dotnet-uninstall-pkgs.sh"
         }
 
@@ -1202,6 +1307,7 @@ function Start-PSBootstrap {
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$BuildWindowsNative,
+        [switch]$BuildLinuxArm,
         [switch]$Force
     )
 
@@ -1210,7 +1316,7 @@ function Start-PSBootstrap {
     Push-Location $PSScriptRoot/tools
 
     try {
-        if ($Environment.IsLinux -or $Environment.IsOSX) {
+        if ($Environment.IsLinux -or $Environment.IsMacOS) {
             # This allows sudo install to be optional; needed when running in containers / as root
             # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
             $sudo = if (!$NoSudo) { "sudo" }
@@ -1225,11 +1331,20 @@ function Start-PSBootstrap {
                 Pop-Location
             }
 
+            if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
+                Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
+                return
+            }
+
             # Install ours and .NET's dependencies
             $Deps = @()
             if ($Environment.IsUbuntu) {
                 # Build tools
                 $Deps += "curl", "g++", "cmake", "make"
+
+                if ($BuildLinuxArm) {
+                    $Deps += "gcc-arm-linux-gnueabihf", "g++-arm-linux-gnueabihf"
+                }
 
                 # .NET Core required runtime libraries
                 $Deps += "libunwind8"
@@ -1268,7 +1383,7 @@ function Start-PSBootstrap {
                 Start-NativeExecution {
                     Invoke-Expression "$baseCommand $Deps"
                 }
-            } elseif ($Environment.IsOSX) {
+            } elseif ($Environment.IsMacOS) {
                 precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
                 # Build tools
@@ -1296,6 +1411,9 @@ function Start-PSBootstrap {
                 }
             }
         }
+
+        # Try to locate dotnet-SDK before installing it
+        Find-Dotnet
 
         # Install dotnet-SDK
         $dotNetExists = precheck 'dotnet' $null
@@ -1428,7 +1546,6 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.ConsoleHost',
 'Microsoft.PowerShell.Security',
 'System.Management.Automation',
-'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
 'Microsoft.PowerShell.CoreCLR.Eventing',
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
@@ -1534,7 +1651,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs powershell.inc
+        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershell.inc
     } finally {
         Pop-Location
     }
@@ -1807,14 +1924,24 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
-    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+    $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
+    $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v
+    $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
-    Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-    $msiLocationPath
+    if (Test-Path $msiLocationPath)
+    {
+        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+        $msiLocationPath
+    }
+    else
+    {
+        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
+        $WiXCandleLog | Out-String | Write-Verbose -Verbose
+        $WiXLightLog  | Out-String | Write-Verbose -Verbose
+        throw "Failed to create $msiLocationPath"
+    }
 }
 
 function Start-CrossGen {
@@ -1826,18 +1953,11 @@ function Start-CrossGen {
         $PublishPath,
 
         [Parameter(Mandatory=$true)]
-        [ValidateSet("ubuntu.14.04-x64",
-                     "ubuntu.16.04-x64",
-                     "debian.8-x64",
-                     "centos.7-x64",
-                     "fedora.24-x64",
-                     "win7-x86",
+        [ValidateSet("win7-x86",
                      "win7-x64",
-                     "win81-x64",
-                     "win10-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64",
-                     "opensuse.42.1-x64")]
+                     "linux-x64",
+                     "linux-arm")]
         [string]
         $Runtime
     )
@@ -1894,9 +2014,11 @@ function Start-CrossGen {
         } else {
             "win-x64"
         }
+    } elseif ($Runtime -eq "linux-arm") {
+        throw "crossgen is not available for 'linux-arm'"
     } elseif ($Environment.IsLinux) {
         "linux-x64"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "osx-x64"
     }
 
@@ -1925,7 +2047,7 @@ function Start-CrossGen {
          "clrjit.dll"
     } elseif ($Environment.IsLinux) {
         "libclrjit.so"
-    } elseif ($Environment.IsOSX) {
+    } elseif ($Environment.IsMacOS) {
         "libclrjit.dylib"
     }
 
@@ -1968,7 +2090,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Commands.Utility.dll",
         "Microsoft.PowerShell.Commands.Management.dll",
         "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
         "Microsoft.PowerShell.PSReadLine.dll",

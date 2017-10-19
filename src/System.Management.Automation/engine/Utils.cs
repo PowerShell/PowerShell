@@ -622,47 +622,6 @@ namespace System.Management.Automation
         /// </summary>
         internal const string ScheduledJobModuleName = "PSScheduledJob";
 
-        internal const string WorkflowType = "Microsoft.PowerShell.Workflow.AstToWorkflowConverter, Microsoft.PowerShell.Activities, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-        internal const string WorkflowModule = "PSWorkflow";
-
-        internal static IAstToWorkflowConverter GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(ExecutionContext context)
-        {
-            IAstToWorkflowConverter converterInstance = null;
-            Type converterType = null;
-
-            if (Utils.IsRunningFromSysWOW64())
-            {
-                throw new NotSupportedException(AutomationExceptions.WorkflowDoesNotSupportWOW64);
-            }
-
-            // If the current language mode is ConstrainedLanguage but the system lockdown mode is not,
-            // then also block the conversion - since we can't validate the InlineScript, PowerShellValue,
-            // etc.
-            if ((context != null) &&
-                (context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
-                (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce))
-            {
-                throw new NotSupportedException(Modules.CannotDefineWorkflowInconsistentLanguageMode);
-            }
-
-            EnsureModuleLoaded(WorkflowModule, context);
-
-            converterType = Type.GetType(WorkflowType);
-
-            if (converterType != null)
-            {
-                converterInstance = (IAstToWorkflowConverter)converterType.GetConstructor(PSTypeExtensions.EmptyTypes).Invoke(EmptyArray<object>());
-            }
-
-            if (converterInstance == null)
-            {
-                string error = StringUtil.Format(AutomationExceptions.CantLoadWorkflowType, Utils.WorkflowType, Utils.WorkflowModule);
-                throw new NotSupportedException(error);
-            }
-
-            return converterInstance;
-        }
-
         internal static void EnsureModuleLoaded(string module, ExecutionContext context)
         {
             if (context != null && !context.AutoLoadingModuleInProgress.Contains(module))
@@ -1107,24 +1066,12 @@ namespace System.Management.Automation
         internal static readonly HashSet<string> PowerShellAssemblies =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    "microsoft.powershell.activities",
                     "microsoft.powershell.commands.diagnostics",
                     "microsoft.powershell.commands.management",
                     "microsoft.powershell.commands.utility",
                     "microsoft.powershell.consolehost",
-                    "microsoft.powershell.core.activities",
-                    "microsoft.powershell.diagnostics.activities",
-                    "microsoft.powershell.editor",
-                    "microsoft.powershell.gpowershell",
-                    "microsoft.powershell.graphicalhost",
-                    "microsoft.powershell.isecommon",
-                    "microsoft.powershell.management.activities",
                     "microsoft.powershell.scheduledjob",
-                    "microsoft.powershell.security.activities",
                     "microsoft.powershell.security",
-                    "microsoft.powershell.utility.activities",
-                    "microsoft.powershell.workflow.servicecore",
-                    "microsoft.wsman.management.activities",
                     "microsoft.wsman.management",
                     "microsoft.wsman.runtime",
                     "system.management.automation"
@@ -1523,6 +1470,7 @@ namespace System.Management.Automation.Internal
         internal static bool IgnoreScriptBlockCache;
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
+        internal static bool DisableGACLoading;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)

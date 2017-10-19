@@ -1407,9 +1407,8 @@ namespace System.Management.Automation
                                     StringLiterals.PowerShellModuleFileExtension,
                                     StringLiterals.PowerShellDataFileExtension,
                                     StringLiterals.PowerShellNgenAssemblyExtension,
-                                    StringLiterals.DependentWorkflowAssemblyExtension,
-                                    StringLiterals.PowerShellCmdletizationFileExtension,
-                                    StringLiterals.WorkflowFileExtension
+                                    StringLiterals.PowerShellILAssemblyExtension,
+                                    StringLiterals.PowerShellCmdletizationFileExtension
                                 };
                                 result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
                                 if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)

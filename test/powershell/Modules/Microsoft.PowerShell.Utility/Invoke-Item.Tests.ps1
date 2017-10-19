@@ -2,7 +2,7 @@ using namespace System.Diagnostics
 
 Describe "Invoke-Item basic tests" -Tags "Feature" {
     BeforeAll {
-        $powershell = Join-Path $PSHOME -ChildPath powershell
+        $powershell = Join-Path $PSHOME -ChildPath pwsh
 
         $testFile1 = Join-Path -Path $TestDrive -ChildPath "text1.txt"
         New-Item -Path $testFile1 -ItemType File -Force > $null
@@ -26,9 +26,9 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             Remove-Item -Path $redirectErr -Force -ErrorAction SilentlyContinue
         }
 
-        ## Run this test only on OSX because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
+        ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to hang.
-        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsOSX) -TestCases $textFileTestCases {
+        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
@@ -125,12 +125,8 @@ Categories=Application;
 
                 $before = $windows.Count
                 Invoke-Item -Path $PSHOME
-                $startTime = Get-Date
                 # may take time for explorer to open window
-                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($windows.Count -eq $before))
-                {
-                    Start-Sleep -Milliseconds 100
-                }
+                Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 > $null
                 $after = $windows.Count
 
                 $before + 1 | Should Be $after
@@ -143,12 +139,8 @@ Categories=Application;
             {
                 # validate on Unix by reassociating default app for directories
                 Invoke-Item -Path $PSHOME
-                $startTime = Get-Date
                 # may take time for handler to start
-                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (-not (Test-Path "$HOME/InvokeItemTest.Success")))
-                {
-                    Start-Sleep -Milliseconds 100
-                }
+                Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
                 Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
             }
             else

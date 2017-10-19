@@ -23,7 +23,7 @@ one on the path.
 Example:
 
 ```powershell
-    $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+    $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     & $powershell -noprofile -command "ExampleCommand" | Should Be "ExampleOutput"
 ```
 
@@ -35,7 +35,7 @@ Some tests simply must be tied to certain platforms. Use Pester's
 the test only on Windows:
 
 ```powershell
-It "Should do something on Windows" -Skip:($IsLinux -Or $IsOSX) { ... }
+It "Should do something on Windows" -Skip:($IsLinux -Or $IsMacOS) { ... }
 ```
 
 Or only on Linux and OS X:

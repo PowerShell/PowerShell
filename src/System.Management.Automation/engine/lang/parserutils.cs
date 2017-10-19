@@ -723,13 +723,6 @@ namespace System.Management.Automation
                 }
             }
 
-            if ((options & (SplitOptions.Multiline | SplitOptions.Singleline)) ==
-                  (SplitOptions.Multiline | SplitOptions.Singleline))
-            {
-                throw InterpreterError.NewInterpreterException(null, typeof(ParseException),
-                    errorPosition, "InvalidSplitOptionCombination", ParserStrings.InvalidSplitOptionCombination);
-            }
-
             if ((options & SplitOptions.SimpleMatch) != 0)
             {
                 separatorPattern = Regex.Escape(separatorPattern);

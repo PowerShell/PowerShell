@@ -317,7 +317,7 @@ foo``u{2195}abc
 
 '@
 "@
-            $result | should be "`r`nfoo``u{2195}abc`r`n"
+            $result | should match "\r?\nfoo``u\{2195\}abc\r?\n"
         }
 
         It "Test that two consecutive Unicode escape sequences are tokenized correctly." {
@@ -601,7 +601,7 @@ foo``u{2195}abc
     }
 
 	It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" {
-		if ( $IsLinux -or $IsOSX ) {
+		if ( $IsLinux -or $IsMacOS ) {
             # because we execute on *nix based on executable bit, and the file name doesn't matter
             # so we can use the same filename as for windows, just make sure it's executable with chmod
             "#!/bin/sh`necho ""Hello World""" | out-file -encoding ASCII $shellfile

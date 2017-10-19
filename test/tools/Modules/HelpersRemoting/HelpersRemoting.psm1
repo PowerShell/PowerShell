@@ -8,7 +8,6 @@ if ($IsWindows) {
     try { $Script:AppVeyorRemoteCred = Import-Clixml -Path "$env:TEMP\AppVeyorRemoteCred.xml" } catch { }
 }
 
-
 function New-RemoteRunspace
 {
     $wsmanConInfo = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
@@ -29,15 +28,30 @@ function New-RemoteRunspace
     return $remoteRunspace
 }
 
-
-function New-RemoteSession
+function CreateParameters
 {
     param (
-        [string] $Name,
+        [string] $ComputerName,
+        [string[]] $Name,
         [string] $ConfigurationName,
-        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
+        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption,
+        [System.Management.Automation.Runspaces.PSSession[]] $Session)
 
-    $parameters = @{ ComputerName = "."; }
+    if($ComputerName)
+    {
+        $parameters = @{ComputerName = $ComputerName}
+    }
+    else
+    {
+        if($Session)
+        {
+            $parameters = @{Session = $Session}
+        }
+        else
+        {
+            $parameters = @{ComputerName = '.'}
+        }
+    }
 
     if ($Name) {
         $parameters["Name"] = $Name
@@ -51,7 +65,8 @@ function New-RemoteSession
         $parameters["SessionOption"] = $SessionOption
     }
 
-    if ($Script:AppVeyorRemoteCred)
+    ## If a PSSession is provided, do not add credentials.
+    if ($Script:AppVeyorRemoteCred -and (-not $Session))
     {
         Write-Verbose "Using Global AppVeyor Credential" -Verbose
         $parameters["Credential"] = $Script:AppVeyorRemoteCred
@@ -61,7 +76,70 @@ function New-RemoteSession
         Write-Verbose "Using Implicit Credential" -Verbose
     }
 
-    $session = New-PSSession @parameters
+    return $parameters
+}
+function New-RemoteSession
+{
+    param (
+        [string] $Name,
+        [string] $ConfigurationName,
+        [switch] $CimSession,
+        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
+
+    $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption
+
+    if ($CimSession) {
+        $session = New-CimSession @parameters
+    } else {
+        $session = New-PSSession @parameters
+    }
 
     return $session
+}
+
+function Invoke-RemoteCommand
+{
+    param (
+        [string] $ComputerName,
+        [scriptblock] $ScriptBlock,
+        [string] $ConfigurationName,
+        [switch] $InDisconnectedSession)
+
+    $parameters = CreateParameters -ComputerName $ComputerName -ConfigurationName $ConfigurationName
+
+    if($ScriptBlock)
+    {
+        $parameters.Add('ScriptBlock', $ScriptBlock)
+    }
+
+    if($InDisconnectedSession)
+    {
+        $parameters.Add('InDisconnectedSession', $InDisconnectedSession.IsPresent)
+    }
+
+    Invoke-Command @parameters
+}
+
+function Enter-RemoteSession
+{
+    param(
+        [string] $Name,
+        [string] $ConfigurationName,
+        [System.Management.Automation.Remoting.PSSessionOption] $SessionOption)
+
+    $parameters = CreateParameters -Name $Name -ConfigurationName $ConfigurationName -SessionOption $SessionOption
+    Enter-PSSession @parameters
+}
+
+function Connect-RemoteSession
+{
+    param(
+        [string] $ComputerName,
+        [string[]] $Name,
+        [System.Management.Automation.Runspaces.PSSession[]] $Session,
+        [string] $ConfigurationName
+    )
+
+    $parameters = CreateParameters -ComputerName $ComputerName -Name $Name -Session $Session -ConfigurationName $ConfigurationName
+    Connect-PSSession @parameters
 }

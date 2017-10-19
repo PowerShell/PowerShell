@@ -237,7 +237,7 @@
 </value>
   </data>
   <data name="RunningCmdDebugStop" xml:space="preserve">
-    <value>You have entered a session that is currently stopped at a debug breakpoint inside a running command or script.  Use the Windows PowerShell command line debugger to continue debugging.
+    <value>You have entered a session that is currently stopped at a debug breakpoint inside a running command or script.  Use the PowerShell command line debugger to continue debugging.
 </value>
   </data>
   <data name="RunspaceNotLocal" xml:space="preserve">

@@ -142,7 +142,7 @@
     <value>Nested PowerShell instances cannot be invoked asynchronously. Use the Invoke method.</value>
   </data>
   <data name="AsyncResultNotOwned" xml:space="preserve">
-    <value>The {0} object was not created by calling {1} on this Windows PowerShell instance.</value>
+    <value>The {0} object was not created by calling {1} on this PowerShell instance.</value>
   </data>
   <data name="ApartmentStateMismatch" xml:space="preserve">
     <value>When the runspace is set to reuse a thread, the apartment state in the invocation settings must match the runspace.</value>
@@ -151,7 +151,7 @@
     <value>When the runspace is set to use the current thread, the apartment state in the invocation settings must match that of the current thread.</value>
   </data>
   <data name="ParameterRequiresCommand" xml:space="preserve">
-    <value>A command is required to add a parameter. A command must be added to the Windows PowerShell instance before adding a parameter.</value>
+    <value>A command is required to add a parameter. A command must be added to the PowerShell instance before adding a parameter.</value>
   </data>
   <data name="KeyMustBeString" xml:space="preserve">
     <value>The keys in the dictionary must be strings.</value>
@@ -163,10 +163,10 @@
     <value>You can only begin receiving data on a PSJobProxy instance when it has been created with data streaming disabled. This operation can run only once.</value>
   </data>
   <data name="GetJobForCommandNotSupported" xml:space="preserve">
-    <value>GetJobForCommand is not supported when there is more than one command in the Windows PowerShell instance.</value>
+    <value>GetJobForCommand is not supported when there is more than one command in the PowerShell instance.</value>
   </data>
   <data name="GetJobForCommandRequiresACommand" xml:space="preserve">
-    <value>The Command property of a Windows PowerShell object cannot be empty.</value>
+    <value>The Command property of a PowerShell object cannot be empty.</value>
   </data>
   <data name="CommandDoesNotWriteJob" xml:space="preserve">
     <value>The PSJobProxy object can only be used for remote commands that return a job object.</value>
@@ -193,16 +193,16 @@
     <value>A job object cannot be reused.</value>
   </data>
   <data name="CannotConnect" xml:space="preserve">
-    <value>This Windows PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
+    <value>This PowerShell object cannot be connected because it is not associated with a remote runspace or runspace pool.</value>
   </data>
   <data name="DiscOnSyncCommand" xml:space="preserve">
     <value>The running command has been disconnected but is still running on the remote server.  Reconnect to get command operation status and output data.</value>
   </data>
   <data name="ExecutionDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current Windows PowerShell session is in the Disconnected state.  Connect this Windows PowerShell session, and then either wait for the command to finish, or stop the command.</value>
+    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then either wait for the command to finish, or stop the command.</value>
   </data>
   <data name="IsDisconnected" xml:space="preserve">
-    <value>The operation cannot be performed because the current Windows PowerShell session is in the Disconnected state.  Connect this Windows PowerShell session, and then try again.</value>
+    <value>The operation cannot be performed because the current PowerShell session is in the Disconnected state.  Connect this PowerShell session, and then try again.</value>
   </data>
   <data name="ConnectFailed" xml:space="preserve">
     <value>The connection attempt to the remote command failed.</value>
@@ -215,7 +215,7 @@
     <value>The operation cannot be performed because a command is currently stopping. Wait for the command to complete stopping, and then try the operation again.</value>
   </data>
   <data name="CommandInvokedFromWrongThreadWithoutCommand" xml:space="preserve">
-    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current Windows PowerShell instance contains no command to invoke.</value>
+    <value>There is no Runspace available to run commands in this thread. You can provide one in the DefaultRunspace property of the System.Management.Automation.Runspaces.Runspace type. The current PowerShell instance contains no command to invoke.</value>
   </data>
   <data name="JobProxyAsJobMustBeTrue" xml:space="preserve">
     <value>A command in which the value of AsJob is equal to false cannot be run through a PSJobProxy.</value>
@@ -226,7 +226,7 @@
     <comment>PSJobProxy is the name of a class and should not be localized</comment>
   </data>
   <data name="NoDefaultRunspaceForPSCreate" xml:space="preserve">
-    <value>A Windows PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
+    <value>A PowerShell object cannot be created that uses the current runspace because there is no current runspace available.  The current runspace might be starting, such as when it is created with an Initial Session State.</value>
   </data>
   <data name="ProxyJobControlNotSupported" xml:space="preserve">
     <value>PSJobProxy does not support this control method.</value>

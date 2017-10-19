@@ -3,7 +3,7 @@ Describe "Out-Default Tests" -tag CI {
         # due to https://github.com/PowerShell/PowerShell/issues/3405, `Out-Default -Transcript` emits output to pipeline
         # as running in Pester effectively wraps everything in parenthesis, workaround is to use another powershell
         # to run the test script passed as a string
-        $powershell = "$PSHOME/powershell"
+        $powershell = "$PSHOME/pwsh"
     }
 
     It "'Out-Default -Transcript' shows up in transcript, but not host" {
