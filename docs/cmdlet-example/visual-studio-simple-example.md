@@ -118,8 +118,8 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
   ![StdImage5](./Images/Std5.png)
 
-1. Now cmdlet can be run on systems supported by PowerShell Standard;
-  For example:
+1. Now cmdlet can be run on systems supported by PowerShell Standard;<br />
+  For example:<br />
   On PowerShell Core on Windows:
 ![StdImage61](./Images/Std61.png)
 On PowerShell Core on Linux:
