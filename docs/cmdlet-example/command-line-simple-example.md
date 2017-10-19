@@ -138,7 +138,7 @@ Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
 1. Copy `MyModule.dll` to a folder on a Windows machine.
 
-2. Import the module.
+1. Import the module.
 
    ```powershell
    Import-Module .\MyModule.dll
@@ -146,7 +146,7 @@ Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
    Note: The module should import without errors.
 
-3. Execute the `Write-TimestampedMessage` command.
+1. Execute the `Write-TimestampedMessage` command.
 
    ```powershell
    Write-TimestampedMessage "Test message."
@@ -180,17 +180,17 @@ If you copy `netstandard.dll` from this directory to the directory containing
 
 1. Install the [.NET Core SDK 2.0 for Windows][net-core-sdk], if it isn't already installed.
 
-2. Start a new Windows PowerShell console. Remember that once a binary assembly is
+1. Start a new Windows PowerShell console. Remember that once a binary assembly is
    loaded into PowerShell it can't be unloaded. Restarting PowerShell is necessary to
    get it to reload `MyModule.dll`.
 
-3. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
+1. Copy the `netstandard.dll` implementation assembly for .NET 4.6.1 to the module's directory.
    ```powershell
    cd 'path-to-where-you-copied-module.dll'
    Copy-Item 'C:\Program Files\dotnet\sdk\2.0.0\Microsoft\Microsoft.NET.Build.Extensions\net461\lib\netstandard.dll' .
    ```
 
-4. Import the module and execute the command:
+1. Import the module and execute the command:
    ```powershell
    Import-Module .\MyModule.dll
    Write-TimestampedMessage "Test message."
