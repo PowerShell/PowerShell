@@ -71,40 +71,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("ITI")]
-        public SwitchParameter IncludeTypeInformation
-        {
-            get
-            {
-                return _includeTypeInformation;
-            }
-            set
-            {
-                _includeTypeInformation = value;
-                _includeTypeInformationIsSet = true;
-            }
-        }
-        private bool _includeTypeInformation;
-        private bool _includeTypeInformationIsSet;
+        public SwitchParameter IncludeTypeInformation { get; set; }
 
         /// <summary>
         /// NoTypeInformation : The #TYPE line should not be generated. Default is true. Cannot specify with IncludeTypeInformation.
         /// </summary>
         [Parameter(DontShow = true)]
         [Alias("NTI")]
-        public SwitchParameter NoTypeInformation
-        {
-            get
-            {
-                return _noTypeInformation;
-            }
-            set
-            {
-                _noTypeInformation = value;
-                _noTypeInformationIsSet = true;
-            }
-        }
-        private bool _noTypeInformation = true;
-        private bool _noTypeInformationIsSet;
+        public SwitchParameter NoTypeInformation { get; set; } = true;
 
         #endregion Command Line Parameters
 
@@ -122,15 +96,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_noTypeInformationIsSet && _includeTypeInformationIsSet)
+            if (this.MyInvocation.BoundParameters.ContainsKey("IncludeTypeInformation") && this.MyInvocation.BoundParameters.ContainsKey("NoTypeInformation"))
             {
                 InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
                 ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
                 this.ThrowTerminatingError(errorRecord);
             }
-            if (_includeTypeInformationIsSet)
+            if (this.MyInvocation.BoundParameters.ContainsKey("IncludeTypeInformation"))
             {
-                _noTypeInformation = !_includeTypeInformation;
+                NoTypeInformation = !IncludeTypeInformation;
             }
             _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
         }
