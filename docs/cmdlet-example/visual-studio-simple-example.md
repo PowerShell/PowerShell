@@ -27,32 +27,32 @@ It should find `System.Management.Automation` package, select it and it will sho
 
 1. Add the code of cmdlet:  
     ```CSharp
-using System.Management.Automation;  // PowerShell namespace.
-
-namespace SendGreeting
-{
-    // Declare the class as a cmdlet and specify and 
-    // appropriate verb and noun for the cmdlet name.
-    [Cmdlet(VerbsCommunications.Send, "Greeting")]
-    public class SendGreetingCommand : Cmdlet
+    using System.Management.Automation;  // PowerShell namespace.
+    
+    namespace SendGreeting
     {
-        // Declare the parameters for the cmdlet.
-        [Parameter(Mandatory = true)]
-        public string Name { get; set; }
-
-        // Overide the ProcessRecord method to process
-        // the supplied user name and write out a 
-        // greeting to the user by calling the WriteObject
-        // method.
-        protected override void ProcessRecord()
+        // Declare the class as a cmdlet and specify and 
+        // appropriate verb and noun for the cmdlet name.
+        [Cmdlet(VerbsCommunications.Send, "Greeting")]
+        public class SendGreetingCommand : Cmdlet
         {
-            WriteObject("Hello " + Name + "!");
+            // Declare the parameters for the cmdlet.
+            [Parameter(Mandatory = true)]
+            public string Name { get; set; }
+    
+            // Overide the ProcessRecord method to process
+            // the supplied user name and write out a 
+            // greeting to the user by calling the WriteObject
+            // method.
+            protected override void ProcessRecord()
+            {
+                WriteObject("Hello " + Name + "!");
+            }
         }
     }
-}
-```  
+    ```  
     At this point everything should look like this:  
-![Step5](./Images/Step5.png)  
+    ![Step5](./Images/Step5.png)  
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
 ![Step6](./Images/Step6.png)
@@ -84,32 +84,32 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
 
 1. Add the code of cmdlet:  
     ```CSharp
-using System.Management.Automation;  // PowerShell namespace.
-
-namespace SendGreeting
-{
-    // Declare the class as a cmdlet and specify and 
-    // appropriate verb and noun for the cmdlet name.
-    [Cmdlet(VerbsCommunications.Send, "Greeting")]
-    public class SendGreetingCommand : Cmdlet
+    using System.Management.Automation;  // PowerShell namespace.
+    
+    namespace SendGreeting
     {
-        // Declare the parameters for the cmdlet.
-        [Parameter(Mandatory = true)]
-        public string Name { get; set; }
-
-        // Overide the ProcessRecord method to process
-        // the supplied user name and write out a 
-        // greeting to the user by calling the WriteObject
-        // method.
-        protected override void ProcessRecord()
+        // Declare the class as a cmdlet and specify and 
+        // appropriate verb and noun for the cmdlet name.
+        [Cmdlet(VerbsCommunications.Send, "Greeting")]
+        public class SendGreetingCommand : Cmdlet
         {
-            WriteObject("Hello " + Name + "!");
+            // Declare the parameters for the cmdlet.
+            [Parameter(Mandatory = true)]
+            public string Name { get; set; }
+    
+            // Overide the ProcessRecord method to process
+            // the supplied user name and write out a 
+            // greeting to the user by calling the WriteObject
+            // method.
+            protected override void ProcessRecord()
+            {
+                WriteObject("Hello " + Name + "!");
+            }
         }
     }
-}
-```  
-    At this point everything should look like this:  
-![StdImage4](./Images/Std4.png)  
+    ```  
+    At this point everything should look like this:
+    ![StdImage4](./Images/Std4.png)  
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
 ![StdImage5](./Images/Std5.png)
