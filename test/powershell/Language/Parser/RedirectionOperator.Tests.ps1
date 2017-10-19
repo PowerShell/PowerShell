@@ -31,7 +31,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
 
     It "If encoding is unset, redirection should be UTF8 without bom" {
         $asciiString > TESTDRIVE:\file.txt
-        $bytes = Get-Content -Byte TESTDRIVE:\file.txt
+        $bytes = Get-Content -AsByteStream TESTDRIVE:\file.txt
         # create the expected - utf8 encoding without a bom
         $encoding = [Text.UTF8Encoding]::new($false)
         # we know that there will be no preamble, so don't provide any bytes
@@ -71,7 +71,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $expectedBytes = .{ $BOM; $TXT; $CR }
             $psdefaultparameterValues["Out-File:Encoding"] = "$encoding"
             $asciiString > TESTDRIVE:/file.txt
-            $observedBytes = Get-Content -Byte TESTDRIVE:/file.txt
+            $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
             # THE TEST
             It $msg -Skip:$skipTest {
                 $observedBytes.Count | Should be $expectedBytes.Count

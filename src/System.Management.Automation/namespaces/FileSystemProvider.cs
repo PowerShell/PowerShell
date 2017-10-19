@@ -6614,8 +6614,13 @@ namespace Microsoft.PowerShell.Commands
                         delimiter = dynParams.Delimiter;
 
                     // Get the stream type
-                    usingByteEncoding = dynParams.Byte;
+                    usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
+
+                    if (usingByteEncoding && streamTypeSpecified)
+                    {
+                        WriteWarning(StringUtil.Format(FileSystemProviderStrings.EncodingNotUsed));
+                    }
 
                     if (streamTypeSpecified)
                     {
@@ -6765,8 +6770,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (dynParams != null)
                 {
-                    usingByteEncoding = dynParams.Byte;
+                    usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
+
+                    if (usingByteEncoding && streamTypeSpecified)
+                    {
+                        WriteWarning(StringUtil.Format(FileSystemProviderStrings.EncodingNotUsed));
+                    }
 
                     if (streamTypeSpecified)
                     {
@@ -7601,7 +7611,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return file contents as a byte stream or create file from a series of bytes
         /// </summary>
         [Parameter]
-        public SwitchParameter Byte { get; set; }
+        public SwitchParameter AsByteStream { get; set; }
 
 #if !UNIX
         /// <summary>
