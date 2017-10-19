@@ -151,6 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public bool outOfBand = false;
         public WriteStreamType writeStream = WriteStreamType.None;
         internal bool isHelpObject = false;
+        internal bool isErrorRecord = false;
 
         /// <summary>
         /// Helper method to set the WriteStreamType property

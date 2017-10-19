@@ -565,7 +565,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 ComplexWriter complexWriter = new ComplexWriter();
 
-                complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                if (fed.isErrorRecord)
+                {
+                    complexWriter.Initialize(_lo, int.MaxValue);
+                }
+                else
+                {
+                    complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                }
                 complexWriter.WriteObject(cve.formatValueList);
 
                 return;
