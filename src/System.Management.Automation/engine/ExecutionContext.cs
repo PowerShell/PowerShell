@@ -1229,7 +1229,9 @@ namespace System.Management.Automation
                     error = securityException;
                 }
             }
-            else if (!String.IsNullOrEmpty(name))
+            
+            // if loading from filename fails, we will try to load from assembly name again to follow the previous code logic, this avoid breaking partner's existed code.
+            if (loadedAssembly == null && !String.IsNullOrEmpty(name))
             {
                 string fixedName = null;
                 // Remove the '.dll' if it's there...
@@ -1245,26 +1247,44 @@ namespace System.Management.Automation
                 {
                     loadedAssembly = Assembly.Load(new AssemblyName(assemblyString));
                 }
+                // if the filename exists and error has been created, we would try NOT to override the error.
                 catch (FileNotFoundException fileNotFound)
                 {
-                    error = fileNotFound;
+                    if (error != null)
+                    {
+                        error = fileNotFound;
+                    }
                 }
                 catch (FileLoadException fileLoadException)
                 {
-                    error = fileLoadException;
+                    if (error != null)
+                    {
+                        error = fileLoadException;
+                    }
                     // this is a legitimate error on CoreCLR for a newly emited with Add-Type assemblies
                     // they cannot be loaded by name, but we are only interested in importing them by path
                 }
                 catch (BadImageFormatException badImage)
                 {
-                    error = badImage;
+                    if (error != null)
+                    {
+                        error = badImage;
+                    }
                 }
                 catch (SecurityException securityException)
                 {
-                    error = securityException;
+                    if (error != null)
+                    {
+                        error = securityException;
+                    }
                 }
             }
 
+            // the error is coming from loading assembly from filename, since we load the assembly from assembly name later, ignore the exception.
+            if (loadedAssembly != null)
+            {
+                error = null;
+            }
             // We either return the loaded Assembly, or return null.
             return loadedAssembly;
         }
