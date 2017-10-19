@@ -26,7 +26,7 @@ It should find `System.Management.Automation` package, select it and it will sho
 ![Step4](./Images/Step4.png)
 
 1. Add the code of cmdlet:  
-```CSharp
+    ```CSharp
 using System.Management.Automation;  // PowerShell namespace.
 
 namespace SendGreeting
@@ -51,7 +51,7 @@ namespace SendGreeting
     }
 }
 ```  
-At this point everything should look like this:  
+    At this point everything should look like this:  
 ![Step5](./Images/Step5.png)  
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
@@ -83,7 +83,7 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
 ![StdImage3](./Images/Std3.png)
 
 1. Add the code of cmdlet:  
-```CSharp
+    ```CSharp
 using System.Management.Automation;  // PowerShell namespace.
 
 namespace SendGreeting
@@ -108,7 +108,7 @@ namespace SendGreeting
     }
 }
 ```  
-At this point everything should look like this:  
+    At this point everything should look like this:  
 ![StdImage4](./Images/Std4.png)  
 
 1. Build solution (F6); The `Output` window will print the location of generated cmdlet DLL:
