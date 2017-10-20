@@ -1,7 +1,3 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
---********************************************************************/
-
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -9,7 +5,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "remove-alias" cmdlet
+    /// The implementation of the "Remove-Alias" cmdlet.
     /// </summary>
     ///
     [Cmdlet(VerbsCommon.Remove, "Alias", DefaultParameterSetName = "Default", HelpUri = "")]
@@ -18,10 +14,10 @@ namespace Microsoft.PowerShell.Commands
          #region Parameters
 
         /// <summary>
-        /// The Name parameter for the command
+        /// The Name parameter for the command.
         /// </summary>
         ///
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string Name { get; set; }
         
         /// <summary>
@@ -38,19 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-
-            set
-            {
-                _force = value;
-            }
-        }
-        private bool _force;
+        public SwitchParameter Force { get; set; }        
 
         #endregion Parameters
 
@@ -62,11 +46,9 @@ namespace Microsoft.PowerShell.Commands
         ///
         protected override void ProcessRecord()
         {
-            
             AliasInfo existingAlias = null;
             try
-            {
-                //See if the Alias exists
+            {                
                 if (String.IsNullOrEmpty(Scope))
                 {
                     existingAlias = SessionState.Internal.GetAlias(Name);
@@ -84,11 +66,9 @@ namespace Microsoft.PowerShell.Commands
                         sessionStateException));
                 return;
             }
-
-            //If the alias exists, proceed to remove it
+            
             if (existingAlias != null)
             {
-
                 try{
                     SessionState.Internal.RemoveAlias(Name, Force);
                 }
@@ -101,17 +81,12 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
             }
-            else{
-                
+            else
+            {
                 ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", Name));
                 ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException",ErrorCategory.ObjectNotFound, Name);
-
             }
-
-
-        } // ProcessRecord
+        }
         #endregion Command code
-
-    } // class GetAliasCommand
-}//Microsoft.PowerShell.Commands
-
+    }
+}
