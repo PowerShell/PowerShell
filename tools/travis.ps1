@@ -4,6 +4,42 @@ param(
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
 
+
+function Send-DailyWebHook
+{
+    param (
+        [Parameter(Mandatory=$true,Position=0)][ValidateSet("Pass","Fail")]$result
+        )
+
+    # Only send web hook if the environment variable is present
+    if ($env:WebHookUrl)
+    {
+        $webhook = $env:WebHookUrl
+        
+        $Body = @{
+                'text'= @"
+Build Result: $result </br>     
+OS Type: $($PSVersionTable.OS) </br>
+<a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
+<a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
+"@
+        }
+        
+        $params = @{
+            Headers = @{'accept'='application/json'}
+            Body = $Body | convertto-json
+            Method = 'Post'
+            URI = $webhook 
+        }
+        
+        Invoke-RestMethod @params
+    }
+    else
+    {
+        log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
+    }
+}
+
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
 # the location in azure is public readonly
@@ -235,6 +271,13 @@ else
             }
             catch {
                 Write-Warning "Could not update status badge: $_"
+            }
+            try {
+                Send-DailyWebHook -result $result
+            }
+            catch {
+                Write-Warning "Could not send webhook: $_"
+                
             }
         }
     }
