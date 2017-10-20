@@ -7,7 +7,8 @@ This document describes steps for building a C# Cmdlet with Visual Studio in 2 w
 
 ## Building a C# Cmdlet for PowerShell Core with Visual Studio
 
-This demonstrates how to build your own C# cmdlet for PowerShell Core with Visual Studio. Targeting for PowerShell Core means that the cmdlet may not work against Windows PowerShell if you take dependencies on new APIs introduced in PowerShell Core.
+This demonstrates how to build your own C# cmdlet for PowerShell Core with Visual Studio.
+Targeting for PowerShell Core means that the cmdlet may not work against Windows PowerShell if you take dependencies on new APIs introduced in PowerShell Core.
 
 We will use the free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
 
@@ -67,7 +68,9 @@ You can also run the same cmdlet on Linux and other systems that PowerShell Core
 
 ## Building a C# Cmdlet for PowerShell Standard 3.0 with Visual Studio
 
-Steps below show how to build your own C# cmdlet for PowerShell Standard 3.0 with Visual Studio. Targeting PowerShell Standard 3.0 means that the same module will work against PowerShell Core as well as Windows PowerShell v3 and newer, however, you are limited to a subset of the available PowerShell APIs.
+Steps below show how to build your own C# cmdlet for PowerShell Standard 3.0 with Visual Studio.
+Targeting PowerShell Standard 3.0 means that the same module will work against PowerShell Core as well as Windows PowerShell v3 and newer,
+however, you are limited to a subset of the available PowerShell APIs.
 
 We will use the free [Visual Studio Community 2017](https://www.visualstudio.com/downloads).
 
