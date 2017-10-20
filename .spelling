@@ -499,6 +499,7 @@ wsl
 #region docs/cmdlet-example/visual-studio-simple-example.md Overrides
 - docs/cmdlet-example/visual-studio-simple-example.md
 dropdown
+v3
 #endregion
 
 #region docs/community/governance.md Overrides
