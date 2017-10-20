@@ -617,10 +617,9 @@ namespace Microsoft.PowerShell.Commands
                     Win32Exception exception = new Win32Exception(lastError);
                     WriteNonTerminatingError(
                         service,
-                        service.MachineName,
                         exception,
                         "FailToOpenServiceControlManager",
-                        ServiceResources.ComputerAccessDenied,
+                        ServiceResources.FailToOpenServiceControlManager,
                         ErrorCategory.PermissionDenied);
                 }
                 hService = NativeMethods.OpenServiceW(
@@ -1515,7 +1514,7 @@ namespace Microsoft.PowerShell.Commands
         }
         // We set the initial value to an invalid value so that we can
         // distinguish when this is and is not set.
-        internal ServiceStartupType startupType = (ServiceStartupType)(-1);
+        internal ServiceStartupType startupType = ServiceStartupType.InvalidValue;
 
 
         /// <summary>
@@ -1672,7 +1671,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     // Modify startup type or display name or credential
                     if (!String.IsNullOrEmpty(DisplayName)
-                        || (ServiceStartupType)(-1) != StartupType || null != Credential)
+                        || ServiceStartupType.InvalidValue != StartupType || null != Credential)
                     {
                         DWORD dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                         if (!NativeMethods.TryGetNativeStartupType(StartupType, out dwStartType))
@@ -2768,7 +2767,7 @@ namespace Microsoft.PowerShell.Commands
                 case ServiceStartupType.Disabled:
                     dwStartType = NativeMethods.SERVICE_DISABLED;
                     break;
-                case (ServiceStartupType)(-1):
+                case ServiceStartupType.InvalidValue:
                     dwStartType = NativeMethods.SERVICE_NO_CHANGE;
                     break;
                 default:
@@ -2803,6 +2802,8 @@ namespace Microsoft.PowerShell.Commands
     ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
     ///</summary>
     public enum ServiceStartupType {
+        ///<summary>Invalid service</summary>
+        InvalidValue = -1,
         ///<summary>Automatic service</summary>
         Automatic = 2,
         ///<summary>Manual service</summary>
