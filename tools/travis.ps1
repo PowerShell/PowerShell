@@ -12,6 +12,7 @@ function Send-DailyWebHook
         )
 
     # Only send web hook if the environment variable is present
+    # Varible should be set in Travis-CI.org settings
     if ($env:WebHookUrl)
     {
         $webhook = $env:WebHookUrl
@@ -277,7 +278,6 @@ else
             }
             catch {
                 Write-Warning "Could not send webhook: $_"
-                
             }
         }
     }
