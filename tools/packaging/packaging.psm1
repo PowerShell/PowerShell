@@ -284,6 +284,7 @@ function Start-PSPackage {
 
         if($IncludeSymbols.IsPresent)
         {
+            # Source is a temporary folder when -IncludeSymbols is present.  So, we should remove it.
             Remove-Item -Path $Source -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
