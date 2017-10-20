@@ -104,7 +104,7 @@ namespace System.Management.Automation
 
 #if UNIX
         /// <summary>
-        /// Gets the identity name to use for writing to syslog.
+        /// Gets the application identity (name) to use for writing to syslog.
         /// </summary>
         /// <returns>
         /// The string identity to use for writing to syslog.
@@ -112,7 +112,7 @@ namespace System.Management.Automation
         /// The default value is 'powershell'
         /// </para>
         /// </returns>
-        internal abstract string GetSysLogIdent();
+        internal abstract string GetSysLogIdentity();
 
         /// <summary>
         /// Gets the log level filter.
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         /// The default value is 'powershell'
         /// </para>
         /// </returns>
-        internal override string GetSysLogIdent()
+        internal override string GetSysLogIdentity()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string identity = ReadValueFromFile<string>(fileName, "LogIdentity");

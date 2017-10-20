@@ -44,7 +44,7 @@ namespace System.Management.Automation.Tracing
     ///
     /// GitCommitId
     ///   This is the first log entry for a session. It provides a correlation
-    ///   between teh full git commit id string and a hash code used for subsequent
+    ///   between the full git commit id string and a hash code used for subsequent
     ///   log entries.
     ///   Context: "GitCommitId"
     ///   Payload: string "Hash:" hashcode
@@ -74,7 +74,7 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         // The full git commit id string
-        static string _gitCommitId;
+        static readonly string _gitCommitId;
         // The hash code for the git commit id.
         static readonly int _commitId;
 
@@ -97,8 +97,19 @@ namespace System.Management.Automation.Tracing
             _commitId = _gitCommitId.GetHashCode();
         }
 
+        /// <summary>
+        /// Initializes a new instance of this class
+        /// </summary>
+        /// <param name="applicationId">The log identity name used to identify the application in syslog.</param>
+        /// <param name="level">The trace lavel to enable.</param>
+        /// <param name="keywords">The keywords to enable.</param>
+        /// <param name="channels">The output channels to enable.</param>
         public SysLogProvider(string applicationId, PSLevel level, PSKeyword keywords, PSChannel channels)
         {
+            // NOTE: This string needs to remain valid for the life of the process since the underlying API keeps
+            // a reference to it.
+            // FUTURE: If logging is redesigned, make these details static or a singleton since there should only be one
+            // instance active.
             _nativeSyslogIdent = Marshal.StringToHGlobalAnsi(applicationId);
             NativeMethods.OpenLog(_nativeSyslogIdent, _facility);
             _keywordFilter = (ulong)keywords;
