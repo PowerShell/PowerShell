@@ -49,7 +49,7 @@ namespace System.Management.Automation.Tracing
         {
             s_provider = new SysLogProvider
             (
-                ConfigPropertyAccessor.Instance.GetSysLogIdent(),
+                ConfigPropertyAccessor.Instance.GetSysLogIdentity(),
                 ConfigPropertyAccessor.Instance.GetLogLevel(),
                 ConfigPropertyAccessor.Instance.GetLogKeywords(),
                 ConfigPropertyAccessor.Instance.GetLogChannels()
