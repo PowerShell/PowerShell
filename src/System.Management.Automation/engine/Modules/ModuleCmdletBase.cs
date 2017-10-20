@@ -293,34 +293,42 @@ namespace Microsoft.PowerShell.Commands
             // Now search using the module path...
             foreach (string path in modulePath)
             {
-                // a name takes the form of .../moduleDir/moduleName.<ext>
-                // if only one name has been specified, then the moduleDir
-                // and moduleName are identical and repeated...
-                // Also append th ename if the path currently points at a directory
-                string qualifiedPath = Path.Combine(path, fileBaseName);
-
-                // Load the latest valid version if it is a multi-version module directory
-                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-
-                if (!found)
+#if UNIX
+                foreach (string folder in Directory.EnumerateDirectories(path))
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    string moduleName = Path.GetFileName(folder);
+                    if (String.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                    }
-                    else if (Directory.Exists(qualifiedPath))
-                    {
-                        // if it points to a directory, add the basename back onto the path...
-                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                    }
+                        fileBaseName = moduleName;
+#endif
+                        string qualifiedPath = Path.Combine(path, fileBaseName);
+                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                        if (!found)
+                        {
+                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                            {
+                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+                            }
+                            else if (Utils.NativeDirectoryExists(qualifiedPath))
+                            {
+                                // if it points to a directory, add the basename back onto the path...
+                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                            }
 
-                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                        }
+#if UNIX
+                    }
+                    if (found)
+                    {
+                        break;
+                    }
                 }
-
                 if (found)
                 {
                     break;
                 }
+#endif
             }
 
             if (found)

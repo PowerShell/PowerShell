@@ -493,20 +493,16 @@ function New-UnixPackage {
             }
 
             # run ronn to convert man page to roff
-            $RonnFile = Join-Path $PSScriptRoot "/../../assets/powershell.1.ronn"
+            $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
             $RoffFile = $RonnFile -replace "\.ronn$"
 
             # Run ronn on assets file
             # Run does not play well with files named powershell6.0.1, so we generate and then rename
             Start-NativeExecution { ronn --roff $RonnFile }
 
-            # Setup for side-by-side man pages (noop if primary package)
-            $FixedRoffFile = $RoffFile -replace "powershell.1$", "pwsh.1"
-            Move-Item $RoffFile $FixedRoffFile
-
             # gzip in assets directory
-            $GzipFile = "$FixedRoffFile.gz"
-            Start-NativeExecution { gzip -f $FixedRoffFile }
+            $GzipFile = "$RoffFile.gz"
+            Start-NativeExecution { gzip -f $RoffFile }
 
             $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
