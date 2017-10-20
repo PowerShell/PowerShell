@@ -1204,7 +1204,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// The number of context lines to collect. If set to a

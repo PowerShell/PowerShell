@@ -244,7 +244,7 @@
     <value>Cannot process path '{0}' because the target represents a reserved device name.</value>
   </data>
   <data name="EncodingNotUsed" xml:space="preserve">
-    <value>Encoding not used when -AsByteStream specified.</value>
+    <value>Encoding not used when '-AsByteStream' specified.</value>
   </data>
   <data name="ByteEncodingError" xml:space="preserve">
     <value>Cannot proceed with byte encoding. When using byte encoding the content must be of type byte.</value>

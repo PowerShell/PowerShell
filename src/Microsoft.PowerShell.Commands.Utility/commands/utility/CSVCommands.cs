@@ -214,7 +214,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -580,7 +581,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are

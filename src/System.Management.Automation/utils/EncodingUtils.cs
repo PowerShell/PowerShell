@@ -92,14 +92,16 @@ namespace System.Management.Automation
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            string encodingName;
-            if (LanguagePrimitives.TryConvertTo<string>(inputData, out encodingName))
+            string encodingName = inputData as String;
+            Encoding foundEncoding;
+
+            if ( inputData is Encoding )
             {
-                Encoding foundEncoding;
-                if (EncodingConversion.encodingMap.TryGetValue(encodingName, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
+                return inputData;
+            }
+            if (EncodingConversion.encodingMap.TryGetValue(encodingName, out foundEncoding))
+            {
+                return foundEncoding;
             }
             return inputData;
         }
@@ -119,13 +121,14 @@ namespace System.Management.Automation
             System.Collections.IDictionary fakeBoundParameters)
         {
             List<CompletionResult> encodings = new List<CompletionResult>();
+            WildcardPattern wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
             foreach(string encoding in EncodingConversion.TabCompletionResults)
             {
                 if (string.IsNullOrEmpty(wordToComplete))
                 {
                     encodings.Add(new CompletionResult(encoding, encoding, CompletionResultType.Text, encoding));
                 }
-                else if (encoding.IndexOf(wordToComplete, StringComparison.InvariantCultureIgnoreCase) == 0)
+                else if (encoding.IndexOf(wordToComplete, StringComparison.InvariantCultureIgnoreCase) == 0 || wildcardPattern.IsMatch(encoding))
                 {
                     encodings.Add(new CompletionResult(encoding, encoding, CompletionResultType.Text, encoding));
                 }

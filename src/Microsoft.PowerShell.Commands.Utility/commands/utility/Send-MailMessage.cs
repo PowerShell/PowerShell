@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
         [ArgumentToEncodingTransformationAttribute()]
-        public Encoding Encoding { get; set; } = new ASCIIEncoding();
+        public Encoding Encoding { get; set; } = Encoding.ASCII;
 
         /// <summary>
         /// Specifies the address collection that contains the

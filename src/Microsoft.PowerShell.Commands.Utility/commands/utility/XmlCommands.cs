@@ -110,7 +110,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         #endregion Command Line Parameters
 

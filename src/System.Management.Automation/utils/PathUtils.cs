@@ -194,19 +194,6 @@ namespace System.Management.Automation
             return new StreamReader(fileStream, encoding);
         }
 
-        internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, string encoding, bool isLiteralPath)
-        {
-            FileStream fileStream = OpenFileStream(filePath, command, isLiteralPath);
-            if (encoding == null)
-            {
-                return new StreamReader(fileStream);
-            }
-            else
-            {
-                return new StreamReader(fileStream, EncodingConversion.Convert(command, encoding));
-            }
-        }
-
         internal static FileStream OpenFileStream(string filePath, PSCmdlet command, bool isLiteralPath)
         {
             string resolvedPath = PathUtils.ResolveFilePath(filePath, command, isLiteralPath);

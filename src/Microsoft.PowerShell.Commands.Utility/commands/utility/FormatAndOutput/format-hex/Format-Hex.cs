@@ -48,7 +48,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "ByInputObject")]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
-        public Encoding Encoding = ClrFacade.GetDefaultEncoding();
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// This parameter is no-op

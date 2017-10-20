@@ -6619,7 +6619,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (usingByteEncoding && streamTypeSpecified)
                     {
-                        WriteWarning(StringUtil.Format(FileSystemProviderStrings.EncodingNotUsed));
+                        WriteWarning(FileSystemProviderStrings.EncodingNotUsed);
                     }
 
                     if (streamTypeSpecified)
@@ -6775,7 +6775,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (usingByteEncoding && streamTypeSpecified)
                     {
-                        WriteWarning(StringUtil.Format(FileSystemProviderStrings.EncodingNotUsed));
+                        WriteWarning(FileSystemProviderStrings.EncodingNotUsed);
                     }
 
                     if (streamTypeSpecified)
@@ -7592,6 +7592,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        [ValidateNotNullOrEmpty]
         public Encoding Encoding
         {
             get
@@ -7625,7 +7626,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the status of the StreamType parameter.  Returns true
         /// if the stream was opened with a user-specified encoding, false otherwise.
         /// </summary>
-        public bool WasStreamTypeSpecified { get; set; }
+        public bool WasStreamTypeSpecified { get; private set; }
 
     } // class FileSystemContentDynamicParametersBase
 
