@@ -1,4 +1,4 @@
-Describe "Write-Error DRT Unit Tests" -Tags "CI" {
+Describe "Write-Error Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1
         $e | Should BeOfType 'System.Management.Automation.ErrorRecord'
@@ -74,40 +74,49 @@ Describe "Write-Error DRT Unit Tests" -Tags "CI" {
         $e.CategoryInfo.TargetType | Should Be 'fooTargetType'
         $e.CategoryInfo.GetMessage() | Should Be 'NotSpecified: (fooTargetName:fooTargetType) [fooAct], fooReason'
     }
-}
 
-Describe "Write-Error" -Tags "CI" {
     It "Should be able to throw" {
-	Write-Error "test throw" -ErrorAction SilentlyContinue | Should Throw
+    	Write-Error "test throw" -ErrorAction SilentlyContinue | Should Throw
     }
 
     It "Should throw a non-terminating error" {
-	Write-Error "test throw" -ErrorAction SilentlyContinue
+        Write-Error "test throw" -ErrorAction SilentlyContinue
 
-	1 + 1 | Should Be 2
+        1 + 1 | Should Be 2
     }
 
     It "Should trip an exception using the exception switch" {
-	$var = 0
-	try
-	{
-	    Write-Error -Exception -Message "test throw"
-	}
-	catch [System.Exception]
-	{
+        $var = 0
+        try
+        {
+            Write-Error -Exception -Message "test throw"
+        }
+        catch [System.Exception]
+        {
 
-	    $var++
-	}
-	finally
-	{
-	    $var | Should Be 1
-	}
+            $var++
+        }
+        finally
+        {
+            $var | Should Be 1
+        }
     }
 
     It "Should output the error message to the `$error automatic variable" {
-	$theError = "Error: Too many input values."
-	write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
+        $theError = "Error: Too many input values."
+        write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
 
-	$error[0]| Should Be $theError
+        $error[0]| Should Be $theError
+    }
+
+    It "ErrorRecord should not be truncated" {
+        $longtext = "0123456789"
+        while ($longtext.Length -lt [console]::WindowWidth) {
+            $longtext += $longtext
+        }
+        pwsh -c Write-Error -Message $longtext 2>&1 > $testdrive\error.txt
+        $e = Get-Content -Path $testdrive\error.txt
+        $e.Count | Should BeExactly 4
+        $e[0] | Should Match $longtext
     }
 }

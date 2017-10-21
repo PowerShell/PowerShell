@@ -82,6 +82,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //Console.WriteLine("         1         2         3         4         5         6         7");
             //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
 
+            if (screenColumns == int.MaxValue)
+            {
+                screenColumns = System.Console.WindowWidth;
+            }
+
             if (leftMarginIndent < 0)
             {
                 leftMarginIndent = 0;

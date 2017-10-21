@@ -2222,7 +2222,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         private void WriteDebuggerMessage(string line)
         {
-            this.ui.WriteWrappedLine(this.ui.DebugForegroundColor, this.ui.DebugBackgroundColor, line);
+            this.ui.WriteLine(this.ui.DebugForegroundColor, this.ui.DebugBackgroundColor, line);
         }
 
         #endregion debugger

@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 ComplexWriter complexWriter = new ComplexWriter();
 
-                complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                complexWriter.Initialize(_lo, int.MaxValue);
                 complexWriter.WriteObject(cve.formatValueList);
 
                 return;
@@ -921,6 +921,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
+                if (columnsOnTheScreen == int.MaxValue)
+                {
+                    columnsOnTheScreen = Console.WindowWidth;
+                }
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)
