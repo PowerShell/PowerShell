@@ -1421,8 +1421,8 @@ namespace System.Management.Automation.Internal
         internal static bool TestStopComputer;
         internal static bool TestWaitStopComputer;
         internal static bool TestRenameComputer;
-        internal static int  TestStopComputerResults = 0;
-        internal static int  TestRenameComputerResults = 0;
+        internal static int  TestStopComputerResults;
+        internal static int  TestRenameComputerResults;
 
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation.Internal
         internal static bool DisableGACLoading;
 
         /// <summary>This member is used for internal test purposes.</summary>
-        public static void SetTestHook(string property, bool value)
+        public static void SetTestHook(string property, object value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             if (fieldInfo != null)
@@ -1440,14 +1440,5 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        /// <summary>This member is used for internal test purposes.</summary>
-        public static void SetTestHook(string property, int value)
-        {
-            var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
-            if (fieldInfo != null)
-            {
-                fieldInfo.SetValue(null, value);
-            }
-        }
     }
 }

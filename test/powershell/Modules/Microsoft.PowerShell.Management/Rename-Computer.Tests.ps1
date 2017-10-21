@@ -1,49 +1,32 @@
-# note these will manipulate private data in the PowerShell engine which will
-# enable us to not actually rename the system, but return right before we do
-$TesthooksType = [system.management.automation.internal.internaltesthooks]
-$TesthookName = "TestRenameComputer"
-$TesthookResultName = "TestRenameComputerResults"
+$RenameTesthook = "TestRenameComputer"
+$RenameResultName = "TestRenameComputerResults"
 $DefaultResultValue = 0
-function Set-HookResult([int]$result) {
-    ${TesthooksType}::SetTestHook($TesthookResultName, $result)
-}
-
-# protect the user from from stop their computer 
-function Test-TesthookIsSet() {
-    try {
-        return ${TesthooksType}.GetField($TesthookName, "NonPublic,Static").GetValue($null)
-    }
-    catch {
-        # fall through
-    }
-    return $false
-}
 
 try 
 {
     # set up for testing
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
-    ${TesthooksType}::SetTestHook($TesthookName,$true)
+    Enable-Testhook -testhookName $RenameTesthook
     # we also set TestStopComputer
-    ${TesthooksType}::SetTestHook("TestStopComputer", $true)
+    Enable-Testhook -testhookName TestStopComputer
 
     # TEST START HERE
     Describe "Rename-Computer" -Tag Feature {
         # if we throw in BeforeEach, the test will fail and the stop will not be called
         BeforeEach {
-            if ( ! (Test-TesthookIsSet) ) {
+            if ( ! (Test-TesthookIsSet -testhookName $RenameTesthook) ) {
                 throw "Testhook '${TesthookName}' is not set"
             }
         }
 
         AfterEach {
-            Set-HookResult -result $defaultResultValue
+            Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
         }
 
         It "Should rename the local computer" {
-            Set-HookResult -result $defaultResultValue
+            Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
-            $result = Rename-Computer -ea Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue
+            $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue
             $result.HasSucceeded | should be $true
             $result.NewComputerName | should be $newname
         }
@@ -52,16 +35,16 @@ try
         # when translated. We are guaranteed that the old computer name will
         # be present, so we'll look for that
         It "Should produce a reboot warning when renaming computer" {
-            Set-HookResult -result $defaultResultValue
+            Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
-            $result = Rename-Computer -ea Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar
+            $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar
             $WarnVar.Message | should match $result.OldComputerName
         }
 
         It "Should not produce a reboot warning when renaming a computer with the reboot flag" {
-            Set-HookResult -result $defaultResultValue
+            Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
-            $result = Rename-Computer -ea Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar -Restart
+            $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar -Restart
             $result.HasSucceeded | should be $true
             $result.NewComputerName | should be $newname
             $WarnVar | should BeNullOrEmpty
@@ -81,8 +64,8 @@ try
 
             It "Renaming '<OldName>' to '<NewName>' creates the right error" -testcase $testcases {
                 param ( $OldName, $NewName, $ExpectedError )
-                Set-HookResult -result 0x1
-                { Rename-Computer -ComputerName $OldName -NewName $NewName -ea Stop } | ShouldBeErrorId $ExpectedError
+                Set-TesthookResult -testhookName $RenameResultName -value 0x1
+                { Rename-Computer -ComputerName $OldName -NewName $NewName -ErrorAction Stop } | ShouldBeErrorId $ExpectedError
             }
         }
     }
@@ -91,7 +74,7 @@ try
 finally
 {
     $PSDefaultParameterValues.Remove("it:skip")
-    ${TesthooksType}::SetTestHook($TesthookName, $false)
-    ${TesthooksType}::SetTestHook("TestStopComputer", $false)
-    Set-HookResult -result 0
+    Disable-Testhook -testhookName $RenameTestHook
+    Disable-Testhook -testhookName TestStopComputer
+    Set-TesthookResult -testhookName $RenameResultName -value 0
 }
