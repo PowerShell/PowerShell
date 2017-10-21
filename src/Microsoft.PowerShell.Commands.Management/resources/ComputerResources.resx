@@ -357,18 +357,6 @@
   <data name="RestartComputerSkipped" xml:space="preserve">
     <value>The computer {0} is skipped. Fail to retrieve its LastBootUpTime via the WMI service with the following error message: {1}.</value>
   </data>
-  <data name="InvalidParameterForDCOM" xml:space="preserve">
-    <value>Parameter WsmanAuthentication should not be specified when the DCOM protocol is in use. {0}</value>
-  </data>
-  <data name="InvalidParameterForWSMan" xml:space="preserve">
-    <value>Parameters DcomAuthentication and Impersonation should not be specified when the WSMan protocol is in use. {0}</value>
-  </data>
-  <data name="ParameterConfliction" xml:space="preserve">
-    <value>Parameter WsmanAuthentication should not be specified with DcomAuthentication and Impersonation at the same time. {0}</value>
-  </data>
-  <data name="ParameterUsage" xml:space="preserve">
-    <value>Parameter WsmanAuthentication is valid only if the WSMan protocol is used. Parameters DcomAuthentication (Authentication) and Impersonation are valid only if the DCOM protocol is used.</value>
-  </data>
   <data name="FailToTestSecureChannel" xml:space="preserve">
     <value>Cannot verify the secure channel for the local computer. Operation failed with the following exception: {0}.</value>
   </data>
@@ -395,24 +383,6 @@
   </data>
   <data name="FailToRetrieveLastRestorePoint" xml:space="preserve">
     <value>Cannot validate the time interval for restore point creation. It failed to retrieve the last restore point with the following error message: {0}.</value>
-  </data>
-  <data name="RenameCommandWsmanAuthParamConflict" xml:space="preserve">
-    <value>Parameter WsmanAuthentication cannot be specified with the DCOM protocol. Parameter WSManAuthentication is valid only when the WSMan protocol is used.</value>
-  </data>
-  <data name="StopCommandAuthProtocolConflict" xml:space="preserve">
-    <value>Parameters DcomAuthentication and Impersonation cannot be specified with the WSMan protocol. {0}</value>
-  </data>
-  <data name="StopCommandParamMessage" xml:space="preserve">
-    <value>Parameter WsmanAuthentication is valid only when the WSMan protocol is used. Parameters DcomAuthentication and Impersonation are valid only when the DCOM protocol is used.</value>
-  </data>
-  <data name="StopCommandParamWSManAuthConflict" xml:space="preserve">
-    <value>Parameter WsmanAuthentication cannot be specified with DcomAuthentication or Impersonation parameters. {0}</value>
-  </data>
-  <data name="StopCommandWSManAuthProtocolConflict" xml:space="preserve">
-    <value>Parameter WsmanAuthentication cannot be specified with the DCOM protocol. {0}</value>
-  </data>
-  <data name="InvalidParameterDCOMNotSupported" xml:space="preserve">
-    <value>DcomAuthentication is not supported. Please use WsmanAuthentication instead.</value>
   </data>
   <data name="InvalidParameterSetAsJob" xml:space="preserve">
     <value>The AsJob Parameter Set is not supported.</value>
