@@ -686,11 +686,11 @@ The following chart shows the .NET Core 2.0 dependencies on different Linux dist
 
 | OS                 | Dependencies |
 | ------------------ | ------------ |
-| Ubuntu 14.04       | libc6, libcurl3, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
-| Ubuntu 16.04       | libc6, libcurl3, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu55 |
-| Ubuntu 17.04       | libc6, libcurl3, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu57 |
-| Debian-jessie (8)  | libc6, libcurl3, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
-| Debian-stretch (9) | libc6, libcurl3, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libunwind8, libuuid1, zlib1g, libssl1.0.2, libicu57 |
+| Ubuntu 14.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
+| Ubuntu 16.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu55 |
+| Ubuntu 17.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu57 |
+| Debian-jessie (8)  | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
+| Debian-stretch (9) | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.2, libicu57 |
 | CentOS 7 <br> Oracle Linux 7 <br> RHEL 7 <br> openSUSE 42.2 <br> Fedora 25 | libunwind, libcurl, openssl-libs, libicu |
 | Fedora 26          | libunwind, libcurl, openssl-libs, libicu, compat-openssl10 |
 
