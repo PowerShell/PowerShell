@@ -7,51 +7,49 @@ Describe "Range Operator" -Tags CI {
             $Range[1] | Should BeOfType [int]
             $Range[2] | Should BeOfType [int]
             $Range[3] | Should BeOfType [int]
+            
+            $Range[0] | Should Be 5
+            $Range[1] | Should Be 6
+            $Range[2] | Should Be 7
+            $Range[3] | Should Be 8
         }
 
         It "Range operator accepts negative integer values" {
-            {
-                -8..-5
-            } |Should Not Throw
-
             $Range = -8..-5            
             $Range.count | Should Be 4
-            $Range[0] |Should Be -8
-            $Range[1] |Should Be -7
-            $Range[2] |Should Be -6
-            $Range[3] |Should Be -5
+            $Range[0] | Should Be -8
+            $Range[1] | Should Be -7
+            $Range[2] | Should Be -6
+            $Range[3] | Should Be -5
         }
 
         It "Range operator support single-item sequences" {
-            {
-                0..0
-            } |Should Not Throw
-
             $Range = 0..0
             $Range.count | Should Be 1
             $Range[0] | Should BeOfType [int]
             $Range[0] | Should Be 0
         }
 
-        It "Range operator works in ascending and descending order" {
-            $Range = 3..4 
-            $Range.count | Should Be 2
-            $Range[0] | Should Be 3
-            $Range[1] | Should Be 4
-
+        It "Range operator works in descending order" {
             $Range = 4..3
             $Range.count | Should Be 2
             $Range[0] | Should Be 4
             $Range[1] | Should Be 3
         }
+
+        It "Range operator works for sequences of both negative and positive numbers" {
+            $Range = -2..2
+            $Range.count | Should Be 5
+            $Range[0] | Should Be -2
+            $Range[1] | Should Be -1
+            $Range[2] | Should Be 0
+            $Range[3] | Should Be 1
+            $Range[4] | Should Be 2
+        }
     }
 
     Context "Character expansion" {
-
         It "Range operator generates an array of [char] from single-character string operands" {
-            {
-                'A'..'E'
-            } | Should Not Throw
             $CharRange = 'A'..'E'
             $CharRange.count | Should Be 5
             $CharRange[0] | Should BeOfType [char]
@@ -74,62 +72,46 @@ Describe "Range Operator" -Tags CI {
         }
 
         It "Range operator works with 16-bit unicode characters" {
-            {
-                "$([char]0x0110)".."$([char]0x0114)"
-            } | Should Not Throw
-            $UnicodeRange = "$([char]0x0110)".."$([char]0x0114)"
+            $UnicodeRange = "`u{0110}".."`u{0114}"
             $UnicodeRange.count | Should Be 5
+            $UnicodeRange[0] | Should Be "`u{0110}"[0]
+            $UnicodeRange[1] | Should Be "`u{0111}"[0]
+            $UnicodeRange[2] | Should Be "`u{0112}"[0]
+            $UnicodeRange[3] | Should Be "`u{0113}"[0]
+            $UnicodeRange[4] | Should Be "`u{0114}"[0]
             $UnicodeRange.Where({$_ -is [char]}).count | Should Be 5
         }
     }
 
     Context "Range operator operand types" {
-
-        It "Range operator works on [int]" {
-            {
-                1..10
-            } | Should Not Throw
-
-            $Range = 1..10
-            $Range.count | Should Be 10
-            $Range.Where({$_ -is [int]}).count | Should Be 10
-        }
-
         It "Range operator works on [long]" {
-            {
-                ([long]1)..([long]10)
-            } | Should Not Throw
-            $Range = ([long]1)..([long]10)
-            $Range.count | Should Be 10
-            $Range.Where({$_ -is [int]}).count | Should Be 10
-        }
-        
-        It "Range operator works on [bigint]" {
-            {
-                ([bigint]1)..([bigint]10)
-            } | Should Not Throw
-            $Range = ([bigint]1)..([bigint]10)
-            $Range.count | Should Be 10
-            $Range.Where({$_ -is [int]}).count | Should Be 10
-        }
-
-        It "Range operator works on [decimal]" {
-            {
-                1.2d..2.9d
-            } | Should Not Throw
-            $Range = 1.1d..9.9d
-            $Range.count | Should Be 10
-            $Range.Where({$_ -is [int]}).count | Should Be 10
+            $Range = ([long]1)..([long]4)
+            $Range.count | Should Be 4
             $Range[0] | Should Be 1
             $Range[1] | Should Be 2
             $Range[2] | Should Be 3
             $Range[3] | Should Be 4
-            $Range[4] | Should Be 5
-            $Range[5] | Should Be 6
-            $Range[6] | Should Be 7
-            $Range[7] | Should Be 8
-            $Range[8] | Should Be 9
-            $Range[9] | Should Be 10
+            $Range.Where({$_ -is [int]}).count | Should Be 4
+        }
+        
+        It "Range operator works on [bigint]" {
+            $Range = ([bigint]1)..([bigint]4)
+            $Range.count | Should Be 4
+            $Range[0] | Should Be 1
+            $Range[1] | Should Be 2
+            $Range[2] | Should Be 3
+            $Range[3] | Should Be 4
+            $Range.Where({$_ -is [int]}).count | Should Be 4
+        }
+
+        It "Range operator works on [decimal]" {
+            $Range = 1.1d..3.9d
+            $Range.count | Should Be 4
+            $Range[0] | Should Be 1
+            $Range[1] | Should Be 2
+            $Range[2] | Should Be 3
+            $Range[3] | Should Be 4
+            $Range.Where({$_ -is [int]}).count | Should Be 4
         }
     }
 }
