@@ -691,7 +691,7 @@ The following chart shows the .NET Core 2.0 dependencies on different Linux dist
 | Ubuntu 17.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu57 |
 | Debian 8 (Jessie)  | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
 | Debian 9 (Stretch) | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.2, libicu57 |
-| CentOS 7 <br> Oracle Linux 7 <br> RHEL 7 <br> openSUSE 42.2 <br> Fedora 25 | libunwind, libcurl, openssl-libs, libicu |
+| CentOS 7 <br> Oracle Linux 7 <br> RHEL 7 <br> OpenSUSE 42.2 <br> Fedora 25 | libunwind, libcurl, openssl-libs, libicu |
 | Fedora 26          | libunwind, libcurl, openssl-libs, libicu, compat-openssl10 |
 
 In order to deploy PowerShell binaries on Linux distributions that are not officially supported,
