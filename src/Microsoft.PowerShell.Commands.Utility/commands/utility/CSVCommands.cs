@@ -67,22 +67,18 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// NoTypeInformation : should the #TYPE line be generated
+        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
         /// </summary>
         [Parameter]
+        [Alias("ITI")]
+        public SwitchParameter IncludeTypeInformation { get; set; }
+
+        /// <summary>
+        /// NoTypeInformation : The #TYPE line should not be generated. Default is true. Cannot specify with IncludeTypeInformation.
+        /// </summary>
+        [Parameter(DontShow = true)]
         [Alias("NTI")]
-        public SwitchParameter NoTypeInformation
-        {
-            get
-            {
-                return _noTypeInformation;
-            }
-            set
-            {
-                _noTypeInformation = value;
-            }
-        }
-        private bool _noTypeInformation;
+        public SwitchParameter NoTypeInformation { get; set; } = true;
 
         #endregion Command Line Parameters
 
@@ -100,6 +96,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(NoTypeInformation)))
+            {
+                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+            if (this.MyInvocation.BoundParameters.ContainsKey("IncludeTypeInformation"))
+            {
+                NoTypeInformation = !IncludeTypeInformation;
+            }
             _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
         }
     }
