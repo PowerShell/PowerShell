@@ -3446,8 +3446,8 @@ namespace System.Management.Automation.Language
                     bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(element);
                     elementExprs[i] =
                         Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateArgument,
-                                        Expression.Constant(element.Extent),
                                         Expression.Convert(GetCommandArgumentExpression(element), typeof(object)),
+                                        Expression.Constant(element),
                                         ExpressionCache.Constant(splatted),
                                         ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
                 }
@@ -3554,19 +3554,19 @@ namespace System.Management.Automation.Language
                                             errorPos.EndColumnNumber != arg.Extent.StartColumnNumber);
                 bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(arg);
                 return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterWithArgument,
-                                       Expression.Constant(errorPos),
+                                       Expression.Constant(commandParameterAst),
                                        Expression.Constant(commandParameterAst.ParameterName),
                                        Expression.Constant(errorPos.Text),
-                                       Expression.Constant(arg.Extent),
+                                       Expression.Constant(arg),
                                        Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
                                        ExpressionCache.Constant(spaceAfterParameter),
                                        ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
             }
 
             return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameter,
-                                   Expression.Constant(errorPos),
                                    Expression.Constant(commandParameterAst.ParameterName),
-                                   Expression.Constant(errorPos.Text));
+                                   Expression.Constant(errorPos.Text),
+                                   Expression.Constant(commandParameterAst));
         }
 
         internal static Expression ThrowRuntimeError(string errorID, string resourceString, params Expression[] exceptionArgs)

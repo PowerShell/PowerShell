@@ -134,7 +134,7 @@ namespace System.Management.Automation.Runspaces
 
             if (name == null)
             {
-                return CommandParameterInternal.CreateArgument(PositionUtilities.EmptyExtent, value);
+                return CommandParameterInternal.CreateArgument(value);
             }
 
             string parameterText;
@@ -142,8 +142,8 @@ namespace System.Management.Automation.Runspaces
             {
                 parameterText = forNativeCommand ? name : "-" + name;
                 return CommandParameterInternal.CreateParameterWithArgument(
-                    PositionUtilities.EmptyExtent, name, parameterText,
-                    PositionUtilities.EmptyExtent, value,
+                    /*parameterAst*/null, name, parameterText,
+                    /*argumentAst*/null, value,
                     true);
             }
 
@@ -177,14 +177,13 @@ namespace System.Management.Automation.Runspaces
             if (!hasColon && value == null)
             {
                 // just a name
-                return CommandParameterInternal.CreateParameter(
-                    PositionUtilities.EmptyExtent, parameterName, parameterText);
+                return CommandParameterInternal.CreateParameter(parameterName, parameterText);
             }
 
             // name+value pair
             return CommandParameterInternal.CreateParameterWithArgument(
-                PositionUtilities.EmptyExtent, parameterName, parameterText,
-                PositionUtilities.EmptyExtent, value,
+                /*parameterAst*/null, parameterName, parameterText,
+                /*argumentAst*/null, value,
                 spaceAfterParameter);
         }
 

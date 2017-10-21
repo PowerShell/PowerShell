@@ -450,8 +450,8 @@ namespace System.Management.Automation
 
                     CommandParameterInternal bindableArgument =
                         CommandParameterInternal.CreateParameterWithArgument(
-                           PositionUtilities.EmptyExtent, parameterName, "-" + parameterName + ":",
-                           PositionUtilities.EmptyExtent, argumentValue, false);
+                           /*parameterAst*/null, parameterName, "-" + parameterName + ":",
+                           /*argumentAst*/null, argumentValue, false);
 
                     bool bindResult =
                             BindParameter(
@@ -1678,12 +1678,10 @@ namespace System.Management.Automation
 
                         // If there are multiple arguments, it's not clear how best to represent the extent as the extent
                         // may be disjoint, as in 'echo a -verbose b', we have 'a' and 'b' in UnboundArguments.
-                        IScriptExtent argumentExtent = UnboundArguments.Count == 1
-                                                           ? UnboundArguments[0].ArgumentExtent
-                                                           : PositionUtilities.EmptyExtent;
+                        var argumentAst = UnboundArguments.Count == 1 ? UnboundArguments[0].ArgumentAst : null;
                         var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                            PositionUtilities.EmptyExtent, varargsParameter.Parameter.Name, "-" + varargsParameter.Parameter.Name + ":",
-                            argumentExtent, valueFromRemainingArguments, false);
+                            /*parameterAst*/null, varargsParameter.Parameter.Name, "-" + varargsParameter.Parameter.Name + ":",
+                            argumentAst, valueFromRemainingArguments, false);
 
                         // To make all of the following work similarly (the first is handled elsewhere, but second and third are
                         // handled here):
@@ -1693,7 +1691,7 @@ namespace System.Management.Automation
                         // we unwrap our List, but only if there is a single argument which is a collection.
                         if (valueFromRemainingArguments.Count == 1 && LanguagePrimitives.IsObjectEnumerable(valueFromRemainingArguments[0]))
                         {
-                            cpi.SetArgumentValue(UnboundArguments[0].ArgumentExtent, valueFromRemainingArguments[0]);
+                            cpi.SetArgumentValue(UnboundArguments[0].ArgumentAst, valueFromRemainingArguments[0]);
                         }
 
                         try
@@ -3036,8 +3034,8 @@ namespace System.Management.Automation
                         {
                             var argument =
                                 CommandParameterInternal.CreateParameterWithArgument(
-                                PositionUtilities.EmptyExtent, entry.Key, "-" + entry.Key + ":",
-                                PositionUtilities.EmptyExtent, entry.Value,
+                                /*parameterAst*/null, entry.Key, "-" + entry.Key + ":",
+                                /*argumentAst*/null, entry.Value,
                                 false);
 
                             // Ignore the result since any failure should cause an exception
@@ -3920,8 +3918,8 @@ namespace System.Management.Automation
 
                 // Create a new CommandParameterInternal for the output of the script block.
                 var newArgument = CommandParameterInternal.CreateParameterWithArgument(
-                    argument.ParameterExtent, argument.ParameterName, "-" + argument.ParameterName + ":",
-                    argument.ArgumentExtent, newValue,
+                    argument.ParameterAst, argument.ParameterName, "-" + argument.ParameterName + ":",
+                    argument.ArgumentAst, newValue,
                     false);
 
                 if (!BindParameter(newArgument, parameter, ParameterBindingFlags.ShouldCoerceType))
@@ -4284,8 +4282,8 @@ namespace System.Management.Automation
 
                 // Now bind the new value
                 CommandParameterInternal param = CommandParameterInternal.CreateParameterWithArgument(
-                    PositionUtilities.EmptyExtent, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
-                    PositionUtilities.EmptyExtent, parameterValue,
+                    /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
+                    /*argumentAst*/null, parameterValue,
                     false);
 
                 flags = flags & ~ParameterBindingFlags.DelayBindScriptBlock;
@@ -4306,8 +4304,8 @@ namespace System.Management.Automation
         {
             _defaultParameterValues.Add(name,
                 CommandParameterInternal.CreateParameterWithArgument(
-                    PositionUtilities.EmptyExtent, name, "-" + name + ":",
-                    PositionUtilities.EmptyExtent, value,
+                    /*parameterAst*/null, name, "-" + name + ":",
+                    /*argumentAst*/null, value,
                     false));
         }
 
@@ -4331,8 +4329,8 @@ namespace System.Management.Automation
                 _defaultParameterValues.Add(
                     parameter.Parameter.Name,
                     CommandParameterInternal.CreateParameterWithArgument(
-                        PositionUtilities.EmptyExtent, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
-                        PositionUtilities.EmptyExtent, defaultParameterValue,
+                        /*parameterAst*/null, parameter.Parameter.Name, "-" + parameter.Parameter.Name + ":",
+                        /*argumentAst*/null, defaultParameterValue,
                         false));
             }
         }
