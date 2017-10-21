@@ -62,8 +62,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             _commandParameterList.Add(
                 CommandParameterInternal.CreateParameterWithArgument(
-                    PositionUtilities.EmptyExtent, parameterName, null,
-                    PositionUtilities.EmptyExtent, parameterValue,
+                    /*parameterAst*/null, parameterName, null,
+                    /*argumentAst*/null, parameterValue,
                     false));
         }
 

@@ -162,7 +162,7 @@ namespace System.Management.Automation
 
                 if (cpi.ArgumentSplatted)
                 {
-                    foreach (var splattedCpi in Splat(cpi.ArgumentValue, cpi.ArgumentExtent))
+                    foreach (var splattedCpi in Splat(cpi.ArgumentValue, cpi.ArgumentAst))
                     {
                         commandProcessor.AddParameter(splattedCpi);
                     }
@@ -293,7 +293,7 @@ namespace System.Management.Automation
             return commandProcessor;
         }
 
-        internal static IEnumerable<CommandParameterInternal> Splat(object splattedValue, IScriptExtent splatExtent)
+        internal static IEnumerable<CommandParameterInternal> Splat(object splattedValue, Ast splatAst)
         {
             splattedValue = PSObject.Base(splattedValue);
             IDictionary splattedTable = splattedValue as IDictionary;
@@ -306,8 +306,8 @@ namespace System.Management.Automation
                     string parameterText = GetParameterText(parameterName);
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
-                        splatExtent, parameterName, parameterText,
-                        splatExtent, parameterValue, false);
+                        splatAst, parameterName, parameterText,
+                        splatAst, parameterValue, false);
                 }
             }
             else
@@ -317,17 +317,17 @@ namespace System.Management.Automation
                 {
                     foreach (object obj in enumerableValue)
                     {
-                        yield return SplatEnumerableElement(obj, splatExtent);
+                        yield return SplatEnumerableElement(obj, splatAst);
                     }
                 }
                 else
                 {
-                    yield return SplatEnumerableElement(splattedValue, splatExtent);
+                    yield return SplatEnumerableElement(splattedValue, splatAst);
                 }
             }
         }
 
-        private static CommandParameterInternal SplatEnumerableElement(object splattedArgument, IScriptExtent splatExtent)
+        private static CommandParameterInternal SplatEnumerableElement(object splattedArgument, Ast splatAst)
         {
             var psObject = splattedArgument as PSObject;
             if (psObject != null)
@@ -336,11 +336,11 @@ namespace System.Management.Automation
                 var baseObj = psObject.BaseObject;
                 if (prop != null && prop.Value is string && baseObj is string)
                 {
-                    return CommandParameterInternal.CreateParameter(splatExtent, (string)prop.Value, (string)baseObj);
+                    return CommandParameterInternal.CreateParameter((string)prop.Value, (string)baseObj, splatAst);
                 }
             }
 
-            return CommandParameterInternal.CreateArgument(splatExtent, splattedArgument);
+            return CommandParameterInternal.CreateArgument(splattedArgument, splatAst);
         }
 
         private static string GetParameterText(string parameterName)
@@ -519,8 +519,8 @@ namespace System.Management.Automation
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
                     commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
                 var parameter = CommandParameterInternal.CreateParameterWithArgument(
-                    pipelineAst.Extent, "ScriptBlock", null,
-                    pipelineAst.Extent, sb,
+                    /*parameterAst*/pipelineAst, "ScriptBlock", null,
+                    /*argumentAst*/pipelineAst, sb,
                     false);
                 commandProcessor.AddParameter(parameter);
                 pipelineProcessor.Add(commandProcessor);
@@ -646,7 +646,7 @@ namespace System.Management.Automation
                         var exprAst = (ExpressionAst)commandElement;
                         var argument = Compiler.GetExpressionValue(exprAst, isTrusted, context);
                         var splatting = (exprAst is VariableExpressionAst && ((VariableExpressionAst)exprAst).Splatted);
-                        commandParameters.Add(CommandParameterInternal.CreateArgument(exprAst.Extent, argument, splatting));
+                        commandParameters.Add(CommandParameterInternal.CreateArgument(argument, exprAst, splatting));
                     }
 
                     var redirections = new List<CommandRedirection>();
@@ -709,14 +709,14 @@ namespace System.Management.Automation
 
             if (argumentAst == null)
             {
-                return CommandParameterInternal.CreateParameter(errorPos, commandParameterAst.ParameterName, errorPos.Text);
+                return CommandParameterInternal.CreateParameter(commandParameterAst.ParameterName, errorPos.Text, commandParameterAst);
             }
 
             object argumentValue = Compiler.GetExpressionValue(argumentAst, isTrusted, context);
             bool spaceAfterParameter = (errorPos.EndLineNumber != argumentAst.Extent.StartLineNumber ||
                                         errorPos.EndColumnNumber != argumentAst.Extent.StartColumnNumber);
-            return CommandParameterInternal.CreateParameterWithArgument(errorPos, commandParameterAst.ParameterName,
-                                                                        errorPos.Text, argumentAst.Extent, argumentValue,
+            return CommandParameterInternal.CreateParameterWithArgument(commandParameterAst, commandParameterAst.ParameterName,
+                                                                        errorPos.Text, argumentAst, argumentValue,
                                                                         spaceAfterParameter);
         }
 
@@ -1115,16 +1115,16 @@ namespace System.Management.Automation
             // Unicode is still the default, but now may be overridden
 
             var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                PositionUtilities.EmptyExtent, "Filepath", "-Filepath:",
-                PositionUtilities.EmptyExtent, File,
+                /*parameterAst*/null, "Filepath", "-Filepath:",
+                /*argumentAst*/null, File,
                 false);
             commandProcessor.AddParameter(cpi);
 
             if (this.Appending)
             {
                 cpi = CommandParameterInternal.CreateParameterWithArgument(
-                    PositionUtilities.EmptyExtent, "Append", "-Append:",
-                    PositionUtilities.EmptyExtent, true,
+                    /*parameterAst*/null, "Append", "-Append:",
+                    /*argumentAst*/null, true,
                     false);
                 commandProcessor.AddParameter(cpi);
             }
