@@ -102,24 +102,13 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             }
         }
 
-        It "Verify Validate Dollar Error Populated should throw exception" {
-            $origEA = $ErrorActionPreference
-            $ErrorActionPreference = "Stop"
-            try
-            {
-                $a = 1,2,3
-                $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.ToString() | Should Match "wgwg-wrwrhqwrhrh35h3h3"
-                $_.FullyQualifiedErrorId | Should Be "CommandNotFoundException"
-            }
-            finally
-            {
-                $ErrorActionPreference = $origEA
-            }
+        It "Verify Validate Dollar Error Populated should be in stderr" {
+            $stderrFile = "$testdrive\stderr.txt"
+            & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3} 2> $stderrFile
+            $stderrFile | Should Exist
+            $stderr = Get-Content $stderrFile -Raw
+            $stderr | Should Match "wgwg-wrwrhqwrhrh35h3h3"
+            $stderr | Should Match "CommandNotFoundException"
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell should works" {
