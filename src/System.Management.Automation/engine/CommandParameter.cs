@@ -15,12 +15,14 @@ namespace System.Management.Automation
     {
         private class Parameter
         {
+            internal Ast ast;
             internal IScriptExtent extent;
             internal string parameterName;
             internal string parameterText;
         }
         private class Argument
         {
+            internal Ast ast;
             internal IScriptExtent extent;
             internal object value;
             internal bool splatted;
@@ -73,12 +75,21 @@ namespace System.Management.Automation
             get { return _parameter != null ? _parameter.extent : PositionUtilities.EmptyExtent; }
         }
 
+        internal Ast ParameterAst {
+            get { return _parameter != null ? _parameter.ast : null; }
+        }
+
         /// <summary>
         /// The extent of the optional argument, if one was specified.
         /// </summary>
         internal IScriptExtent ArgumentExtent
         {
             get { return _argument != null ? _argument.extent : PositionUtilities.EmptyExtent; }
+        }
+
+        internal Ast ArgumentAst
+        {
+            get { return _argument != null ? _argument.ast : null; }
         }
 
         /// <summary>
@@ -141,10 +152,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Create a parameter when no argument has been specified.
         /// </summary>
+        /// <param name="ast">The ast for this parameter</param>
         /// <param name="extent">The extent in script of the parameter.</param>
         /// <param name="parameterName">The parameter name (with no leading dash).</param>
         /// <param name="parameterText">The text of the parameter, as it did, or would, appear in script.</param>
-        internal static CommandParameterInternal CreateParameter(
+        internal static CommandParameterInternal CreateParameterWithAst(
+            Ast ast,
             IScriptExtent extent,
             string parameterName,
             string parameterText)
@@ -152,19 +165,43 @@ namespace System.Management.Automation
             Diagnostics.Assert(extent != null, "Caller to verify extent argument");
             return new CommandParameterInternal
             {
-                _parameter =
-                           new Parameter { extent = extent, parameterName = parameterName, parameterText = parameterText }
+                _parameter = new Parameter 
+                {
+                    ast = ast,
+                    extent = extent,
+                    parameterName = parameterName,
+                    parameterText = parameterText 
+                }
             };
+        }
+
+        internal static CommandParameterInternal CreateParameter(
+            IScriptExtent extent,
+            string parameterName,
+            string parameterText)
+        {
+            return CreateParameterWithAst(null, extent, parameterName, parameterText);
+        }
+
+        internal static CommandParameterInternal CreateParameterAstOnly(
+            Ast ast,
+            string parameterName,
+            string parameterText
+        )
+        {
+            return CreateParameterWithAst(ast, ast.Extent, parameterName, parameterText);
         }
 
         /// <summary>
         /// Create a positional argument to a command.
         /// </summary>
+        /// <param name="ast">The ast for this argument</param>
         /// <param name="extent">The extent of the argument value in the script.</param>
         /// <param name="value">The argument value.</param>
         /// <param name="splatted">True if the argument value is to be splatted, false otherwise.</param>
         /// <param name="arrayIsSingleArgumentForNativeCommand">If the command is native, pass the string with commas instead of multiple arguments</param>
-        internal static CommandParameterInternal CreateArgument(
+        internal static CommandParameterInternal CreateArgumentWithAst(
+            Ast ast,
             IScriptExtent extent,
             object value,
             bool splatted = false,
@@ -175,12 +212,31 @@ namespace System.Management.Automation
             {
                 _argument = new Argument
                 {
+                    ast = ast,
                     extent = extent,
                     value = value,
                     splatted = splatted,
                     arrayIsSingleArgumentForNativeCommand = arrayIsSingleArgumentForNativeCommand
                 }
             };
+        }
+
+        internal static CommandParameterInternal CreateArgument(
+            IScriptExtent extent,
+            object value,
+            bool splatted = false,
+            bool arrayIsSingleArgumentForNativeCommand = false)
+        {
+            return CreateArgumentWithAst(null, extent, value, splatted, arrayIsSingleArgumentForNativeCommand);
+        }
+
+        internal static CommandParameterInternal CreateArgumentAstOnly(
+            Ast ast,
+            object value,
+            bool splatted = false,
+            bool arrayIsSingleArgumentForNativeCommand = false)
+        {
+            return CreateArgumentWithAst(ast, ast.Extent, value, splatted, arrayIsSingleArgumentForNativeCommand);
         }
 
         /// <summary>
@@ -193,6 +249,7 @@ namespace System.Management.Automation
         ///     * In the parameter binder when it resolves a positional argument
         ///     * Other random places that manually construct command processors and know their arguments.
         /// </summary>
+        /// <param name="ast">The ast for this parameter/argument pair</param>
         /// <param name="parameterExtent">The extent in script of the parameter.</param>
         /// <param name="parameterName">The parameter name (with no leading dash).</param>
         /// <param name="parameterText">The text of the parameter, as it did, or would, appear in script.</param>
@@ -200,7 +257,8 @@ namespace System.Management.Automation
         /// <param name="value">The argument value.</param>
         /// <param name="spaceAfterParameter">Used in native commands to correctly handle -foo:bar vs. -foo: bar</param>
         /// <param name="arrayIsSingleArgumentForNativeCommand">If the command is native, pass the string with commas instead of multiple arguments</param>
-        internal static CommandParameterInternal CreateParameterWithArgument(
+        internal static CommandParameterInternal CreateParameterWithArgumentWithAst(
+            Ast ast,
             IScriptExtent parameterExtent,
             string parameterName,
             string parameterText,
@@ -213,13 +271,51 @@ namespace System.Management.Automation
             Diagnostics.Assert(argumentExtent != null, "Caller to verify argumentExtent argument");
             return new CommandParameterInternal
             {
-                _parameter = new Parameter { extent = parameterExtent, parameterName = parameterName, parameterText = parameterText },
-                _argument = new Argument { extent = argumentExtent, value = value, arrayIsSingleArgumentForNativeCommand = arrayIsSingleArgumentForNativeCommand },
+                _parameter = new Parameter
+                            {
+                                ast = ast,
+                                extent = parameterExtent,
+                                parameterName = parameterName,
+                                parameterText = parameterText
+                            },
+                _argument = new Argument 
+                            {
+                                ast = ast != null && ast is CommandParameterAst ? ((CommandParameterAst)ast).Argument : null,
+                                extent = argumentExtent,
+                                value = value,
+                                arrayIsSingleArgumentForNativeCommand = arrayIsSingleArgumentForNativeCommand
+                            },
                 _spaceAfterParameter = spaceAfterParameter
             };
         }
 
-        #endregion ctor
+        internal static CommandParameterInternal CreateParameterWithArgument(
+            IScriptExtent parameterExtent,
+            string parameterName,
+            string parameterText,
+            IScriptExtent argumentExtent,
+            object value,
+            bool spaceAfterParameter,
+            bool arrayIsSingleArgumentForNativeCommand = false)
+        {
+            return CreateParameterWithArgumentWithAst(null, parameterExtent, parameterName, parameterText, argumentExtent, value,
+                spaceAfterParameter, arrayIsSingleArgumentForNativeCommand);
+        }
+        
+        internal static CommandParameterInternal CreateParameterWithArgumentAstOnly(
+            Ast ast,
+            string parameterName,
+            string parameterText,
+            object value,
+            bool spaceAfterParameter,
+            bool arrayIsSingleArgumentForNativeCommand = false
+        )
+        {
+            var pAst = (CommandParameterAst) ast;
+            return CreateParameterWithArgumentWithAst(pAst, pAst.Extent, parameterName, parameterText, pAst.Argument.Extent, value,
+                spaceAfterParameter, arrayIsSingleArgumentForNativeCommand);
+        }
+        #endregion  ctor
 
         internal bool IsDashQuestion()
         {

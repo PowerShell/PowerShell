@@ -66,12 +66,12 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo CharOps_CompareStringIne =
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
 
-        internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
-            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
-        internal static readonly MethodInfo CommandParameterInternal_CreateParameter =
-            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameter), staticFlags);
-        internal static readonly MethodInfo CommandParameterInternal_CreateParameterWithArgument =
-            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameterWithArgument), staticFlags);
+        internal static readonly MethodInfo CommandParameterInternal_CreateArgumentAstOnly =
+            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgumentAstOnly), staticFlags);
+        internal static readonly MethodInfo CommandParameterInternal_CreateParameterAstOnly =
+            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameterAstOnly), staticFlags);
+        internal static readonly MethodInfo CommandParameterInternal_CreateParameterWithArgumentAstOnly =
+            typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateParameterWithArgumentAstOnly), staticFlags);
 
         internal static readonly MethodInfo CommandRedirection_UnbindForExpression =
             typeof(CommandRedirection).GetMethod(nameof(CommandRedirection.UnbindForExpression), instanceFlags);
@@ -3443,8 +3443,8 @@ namespace System.Management.Automation.Language
 
                     bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(element);
                     elementExprs[i] =
-                        Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateArgument,
-                                        Expression.Constant(element.Extent),
+                        Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateArgumentAstOnly,
+                                        Expression.Constant(element),
                                         Expression.Convert(GetCommandArgumentExpression(element), typeof(object)),
                                         ExpressionCache.Constant(splatted),
                                         ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
@@ -3551,18 +3551,17 @@ namespace System.Management.Automation.Language
                 bool spaceAfterParameter = (errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
                                             errorPos.EndColumnNumber != arg.Extent.StartColumnNumber);
                 bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(arg);
-                return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterWithArgument,
-                                       Expression.Constant(errorPos),
+                return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterWithArgumentAstOnly,
+                                       Expression.Constant(commandParameterAst),
                                        Expression.Constant(commandParameterAst.ParameterName),
                                        Expression.Constant(errorPos.Text),
-                                       Expression.Constant(arg.Extent),
                                        Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
                                        ExpressionCache.Constant(spaceAfterParameter),
                                        ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
             }
 
-            return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameter,
-                                   Expression.Constant(errorPos),
+            return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterAstOnly,
+                                   Expression.Constant(commandParameterAst),
                                    Expression.Constant(commandParameterAst.ParameterName),
                                    Expression.Constant(errorPos.Text));
         }

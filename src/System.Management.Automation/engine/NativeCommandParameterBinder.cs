@@ -105,9 +105,23 @@ namespace System.Management.Automation
                         //    windbg  -k com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect
                         // The parser produced an array of strings but marked the parameter so we
                         // can properly reconstruct the correct command line.
+                        bool bareWord = false;
+                        var pAst = parameter.ArgumentAst;
+                        if (pAst != null)
+                        {
+                            if (pAst is System.Management.Automation.Language.StringConstantExpressionAst sce)
+                            {
+                                bareWord = sce.StringConstantType == System.Management.Automation.Language.StringConstantType.BareWord;
+                            }
+                            else if (pAst is System.Management.Automation.Language.ExpandableStringExpressionAst ese)
+                            {
+                                bareWord = ese.StringConstantType == System.Management.Automation.Language.StringConstantType.BareWord;
+                            }
+                        }
                         appendOneNativeArgument(Context, argValue,
                             parameter.ArrayIsSingleArgumentForNativeCommand ? ',' : ' ',
-                            sawVerbatimArgumentMarker);
+                            sawVerbatimArgumentMarker,
+                            bareWord);
                     }
                 }
             }
@@ -141,7 +155,8 @@ namespace System.Management.Automation
         /// <param name="obj">The object to append</param>
         /// <param name="separator">A space or comma used when obj is enumerable</param>
         /// <param name="sawVerbatimArgumentMarker">true if the argument occurs after --%</param>
-        private void appendOneNativeArgument(ExecutionContext context, object obj, char separator, bool sawVerbatimArgumentMarker)
+        /// <param name="bareWord">True if the argument was a bare (unquoted) string</param>
+        private void appendOneNativeArgument(ExecutionContext context, object obj, char separator, bool sawVerbatimArgumentMarker, bool bareWord)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
             bool needSeparator = false;
@@ -210,7 +225,7 @@ namespace System.Management.Automation
 #if UNIX
                             // On UNIX systems, we expand arguments containing wildcard expressions against
                             // the file system just like bash, etc.
-                            if (System.Management.Automation.WildcardPattern.ContainsWildcardCharacters(arg))
+                            if (System.Management.Automation.WildcardPattern.ContainsWildcardCharacters(arg) && bareWord)
                             {
                                 // See if the current working directory is a filesystem provider location
                                 // We won't do the expansion if it isn't since native commands can only access the file system.
