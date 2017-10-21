@@ -4253,6 +4253,12 @@ param(
     [switch]
     ${ShowWindow})
 
+    # On non-Window systems always display the full help topic.
+    # On Windows, only display the full help topic if the user has specified a PAGER app.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full -and (!$IsWindows -or (Test-Path env:PAGER))) {
+        $PSBoundParameters['Full'] = $true
+    }
+
     #Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
     $outputEncoding=[System.Console]::OutputEncoding
 
