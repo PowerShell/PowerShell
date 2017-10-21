@@ -48,10 +48,10 @@ You can download and install a PowerShell package for any of the following platf
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
 
 | Platform     | Downloads                                       | How to Install                 |
-| ------------ | :---------------------------------------------: | :----------------------------: |
+| ------------ | ----------------------------------------------- | ------------------------------ |
 | Windows      | [32-bit][rl-winx86-zip]/[64-bit][rl-winx64-zip] | [Instructions][in-windows-zip] |
-| macOS        | [64-bit][rl-macos-tar]                          | [Instructions][in-macos-tar]   |
-| Linux        | [64-bit][rl-linux-tar]                          | [Instructions][in-linux-tar]   |
+| macOS        | [64-bit][rl-macos-tar]                          | [Instructions][in-tar]   |
+| Linux        | [64-bit][rl-linux-tar]                          | [Instructions][in-tar]   |
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x86.msi
@@ -85,9 +85,8 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-macos]: docs/installation/linux.md#macos-1012
 [in-docker]: docker
 [in-kali]: docs/installation/linux.md#kali
-[in-windows-zip]: TBD
-[in-macos-tar]: TBD
-[in-linux-tar]: TBD
+[in-windows-zip]: docs/installation/windows.md#zip
+[in-tar]: docs/installation/linux.md#binary-archives
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
