@@ -4,7 +4,7 @@ Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Ubuntu 17.04][u17], [Debian 
 [CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [OpenSUSE 42.2][opensuse], [Fedora 25][fed25],
 [Fedora 26][fed26], [Arch Linux][arch], and [macOS 10.12][mac].
 
-For Linux distributions that are not offically supported,
+For Linux distributions that are not officially supported,
 you can try using the [PowerShell AppImage][lai].
 You can also try deploying PowerShell binaries directly using the Linux [`tar.gz` archive][tar],
 but you would need to set up the necessary dependencies based on the OS in separate steps.
@@ -679,18 +679,18 @@ PowerShell binary `tar.gz` archives are provided for macOS and Linux platforms t
 ### Dependencies
 
 For Linux, PowerShell builds portable binaries for all Linux distributions.
-But .NET Core runtime requires different dependecies on different distributions,
+But .NET Core runtime requires different dependencies on different distributions,
 and hence PowerShell does the same.
 
-The following chart shows the .NET Core 2.0 dependencies on different Linux distributions that are offcially supported.
+The following chart shows the .NET Core 2.0 dependencies on different Linux distributions that are officially supported.
 
 | OS                 | Dependencies |
 | ------------------ | ------------ |
 | Ubuntu 14.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
 | Ubuntu 16.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu55 |
 | Ubuntu 17.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu57 |
-| Debian-jessie (8)  | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
-| Debian-stretch (9) | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.2, libicu57 |
+| Debian 8 (Jessie)  | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
+| Debian 9 (Stretch) | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.2, libicu57 |
 | CentOS 7 <br> Oracle Linux 7 <br> RHEL 7 <br> openSUSE 42.2 <br> Fedora 25 | libunwind, libcurl, openssl-libs, libicu |
 | Fedora 26          | libunwind, libcurl, openssl-libs, libicu, compat-openssl10 |
 
