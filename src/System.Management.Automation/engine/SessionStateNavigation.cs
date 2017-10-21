@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// If the provider threw an exception.
         /// </exception>
         ///
-        internal string GetParentPath(string path, int depth, string root)
+        internal string GetParentPath(string path, string root)
         {
             if (path == null)
             {
@@ -61,7 +61,7 @@ namespace System.Management.Automation
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
 
-            string result = GetParentPath(path,depth, root, context);
+            string result = GetParentPath(path, root, context);
 
             context.ThrowFirstErrorOrDoNothing();
 
@@ -107,11 +107,10 @@ namespace System.Management.Automation
         ///
         internal string GetParentPath(
             string path,
-            int depth,
             string root,
             CmdletProviderContext context)
         {
-            return GetParentPath(path, depth, root, context, false);
+            return GetParentPath(path, root, context, false);
         }
 
 
@@ -363,7 +362,6 @@ namespace System.Management.Automation
         ///
         internal string GetParentPath(
             ProviderInfo provider,
-            int depth,
             string path,
             string root,
             CmdletProviderContext context)
@@ -386,7 +384,7 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
             CmdletProvider providerInstance = GetProviderInstance(provider);
-            return GetParentPath(providerInstance,depth , path, root, context);
+            return GetParentPath(providerInstance, path, root, context);
         }
 
         /// <summary>
@@ -432,7 +430,6 @@ namespace System.Management.Automation
         ///
         internal string GetParentPath(
             CmdletProvider providerInstance,
-            int depth,
             string path,
             string root,
             CmdletProviderContext context)
@@ -462,7 +459,7 @@ namespace System.Management.Automation
 
             try
             {
-                result = navigationCmdletProvider.GetParentPath(path, depth, root, context);
+                result = navigationCmdletProvider.GetParentPath(path, root, context);
             }
             catch (LoopFlowException)
             {

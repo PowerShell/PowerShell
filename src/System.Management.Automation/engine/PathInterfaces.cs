@@ -1122,7 +1122,7 @@ namespace System.Management.Automation
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        public string ParseParent(string path, int depth, string root)
+        public string ParseParent(string path, string root)
         {
             Dbg.Diagnostics.Assert(
                 _sessionState != null,
@@ -1130,7 +1130,7 @@ namespace System.Management.Automation
 
             // Parameter validation is done in the session state object
 
-            return _sessionState.GetParentPath(path, depth, root);
+            return _sessionState.GetParentPath(path, root);
         } // GetParentPath
 
         /// <summary>
