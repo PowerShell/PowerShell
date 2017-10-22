@@ -43,6 +43,8 @@
             $errorRecord = $null
             $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
             $result | Should Not Be $null
+            $result.Count | Should Be 1
+            $result.$('') | Should Be 'Value'
         }
     }
 
@@ -58,6 +60,9 @@
             $errorRecord = $null
             $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonContainingKeysWithDifferentCasing, $true, [ref]$errorRecord)
             $result | Should Not Be $null
+            $result.Count | Should Be 2
+            $result.key1  | Should Be 'Value1'
+            $result.Key1  | Should Be 'Value2'
         }
     }
 }
