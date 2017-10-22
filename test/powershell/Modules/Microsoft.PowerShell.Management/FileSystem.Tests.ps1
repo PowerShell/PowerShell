@@ -949,6 +949,16 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $result = Get-Item -Path "TestDrive:\*" -filter "*2.txt"
             $result.Name | Should Be $testFile2
         }
+
+        It "Verify -LiteralPath with wildcard fails for file that doesn't exist" {
+            { Get-Item -LiteralPath "a*b.txt" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+
+        It "Verify -LiteralPath with wildcard succeeds for file" -Skip:($IsWindows) {
+            New-Item -Path "$testdrive\a*b.txt" -ItemType File > $null
+            $file = Get-Item -LiteralPath "$testdrive\a*b.txt"
+            $file.Name | Should BeExactly "a*b.txt"
+        }
     }
 
     Context "Valdiate Move-Item parameters" {
@@ -957,15 +967,15 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         BeforeEach {
-            New-Item -Path $testFile -ItemType File > $null
-            New-Item -Path $testFile2 -ItemType File > $null
+            New-Item -Path $testFile -ItemType File -Force > $null
+            New-Item -Path $testFile2 -ItemType File -Force > $null
         }
 
         AfterEach {
             Remove-Item -Path * -Recurse -Force -ErrorAction SilentlyContinue
         }
 
-        It "Verify WhatIf" -Skip:$true { #Skipped until issue #2385 gets resolved
+        It "Verify WhatIf" {
             Move-Item -Path $testFile -Destination $altTestFile -WhatIf
             try {
                 Get-Item -Path $altTestFile -ErrorAction Stop
@@ -974,15 +984,16 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
         }
 
-        It "Verify Include and Exclude Intersection" -Skip:$true { #Skipped until issue #2385 gets resolved
-            Move-Item -Path "TestDrive:\*" -Destination $altTestFile -Include "*.txt" -Exclude "*2*"
-            $file1 = Get-Item $testFile2 -ErrorAction SilentlyContinue
-            $file2 = Get-Item $altTestFile -ErrorAction SilentlyContinue
+        It "Verify Include and Exclude Intersection" {
+            New-Item -Path "TestDrive:\dest" -ItemType Directory
+            Move-Item -Path "TestDrive:\*" -Destination "TestDrive:\dest" -Include "*.txt" -Exclude "*2*"
+            $file1 = Get-Item "TestDrive:\dest\$testFile2" -ErrorAction SilentlyContinue
+            $file2 = Get-Item "TestDrive:\dest\$testFile" -ErrorAction SilentlyContinue
             $file1 | Should BeNullOrEmpty
-            $file2.Name | Should Be $altTestFile
+            $file2.Name | Should Be $testFile
         }
 
-        It "Verify Filter" -Skip:$true { #Skipped until issue #2385 gets resolved
+        It "Verify Filter" {
             Move-Item -Path "TestDrive:\*" -Filter "*2.txt" -Destination $altTestFile
             $file1 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file2 = Get-Item $altTestFile -ErrorAction SilentlyContinue
