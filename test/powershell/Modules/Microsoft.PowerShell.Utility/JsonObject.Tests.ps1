@@ -44,7 +44,7 @@
             $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
             $result | Should Not Be $null
             $result.Count | Should Be 1
-            $result.$('') | Should Be 'Value'
+            $result.'' | Should Be 'Value'
         }
     }
 
