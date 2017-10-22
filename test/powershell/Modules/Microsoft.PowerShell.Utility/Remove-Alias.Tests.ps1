@@ -30,6 +30,12 @@ Describe "Remove-Alias" -Tags "CI" {
         } | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand'
     }
 
+    It "Remove-Alias should throw if alias does not exist"{
+        {            
+            Remove-Alias -Name "foo" -ErrorAction Stop            
+        } | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.RemoveAliasCommand'
+    }
+
     It "Remove-Alias should throw on out-of-range scope"{
         {
             Set-Alias -Name "foo" -Value "bar"

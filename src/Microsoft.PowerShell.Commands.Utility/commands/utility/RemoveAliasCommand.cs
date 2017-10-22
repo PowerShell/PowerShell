@@ -14,25 +14,22 @@ namespace Microsoft.PowerShell.Commands
          #region Parameters
 
         /// <summary>
-        /// The Name parameter for the command.
-        /// </summary>
-        ///
+        /// The alias name to remove.
+        /// </summary>        
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string Name { get; set; }
         
         /// <summary>
         /// The scope parameter for the command determines
         /// which scope the alias is removed from.
-        /// </summary>
-        ///
+        /// </summary>        
         [Parameter]
         public string Scope { get; set; }
 
         /// <summary>
         /// If set to true and an existing alias of the same name exists
         /// and is ReadOnly, it will still be deleted.
-        /// </summary>
-        ///
+        /// </summary>        
         [Parameter]
         public SwitchParameter Force { get; set; }        
 
@@ -42,49 +39,27 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The main processing loop of the command.
-        /// </summary>
-        ///
+        /// </summary>        
         protected override void ProcessRecord()
         {
-            AliasInfo existingAlias = null;
-            try
-            {                
-                if (String.IsNullOrEmpty(Scope))
-                {
-                    existingAlias = SessionState.Internal.GetAlias(Name);
-                }
-                else
-                {
-                    existingAlias = SessionState.Internal.GetAliasAtScope(Name, Scope);
-                }
-            }
-            catch (SessionStateException sessionStateException)
+            AliasInfo existingAlias = null;           
+            if (String.IsNullOrEmpty(Scope))
             {
-                WriteError(
-                    new ErrorRecord(
-                        sessionStateException.ErrorRecord,
-                        sessionStateException));
-                return;
+                existingAlias = SessionState.Internal.GetAlias(Name);
             }
-            
+            else
+            {
+                existingAlias = SessionState.Internal.GetAliasAtScope(Name, Scope);
+            }
             if (existingAlias != null)
             {
-                try{
-                    SessionState.Internal.RemoveAlias(Name, Force);
-                }
-                catch (SessionStateException sessionStateException)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            sessionStateException.ErrorRecord,
-                            sessionStateException));
-                    return;
-                }
+                SessionState.Internal.RemoveAlias(Name, Force);
             }
             else
             {
                 ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", Name));
                 ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException",ErrorCategory.ObjectNotFound, Name);
+                WriteError(error);
             }
         }
         #endregion Command code

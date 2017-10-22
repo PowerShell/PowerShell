@@ -363,6 +363,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Register-ObjectEvent",                               ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Register-PSSessionConfiguration",                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Register-WmiEvent",                                  ,                     $($FullCLR                               )
+"Cmdlet", "Remove-Alias",                                       ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-Computer",                                    ,                     $($FullCLR                               )
 "Cmdlet", "Remove-Event",                                       ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-EventLog",                                    ,                     $($FullCLR                               )
