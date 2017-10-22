@@ -35,8 +35,70 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     It 'Globbing [cde]b?.* should return one file name "cbb.txt"' {
         /bin/ls $TESTDRIVE/[cde]b?.* | Should Match "cbb.txt"
     }
-    It 'Should return the original pattern if there are no matches' {
-        /bin/echo $TESTDRIVE/*.nosuchfile | Should Match "\*\.nosuchfile$"
+	# Test globbing with expressions
+	It 'Globbing should work with unquoted expressions' {
+	    $v = "$TESTDRIVE/abc*"
+		/bin/ls $v | Should Match "abc.txt"
+
+		$h = [pscustomobject]@{P=$v}
+		/bin/ls $h.P | Should Match "abc.txt"
+
+		$a = $v,$v
+		/bin/ls $a[1] | Should Match "abc.txt"
+	}
+	It 'Globbing should not happen with quoted expressions' {
+	    $v = "$TESTDRIVE/abc*"
+		/bin/echo "$v" | Should BeExactly $v
+		/bin/echo '$v' | Should BeExactly '$v'
+	}
+    It 'Should return the original pattern (<arg>) if there are no matches' -TestCases @(
+        @{arg = '/nOSuCH*file'},               # No matching file
+        @{arg = '/bin/nOSuCHdir/*'},           # Directory doesn't exist
+        @{arg = '-NosUch*fIle'},               # Parameter syntax but could be file
+        @{arg = '-nOsuCh*drive:nosUch*fIle'},  # Parameter w/ arg syntax, could specify drive
+        @{arg = '-nOs[u]ChdrIve:nosUch*fIle'}, # Parameter w/ arg syntax, could specify drive
+        @{arg = '-nOsuChdRive:nosUch*fIle'},   # Parameter w/ arg syntax, could specify drive
+        @{arg = '-nOsuChdRive: nosUch*fIle'},  # Parameter w/ arg syntax, could specify drive
+        @{arg = '/no[suchFilE'},               # Invalid wildcard (no closing ']')
+        @{arg = '[]'}                          # Invalid wildcard
+    ) {
+        param($arg)
+        /bin/echo $arg | Should BeExactly $arg
+    }
+    $quoteTests = @(
+        @{arg = '"*"'},
+        @{arg = "'*'"}
+    )
+    It 'Should not expand quoted strings: <arg>' -TestCases $quoteTests {
+        param($arg)
+        Invoke-Expression "/bin/echo $arg" | Should BeExactly '*'
+    }
+	# Splat tests are skipped because they should work, but don't.
+	# Supporting this scenario would require adding a NoteProperty
+	# to each quoted string argument - maybe not worth it, and maybe
+	# an argument for another way to suppress globbing.
+    It 'Should not expand quoted strings via splat array: <arg>' -TestCases $quoteTests -Skip {
+        param($arg)
+
+        function Invoke-Echo
+        {
+            /bin/echo @args
+        }
+        Invoke-Expression "Invoke-Echo $arg" | Should BeExactly '*'
+    }
+    It 'Should not expand quoted strings via splat hash: <arg>' -TestCases $quoteTests -Skip {
+        param($arg)
+
+        function Invoke-Echo($quotedArg)
+        {
+            /bin/echo @PSBoundParameters
+        }
+        Invoke-Expression "Invoke-Echo -quotedArg:$arg" | Should BeExactly "-quotedArg:*"
+
+        # When specifing a space after the parameter, the space is removed when splatting.
+        # This behavior is debatable, but it's worth adding this test anyway to detect
+        # a change in behavior.
+        Invoke-Expression "Invoke-Echo -quotedArg: $arg" | Should BeExactly "-quotedArg:*"
     }
     # Test the behavior in non-filesystem drives
     It 'Should not expand patterns on non-filesystem drives' {
@@ -56,4 +118,10 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     It '~/foo should be replaced by the <filesystem provider home directory>/foo' {
         /bin/echo ~/foo | Should BeExactly "$($executioncontext.SessionState.Provider.Get("FileSystem").Home)/foo"
     }
+	It '~ should not be replaced when quoted' {
+		/bin/echo '~' | Should BeExactly '~'
+		/bin/echo "~" | Should BeExactly '~'
+		/bin/echo '~/foo' | Should BeExactly '~/foo'
+		/bin/echo "~/foo" | Should BeExactly '~/foo'
+	}
 }
