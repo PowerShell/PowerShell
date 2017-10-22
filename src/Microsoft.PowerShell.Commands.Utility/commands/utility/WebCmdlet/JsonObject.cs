@@ -13,6 +13,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Reflection;
 
@@ -133,14 +134,30 @@ namespace Microsoft.PowerShell.Commands
                     return null;
                 }
 
+                // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
+                // does not throw when encountering duplicates and just uses the last entry.
+                if (result.Properties.Any(psPropertyInfo => psPropertyInfo.Name.Equals(entry.Key, StringComparison.InvariantCulture)))
+                {
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    error = new ErrorRecord(
+                        new InvalidOperationException(errorMsg),
+                        "DuplicateKeysInJsonString",
+                        ErrorCategory.InvalidOperation,
+                        null);
+                    return null;
+                }
+
+                // Compare case insensitive to tell the user to use the -AsHashTable option instead.
+                // This is because PSObject cannot have keys with different casing.
                 PSPropertyInfo property = result.Properties[entry.Key];
                 if (property != null)
                 {
                     string errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.DuplicateKeysInJsonString, property.Name, entry.Key);
+                                                    WebCmdletStrings.KeysWithDifferentCasingInJsonString, property.Name, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
-                        "DuplicateKeysInJsonString",
+                        "KeysWithDifferentCasingInJsonString",
                         ErrorCategory.InvalidOperation,
                         null);
                     return null;
@@ -228,10 +245,12 @@ namespace Microsoft.PowerShell.Commands
             Hashtable result = new Hashtable();
             foreach (var entry in entries)
             {
+                // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
+                // does not throw when encountering duplicates and just uses the last entry.
                 if (result.ContainsKey(entry.Key))
                 {
                     string errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key, entry.Key);
+                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
                         "DuplicateKeysInJsonString",

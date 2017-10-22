@@ -2,6 +2,7 @@
 
     BeforeAll {
         $jsonWithEmptyKey = '{"": "Value"}'
+        $jsonContainingKeysWithDifferentCasing = '{"key1": "Value1", "Key1": "Value2"}'
     }
 
     It 'No error for valid string ''<name>'' with -ReturnHashTable:$<ReturnHashTable>' -TestCase @(
@@ -30,16 +31,33 @@
         $errRecord = $null
         { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord) } | ShouldBeErrorId "ArgumentException"
     }
-    
-    It 'Throw InvalidOperationException when json contains empty key name' {
-        $errorRecord = $null
-        [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, [ref]$errorRecord)
-        $errorRecord.FullyQualifiedErrorId | Should Be 'EmptyKeyInJsonString'
+
+    Context 'Empty key name' {    
+        It 'Throw InvalidOperationException when json contains empty key name' {
+            $errorRecord = $null
+            [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, [ref]$errorRecord)
+            $errorRecord.FullyQualifiedErrorId | Should Be 'EmptyKeyInJsonString'
+        }
+
+        It 'Not throw when json contains empty key name when ReturnHashTable is true' {
+            $errorRecord = $null
+            $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
+            $result | Should Not Be $null
+        }
     }
 
-    It 'Not throw when json contains empty key na' {
-        $errorRecord = $null
-        $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
-        $result | Should Not Be $null
+    Context 'Keys with different casing ' {
+        
+        It 'Throw InvalidOperationException when json contains key with different casing' {
+            $errorRecord = $null
+            [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonContainingKeysWithDifferentCasing, [ref]$errorRecord)
+            $errorRecord.FullyQualifiedErrorId | Should Be 'KeysWithDifferentCasingInJsonString'
+        }
+
+        It 'Not throw when json contains key (same casing) when ReturnHashTable is true' {
+            $errorRecord = $null
+            $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonContainingKeysWithDifferentCasing, $true, [ref]$errorRecord)
+            $result | Should Not Be $null
+        }
     }
 }
