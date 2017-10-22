@@ -20,14 +20,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specify a different file extension other than the default one, which is '.tmp'. The period in this parameter is optional.
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter()]
         [ValidateNotNullOrEmpty]
         public string Extension { get; set; } = defaultExtension;
 
         /// <summary>
-        /// Returns a TemporaryFile.
+        /// Validate Extension.
         /// </summary>
-        protected override void EndProcessing()
+        protected override void BeginProcessing()
         {
             // Check for invalid characters in extension
             if (Extension.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
@@ -42,7 +42,13 @@ namespace Microsoft.PowerShell.Commands
                         Extension));
                 return;
             }
+        }
 
+        /// <summary>
+        /// Returns a TemporaryFile.
+        /// </summary>
+        protected override void EndProcessing()
+        {
             string temporaryFilePath = null;
             string tempPath = Path.GetTempPath();
 

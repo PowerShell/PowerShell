@@ -17,8 +17,10 @@
 
 Describe "NewTemporaryFile" -Tags "CI" {
 
-    $defaultExtension = '.tmp'
-
+    BeforeAll {
+        $defaultExtension = '.tmp'
+    }
+    
     AfterEach {
         if ($null -ne $script:tempFile)
         {
