@@ -84,7 +84,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (screenColumns == int.MaxValue)
             {
-                screenColumns = System.Console.WindowWidth;
+                try
+                {
+                    screenColumns = System.Console.WindowWidth;
+                }
+                catch
+                {
+                    screenColumns = 120;
+                }
             }
 
             if (leftMarginIndent < 0)

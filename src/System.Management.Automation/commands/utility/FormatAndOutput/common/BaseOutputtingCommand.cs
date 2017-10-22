@@ -923,7 +923,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
                 if (columnsOnTheScreen == int.MaxValue)
                 {
-                    columnsOnTheScreen = Console.WindowWidth;
+                    try
+                    {
+                        columnsOnTheScreen = Console.WindowWidth;
+                    }
+                    catch
+                    {
+                        columnsOnTheScreen = 120;
+                    }
                 }
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
