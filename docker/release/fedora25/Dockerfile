@@ -15,10 +15,10 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
       org.label-schema.vendor="PowerShell" \
       org.label-schema.version=${POWERSHELL_VERSION} \
       org.label-schema.schema-version="1.0" \
-      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" \
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} pwsh -c '$psversiontable'" \
       org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" \
-      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" \
-      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} pwsh -c Invoke-Pester" \
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} pwsh -c Get-Help"
 
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
@@ -40,4 +40,4 @@ RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.r
 RUN dnf install -y powershell
 
 # Use array to avoid Docker prepending /bin/sh -c
-CMD [ "powershell" ]
+CMD [ "pwsh" ]

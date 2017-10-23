@@ -25,10 +25,10 @@ LABEL maintainer="PowerShell Community <powershellteam@hotmail.com>" \
       org.label-schema.name="powershell" \
       org.label-schema.vendor="PowerShell" \
       org.label-schema.schema-version="1.0" \
-      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" \
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} pwsh -c '$psversiontable'" \
       org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" \
-      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" \
-      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} pwsh -c Invoke-Pester" \
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} pwsh -c Get-Help"
 
 COPY --from=build-env /build/powershell-bin/*.xz /powershell-package/
 RUN ls /powershell-package/*

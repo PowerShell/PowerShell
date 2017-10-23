@@ -24,7 +24,7 @@ then
     usage
 fi
 
-POWERSHELL_LINKFILE=/usr/bin/powershell
+POWERSHELL_LINKFILE=/usr/bin/pwsh
 
 # Download the powershell .tar.gz package
 curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v$POWERSHELL_VERSION/$POWERSHELL_PACKAGE
@@ -35,7 +35,7 @@ mkdir -p /opt/microsoft/powershell/$POWERSHELL_VERSION
 tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/$POWERSHELL_VERSION
 
 # Create the symbolic link that points to powershell
-ln -s /opt/microsoft/powershell/$POWERSHELL_VERSION/powershell $POWERSHELL_LINKFILE
+ln -s /opt/microsoft/powershell/$POWERSHELL_VERSION/pwsh $POWERSHELL_LINKFILE
 # Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
     echo $POWERSHELL_LINKFILE > /etc/shells ;
