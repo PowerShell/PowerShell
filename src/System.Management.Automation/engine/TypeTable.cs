@@ -4218,7 +4218,6 @@ namespace System.Management.Automation.Runspaces
 
             Update(errors, typeData, false);
             StandardMembersUpdated();
-
             // Throw exception if there are any errors
             FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingTypes", errors, RunspaceConfigurationCategory.Types);
         }
@@ -4245,7 +4244,6 @@ namespace System.Management.Automation.Runspaces
 
             Update(errors, typeData, true);
             StandardMembersUpdated();
-
             // Throw exception if there are any errors
             FormatAndTypeDataHelper.ThrowExceptionOnError("ErrorsUpdatingTypes", errors, RunspaceConfigurationCategory.Types);
         }

@@ -31,7 +31,6 @@ namespace System.Management.Automation.Runspaces.Internal
         // pool services on this queue.
         protected Queue<GetRunspaceAsyncResult> ultimateRequestQueue;
         protected RunspacePoolStateInfo stateInfo;
-        protected RunspaceConfiguration rsConfig;
         protected InitialSessionState _initialSessionState;
         protected PSHost host;
         protected Guid instanceId;
@@ -52,9 +51,6 @@ namespace System.Management.Automation.Runspaces.Internal
         /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/>
         /// and <paramref name="maxRunspaces"/>
         /// </summary>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration to use when creating a new Runspace.
-        /// </param>
         /// <param name="maxRunspaces">
         /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
@@ -76,25 +72,19 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </exception>
         public RunspacePoolInternal(int minRunspaces,
                 int maxRunspaces,
-                RunspaceConfiguration runspaceConfiguration,
                 PSHost host)
             : this(minRunspaces, maxRunspaces)
         {
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-
             if (host == null)
             {
                 throw PSTraceSource.NewArgumentNullException("host");
             }
 
-            rsConfig = runspaceConfiguration;
             this.host = host;
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
+            _initialSessionState = InitialSessionState.CreateDefault();
         }
 
         /// <summary>
@@ -261,18 +251,6 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         private PSPrimitiveDictionary _applicationPrivateData;
-
-        /// <summary>
-        /// Gets the RunspaceConfiguration object that this pool uses
-        /// to create the runspaces.
-        /// </summary>
-        public RunspaceConfiguration RunspaceConfiguration
-        {
-            get
-            {
-                return rsConfig;
-            }
-        }
 
         /// <summary>
         /// Gets the InitialSessionState object that this pool uses
@@ -1272,21 +1250,10 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </remarks>
         protected Runspace CreateRunspace()
         {
+            Dbg.Assert(null != _initialSessionState, "_initialSessionState should not be null");
             // TODO: exceptions thrown here need to be documented
             // runspace.Open() did not document all the exceptions.
-            Runspace result = null;
-
-            // if host is null we are already throwing an
-            // exception, hence a check is not required at this
-            // point
-            if (rsConfig != null)
-            {
-                result = RunspaceFactory.CreateRunspace(host, rsConfig);
-            }
-            else
-            {
-                result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
-            }
+            Runspace result = RunspaceFactory.CreateRunspaceFromSessionStateNoClone(host, _initialSessionState);
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
 #if !CORECLR // No ApartmentState In CoreCLR

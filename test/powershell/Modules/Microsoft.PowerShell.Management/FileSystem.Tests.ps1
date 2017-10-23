@@ -240,7 +240,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
     Context "Validate behavior when access is denied" {
         BeforeAll {
-            $powershell = Join-Path $PSHOME "powershell"
+            $powershell = Join-Path $PSHOME "pwsh"
             if ($IsWindows)
             {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"

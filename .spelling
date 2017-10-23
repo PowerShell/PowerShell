@@ -147,6 +147,7 @@ psobjects
 psproxyjobs
 PSReadline
 PSSessionConfiguration
+pwsh
 redistributables
 Register-EngineEvent
 Register-PSSessionConfiguration
@@ -484,6 +485,15 @@ src
 #region docs/building/macos.md Overrides
  - docs/building/macos.md
 preview3
+#endregion
+
+#region docs/cmdlet-example/command-line-simple-example.md Overrides
+- docs/cmdlet-example/command-line-simple-example.md
+aka
+classlib
+dotnet
+netstandard.dll
+wsl
 #endregion
 
 #region docs/community/governance.md Overrides
@@ -1189,4 +1199,9 @@ Start-CodeCoverageRun
 tests.zip
 v5.0
 v6.0.
+#endregion
+
+#region test/tools/WebListener/README.md Overrides
+ - test/tools/WebListener/README.md
+ResponseHeaders
 #endregion

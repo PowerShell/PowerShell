@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     ///
-    /// implementation of RawConsole for powershell.exe
+    /// implementation of RawConsole for powershell
     ///
     /// </summary>
 

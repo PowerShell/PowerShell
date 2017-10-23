@@ -103,7 +103,7 @@ using System.Management.Automation;           // Windows PowerShell namespace.
 
 namespace ModuleCmdlets
 {
-  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]   
+  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
   public class TestBinaryModuleCmdlet1Command : Cmdlet
   {
     protected override void BeginProcessing()
@@ -115,7 +115,7 @@ namespace ModuleCmdlets
 "@
 
     Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
-    $results = powershell -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
+    $results = pwsh -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
 
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
@@ -124,3 +124,41 @@ namespace ModuleCmdlets
     }
  }
 
+Describe "Import-Module should be case insensitive" -Tags 'CI' {
+    BeforeAll {
+        $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
+        $originalPSModulePath = $env:PSModulePath.Clone()
+        $modulesPath = "$TestDrive\Modules"
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesPath
+        $PSModuleAutoloadingPreference = "none"
+    }
+
+    AfterAll {
+        $global:PSModuleAutoloadingPreference = $defaultPSModuleAutoloadingPreference
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    AfterEach {
+        Remove-Item -Recurse -Path $modulesPath -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Import-Module can import a module using different casing using '<modulePath>' and manifest:<manifest>" -TestCases @(
+        @{modulePath="TESTMODULE/1.1"; manifest=$true},
+        @{modulePath="TESTMODULE"    ; manifest=$true},
+        @{modulePath="TESTMODULE"    ; manifest=$false}
+        ) {
+        param ($modulePath, $manifest)
+        New-Item -ItemType Directory -Path "$modulesPath/$modulePath" -Force > $null
+        if ($manifest) {
+            New-ModuleManifest -Path "$modulesPath/$modulePath/TESTMODULE.psd1" -RootModule "TESTMODULE.psm1" -ModuleVersion 1.1
+        }
+        Set-Content -Path "$modulesPath/$modulePath/TESTMODULE.psm1" -Value "function mytest { 'hello' }"
+        Import-Module testMODULE
+        $m = Get-Module TESTmodule
+        $m | Should BeOfType "System.Management.Automation.PSModuleInfo"
+        $m.Name | Should Be "TESTMODULE"
+        mytest | Should BeExactly "hello"
+        Remove-Module TestModule
+        Get-Module tESTmODULE | Should BeNullOrEmpty
+    }
+}

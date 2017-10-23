@@ -238,7 +238,7 @@ try
     }
 
     # grab the commitID, we need this to grab the right sources
-    $gitCommitId = & "$psBinPath\powershell.exe" -noprofile -command { $PSVersiontable.GitCommitId }
+    $gitCommitId = & "$psBinPath\pwsh.exe" -noprofile -command { $PSVersiontable.GitCommitId }
     $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
 
     # download the src directory

@@ -379,28 +379,6 @@ namespace System.Management.Automation
                     RunspaceInit.PSHOMEDescription);
 
             this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
-
-            // $Console - set the console file for this shell, if there is one, "" otherwise...
-            SetConsoleVariable();
-        }
-
-        /// <summary>
-        /// Set the $Console variable in this session state instance...
-        /// </summary>
-        internal void SetConsoleVariable()
-        {
-            // $Console - set the console file for this shell, if there is one, "" otherwise...
-            string consoleFileName = string.Empty;
-            RunspaceConfigForSingleShell rcss = ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
-            if (rcss != null && rcss.ConsoleInfo != null && !string.IsNullOrEmpty(rcss.ConsoleInfo.Filename))
-            {
-                consoleFileName = rcss.ConsoleInfo.Filename;
-            }
-            PSVariable v = new PSVariable(SpecialVariables.ConsoleFileName,
-                    consoleFileName,
-                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope,
-                    RunspaceInit.ConsoleDescription);
-            this.GlobalScope.SetVariable(v.Name, v, false, true, this, CommandOrigin.Internal, fastPath: true);
         }
 
         /// <summary>
@@ -500,13 +478,7 @@ namespace System.Management.Automation
 
                 CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
 
-                Collection<string> keys = new Collection<string>();
-                foreach (string key in Providers.Keys)
-                {
-                    keys.Add(key);
-                }
-
-                foreach (string providerName in keys)
+                foreach (string providerName in Providers.Keys)
                 {
                     // All errors are ignored.
 

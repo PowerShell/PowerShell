@@ -2033,11 +2033,11 @@ namespace System.Management.Automation.Runspaces
             }
 #endif
 
-            // Create client ssh process that hosts powershell.exe as a subsystem and is configured
+            // Create client ssh process that hosts powershell as a subsystem and is configured
             // to be in server mode for PSRP over SSHD:
-            //   powershell -Version 5.1 -sshs -NoLogo -NoProfile
+            //   powershell -sshs -NoLogo -NoProfile
             //   See sshd_configuration file, subsystems section and it will have this entry:
-            //     Subsystem       powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Version 5.1 -sshs -NoLogo -NoProfile
+            //     Subsystem       powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -sshs -NoLogo -NoProfile
             string arguments;
             if (!string.IsNullOrEmpty(this.KeyFilePath))
             {
@@ -3164,6 +3164,8 @@ namespace System.Management.Automation.Runspaces
                     //
                     // Hyper-V container (i.e., RuntimeId is not empty) uses Hyper-V socket transport.
                     // Windows Server container (i.e., RuntimeId is empty) uses named pipe transport for now.
+                    // This code executes `powershell.exe` as it exists in the container which currently is
+                    // expected to be Windows PowerShell as it's inbox in the container.
                     //
                     cmd = string.Format(System.Globalization.CultureInfo.InvariantCulture,
                         @"{{""CommandLine"": ""powershell.exe {0} -NoLogo {1}"",""RestrictedToken"": {2}}}",

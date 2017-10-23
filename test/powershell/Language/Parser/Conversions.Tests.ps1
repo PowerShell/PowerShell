@@ -114,7 +114,7 @@ namespace TestTypeResolution {
         Add-Type $cmdletCode -OutputAssembly $cmdletDllPath
         Add-Type $dupTypeCode -OutputAssembly $dupTypeDllPath
 
-        $powershell = Join-Path $PSHOME "powershell"
+        $powershell = Join-Path $PSHOME "pwsh"
     }
 
     It "validate Type resolution should prefer the assembly loaded by Import-Module" {

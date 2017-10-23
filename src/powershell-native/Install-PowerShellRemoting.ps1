@@ -116,7 +116,7 @@ if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity
 if ($PsCmdlet.ParameterSetName -eq "ByPath")
 {
     $targetPsHome = $PowerShellHome
-    $targetPsVersion = & "$targetPsHome\powershell" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+    $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
 }
 else
 {

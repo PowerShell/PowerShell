@@ -437,7 +437,7 @@ function New-UnixPackage {
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
         if ($pscmdlet.ShouldProcess("Create staging folder")) {
-            New-StagingFolder -StagingPath $Staging -Name $Name
+            New-StagingFolder -StagingPath $Staging
         }
 
         # Follow the Filesystem Hierarchy Standard for Linux and macOS
@@ -456,7 +456,7 @@ function New-UnixPackage {
 
         if($pscmdlet.ShouldProcess("Create package file system"))
         {
-            New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
+            New-Item -Force -ItemType SymbolicLink -Path "/tmp/pwsh" -Target "$Destination/pwsh" >$null
 
             if ($Environment.IsRedHatFamily) {
                 # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
@@ -468,14 +468,14 @@ function New-UnixPackage {
 
                 $AfterInstallScript = [io.path]::GetTempFileName()
                 $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.RedHatAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.RedHatAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+                $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
             }
             elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
                 $AfterInstallScript = [io.path]::GetTempFileName()
                 $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.UbuntuAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+                $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
             }
 
 
@@ -483,7 +483,7 @@ function New-UnixPackage {
             # if the target of the powershell symlink exists, `fpm` aborts
             # with a `utime` error on macOS.
             # so we move it to make symlink broken
-            $symlink_dest = "$Destination/$Name"
+            $symlink_dest = "$Destination/pwsh"
             $hack_dest = "./_fpm_symlink_hack_powershell"
             if ($Environment.IsMacOS) {
                 if (Test-Path $symlink_dest) {
@@ -493,22 +493,16 @@ function New-UnixPackage {
             }
 
             # run ronn to convert man page to roff
-            $RonnFile = Join-Path $PSScriptRoot "/../../assets/powershell.1.ronn"
+            $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
             $RoffFile = $RonnFile -replace "\.ronn$"
 
             # Run ronn on assets file
             # Run does not play well with files named powershell6.0.1, so we generate and then rename
             Start-NativeExecution { ronn --roff $RonnFile }
 
-            # Setup for side-by-side man pages (noop if primary package)
-            $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
-            if ($Name -ne "powershell") {
-                Move-Item $RoffFile $FixedRoffFile
-            }
-
             # gzip in assets directory
-            $GzipFile = "$FixedRoffFile.gz"
-            Start-NativeExecution { gzip -f $FixedRoffFile }
+            $GzipFile = "$RoffFile.gz"
+            Start-NativeExecution { gzip -f $RoffFile }
 
             $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
@@ -517,7 +511,7 @@ function New-UnixPackage {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $GzipFile
-                chmod 755 "$Staging/$Name" # only the executable should be executable
+                chmod 755 "$Staging/pwsh" # only the executable should be executable
             }
         }
 
@@ -576,16 +570,58 @@ function New-UnixPackage {
             $Arguments += @("--depends", $Dependency)
         }
         if ($AfterInstallScript) {
-        $Arguments += @("--after-install", $AfterInstallScript)
+            $Arguments += @("--after-install", $AfterInstallScript)
         }
         if ($AfterRemoveScript) {
-        $Arguments += @("--after-remove", $AfterRemoveScript)
+            $Arguments += @("--after-remove", $AfterRemoveScript)
         }
         $Arguments += @(
             "$Staging/=$Destination/",
             "$GzipFile=$ManFile",
-            "/tmp/$Name=$Link"
+            "/tmp/pwsh=$Link"
         )
+
+        # Add macOS powershell launcher
+        if($Type -eq "osxpkg")
+        {
+            if($pscmdlet.ShouldProcess("Add macOS launch application")) {
+                # Define folder for launch application.
+                $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+
+                # Update icns file.
+                $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+                $iconfilebase = (Get-Item -Path $iconfile).BaseName
+                # Create Resources folder, ignore error if exists.
+                New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+                Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
+
+                # Set values in plist.
+                $plist = "$macosapp/Contents/Info.plist"
+                Start-NativeExecution {
+                    defaults write $plist CFBundleIdentifier $Name
+                    defaults write $plist CFBundleVersion $Version
+                    defaults write $plist CFBundleShortVersionString $Version
+                    defaults write $plist CFBundleGetInfoString $Version
+                    defaults write $plist CFBundleIconFile $iconfilebase
+                }
+
+                # Convert to XML plist, needed because defaults native
+                # app auto converts it to binary format when it modify
+                # the plist file.
+                Start-NativeExecution {
+                    plutil -convert xml1 $plist
+                }
+                # Set permissions.
+                Start-NativeExecution {
+                    find $macosapp | xargs chmod 755
+                }
+
+                # Add app folder to fpm paths.
+                $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
+                $Arguments += "$appsfolder=/"
+            }
+        }
+
         # Build package
         try {
             if($pscmdlet.ShouldProcess("Create $type package")) {
@@ -600,11 +636,12 @@ function New-UnixPackage {
                 }
             }
             if ($AfterInstallScript) {
-            Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
             }
             if ($AfterRemoveScript) {
-            Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
             }
+            Remove-Item -Path $GzipFile -Force -ErrorAction SilentlyContinue
         }
 
         # Magic to get path output
@@ -639,32 +676,11 @@ function New-StagingFolder
     param(
         [Parameter(Mandatory)]
         [string]
-        $StagingPath,
-
-        # Must start with 'powershell' but may have any suffix
-        [Parameter(Mandatory)]
-        [ValidatePattern("^powershell")]
-        [string]
-        $Name
+        $StagingPath
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
     Copy-Item -Recurse $PackageSourcePath $StagingPath
-
-    # Rename files to given name if not "powershell"
-    if ($Name -ne "powershell") {
-        $Files = @("powershell",
-                "powershell.dll",
-                "powershell.deps.json",
-                "powershell.pdb",
-                "powershell.runtimeconfig.json",
-                "powershell.xml")
-
-        foreach ($File in $Files) {
-            $NewName = $File -replace "^powershell", $Name
-            Move-Item "$StagingPath/$File" "$StagingPath/$NewName"
-        }
-    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -790,7 +806,7 @@ function New-NugetPackage
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
     if ($pscmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $contentFolder -Name $Name
+        New-StagingFolder -StagingPath $contentFolder
     }
 
     $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'

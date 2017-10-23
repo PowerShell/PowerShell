@@ -1,9 +1,9 @@
-powershell(1) -- command-line shell and .NET REPL
+pwsh(1) -- PowerShell command-line shell and .NET REPL
 =================================================
 
 ## SYNOPSIS
 
-`powershell` [`-NoLogo`] [`-NoExit`] [`-NoProfile`] [`-NonInteractive`]
+`pwsh` [`-NoLogo`] [`-NoExit`] [`-NoProfile`] [`-NonInteractive`]
 [`-InputFormat` {Text | XML}] [`-OutputFormat` {Text | XML}]
 [`-EncodedCommand` <Base64EncodedCommand>]
 [`-File` <filePath> <args>] [`-ExecutionPolicy` <ExecutionPolicy>]

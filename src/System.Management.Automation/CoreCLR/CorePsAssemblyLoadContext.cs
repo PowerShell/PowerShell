@@ -503,7 +503,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// This method is to be used by native host whose TPA list doesn't include PS assemblies, such as the
-        /// in-box Nano powershell.exe, the PS remote WinRM plugin, in-box Nano DSC and in-box Nano SCOM agent.
+        /// in-box Nano powershell, the PS remote WinRM plugin, in-box Nano DSC and in-box Nano SCOM agent.
         /// </remarks>
         /// <param name="basePaths">
         /// Base directory paths that are separated by semicolon ';'.

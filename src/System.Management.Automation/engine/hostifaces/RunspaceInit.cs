@@ -31,24 +31,6 @@ namespace System.Management.Automation.Runspaces
 
             // Add the variables that must always be there...
             ss.InitializeFixedVariables();
-
-            // If this is being built from a runspace configuration, then
-            // add all of the default entries. When initializing from an InitialSessionState
-            // object, it will contain the defaults if so desired.
-            if (this.RunspaceConfiguration != null)
-            {
-                bool addSetStrictMode = true;
-                foreach (RunspaceConfigurationEntry entry in this.RunspaceConfiguration.Cmdlets)
-                {
-                    if (entry.Name.Equals("Set-StrictMode", StringComparison.OrdinalIgnoreCase))
-                    {
-                        addSetStrictMode = false;
-                        break;
-                    }
-                }
-                // Add all of the built-in variable, function and alias definitions...
-                ss.AddBuiltInEntries(addSetStrictMode);
-            }
         }
     }
 }

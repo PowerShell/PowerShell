@@ -302,7 +302,7 @@
             $test2File = Join-Path -Path $tempDir -ChildPath "test2.ps1"
 
             $expected = "[$tempDir]"
-            $psPath = "$PSHOME\powershell"
+            $psPath = "$PSHOME\pwsh"
 
             $null = New-Item -Path $tempDir -ItemType Directory -Force
             Set-Content -Path $test1File -Value $test1 -Force
@@ -416,6 +416,26 @@
 
         It "Binds properly when passing multiple arguments to a cmdlet" {
             $result = Test-BindingCmdlet 1 2 3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when collections of type other than object[] are used on an advanced function" {
+            $list = [Collections.Generic.List[int]](1..3)
+            $result = Test-BindingFunction $list
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when collections of type other than object[] are used on a cmdlet" {
+            $list = [Collections.Generic.List[int]](1..3)
+            $result = Test-BindingCmdlet $list
 
             $result.ArgumentCount | Should Be 3
             $result.Value[0] | Should Be 1

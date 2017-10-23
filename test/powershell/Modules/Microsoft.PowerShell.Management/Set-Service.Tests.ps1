@@ -126,7 +126,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $creds = [pscredential]::new(".\$startUsername", $password)
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe";
+                BinaryPathName = "$PSHOME\pwsh.exe";
                 StartupType    = "Manual";
                 Credential     = $creds
             }
@@ -156,7 +156,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         try {
             $parameters = @{
                 Name           = $name;
-                BinaryPathName = "$PSHOME\powershell.exe";
+                BinaryPathName = "$PSHOME\pwsh.exe";
                 StartupType    = $startupType;
             }
             if ($description) {
@@ -200,7 +200,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $servicename = "testremoveservice"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -218,7 +218,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $servicename = "testremoveservice"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -241,7 +241,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $newdisplayname = "newdisplayname"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -260,7 +260,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             $newdisplayname = "newdisplayname"
             $parameters = @{
                 Name           = $servicename;
-                BinaryPathName = "$PSHOME\powershell.exe"
+                BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
             $service | Should Not BeNullOrEmpty
@@ -290,7 +290,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         param($cmdlet, $name, $parameter, $value, $errorid)
         $parameters = @{$parameter = $value; Name = $name; ErrorAction = "Stop"}
         if ($cmdlet -eq "New-Service") {
-            $parameters += @{Binary = "$PSHOME\powershell.exe"};
+            $parameters += @{Binary = "$PSHOME\pwsh.exe"};
         }
         { & $cmdlet @parameters } | ShouldBeErrorId $errorid
     }
