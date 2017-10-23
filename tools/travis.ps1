@@ -15,6 +15,7 @@ function Send-DailyWebHook
     # Varible should be set in Travis-CI.org settings
     if ($env:WebHookUrl)
     {
+        log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
         
         $Body = @{
@@ -230,6 +231,17 @@ else
         $result = "FAIL"
     }
 
+    try {
+        Start-PSxUnit        
+    }
+    catch {
+        $result = "FAIL"
+        if (!$resultError)
+        {
+            $resultError = $_
+        }
+    }
+
     if (-not $isPr) {
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
@@ -266,7 +278,7 @@ else
                     write-warning "Could not retrieve $result badge"
                 }
                 else {
-                    Write-Verbose -verbose "Setting status badge to '$result'"
+                    log "Setting status badge to '$result'"
                     Set-DailyBuildBadge -content $svgData
                 }
             }
@@ -286,6 +298,4 @@ else
     if ( $result -eq "FAIL" ) {
         Throw $resultError
     }
-
-    Start-PSxUnit
 }
