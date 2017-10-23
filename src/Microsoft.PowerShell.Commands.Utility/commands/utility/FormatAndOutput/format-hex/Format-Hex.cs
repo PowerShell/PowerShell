@@ -47,7 +47,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "ByInputObject")]
         [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompleter(typeof(EncodingArgumentCompleter))]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
         [ValidateNotNullOrEmpty]
         public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 

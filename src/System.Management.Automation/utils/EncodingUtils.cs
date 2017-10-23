@@ -94,12 +94,7 @@ namespace System.Management.Automation
         {
             string encodingName = inputData as String;
             Encoding foundEncoding;
-
-            if ( inputData is Encoding )
-            {
-                return inputData;
-            }
-            if (EncodingConversion.encodingMap.TryGetValue(encodingName, out foundEncoding))
+            if (encodingName != null && EncodingConversion.encodingMap.TryGetValue(encodingName, out foundEncoding))
             {
                 return foundEncoding;
             }
@@ -108,32 +103,4 @@ namespace System.Management.Automation
 
     }
 
-    internal class EncodingArgumentCompleter : IArgumentCompleter
-    {
-        /// <summary>
-        /// This allows us to actually complete the string with tab complete.
-        /// </summary>
-        public IEnumerable<CompletionResult> CompleteArgument(
-            string commandName,
-            string parameterName,
-            string wordToComplete,
-            System.Management.Automation.Language.CommandAst commandAst,
-            System.Collections.IDictionary fakeBoundParameters)
-        {
-            List<CompletionResult> encodings = new List<CompletionResult>();
-            WildcardPattern wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
-            foreach(string encoding in EncodingConversion.TabCompletionResults)
-            {
-                if (string.IsNullOrEmpty(wordToComplete))
-                {
-                    encodings.Add(new CompletionResult(encoding, encoding, CompletionResultType.Text, encoding));
-                }
-                else if (encoding.IndexOf(wordToComplete, StringComparison.InvariantCultureIgnoreCase) == 0 || wildcardPattern.IsMatch(encoding))
-                {
-                    encodings.Add(new CompletionResult(encoding, encoding, CompletionResultType.Text, encoding));
-                }
-            }
-            return encodings;
-        }
-    }
 }
