@@ -28,5 +28,5 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
 FunctionsToExport= "ConvertFrom-SddlString"
 AliasesToExport= "CFS", "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855960'
 }
