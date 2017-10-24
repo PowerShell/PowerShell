@@ -427,7 +427,7 @@ mv opt/microsoft/powershell/*/* usr/bin/
 
 cat > $APP.desktop <<\EOF
 [Desktop Entry]
-Name=PowerShell
+Name=powershell
 Comment=Microsoft PowerShell
 Exec=pwsh
 Keywords=shell;prompt;command;commandline;cmd;
@@ -472,6 +472,6 @@ cd ..
 wget -c https://psgithub.blob.core.windows.net/files/appimagetool-x86_64.AppImage
 chmod a+x appimagetool-x86_64.AppImage
 ./appimagetool-x86_64.AppImage ./powershell.AppDir
-cp ./PowerShell*AppImage ..
+cp ./powershell*AppImage ..
 
 cd ..
