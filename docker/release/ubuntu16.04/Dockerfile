@@ -2,7 +2,7 @@
 
 FROM ubuntu:xenial
 
-ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_VERSION=6.0.0-beta.9
 ARG IMAGE_NAME=microsoft/powershell:ubuntu16.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -39,7 +39,7 @@ RUN locale-gen $LANG && update-locale
 
 # Import the public repository GPG keys for Microsoft
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-	
+
 # Register the Microsoft Ubuntu 16.04 repository
 RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
 

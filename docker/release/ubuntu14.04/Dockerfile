@@ -2,7 +2,7 @@
 
 FROM ubuntu:trusty
 
-ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_VERSION=6.0.0-beta.9
 ARG IMAGE_NAME=microsoft/powershell:ubuntu14.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -33,12 +33,12 @@ RUN apt-get update \
         apt-utils \
         ca-certificates \
         curl \
-        apt-transport-https \	
+        apt-transport-https \
     && rm -rf /var/lib/apt/lists/*
 
 # Import the public repository GPG keys for Microsoft
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-	
+
 # Register the Microsoft Ubuntu 14.04 repository
 RUN curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
 

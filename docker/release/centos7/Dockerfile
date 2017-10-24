@@ -2,7 +2,7 @@
 
 FROM centos:7
 
-ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_VERSION=6.0.0-beta.9
 ARG IMAGE_NAME=microsoft/powershell:centos7
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -29,7 +29,7 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install dependencies and clean up
-RUN yum install -y \       
+RUN yum install -y \
         curl \
     && yum clean all
 

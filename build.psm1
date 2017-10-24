@@ -372,7 +372,7 @@ function Start-PSBuild {
     }
 
     function Stop-DevPowerShell {
-        Get-Process powershell* |
+        Get-Process pwsh* |
             Where-Object {
                 $_.Modules |
                 Where-Object {
@@ -1597,7 +1597,7 @@ function Start-DevPowerShell {
 
         # splatting for the win
         $startProcessArgs = @{
-            FilePath = "$binDir\powershell"
+            FilePath = "$binDir\pwsh"
             ArgumentList = "$ArgumentList"
         }
 
