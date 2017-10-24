@@ -343,7 +343,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("time",
                 TableControl.Create()
                     .AddHeader(Alignment.Right, width: 4)
-                    .AddHeader(Alignment.Right, width: 13, label: "ExecutionTime")
+                    .AddHeader(Alignment.Right, width: 13, label: "Duration")
                     .AddHeader()
                     .StartRowDefinition()
                         .AddPropertyColumn("Id")

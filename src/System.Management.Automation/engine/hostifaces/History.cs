@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The time it took to execute the associeated pipeline
         /// </summary>
-        public TimeSpan ExecutionTime => EndExecutionTime - StartExecutionTime;
+        public TimeSpan Duration => EndExecutionTime - StartExecutionTime;
 
         /// <summary>
         /// Override for ToString() method
@@ -158,16 +158,16 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         public string GetExecutionTimeString()
         {
-            var executionTime = ExecutionTime;
-            if (executionTime.Days > 0)
+            var duration = Duration;
+            if (duration.Days > 0)
             {
-                return $@"{executionTime:d\.hh\:mm\:ss}";
+                return $@"{duration:d\.hh\:mm\:ss}";
             }
-            if (executionTime.Hours > 1)
+            if (duration.Hours > 1)
             { 
-                return $@"{executionTime:hh\:mm\:ss}";
+                return $@"{duration:hh\:mm\:ss}";
             }
-            return $@"{executionTime:mm\:ss\.fff}";
+            return $@"{duration:mm\:ss\.fff}";
         }
 
         /// <summary>
