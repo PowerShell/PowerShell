@@ -70,8 +70,8 @@ Describe "Get-Content" -Tags "CI" {
         Pop-Location
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
-    It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
-        {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+    It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
+        {Get-Content -Path HKLM:\\software\\microsoft -EA stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
     It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
         {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
@@ -99,53 +99,52 @@ baz
 "@
         $expected = 'foo'
         $tailCount = 3
-        [Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding] $encoding = $EncodingName
 
         $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
-        $content | Set-Content -Path $testPath -Encoding $encoding
+        $content | Set-Content -Path $testPath -Encoding $encodingName
         $expected = 'foo'
 
-        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encoding
+        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encodingName
         $actual.GetType() | Should Be "System.Object[]"
         $actual.Length | Should Be $tailCount
         $actual[0] | Should Be $expected
     }
     It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
-        set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
-        $result=get-content -path $testPath -readcount:-1 -tail 5
+        Set-Content -Path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+        $result=Get-Content -Path $testPath -Readcount:-1 -Tail 5
         $result.Length | Should Be 4
         $expected = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -readcount 0 -tail 3
+        $result=Get-Content -Path $testPath -Readcount 0 -Tail 3
         $result.Length    | Should Be 3
         $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -readcount 1 -tail 3
+        $result=Get-Content -Path $testPath -Readcount 1 -Tail 3
         $result.Length    | Should Be 3
         $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -readcount 99999 -tail 3
+        $result=Get-Content -Path $testPath -Readcount 99999 -Tail 3
         $result.Length    | Should Be 3
         $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -readcount 2 -tail 3
+        $result=Get-Content -Path $testPath -Readcount 2 -Tail 3
         $result.Length    | Should Be 2
         $expected = "Hello2,World2","Hello3,World3"
         $expected = $expected,"Hello4,World4"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -readcount 2 -tail 2
+        $result=Get-Content -Path $testPath -Readcount 2 -Tail 2
         $result.Length    | Should Be 2
         $expected = "Hello3,World3","Hello4,World4"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -delimiter "," -tail 2
+        $result=Get-Content -Path $testPath -Delimiter "," -Tail 2
         $result.Length    | Should Be 2
         $expected = "World3${nl}Hello4", "World4${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -delimiter "o" -tail 3
+        $result=Get-Content -Path $testPath -Delimiter "o" -Tail 3
         $result.Length    | Should Be 3
         $expected = "rld3${nl}Hell", '4,W', "rld4${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=get-content -path $testPath -encoding:Byte -tail 10
+        $result=Get-Content -Path $testPath -AsByteStream -Tail 10
         $result.Length    | Should Be 10
         if ($IsWindows) {
             $expected =      52, 44, 87, 111, 114, 108, 100, 52, 13, 10
@@ -155,9 +154,9 @@ baz
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
-    It "should get-content that matches the input string"{
-        set-content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
-        $result=get-content $testPath -delimiter "ll"
+    It "should Get-Content that matches the input string"{
+        Set-Content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
+        $result=Get-Content $testPath -Delimiter "ll"
         $result.Length    | Should Be 9
         $expected = 'He', 'o,', '', 'Wor', "d${nl}He", 'o2,', '', 'Wor', "d2${nl}"
         for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]    | Should BeExactly $expected[$i]}
@@ -170,7 +169,7 @@ baz
         Get-Content $testPath | Should BeExactly $testString
     }
 
-    It "Should support NTFS streams using -stream" -Skip:(!$IsWindows) {
+    It "Should support NTFS streams using -Stream" -Skip:(!$IsWindows) {
         Set-Content -Path $testPath -Stream hello -Value World
         Get-Content -Path $testPath | Should Be $testString
         Get-Content -Path $testPath -Stream hello | Should Be "World"
@@ -190,12 +189,12 @@ baz
     }
 
     It "-Stream is not a valid parameter for <cmdlet> on Linux/Mac" -Skip:($IsWindows) -TestCases @(
-        @{cmdlet="get-content"},
-        @{cmdlet="set-content"},
-        @{cmdlet="clear-content"},
-        @{cmdlet="add-content"},
-        @{cmdlet="get-item"},
-        @{cmdlet="remove-item"}
+        @{cmdlet="Get-Content"},
+        @{cmdlet="Set-Content"},
+        @{cmdlet="Clear-Content"},
+        @{cmdlet="Add-Content"},
+        @{cmdlet="Get-Item"},
+        @{cmdlet="Remove-Item"}
     ) {
         param($cmdlet)
         (Get-Command $cmdlet).Parameters["stream"] | Should BeNullOrEmpty
@@ -237,7 +236,7 @@ baz
             $fileContent = $firstLine,$secondLine,$thirdLine,$fourthLine
         }
         BeforeEach{
-            Set-content -Path $testPath $fileContent
+            Set-Content -Path $testPath $fileContent
         }
         It "Should return all lines when -Tail value is more than number of lines in the file"{
             $result = Get-Content -Path $testPath -ReadCount -1 -Tail 5 -Encoding UTF7
@@ -283,6 +282,10 @@ baz
             $expected[1] = $thirdLine
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
         }
+        It "A warning should be emitted if both -AsByteStream and -Encoding are used together" {
+            [byte[]][char[]]"test" | Set-Content -Encoding Unicode -AsByteStream "${TESTDRIVE}\bfile.txt" -WarningVariable contentWarning *>$null
+            $contentWarning.Message | Should Match "-AsByteStream"
+        }
     }
 }
 
@@ -295,7 +298,7 @@ Describe "Get-Content -Raw test" -Tags "CI" {
       @{character = "a`r`nb"; testname = "CRLF-separated files without trailing newline"; filename = "crlf-nt.txt"}        
     ) {
         param ($character, $filename)
-        Set-Content -Encoding Ascii -NoNewline "$TestDrive\$filename" -value $character
+        Set-Content -Encoding Ascii -NoNewline "$TestDrive\$filename" -Value $character
         Get-Content -Raw "$TestDrive\$filename" | Should BeExactly $character
     }
 }

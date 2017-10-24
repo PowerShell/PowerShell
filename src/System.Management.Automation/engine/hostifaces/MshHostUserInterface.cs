@@ -1068,14 +1068,8 @@ namespace System.Management.Automation.Host
             set
             {
                 _path = value;
-
-                Encoding = Encoding.UTF8;
-                FileSystemCmdletProviderEncoding fileEncoding = Utils.GetEncoding(value);
-
-                if (fileEncoding != FileSystemCmdletProviderEncoding.Default)
-                {
-                    Encoding = Utils.GetEncodingFromEnum(fileEncoding);
-                }
+                // Get the encoding from the file, or default (UTF8-NoBom)
+                Encoding = Utils.GetEncoding(value);
             }
         }
         private string _path;

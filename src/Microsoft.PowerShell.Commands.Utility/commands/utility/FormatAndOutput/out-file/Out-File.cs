@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
@@ -72,25 +73,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Position = 1)]
-        [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] {
-            EncodingConversion.Unknown,
-            EncodingConversion.String,
-            EncodingConversion.Unicode,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf32,
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
             EncodingConversion.Ascii,
-            EncodingConversion.Default,
-            EncodingConversion.OEM })]
-        public string Encoding
-        {
-            get { return _encoding; }
-            set { _encoding = value; }
-        }
-
-        private string _encoding;
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -196,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     FilePath,
-                    _encoding,
+                    Encoding,
                     false, // defaultEncoding
                     Append,
                     Force,

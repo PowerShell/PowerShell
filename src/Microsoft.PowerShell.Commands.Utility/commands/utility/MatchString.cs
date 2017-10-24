@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Collections;
@@ -1201,19 +1202,20 @@ namespace Microsoft.PowerShell.Commands
         /// The text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] {
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
             EncodingConversion.Unicode,
             EncodingConversion.Utf7,
             EncodingConversion.Utf8,
-            EncodingConversion.Utf32,
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Default,
-            EncodingConversion.OEM })]
-        public string Encoding { get; set; }
-
-        private System.Text.Encoding _textEncoding;
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// The number of context lines to collect. If set to a
@@ -1282,16 +1284,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Process encoding switch.
-            if (Encoding != null)
-            {
-                _textEncoding = EncodingConversion.Convert(this, Encoding);
-            }
-            else
-            {
-                _textEncoding = new System.Text.UTF8Encoding();
-            }
-
             if (!_simpleMatch)
             {
                 RegexOptions regexOptions = (_caseSensitive) ? RegexOptions.None : RegexOptions.IgnoreCase;
@@ -1434,7 +1426,7 @@ namespace Microsoft.PowerShell.Commands
 
                 using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (StreamReader sr = new StreamReader(fs, _textEncoding))
+                    using (StreamReader sr = new StreamReader(fs, Encoding))
                     {
                         String line;
                         int lineNo = 0;

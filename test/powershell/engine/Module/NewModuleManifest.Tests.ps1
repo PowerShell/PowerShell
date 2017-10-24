@@ -34,7 +34,7 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     function TestNewModuleManifestEncoding {
         param ([byte[]]$expected)
         New-ModuleManifest -Path $testModulePath
-        (Get-Content -Encoding Byte -Path $testModulePath -TotalCount $expected.Length) -join ',' | Should Be ($expected -join ',')
+        (Get-Content -AsByteStream -Path $testModulePath -TotalCount $expected.Length) -join ',' | Should Be ($expected -join ',')
     }
 
     It "Verify module manifest encoding" {
