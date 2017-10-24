@@ -101,11 +101,6 @@ namespace System.Management.Automation
 
         internal static object[] Range(int lower, int upper)
         {
-            if (lower == upper)
-            {
-                return new object[] { lower };
-            }
-
             int absRange = Math.Abs(checked(upper - lower));
 
             object[] ra = new object[absRange + 1];
@@ -868,11 +863,6 @@ namespace System.Management.Automation
         {
             int lower = (int)start;
             int upper = (int)end;
-
-            if (lower == upper)
-            {
-                return new object[] { lower };
-            }
 
             int absRange = Math.Abs(checked(upper - lower));
 
