@@ -553,14 +553,14 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 ## Linux AppImage
 
 Using a recent Linux distribution,
-download the AppImage `PowerShell-6.0.0-beta.8-x86_64.AppImage`
+download the AppImage `powershell-6.0.0-beta.8-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
 ```bash
-chmod a+x PowerShell-6.0.0-beta.8-x86_64.AppImage
-./PowerShell-6.0.0-beta.8-x86_64.AppImage
+chmod a+x powershell-6.0.0-beta.8-x86_64.AppImage
+./powershell-6.0.0-beta.8-x86_64.AppImage
 ```
 
 The [AppImage][] lets you run PowerShell without installing it.
@@ -705,13 +705,13 @@ powershell
 
 ```sh
 # Grab the latest App Image
-wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-x86_64.AppImage
+wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0-beta.8-x86_64.AppImage
 
 # Make executable
-chmod a+x PowerShell-6.0.0-beta.8-x86_64.AppImage
+chmod a+x powershell-6.0.0-beta.8-x86_64.AppImage
 
 # Start PowerShell
-./PowerShell-6.0.0-beta.8-x86_64.AppImage
+./powershell-6.0.0-beta.8-x86_64.AppImage
 ```
 
 ### Uninstallation - Kali

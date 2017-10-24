@@ -140,7 +140,7 @@ function Start-PSPackage {
         # If building a symbols package, don't include the publish build.
         if ($IncludeSymbols.IsPresent)
         {
-            $buildSource = Split-Path -Path $Source -Parent           
+            $buildSource = Split-Path -Path $Source -Parent
             $Source = New-TempFolder
             Get-ChildItem -Path $buildSource | Where-Object {$_.Name -ine 'Publish'} | Copy-Item -Destination $Source -Recurse
         }
@@ -217,7 +217,7 @@ function Start-PSPackage {
 
                 if ($Environment.IsUbuntu14) {
                     $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
-                    $appImage = Get-Item PowerShell-*.AppImage
+                    $appImage = Get-Item powershell-*.AppImage
                     if ($appImage.Count -gt 1) {
                         throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
                     }
