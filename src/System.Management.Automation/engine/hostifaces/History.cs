@@ -85,6 +85,11 @@ namespace Microsoft.PowerShell.Commands
         public DateTime EndExecutionTime { get; private set; }
 
         /// <summary>
+        /// The time it took to execute the associeated pipeline
+        /// </summary>
+        public TimeSpan ExecutionTime => EndExecutionTime - StartExecutionTime;
+
+        /// <summary>
         /// Override for ToString() method
         /// </summary>
         /// <returns></returns>
