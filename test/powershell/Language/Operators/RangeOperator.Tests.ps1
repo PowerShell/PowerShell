@@ -84,26 +84,6 @@ Describe "Range Operator" -Tags CI {
     }
 
     Context "Range operator operand types" {
-        It "Range operator works on [long]" {
-            $Range = ([long]1)..([long]4)
-            $Range.count | Should Be 4
-            $Range[0] | Should Be 1
-            $Range[1] | Should Be 2
-            $Range[2] | Should Be 3
-            $Range[3] | Should Be 4
-            $Range.Where({$_ -is [int]}).count | Should Be 4
-        }
-        
-        It "Range operator works on [bigint]" {
-            $Range = ([bigint]1)..([bigint]4)
-            $Range.count | Should Be 4
-            $Range[0] | Should Be 1
-            $Range[1] | Should Be 2
-            $Range[2] | Should Be 3
-            $Range[3] | Should Be 4
-            $Range.Where({$_ -is [int]}).count | Should Be 4
-        }
-
         It "Range operator works on [decimal]" {
             $Range = 1.1d..3.9d
             $Range.count | Should Be 4
