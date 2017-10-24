@@ -1032,6 +1032,7 @@ namespace System.Management.Automation
 
             if (outputValue.Stream == MinishellStream.Error)
             {
+                // write stderr as string instead of as ErrorRecord
                 this.commandRuntime._WriteErrorSkipAllowCheck(outputValue.Data);
             }
             else if (outputValue.Stream == MinishellStream.Output)

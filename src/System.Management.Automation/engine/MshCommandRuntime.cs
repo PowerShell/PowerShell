@@ -2579,6 +2579,13 @@ namespace System.Management.Automation
             this.OutputPipe.Add(sendToPipeline);
         }
 
+        // Use this variant to write stderr as string and skip the ThrowIfWriteNotPermitted check
+        /// <exception cref="System.Management.Automation.PipelineStoppedException">
+        /// The pipeline has already been terminated, or was terminated
+        /// during the execution of this method.
+        /// The Cmdlet should generally just allow PipelineStoppedException
+        /// to percolate up to the caller of ProcessRecord etc.
+        /// </exception>
         internal void _WriteErrorSkipAllowCheck(object sendToPipeline)
         {
             ThrowIfStopping();
