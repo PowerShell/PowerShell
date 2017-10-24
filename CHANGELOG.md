@@ -70,13 +70,13 @@
 ### Code Cleanup
 
 - Clean up Json cmdlets. (#5001) (Thanks @iSazonov)
-- Remove some code that is ancient and has never been used. (#5066)
+- Remove code guarded by `RELATIONSHIP_SUPPORTED` and `SUPPORTS_IMULTIVALUEPROPERTYCMDLETPROVIDER`, which has never been used. (#5066)
 - Remove PSMI code that has never been used. (#5075)
 - Remove unreachable code for `Stop-Job`. (#5091) (Thanks @travisty-)
 
 ### Test
 
-- Fix Delay Test Race Condition in `WebCmdlets.Tests.ps1`. (#5035) (Thanks @markekraus)
+- Fix a race condition between `WebListener` and Web Cmdlets tests. (#5035) (Thanks @markekraus)
 - Add warning to `Start-PSPester` if Pester module is not found (#5069) (Thanks @DdWr)
 - Add tests for DSC configuration compilation on Windows. (#5011)
 - Test fixes and code coverage automation fixes. (#5046)
@@ -85,16 +85,16 @@
 
 - Update Pi demo instructions about installing libunwind8. (#4974)
 - Add links on best practice guidelines in coding guideline. (#4983) (Thanks @iSazonov)
-- Reformat command line help for `powershell -Help` (#4989) (Thanks @iSazonov)
+- Reformat command line help for `powershell -help` (#4989) (Thanks @iSazonov)
 - Change logo in readme to current black icon. (#5030)
-- Fix RPM package name in README.md (#5044)
+- Fix RPM package name in `README.md`. (#5044)
 - Update `docs/building/linux.md` to reflect the current status of powershell build. (#5068) (Thanks @dee-see)
 - Add black version of `.icns` file for macOS. (#5073) (Thanks @thezim)
 - Update Arch Linux installation instructions. (#5048) (Thanks @kylesferrazza)
-- Add submodule reminder to testing-guidelines.md. (#5061) (Thanks @DdWr)
+- Add submodule reminder to `testing-guidelines.md`. (#5061) (Thanks @DdWr)
 - Update instructions in `docs/building/internals.md` for building from source. (#5072) (Thanks @kylesferrazza)
-- Add user voice link to Issue Template. (#5100) (Thanks @markekraus)
-- Add `Get-WebListenerUrl` Based Examples to WebListener README.md (#4981) (Thanks @markekraus)
+- Add UserVoice link to Issue Template. (#5100) (Thanks @markekraus)
+- Add `Get-WebListenerUrl` Based Examples to WebListener `README.md`. (#4981) (Thanks @markekraus)
 - Add document about how to create cmdlet with dotnet CLI. (#5117) (Thanks @rkeithhill)
 - Update the help text for powershell with the new name `pwsh`. (#5182)
 - Add new forward links for PowerShell 6.0.0 help content. (#4978)
