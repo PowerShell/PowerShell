@@ -654,7 +654,10 @@ namespace System.Management.Automation
                 List<string> split; 
                 if(limit == 0)
                 {
-                    split = new List<String>();
+                    // No limit specified
+                    // set capacity to item.Length + 1
+                    // this covers worst common case (predicate == {$true})
+                    split = new List<String>(item.Length + 1);
                 }
                 else
                 {
