@@ -517,7 +517,7 @@ function ConvertTo-Resx
     Write-Verbose -Message "Creating $resxFileName" -Verbose
 
     $resx = New-Resx -manifest $etwmanifest
-    $resx | Set-Content -Path $resxFileName -Encoding 'UTF8'
+    $resx | Set-Content -Path $resxFileName -Encoding 'ASCII'
 
     $codeFileName = Join-Path -Path $CodePath -ChildPath "$($Name).cs"
     Write-Verbose -Message "Creating $codeFileName" -Verbose
