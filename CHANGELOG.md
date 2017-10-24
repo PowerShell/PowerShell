@@ -7,13 +7,13 @@
 - Fix `ValueFromRemainingArguments` to have consistent behavior between script and C# cmdlets. (#2038) (Thanks @dlwyatt)
 - Remove parameters `-importsystemmodules` and `-psconsoleFile` from `powershell.exe`. (#4995)
 - Removed font and codepage handling code that is only applicable to Windows PowerShell. (#4995)
-- Removed code to show a GUI prompt for credentials as PSCore6 prompts in console. (#4995)
+- Removed code to show a GUI prompt for credentials as PowerShell Core prompts in console. (#4995)
 - Remove `-ComputerName` from `Get/Set/Remove-Service`. (#5094)
 - Rename the executable name from `powershell` to `pwsh`. (#5101)
-- Remove RunspaceConfiguration support. (#4942)
+- Remove `RunspaceConfiguration` support. (#4942)
 - Remove `-ComputerName` support since .NET Core `Process.GetProcesses(computer)` returns local processes. (#4960)
 - Make `-NoTypeInformation` the default on `Export-Csv` and `ConvertTo-Csv`. (#5164) (Thanks @markekraus)
-- Unify cmdlets with parameter `-Encoding` to be of type System.Text.Encoding. (#5080)
+- Unify cmdlets with parameter `-Encoding` to be of type `System.Text.Encoding`. (#5080)
 
 ### Engine updates and fixes
 
@@ -22,12 +22,12 @@
 - Fix detection of whether `-LiteralPath` was used to suppress wildcard expansion for navigation cmdlets. (#5038)
 - Enable using filesystem from a UNC location. (#4998)
 - Escape trailing backslash when dealing with native command arguments. (#4965)
-- Change location of ModuleAnalysisCache so it isn't shared with Windows PowerShell. (#5133)
+- Change location of `ModuleAnalysisCache` so it isn't shared with Windows PowerShell. (#5133)
 - Put command discovery before scripts for Unix. (#5116)
 
 ### General cmdlet updates and fixes
 
-- Correct comma position in SecureStringCommands.resx. (#5033) (Thanks @markekraus)
+- Correct comma position in `SecureStringCommands.resx`. (#5033) (Thanks @markekraus)
 - User Agent of Web Cmdlets now reports the OS platform (#4937) (Thanks @LDSpits)
 - Add the positional parameter attribute to `-InputObject` for `Set-Service`. (#5017) (Thanks @travisty-)
 - Add `ValidateNotNullOrEmpty` attribute to `-UFormat` for `Get-Date`. (#5055) (Thanks @DdWr)
@@ -39,17 +39,17 @@
     - Add `-Authentication` that provides three options: Basic, OAuth, and Bearer.
     - Add `-Token` to get the bearer token for OAuth and Bearer options.
     - Add `-AllowUnencryptedAuthentication` to bypass authentication that is provided for any transport scheme other than HTTPS.
-- Fix MatchInfoContext clone implementation (#5121) (Thanks @dee-see)
+- Fix `MatchInfoContext` clone implementation (#5121) (Thanks @dee-see)
 - Exclude `PSHostProcess` cmdlets from Unix platforms. (#5105)
 - Fix `Add-Member` to fetch resource string correctly. (#5114)
 - Enable `Import-Module` to be case insensitive. (#5097)
 - Add exports for `syslog` APIs in `libpsl-native`. (#5149)
-- Make `Get-ChildItem` honor `-Depth` parameter when using with `-Include` or `-Exclude`. (#4985) (Thanks @Windos)
+- Fix `Get-ChildItem` to not ignore `-Depth` parameter when using with `-Include` or `-Exclude`. (#4985) (Thanks @Windos)
 - Added properties `UserName`, `Description`, `DelayedAutoStart`, `BinaryPathName` and `StartupType` to the `ServiceController` objects returned by `Get-Service`. (#4907) (Thanks @joandrsn)
 
 ### Build and Packaging Improvements
 
-- Treat .rtf files as binary so EOL don't get changed. (#5020)
+- Treat `.rtf` files as binary so EOL don't get changed. (#5020)
 - Improve the output of `tools/installpsh-osx.sh` and update Travis-CI to use Ruby 2.3.3. (#5065)
 - Improve `Start-PSBootstrap` to locate dotnet SDK before installing it. (#5059) (Thanks @PetSerAl)
 - Fix the prerequisite check of the MSI package. (#5070)
@@ -87,14 +87,14 @@
 - Add links on best practice guidelines in coding guideline. (#4983) (Thanks @iSazonov)
 - Reformat command line help for `powershell -Help` (#4989) (Thanks @iSazonov)
 - Change logo in readme to current black icon. (#5030)
-- Fix RPM package name in README.md. (#5044)
+- Fix RPM package name in README.md (#5044)
 - Update `docs/building/linux.md` to reflect the current status of powershell build. (#5068) (Thanks @dee-see)
-- Add black version of icns for macOS. (#5073) (Thanks @thezim)
+- Add black version of `.icns` file for macOS. (#5073) (Thanks @thezim)
 - Update Arch Linux installation instructions. (#5048) (Thanks @kylesferrazza)
 - Add submodule reminder to testing-guidelines.md. (#5061) (Thanks @DdWr)
 - Update instructions in `docs/building/internals.md` for building from source. (#5072) (Thanks @kylesferrazza)
 - Add user voice link to Issue Template. (#5100) (Thanks @markekraus)
-- Add `Get-WebListenerUrl` Based Examples to WebListener README.md. (#4981) (Thanks @markekraus)
+- Add `Get-WebListenerUrl` Based Examples to WebListener README.md (#4981) (Thanks @markekraus)
 - Add document about how to create cmdlet with dotnet CLI. (#5117) (Thanks @rkeithhill)
 - Update the help text for powershell with the new name `pwsh`. (#5182)
 - Add new forward links for PowerShell 6.0.0 help content. (#4978)
