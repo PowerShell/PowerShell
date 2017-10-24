@@ -19,8 +19,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class HistoryInfo
     {
-        #region constuctor
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -56,9 +54,6 @@ namespace Microsoft.PowerShell.Commands
             _cleared = history._cleared;
         }
 
-        #endregion constructor
-
-        #region public
         /// <summary>
         /// Id of this history entry.
         /// </summary>
@@ -135,10 +130,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #endregion public
-
-        #region internal
-
         /// <summary>
         /// Cleared status of an entry
         /// </summary>
@@ -191,10 +182,6 @@ namespace Microsoft.PowerShell.Commands
             _cmdline = command;
         }
 
-        #endregion internal
-
-        #region private
-
         /// <summary>
         /// Id of the pipeline corresponding to this history entry
         /// </summary>
@@ -231,10 +218,6 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _cleared = false;
 
-        #endregion private
-
-        #region ICloneable Members
-
         /// <summary>
         /// Returns a clone of this object
         /// </summary>
@@ -243,8 +226,6 @@ namespace Microsoft.PowerShell.Commands
         {
             return new HistoryInfo(this);
         }
-
-        #endregion
     }
 
     /// <summary>
