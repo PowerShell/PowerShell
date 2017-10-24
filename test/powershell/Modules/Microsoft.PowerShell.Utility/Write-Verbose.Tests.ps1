@@ -35,8 +35,8 @@ Describe "Write-Verbose" -Tags "CI" {
         $origVerbosePref = $VerbosePreference
         $VerbosePreference = "continue"
         try {
-            $out = Write-Verbose $text *>&1
-            $out | Should Match $text
+            $out = Write-Verbose $text 4>&1
+            $out | Should BeExactly $text
         }
         finally {
             $VerbosePreference = $origVerbosePref

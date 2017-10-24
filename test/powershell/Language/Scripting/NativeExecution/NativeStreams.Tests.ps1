@@ -58,7 +58,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
             pwsh -c "& { [Console]::Error.WriteLine('$longtext') }" 2>&1 > $testdrive\error.txt
             $e = Get-Content -Path $testdrive\error.txt
             $e.Count | Should BeExactly 1
-            $e | Should Match $longtext
+            $e | Should BeExactly $longtext
         }
     }
 }

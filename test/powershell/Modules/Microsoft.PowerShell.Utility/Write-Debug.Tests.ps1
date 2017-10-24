@@ -7,8 +7,8 @@ Describe "Write-Debug tests" -Tags "CI" {
         $origDebugPref = $DebugPreference
         $DebugPreference = "Continue"
         try {
-            $out = Write-Debug $text *>&1
-            $out | Should Match $text
+            $out = Write-Debug $text 5>&1
+            $out | Should BeExactly $text
         }
         finally {
             $DebugPreference = $origDebugPref

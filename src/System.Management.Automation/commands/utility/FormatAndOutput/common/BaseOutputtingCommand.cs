@@ -921,6 +921,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
+                // for tables, we want to make sure we don't end up adding padding to int.MaxValue and default to 120 columns instead
                 if (columnsOnTheScreen == int.MaxValue)
                 {
                     try
