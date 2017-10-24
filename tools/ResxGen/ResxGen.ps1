@@ -53,6 +53,6 @@ try
 }
 finally
 {
-    Remove-Module .\ResxGen.psm1 -Force -ErrorAction Ignore
+    Remove-Module ResxGen -Force -ErrorAction Ignore
 }
 

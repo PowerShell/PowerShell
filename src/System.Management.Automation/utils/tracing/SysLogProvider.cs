@@ -50,7 +50,7 @@ namespace System.Management.Automation.Tracing
     ///   Payload: string "Hash:" hashcode
     ///    where string is the full git commit id string and hashcode is the integer
     ///    hash code for the string in HEX.
-    ///   Example: (19E1025:3:10) [GitCommitId] {eaa9aec8-5b5f-4f68-b045-5e9ae3cfc0b5} Hash:193E1025
+    ///   Example: (19E1025:3:10) [GitCommitId] v6.0.0-beta.8-67-gca2630a3dea6420a3cd3914c84a74c1c45311f54 Hash:193E1025
     ///
     /// Transfer
     ///   A log entry to record a transfer event.
@@ -73,13 +73,8 @@ namespace System.Management.Automation.Tracing
     /// </remarks>
     internal class SysLogProvider
     {
-        // The full git commit id string
-        static readonly string _gitCommitId;
         // The hash code for the git commit id.
         static readonly int _commitId;
-
-        [ThreadStatic]
-        static Guid _activity = Guid.NewGuid();
 
         // Ensure the string pointer is not garbage collected.
         static IntPtr _nativeSyslogIdent = IntPtr.Zero;
@@ -91,10 +86,10 @@ namespace System.Management.Automation.Tracing
 
         static SysLogProvider()
         {
-            // full git commit id string. Will be logged with the associated hash code.
-            _gitCommitId = PSVersionInfo.GitCommitId;
-            // has value for the commit id string.
-            _commitId = _gitCommitId.GetHashCode();
+            // Get a hash value for the full commit id string.
+            // NOTE: Consider using a hashing algorithm that guarantees
+            // a repeatable value and is less susceptible to collision.
+            _commitId = PSVersionInfo.GitCommitId.GetHashCode();
         }
 
         /// <summary>
@@ -119,6 +114,56 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
+        /// Defines a thread local StringBuilder for building log messages.
+        /// </summary>
+        /// <remarks>
+        /// NOTE: do not access this field directly, use the MessageBuilder
+        /// property to ensure correct thread initialization; otherwise, a null reference can occur.
+        /// </remarks>
+        [ThreadStatic]
+        private static StringBuilder _messageBuilder;
+
+        private static StringBuilder MessageBuilder
+        {
+            get
+            {
+                if (_messageBuilder == null)
+                {
+                    // First time initialization for this thread.
+                    _messageBuilder = new StringBuilder(200);
+                }
+                return _messageBuilder;
+            }
+        }
+
+        /// <summary>
+        /// Defines a activity id for the current thread.
+        /// </summary>
+        /// <remarks>
+        /// NOTE: do not access this field directly, use the Activity property
+        /// to ensure correct thread initialization.
+        /// </remarks>
+        [ThreadStatic]
+        static Guid? _activity;
+
+        private static Guid Activity
+        {
+            get
+            {
+                if (_activity.HasValue == false)
+                {
+                    // first time initialization for this thread.
+                    _activity = Guid.NewGuid();
+                }
+                return _activity.Value;
+            }
+            set
+            {
+                _activity = value;
+            }
+        }
+
+        /// <summary>
         /// Gets the value indicating if the specified level and keywords are enabled for logging
         /// </summary>
         /// <param name="level">The PSLevel to check.</param>
@@ -126,12 +171,8 @@ namespace System.Management.Automation.Tracing
         /// <returns>true if the specified level and keywords are enabled for logging.</returns>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return
-            (
-                ((ulong) keywords & _keywordFilter) != 0
-                &&
-                ((int) level <= _levelFilter)
-            );
+            return ( ((ulong) keywords & _keywordFilter) != 0 &&
+                     ((int) level <= _levelFilter) );
         }
 
         // NOTE: There are a number of places where PowerShell code sends analytic events
@@ -141,12 +182,8 @@ namespace System.Management.Automation.Tracing
         // filtering is performed to suppress analytic events.
         private bool ShouldLog(PSLevel level, PSKeyword keywords, PSChannel channel)
         {
-            return
-            (
-                (_channelFilter & (ulong)channel) != 0
-                &&
-                IsEnabled(level, keywords)
-            );
+            return ((_channelFilter & (ulong)channel) != 0 &&
+                    IsEnabled(level, keywords));
         }
 
         #region resource manager
@@ -204,29 +241,26 @@ namespace System.Management.Automation.Tracing
         /// <param name="args">An array of zero or more payload objects</param>
         private static void GetEventMessage(StringBuilder sb, PSEventId eventId, params object[] args )
         {
-            EventResource resource = EventResource.GetMessage((int) eventId);
+            int parameterCount;
+            string resourceName = EventResource.GetMessage((int) eventId, out parameterCount);
 
-            if (resource == null)
+            if (resourceName == null)
             {
-                resource = EventResource.GetMissingEventMessage();
-                string resourceValue = GetResourceString(resource.Name);
-                sb.AppendFormat(CultureInfo.InvariantCulture, resourceValue, (int) eventId);
-
                 // If an event id was specified that is not found in the event resource lookup table,
                 // use a placeholder message that includes the event id.
+                resourceName = EventResource.GetMissingEventMessage(out parameterCount);
                 Diagnostics.Assert(false, sb.ToString());
+                args = new object[] {eventId};
+            }
+
+            string resourceValue = GetResourceString(resourceName);
+            if (parameterCount > 0)
+            {
+                sb.AppendFormat(resourceValue, args);
             }
             else
             {
-                string resourceValue = GetResourceString(resource.Name);
-                if (resource.ParameterCount > 0)
-                {
-                    sb.AppendFormat(resourceValue, args);
-                }
-                else
-                {
-                    sb.Append(resourceValue);
-                }
+                sb.Append(resourceValue);
             }
         }
 
@@ -246,18 +280,16 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Logs a activity transfer
         /// </summary>
-        /// <param name="parentActivityId">The </param>
+        /// <param name="parentActivityId">The parent activity id.</param>
         public void LogTransfer(Guid parentActivityId)
         {
             // NOTE: always log
             int threadId = Thread.CurrentThread.ManagedThreadId;
-            string message = string.Format
-            (
-                CultureInfo.InvariantCulture,
-                "({0:X}:{1:X}:{2:X}) [Transfer]:{3} {4}", _commitId, threadId, PSChannel.Operational,
-                parentActivityId.ToString("B"),
-                _activity.ToString("B")
-            );
+            string message = string.Format(CultureInfo.InvariantCulture,
+                                           "({0:X}:{1:X}:{2:X}) [Transfer]:{3} {4}",
+                                           _commitId, threadId, PSChannel.Operational,
+                                           parentActivityId.ToString("B"),
+                                           Activity.ToString("B"));
 
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
@@ -269,10 +301,12 @@ namespace System.Management.Automation.Tracing
         public void SetActivity(Guid activity)
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
-            _activity = activity;
+            Activity = activity;
 
             // NOTE: always log
-            string message = string.Format(CultureInfo.InvariantCulture, "({0:X}:{1:X}:{2:X}) [Activity] {3}", _commitId, threadId, PSChannel.Operational, activity.ToString("B"));
+            string message = string.Format(CultureInfo.InvariantCulture,
+                                           "({0:X}:{1:X}:{2:X}) [Activity] {3}",
+                                           _commitId, threadId, PSChannel.Operational, activity.ToString("B"));
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
@@ -283,7 +317,9 @@ namespace System.Management.Automation.Tracing
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
             // NOTE: always log
-            string message = string.Format(CultureInfo.InvariantCulture, "({0:X}:{1:X}:{2:X}) [GitCommitId] {3} Hash: {0:X}", _commitId, threadId, PSChannel.Operational, _gitCommitId);
+            string message = string.Format(CultureInfo.InvariantCulture,
+                                           "({0:X}:{1:X}:{2:X}) [GitCommitId] {3} Hash: {0:X}",
+                                           _commitId, threadId, PSChannel.Operational, PSVersionInfo.GitCommitId);
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
@@ -303,10 +339,13 @@ namespace System.Management.Automation.Tracing
             {
                 int threadId = Thread.CurrentThread.ManagedThreadId;
 
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = MessageBuilder;
+                sb.Clear();
 
                 // add the message preamble
-                sb.AppendFormat(CultureInfo.InvariantCulture, "({0:X}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ", _commitId, threadId, channel, eventId, task, opcode, level);
+                sb.AppendFormat(CultureInfo.InvariantCulture,
+                                "({0:X}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ",
+                                _commitId, threadId, channel, eventId, task, opcode, level);
 
                 // add the message
                 GetEventMessage(sb, eventId, args);
