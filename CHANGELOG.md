@@ -6,7 +6,6 @@
 
 - Fix `ValueFromRemainingArguments` to have consistent behavior between script and C# cmdlets. (#2038) (Thanks @dlwyatt)
 - Remove parameters `-importsystemmodules` and `-psconsoleFile` from `powershell.exe`. (#4995)
-- Removed font and codepage handling code that is only applicable to Windows PowerShell. (#4995)
 - Removed code to show a GUI prompt for credentials as PowerShell Core prompts in console. (#4995)
 - Remove `-ComputerName` from `Get/Set/Remove-Service`. (#5094)
 - Rename the executable name from `powershell` to `pwsh`. (#5101)
@@ -17,7 +16,7 @@
 
 ### Engine updates and fixes
 
-- Fix powershell to update the `PATH` environment variable only if `PATH` exists. (#5021)
+- Fix PowerShell to update the `PATH` environment variable only if `PATH` exists. (#5021)
 - Enable support of folders and files with colon in name on Unix. (#4959)
 - Fix detection of whether `-LiteralPath` was used to suppress wildcard expansion for navigation cmdlets. (#5038)
 - Enable using filesystem from a UNC location. (#4998)
@@ -55,7 +54,7 @@
 - Fix the prerequisite check of the MSI package. (#5070)
 - Support creating `tar.gz` package for Linux and macOS. (#5085)
 - Add release builds that produce symbols for compliance scans. (#5086)
-- Update existing docker files for the Linux package changes. (#5102)
+- Update existing Docker files for the Linux package changes. (#5102)
 - Add compiler switches and replace dangerous function with safer ones. (#5089)
 - Add macOS launcher. (#5138) (Thanks @thezim)
 - Replace `httpbin.org/response-headers` Tests with WebListener. (#5058) (Thanks @markekraus)
@@ -65,7 +64,7 @@
 - Add code to send web hook for Travis-CI daily build. (#5183)
 - Add `global.json` to pick correct SDK version. (#5118) (Thanks @rkeithhill)
 - Update packaging to only package PowerShell binaries when packaging symbols. (#5145)
-- Update docker files and related due to the name change. (#5156)
+- Update Docker files and related due to the name change. (#5156)
 
 ### Code Cleanup
 
@@ -73,6 +72,7 @@
 - Remove code guarded by `RELATIONSHIP_SUPPORTED` and `SUPPORTS_IMULTIVALUEPROPERTYCMDLETPROVIDER`, which has never been used. (#5066)
 - Remove PSMI code that has never been used. (#5075)
 - Remove unreachable code for `Stop-Job`. (#5091) (Thanks @travisty-)
+- Removed font and codepage handling code that is only applicable to Windows PowerShell. (#4995)
 
 ### Test
 
@@ -96,7 +96,7 @@
 - Add UserVoice link to Issue Template. (#5100) (Thanks @markekraus)
 - Add `Get-WebListenerUrl` Based Examples to WebListener `README.md`. (#4981) (Thanks @markekraus)
 - Add document about how to create cmdlet with dotnet CLI. (#5117) (Thanks @rkeithhill)
-- Update the help text for powershell with the new name `pwsh`. (#5182)
+- Update the help text for PowerShell executable with the new name `pwsh`. (#5182)
 - Add new forward links for PowerShell 6.0.0 help content. (#4978)
 - Fix VSCode `launch.json` to point to `pwsh`. (#5189)
 - Add example of how to create .NET Core cmdlet with Visual Studio. (#5096)
