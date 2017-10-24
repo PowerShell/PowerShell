@@ -22,7 +22,8 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Get-PSBreakpoint", "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
     "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-FileHash",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
-    "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "New-TemporaryFile", "Get-Verb", "Format-Hex"
+    "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "New-TemporaryFile", "Get-Verb", "Format-Hex",
+    "Test-Json"
 FunctionsToExport= "Import-PowerShellDataFile"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
