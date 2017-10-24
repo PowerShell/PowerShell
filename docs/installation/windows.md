@@ -10,7 +10,7 @@ Once downloaded, double-click the installer and follow the prompts.
 There is a shortcut placed in the Start Menu upon installation.
 
 * By default the package is installed to `$env:ProgramFiles\PowerShell\`
-* You can launch PowerShell via the Start Menu or `$env:ProgramFiles\PowerShell\powershell.exe`
+* You can launch PowerShell via the Start Menu or `$env:ProgramFiles\PowerShell\pwsh.exe`
 
 ### Prerequisites
 
@@ -22,6 +22,13 @@ To enable PowerShell remoting over WinRM, the following prerequisites need to be
 * Install the Windows Management Framework (WMF) [4.0](https://www.microsoft.com/download/details.aspx?id=40855)
   or newer ([5.0](https://www.microsoft.com/download/details.aspx?id=50395),
   [5.1](https://www.microsoft.com/download/details.aspx?id=54616)) on Windows 7.
+
+## ZIP
+
+PowerShell binary ZIP archives are provided to enable advanced deployment scenarios.
+Be noted that when using the ZIP archive, you won't get the prerequisites check as in the MSI package.
+So in order for remoting over WinRM to work properly on Windows versions prior to Windows 10,
+you need to make sure the [prerequisites](#prerequisites) are met.
 
 ## Deploying on Nano Server
 
@@ -142,4 +149,4 @@ We publish an archive with CoreCLR bits on every CI build with [AppVeyor][].
 * Unblock zip file: right-click in File Explorer -> Properties ->
   check 'Unblock' box -> apply
 * Extract zip file to `bin` directory
-* `./bin/powershell.exe`
+* `./bin/pwsh.exe`

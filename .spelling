@@ -597,9 +597,27 @@ sample-dotnet2
 
 #region docs/installation/linux.md Overrides
  - docs/installation/linux.md
+compat-openssl10
+dockerfile
+libc6
 libcurl
+libcurl3
+libgcc1
+libgssapi-krb5-2
+libicu
+libicu52
+libicu55
+libicu57
+liblttng-ust0
+libssl1.0.0
+libssl1.0.2
+libstdc
+libunwind
+libunwind8
+libuuid1
+openssl-libs
 OpenSUSE
-TravisEz13
+zlib1g
 zypper
 #endregion
 

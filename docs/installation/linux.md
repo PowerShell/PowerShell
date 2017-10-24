@@ -2,19 +2,15 @@
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Ubuntu 17.04][u17], [Debian 8][deb8], [Debian 9][deb9],
 [CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [OpenSUSE 42.2][opensuse], [Fedora 25][fed25],
-[Fedora 26][fed26], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.12][mac].
+[Fedora 26][fed26], [Arch Linux][arch], and [macOS 10.12][mac].
+
+For Linux distributions that are not officially supported,
+you can try using the [PowerShell AppImage][lai].
+You can also try deploying PowerShell binaries directly using the Linux [`tar.gz` archive][tar],
+but you would need to set up the necessary dependencies based on the OS in separate steps.
+
 All packages are available on our GitHub [releases][] page.
-
-All of these steps can be done automatically by the [`download.sh`][download] script.
-You should *never* run a script without reading it first!
-
-Please **read the [download][] script first**, and then if you want to run it, use:
-
-```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/download.sh)
-```
-
-Once the package is installed, run `powershell` from a terminal.
+Once the package is installed, run `pwsh` from a terminal.
 
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
@@ -29,7 +25,7 @@ Once the package is installed, run `powershell` from a terminal.
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1012
-[download]: https://github.com/PowerShell/PowerShell/blob/master/tools/download.sh
+[tar]: #binary-archives
 
 ## Ubuntu 14.04
 
@@ -52,7 +48,7 @@ sudo apt-get update
 sudo apt-get install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -102,7 +98,7 @@ sudo apt-get update
 sudo apt-get install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -152,7 +148,7 @@ sudo apt-get update
 sudo apt-get install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -206,7 +202,7 @@ sudo apt-get update
 sudo apt-get install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -260,7 +256,7 @@ sudo apt-get update
 sudo apt-get install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -305,7 +301,7 @@ curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.
 sudo yum install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -351,7 +347,7 @@ curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.
 sudo yum install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 After registering the Microsoft repository once as superuser,
@@ -406,7 +402,7 @@ sudo zypper update
 sudo zypper install powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 ### Installation via Direct Download - OpenSUSE 42.2
@@ -452,7 +448,7 @@ sudo dnf update
 sudo dnf install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 ### Installation via Direct Download - Fedora 25
@@ -502,7 +498,7 @@ sudo dnf install compat-openssl10
 sudo dnf install -y powershell
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 ### Installation via Direct Download - Fedora 26
@@ -630,7 +626,7 @@ If you installed PowerShell via direct download,
 PowerShell must be removed manually:
 
 ```sh
-sudo rm -rf /usr/local/bin/powershell /usr/local/microsoft/powershell
+sudo rm -rf /usr/local/bin/pwsh /usr/local/microsoft/powershell
 ```
 
 To uninstall the additional PowerShell paths (such as the user profile path)
@@ -639,50 +635,6 @@ and remove the desired the paths with `sudo rm`.
 (Note: this is not necessary if you installed with Homebrew.)
 
 [paths]:#paths
-
-### OpenSSL on macOS
-
-On macOS, .NET Core requires Homebrew's OpenSSL
-because the "OpenSSL" system libraries on macOS are not OpenSSL,
-as Apple deprecated OpenSSL in favor of their own libraries.
-This requirement is not a hard requirement for all of PowerShell.
-However, most networking functions (such as `Invoke-WebRequest`)
-do require OpenSSL to work properly.
-
-The PowerShell formula for Homebrew includes this OpenSSL as a dependency,
-so you if you installed via Homebrew, you shouldn't run into these problems.
-
-If you installed via direct download (or through some means other than Homebrew),
-the easiest fix for these issues is to install [Homebrew's OpenSSL][openssl]:
-
-```bash
-brew install openssl
-brew install curl --with-openssl
-```
-
-**Please ignore** .NET Core's installation instructions to manually link the OpenSSL libraries.
-This is **not** required for PowerShell as we patch .NET Core's cryptography libraries to find Homebrew's OpenSSL in its installed location.
-Again, **do not** run `brew link --force` nor `ln -s` for OpenSSL, regardless of other instructions.
-
-Homebrew previously allowed OpenSSL libraries to be linked to the system library location;
-however, this created major security holes and is [no longer allowed][homebrew-patch].
-Because .NET Core's 1.0.0 release libraries still look in the prior system location for OpenSSL,
-they will fail to work unless the libraries are manually placed there (security risk),
-or their libraries are patched (which we do).
-To patch .NET Core's cryptography libraries, we use `install_name_tool`:
-
-```bash
-find ~/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
-find ~/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
-```
-
-This updates .NET Core's library to look in Homebrew's OpenSSL installation location instead of the system library location.
-The PowerShell macOS package come with the necessary libraries patched,
-and the build script patches the libraries on-the-fly when building from source.
-You *can* run this command manually if you're having trouble with .NET Core's cryptography libraries.
-
-[openssl]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb
-[homebrew-patch]: https://github.com/Homebrew/brew/pull/597
 
 ## Kali
 
@@ -698,7 +650,7 @@ dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
 dpkg -i powershell_6.0.0-beta.8-1.ubuntu.16.04_amd64.deb
 
 # Start PowerShell
-powershell
+pwsh
 ```
 
 ### Run PowerShell in latest Kali (Kali GNU/Linux Rolling) without installing it
@@ -720,6 +672,83 @@ chmod a+x powershell-6.0.0-beta.8-x86_64.AppImage
 dpkg -r powershell_6.0.0-beta.8-1.ubuntu.16.04_amd64.deb
 ```
 
+## Binary Archives
+
+PowerShell binary `tar.gz` archives are provided for macOS and Linux platforms to enable advanced deployment scenarios.
+
+### Dependencies
+
+For Linux, PowerShell builds portable binaries for all Linux distributions.
+But .NET Core runtime requires different dependencies on different distributions,
+and hence PowerShell does the same.
+
+The following chart shows the .NET Core 2.0 dependencies on different Linux distributions that are officially supported.
+
+| OS                 | Dependencies |
+| ------------------ | ------------ |
+| Ubuntu 14.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
+| Ubuntu 16.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu55 |
+| Ubuntu 17.04       | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu57 |
+| Debian 8 (Jessie)  | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.0, libicu52 |
+| Debian 9 (Stretch) | libc6, libgcc1, libgssapi-krb5-2, liblttng-ust0, libstdc++6, <br> libcurl3, libunwind8, libuuid1, zlib1g, libssl1.0.2, libicu57 |
+| CentOS 7 <br> Oracle Linux 7 <br> RHEL 7 <br> OpenSUSE 42.2 <br> Fedora 25 | libunwind, libcurl, openssl-libs, libicu |
+| Fedora 26          | libunwind, libcurl, openssl-libs, libicu, compat-openssl10 |
+
+In order to deploy PowerShell binaries on Linux distributions that are not officially supported,
+you would need to install the necessary dependencies for the target OS in separate steps.
+For example, our [Amazon Linux dockerfile][amazon-dockerfile] installs dependencies first,
+and then extracts the Linux `tar.gz` archive.
+
+[amazon-dockerfile]: https://github.com/PowerShell/PowerShell/blob/master/docker/community/amazonlinux/Dockerfile
+
+### Installation - Binary Archives
+
+#### Linux
+
+```sh
+# Download the powershell '.tar.gz' archive
+curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-linux-x64.tar.gz
+
+# Create the target folder where powershell will be placed
+sudo mkdir -p /opt/microsoft/powershell/6.0.0-beta.9
+
+# Expand powershell to the target folder
+sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/6.0.0-beta.9
+
+# Create the symbolic link that points to pwsh
+sudo ln -s /opt/microsoft/powershell/6.0.0-beta.9/pwsh /usr/bin/pwsh
+```
+
+#### macOS
+
+```sh
+# Download the powershell '.tar.gz' archive
+curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-osx-x64.tar.gz
+
+# Create the target folder where powershell will be placed
+sudo mkdir -p /usr/local/microsoft/powershell/6.0.0-beta.9
+
+# Expand powershell to the target folder
+sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell/6.0.0-beta.9
+
+# Create the symbolic link that points to pwsh
+sudo ln -s /usr/local/microsoft/powershell/6.0.0-beta.9/pwsh /usr/local/bin/pwsh
+```
+
+### Uninstallation - Binary Archives
+
+#### Linux
+
+```sh
+sudo rm -rf /usr/bin/pwsh /opt/microsoft/powershell
+```
+
+#### macOS
+
+```sh
+sudo rm -rf /usr/local/bin/pwsh /usr/local/microsoft/powershell
+```
+
 ## Paths
 
 * `$PSHOME` is `/opt/microsoft/powershell/6.0.0-beta.8/`
@@ -738,7 +767,7 @@ On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
 Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-beta.8/`,
-and the symlink is placed at `/usr/local/bin/powershell`.
+and the symlink is placed at `/usr/local/bin/pwsh`.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest
 [xdg-bds]: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
