@@ -1,6 +1,6 @@
 #if !UNIX
 //
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft.  All rights reserved.
 //
 using System.Collections.Generic;
 using System.Diagnostics.Eventing;
