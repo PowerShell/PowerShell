@@ -1,5 +1,5 @@
 /********************************************************************++
-    Copyright (c) Microsoft Corporation, 2003
+    Copyright (c) Microsoft Corporation. All Rights Reserved.
 
     Project:     PowerShell
 

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation, 2005.
+//  Copyright (c) Microsoft Corporation. All Rights Reserved.
 //
 //  File:      NativeMsh.h
 //

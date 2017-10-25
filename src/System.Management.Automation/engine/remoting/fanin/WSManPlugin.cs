@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation, 2007.
+//  Copyright (c) Microsoft Corporation. All Rights Reserved.
 //
 //  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.

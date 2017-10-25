@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All Rights Reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -410,7 +410,7 @@ namespace System.Management.Automation
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
                 }
-    
+
                 var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
                 if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
                 {
@@ -420,7 +420,7 @@ namespace System.Management.Automation
                         // Out-Null is the only command, bail without running anything
                         return;
                     }
-    
+
                     // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
                     // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
                     var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
@@ -493,7 +493,7 @@ namespace System.Management.Automation
                 System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
                 updatedScriptblock.Append(cmdPrefix);
                 int position = 0;
-                // Prefix variables in the scriptblock with $using: 
+                // Prefix variables in the scriptblock with $using:
                 foreach (var v in variables)
                 {
                     var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
@@ -502,7 +502,7 @@ namespace System.Management.Automation
                         continue;
                     // Skip PowerShell magic variables
                     if (Regex.Match(vName,
-                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$", 
+                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
                                 RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
                     )
                     {

@@ -1,4 +1,4 @@
-;// Copyright (C) Microsoft Corporation, 2000 - 2002
+;// Copyright (C) Microsoft Corporation. All Rights Reserved.
 
 MessageId=1
 SymbolicName=MISSING_COMMAND_LINE_ARGUMENT

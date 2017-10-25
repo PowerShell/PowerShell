@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation, 2014.
+//  Copyright (c) Microsoft Corporation. All Rights Reserved.
 //
 //  Contents:  A class that extracts the path to $PSHOME and the path to its
 //             CoreCLR from a configuration file.

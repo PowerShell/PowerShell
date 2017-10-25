@@ -1,5 +1,5 @@
 #
-# Copyright (c) Microsoft Corporation, 2015
+# Copyright (c) Microsoft Corporation. All Rights Reserved.
 #
 
 Describe 'enums' -Tags "CI" {

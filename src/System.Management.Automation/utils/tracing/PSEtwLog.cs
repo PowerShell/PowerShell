@@ -1,6 +1,6 @@
 #if !UNIX
 //
-//    Copyright (c) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All Rights Reserved.
 //
 using System.Globalization;
 using System.Management.Automation.Internal;

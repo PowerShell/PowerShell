@@ -22,7 +22,7 @@ Author = 'Microsoft Corporation'
 CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright (c) Microsoft. All rights reserved.'
+Copyright = 'Copyright (c) Microsoft. All rights reserved.'
 
 # Description of the functionality provided by this module
 # Description = ''

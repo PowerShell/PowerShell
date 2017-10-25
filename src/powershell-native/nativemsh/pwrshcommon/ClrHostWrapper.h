@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation, 2014.
+//  Copyright (c) Microsoft Corporation. All Rights Reserved.
 //
 //  File:      ClrHostWrapper.h
 //

@@ -1,5 +1,5 @@
 ﻿//
-//    Copyright (c) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All Rights Reserved.
 //
 
 namespace System.Management.Automation
