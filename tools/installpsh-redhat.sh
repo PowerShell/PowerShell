@@ -129,7 +129,7 @@ echo "*** Setting up PowerShell Core repo..."
 $SUDO curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/microsoft.repo
 $SUDO yum install -y powershell
 
-powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
 success=$?
 
 if [[ "$success" != 0 ]]; then
