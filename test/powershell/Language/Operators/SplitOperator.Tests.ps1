@@ -139,7 +139,6 @@ Describe "Split Operator" -Tags CI {
             $res[2] | Should Be "e::f::"
             $res[3] | Should Be "::h"
         }
-
     }
 
     Context "Binary split operator options" {
