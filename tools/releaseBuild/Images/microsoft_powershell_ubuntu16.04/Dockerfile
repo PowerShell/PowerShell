@@ -31,4 +31,4 @@ RUN apt-get update \
 COPY PowerShellPackage.ps1 /
 
 # Use PowerShell as the default shell
-ENTRYPOINT [ "powershell" ]
+ENTRYPOINT [ "pwsh" ]

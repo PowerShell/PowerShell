@@ -141,7 +141,7 @@ if [[ ! -d $(brew --prefix cask) ]]; then
     fi
 fi
 
-if ! hash powershell 2>/dev/null; then
+if ! hash pwsh 2>/dev/null; then
     echo "Installing PowerShell..."
     if ! brew cask install powershell; then
         echo "ERROR: PowerShell failed to install! Cannot install powershell..." >&2
@@ -165,7 +165,7 @@ if [[ "'$*'" =~ includeide ]] ; then
     code --install-extension ms-vscode.PowerShell
 fi
 
-powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
 success=$?
 
 if [[ "$success" != 0 ]]; then

@@ -24,4 +24,4 @@ RUN yum install -y \
 COPY PowerShellPackage.ps1 /
 
 # Use PowerShell as the default shell
-ENTRYPOINT [ "powershell" ]
+ENTRYPOINT [ "pwsh" ]

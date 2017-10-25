@@ -141,11 +141,17 @@
   <data name="CredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
   </data>
-  <data name="DirecotryPathSpecified" xml:space="preserve">
+  <data name="DirectoryPathSpecified" xml:space="preserve">
     <value>Path '{0}' resolves to a directory. Specify a path including a file name, and then retry the command.</value>
   </data>
+  <data name="EmptyKeyInJsonString" xml:space="preserve">
+    <value>The provided JSON includes a property whose name is an empty string, this is only supported using the -AsHashTable switch.</value>
+  </data>
   <data name="DuplicateKeysInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated keys '{0}' and '{1}'.</value>
+    <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
+  </data>
+  <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
+    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the exisiting key '{0}' was '{1}'.</value>
   </data>
   <data name="ExtendedProfileRequired" xml:space="preserve">
     <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the installation of the .NET Client Profile, sometimes called the .NET extended profile.</value>
