@@ -77,7 +77,7 @@ In addition you will need to enable password authentication and optionally key b
     ```
     - Add a PowerShell subsystem entry
     ```none
-    Subsystem powershell /usr/bin/powershell -sshs -NoLogo -NoProfile
+    Subsystem powershell /usr/bin/pwsh -sshs -NoLogo -NoProfile
     ```
     - Optionally enable key authentication
     ```none
