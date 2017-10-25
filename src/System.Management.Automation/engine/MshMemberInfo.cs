@@ -2644,6 +2644,15 @@ namespace System.Management.Automation
         internal bool IsSpecial { get; private set; }
     }
 
+    internal sealed struct Unit  {
+        private Unit() { }
+    }
+
+    internal class PSMethod<T> : PSMethod
+    {
+    }
+
+
     /// <summary>
     /// Used to access parameterized properties from the BaseObject
     /// </summary>

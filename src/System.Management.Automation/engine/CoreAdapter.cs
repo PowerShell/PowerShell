@@ -730,12 +730,12 @@ namespace System.Management.Automation
         internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType)
         {
             Type fromType = GetArgumentType(argument);
-            ConversionRank rank = LanguagePrimitives.GetConversionRank(fromType, parameterType);
+            ConversionRank rank = LanguagePrimitives.GetConversionRank(fromType, parameterType, argument);
 
             if (rank == ConversionRank.None)
             {
                 fromType = GetArgumentType(PSObject.Base(argument));
-                rank = LanguagePrimitives.GetConversionRank(fromType, parameterType);
+                rank = LanguagePrimitives.GetConversionRank(fromType, parameterType, argument);
             }
 
             return rank;
@@ -5531,6 +5531,15 @@ namespace System.Management.Automation
                 }
 
                 return this.Unify(parameterType.GetGenericArguments()[0], argumentType);
+            }
+
+            if (parameterType.IsSubclassOf(typeof(MulticastDelegate)))
+            {
+                // Func/Action
+                if (argumentType == typeof(PSMethod))
+                {
+                    return true;
+                }
             }
 
             if (parameterTypeInfo.IsGenericType)

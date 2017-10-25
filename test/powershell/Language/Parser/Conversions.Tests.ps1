@@ -127,3 +127,57 @@ namespace TestTypeResolution {
         $location | Should Be $cmdletDllPath
     }
 }
+
+Describe 'method conversion' -Tags 'CI' {
+    class M {
+        [int] Twice([int] $value) { return 2 * $value }
+        [int] ThriceInstance([int] $value) { return 3 * $value }
+        static [int] Thrice([int] $value) { return 3 * $value }
+        static [int] Add([int] $i, [int16] $j) { return $i + $j }
+
+        static [int] Apply([int] $value, [Func[int, int]] $function) {
+            return $function.Invoke($value)
+        }
+
+        static [int] Apply([int] $v1, [Int16] $v2, [Func[int, int16, int]] $function) {
+            return $function.Invoke($v1, $v2)
+        }
+    }
+
+    It 'converts static method as Func does not throw' {
+        {[Func[int, int]] [M]::Thrice} | Should Not Throw
+    }
+
+    It 'converts static method as Func is non null' {
+        ([Func[int, int]] [M]::Thrice) | Should Not BeNullOrEmpty
+    }
+
+
+    It 'calls static method as Func' {
+        $f = [Func[int, int]] [M]::Thrice
+        [M]::Apply(1, $f) | Should be 3
+    }
+
+    It 'calls static method as Func' {
+        $f = [Func[int, int16, int]] [M]::Add
+        [M]::Apply(3, 4, $f) | Should be 7
+    }
+
+    It 'converts instance psmethodinfo to Func' {
+        $m = [M]::new()
+        {[Func[int, int]] $m.Twice} | Should Not Throw
+    }
+
+    It 'calls Instance method as Func' {
+        $m = [M]::new()
+        [int[]]$values = 1..10
+        [System.Linq.Enumerable]::Sum($values, $m.Twice) | Should be 110
+    }
+
+    It 'calls another Instance method as distinct Func' {
+        $m = [M]::new()
+        [int[]]$values = 1..10
+        [System.Linq.Enumerable]::Sum($values, $m.ThriceInstance) | Should be 165
+    }
+
+}
