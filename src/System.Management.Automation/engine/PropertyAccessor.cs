@@ -372,7 +372,7 @@ namespace System.Management.Automation
             string identity = ReadValueFromFile<string>(fileName, "LogIdentity");
 
             if (string.IsNullOrEmpty(identity) ||
-                identity.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase))
+                identity.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
             {
                 identity = "powershell";
             }
@@ -394,7 +394,7 @@ namespace System.Management.Automation
             PSLevel level;
 
             if (string.IsNullOrEmpty(levelName) ||
-                levelName.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase) ||
+                levelName.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase) ||
                 !Enum.TryParse<PSLevel>(levelName, true, out level))
             {
                 level = PSLevel.Informational;
@@ -435,7 +435,7 @@ namespace System.Management.Automation
 
                 foreach (string name in names)
                 {
-                    if (name.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase.Compare))
+                    if (name.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
                     {
                         result = 0;
                         break;
@@ -481,7 +481,7 @@ namespace System.Management.Automation
 
                 foreach (string name in names)
                 {
-                    if (name.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase))
+                    if (name.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
                     {
                         result = 0;
                         break;
