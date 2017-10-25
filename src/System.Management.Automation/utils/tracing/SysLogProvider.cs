@@ -24,10 +24,10 @@ namespace System.Management.Automation.Tracing
     /// The log entries use the following common format
     ///     (commitId:threadId:channelid) [context] payload
     /// Where:
-    ///     commitId: A hash code of the full git commit id string
+    ///     commitId: A hash code of the full git commit id string.
     ///     threadid: The thread identifier of calling code.
     ///     channelid: The identifier for the output channel. See PSChannel for values.
-    ///     context: Dependent on the type of log entry
+    ///     context: Dependent on the type of log entry.
     ///     payload: Dependent on the type of log entry.
     /// Note:
     ///     commitId, threadId, and eventId are logged as HEX without a leading
@@ -40,7 +40,7 @@ namespace System.Management.Automation.Tracing
     ///
     /// Note that the examples illustrate the output from SysLogProvider.Log,
     /// Data automatically prepended by syslog, such as timestamp, hostname, ident,
-    /// and processid are not shown
+    /// and processid are not shown.
     ///
     /// GitCommitId
     ///   This is the first log entry for a session. It provides a correlation
@@ -56,7 +56,7 @@ namespace System.Management.Automation.Tracing
     ///   A log entry to record a transfer event.
     ///   Context: "Transfer"
     ///   The playload is two, space separated string guids, the first being the
-    ///   parent activityid followed by the new activityid
+    ///   parent activityid followed by the new activityid.
     ///   Example: (19E1025:3:10) [Transfer] {de168a71-6bb9-47e4-8712-bc02506d98be} {ab0077f6-c042-4728-be76-f688cfb1b054}
     ///
     /// Activity
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Initializes a new instance of this class
+        /// Initializes a new instance of this class.
         /// </summary>
         /// <param name="applicationId">The log identity name used to identify the application in syslog.</param>
         /// <param name="level">The trace lavel to enable.</param>
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Tracing
             {
                 if (_messageBuilder == null)
                 {
-                    // First time initialization for this thread.
+                    // NOTE: Thread static fields must be explicitly initialized for each thread.
                     _messageBuilder = new StringBuilder(200);
                 }
                 return _messageBuilder;
@@ -152,7 +152,7 @@ namespace System.Management.Automation.Tracing
             {
                 if (_activity.HasValue == false)
                 {
-                    // first time initialization for this thread.
+                    // NOTE: Thread static fields must be explicitly initialized for each thread.
                     _activity = Guid.NewGuid();
                 }
                 return _activity.Value;
@@ -164,7 +164,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Gets the value indicating if the specified level and keywords are enabled for logging
+        /// Gets the value indicating if the specified level and keywords are enabled for logging.
         /// </summary>
         /// <param name="level">The PSLevel to check.</param>
         /// <param name="keywords">The PSKeyword to check.</param>
@@ -238,7 +238,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         /// <param name="sb">The StringBuilder to append.</param>
         /// <param name="eventId">The id of the event to retrieve.</param>
-        /// <param name="args">An array of zero or more payload objects</param>
+        /// <param name="args">An array of zero or more payload objects.</param>
         private static void GetEventMessage(StringBuilder sb, PSEventId eventId, params object[] args )
         {
             int parameterCount;
@@ -266,7 +266,7 @@ namespace System.Management.Automation.Tracing
 
         #region logging
 
-        // maps a LogLevel to an associated SysLogPriority
+        // maps a LogLevel to an associated SysLogPriority.
         static NativeMethods.SysLogPriority[] _levels =
         {
             NativeMethods.SysLogPriority.Info,
@@ -278,7 +278,7 @@ namespace System.Management.Automation.Tracing
         };
 
         /// <summary>
-        /// Logs a activity transfer
+        /// Logs a activity transfer.
         /// </summary>
         /// <param name="parentActivityId">The parent activity id.</param>
         public void LogTransfer(Guid parentActivityId)
@@ -297,7 +297,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Logs the activity identifier for the current thread.
         /// </summary>
-        /// <param name="activity">The Guid activity identifier</param>
+        /// <param name="activity">The Guid activity identifier.</param>
         public void SetActivity(Guid activity)
         {
             int threadId = Thread.CurrentThread.ManagedThreadId;
@@ -324,15 +324,15 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Writes a log entry
+        /// Writes a log entry.
         /// </summary>
         /// <param name="eventId">The event id of the log entry.</param>
-        /// <param name="channel">The channel to log</param>
-        /// <param name="task">The task for the log entry</param>
-        /// <param name="opcode">The operation for the log entry</param>
+        /// <param name="channel">The channel to log.</param>
+        /// <param name="task">The task for the log entry.</param>
+        /// <param name="opcode">The operation for the log entry.</param>
         /// <param name="level">The logging level.</param>
         /// <param name="keyword">The keyword(s) for the event.</param>
-        /// <param name="args">The payload for the log message</param>
+        /// <param name="args">The payload for the log message.</param>
         public void Log(PSEventId eventId, PSChannel channel, PSTask task, PSOpcode opcode, PSLevel level, PSKeyword keyword, params object[] args)
         {
             if (ShouldLog(level, keyword, channel))
@@ -381,12 +381,12 @@ namespace System.Management.Automation.Tracing
     {
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
-        /// See man 3 syslog for more info
+        /// See man 3 syslog for more info.
         /// </summary>
         /// <param name="priority">
-        /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry
+        /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry.
         /// </param>
-        /// <param name="message">The message to put in the log entry</param>
+        /// <param name="message">The message to put in the log entry.</param>
         [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
         internal static extern void SysLog(SysLogPriority priority, string message);
 
@@ -399,86 +399,87 @@ namespace System.Management.Automation.Tracing
         [Flags]
         internal enum SysLogPriority : uint
         {
-            // Priorities
+            // Priorities enum values.
+
             /// <summary>
-            /// system is unusable
+            /// System is unusable
             /// </summary>
             Emergency       = 0,
 
             /// <summary>
-            /// action must be taken immediately
+            /// Action must be taken immediately
             /// </summary>
             Alert           = 1,
 
             /// <summary>
-            /// critical conditions
+            /// Critical conditions
             /// </summary>
             Critical        = 2,
 
             /// <summary>
-            /// error conditions
+            /// Error conditions
             /// </summary>
             Error           = 3,
 
             /// <summary>
-            /// warning conditions
+            /// Warning conditions
             /// </summary>
             Warning         = 4,
 
             /// <summary>
-            /// normal but significant condition
+            /// Normal but significant condition
             /// </summary>
             Notice          = 5,
 
             /// <summary>
-            /// informational
+            /// Informational
             /// </summary>
             Info            = 6,
 
             /// <summary>
-            /// debug-level messages
+            /// Debug-level messages
             /// </summary>
             Debug           = 7,
 
-            // facilities
+            // Facility enum values.
 
             /// <summary>
-            /// kernel messages
+            /// Kernel messages
             /// </summary>
             Kernel          = (0<<3),
 
             /// <summary>
-            /// random user-level messages
+            /// Random user-level messages
             /// </summary>
             User            = (1<<3),
 
             /// <summary>
-            /// mail system
+            /// Mail system
             /// </summary>
             Mail            = (2<<3),
 
             /// <summary>
-            /// system daemons
+            /// System daemons
             /// </summary>
             Daemon          = (3<<3),
 
             /// <summary>
-            /// authorization messages
+            /// Authorization messages
             /// </summary>
             Authorization   = (4<<3),
 
             /// <summary>
-            /// messages generated internally by syslogd
+            /// Messages generated internally by syslogd
             /// </summary>
             Syslog          = (5<<3),
 
             /// <summary>
-            /// line printer subsystem
+            /// Line printer subsystem
             /// </summary>
             Lpr             = (6<<3),
 
             /// <summary>
-            /// network news subsystem
+            /// Network news subsystem
             /// </summary>
             News            = (7<<3),
 
@@ -488,17 +489,17 @@ namespace System.Management.Automation.Tracing
             Uucp            = (8<<3),
 
             /// <summary>
-            /// clock daemon
+            /// Clock daemon
             /// </summary>
             Cron            = (9<<3),
 
             /// <summary>
-            /// security/authorization messages (private)
+            /// Security/authorization messages (private)
             /// </summary>
             Authpriv        = (10<<3),
 
             /// <summary>
-            /// ftp daemon
+            /// FTP daemon
             /// </summary>
             Ftp             = (11<<3),
 

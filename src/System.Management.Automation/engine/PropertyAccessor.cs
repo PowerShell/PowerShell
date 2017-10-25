@@ -363,19 +363,16 @@ namespace System.Management.Automation
         /// <returns>
         /// The string identity to use for writing to syslog.
         /// <para>
-        /// The default value is 'powershell'
+        /// The default value is 'powershell'.
         /// </para>
         /// </returns>
         internal override string GetSysLogIdentity()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string identity = ReadValueFromFile<string>(fileName, "LogIdentity");
-            if
-            (
-                string.IsNullOrEmpty(identity)
-                ||
-                StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, identity) == 0
-            )
+
+            if (string.IsNullOrEmpty(identity) ||
+                identity.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase))
             {
                 identity = "powershell";
             }
@@ -387,7 +384,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>One of the PSLevel values indicating the level to log.
         /// <para>
-        /// The default value is PSLevel.Informational
+        /// The default value is PSLevel.Informational.
         /// </para>
         /// </returns>
         internal override PSLevel GetLogLevel()
@@ -395,12 +392,10 @@ namespace System.Management.Automation
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string levelName = ReadValueFromFile<string>(fileName, "LogLevel");
             PSLevel level;
-            if
-            (
-                StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, levelName) == 0
-                ||
-                !Enum.TryParse<PSLevel>(levelName, true, out level )
-            )
+
+            if (string.IsNullOrEmpty(levelName) ||
+                levelName.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase) ||
+                !Enum.TryParse<PSLevel>(levelName, true, out level))
             {
                 level = PSLevel.Informational;
             }
@@ -415,7 +410,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Provides a string name to indicate the default for a configuration setting.
         /// </summary>
-        const string LogDefaultValueName = "default";
+        const string LogDefaultValue = "default";
 
         const PSChannel DefaultChannels = PSChannel.Operational;
 
@@ -423,9 +418,9 @@ namespace System.Management.Automation
         /// Gets the bitmask of the PSChannel values to log.
         /// </summary>
         /// <returns>
-        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic
+        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic.
         /// <para>
-        /// The default value is PSChannel.Operational
+        /// The default value is PSChannel.Operational.
         /// </para>
         /// </returns>
         internal override PSChannel GetLogChannels()
@@ -440,7 +435,7 @@ namespace System.Management.Automation
 
                 foreach (string name in names)
                 {
-                    if (StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, name) == 0)
+                    if (name.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase.Compare))
                     {
                         result = 0;
                         break;
@@ -462,7 +457,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        // by default, do not include analytic events
+        // by default, do not include analytic events.
         const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
 
         /// <summary>
@@ -471,7 +466,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A bitmask of PSKeyword values.
         /// <para>
-        /// The default value is all keywords other than UseAlwaysAnalytic
+        /// The default value is all keywords other than UseAlwaysAnalytic.
         /// </para>
         /// </returns>
         internal override PSKeyword GetLogKeywords()
@@ -486,7 +481,7 @@ namespace System.Management.Automation
 
                 foreach (string name in names)
                 {
-                    if (StringComparer.OrdinalIgnoreCase.Compare(LogDefaultValueName, name) == 0)
+                    if (name.Equals(LogDefaultValue, StringComparer.OrdinalIgnoreCase))
                     {
                         result = 0;
                         break;

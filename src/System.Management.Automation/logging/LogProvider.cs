@@ -147,8 +147,8 @@ namespace System.Management.Automation
             internal static readonly string LogContextShellId = EtwLoggingStrings.LogContextShellId;
         }
 
-       /// <summary>
-        /// Gets PSLogUserData from execution context
+        /// <summary>
+        /// Gets PSLogUserData from execution context.
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
@@ -170,10 +170,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Appends exception information
+        /// Appends exception information.
         /// </summary>
-        /// <param name="sb">string builder</param>
-        /// <param name="except">exception</param>
+        /// <param name="sb">string builder.</param>
+        /// <param name="except">exception.</param>
         protected static void AppendException(StringBuilder sb, Exception except)
         {
             sb.AppendLine(StringUtil.Format(EtwLoggingStrings.ErrorRecordMessage, except.Message));
@@ -199,10 +199,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Appends additional information
+        /// Appends additional information.
         /// </summary>
-        /// <param name="sb">string builder</param>
-        /// <param name="additionalInfo">additional information</param>
+        /// <param name="sb">string builder.</param>
+        /// <param name="additionalInfo">additional information.</param>
         protected static void AppendAdditionalInfo(StringBuilder sb, Dictionary<String, String> additionalInfo)
         {
             if (additionalInfo != null)
@@ -215,10 +215,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets PSLevel from severity
+        /// Gets PSLevel from severity.
         /// </summary>
-        /// <param name="severity">error severity</param>
-        /// <returns>PS log level</returns>
+        /// <param name="severity">error severity.</param>
+        /// <returns>PS log level.</returns>
         protected static PSLevel GetPSLevelFromSeverity(string severity)
         {
             switch (severity)
@@ -236,7 +236,7 @@ namespace System.Management.Automation
         // Estimate an approximate size to use for the StringBuilder in LogContextToString
         // Estimated length of all Strings.* values
         // Rough estimate of values
-        // max path for
+        // max path for Command path
         const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
 
         /// <summary>

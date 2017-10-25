@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// SysLog LogProvider implementation
+    /// SysLog LogProvider implementation.
     /// </summary>
     internal class PSSysLogProvider : LogProvider
     {
@@ -20,7 +20,7 @@ namespace System.Management.Automation.Tracing
         internal const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
         static PSSysLogProvider()
         {
@@ -46,7 +46,7 @@ namespace System.Management.Automation.Tracing
             {
                 if (_payloadBuilder == null)
                 {
-                    // First time initialization for this thread.
+                    // NOTE: Thread static fields must be explicitly initialized for each thread.
                     _payloadBuilder = new StringBuilder(200);
                 }
                 return _payloadBuilder;
