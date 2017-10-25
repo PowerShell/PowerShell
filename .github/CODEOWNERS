@@ -41,7 +41,7 @@ demos/                                             @joeyaiello @SteveL-MSFT @Hem
 src/System.Management.Automation/DscSupport        @TravisEz13 @dantraMSFT
 
 # Area: engine
-src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay
+src/System.Management.Automation/engine            @daxian-dbw @lzybkr @BrucePay
 
 # Area: Debugging
 # Must be below engine to override
@@ -54,6 +54,7 @@ src/System.Management.Automation/help              @Francisco-Gamino @adityapatw
 # @daxian-dbw @lzybkr @charub
 
 # Area: Language
+src/System.Management.Automation/engine/parser
 # @daxian-dbw @vors @lzybkr @BrucePay
 
 # Area: Providers
