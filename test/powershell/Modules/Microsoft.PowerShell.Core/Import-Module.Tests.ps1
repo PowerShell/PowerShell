@@ -36,7 +36,7 @@
 
     It "should be able to load an already loaded module" {
         Import-Module $moduleName
-        { $script:module = Import-Module $moduleName -PassThru } | Should Not Throw
+        { $script:module = Import-Module $moduleName -PassThru -ErrorAction Stop } | Should Not Throw
         Get-Module -Name $moduleName | Should Be $script:module
     }
 
