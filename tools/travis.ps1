@@ -196,8 +196,7 @@ else
     $pesterParam = @{
         'binDir'          = $output
         'PassThru'        = $true
-        'Terse'           = $true
-        'UseRunspacePool' = $true
+        'UseRunspacePool' = $false
     }
 
     if ($isFullBuild) {
@@ -233,7 +232,7 @@ else
     }
 
     try {
-        Start-PSxUnit        
+        Start-PSxUnit
     }
     catch {
         $result = "FAIL"

@@ -840,10 +840,12 @@ function Start-PSPester {
         [string]$powershell = (Join-Path $binDir 'pwsh'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
+        [Parameter(ParameterSetName='RunspacePool')]
         [switch]$Unelevate,
         [switch]$Quiet,
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
+        [Parameter(ParameterSetName='RunspacePool')]
         [switch]$PassThru,
         [switch]$IncludeFailingTest,
         [Parameter(ParameterSetName='RunspacePool')]

@@ -61,10 +61,10 @@
 
         $script:a = $null
 
-        {$script:a = dir | select-object -property Name, (
+        {$script:a = Get-ChildItem $PSHOME | select-object -property Name, (
                     [ordered]@{Name="IsDirectory";
                                Expression ={$_.PSIsContainer}})} | Should Not Throw
 
-        It '$a should not be $null'  { $script:a | Should Not Be $null }
+        It '$a should not be $null'  { $script:a | Should Not BeNullOrEmpty }
     }
 }

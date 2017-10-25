@@ -10,7 +10,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_D = "D39B4FD9-3E1D-4DD5-8718-22FE2C934CE3"
             $item_E = "EE150FEB-0F21-4AFF-8066-AF59E925810C"
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43"
-            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676" 
+            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676"
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
@@ -21,7 +21,7 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should list the contents of the current folder" {
-            (Get-ChildItem .).Name.Length | Should BeGreaterThan 0
+            (Get-ChildItem $TestDrive).Name.Length | Should BeGreaterThan 0
         }
 
         It "Should list the contents of the home directory" {
@@ -31,7 +31,7 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should have a the proper fields and be populated" {
-            $var = Get-Childitem .
+            $var = Get-Childitem $TestDrive
 
             $var.Name.Length   | Should BeGreaterThan 0
             $var.Mode.Length   | Should BeGreaterThan 0

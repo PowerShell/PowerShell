@@ -5,7 +5,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/pshcoredevenv-debian.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -25,7 +25,7 @@ thisinstallerdistro=debian
 repobased=true
 gitscriptname="installpsh-debian.psh"
 
-echo ; 
+echo ;
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Current PowerShell Core Version: $currentpshversion"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
@@ -132,7 +132,7 @@ $SUDO apt-get update
 # Install PowerShell
 $SUDO apt-get install -y powershell
 
-powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
 success=$?
 
 if [[ "$success" != 0 ]]; then
@@ -158,7 +158,7 @@ fi
 if [[ "'$*'" =~ -interactivetesting ]] ; then
     echo "*** Loading test code in VS Code"
     curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
+    code ./testpowershell.ps1
 fi
 
 if [[ "$repobased" == true ]] ; then

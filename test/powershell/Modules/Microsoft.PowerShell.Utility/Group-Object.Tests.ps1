@@ -14,7 +14,7 @@ Describe "Group-Object DRT Unit Tests" -Tags "CI" {
 Describe "Group-Object" -Tags "CI" {
 
     BeforeAll {
-        $testObject = Get-ChildItem
+        $testObject = Get-ChildItem -Path $PSHOME
     }
 
     It "Should be called using an object as piped without error with no switches" {

@@ -348,11 +348,17 @@ function Invoke-AppVeyorTest
         Remove-Item -Force ${telemetrySemaphoreFilepath}
     }
 
-    Start-PSPester -Terse -UseRunspacePool -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
+    $commonparams = @{
+        Terse           = $true;
+        UseRunspacePool = $false;
+        bindir          = $env:CoreOutput
+    }
+
+    Start-PSPester @commonparams -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
 
-    Start-PSPester -Terse -UseRunspacePool -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
+    Start-PSPester @commonparams -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 

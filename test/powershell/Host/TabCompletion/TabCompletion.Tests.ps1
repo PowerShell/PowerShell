@@ -9,6 +9,8 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
+        # set location to testdrive so that the tests don't conflict with files in system32 if run in runspacepool
+        Set-Location $testdrive
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should be notepad.exe
     }
@@ -892,6 +894,8 @@ dir -Recurse `
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
 
+            # set location to testdrive so that the tests don't conflict with files in system32 if run in runspacepool
+            Set-Location $testdrive
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
