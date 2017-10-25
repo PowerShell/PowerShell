@@ -635,15 +635,15 @@ namespace System.Management.Automation
             List<string> results = new List<string>();
             foreach (string item in content)
             {
+                int maxSubstrings = System.Math.Abs(limit);
                 bool rightToLeft = false;
                 if(limit < 0){
                     // User supplied a negative Max-substrings argument,
                     // employ Right-to-Left splitting instead
                     rightToLeft = true;
-                    limit = System.Math.Abs(limit);
                 }
 
-                if (limit == 1)
+                if (maxSubstrings == 1)
                 {
                     // Don't bother with looking for any delimiters,
                     // just return the original string.
@@ -663,7 +663,7 @@ namespace System.Management.Automation
                 {
                     // Limit was specified by the user
                     // instantiate list with maximum needed capacity
-                    split = new List<String>(limit);
+                    split = new List<String>(maxSubstrings);
                 }
                 
                 StringBuilder buf = new StringBuilder();
@@ -690,7 +690,7 @@ namespace System.Management.Automation
                         split.Add(buf.ToString());
                         buf = new StringBuilder();
 
-                        if (limit > 0 && split.Count >= (limit - 1))
+                        if (maxSubstrings > 0 && split.Count >= (maxSubstrings - 1))
                         {
                             // We're one item below the limit. If
                             // we have any string left, go ahead
@@ -738,7 +738,7 @@ namespace System.Management.Automation
 
                 // Add any remainder, if we're under the limit.
                 if (buf.Length > 0 &&
-                    (limit == 0 || split.Count < limit))
+                    (limit == 0 || split.Count < maxSubstrings))
                 {
                     split.Add(buf.ToString());
                 }
