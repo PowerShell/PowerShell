@@ -150,7 +150,7 @@
 
         try
         {
-            test-singleintparameter -Parameter1 'dookie'
+            test-singleintparameter -Parameter1 'exampleInvalidParam'
             throw "No Exception!"
         }
         catch
