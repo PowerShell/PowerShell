@@ -35,10 +35,10 @@ install:
       npm install -g markdown-spellcheck@0.11.0;
     fi
   - ulimit -n 4096
-  - powershell -File tools/travis.ps1 -Bootstrap
+  - pwsh -File tools/travis.ps1 -Bootstrap
 
 script:
-  - powershell -File tools/travis.ps1
+  - pwsh -File tools/travis.ps1
   # spellcheck
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       mdspell '**/*.md' '!powershell/**/*.md' --ignore-numbers --ignore-acronyms --report;

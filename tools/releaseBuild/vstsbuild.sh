@@ -1,1 +1,1 @@
-powershell -command ".\vstsbuild.ps1 $*"
+pwsh -command ".\vstsbuild.ps1 $*"

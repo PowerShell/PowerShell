@@ -2,8 +2,8 @@
 
 FROM amazonlinux:latest
 
-ARG POWERSHELL_VERSION=6.0.0-beta.8
-ARG POWERSHELL_PACKAGE=powershell-6.0.0-beta.8-linux-x64.tar.gz
+ARG POWERSHELL_VERSION=6.0.0-beta.9
+ARG POWERSHELL_PACKAGE=powershell-6.0.0-beta.9-linux-x64.tar.gz
 ARG IMAGE_NAME=microsoft/powershell:amazonlinux
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -29,7 +29,7 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install dependencies and clean up
-RUN yum install -y \       
+RUN yum install -y \
         curl \
         libunwind \
         libicu \

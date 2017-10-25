@@ -2,7 +2,7 @@
 
 FROM fedora:25
 
-ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_VERSION=6.0.0-beta.9
 ARG IMAGE_NAME=microsoft/powershell:fedora25
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -23,7 +23,7 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
 # Install dependencies and clean up
-RUN dnf install -y \       
+RUN dnf install -y \
         curl \
         glibc-locale-source \
     && dnf clean all
