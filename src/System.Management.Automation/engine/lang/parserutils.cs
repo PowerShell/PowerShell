@@ -647,7 +647,7 @@ namespace System.Management.Automation
 
             List<string> results = new List<string>();
 
-            StringBuilder buf = new StringBuilder();
+            List<char> buf = new List<char>();
 
             foreach (string item in content)
             {                
@@ -666,7 +666,7 @@ namespace System.Management.Automation
                     split = new List<String>(limit);
                 }
                 
-                // Clear string buffer
+                // Clear char buffer
                 buf.Clear(); 
 
                 int strIndex = 0;
@@ -689,7 +689,11 @@ namespace System.Management.Automation
                         args: new object[] { item, strIndex });
                     if (LanguagePrimitives.IsTrue(isDelimChar))
                     {
-                        split.Add(buf.ToString());
+                        if(rightToLeft)
+                        {
+                            buf.Reverse();
+                        }
+                        split.Add(string.Concat(buf));
                         buf.Clear();
 
                         if (limit > 0 && split.Count >= (limit - 1))
@@ -727,22 +731,19 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        if(rightToLeft)
-                        {
-                            buf.Insert(0, item[strIndex]);
-                        }
-                        else
-                        {
-                            buf.Append(item[strIndex]);
-                        }
+                        buf.Add(item[strIndex]);
                     }
                 }
 
                 // Add any remainder, if we're under the limit.
-                if (buf.Length > 0 &&
+                if (buf.Count > 0 &&
                     (limit == 0 || split.Count < limit))
                 {
-                    split.Add(buf.ToString());
+                    if(rightToLeft)
+                    {
+                        buf.Reverse();
+                    }
+                    split.Add(string.Concat(buf));
                 }
 
                 if(rightToLeft)
