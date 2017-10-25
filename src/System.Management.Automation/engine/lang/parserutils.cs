@@ -647,6 +647,8 @@ namespace System.Management.Automation
 
             List<string> results = new List<string>();
 
+            StringBuilder buf = new StringBuilder();
+
             foreach (string item in content)
             {                
                 List<string> split; 
@@ -664,7 +666,9 @@ namespace System.Management.Automation
                     split = new List<String>(limit);
                 }
                 
-                StringBuilder buf = new StringBuilder();
+                // Clear string buffer
+                buf.Clear(); 
+
                 int strIndex = 0;
                 for (int cursor = 0; cursor < item.Length; cursor++)
                 {
@@ -686,7 +690,7 @@ namespace System.Management.Automation
                     if (LanguagePrimitives.IsTrue(isDelimChar))
                     {
                         split.Add(buf.ToString());
-                        buf = new StringBuilder();
+                        buf.Clear();
 
                         if (limit > 0 && split.Count >= (limit - 1))
                         {
