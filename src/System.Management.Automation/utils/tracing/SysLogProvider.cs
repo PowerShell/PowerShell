@@ -77,7 +77,7 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         // The hash code for the git commit id.
-        static readonly string _commitId;
+        static readonly int _commitId;
 
         // Ensure the string pointer is not garbage collected.
         static IntPtr _nativeSyslogIdent = IntPtr.Zero;
@@ -89,25 +89,7 @@ namespace System.Management.Automation.Tracing
 
         static SysLogProvider()
         {
-            _commitId = id;
-        }
-
-        static string CommitIdHash()
-        {
-            string id = PSVersionInfo.GitCommitId;
-            string version = PSVersionInfo.Version
-            int index = $id.LastIndexOf('-');
-            if (index > 0)
-            {
-                // Use the first 12 characters of the commit id's SHA1 hash
-                id = id.SubString(index, 12);
-            }
-            else
-            {
-                // Private builds do not have an SHA-1 hash
-                // Use the hash code for the entire commit id
-                id = id.GetHashCode().ToString("X");
-            }
+            _commitId = PSVersionInfo.GitCommitId.GetHashCode();
         }
 
         /// <summary>
