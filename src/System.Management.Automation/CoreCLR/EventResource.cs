@@ -16,7 +16,7 @@ namespace System.Management.Automation.Tracing
     internal static class EventResource
     {
         // Defines the resource id of the message to use when an event id is not valid.
-        const string MissingEventIdResourceName = "MissingEventIdMessage";
+        private const string MissingEventIdResourceName = "MissingEventIdMessage";
 
         /// <summary>
         /// Gets the name of the message resource to use for event ids that are not found.
