@@ -35,7 +35,7 @@ install:
       npm install -g markdown-spellcheck@0.11.0;
     fi
   - ulimit -n 4096
-  - pwsh -File tools/travis.ps1 -Bootstrap
+  - pwsh -File tools/travis.ps1 -Stage Bootstrap
 
 script:
   - pwsh -File tools/travis.ps1
@@ -43,3 +43,9 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       mdspell '**/*.md' '!powershell/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
+
+after_failure:
+  - pwsh -File tools/travis.ps1 -Stage Failure
+
+after_success:
+  - pwsh -File tools/travis.ps1 -Stage Success
