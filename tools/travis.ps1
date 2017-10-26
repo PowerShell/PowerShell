@@ -285,7 +285,7 @@ elseif($Stage -in 'Failure', 'Success')
         $result = 'FAIL'
     }
 
-    if ((-not $isPr) -and $cronBuild) {
+    if ($cronBuild) {
         # update the badge if you've done a cron build, these are not fatal issues
         try {
             $svgData = Get-DailyBadge -result $result
