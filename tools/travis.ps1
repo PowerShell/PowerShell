@@ -1,6 +1,8 @@
 param(
-    [switch]$Bootstrap
+    [ValidateSet('Bootstrap','Build','Failure','Success')]
+    [String]$Stage = 'Build'
 )
+
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
 
@@ -158,14 +160,14 @@ $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq
 $cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
 
-if($Bootstrap.IsPresent)
+if($Stage -eq 'Bootstrap')
 {
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:(-not $isPr)
 }
-else 
+elseif($Stage -eq 'Build')
 {
     $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
@@ -270,32 +272,44 @@ else
             }            
         }
 
-        # update the badge if you've done a cron build, these are not fatal issues
-        if ( $cronBuild ) {
-            try {
-                $svgData = Get-DailyBadge -result $result
-                if ( ! $svgData ) {
-                    write-warning "Could not retrieve $result badge"
-                }
-                else {
-                    log "Setting status badge to '$result'"
-                    Set-DailyBuildBadge -content $svgData
-                }
-            }
-            catch {
-                Write-Warning "Could not update status badge: $_"
-            }
-            try {
-                Send-DailyWebHook -result $result
-            }
-            catch {
-                Write-Warning "Could not send webhook: $_"
-            }
-        }
-    }
-
     # if the tests did not pass, throw the reason why
     if ( $result -eq "FAIL" ) {
         Throw $resultError
     }
+}
+elseif($Stage -in 'Failure', 'Success')
+{
+    $result = 'PASS'
+    if($Stage -eq 'Failure')
+    {
+        $result = 'FAIL'
+    }
+
+    if ((-not $isPr) -and $cronBuild) {
+        # update the badge if you've done a cron build, these are not fatal issues
+        try {
+            $svgData = Get-DailyBadge -result $result
+            if ( ! $svgData ) {
+                write-warning "Could not retrieve $result badge"
+            }
+            else {
+                log "Setting status badge to '$result'"
+                Set-DailyBuildBadge -content $svgData
+            }
+        }
+        catch {
+            Write-Warning "Could not update status badge: $_"
+        }
+
+        try {
+            Send-DailyWebHook -result $result
+        }
+        catch {
+            Write-Warning "Could not send webhook: $_"
+        }
+    }
+    else {
+        log 'We only send bagde or webhook update for Cron builds'
+    }
+
 }
