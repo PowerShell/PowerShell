@@ -853,12 +853,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!String.IsNullOrEmpty(error.FileName))
                 {
-                    actualSource = System.IO.File.ReadAllText(error.FileName).Split(Utils.Separators.Newline);
+                    actualSource = System.IO.File.ReadAllLines(error.FileName);
                 }
             }
 
             string errorText = StringUtil.Format(AddTypeStrings.CompilationErrorFormat,
-                        error.FileName, error.Line, error.ErrorText) + "\n";
+                        error.FileName, error.Line, error.ErrorText) + Environment.NewLine;
 
             for (int lineNumber = error.Line - 1; lineNumber < error.Line + 2; lineNumber++)
             {
@@ -876,8 +876,8 @@ namespace Microsoft.PowerShell.Commands
 
                     lineText += actualSource[lineNumber - 1];
 
-                    errorText += "\n" + StringUtil.Format(AddTypeStrings.CompilationErrorFormat,
-                        error.FileName, lineNumber, lineText) + "\n";
+                    errorText += Environment.NewLine + StringUtil.Format(AddTypeStrings.CompilationErrorFormat,
+                        error.FileName, lineNumber, lineText) + Environment.NewLine;
                 }
             }
 
