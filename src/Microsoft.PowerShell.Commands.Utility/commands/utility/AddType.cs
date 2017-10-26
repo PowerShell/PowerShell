@@ -763,6 +763,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
+            // Prevent code compilation in ConstrainedLanguage mode
+            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType), "CannotDefineNewType", ErrorCategory.PermissionDenied, null));
+            }
+
             // Generate an error if they've specified an output
             // assembly type without an output assembly
             if (String.IsNullOrEmpty(outputAssembly) && outputTypeSpecified)
@@ -778,36 +786,6 @@ namespace Microsoft.PowerShell.Commands
 
                 ThrowTerminatingError(errorRecord);
                 return;
-            }
-
-            PopulateSource();
-        }
-
-        internal void PopulateSource()
-        {
-            // Prevent code compilation in ConstrainedLanguage mode
-            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType), "CannotDefineNewType", ErrorCategory.PermissionDenied, null));
-            }
-
-            // Load the source if they want to load from a file
-            if (String.Equals(ParameterSetName, "FromPath", StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
-                )
-            {
-                sourceCode = "";
-                foreach (string file in paths)
-                {
-                    sourceCode += System.IO.File.ReadAllText(file) + "\n";
-                }
-            }
-
-            if (String.Equals(ParameterSetName, "FromMember", StringComparison.OrdinalIgnoreCase))
-            {
-                sourceCode = GenerateTypeSource(typeNamespace, Name, sourceCode, language);
             }
         }
 
@@ -932,13 +910,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Load the source if they want to load from a file
                 if (String.Equals(ParameterSetName, "FromPath", StringComparison.OrdinalIgnoreCase) ||
-                    String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase))
+                    String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
+                   )
                 {
-                    this.sourceCode = "";
+                    StringBuilder sb = new StringBuilder(paths.Length);
+                    sourceCode = "";
+
                     foreach (string file in paths)
                     {
-                        this.sourceCode += System.IO.File.ReadAllText(file) + "\n";
+                        sb.Append(System.IO.File.ReadAllText(file));
+                        sb.Append("\n");
                     }
+
+                    sourceCode = sb.ToString();
+                }
+                else if (String.Equals(ParameterSetName, "FromMember", StringComparison.OrdinalIgnoreCase))
+                {
+                    sourceCode = GenerateTypeSource(typeNamespace, Name, sourceCode, language);
                 }
 
                 CompileSourceToAssembly(this.sourceCode);
