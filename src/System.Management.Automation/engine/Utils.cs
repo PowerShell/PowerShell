@@ -1416,6 +1416,14 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
+
+        // Stop/Restart/Rename Computer tests
+        internal static bool TestStopComputer;
+        internal static bool TestWaitStopComputer;
+        internal static bool TestRenameComputer;
+        internal static int  TestStopComputerResults = 0;
+        internal static int  TestRenameComputerResults = 0;
+
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
@@ -1424,6 +1432,16 @@ namespace System.Management.Automation.Internal
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)
+        {
+            var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
+            if (fieldInfo != null)
+            {
+                fieldInfo.SetValue(null, value);
+            }
+        }
+
+        /// <summary>This member is used for internal test purposes.</summary>
+        public static void SetTestHook(string property, int value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             if (fieldInfo != null)
