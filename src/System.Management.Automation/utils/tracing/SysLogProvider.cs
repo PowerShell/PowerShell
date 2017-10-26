@@ -47,10 +47,13 @@ namespace System.Management.Automation.Tracing
     ///   between the full git commit id string and a hash code used for subsequent
     ///   log entries.
     ///   Context: "GitCommitId"
-    ///   Payload: string "Hash:" hashcode
-    ///    where string is the full git commit id string and hashcode is the integer
-    ///    hash code for the string in HEX.
-    ///   Example: (19E1025:3:10) [GitCommitId] v6.0.0-beta.8-67-gca2630a3dea6420a3cd3914c84a74c1c45311f54 Hash:193E1025
+    ///   Payload: string "Hash:" hashcode as HEX string.
+    ///    For official builds, the GitCommitID is the release tag. For other builds the commit id may include an SHA-1 hash at the
+    ///    end of the release tag.
+    ///   Example 1: Official release
+    ///     (19E1025:3:10) [GitCommitId] v6.0.0-beta.9 Hash:64D0C08D
+    ///   Example 2: Commit id with SHA-1 hash
+    ///     (19E1025:3:10) [GitCommitId] v6.0.0-beta.8-67-gca2630a3dea6420a3cd3914c84a74c1c45311f54 Hash:8EE3A3B3
     ///
     /// Transfer
     ///   A log entry to record a transfer event.
@@ -74,7 +77,7 @@ namespace System.Management.Automation.Tracing
     internal class SysLogProvider
     {
         // The hash code for the git commit id.
-        static readonly int _commitId;
+        static readonly string _commitId;
 
         // Ensure the string pointer is not garbage collected.
         static IntPtr _nativeSyslogIdent = IntPtr.Zero;
@@ -86,10 +89,25 @@ namespace System.Management.Automation.Tracing
 
         static SysLogProvider()
         {
-            // Get a hash value for the full commit id string.
-            // NOTE: Consider using a hashing algorithm that guarantees
-            // a repeatable value and is less susceptible to collision.
-            _commitId = PSVersionInfo.GitCommitId.GetHashCode();
+            _commitId = id;
+        }
+
+        static string CommitIdHash()
+        {
+            string id = PSVersionInfo.GitCommitId;
+            string version = PSVersionInfo.Version
+            int index = $id.LastIndexOf('-');
+            if (index > 0)
+            {
+                // Use the first 12 characters of the commit id's SHA1 hash
+                id = id.SubString(index, 12);
+            }
+            else
+            {
+                // Private builds do not have an SHA-1 hash
+                // Use the hash code for the entire commit id
+                id = id.GetHashCode().ToString("X");
+            }
         }
 
         /// <summary>
