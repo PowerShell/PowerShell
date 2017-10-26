@@ -1,4 +1,4 @@
-Describe 'Ubuntu Post-Install Tests' -Tag 'CI' {
+Describe 'Ubuntu/Debian Post-Install Tests' -Tag 'CI' {
     BeforeAll {
         $skip = $IsWindows
 
@@ -6,11 +6,12 @@ Describe 'Ubuntu Post-Install Tests' -Tag 'CI' {
         {
             $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
             $IsUbuntu = $LinuxInfo.ID -match 'ubuntu'
-            $skip = -not $IsUbuntu
+            $IsDebian = $LinuxInfo.ID -match 'debian'
+            $skiplibgssapi = -not ($IsUbuntu -or $IsDebian)
         }
     }
 
-    It "libgssapi_krb5.so symbolic link exists in the $PSHOME directory" -skip:$skip {
+    It "libgssapi_krb5.so symbolic link exists in the $PSHOME directory" -skip:$skiplibgssapi {
         $expectedPath = Join-Path -Path $PSHOME -ChildPath 'libgssapi_krb5.so'
 
         Test-Path -path $expectedPath | Should Be $true
