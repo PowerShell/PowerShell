@@ -271,6 +271,7 @@ elseif($Stage -eq 'Build')
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }            
         }
+    }
 
     # if the tests did not pass, throw the reason why
     if ( $result -eq "FAIL" ) {
