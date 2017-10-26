@@ -476,13 +476,10 @@ function New-UnixPackage {
                 $AfterRemoveScript = [io.path]::GetTempFileName()
                 $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
                 $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-                # Needed for Ubuntu 16.04 and Debian 8.*
+                # Needed for Ubuntu 16.04 and Debian 8.* which do not have a symbolic link for libgssapi_krb5.
+                # The next version of the PSRP client 'should' resolve this by linking against the 2.0 binary.
                 # NOTE: Staging is ending up with the actual file instead of the symbolic link.
-                # Remove the file and create the link.
-                if (Test-Path -Path "$Staging/libgssapi_krb5.so")
-                {
-                    Remove-Item -Path "$Staging/libgssapi_krb5.so" -Force -ErrorAction SilentlyContinue
-                }
+                # Force create a symbolic link.
                 Write-Verbose -Message "Creating symbolic link $Staging/libgssapi_krb5.so"
                 New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2" -Path "$Staging/libgssapi_krb5.so" -ErrorAction Stop >$null
             }
