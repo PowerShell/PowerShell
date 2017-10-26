@@ -914,7 +914,6 @@ namespace Microsoft.PowerShell.Commands
                    )
                 {
                     StringBuilder sb = new StringBuilder(paths.Length);
-                    sourceCode = "";
 
                     foreach (string file in paths)
                     {
