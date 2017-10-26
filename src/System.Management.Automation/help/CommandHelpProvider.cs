@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation. All Rights Reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.IO;
@@ -585,7 +585,7 @@ namespace System.Management.Automation
                 // e.g., <AssemblyName>.ni.dll as supposed to <AssemblyName>.dll.
 
                 // When cmdlet metadata is generated for the 'HelpFile' field, we use the name assembly and we append '-Help.xml' to it.
-                // Because of this, if the cmdlet is part of an N�gen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
+                // Because of this, if the cmdlet is part of an Ngen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
                 // If this is the case, we remove '.ni' from the help file name and try again.
                 // For example:
                 // Ngen assembly name: Microsoft.PowerShell.Commands.Management.ni.dll
@@ -604,7 +604,7 @@ namespace System.Management.Automation
                     if (String.IsNullOrEmpty(location))
                     {
                         // If the help file could not be found, then it is possible that the actual assembly name is something like
-                        // <Name>.ni.dll, e.g., MyAssembly.ni.dll, so let�s try to find the original help file in the cmdlet metadata.
+                        // <Name>.ni.dll, e.g., MyAssembly.ni.dll, so let's try to find the original help file in the cmdlet metadata.
                         location = GetHelpFile(helpFile, cmdletInfo);
                     }
                 }

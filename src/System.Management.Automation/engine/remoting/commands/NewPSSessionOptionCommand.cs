@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation. All Rights Reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Remoting
         /// The duration for which PowerShell should wait before it times out on cancel operations
         /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
         /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
-        /// The user wouldn�t mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
+        /// The user wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
         /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client has hung.
         ///
         /// Default: 60 * 1000 = 1 minute
@@ -390,7 +390,7 @@ namespace Microsoft.PowerShell.Commands
         /// times out on cancel operations (close runspace or stop powershell). For
         /// instance, when the user hits ctrl-C, New-PSSession cmdlet tries to call a
         /// stop on all remote runspaces which are in the Opening state. The user
-        /// wouldn�t mind waiting for 15 seconds, but this should be time bound and of a
+        /// wouldn't mind waiting for 15 seconds, but this should be time bound and of a
         /// shorter duration. A high timeout here like 3 minutes will give the user
         /// a feeling that the PowerShell client has hung.
         /// </summary>

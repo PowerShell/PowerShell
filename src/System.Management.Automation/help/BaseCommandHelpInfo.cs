@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation. All Rights Reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -249,7 +249,7 @@ namespace System.Management.Automation
                     if (!System.Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute))
                     {
                         // WinBlue: 545315 Online help links are broken with localized help
-                        // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (m�glicherwei se auf Englisch)
+                        // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
                         // Split the string based on <s> (space). We decided to go with this approach as
                         // UX localization authors use spaces. Correctly extracting only the wellformed URI
                         // is out-of-scope for this fix.
@@ -316,7 +316,7 @@ namespace System.Management.Automation
                         if (!System.Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute))
                         {
                             // WinBlue: 545315 Online help links are broken with localized help
-                            // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (m�glicherwei se auf Englisch)
+                            // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
                             // Split the string based on <s> (space). We decided to go with this approach as
                             // UX localization authors use spaces. Correctly extracting only the wellformed URI
                             // is out-of-scope for this fix.

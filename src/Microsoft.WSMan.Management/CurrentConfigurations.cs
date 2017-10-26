@@ -1,6 +1,6 @@
 ﻿//------------------------------------------------------------------
 // <copyright file="CurrentConfigurations.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation. All Rights Reserved.
+//     Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
 //
 // <author email="psarda">

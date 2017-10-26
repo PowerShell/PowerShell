@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation. All Rights Reserved.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  File:      MainEntry.cpp
 //

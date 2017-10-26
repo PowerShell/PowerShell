@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation. All Rights Reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 // This file contains the definitions for the objects
 // used in the communication protocol between formatting

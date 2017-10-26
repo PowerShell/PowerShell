@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation. All Rights Reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 // this file contains the data structures for the in memory database

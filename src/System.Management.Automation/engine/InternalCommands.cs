@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation. All Rights Reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -295,12 +295,12 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     // we write null out because:
-                                    // PS C:\> �$null | ForEach-object {$_.aa} | ForEach-Object {$_ + 3}�
+                                    // PS C:\> $null | ForEach-object {$_.aa} | ForEach-Object {$_ + 3}
                                     // 3
                                     // so we also want
-                                    // PS C:\> �$null | ForEach-object aa | ForEach-Object {$_ + 3}�
+                                    // PS C:\> $null | ForEach-object aa | ForEach-Object {$_ + 3}
                                     // 3
-                                    // But if we don�t write anything to the pipeline when _inputObject is null,
+                                    // But if we don't write anything to the pipeline when _inputObject is null,
                                     // the result 3 will not be generated.
                                     WriteObject(null);
                                 }
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
                                 // so we also want
                                 // PS C:\> "string" | ForEach-Object aa | ForEach-Object {$_ + 3}
                                 // 3
-                                // But if we don�t write anything to the pipeline when no member is found,
+                                // But if we don't write anything to the pipeline when no member is found,
                                 // the result 3 will not be generated.
                                 WriteObject(null);
                             }
