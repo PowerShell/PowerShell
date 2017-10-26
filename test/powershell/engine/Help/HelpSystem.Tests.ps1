@@ -123,6 +123,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 
         if ($IsWindows)
         {
+            Start-Service WinRM
             $testCases += @(
                 @{
                     helpFile    = "$PSHOME\$([Globalization.CultureInfo]::CurrentUICulture)\Microsoft.WSMan.Management.dll-help.xml"

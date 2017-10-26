@@ -513,7 +513,7 @@ foo
     }
 }
 
-Describe "WindowStyle argument" -Tag Feature {
+Describe "WindowStyle argument" -Tag Scenario {
     BeforeAll {
         $defaultParamValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = !$IsWindows

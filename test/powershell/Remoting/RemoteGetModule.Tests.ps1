@@ -5,6 +5,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         if (!$IsWindows) {
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
+            Start-Service WinRM
             $pssession = New-RemoteSession
             # pending https://github.com/PowerShell/PowerShell/issues/4819
             # $cimsession = New-RemoteSession -CimSession

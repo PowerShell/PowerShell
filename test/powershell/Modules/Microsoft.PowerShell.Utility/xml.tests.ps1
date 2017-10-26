@@ -65,8 +65,7 @@
                 $file = 'env:xmltestfile'
                 $params = @{$parameter=$file}
                 $err = $null
-                Select-XML @params "Root" -ErrorVariable err
-                $err.FullyQualifiedErrorId | Should Be $expectedError
+                { Select-XML @params "Root" -ErrorAction Stop } | ShouldBeErrorId $expectedError
             }
             finally
             {
@@ -78,8 +77,7 @@
             $testfile = "$testdrive/test.xml"
             Set-Content -Path $testfile -Value "<a><b>"
             $err = $null
-            Select-Xml -Path $testfile -XPath foo -ErrorVariable err
-            $err.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
+            { Select-Xml -Path $testfile -XPath foo -ErrorAction Stop } | ShouldBeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "-xml works with inputstream" {
@@ -93,14 +91,12 @@
         It "Returns error for invalid xmlnamespace" {
             $err = $null
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
-            Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorVariable err
-            $err.FullyQualifiedErrorId | Should Be 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
+            { Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorAction Stop } | ShouldBeErrorId 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "Returns error for invalid content" {
             $err = $null
-            Select-Xml -Content "hello" -XPath foo -ErrorVariable err
-            $err.FullyQualifiedErrorId | Should Be 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
+            { Select-Xml -Content "hello" -XPath foo -ErrorAction Stop } | ShouldBeErrorId 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "ToString() works correctly on nested node" {

@@ -17,23 +17,23 @@ function Send-DailyWebHook
     {
         log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
-        
+
         $Body = @{
                 'text'= @"
-Build Result: $result </br>     
+Build Result: $result </br>
 OS Type: $($PSVersionTable.OS) </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
 "@
         }
-        
+
         $params = @{
             Headers = @{'accept'='application/json'}
             Body = $Body | convertto-json
             Method = 'Post'
-            URI = $webhook 
+            URI = $webhook
         }
-        
+
         Invoke-RestMethod @params
     }
     else
@@ -124,7 +124,7 @@ function Set-DailyBuildBadge
 
     $headers["Authorization"]  = "SharedKey " + $storageAccountName + ":" + $signature
 
-    if ( $PSCmdlet.ShouldProcess("$signaturestring")) 
+    if ( $PSCmdlet.ShouldProcess("$signaturestring"))
     {
         # if this fails, it will throw, you can't check the response for a success code
         $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
@@ -165,7 +165,7 @@ if($Bootstrap.IsPresent)
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:(-not $isPr)
 }
-else 
+else
 {
     $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
@@ -184,19 +184,19 @@ else
     # NOTE: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue
     #       is tracked by https://github.com/dotnet/coreclr/issues/9745
     $originalProgressPreference = $ProgressPreference
-    $ProgressPreference = 'SilentlyContinue' 
+    $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
         Start-PSBuild -CrossGen:$isDailyBuild -PSModuleRestore
     }
     finally{
-        $ProgressPreference = $originalProgressPreference    
+        $ProgressPreference = $originalProgressPreference
     }
 
-    $pesterParam = @{ 
-        'binDir'   = $output 
-        'PassThru' = $true
-        'Terse'    = $true
+    $pesterParam = @{
+        'binDir'          = $output
+        'PassThru'        = $true
+        'UseRunspacePool' = $false
     }
 
     if ($isFullBuild) {
@@ -232,7 +232,7 @@ else
     }
 
     try {
-        Start-PSxUnit        
+        Start-PSxUnit
     }
     catch {
         $result = "FAIL"
@@ -246,7 +246,7 @@ else
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
         if (-not $isDailyBuild) { Start-PSBuild -CrossGen }
-        
+
         $packageParams = @{}
         if($env:TRAVIS_BUILD_NUMBER)
         {
@@ -267,7 +267,7 @@ else
             {
                 log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-            }            
+            }
         }
 
         # update the badge if you've done a cron build, these are not fatal issues

@@ -9,6 +9,8 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
+        # set location to testdrive so that the tests don't conflict with files in system32 if run in runspacepool
+        Set-Location $testdrive
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
         $res.CompletionMatches[0].CompletionText | Should be notepad.exe
     }
@@ -481,6 +483,7 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
+            Start-Service WinRM
             $beforeTab = 'wsman::localh'
             $afterTab = 'wsman::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
@@ -891,6 +894,8 @@ dir -Recurse `
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
 
+            # set location to testdrive so that the tests don't conflict with files in system32 if run in runspacepool
+            Set-Location $testdrive
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
@@ -1013,6 +1018,10 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        if ($IsWindows)
+        {
+            Start-Service WinRM
+        }
     }
 
     AfterAll {
@@ -1022,7 +1031,7 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
     It "Tab completion works correctly for Listeners" {
         $path = "wsman:\localhost\listener\listener"
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
-        $listener = Get-ChildItem WSMan:\localhost\Listener
+        $listener = Get-ChildItem WSMan:\localhost\Listener -Force
         $res.CompletionMatches.Count | Should Be $listener.Count
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
             $res.CompletionMatches[$i].ListItemText | Should Be $listener[$i].Name
