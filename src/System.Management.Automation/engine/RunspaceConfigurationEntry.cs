@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #pragma warning disable 1634, 1691
@@ -47,7 +47,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         Formats,
     }
-    
+
     /// <summary>
     /// Define class for runspace configuration entry.
     /// </summary>

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
                                 string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);
                                 var errorRecord = new ErrorRecord(new ArgumentException(errorMsg), "Modules_InvalidRootModuleInModuleManifest",
                                         ErrorCategory.InvalidArgument, _path);
-                                WriteError(errorRecord);                            
+                                WriteError(errorRecord);
                             }
                         }
 
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
                     string message = StringUtil.Format(Modules.InvalidModuleManifestPath, path);
                     InvalidOperationException ioe = new InvalidOperationException(message);
                     ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
-                    ThrowTerminatingError(er);                    
+                    ThrowTerminatingError(er);
                 }
                 path = pathInfos[0].Path;
 

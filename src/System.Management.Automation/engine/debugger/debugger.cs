@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         public event EventHandler<ProcessRunspaceDebugEndEventArgs> RunspaceDebugProcessingCompleted;
 
         /// <summary>
-        /// Event raised to indicate that the debugging session is over and runspace debuggers queued for 
+        /// Event raised to indicate that the debugging session is over and runspace debuggers queued for
         /// processing should be released.
         /// </summary>
         public event EventHandler<EventArgs> CancelRunspaceDebugProcessing;

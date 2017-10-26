@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation
         internal void RunspaceClosingNotification()
         {
             EngineSessionState.RunspaceClosingNotification();
-            
+
             if (_debugger != null)
             {
                 _debugger.Dispose();
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
                 }
                 return _formatDBManager;
             }
-            
+
             set
             {
                 _formatDBManager = value;

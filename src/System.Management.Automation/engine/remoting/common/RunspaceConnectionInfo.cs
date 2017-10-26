@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Net;
@@ -37,7 +37,7 @@ namespace System.Management.Automation.Runspaces
     public enum AuthenticationMechanism
     {
         /// <summary>
-        /// Use the default authentication (as defined by the underlying protocol) 
+        /// Use the default authentication (as defined by the underlying protocol)
         /// for establishing a remote connection.
         /// </summary>
         Default = 0x0,
@@ -60,11 +60,11 @@ namespace System.Management.Automation.Runspaces
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Credssp")]
         Credssp = 0x4,
         /// <summary>
-        /// Use Digest authentication mechanism. Digest authentication operates much 
-        /// like Basic authentication. However, unlike Basic authentication, Digest authentication 
+        /// Use Digest authentication mechanism. Digest authentication operates much
+        /// like Basic authentication. However, unlike Basic authentication, Digest authentication
         /// transmits credentials across the network as a hash value, also known as a message digest.
-        /// The user name and password cannot be deciphered from the hash value. Conversely, Basic 
-        /// authentication sends a Base 64 encoded password, essentially in clear text, across the 
+        /// The user name and password cannot be deciphered from the hash value. Conversely, Basic
+        /// authentication sends a Base 64 encoded password, essentially in clear text, across the
         /// network.
         /// </summary>
         Digest = 0x5,
@@ -116,14 +116,14 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// WSManTransportManager supports disconnected PowerShell sessions.
-    /// When a remote PS session server is in disconnected state, output 
-    /// from the running command pipeline is cached on the server.  This 
+    /// When a remote PS session server is in disconnected state, output
+    /// from the running command pipeline is cached on the server.  This
     /// enum determines what the server does when the cache is full.
     /// </summary>
     public enum OutputBufferingMode
     {
         /// <summary>
-        /// No output buffering mode specified.  Output buffering mode on server will 
+        /// No output buffering mode specified.  Output buffering mode on server will
         /// default to Block if a new session is created, or will retain its current
         /// mode for non-creation scenarios (e.g., disconnect/connect operations).
         /// </summary>
@@ -141,7 +141,7 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Class which defines connection path to a remote runspace 
+    /// Class which defines connection path to a remote runspace
     /// that needs to be created. Transport specific connection
     /// paths will be derived from this
     /// </summary>
@@ -214,9 +214,9 @@ namespace System.Management.Automation.Runspaces
         private CultureInfo _uiCulture = CultureInfo.CurrentUICulture;
 
         /// <summary>
-        /// The duration (in ms) for which PowerShell remoting waits before timing out on a connection to a remote machine. 
-        /// Simply put, the timeout for a remote runspace creation. 
-        /// The administrator would like to tweak this timeout depending on whether 
+        /// The duration (in ms) for which PowerShell remoting waits before timing out on a connection to a remote machine.
+        /// Simply put, the timeout for a remote runspace creation.
+        /// The administrator would like to tweak this timeout depending on whether
         /// he/she is connecting to a machine in the data center or across a slow WAN.
         /// </summary>
         public int OpenTimeout
@@ -232,9 +232,9 @@ namespace System.Management.Automation.Runspaces
                 }
                 else if (this is WSManConnectionInfo && _openTimeout == InfiniteTimeout)
                 {
-                    // this timeout value gets passed to a 
-                    // timer associated with the session 
-                    // data structure handler state machine. 
+                    // this timeout value gets passed to a
+                    // timer associated with the session
+                    // data structure handler state machine.
                     // The timer constructor will throw an exception
                     // for any value greater than Int32.MaxValue
                     // hence this is the maximum possible limit
@@ -249,10 +249,10 @@ namespace System.Management.Automation.Runspaces
 
 
         /// <summary>
-        /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations 
-        /// (close runspace or stop powershell). For instance, when the user hits ctrl-C, 
-        /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state. 
-        /// The administrator wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
+        /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations
+        /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
+        /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
+        /// The administrator wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
         /// A high timeout here like 3 minutes will give the administrator a feeling that the PowerShell client has hung.
         /// </summary>
         public int CancelTimeout { get; set; } = defaultCancelTimeout;
@@ -260,18 +260,18 @@ namespace System.Management.Automation.Runspaces
         internal const int defaultCancelTimeout = BaseTransportManager.ClientCloseTimeoutMs;
 
         /// <summary>
-        /// The duration for which PowerShell remoting waits before timing out 
-        /// for any operation. The user would like to tweak this timeout 
+        /// The duration for which PowerShell remoting waits before timing out
+        /// for any operation. The user would like to tweak this timeout
         /// depending on whether he/she is connecting to a machine in the data
         /// center or across a slow WAN.
-        /// 
+        ///
         /// Default: 3*60*1000 == 3minutes
         /// </summary>
         public int OperationTimeout { get; set; } = BaseTransportManager.ClientDefaultOperationTimeoutMs;
 
         /// <summary>
-        /// The duration (in ms) for which a Runspace on server needs to wait before it declares the client dead and closes itself down. 
-        /// This is especially important as these values may have to be configured differently for enterprise administration 
+        /// The duration (in ms) for which a Runspace on server needs to wait before it declares the client dead and closes itself down.
+        /// This is especially important as these values may have to be configured differently for enterprise administration
         /// and exchange scenarios.
         /// </summary>
         public int IdleTimeout { get; set; } = DefaultIdleTimeout;
@@ -309,8 +309,8 @@ namespace System.Management.Automation.Runspaces
             CancelTimeout = TimeSpanToTimeOutMs(options.CancelTimeout);
             OperationTimeout = TimeSpanToTimeOutMs(options.OperationTimeout);
 
-            // Special case for idle timeout.  A value of milliseconds == -1 
-            // (BaseTransportManager.UseServerDefaultIdleTimeout) is allowed for 
+            // Special case for idle timeout.  A value of milliseconds == -1
+            // (BaseTransportManager.UseServerDefaultIdleTimeout) is allowed for
             // specifying the default value on the server.
             IdleTimeout = (options.IdleTimeout.TotalMilliseconds >= BaseTransportManager.UseServerDefaultIdleTimeout &&
                                 options.IdleTimeout.TotalMilliseconds < int.MaxValue)
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// AppName which identifies the connection 
+        /// AppName which identifies the connection
         /// end point in the machine
         /// </summary>
         public String AppName
@@ -497,8 +497,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
-        /// </summary> 
+        ///
+        /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#ShellUri")]
         public string ShellUri
         {
@@ -632,9 +632,9 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// If true, underlying WSMan infrastructure will compress data sent on the network.
-        /// If false, data will not be compressed. Compression improves performance by 
+        /// If false, data will not be compressed. Compression improves performance by
         /// reducing the amount of data sent on the network. Compression my require extra
-        /// memory consumption and CPU usage. In cases where available memory / CPU is less, 
+        /// memory consumption and CPU usage. In cases where available memory / CPU is less,
         /// set this property to false.
         /// By default the value of this property is "true".
         /// </summary>
@@ -643,31 +643,31 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
-        /// already loaded the profile (i.e. in another session). 
+        /// already loaded the profile (i.e. in another session).
         /// </summary>
         public bool NoMachineProfile { get; set; }
 
         // BEGIN: Session Options
 
         /// <summary>
-        /// By default, wsman uses IEConfig - the current user 
-        ///  Internet Explorer proxy settings for the current active network connection. 
-        ///  This option requires the user profile to be loaded, so the option can 
-        ///  be directly used when called within a process that is running under 
-        ///  an interactive user account identity; if the client application is running 
-        ///  under a user context different then the interactive user, the client 
+        /// By default, wsman uses IEConfig - the current user
+        ///  Internet Explorer proxy settings for the current active network connection.
+        ///  This option requires the user profile to be loaded, so the option can
+        ///  be directly used when called within a process that is running under
+        ///  an interactive user account identity; if the client application is running
+        ///  under a user context different then the interactive user, the client
         ///  application has to explicitly load the user profile prior to using this option.
-        ///  
-        /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct 
-        /// connection to the server is used 
+        ///
+        /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct
+        /// connection to the server is used
         /// </summary>
         public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
-        /// This parameter takes a set of authentication methods the user can select 
+        /// This parameter takes a set of authentication methods the user can select
         /// from.  The available options should be as follows:
-        /// - Negotiate: Use the default authentication (ad defined by the underlying 
+        /// - Negotiate: Use the default authentication (ad defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
         /// - Digest: Use Digest authentication for establishing a remote connection
@@ -716,37 +716,37 @@ namespace System.Management.Automation.Runspaces
 
 
         /// <summary>
-        /// When connecting over HTTPS, the client does not validate that the server 
-        /// certificate is signed by a trusted certificate authority (CA). Use only when 
-        /// the remote computer is trusted by other means, for example, if the remote 
-        /// computer is part of a network that is physically secure and isolated or the 
+        /// When connecting over HTTPS, the client does not validate that the server
+        /// certificate is signed by a trusted certificate authority (CA). Use only when
+        /// the remote computer is trusted by other means, for example, if the remote
+        /// computer is part of a network that is physically secure and isolated or the
         /// remote computer is listed as a trusted host in WinRM configuration
         /// </summary>
         public bool SkipCACheck { get; set; }
 
         /// <summary>
-        /// Indicates that certificate common name (CN) of the server need not match the 
-        /// hostname of the server. Used only in remote operations using https. This 
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines.
         /// </summary>
         public bool SkipCNCheck { get; set; }
 
         /// <summary>
-        /// Indicates that certificate common name (CN) of the server need not match the 
-        /// hostname of the server. Used only in remote operations using https. This 
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines
         /// </summary>
         public bool SkipRevocationCheck { get; set; }
 
         /// <summary>
-        /// Specifies that no encryption will be used when doing remote operations over 
-        /// http. Unencrypted traffic is not allowed by default and must be enabled in 
+        /// Specifies that no encryption will be used when doing remote operations over
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in
         /// the local configuration
         /// </summary>
         public bool NoEncryption { get; set; }
 
         /// <summary>
-        /// Indicates the request is encoded in UTF16 format rather than UTF8 format; 
+        /// Indicates the request is encoded in UTF16 format rather than UTF8 format;
         /// UTF8 is the default.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
@@ -768,8 +768,8 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// When true and in loopback scenario (localhost) this enables creation of WSMan
-        /// host process with the user interactive token, allowing PowerShell script network access, 
-        /// i.e., allows going off box.  When this property is true and a PSSession is disconnected, 
+        /// host process with the user interactive token, allowing PowerShell script network access,
+        /// i.e., allows going off box.  When this property is true and a PSSession is disconnected,
         /// reconnection is allowed only if reconnecting from a PowerShell session on the same box.
         /// </summary>
         public bool EnableNetworkAccess { get; set; }
@@ -791,9 +791,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="scheme">scheme to be used for connection</param>
         /// <param name="port">port to connect to</param>
         /// <param name="appName">application end point to connect to</param>
-        /// <param name="shellUri">remote shell to launch 
+        /// <param name="shellUri">remote shell to launch
         /// on connection</param>
-        /// <param name="credential">credential to be used 
+        /// <param name="credential">credential to be used
         /// for connection</param>
         /// <param name="openTimeout">Timeout in milliseconds for open
         /// call on Runspace to finish</param>
@@ -820,9 +820,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="scheme">Scheme to be used for connection.</param>
         /// <param name="port">port to connect to</param>
         /// <param name="appName">application end point to connect to</param>
-        /// <param name="shellUri">remote shell to launch 
+        /// <param name="shellUri">remote shell to launch
         /// on connection</param>
-        /// <param name="credential">credential to be used 
+        /// <param name="credential">credential to be used
         /// for connection</param>
         /// <exception cref="ArgumentException">Invalid
         /// scheme or invalid port is specified</exception>
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="useSsl"></param>
         /// <param name="computerName"></param>
@@ -876,7 +876,7 @@ namespace System.Management.Automation.Runspaces
         /// and with the default credentials, default server
         /// life time and default open timeout
         ///        http://localhost/
-        /// The default shellname Microsoft.PowerShell will be 
+        /// The default shellname Microsoft.PowerShell will be
         /// used
         /// </summary>
         public WSManConnectionInfo()
@@ -892,7 +892,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="uri">uri of remote runspace</param>
         /// <param name="shellUri"></param>
-        /// <param name="credential">credentials to use to 
+        /// <param name="credential">credentials to use to
         /// connect to the remote runspace</param>
         /// <exception cref="ArgumentException">When an
         /// uri representing an invalid path is specified</exception>
@@ -915,7 +915,7 @@ namespace System.Management.Automation.Runspaces
                                                     (RemotingErrorIdStrings.RelativeUriForRunspacePathNotSupported));
             }
 
-            // This check is needed to make sure we connect to WSMan app in the 
+            // This check is needed to make sure we connect to WSMan app in the
             // default case (when user did not specify any appname) like
             // http://localhost , http://127.0.0.1 etc.
             if (uri.AbsolutePath.Equals("/", StringComparison.OrdinalIgnoreCase) &&
@@ -951,7 +951,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// constructor to create a WSManConnectionInfo with a 
+        /// constructor to create a WSManConnectionInfo with a
         /// uri specified and the default credentials,
         /// default server life time and default open
         /// timeout
@@ -973,7 +973,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="options"></param>
         /// <exception cref="ArgumentException">
-        /// 1. Proxy credential cannot be specified when proxy accesstype is None. 
+        /// 1. Proxy credential cannot be specified when proxy accesstype is None.
         /// Either specify a valid proxy accesstype other than None or do not specify proxy credential.
         /// </exception>
         public override void SetSessionOptions(PSSessionOption options)
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation.Runspaces
                 // resolve to default ports if required
                 if (port.Value == DefaultPort)
                 {
-                    // this is needed so that the OriginalString on 
+                    // this is needed so that the OriginalString on
                     // connection uri is fine
                     PortSetting = -1;
                     UseDefaultWSManPort = true;
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation.Runspaces
         /// User has the following options:
         /// 1. AuthMechanism + Credential
         /// 2. CertificateThumbPrint
-        /// 
+        ///
         /// All the above are mutually exclusive.
         /// </summary>
         /// <exception cref="InvalidOperationException">
@@ -1301,7 +1301,7 @@ namespace System.Management.Automation.Runspaces
                 UseDefaultWSManPort = false;
             }
 
-            // This check is needed to make sure we connect to WSMan app in the 
+            // This check is needed to make sure we connect to WSMan app in the
             // default case (when user did not specify any appname) like
             // http://localhost , http://127.0.0.1 etc.
             string appname;
@@ -1345,8 +1345,8 @@ namespace System.Management.Automation.Runspaces
         #region constants
 
         /// <summary>
-        /// Default disconnected server output mode is set to None.  This mode allows the 
-        /// server to set the buffering mode to Block for new sessions and retain its 
+        /// Default disconnected server output mode is set to None.  This mode allows the
+        /// server to set the buffering mode to Block for new sessions and retain its
         /// current mode during disconnect/connect operations.
         /// </summary>
         internal const OutputBufferingMode DefaultOutputBufferingMode = OutputBufferingMode.None;
@@ -1372,7 +1372,7 @@ namespace System.Management.Automation.Runspaces
         private const string DefaultScheme = HttpScheme;
         private const string DefaultSslScheme = HttpsScheme;
         /// <summary>
-        /// Default appname. This is empty as WSMan configuration has support 
+        /// Default appname. This is empty as WSMan configuration has support
         /// for this. Look at
         /// get-item WSMan:\localhost\Client\URLPrefix
         /// </summary>
@@ -1381,7 +1381,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default scheme.
         /// As part of port DCR, WSMan changed the default ports
-        /// from 80,443 to 5985,5986 respectively no-SSL,SSL 
+        /// from 80,443 to 5985,5986 respectively no-SSL,SSL
         /// connections. Since the standards say http,https use
         /// 80,443 as defaults..we came up with new mechanism
         /// to specify scheme as empty. For SSL, WSMan introduced
@@ -1695,7 +1695,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Optional application domain name.  If not specified then the 
+        /// Optional application domain name.  If not specified then the
         /// default application domain is used.
         /// </summary>
         public string AppDomainName
@@ -2223,7 +2223,7 @@ namespace System.Management.Automation.Runspaces
             for (int i=0; i<argsLength; )
             {
                 var iStart = i;
-         
+
                 switch (argsToParse[i])
                 {
                     case '"':
@@ -2347,7 +2347,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Create a process through native Win32 APIs and return StdIn, StdOut, StdError reader/writers
-        /// This needs to be done via Win32 APIs because managed code creates anonymous synchronous pipes 
+        /// This needs to be done via Win32 APIs because managed code creates anonymous synchronous pipes
         /// for redirected StdIn/Out and SSH (and PSRP) require asynchronous (overlapped) pipes, which must
         /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
         /// P-Invoking native APIs.
@@ -2363,7 +2363,7 @@ namespace System.Management.Automation.Runspaces
             //
             // These std pipe handles are bound to managed Reader/Writer objects and returned to the transport
             // manager object, which uses them for PSRP communication.  The lifetime of these handles are then
-            // tied to the reader/writer objects which the transport is responsible for disposing (see 
+            // tied to the reader/writer objects which the transport is responsible for disposing (see
             // SSHClientSessionTransportManger and the CloseConnection() method.
             //
             SafePipeHandle stdInPipeServer = null;
@@ -2387,7 +2387,7 @@ namespace System.Management.Automation.Runspaces
                 (sshProcess.HasExited == true))
             {
                 throw new InvalidOperationException(
-                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty), 
+                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),
                     ex);
             }
 
@@ -3197,7 +3197,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     //
                     // The ComputeSystemExists call depends on the existence of microsoft.hostcompute.interop.dll,
-                    // which requires Containers feature to be enabled. In case Containers feature is 
+                    // which requires Containers feature to be enabled. In case Containers feature is
                     // not enabled, we need to output a corresponding error message to inform user.
                     //
                     ProcessId = 0;
@@ -3308,7 +3308,7 @@ namespace System.Management.Automation.Runspaces
             // and do the work.
             //
             // For OneCore PowerShell, its ApartmentState is always MTA.
-            //        
+            //
 #if CORECLR
             threadProc();
 #else

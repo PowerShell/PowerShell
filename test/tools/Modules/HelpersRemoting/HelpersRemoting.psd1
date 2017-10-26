@@ -12,7 +12,7 @@ GUID = '7acf3c68-64f4-4550-bf14-b9361bfbfea3'
 
 CompanyName = 'Microsoft Corporation'
 
-Copyright = 'Copyright (C) Microsoft Corporation, All rights reserved.'
+Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 
 Description = 'Temporary module for remoting tests'
 

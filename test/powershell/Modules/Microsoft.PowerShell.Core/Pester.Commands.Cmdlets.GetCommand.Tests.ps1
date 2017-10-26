@@ -1,5 +1,5 @@
 ﻿##
-## Copyright (c) Microsoft Corporation, 2015
+## Copyright (c) Microsoft Corporation. All rights reserved.
 ##
 
 Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
@@ -50,15 +50,15 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         Pop-Location
     }
 
-    It "Get-Command -ShowCommandInfo property field test" {       
+    It "Get-Command -ShowCommandInfo property field test" {
         $properties = ($commandInfo | Get-Member -MemberType NoteProperty)
-        $propertiesAsString =  $properties.name | out-string 
-        $propertiesAsString | Should MatchExactly 'CommandType' 
-        $propertiesAsString | Should MatchExactly 'Definition' 
-        $propertiesAsString | Should MatchExactly 'Module' 
-        $propertiesAsString | Should MatchExactly 'ModuleName' 
-        $propertiesAsString | Should MatchExactly 'Name' 
-        $propertiesAsString | Should MatchExactly 'ParameterSets' 
+        $propertiesAsString =  $properties.name | out-string
+        $propertiesAsString | Should MatchExactly 'CommandType'
+        $propertiesAsString | Should MatchExactly 'Definition'
+        $propertiesAsString | Should MatchExactly 'Module'
+        $propertiesAsString | Should MatchExactly 'ModuleName'
+        $propertiesAsString | Should MatchExactly 'Name'
+        $propertiesAsString | Should MatchExactly 'ParameterSets'
     }
 
     $testcases = @(
@@ -80,20 +80,20 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 
     It "Get-Command -ShowCommandInfo ParameterSets property field test" {
         $properties = ($commandInfo.ParameterSets[0] | Get-Member -MemberType NoteProperty)
-        $propertiesAsString =  $properties.name | out-string 
-        $propertiesAsString | Should MatchExactly 'IsDefault' 
-        $propertiesAsString | Should MatchExactly 'Name' 
+        $propertiesAsString =  $properties.name | out-string
+        $propertiesAsString | Should MatchExactly 'IsDefault'
+        $propertiesAsString | Should MatchExactly 'Name'
         $propertiesAsString | Should MatchExactly 'Parameters'
     }
 
     It "Get-Command -ShowCommandInfo Parameters property field test" {
         $properties = ($commandInfo.ParameterSets[0].Parameters | Get-Member -MemberType NoteProperty)
-        $propertiesAsString =  $properties.name | out-string 
-        $propertiesAsString | Should MatchExactly 'HasParameterSet' 
-        $propertiesAsString | Should MatchExactly 'IsMandatory' 
+        $propertiesAsString =  $properties.name | out-string
+        $propertiesAsString | Should MatchExactly 'HasParameterSet'
+        $propertiesAsString | Should MatchExactly 'IsMandatory'
         $propertiesAsString | Should MatchExactly 'Name'
-        $propertiesAsString | Should MatchExactly 'ParameterType' 
-        $propertiesAsString | Should MatchExactly 'Position' 
+        $propertiesAsString | Should MatchExactly 'ParameterType'
+        $propertiesAsString | Should MatchExactly 'Position'
         $propertiesAsString | Should MatchExactly 'ValidParamSetValues'
         $propertiesAsString | Should MatchExactly 'ValueFromPipeline'
     }

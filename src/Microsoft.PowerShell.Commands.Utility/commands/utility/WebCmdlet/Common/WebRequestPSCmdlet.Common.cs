@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
 
         /// <summary>
-        /// Gets or sets the Authentication property used to determin the Authentication method for the web session. 
+        /// Gets or sets the Authentication property used to determin the Authentication method for the web session.
         /// Authentication does not work with UseDefaultCredentials.
         /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
         /// Basic: Requires Credential
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public virtual WebAuthenticationType Authentication { get; set; } = WebAuthenticationType.None;
-        
+
         /// <summary>
         /// gets or sets the Credential property
         /// </summary>
@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell.Commands
         {
             return (ParameterSetName == "StandardMethod");
         }
-        
+
         private bool IsCustomMethodSet()
         {
             return (ParameterSetName == "CustomMethod");

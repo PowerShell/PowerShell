@@ -1,7 +1,7 @@
 #if CORECLR
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Text;
@@ -38,10 +38,10 @@ namespace Microsoft.PowerShell.Commands
                 raw.AppendFormat("{0} {1} {2}", protocol, statusCode, statusDescription);
                 raw.AppendLine();
             }
-            
-            HttpHeaders[] headerCollections = 
+
+            HttpHeaders[] headerCollections =
             {
-                response.Headers, 
+                response.Headers,
                 response.Content == null ? null : response.Content.Headers
             };
 

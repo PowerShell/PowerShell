@@ -1,5 +1,5 @@
 /********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * --********************************************************************/
 
 /*
@@ -1555,7 +1555,7 @@ namespace System.Management.Automation.Remoting.Client
                     "Transport manager error thread ended with error: {0}", errorMsg);
 
                 PSRemotingTransportException psrte = new PSRemotingTransportException(
-                    StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, errorMsg), 
+                    StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, errorMsg),
                     e);
                 HandleSSHError(psrte);
             }
@@ -1642,7 +1642,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (data == null)
                     {
                         // End of stream indicates that the SSH transport is broken.
-                        // SSH will return the appropriate error in StdErr stream so 
+                        // SSH will return the appropriate error in StdErr stream so
                         // let the error reader thread report the error.
                         break;
                     }

@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2014.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  File:      ClrHostWrapper.h
 //
@@ -14,7 +14,7 @@
 #include <string>
 #include "NativeMshConstants.h"
 
-namespace NativeMsh 
+namespace NativeMsh
 {
     //
     // Abstract class to abstract CLR runtime host operations so that they can be
@@ -57,7 +57,7 @@ namespace NativeMsh
     };
 
     //
-    // Concrete implementation of the wrapper for CoreClr.dll's 
+    // Concrete implementation of the wrapper for CoreClr.dll's
     // Platform-Agnostic hosting interface.
     //
     class CoreClrHostingApiWrapper : public ClrHostWrapper
@@ -104,13 +104,13 @@ namespace NativeMsh
         coreclr_create_delegate_ptr createDelegatePtr;
 
     public:
-        CoreClrHostingApiWrapper() 
-            : coreClrHandle(NULL), 
-              pinnedModuleHandle(NULL), 
+        CoreClrHostingApiWrapper()
+            : coreClrHandle(NULL),
+              pinnedModuleHandle(NULL),
               hostHandle(NULL),
               domainId(0),
-              initPtr(NULL), 
-              shutdownPtr(NULL), 
+              initPtr(NULL),
+              shutdownPtr(NULL),
               createDelegatePtr(NULL)
         {}
 
@@ -119,12 +119,12 @@ namespace NativeMsh
             this->CleanUpHostWrapper();
         }
 
-        virtual bool IsInitialized() 
-        { 
-            return (NULL != coreClrHandle); 
+        virtual bool IsInitialized()
+        {
+            return (NULL != coreClrHandle);
         }
-       
-        // 
+
+        //
         // Attempts to load CoreCLR.dll from the specified directory.
         // On success pins the dll, sets coreCLRDirectoryPath and returns the HMODULE.
         // On failure returns NULL.
@@ -171,7 +171,7 @@ namespace NativeMsh
                 {
                     return g_STOP_CLR_HOST_FAILED;
                 }
-                
+
                 if (this->coreClrHandle)
                 {
                     // TODO: Is this comment still relevant with the new hosting API?
@@ -196,12 +196,12 @@ namespace NativeMsh
             if (initPtr)
             {
                 return initPtr(
-                        exePath, 
-                        appDomainFriendlyName, 
-                        propertyCount, 
-                        propertyKeys, 
-                        propertyValues, 
-                        &(this->hostHandle), 
+                        exePath,
+                        appDomainFriendlyName,
+                        propertyCount,
+                        propertyKeys,
+                        propertyValues,
+                        &(this->hostHandle),
                         &(this->domainId));
             }
             return E_FAIL;

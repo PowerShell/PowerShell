@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2005.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  File:      MainEntry.cpp
 //
@@ -11,7 +11,7 @@
 
 #ifdef _PREFAST_
 #pragma prefast (push)
-#pragma prefast (disable: 6054) 
+#pragma prefast (disable: 6054)
 #endif /* _PREFAST_ */
 
 #include "Nativemsh.h"
@@ -71,7 +71,7 @@ bool ConvertArgvToSafeArray(
         }
 
         rgsabound[0].lLbound = 0;
-         
+
         // rgsabound[0].cElements holds the number of elements that need to be passed to managed exe
         rgsabound[0].cElements = argc - 1 - skipIndex;
         psa = SafeArrayCreate(VT_BSTR, 1, rgsabound);
@@ -83,7 +83,7 @@ bool ConvertArgvToSafeArray(
         }
 
         long psaIndex[1];
-        psaIndex[0] = 0; 
+        psaIndex[0] = 0;
 
         if (0 != rgsabound[0].cElements)
         {
@@ -116,7 +116,7 @@ bool ConvertArgvToSafeArray(
 
 bool FileExists(__in LPWSTR pszFileName)
 {
-    return (GetFileAttributesW(pszFileName) != INVALID_FILE_ATTRIBUTES);    
+    return (GetFileAttributesW(pszFileName) != INVALID_FILE_ATTRIBUTES);
 }
 
 unsigned int LaunchManagedMonad(
@@ -144,7 +144,7 @@ unsigned int LaunchManagedMonad(
             break;
         }
         // Use the hosting interfaces from .Net Framework 1.1
-        CComPtr<ICorRuntimeHost> pCLR = NULL;        
+        CComPtr<ICorRuntimeHost> pCLR = NULL;
 
         exitCode = pwrshCommon.LaunchCLR(wszMonadVersion, wszRuntimeVersion, &pCLR);
 
@@ -187,7 +187,7 @@ unsigned int LaunchManagedMonad(
 
         // use CreateInstance because we use the assembly strong name (as opposed to CreateInstanceFrom)
         _bstr_t bstrConsoleHostAssemblyName = _bstr_t(wszConsoleHostAssemblyName);
-        _bstr_t bstrUnmanagedMshEntryClass = _bstr_t(L"Microsoft.PowerShell.UnmanagedPSEntry");        
+        _bstr_t bstrUnmanagedMshEntryClass = _bstr_t(L"Microsoft.PowerShell.UnmanagedPSEntry");
 
         hr = spDefaultDomain->CreateInstance(
                 bstrConsoleHostAssemblyName,
@@ -211,13 +211,13 @@ unsigned int LaunchManagedMonad(
 
         CComPtr<IDispatch> pDisp;
         pDisp = VntUnwrapped.pdispVal;
-        
+
         OLECHAR FAR * wszMember = L"Start";
-        
+
         DISPID dispid;
         //Retrieve the DISPID
         hr = pDisp->GetIDsOfNames (
-            IID_NULL, 
+            IID_NULL,
             &wszMember,
             1,
             LOCALE_SYSTEM_DEFAULT,
@@ -233,7 +233,7 @@ unsigned int LaunchManagedMonad(
         VARIANT pVarArgs[2];
 
         // Both EnterWithConsoleFile and EnterWithConsoleFile take a string and a string array
-        // The order of the arguments need to be reversed in this array            
+        // The order of the arguments need to be reversed in this array
         pVarArgs[0].vt = VT_ARRAY;
         pVarArgs[0].parray = pArgvSA;
 
@@ -761,7 +761,7 @@ unsigned int ParseCommandLineArguments(
     const wchar_t * wszArgumentServerMode20Short = L"s";
     const int cchArgumentServerMode20Short = 2; // including null terminating
     bool bServerMode20Specified = false;
-    
+
     int version_lpMonadMajorVersion = -1;
     int version_lpMonadMinorVersion = -1;
     wchar_t *  version_pwszMonadVersion = NULL;
@@ -783,7 +783,7 @@ unsigned int ParseCommandLineArguments(
             exitCode = EXIT_CODE_BAD_COMMAND_LINE_PARAMETER;
             break;
         }
-        
+
         *lpMonadVersionIndex = *lpMonadMinorVersion = -1;
         if (1 >= argc)
         {
@@ -794,7 +794,7 @@ unsigned int ParseCommandLineArguments(
 
         int idxParameterPosition = 1;
         LPCWSTR wszCommandLineInput = argv[idxParameterPosition];
-        
+
         // Parse for -version
         if (IsParameterMatched(wszArgumentVersion, cchArgumentVersion, wszCommandLineInput))
         {
@@ -806,14 +806,14 @@ unsigned int ParseCommandLineArguments(
                     exitCode = EXIT_CODE_BAD_COMMAND_LINE_PARAMETER;
                     break;
                 }
-                *lpMonadVersionIndex = idxParameterPosition - 1;                
+                *lpMonadVersionIndex = idxParameterPosition - 1;
                 *pwszMonadVersion = argv[idxParameterPosition];
-                
+
                 // Save the version values in case we need to override the version in psconsolefile
                 version_lpMonadMajorVersion = *lpMonadMajorVersion;
                 version_lpMonadMinorVersion = *lpMonadMinorVersion;
                 version_pwszMonadVersion = argv[idxParameterPosition];
-                
+
                 if (idxParameterPosition < argc - 1)
                 {
                     idxParameterPosition = idxParameterPosition + 1;
@@ -846,11 +846,11 @@ unsigned int ParseCommandLineArguments(
             *lpMonadMinorVersion = -1;
             bServerMode20Specified = true;
             *pwszMonadVersion = L"2.0";
-            
+
             // let the rest of the parameter processing happen in managed code for -ServerMode
             // hence not updating wszCommandLineInput
         }
-        
+
         // Parse for CLR Version
         if (IsParameterMatched(wszArgumentRuntimeVersion, cchArgumentRuntimeVersion, wszCommandLineInput))
         {
@@ -909,7 +909,7 @@ unsigned int ParseCommandLineArguments(
                 exitCode = EXIT_CODE_BAD_COMMAND_LINE_PARAMETER;
                 break;
             }
-        }        
+        }
 
         // Parse for NoProfile
         if (IsParameterMatched(wszArgumentMonadProfile, cchArgumentMonadProfile, wszCommandLineInput) ||
@@ -924,20 +924,20 @@ unsigned int ParseCommandLineArguments(
         {
             *lpMonadMajorVersion = 3;
             *lpMonadMinorVersion = -1;
-            
+
             wchar_t * wszConsoleFile = NULL;
             wchar_t * wszConsoleHostAssemblyName = NULL;
             wchar_t * wszRuntimeVersion = NULL;
             wchar_t * tempMonadVersion = NULL;
-            
-            // This gets the Monad Version from the registry 
+
+            // This gets the Monad Version from the registry
             exitCode = pwrshCommon.GetRegistryInfo(
                 &tempMonadVersion,
                 lpMonadMajorVersion,
                 *lpMonadMinorVersion,
                 &wszRuntimeVersion,
                 &wszConsoleHostAssemblyName);
-            
+
             if (EXIT_CODE_SUCCESS != exitCode)
             {
                 break;
@@ -963,7 +963,7 @@ unsigned int ParseCommandLineArguments(
 
 #pragma prefast(pop)
 
-/*********************************************************  
+/*********************************************************
  Loads a string from the modules resource
 **********************************************************/
 HRESULT SafeLoadString(UINT uId, __deref_out LPWSTR* ppszString)
@@ -1020,8 +1020,8 @@ shortcut
 
 Note that the above short cut will not be stored on disk
 **************************************************************************/
-HRESULT CreateShortCut(PCWSTR pszDisplay, PCWSTR pszAppPath, PCWSTR pszDescription, 
-                       PCWSTR pszArguments, PCWSTR pszIconAppPath, int iIconIndex, bool requiresElevation, 
+HRESULT CreateShortCut(PCWSTR pszDisplay, PCWSTR pszAppPath, PCWSTR pszDescription,
+                       PCWSTR pszArguments, PCWSTR pszIconAppPath, int iIconIndex, bool requiresElevation,
                        bool console,IShellLink **ppShortCut)
 {
     CComPtr<IShellLink> pShellLink;     // pointer to a shell link
@@ -1085,7 +1085,7 @@ HRESULT CreateShortCut(PCWSTR pszDisplay, PCWSTR pszAppPath, PCWSTR pszDescripti
     if (requiresElevation)
     {
         // It has methods GetFlags() and SetFlags() to obtain
-        // and modify the flags on a shell link. The 
+        // and modify the flags on a shell link. The
         // SLDF_RUNAS_USER should be set to allow running as an
         // administrator
 
@@ -1128,7 +1128,7 @@ INT CheckForISE()
         }
         free(pszExpandedPath);
     }
-    
+
     return isePresent;
 }
 
@@ -1205,16 +1205,16 @@ unsigned int ValidateDownlevelSetupHadClrWhenInstalled(
         // Else, Launch PowerShell
         LONG lResult = RegQueryValueExW(hEngineKey, g_NetFX_V4_IS_INSTALLED_KEY, NULL, NULL, NULL, &valueLengthInByte);
         if (lResult == ERROR_SUCCESS)
-        {   
-            // If the data has the REG_SZ, REG_MULTI_SZ or REG_EXPAND_SZ type, this size includes any terminating null character or characters 
+        {
+            // If the data has the REG_SZ, REG_MULTI_SZ or REG_EXPAND_SZ type, this size includes any terminating null character or characters
             // unless the data was stored without them - http://msdn.microsoft.com/en-us/library/ms724911(VS.85).aspx
-            NetFxV4IsInstalledKeyValue = new wchar_t[valueLengthInByte / sizeof(wchar_t)]; 
+            NetFxV4IsInstalledKeyValue = new wchar_t[valueLengthInByte / sizeof(wchar_t)];
             if (NULL == NetFxV4IsInstalledKeyValue)
             {
                 exitCode = EXIT_CODE_INIT_FAILURE;
             }
             else
-            {                
+            {
                 memset(NetFxV4IsInstalledKeyValue, 0, valueLengthInByte);
 
                 lResult = RegQueryValueExW(
@@ -1222,9 +1222,9 @@ unsigned int ValidateDownlevelSetupHadClrWhenInstalled(
                     g_NetFX_V4_IS_INSTALLED_KEY,
                     NULL,
                     NULL,
-                    (LPBYTE) NetFxV4IsInstalledKeyValue, 
+                    (LPBYTE) NetFxV4IsInstalledKeyValue,
                     &valueLengthInByte);
-            
+
                 if (lResult == ERROR_SUCCESS)
                 {
                     if (0 == wcsncmp(NetFxV4IsInstalledKeyValue, L"No", 2))
@@ -1272,7 +1272,7 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
     LPCWSTR lpParentShortCut = startupInfo.lpTitle;
     LPWSTR pathRegValue = NULL;
     BOOL foundlnkFile = false;
-    
+
     if (NULL == lpParentShortCut || ( (startupInfo.dwFlags & STARTF_TITLEISLINKNAME) != STARTF_TITLEISLINKNAME ) )
     {
         LPWSTR pathRegValueName =NULL;
@@ -1291,12 +1291,12 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
         retVal = RegGetValue(HKEY_LOCAL_MACHINE, g_ConsoleHostShortcutTarget_KEY_PATH, pathRegValueName, RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, NULL, &valueLengthInByte);
         if (ERROR_SUCCESS == retVal)
         {
-            pathRegValue = new wchar_t[valueLengthInByte / sizeof(wchar_t) +1]; 
+            pathRegValue = new wchar_t[valueLengthInByte / sizeof(wchar_t) +1];
             memset(pathRegValue, 0, valueLengthInByte + sizeof(wchar_t));
 
-            retVal = RegGetValue(HKEY_LOCAL_MACHINE, g_ConsoleHostShortcutTarget_KEY_PATH, pathRegValueName, RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, pathRegValue, &valueLengthInByte);            
+            retVal = RegGetValue(HKEY_LOCAL_MACHINE, g_ConsoleHostShortcutTarget_KEY_PATH, pathRegValueName, RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ | RRF_NOEXPAND, NULL, pathRegValue, &valueLengthInByte);
             if (retVal == ERROR_SUCCESS)
-            {    
+            {
                 lpParentShortCut = pathRegValue;
                 foundlnkFile = true;
             }
@@ -1377,9 +1377,9 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
     HRESULT hr = pShellLink.CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER);
     CheckAndReturn(hr);
 
-    hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile); 
+    hr = pShellLink->QueryInterface(IID_IPersistFile, (LPVOID*)&pPersistFile);
     CheckAndReturn(hr);
-    
+
     hr = pPersistFile->Load(g_IconApp, STGM_READWRITE);
     int iconIndex = 0;
     if (SUCCEEDED(hr))
@@ -1387,7 +1387,7 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
         hr = pShellLink->GetIconLocation(g_IconApp, MAX_PATH, &iconIndex);
         CheckAndReturn(hr);
     }
-    else 
+    else
     {
         LPCWSTR powerShellExec = L"%windir%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
 
@@ -1395,7 +1395,7 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
 
         StringCchLength(powerShellExec, STRSAFE_MAX_LENGTH, &length);
 
-        StringCchCopy(g_IconApp, length+1, powerShellExec);             
+        StringCchCopy(g_IconApp, length+1, powerShellExec);
     }
 
     CComPtr<IObjectCollection> pShortCutCollection;
@@ -1407,14 +1407,14 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
 
     LPWSTR pszDisplay = NULL;           // display string
     LPWSTR pszDescription = NULL;       // description string
-    
+
 
     // 1. Add "Run Windows PowerShell as admin"
     hr = SafeLoadString(118, &pszDisplay);
     CheckAndReturn(hr);
     SafeLoadString(119, &pszDescription);
     CheckAndReturn(hr);
-	 
+
     // create shortcut
     hr = CreateShortCut(pszDisplay, lpParentShortCut, pszDescription,
             NULL, g_IconApp, iconIndex, true, true, &pShortCut);
@@ -1431,7 +1431,7 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
     // check if ISE is present
     if (CheckForISE())
     {
-        // Add shortcut for "Run ISE as Administrator" 
+        // Add shortcut for "Run ISE as Administrator"
         hr = SafeLoadString(122, &pszDisplay);
         CheckAndReturn(hr);
         SafeLoadString(123, &pszDescription);
@@ -1477,7 +1477,7 @@ HRESULT AddPowerShellTasksToList(ICustomDestinationList *pCustDestList, STARTUPI
 }
 
 /*********************************************************************
-* FileExists is a helper function used to check if the file path 
+* FileExists is a helper function used to check if the file path
 * provided as argument to this function exists or not.
 *********************************************************************/
 BOOL FileExists(LPCWSTR  fileName)
@@ -1485,16 +1485,16 @@ BOOL FileExists(LPCWSTR  fileName)
     HANDLE hFile;
     LPSECURITY_ATTRIBUTES pSec = (LPSECURITY_ATTRIBUTES)NULL;
     ::SetLastError(ERROR_SUCCESS);
-    hFile = ::CreateFile(fileName, 
+    hFile = ::CreateFile(fileName,
                          GENERIC_READ,
                          FILE_SHARE_READ, // | FILE_SHARE_WRITE,
                          pSec,
                          OPEN_EXISTING,
                          FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS,
                          0);
-    if(hFile != INVALID_HANDLE_VALUE) 
+    if(hFile != INVALID_HANDLE_VALUE)
     {
-        ::CloseHandle(hFile); 
+        ::CloseHandle(hFile);
         return TRUE;
     }
     else {
@@ -1510,7 +1510,7 @@ void CreateCustomDestinationList(STARTUPINFO &startupInfo)
     CoInitialize(NULL);
 
     CComPtr<ICustomDestinationList> pCustDestList;  // pointer to the jump list
-    UINT uMaxSlots = 0;                         // maximum slots available for us 
+    UINT uMaxSlots = 0;                         // maximum slots available for us
                                                 // to create items in jump list
 
     HRESULT hr = pCustDestList.CoCreateInstance(CLSID_DestinationList, NULL, CLSCTX_INPROC_SERVER);
@@ -1520,7 +1520,7 @@ void CreateCustomDestinationList(STARTUPINFO &startupInfo)
         CComPtr<IObjectArray> pRemovedItems;        // Items just removed when this transaction begins
 
         // start a list building transaction
-        // this method needs to be called before 
+        // this method needs to be called before
         // any of the other methods in ICustomDestinationList
         hr = pCustDestList->BeginList(&uMaxSlots, IID_PPV_ARGS(&pRemovedItems));
 
@@ -1572,7 +1572,7 @@ int __cdecl
     wchar_t * wszDefaultRuntimeVersion = NULL;
     wchar_t * wszRuntimeVersion = NULL;
     wchar_t * wszConsoleHostAssemblyName = NULL;
-    
+
     bool isDeletewszMonadVersionNeeded = false;
 
     unsigned int exitCode = EXIT_CODE_SUCCESS;
@@ -1584,7 +1584,7 @@ int __cdecl
     // interface language separate from thread locale.
     // Setting this will enable OS resource loader to load correct
     // resource that can display properly in a console window.
-    // Note: If the language identifier is 0, the function always 
+    // Note: If the language identifier is 0, the function always
     // succeeds.
     SetThreadUILanguage(0);
 
@@ -1615,7 +1615,7 @@ int __cdecl
         int consoleFileIndex = -1;
         int profileIndex = -1;
         const float win8DefaultMonadMajorVersion = 3.0;
-                
+
         exitCode = ParseCommandLineArguments(
                                 argc,
                                 argv,
@@ -1634,7 +1634,7 @@ int __cdecl
         }
 
         // WinPE supports only PowerShell >=3.0.
-        // If the PowerShell host is a WinPE machine & if the requested 
+        // If the PowerShell host is a WinPE machine & if the requested
         // PowerShell version is not 3.0, then display an not supported monad version error message.
         if(IsWinPEHost() && (monadMajorVersion == 1 || monadMajorVersion == 2))
         {
@@ -1643,13 +1643,13 @@ int __cdecl
             break;
         }
 
-        // This is for remembering which major version is requested from command line. 
+        // This is for remembering which major version is requested from command line.
         // GetRegistryInfo call after this will change monadMajorVersion to be PowerShell
-        // major version installed (based on registry). 
+        // major version installed (based on registry).
         // int requestedMonadMajorVersion = monadMajorVersion;
 
         // For GetRegistryInfo call, monadMajorVersion is used to calculate the version key in registry.
-        // For PowerShell V2, version key in registry is 1. 
+        // For PowerShell V2, version key in registry is 1.
         if (monadMajorVersion == 2)
         {
             monadMajorVersion = 1;
@@ -1675,24 +1675,24 @@ int __cdecl
         }
 
         bool skipProfile = profileIndex != -1;
-        
+
         // skipIndex holds the position of the last parameter that needs to be handled by the native layer.
         // In other words, skipIndex + 1 will give the position of the first parameter that needs to be passed to managed layer.
         // Find the last native parameter, and chomp everything up until it.
-        // We don't do this for NoProfile. We parse it once here and then parse it again in the managed layer. 
+        // We don't do this for NoProfile. We parse it once here and then parse it again in the managed layer.
         int skipIndex = -1;
-        
+
         if(monadVersionIndex > skipIndex) { skipIndex = monadVersionIndex; }
         if(consoleFileIndex > skipIndex) { skipIndex = consoleFileIndex; }
         if(runtimeVersionIndex > skipIndex) { skipIndex = runtimeVersionIndex; }
-        
+
         skipIndex = skipIndex + 1;
 
-        // WTR  - Check for the key that indicates absence of NetFx4 and output appropriate message to the user        
-        
+        // WTR  - Check for the key that indicates absence of NetFx4 and output appropriate message to the user
+
         // Open PowerShellEngine Registry Key
         // For GetRegistryInfo call, monadMajorVersion is used to calculate the version key in registry.
-        // For PowerShell V2, version key in registry is 1. 
+        // For PowerShell V2, version key in registry is 1.
         int useMonadMajorVersion = -1;
         if (monadMajorVersion == 2)
         {
@@ -1700,9 +1700,9 @@ int __cdecl
         }
         else
         {
-            useMonadMajorVersion = 3;        
+            useMonadMajorVersion = 3;
         }
-       
+
         // If runtimeVersion is not supplied, validate that the defaultRuntimeVersion is installed.
         // We can't do runtimeVersion validation on the user input, as this frequently changes per
         // release of the .NET Framework.
@@ -1775,7 +1775,7 @@ int __cdecl
     if (g_hResInstance)
     {
         FreeMUILibrary(g_hResInstance);
-    }        
+    }
 
     return exitCode;
 }

@@ -1,5 +1,5 @@
 ﻿#
-# Copyright (c) Microsoft Corporation, 2016
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 # This is a Pester test suite which validate the Web cmdlets.
 #
@@ -455,7 +455,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
     It "Invoke-WebRequest returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
-        
+
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
 
@@ -468,7 +468,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Invoke-WebRequest returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
-        
+
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
 
@@ -633,7 +633,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $result.Output.Headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding
-        $jsonContent = $result.Output.Content | ConvertFrom-Json        
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.Headers.Host | Should BeExactly $uri.Authority
     }
 
@@ -1317,7 +1317,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             param($Authentication)
             $params = @{
                 Uri = $httpsUri
-                Authentication = $Authentication 
+                Authentication = $Authentication
                 Token = $token
                 SkipCertificateCheck = $true
             }
@@ -1437,7 +1437,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
     It "Invoke-RestMethod returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
-        
+
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
 
@@ -1448,7 +1448,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     It "Invoke-RestMethod returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
-        
+
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
 
@@ -1596,7 +1596,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
 
         # Validate response content
-        $headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding      
+        $headers.'Content-Encoding'[0] | Should BeExactly $dataEncoding
         $result.Headers.Host | Should BeExactly $uri.Authority
     }
 
@@ -2237,7 +2237,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             param($Authentication)
             $params = @{
                 Uri = $httpsUri
-                Authentication = $Authentication 
+                Authentication = $Authentication
                 Token = $token
                 SkipCertificateCheck = $true
             }

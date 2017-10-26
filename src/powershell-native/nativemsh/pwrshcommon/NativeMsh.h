@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2005.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  File:      NativeMsh.h
 //
@@ -24,7 +24,7 @@
 #include <mscoree.h>
 #endif
 
-namespace NativeMsh 
+namespace NativeMsh
 {
     class PwrshCommon
     {
@@ -35,7 +35,7 @@ namespace NativeMsh
 
     public:
         // Provides default implementations of all dependencies
-        PwrshCommon(); 
+        PwrshCommon();
 
         // Allows users to override the default dependency objects with a specific implementations.
         //

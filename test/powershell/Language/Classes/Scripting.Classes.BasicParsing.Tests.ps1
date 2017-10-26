@@ -1,5 +1,5 @@
 #
-# Copyright (c) Microsoft Corporation, 2014
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 
 try {
