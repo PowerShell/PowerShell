@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
         /// The alias name to remove.
         /// </summary>        
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public string Name { get; set; }
+        public string[] Name { get; set; }
         
         /// <summary>
         /// The scope parameter for the command determines
@@ -42,24 +42,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>        
         protected override void ProcessRecord()
         {
-            AliasInfo existingAlias = null;           
-            if (String.IsNullOrEmpty(Scope))
-            {
-                existingAlias = SessionState.Internal.GetAlias(Name);
-            }
-            else
-            {
-                existingAlias = SessionState.Internal.GetAliasAtScope(Name, Scope);
-            }
-            if (existingAlias != null)
-            {
-                SessionState.Internal.RemoveAlias(Name, Force);
-            }
-            else
-            {
-                ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", Name));
-                ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException",ErrorCategory.ObjectNotFound, Name);
-                WriteError(error);
+            foreach(string aliasName in Name)
+            {            
+                AliasInfo existingAlias = null;           
+                if (String.IsNullOrEmpty(Scope))
+                {
+                    existingAlias = SessionState.Internal.GetAlias(aliasName);
+                }
+                else
+                {
+                    existingAlias = SessionState.Internal.GetAliasAtScope(aliasName, Scope);
+                }
+
+                if (existingAlias != null)
+                {
+                    SessionState.Internal.RemoveAlias(aliasName, Force);
+                }
+                else
+                {
+                    ItemNotFoundException notAliasFound = new ItemNotFoundException(StringUtil.Format(AliasCommandStrings.NoAliasFound, "name", aliasName));
+                    ErrorRecord error = new ErrorRecord(notAliasFound, "ItemNotFoundException",ErrorCategory.ObjectNotFound, aliasName);
+                    WriteError(error);
+                }
             }
         }
         #endregion Command code

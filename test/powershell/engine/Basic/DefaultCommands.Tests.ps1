@@ -118,6 +118,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",  "pushd",                              "Push-Location",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
 "Alias",  "pwd",                                "Get-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
 "Alias",  "r",                                  "Invoke-History",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "ral",                                "Remove-Alias",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
 "Alias",  "rbp",                                "Remove-PSBreakpoint",                $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
 "Alias",  "rcjb",                               "Receive-Job",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
 "Alias",  "rcsn",                               "Receive-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
