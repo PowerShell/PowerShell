@@ -545,7 +545,7 @@ Fix steps:
 
     if ($Environment.IsUbuntu -or $Environment.IsDebian)
     {
-        # libpsl-native.so v1.3 now depends on libgssapi_krb5 for Kerberos support.
+        # libpsrpclient.so v1.3 now depends on libgssapi_krb5 for Kerberos support.
         # Ubuntu 16.04 and Debian 8.* do not have this file or symbolic link which prevents
         # tests from running.  Create the symbolic link to work around it.
         # See tools\packaging.psm1 for similar behavior at packaging time.

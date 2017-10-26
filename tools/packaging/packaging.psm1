@@ -476,7 +476,7 @@ function New-UnixPackage {
                 $AfterRemoveScript = [io.path]::GetTempFileName()
                 $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
                 $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-                # libpsl-native.so v1.3 depends on libgssapi_krb5.so for kerberos support
+                # libpsrpclient.so v1.3 depends on libgssapi_krb5.so for kerberos support
                 # but Ubuntu 16.04 and Debian 8.* which do not have a symbolic link for libgssapi_krb5.
                 # This works around the problem by creating the symbolic link in the package.
                 # The next version of the PSRP client 'should' resolve this by linking against the 2.0 binary.
