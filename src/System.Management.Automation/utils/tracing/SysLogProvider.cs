@@ -76,9 +76,6 @@ namespace System.Management.Automation.Tracing
     /// </remarks>
     internal class SysLogProvider
     {
-        // The hash code for the git commit id.
-        static readonly int _commitId;
-
         // Ensure the string pointer is not garbage collected.
         static IntPtr _nativeSyslogIdent = IntPtr.Zero;
         static NativeMethods.SysLogPriority _facility = NativeMethods.SysLogPriority.Local0;
@@ -86,11 +83,6 @@ namespace System.Management.Automation.Tracing
         byte _channelFilter;
         ulong _keywordFilter;
         byte _levelFilter;
-
-        static SysLogProvider()
-        {
-            _commitId = PSVersionInfo.GitCommitId.GetHashCode();
-        }
 
         /// <summary>
         /// Initializes a new instance of this class.
@@ -110,7 +102,6 @@ namespace System.Management.Automation.Tracing
             _keywordFilter = (ulong)keywords;
             _levelFilter = (byte) level;
             _channelFilter = (byte) channels;
-            LogCommit();
         }
 
         /// <summary>
@@ -286,8 +277,8 @@ namespace System.Management.Automation.Tracing
             // NOTE: always log
             int threadId = Thread.CurrentThread.ManagedThreadId;
             string message = string.Format(CultureInfo.InvariantCulture,
-                                           "({0:X}:{1:X}:{2:X}) [Transfer]:{3} {4}",
-                                           _commitId, threadId, PSChannel.Operational,
+                                           "({0}:{1:X}:{2:X}) [Transfer]:{3} {4}",
+                                           PSVersionInfo.GitCommitId, threadId, PSChannel.Operational,
                                            parentActivityId.ToString("B"),
                                            Activity.ToString("B"));
 
@@ -306,20 +297,7 @@ namespace System.Management.Automation.Tracing
             // NOTE: always log
             string message = string.Format(CultureInfo.InvariantCulture,
                                            "({0:X}:{1:X}:{2:X}) [Activity] {3}",
-                                           _commitId, threadId, PSChannel.Operational, activity.ToString("B"));
-            NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
-        }
-
-        /// <summary>
-        /// Logs a message that provides a correlation between the full git commit id string and a hash code used for subsequent log entries.
-        /// </summary>
-        static void LogCommit()
-        {
-            int threadId = Thread.CurrentThread.ManagedThreadId;
-            // NOTE: always log
-            string message = string.Format(CultureInfo.InvariantCulture,
-                                           "({0:X}:{1:X}:{2:X}) [GitCommitId] {3} Hash: {0:X}",
-                                           _commitId, threadId, PSChannel.Operational, PSVersionInfo.GitCommitId);
+                                           PSVersionInfo.GitCommitId, threadId, PSChannel.Operational, activity.ToString("B"));
             NativeMethods.SysLog(NativeMethods.SysLogPriority.Info, message);
         }
 
@@ -344,8 +322,8 @@ namespace System.Management.Automation.Tracing
 
                 // add the message preamble
                 sb.AppendFormat(CultureInfo.InvariantCulture,
-                                "({0:X}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ",
-                                _commitId, threadId, channel, eventId, task, opcode, level);
+                                "({0}:{1:X}:{2:X}) [{3:G}:{4:G}.{5:G}.{6:G}] ",
+                                PSVersionInfo.GitCommitId, threadId, channel, eventId, task, opcode, level);
 
                 // add the message
                 GetEventMessage(sb, eventId, args);
