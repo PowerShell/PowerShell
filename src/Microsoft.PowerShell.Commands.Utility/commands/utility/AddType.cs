@@ -922,34 +922,25 @@ namespace Microsoft.PowerShell.Commands
 
                         long initLength = 0;
 
+                        // We replace 'ReadAllText' with 'StringBuilder' and 'ReadAllLines'
+                        // to avoide temporary LOH allocations.
                         foreach (string file in paths)
                         {
                             FileInfo f = new FileInfo(file);
-                            initLength = f.Length;
+                            initLength += f.Length;
                         }
 
-                        if (initLength < int.MaxValue)
-                        {
-                            StringBuilder sb = new StringBuilder((int)initLength);
+                        StringBuilder sb = new StringBuilder((int)initLength);
 
-                            foreach (string file in paths)
-                            {
-                                foreach (string line in File.ReadAllLines(file))
-                                {
-                                    sb.AppendLine(line);
-                                }
-                            }
-
-                            sourceCode = sb.ToString();
-                        }
-                        else
+                        foreach (string file in paths)
                         {
-                            sourceCode = "";
-                            foreach (string file in paths)
+                            foreach (string line in File.ReadAllLines(file))
                             {
-                                sourceCode += System.IO.File.ReadAllText(file) + "\n";
+                                sb.AppendLine(line);
                             }
                         }
+
+                        sourceCode = sb.ToString();
                     }
                 }
                 else if (String.Equals(ParameterSetName, "FromMember", StringComparison.OrdinalIgnoreCase))
