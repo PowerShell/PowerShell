@@ -913,15 +913,44 @@ namespace Microsoft.PowerShell.Commands
                     String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
                    )
                 {
-                    StringBuilder sb = new StringBuilder(paths.Length);
-
-                    foreach (string file in paths)
+                    if (paths.Length == 1)
                     {
-                        sb.Append(System.IO.File.ReadAllText(file));
-                        sb.Append("\n");
+                        sourceCode = File.ReadAllText(paths[0]);
                     }
+                    else
+                    {
 
-                    sourceCode = sb.ToString();
+                        long initLength = 0;
+
+                        foreach (string file in paths)
+                        {
+                            FileInfo f = new FileInfo(file);
+                            initLength = f.Length;
+                        }
+
+                        if (initLength < int.MaxValue)
+                        {
+                            StringBuilder sb = new StringBuilder((int)initLength);
+
+                            foreach (string file in paths)
+                            {
+                                foreach (string line in File.ReadAllLines(file))
+                                {
+                                    sb.AppendLine(line);
+                                }
+                            }
+
+                            sourceCode = sb.ToString();
+                        }
+                        else
+                        {
+                            sourceCode = "";
+                            foreach (string file in paths)
+                            {
+                                sourceCode += System.IO.File.ReadAllText(file) + "\n";
+                            }
+                        }
+                    }
                 }
                 else if (String.Equals(ParameterSetName, "FromMember", StringComparison.OrdinalIgnoreCase))
                 {
