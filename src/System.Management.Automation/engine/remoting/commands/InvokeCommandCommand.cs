@@ -1624,7 +1624,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="nonblocking">Write in a non-blocking manner</param>
         private void WriteJobResults(bool nonblocking)
         {
-            if (_job != null)
+            if (_job == null)
+            {
+                return;
+            }
+
+            try
             {
                 PipelineStoppedException caughtPipelineStoppedException = null;
                 _job.PropagateThrows = _propagateErrors;
@@ -1756,7 +1761,12 @@ namespace Microsoft.PowerShell.Commands
                                     session.Name, session.InstanceId));
                         }
                     }
-
+                }
+            }
+            finally
+            {
+                if (_job.JobStateInfo.State == JobState.Disconnected)
+                {
                     // Allow Invoke-Command to end even though not all remote pipelines
                     // finished.
                     HandleThrottleComplete(null, null);
