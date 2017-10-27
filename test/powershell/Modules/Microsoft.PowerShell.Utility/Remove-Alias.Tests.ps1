@@ -37,19 +37,22 @@ Describe "Remove-Alias" -Tags "CI" {
         } | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.RemoveAliasCommand'
     }
 
+    It "Remove-Alias should remove multiple alias at once"{
+        {
+            Set-Alias -Name "tral" -Value "Remove-Alias" -ErrorAction Stop
+            Set-Alias -Name "tral2" -Value "Remove-Alias" -ErrorAction Stop
+            Set-Alias -Name "tral3" -Value "Remove-Alias" -ErrorAction Stop
+            Remove-Alias -Name "tral","tral2","tral3" -ErrorAction Stop
+            Get-Alias -Name "tral" -ErrorAction Stop | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand'
+            Get-Alias -Name "tral2" -ErrorAction Stop | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand'
+            Get-Alias -Name "tral3" -ErrorAction Stop | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand'
+        }
+    }
+
     It "Remove-Alias should throw on out-of-range scope"{
         {
             Set-Alias -Name "tral" -Value "Remove-Alias" -ErrorAction Stop
             Remove-Alias -Name "tral" -Scope 99999 -ErrorAction Stop
         } | ShouldBeErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.RemoveAliasCommand"
-    }
-
-    It "Remove-Alias should work when called with alias ral"
-    {
-        {
-            Set-Alias -Name "tral" -Value "Remove-Alias" -ErrorAction Stop
-            ral -Name "tral" -ErrorAction Stop
-            Get-Alias -Name "tral" -ErrorAction Stop
-        } | ShouldBeErrorId 'ItemNotFoundException,Microsoft.PowerShell.Commands.GetAliasCommand'
     }
 }
