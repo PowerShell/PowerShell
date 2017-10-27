@@ -702,12 +702,12 @@ function Invoke-OpenCover
             # '&' invoke caused issues with cmdline parameters for opencover.console.exe
             $elevatedFile = "$env:temp\elevated.ps1"
             "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -force
-            pwsh.exe -file $elevatedFile
+            powershell.exe -file $elevatedFile
 
             # invoke OpenCover unelevated and poll for completion
             $unelevatedFile = "$env:temp\unelevated.ps1"
             "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
-            runas.exe /trustlevel:0x20000 "pwsh.exe -file $unelevatedFile"
+            runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
             # timeout of 6 hours
             # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.

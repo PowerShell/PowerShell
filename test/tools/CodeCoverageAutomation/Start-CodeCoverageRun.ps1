@@ -143,6 +143,9 @@ $jsonFile = "$outputBaseFolder\CC.json"
 
 try
 {
+    # first thing to do is to be sure that no processes are running which will cause us issues
+    Get-Process pwsh | Stop-Process -Force -ErrorAction Stop
+
     ## This is required so we do not keep on merging coverage reports.
     if(Test-Path $outputLog)
     {
@@ -275,7 +278,7 @@ try
 
         Write-LogPassThru -Message "pulling sparse repo"
         "src" | Out-File -Encoding ascii .git\info\sparse-checkout -Force
-        "assets" | Out-File -Encoding ascii .git\info\sparse-checkout -Append
+        "/assets" | Out-File -Encoding ascii .git\info\sparse-checkout -Append
         & $gitexe pull origin master
         Write-LogPassThru -Message "git operation 'pull' returned $LASTEXITCODE"
 
@@ -291,8 +294,14 @@ try
     $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
 
-    # now invoke opencover
-    Invoke-OpenCover @openCoverParams
+    try {
+        # now invoke opencover
+        Invoke-OpenCover @openCoverParams | Out-String | Write-LogPassThru
+    }
+    catch {
+        ("ERROR: " + $_.ScriptStackTrace) | Write-LogPassThru
+        $_ 2>&1 | out-string -Stream | %{ "ERROR: $_" } | Write-LogPassThru
+    }
 
     if(Test-Path $outputLog)
     {
