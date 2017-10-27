@@ -9,6 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     ///
     [Cmdlet(VerbsCommon.Remove, "Alias", DefaultParameterSetName = "Default", HelpUri = "")]
+    [Alias("ral")]
     public class RemoveAliasCommand : PSCmdlet
     {
          #region Parameters
