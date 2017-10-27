@@ -428,9 +428,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 rv = obj;
             }
-            else if (obj is Newtonsoft.Json.Linq.JProperty)
+            else if (obj is Newtonsoft.Json.Linq.JObject jObject)
             {
-                rv = obj.ToString();
+                rv = jObject.ToObject<Dictionary<object,object>>();
             }
             else
             {
