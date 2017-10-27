@@ -110,4 +110,10 @@ Describe "History cmdlet test cases" -Tags "CI" {
 
         $errorResult | Should -BeExactly 'CommandNotFoundException'
     }
+
+    It "Has time view in table format" {
+        $null = Get-ChildItem
+        Get-History | Format-Table -View time -ErrorVariable ftError | Out-Null
+        $ftError.Count | Should Be 0
+    }
 }
