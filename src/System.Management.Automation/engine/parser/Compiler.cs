@@ -65,6 +65,8 @@ namespace System.Management.Automation.Language
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIne =
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
+        internal static readonly MethodInfo CharOps_Range =
+            typeof(CharOps).GetMethod(nameof(CharOps.Range), staticFlags);
 
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
@@ -4901,6 +4903,11 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
+                    if(lhs.Type == typeof(string)){
+                        return Expression.Call(CachedReflectionInfo.CharOps_Range,
+                                               lhs.Convert(typeof(char)),
+                                               rhs.Convert(typeof(char)));
+                    }
                     return Expression.Call(CachedReflectionInfo.IntOps_Range,
                                            lhs.Convert(typeof(int)),
                                            rhs.Convert(typeof(int)));
