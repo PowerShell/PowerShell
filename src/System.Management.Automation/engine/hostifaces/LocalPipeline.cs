@@ -912,7 +912,6 @@ namespace System.Management.Automation.Runspaces
                                 command.CreateCommandProcessor
                                     (
                                         LocalRunspace.ExecutionContext,
-                                        LocalRunspace.CommandFactory,
                                         AddToHistory,
                                         commandOrigin
                                     );

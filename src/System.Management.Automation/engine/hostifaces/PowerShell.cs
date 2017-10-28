@@ -3662,7 +3662,6 @@ namespace System.Management.Automation
                             cmd.CreateCommandProcessor
                             (
                                 Runspace.DefaultRunspace.ExecutionContext,
-                                ((LocalRunspace)Runspace.DefaultRunspace).CommandFactory,
                                 false,
                                 IsNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
                             );

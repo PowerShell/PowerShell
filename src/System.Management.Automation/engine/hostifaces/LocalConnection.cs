@@ -270,16 +270,6 @@ namespace System.Management.Automation.Runspaces
         #endregion protected_properties
 
         #region internal_properties
-        /// <summary>
-        /// CommandFactory object for this runspace.
-        /// </summary>
-        internal CommandFactory CommandFactory
-        {
-            get
-            {
-                return _commandFactory;
-            }
-        }
 
         /// <summary>
         /// Gets history manager for this runspace
@@ -648,7 +638,6 @@ namespace System.Management.Automation.Runspaces
                 MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Available);
                 startLifeCycleEventWritten = true;
 
-                _commandFactory = new CommandFactory(_engine.Context);
                 _history = new History(_engine.Context);
                 _jobRepository = new JobRepository();
                 _jobManager = new JobManager();
@@ -902,7 +891,6 @@ namespace System.Management.Automation.Runspaces
 
             //All pipelines have been canceled. Close the runspace.
             _engine = null;
-            _commandFactory = null;
 
             SetRunspaceState(RunspaceState.Closed);
 
@@ -1289,11 +1277,6 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
 
         #region private fields
-
-        /// <summary>
-        /// CommandFactory for creating Command objects
-        /// </summary>
-        private CommandFactory _commandFactory;
 
         /// <summary>
         /// AutomationEngine instance for this runspace
