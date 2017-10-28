@@ -803,6 +803,24 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
     }
 
+    # Test pending support for multiple header capable server on Linux/macOS ses issue #4639
+    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Multiple Link Headers are present" -Pending:$(!$IsWindows){
+        $headers = @{
+            Link =
+                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1>; rel="self"',
+                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2>; rel="next"',
+                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5>; rel="last"'
+        } | ConvertTo-Json -Compress
+        $headers = [uri]::EscapeDataString($headers)
+        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK&headers=$headers"
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.RelationLink.Count | Should BeExactly 3
+        $result.Output.RelationLink["self"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1"
+        $result.Output.RelationLink["next"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2"
+        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
+    }
+
     It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property: <type>" -TestCases @(
         @{ type = "noUrl" }
         @{ type = "malformed" }
