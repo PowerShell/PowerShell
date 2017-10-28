@@ -182,17 +182,28 @@ namespace Microsoft.PowerShell.Commands
                 Func<HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors,bool> validationCallBackWrapper = 
                     delegate(HttpRequestMessage httpRequestMessage, X509Certificate2 x509Certificate2, X509Chain x509Chain, SslPolicyErrors sslPolicyErrors)
                     {
+                        InitialSessionState iss = InitialSessionState.CreateDefault();
+                        
+                        // Add $_ variable with the Delegate parameters as members
+                        PSObject dollarUnderbar = new PSObject();
+                        dollarUnderbar.Members.Add(new PSNoteProperty("Request", httpRequestMessage));
+                        dollarUnderbar.Members.Add(new PSNoteProperty("Certificate", x509Certificate2));
+                        dollarUnderbar.Members.Add(new PSNoteProperty("CertificateChain", x509Chain));
+                        dollarUnderbar.Members.Add(new PSNoteProperty("SslErrors", sslPolicyErrors));
+                        iss.Variables.Add(new SessionStateVariableEntry(name: "_", value: dollarUnderbar, description: String.Empty));
+
                         Boolean result = false;
                         try
                         {
-                            result = LanguagePrimitives.IsTrue(
-                                 CertificateValidationScript.InvokeReturnAsIs(
-                                    httpRequestMessage, 
-                                    x509Certificate2, 
-                                    x509Chain, 
-                                    sslPolicyErrors
-                                )
-                            );
+                            using (Runspace rs = RunspaceFactory.CreateRunspace(iss))
+                            using (var ps = System.Management.Automation.PowerShell.Create())
+                            {
+                                ps.Runspace = rs;
+                                rs.Open();
+                                ps.AddScript(CertificateValidationScript.ToString());
+
+                                result = LanguagePrimitives.IsTrue(ps.Invoke().First());
+                            }
                         }
                         catch // Treat all exceptions as Certificate failures.
                         {

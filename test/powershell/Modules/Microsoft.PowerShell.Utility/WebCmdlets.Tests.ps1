@@ -1583,23 +1583,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
         }
 
-        It "Verifies Invoke-WebRequest -CertificateValidationScript script has access to the calling scope" -Pending:$PendingCertificateTest {
-            # WebListener's Certificate Thumbprint
-            $thumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
-            $scriptHash = @{Subject = $null}
+        It 'Verifies Invoke-WebRequest -CertificateValidationScript script has a $_' -Pending:$PendingCertificateTest {
             $params = @{
                 Uri = Get-WebListenerUrl -Test 'Get' -Https
                 ErrorAction = 'Stop'
                 CertificateValidationScript = { 
-                    # $args[1] is the remote server's X509Certificate2 certificate
-                    $scriptHash['Subject'] = $args[1].Subject
-                    return ($args[1].Thumbprint -eq $thumbprint)
+                    $_.Certificate.Thumbprint -eq 'C8747A1C4A46E52EEC688A6766967010F86C58E3' -and
+                    $_.CertificateChain.ChainElements[0].Certificate.Thumbprint -eq 'C8747A1C4A46E52EEC688A6766967010F86C58E3' -and
+                    $_.SslErrors -eq 'RemoteCertificateChainErrors' -and
+                    $_.Request.Method.Method -eq 'GET'
                 }
             }
             $result = Invoke-WebRequest @Params
             $jsonResult = $result.Content | ConvertFrom-Json
             $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
-            $scriptHash.Subject | Should BeExactly 'CN=localhost'
         }
 
         It "Verifies Invoke-WebRequest -CertificateValidationScript treats exceptions as Certificate failures" -Pending:$PendingCertificateTest {
@@ -2708,22 +2705,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Headers.Host | Should BeExactly $params.Uri.Authority
         }
         
-        It "Verifies Invoke-RestMethod -CertificateValidationScript script has access to the calling scope" -Pending:$PendingCertificateTest {
-            # WebListener's Certificate Thumbprint
-            $thumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
-            $scriptHash = @{Subject = $null}
+        It 'Verifies Invoke-RestMethod -CertificateValidationScript script has a $_' -Pending:$PendingCertificateTest {
             $params = @{
                 Uri = Get-WebListenerUrl -Test 'Get' -Https
                 ErrorAction = 'Stop'
-                CertificateValidationScript = { 
-                    # $args[1] is the remote server's X509Certificate2 certificate
-                    $scriptHash['Subject'] = $args[1].Subject
-                    return ($args[1].Thumbprint -eq $thumbprint)
+                CertificateValidationScript = {
+                    $WebListenerThumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
+                    $_.Certificate.Thumbprint -eq $WebListenerThumbprint -and
+                    $_.CertificateChain.ChainElements[0].Certificate.Thumbprint -eq $WebListenerThumbprint -and
+                    $_.SslErrors -eq 'RemoteCertificateChainErrors' -and
+                    $_.Request.Method.Method -eq 'GET'
                 }
             }
-            $result = Invoke-RestMethod @Params
+            $result = Invoke-RestMethod @Params 
             $result.Headers.Host | Should BeExactly $params.Uri.Authority
-            $scriptHash.Subject | Should BeExactly 'CN=localhost'
         }
 
         It "Verifies Invoke-RestMethod -CertificateValidationScript treats exceptions as Certificate failures" -Pending:$PendingCertificateTest {
