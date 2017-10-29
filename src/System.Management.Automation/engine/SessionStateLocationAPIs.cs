@@ -6,6 +6,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
 
@@ -231,19 +232,36 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             string providerId = null;
 
-
-            const string locationStackHistoryId = "SetLocationHistoryStack";
             // Replace path with last working directory when '-' was passed.
+            if (_workingLocationHistoryStack == null)
+            {
+                const int locationHistoryLimit = 1000;
+                _workingLocationHistoryStack = new BoundedStack<PathInfo>(locationHistoryLimit);
+            }
+            bool pushNextLocation = true;
             if (originalPath.Equals("-"))            
             {
-                return PopLocation(locationStackHistoryId);
+
+                if (_workingLocationHistoryStack.Count > 0)
+                {
+                    var previousLocation =  _workingLocationHistoryStack.Pop();
+                    path = previousLocation.Path;
+                    pushNextLocation = false;
+                }
+                else
+                {
+                    throw new InvalidOperationException(SessionStateStrings.SetContentToLastLocationWhenHistoryIsEmpty);
+                }
             }
-            PushCurrentLocation(locationStackHistoryId);
+            if (pushNextLocation)
+            {
+                var newPushPathInfo = GetNewPushPathInfo();
+                _workingLocationHistoryStack.Push(newPushPathInfo);
+            }
 
             PSDriveInfo previousWorkingDrive = CurrentDrive;
 
             // First check to see if the path is a home path
-
             if (LocationGlobber.IsHomePath(path))
             {
                 path = Globber.GetHomeRelativePath(path);
@@ -786,6 +804,11 @@ namespace System.Management.Automation
         #region push-Pop current working directory
 
         /// <summary>
+        /// A bounded stack for the location history of Set-Location
+        /// </summary>
+        private BoundedStack<PathInfo> _workingLocationHistoryStack;
+
+        /// <summary>
         /// A stack of the most recently pushed locations
         /// </summary>
         private Dictionary<String, Stack<PathInfo>> _workingLocationStack;
@@ -813,8 +836,24 @@ namespace System.Management.Automation
                 stackName = _defaultStackName;
             }
 
-            // Create a new instance of the directory/drive pair
+            // Get the location stack from the hashtable
 
+            Stack<PathInfo> locationStack = null;
+
+            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
+            {
+                locationStack = new Stack<PathInfo>();
+                _workingLocationStack[stackName] = locationStack;
+            }
+
+            // Push the directory/drive pair onto the stack
+            var newPushPathInfo = GetNewPushPathInfo();
+            locationStack.Push(newPushPathInfo);
+        }
+
+        private PathInfo GetNewPushPathInfo()
+        {
+             // Create a new instance of the directory/drive pair
             ProviderInfo provider = CurrentDrive.Provider;
             string mshQualifiedPath =
                 LocationGlobber.GetMshQualifiedPath(CurrentDrive.CurrentLocation, CurrentDrive);
@@ -831,19 +870,7 @@ namespace System.Management.Automation
                 CurrentDrive.Name,
                 mshQualifiedPath);
 
-            // Get the location stack from the hashtable
-
-            Stack<PathInfo> locationStack = null;
-
-            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
-            {
-                locationStack = new Stack<PathInfo>();
-                _workingLocationStack[stackName] = locationStack;
-            }
-
-            // Push the directory/drive pair onto the stack
-
-            locationStack.Push(newPushLocation);
+            return newPushLocation;
         }
 
         /// <summary>

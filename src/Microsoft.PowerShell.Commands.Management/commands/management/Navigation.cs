@@ -916,10 +916,6 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         result = SessionState.Path.SetLocation(Path, CmdletProviderContext);
-#if UNIX
-                        // Be consistent with most Unix shells that set the environment variable 'OLDPWD' when changing location
-                        Environment.SetEnvironmentVariable("OLDPWD", Path);
-#endif
                     }
                     catch (PSNotSupportedException notSupported)
                     {

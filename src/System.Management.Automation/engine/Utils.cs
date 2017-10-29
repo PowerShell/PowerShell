@@ -1482,4 +1482,44 @@ namespace System.Management.Automation.Internal
             }
         }
     }
+
+    /// <summary>
+    /// An bounded stack based on a linked list.
+    /// </summary>
+    public class BoundedStack<T> : LinkedList<T>
+    {
+        private readonly int _capacity;
+
+        /// <summary>
+        /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
+        /// </summary>
+        /// <param name="capacity"></param>
+        public BoundedStack(int capacity)
+        {
+            _capacity = capacity;
+        }
+
+        /// <summary>
+        /// Push item.
+        /// </summary>
+        /// <param name="item"></param>
+        public void Push(T item)
+        {
+            this.AddFirst(item);
+
+            if(this.Count > _capacity)
+                this.RemoveLast();
+        }
+
+        /// <summary>
+        /// Pop item.
+        /// </summary>
+        /// <returns></returns>
+        public T Pop()
+        {
+            var item = this.First.Value;
+            this.RemoveFirst();
+            return item;
+        }
+    }
 }

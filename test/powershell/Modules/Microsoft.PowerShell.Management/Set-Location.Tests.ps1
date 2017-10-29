@@ -58,39 +58,35 @@ Describe "Set-Location" -Tags "CI" {
 
     Context 'Set-Location with last location history' {
         
-            It 'Should go to last location when specifying minus as a path' {
-                $initialLocation = Get-Location
-                Set-Location ([System.IO.Path]::GetTempPath())
-                Set-Location -
-                (Get-Location).Path | Should Be ($initialLocation).Path
-            }
+        It 'Should go to last location when specifying minus as a path' {
+            $initialLocation = Get-Location
+            Set-Location ([System.IO.Path]::GetTempPath())
+            Set-Location -
+            (Get-Location).Path | Should Be ($initialLocation).Path
+        }
 
-            It 'Should go to last location when specifying minus as a path using alias' {
-                $initialLocation = Get-Location
-                Set-Location ([System.IO.Path]::GetTempPath())
-                cd -
-                (Get-Location).Path | Should Be ($initialLocation).Path
-            }
-    
-            It 'Should go back to original location when specifying minus as a path twice' {
-                $tempPath = ([System.IO.Path]::GetTempPath())
-                Set-Location $tempLocation
-                $tempLocation = Get-Location
-                Set-Location -
-                Set-Location -
-                (Get-Location).Path | Should Be ($tempLocation).Path
-            }
+        It 'Should go back to previous locations when specifying minus twice' {
+            $initialLocation = (Get-Location).Path
+            $firstLocationChange = [System.IO.Path]::GetTempPath()
+            Set-Location $firstLocation
+            Set-Location ([environment]::getfolderpath("user"))
+            Set-Location -
+            (Get-Location).Path | Should Be $firstLocationChange
+            Set-Location -
+            (Get-Location).Path | Should Be $initialLocation
+        }
 
-            It 'Should fail if there is no last location' {
-                [System.Environment]::SetEnvironmentVariable('OLDPWD', [string]::Empty)
-                try
-                {
-                    Set-Location -
-                }
-                catch
-                {
-                    $_.FullyQualifiedErrorId | should be "SetLocationInvalidArgument,Microsoft.PowerShell.Commands.SetLocationCommand"
-                }
+        It 'Location History is limited' {
+            $initialLocation = (Get-Location).Path
+            $maximumLocationHistory = 1000
+            foreach ($i in 1..$maximumLocationHistory) {
+                Set-Location ([System.IO.Path]::GetTempPath())
             }
+            foreach ($i in 1..$maximumLocationHistory) {
+                Set-Location -
+            }
+            (Get-Location).Path | Should Be $initialLocation
+            { Set-Location - } | ShouldBeErrorId 'System.InvalidOperationException,Microsoft.PowerShell.Commands.SetLocationCommand'
+        }
     }
 }
