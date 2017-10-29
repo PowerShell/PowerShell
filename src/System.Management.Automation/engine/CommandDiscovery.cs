@@ -301,26 +301,7 @@ namespace System.Management.Automation
         internal CommandProcessorBase LookupCommandProcessor(string commandName,
             CommandOrigin commandOrigin, bool? useLocalScope)
         {
-            CommandInfo commandInfo = null;
-#if false
-                if (tokenCache.ContainsKey (commandName))
-                {
-                    commandInfo = tokenCache[commandName];
-                }
-                else
-                {
-                    commandInfo = LookupCommandInfo (commandName);
-
-                    if (commandInfo.CommandType == CommandTypes.Alias)
-                    {
-                        commandInfo = ((AliasInfo)commandInfo).ResolvedCommand;
-                    }
-
-                    tokenCache[commandName] = commandInfo;
-                }
-#else
-            commandInfo = LookupCommandInfo(commandName, commandOrigin);
-#endif
+            CommandInfo commandInfo = LookupCommandInfo(commandName, commandOrigin);
             CommandProcessorBase processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null);
 
             // commandInfo.Name might be different than commandName - restore the original invocation name

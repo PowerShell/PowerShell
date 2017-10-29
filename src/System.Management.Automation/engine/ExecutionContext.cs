@@ -546,8 +546,6 @@ namespace System.Management.Automation
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
-        private CommandFactory _commandFactory;
-
         /// <summary>
         /// Routine to create a command(processor) instance using the factory.
         /// </summary>
@@ -556,15 +554,14 @@ namespace System.Management.Automation
         /// <returns>The command processor object</returns>
         internal CommandProcessorBase CreateCommand(string command, bool dotSource)
         {
-            if (_commandFactory == null)
-            {
-                _commandFactory = new CommandFactory(this);
-            }
-            CommandProcessorBase commandProcessor = _commandFactory.CreateCommand(command,
-                this.EngineSessionState.CurrentScope.ScopeOrigin, !dotSource);
+            CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
+            CommandProcessorBase commandProcessor =
+                CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource);
             // Reset the command origin for script commands... //BUGBUG - dotting can get around command origin checks???
             if (commandProcessor != null && commandProcessor is ScriptCommandProcessorBase)
+            {
                 commandProcessor.Command.CommandOriginInternal = CommandOrigin.Internal;
+            }
 
             return commandProcessor;
         }
