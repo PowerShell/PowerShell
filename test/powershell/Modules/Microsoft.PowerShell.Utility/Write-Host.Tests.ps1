@@ -1,7 +1,7 @@
 ﻿Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
 
         $testData = @(
             @{ Name = '-Separator';       Command = "Write-Host a,b,c -Separator '+'";                 returnCount = 1; returnValue = @("a+b+c") }

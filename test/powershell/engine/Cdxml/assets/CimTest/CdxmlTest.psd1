@@ -2,7 +2,7 @@
     GUID = '41486F7D-842F-40F1-ACE4-8405F9C2ED9B'
     Author="Microsoft Corporation"
     CompanyName="Microsoft Corporation"
-    Copyright="(c) Microsoft Corporation. All rights reserved."
+    Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
     ModuleVersion = '2.0.0.0'
     PowerShellVersion = '3.0'
     FormatsToProcess = @()

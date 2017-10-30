@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -169,25 +169,7 @@ namespace System.Management.Automation
         /// </summary>
         internal AutomationEngine Engine { get; private set; }
 
-        /// <summary>
-        /// Get the RunspaceConfiguration instance
-        /// </summary>
-        internal RunspaceConfiguration RunspaceConfiguration { get; }
-
         internal InitialSessionState InitialSessionState { get; }
-
-        /// <summary>
-        /// True if the RunspaceConfiguration/InitialSessionState is for a single shell or false otherwise.
-        /// </summary>
-        ///
-        internal bool IsSingleShell
-        {
-            get
-            {
-                RunspaceConfigForSingleShell runSpace = RunspaceConfiguration as RunspaceConfigForSingleShell;
-                return runSpace != null || InitialSessionState != null;
-            }
-        }
 
         /// <summary>
         /// Added for Win8: 336382
@@ -259,14 +241,7 @@ namespace System.Management.Automation
             {
                 if (_providerNames == null)
                 {
-                    if (IsSingleShell)
-                    {
-                        _providerNames = new SingleShellProviderNames();
-                    }
-                    else
-                    {
-                        _providerNames = new CustomShellProviderNames();
-                    }
+                    _providerNames = new SingleShellProviderNames();
                 }
                 return _providerNames;
             }
@@ -292,11 +267,6 @@ namespace System.Management.Automation
                     if (AuthorizationManager is PSAuthorizationManager && !String.IsNullOrEmpty(AuthorizationManager.ShellId))
                     {
                         _shellId = AuthorizationManager.ShellId;
-                    }
-                    else if (RunspaceConfiguration != null && !String.IsNullOrEmpty(RunspaceConfiguration.ShellId))
-                    {
-                        // Otherwise fall back to the runspace shell id if it's there...
-                        _shellId = RunspaceConfiguration.ShellId;
                     }
                     else
                     {
@@ -576,8 +546,6 @@ namespace System.Management.Automation
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
-        private CommandFactory _commandFactory;
-
         /// <summary>
         /// Routine to create a command(processor) instance using the factory.
         /// </summary>
@@ -586,15 +554,14 @@ namespace System.Management.Automation
         /// <returns>The command processor object</returns>
         internal CommandProcessorBase CreateCommand(string command, bool dotSource)
         {
-            if (_commandFactory == null)
-            {
-                _commandFactory = new CommandFactory(this);
-            }
-            CommandProcessorBase commandProcessor = _commandFactory.CreateCommand(command,
-                this.EngineSessionState.CurrentScope.ScopeOrigin, !dotSource);
+            CommandOrigin commandOrigin = this.EngineSessionState.CurrentScope.ScopeOrigin;
+            CommandProcessorBase commandProcessor =
+                CommandDiscovery.LookupCommandProcessor(command, commandOrigin, !dotSource);
             // Reset the command origin for script commands... //BUGBUG - dotting can get around command origin checks???
             if (commandProcessor != null && commandProcessor is ScriptCommandProcessorBase)
+            {
                 commandProcessor.Command.CommandOriginInternal = CommandOrigin.Internal;
+            }
 
             return commandProcessor;
         }
@@ -1090,11 +1057,6 @@ namespace System.Management.Automation
 
         internal void RunspaceClosingNotification()
         {
-            if (this.RunspaceConfiguration != null)
-            {
-                this.RunspaceConfiguration.Unbind(this);
-            }
-
             EngineSessionState.RunspaceClosingNotification();
 
             if (_debugger != null)
@@ -1114,10 +1076,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the type table instance for this engine. This is somewhat
-        /// complicated by the need to have a single type table in RunspaceConfig
-        /// shared across all bound runspaces, as well as individual tables for
-        /// instances created from InitialSessionState.
+        /// Gets the type table instance for this engine.
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -1125,22 +1084,15 @@ namespace System.Management.Automation
             {
                 if (_typeTable == null)
                 {
-                    // Always use the type table from the RunspaceConfig if there is one, otherwise create a default one
-                    _typeTable = (this.RunspaceConfiguration != null && RunspaceConfiguration.TypeTable != null)
-                        ? RunspaceConfiguration.TypeTable
-                        : new TypeTable();
+                    _typeTable = new TypeTable();
                     _typeTableWeakReference = new WeakReference<TypeTable>(_typeTable);
                 }
                 return _typeTable;
             }
-            // This needs to exist so that RunspaceConfiguration can
-            // push it's shared type table into ExecutionContext
             set
             {
-                if (this.RunspaceConfiguration != null)
-                    throw new NotImplementedException("set_TypeTable()");
                 _typeTable = value;
-                _typeTableWeakReference = value != null ? new WeakReference<TypeTable>(value) : null;
+                _typeTableWeakReference = (value != null) ? new WeakReference<TypeTable>(value) : null;
             }
         }
 
@@ -1163,21 +1115,12 @@ namespace System.Management.Automation
         private WeakReference<TypeTable> _typeTableWeakReference;
 
         /// <summary>
-        /// Gets the format info database for this engine. This is significantly
-        /// complicated by the need to have a single type table in RunspaceConfig
-        /// shared across all bound runspaces, as well as individual tables for
-        /// instances created from InitialSessionState.
+        /// Gets the format info database for this engine.
         /// </summary>
         internal TypeInfoDataBaseManager FormatDBManager
         {
             get
             {
-                // Use the format DB from the RunspaceConfig if there is one.
-                if (this.RunspaceConfiguration != null && RunspaceConfiguration.FormatDBManager != null)
-                {
-                    return RunspaceConfiguration.FormatDBManager;
-                }
-
                 if (_formatDBManager == null)
                 {
                     // If no Formatter database has been created, then
@@ -1194,12 +1137,8 @@ namespace System.Management.Automation
                 return _formatDBManager;
             }
 
-            // This needs to exist so that RunspaceConfiguration can
-            // push it's shared format database table into ExecutionContext
             set
             {
-                if (this.RunspaceConfiguration != null)
-                    throw new NotImplementedException("set_FormatDBManager()");
                 _formatDBManager = value;
             }
         }
@@ -1217,69 +1156,6 @@ namespace System.Management.Automation
             }
         }
         internal PSTransactionManager transactionManager;
-
-
-        private bool _assemblyCacheInitialized = false;
-
-        /// <summary>
-        /// This function is called by RunspaceConfiguration.Assemblies.Update call back.
-        /// It's not used when constructing a runspace from an InitialSessionState object.
-        /// </summary>
-        internal void UpdateAssemblyCache()
-        {
-            string errors = "";
-
-            if (this.RunspaceConfiguration != null)
-            {
-                if (!_assemblyCacheInitialized)
-                {
-                    foreach (AssemblyConfigurationEntry entry in this.RunspaceConfiguration.Assemblies)
-                    {
-                        Exception error = null;
-                        AddAssembly(entry.Name, entry.FileName, out error);
-
-                        if (error != null)
-                        {
-                            errors += "\n" + error.Message;
-                        }
-                    }
-
-                    _assemblyCacheInitialized = true;
-                }
-                else
-                {
-                    foreach (AssemblyConfigurationEntry entry in this.RunspaceConfiguration.Assemblies.UpdateList)
-                    {
-                        switch (entry.Action)
-                        {
-                            case UpdateAction.Add:
-                                Exception error = null;
-                                AddAssembly(entry.Name, entry.FileName, out error);
-
-                                if (error != null)
-                                {
-                                    errors += "\n" + error.Message;
-                                }
-
-                                break;
-
-                            case UpdateAction.Remove:
-                                RemoveAssembly(entry.Name);
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                }
-
-                if (!String.IsNullOrEmpty(errors))
-                {
-                    string message = StringUtil.Format(MiniShellErrors.UpdateAssemblyErrors, errors);
-                    throw new RuntimeException(message);
-                }
-            }
-        }
 
         internal Assembly AddAssembly(string name, string filename, out Exception error)
         {
@@ -1535,27 +1411,6 @@ namespace System.Management.Automation
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Constructs an Execution context object for Automation Engine
-        /// </summary>
-        ///
-        /// <param name="engine">
-        /// Engine that hosts this execution context
-        /// </param>
-        /// <param name="hostInterface">
-        /// Interface that should be used for interaction with host
-        /// </param>
-        /// <param name="runspaceConfiguration">
-        /// RunspaceConfiguration information
-        /// </param>
-        internal ExecutionContext(AutomationEngine engine, PSHost hostInterface, RunspaceConfiguration runspaceConfiguration)
-        {
-            RunspaceConfiguration = runspaceConfiguration;
-            AuthorizationManager = runspaceConfiguration.AuthorizationManager;
-
-            InitializeCommon(engine, hostInterface);
         }
 
         /// <summary>

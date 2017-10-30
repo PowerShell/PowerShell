@@ -79,7 +79,7 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         $testfile = Join-Path $TestDrive -ChildPath "testfile.csv"
         Remove-Item -Path $testfile -Force -ErrorAction SilentlyContinue
         $processlist = (Get-Process)[0..1]
-        $processlist | Export-Csv -Path $testfile -Force
+        $processlist | Export-Csv -Path $testfile -Force -IncludeTypeInformation
         # Import-Csv add "CSV:" before actual type
         $expectedProcessType = "CSV:System.Diagnostics.Process"
     }

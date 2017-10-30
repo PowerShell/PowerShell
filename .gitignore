@@ -38,19 +38,18 @@ dotnet-uninstall-debian-packages.sh
 
 # Ignore packages
 *.deb
+*.tar.gz
 *.zip
 *.rpm
 *.pkg
 *.nupkg
+*.AppImage
 
 # ignore the telemetry semaphore file
 DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
 
 # default location for produced nuget packages
 /nuget-artifacts
-
-# generated man files
-/assets/powershell.1*
 
 # resgen output
 gen

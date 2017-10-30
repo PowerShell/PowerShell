@@ -1,7 +1,7 @@
 ﻿#if CORECLR
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -287,9 +287,9 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);    
+                    request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
                 }
-                
+
             }
 
             // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.

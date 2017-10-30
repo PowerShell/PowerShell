@@ -1,4 +1,4 @@
-;// Copyright (C) Microsoft Corporation, 2000 - 2002
+;// Copyright (c) Microsoft Corporation. All rights reserved.
 
 MessageId=1
 SymbolicName=MISSING_COMMAND_LINE_ARGUMENT
@@ -225,7 +225,7 @@ Windows PowerShell
 MessageId=38
 SymbolicName=SHELLBANNER2
 Language=English
-Copyright (C) 2015 Microsoft Corporation. All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 .
 
 MessageId=39

@@ -1,6 +1,6 @@
 #if !UNIX
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
@@ -2608,109 +2608,6 @@ namespace Microsoft.PowerShell
 
 #endregion Window
 
-#if !CORECLR
-#region Font Selection
-
-        /// <summary>
-        /// UpdateLocaleSpecificFont is a helper method used to update
-        /// the console font based on the locale.
-        /// The default font face used for Powershell Console is Lucida Console.
-        /// However certain locales dont support Lucida Console font. Hence for such
-        /// locales the console font is updated to Raster dynamically.
-        /// </summary>
-        internal static void UpdateLocaleSpecificFont()
-        {
-            // Default Powershell shortcut.lnk settings.
-            const string defaultFontFace = "Lucida Console";
-
-            // Default CJK locale shortcut.lnk settings.
-            // Font size is hard coded here to ensure we select a supported size.
-            // GDI does a poor job of selecting raster font size if the requested
-            // size is not supported.
-            const string CJKFontFace = "Terminal";
-            const int CJKFontFamily = 48;
-            const int CJKnFont = 6;
-            const int CJKFontWidth = 8;
-            const int CJKFontHeight = 12;
-            const int CKJFontWeight = 400;
-
-            uint currentLocaleCodePage = (uint)ConsoleControl.NativeMethods.GetConsoleCP();
-
-            ConsoleHandle handle = ConsoleControl.GetActiveScreenBufferHandle();
-            CONSOLE_FONT_INFO_EX fontInfo;
-            try
-            {
-                fontInfo = ConsoleControl.GetConsoleFontInfo(handle);
-            }
-            catch (Exception)
-            {
-                return;
-            }
-
-            bool isLucidaConsoleSupportedLocale = CodePageSupportsLucida(currentLocaleCodePage);
-
-            // The Raster font is updated for Japanese and Korean locales if the user has not manually
-            // altered the default settings. If the default settings are altered then the
-            // setting chosen by the user would be used.
-            if (!isLucidaConsoleSupportedLocale &&
-                fontInfo.FontFace.Equals(defaultFontFace, StringComparison.OrdinalIgnoreCase))
-            {
-                fontInfo.FontFace = CJKFontFace;
-                fontInfo.FontFamily = CJKFontFamily;
-                fontInfo.nFont = CJKnFont;
-                fontInfo.FontWidth = CJKFontWidth;
-                fontInfo.FontHeight = CJKFontHeight;
-                fontInfo.FontWeight = CKJFontWeight;
-
-                bool result = NativeMethods.SetCurrentConsoleFontEx(handle.DangerousGetHandle(), false, ref fontInfo);
-
-                if (result == false)
-                {
-                    int err = Marshal.GetLastWin32Error();
-
-                    HostException e = CreateHostException(err,
-                        "SetConsoleFontInfo",
-                        ErrorCategory.ResourceUnavailable,
-                        ConsoleControlStrings.SetConsoleFontInfoExceptionTemplate);
-
-                    throw e;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Supported Lucida code pages obtained from Font group.
-        /// Contacts: alib, judysa, simonda
-        /// </summary>
-        private static HashSet<uint> LucidaSupportedCodePages = new HashSet<uint>()
-        {
-            1251,               // Latin 1
-            1250,               // Latin 2
-            1251,               // Cyrillic
-            1253,               // Greek
-            1254,               // Turkish
-            869,                // IBM Greek
-            866,                // MS-DOS Russian
-            865,                // MS-DOS Nordic
-            863,                // MS-DOS Canadian French
-            861,                // MS-DOS Icelandic
-            860,                // MS-DOS Portuguese
-            857,                // IBM Turkish
-            855,                // IBM Cyrillic
-            852,                // Latin 2
-            737,                // Greek
-            850,                // WE/Latin 1
-            437                 // US
-            //936,                // SimplifiedChinese -  According to font team this is *not* supported.
-            //950                 // TraditionalChinese - According to font team this is *not* supported.
-        };
-        private static bool CodePageSupportsLucida(uint currentLocaleCodePage)
-        {
-            return LucidaSupportedCodePages.Contains(currentLocaleCodePage);
-        }
-
-#endregion
-#endif
         /// <summary>
         ///
         /// Wrap Win32 WriteConsole
@@ -2819,229 +2716,6 @@ namespace Microsoft.PowerShell
 
 #endif
 #region Dealing with CJK
-#if !UNIX
-
-        /// <summary>
-        /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
-        /// Gets the CharSet for a code page
-        /// </summary>
-        /// <param name="codePage"></param>
-        /// <returns>The CharSet corresponding to the codePage; defaults to OEM_CHARSET (255)</returns>
-        private static uint CodePageToCharSet(uint codePage)
-        {
-            const uint OEM_CHARSET = 255;
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
-#if CORECLR // TranslateCharsetInfo exists in an extension API set 'ext-ms-win-gdi-font-l1-1-1.dll', which is not available in NanoServer.
-            return OEM_CHARSET;
-#else
-            CHARSETINFO csi;
-            const DWORD TCI_SRCCODEPAGE = 2;
-            if (!NativeMethods.TranslateCharsetInfo((IntPtr)codePage, out csi, TCI_SRCCODEPAGE))
-            {
-                csi.ciCharset = OEM_CHARSET;
-            }
-            return csi.ciCharset;
-#endif
-        }
-
-        // From \windows\core\ntcon\server\dbcs.c
-        private static bool IsAvailableFarEastCodePage(uint codePage)
-        {
-            uint charSet = CodePageToCharSet(codePage);
-            return IsAnyDBCSCharSet(charSet);
-        }
-
-        // From \windows\core\ntcon\server\dbcs.c
-        private static bool IsAnyDBCSCharSet(uint charSet)
-        {
-            const uint SHIFTJIS_CHARSET = 128;
-            const uint HANGUL_CHARSET = 129;
-            const uint CHINESEBIG5_CHARSET = 136;
-            const uint GB2312_CHARSET = 134;
-            return charSet == SHIFTJIS_CHARSET || charSet == HANGUL_CHARSET ||
-                charSet == CHINESEBIG5_CHARSET || charSet == GB2312_CHARSET;
-        }
-
-        /// <summary>
-        /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
-        /// Precondition: the current code page needs to be a Far East code page.
-        ///
-        /// char F8F8 makes this function return 1 while in CHT, CHS, and KOR it takes 2 cells.
-        /// I don't think we should special-case this because that ought to be a bug outside of
-        /// this code.
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="hwnd">window handle</param>
-        /// <param name="hDC">handle to DC; it is not released by this method</param>
-        /// <param name="istmInitialized"></param>
-        /// <param name="tm"></param>
-        /// <returns></returns>
-        private static int LengthInBufferCellsFE(char c, ref HWND hwnd, ref HDC hDC, ref bool istmInitialized, ref TEXTMETRIC tm)
-        {
-            if (0x20 <= c && c <= 0x7e)
-            {
-                /* ASCII */
-                return 1;
-            }
-            else if (0x3041 <= c && c <= 0x3094)
-            {
-                /* Hiragana */
-                return 2;
-            }
-            else if (0x30a1 <= c && c <= 0x30f6)
-            {
-                /* Katakana */
-                return 2;
-            }
-            else if (0x3105 <= c && c <= 0x312c)
-            {
-                /* Bopomofo */
-                return 2;
-            }
-            else if (0x3131 <= c && c <= 0x318e)
-            {
-                /* Hangul Elements */
-                return 2;
-            }
-            else if (0xac00 <= c && c <= 0xd7a3)
-            {
-                /* Korean Hangul Syllables */
-                return 2;
-            }
-            else if (0xff01 <= c && c <= 0xff5e)
-            {
-                /* Fullwidth ASCII variants */
-                return 2;
-            }
-            else if (0xff61 <= c && c <= 0xff9f)
-            {
-                /* Halfwidth Katakana variants */
-                return 1;
-            }
-            else if ((0xffa0 <= c && c <= 0xffbe) ||
-                     (0xffc2 <= c && c <= 0xffc7) ||
-                     (0xffca <= c && c <= 0xffcf) ||
-                     (0xffd2 <= c && c <= 0xffd7) ||
-                     (0xffda <= c && c <= 0xffdc))
-            {
-                /* Halfwidth Hangul variants */
-                return 1;
-            }
-            else if (0xffe0 <= c && c <= 0xffe6)
-            {
-                /* Fullwidth symbol variants */
-                return 2;
-            }
-            else if (0x4e00 <= c && c <= 0x9fa5)
-            {
-                /* Han Ideographic */
-                return 2;
-            }
-            else if (0xf900 <= c && c <= 0xfa2d)
-            {
-                /* Han Compatibility Ideographs */
-                return 2;
-            }
-            else
-            {
-                // GetTextMetrics / GetCharWidth32 exist in an extension API set 'ext-ms-win-gdi-font-l1-1-1.dll', which is not available in NanoServer.
-#if !CORECLR
-                /* Unknown character: need to use GDI*/
-                if (hDC == (IntPtr)0)
-                {
-                    hwnd = NativeMethods.GetConsoleWindow();
-                    if ((IntPtr)0 == hwnd)
-                    {
-                        int err = Marshal.GetLastWin32Error();
-                        //Don't throw exception so that output can continue
-                        tracer.TraceError("Win32 Error 0x{0:X} occurred when getting the window handle to the console.",
-                            err);
-                        return 1;
-                    }
-                    hDC = NativeMethods.GetDC(hwnd);
-                    if ((IntPtr)0 == hDC)
-                    {
-                        int err = Marshal.GetLastWin32Error();
-                        //Don't throw exception so that output can continue
-                        tracer.TraceError("Win32 Error 0x{0:X} occurred when getting the Device Context of the console window.",
-                            err);
-                        return 1;
-                    }
-                }
-                bool result = true;
-                if (!istmInitialized)
-                {
-                    result = NativeMethods.GetTextMetrics(hDC, out tm);
-                    if (!result)
-                    {
-                        int err = Marshal.GetLastWin32Error();
-                        //Don't throw exception so that output can continue
-                        tracer.TraceError("Win32 Error 0x{0:X} occurred when getting the Text Metric of the console window's Device Context.",
-                            err);
-                        return 1;
-                    }
-                    istmInitialized = true;
-                }
-                int width;
-                result = NativeMethods.GetCharWidth32(hDC, (uint)c, (uint)c, out width);
-                if (!result)
-                {
-                    int err = Marshal.GetLastWin32Error();
-                    //Don't throw exception so that output can continue
-                    tracer.TraceError("Win32 Error 0x{0:X} occurred when getting the width of a char.",
-                        err);
-                    return 1;
-                }
-                if (width >= tm.tmMaxCharWidth)
-                {
-                    return 2;
-                }
-#endif
-            }
-            tracer.WriteLine("failed to locate char {0}, return 1", (int)c);
-            return 1;
-        }
-
-        internal static int LengthInBufferCells(char c)
-        {
-            uint codePage = NativeMethods.GetConsoleOutputCP();
-            return LengthInBufferCells(c, codePage);
-        }
-
-        /// <summary>
-        /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="codePage"></param>
-        /// <returns></returns>
-        [SuppressMessage("Microsoft.Usage", "CA1806:DoNotIgnoreMethodResults",
-            MessageId = "Microsoft.PowerShell.ConsoleControl+NativeMethods.ReleaseDC(System.IntPtr,System.IntPtr)")]
-        private static int LengthInBufferCells(char c, uint codePage)
-        {
-            if (!IsAvailableFarEastCodePage(codePage))
-            {
-                return 1;
-            }
-            HWND hwnd = (HWND)0;
-            HDC hDC = (HDC)0;
-            bool istmInitialized = false;
-            TEXTMETRIC tm = new TEXTMETRIC(); ;
-            try
-            {
-                return LengthInBufferCellsFE(c, ref hwnd, ref hDC, ref istmInitialized, ref tm);
-            }
-            finally
-            {
-                if (hwnd != (IntPtr)0 && hDC != (IntPtr)0)
-                {
-                    NativeMethods.ReleaseDC(hwnd, hDC);
-                }
-            }
-        }
-
-#endif
 
         // Return the length of a VT100 control sequence character in str starting
         // at the given offset.
@@ -3108,38 +2782,7 @@ namespace Microsoft.PowerShell
                 }
             }
 
-#if UNIX
             return str.Length - offset - escapeSequenceAdjustment;
-#else
-            uint codePage = NativeMethods.GetConsoleOutputCP();
-            if (!IsAvailableFarEastCodePage(codePage))
-            {
-                return str.Length - offset - escapeSequenceAdjustment;
-            }
-
-            HWND hwnd = (HWND)0;
-            HDC hDC = (HDC)0;
-            bool istmInitialized = false;
-            TEXTMETRIC tm = new TEXTMETRIC(); ;
-            int length = 0;
-            try
-            {
-                int n = str.Length;
-                for (int i = offset; i < n; i++)
-                {
-                    char c = str[i];
-                    length += LengthInBufferCellsFE(c, ref hwnd, ref hDC, ref istmInitialized, ref tm);
-                }
-                return length - escapeSequenceAdjustment;
-            }
-            finally
-            {
-                if (hwnd != (IntPtr)0 && hDC != (IntPtr)0)
-                {
-                    NativeMethods.ReleaseDC(hwnd, hDC);
-                }
-            }
-#endif
         }
 
 #if !UNIX
@@ -3321,6 +2964,33 @@ namespace Microsoft.PowerShell
 
 #endregion helper
 
+#region
+
+        internal static int LengthInBufferCells(char c)
+        {
+            // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
+            // which is derived from http://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
+
+            bool isWide = c >= 0x1100 &&
+                (c <= 0x115f || /* Hangul Jamo init. consonants */
+                 c == 0x2329 || c == 0x232a ||
+                 (c >= 0x2e80 && c <= 0xa4cf &&
+                  c != 0x303f) || /* CJK ... Yi */
+                 (c >= 0xac00 && c <= 0xd7a3) || /* Hangul Syllables */
+                 (c >= 0xf900 && c <= 0xfaff) || /* CJK Compatibility Ideographs */
+                 (c >= 0xfe10 && c <= 0xfe19) || /* Vertical forms */
+                 (c >= 0xfe30 && c <= 0xfe6f) || /* CJK Compatibility Forms */
+                 (c >= 0xff00 && c <= 0xff60) || /* Fullwidth Forms */
+                 (c >= 0xffe0 && c <= 0xffe6));
+                  // We can ignore these ranges because .Net strings use surrogate pairs
+                  // for this range and we do not handle surrogage pairs.
+                  // (c >= 0x20000 && c <= 0x2fffd) ||
+                  // (c >= 0x30000 && c <= 0x3fffd)
+            return 1 + (isWide ? 1 : 0);
+        }
+
+#endregion
+
 #region SendInput
 
         internal static void MimicKeyPress(INPUT[] inputs)
@@ -3396,9 +3066,6 @@ namespace Microsoft.PowerShell
 
 #region Code Page
 
-            [DllImport(PinvokeDllNames.GetConsoleCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetConsoleCP();
-
             [DllImport(PinvokeDllNames.GetConsoleOutputCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetConsoleOutputCP();
 
@@ -3412,15 +3079,6 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.ReleaseDCDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern int ReleaseDC(HWND hwnd, HDC hdc);
-
-            [DllImport(PinvokeDllNames.TranslateCharsetInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern bool TranslateCharsetInfo(IntPtr src, out CHARSETINFO Cs, DWORD options);
-
-            [DllImport(PinvokeDllNames.GetTextMetricsDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern bool GetTextMetrics(HDC hdc, out TEXTMETRIC tm);
-
-            [DllImport(PinvokeDllNames.GetCharWidth32DllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern bool GetCharWidth32(HDC hdc, uint first, uint last, out int width);
 
             [DllImport(PinvokeDllNames.FlushConsoleInputBufferDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool FlushConsoleInputBuffer(NakedWin32Handle consoleInput);
@@ -3476,14 +3134,8 @@ namespace Microsoft.PowerShell
                 Pipe
             };
 
-            [DllImport(PinvokeDllNames.GetFileTypeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern FileType GetFileType(NakedWin32Handle fileHandle);
-
             [DllImport(PinvokeDllNames.GetLargestConsoleWindowSizeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern COORD GetLargestConsoleWindowSize(NakedWin32Handle consoleOutput);
-
-            [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern IntPtr GetStdHandle(int handleId);
 
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool ReadConsole
@@ -3562,10 +3214,6 @@ namespace Microsoft.PowerShell
             // There is no GetCurrentConsoleFontEx on Core
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool GetCurrentConsoleFontEx(NakedWin32Handle consoleOutput, bool bMaximumWindow, ref CONSOLE_FONT_INFO_EX consoleFontInfo);
-
-            // There is no SetCurrentConsoleFontEx on Core
-            [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern bool SetCurrentConsoleFontEx(NakedWin32Handle consoleOutput, bool bMaximumWindow, ref CONSOLE_FONT_INFO_EX consoleFontInfo);
 
             [DllImport(PinvokeDllNames.GetConsoleCursorInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool GetConsoleCursorInfo(NakedWin32Handle consoleOutput, out CONSOLE_CURSOR_INFO consoleCursorInfo);

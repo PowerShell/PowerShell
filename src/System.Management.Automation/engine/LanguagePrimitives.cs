@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -440,9 +440,23 @@ namespace System.Management.Automation
 
         internal static bool IsTypeEnumerable(Type type)
         {
+            if (type == null) { return false; }
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(type);
             return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
         }
+
+        /// <summary>
+        /// Returns True if the language considers obj to be IEnumerable
+        /// </summary>
+        /// <param name="obj">
+        /// IEnumerable or IEnumerable-like object
+        /// </param>
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
+        public static bool IsObjectEnumerable(object obj)
+        {
+            return IsTypeEnumerable(PSObject.Base(obj)?.GetType());
+        }
+
 
         /// <summary>
         /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable
@@ -453,26 +467,9 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static IEnumerable GetEnumerable(object obj)
         {
-            if (obj == null)
-            {
-                return null;
-            }
-
-            Type objectType = obj.GetType();
-
-            // if the object passed is an PSObject,
-            // look at the base object. Notice that, if the
-            // object has been serialized, the base object
-            // will be there as an ArrayList if the original
-            // object was IEnumerable
-            if (objectType == typeof(PSObject))
-            {
-                PSObject mshObj = (PSObject)obj;
-                obj = mshObj.BaseObject;
-                objectType = obj.GetType();
-            }
-
-            GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(objectType);
+            obj = PSObject.Base(obj);
+            if (obj == null) { return null; }
+            GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(obj.GetType());
             return getEnumerable(obj);
         }
 

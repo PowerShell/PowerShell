@@ -1,7 +1,7 @@
 # escape=`
 FROM microsoft/windowsservercore
 
-SHELL ["powershell.exe","-command"]
+SHELL ["pwsh.exe","-command"]
 
 # the source msi should change on a daily basis
 # the destination should not change
@@ -18,7 +18,7 @@ RUN new-LocalUser -Name testuser -password (ConvertTo-SecureString 11aa!!AA -asp
     set-item WSMan:/localhost/client/AllowUnencrypted $true; `
     Start-Process -FilePath msiexec.exe -ArgumentList '-qn', `
     '-i c:\PSCore.msi','-log c:\PSCore-install.log','-norestart' -wait ; `
-    $psexec = get-item -path ${ENV:ProgramFiles}/powershell/*/powershell.exe; `
+    $psexec = get-item -path ${ENV:ProgramFiles}/powershell/*/pwsh.exe; `
     $corehome = $psexec.directory.fullname; `
     & $psexec Install-PowerShellRemoting.ps1; `
     remove-item -force c:\PSCore.msi

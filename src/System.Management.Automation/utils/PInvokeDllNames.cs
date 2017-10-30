@@ -1,5 +1,5 @@
 ﻿//
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
 namespace System.Management.Automation
@@ -136,5 +136,7 @@ namespace System.Management.Automation
         internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/
         internal const string GetACPDllName = "api-ms-win-core-localization-l1-2-0.dll";                     /*123*/
         internal const string DeleteServiceDllName = "api-ms-win-service-management-l1-1-0.dll";             /*124*/
+        internal const string QueryServiceConfigDllName = "api-ms-win-service-management-l2-1-0.dll";        /*125*/
+        internal const string QueryServiceConfig2DllName = "api-ms-win-service-management-l2-1-0.dll";       /*126*/
     }
 }

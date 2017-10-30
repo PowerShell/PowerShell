@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 #if !CORECLR
@@ -19,6 +20,32 @@ using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
 {
+    /// <summary>
+    /// The valid values for the -Authentication parameter for Invoke-RestMethod and Invoke-WebRequest
+    /// </summary>
+    public enum WebAuthenticationType
+    {
+        /// <summary>
+        /// No authentication. Default.
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// RFC-7617 Basic Authentication. Requires -Credential
+        /// </summary>
+        Basic,
+
+        /// <summary>
+        /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token
+        /// </summary>
+        Bearer,
+
+        /// <summary>
+        /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token
+        /// </summary>
+        OAuth,
+    }
+
     /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
@@ -62,6 +89,22 @@ namespace Microsoft.PowerShell.Commands
         #region Authorization and Credentials
 
         /// <summary>
+        /// Gets or sets the AllowUnencryptedAuthentication property
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Authentication property used to determin the Authentication method for the web session.
+        /// Authentication does not work with UseDefaultCredentials.
+        /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
+        /// Basic: Requires Credential
+        /// OAuth/Bearer: Requires Token
+        /// </summary>
+        [Parameter]
+        public virtual WebAuthenticationType Authentication { get; set; } = WebAuthenticationType.None;
+
+        /// <summary>
         /// gets or sets the Credential property
         /// </summary>
         [Parameter]
@@ -93,6 +136,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Token property. Token is required by Authentication OAuth and Bearer.
+        /// </summary>
+        [Parameter]
+        public virtual SecureString Token { get; set; }
 
         #endregion
 
@@ -274,6 +323,38 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
+            // Authentication
+            if (UseDefaultCredentials && (Authentication != WebAuthenticationType.None))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationConflict,
+                                                       "WebCmdletAuthenticationConflictException");
+                ThrowTerminatingError(error);
+            }
+            if ((Authentication != WebAuthenticationType.None) && (null != Token) && (null != Credential))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenConflict,
+                                                       "WebCmdletAuthenticationTokenConflictException");
+                ThrowTerminatingError(error);
+            }
+            if ((Authentication == WebAuthenticationType.Basic) && (null == Credential))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationCredentialNotSupplied,
+                                                       "WebCmdletAuthenticationCredentialNotSuppliedException");
+                ThrowTerminatingError(error);
+            }
+            if ((Authentication == WebAuthenticationType.OAuth || Authentication == WebAuthenticationType.Bearer) && (null == Token))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AuthenticationTokenNotSupplied,
+                                                       "WebCmdletAuthenticationTokenNotSuppliedException");
+                ThrowTerminatingError(error);
+            }
+            if (!AllowUnencryptedAuthentication && (Authentication != WebAuthenticationType.None) && (Uri.Scheme != "https"))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
+                                                       "WebCmdletAllowUnencryptedAuthenticationRequiredException");
+                ThrowTerminatingError(error);
+            }
+
             // credentials
             if (UseDefaultCredentials && (null != Credential))
             {
@@ -335,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (Directory.Exists(providerPaths[0]))
                             {
-                                errorRecord = GetValidationError(WebCmdletStrings.DirecotryPathSpecified,
+                                errorRecord = GetValidationError(WebCmdletStrings.DirectoryPathSpecified,
                                                                  "WebCmdletInFileNotFilePathException", InFile);
                             }
                             _originalFilePath = InFile;
@@ -389,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // handle credentials
             //
-            if (null != Credential)
+            if (null != Credential && Authentication == WebAuthenticationType.None)
             {
                 // get the relevant NetworkCredential
                 NetworkCredential netCred = Credential.GetNetworkCredential();
@@ -397,6 +478,10 @@ namespace Microsoft.PowerShell.Commands
 
                 // supplying a credential overrides the UseDefaultCredentials setting
                 WebSession.UseDefaultCredentials = false;
+            }
+            else if ((null != Credential || null!= Token) && Authentication != WebAuthenticationType.None)
+            {
+                ProcessAuthentication();
             }
             else if (UseDefaultCredentials)
             {
@@ -660,10 +745,38 @@ namespace Microsoft.PowerShell.Commands
         {
             return (ParameterSetName == "StandardMethod");
         }
-        
+
         private bool IsCustomMethodSet()
         {
             return (ParameterSetName == "CustomMethod");
+        }
+
+        private string GetBasicAuthorizationHeader()
+        {
+            string unencoded = String.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
+            Byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
+            return String.Format("Basic {0}", Convert.ToBase64String(bytes));
+        }
+
+        private string GetBearerAuthorizationHeader()
+        {
+            return String.Format("Bearer {0}", new NetworkCredential(String.Empty, Token).Password);
+        }
+
+        private void ProcessAuthentication()
+        {
+            if(Authentication == WebAuthenticationType.Basic)
+            {
+                WebSession.Headers["Authorization"] = GetBasicAuthorizationHeader();
+            }
+            else if (Authentication == WebAuthenticationType.Bearer || Authentication == WebAuthenticationType.OAuth)
+            {
+                WebSession.Headers["Authorization"] = GetBearerAuthorizationHeader();
+            }
+            else
+            {
+                Diagnostics.Assert(false, String.Format("Unrecognized Authentication value: {0}", Authentication));
+            }
         }
 
         #endregion Helper Methods

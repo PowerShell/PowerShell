@@ -1,4 +1,4 @@
-;// Copyright (C) Microsoft Corporation, 2000 - 2007
+;// Copyright (c) Microsoft Corporation. All rights reserved.
 
 ;#undef FACILITY_POWERSHELL
 FacilityNames=(PowerShell=84:FACILITY_POWERSHELL)

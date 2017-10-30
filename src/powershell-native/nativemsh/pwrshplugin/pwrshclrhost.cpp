@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2014.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
-//  Contents:  Source code for abstraction of CLR and worker differences between PowerShell versions. 
+//  Contents:  Source code for abstraction of CLR and worker differences between PowerShell versions.
 //  pwrshplugin is totally unmanaged.
 // ----------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
         "System.Management.Automation.Remoting.WSManPluginManagedEntryWrapper",
         "InitPlugin",
         (void**)&entryPointDelegate);
-    
+
     if (FAILED(hr))
     {
         output->DisplayMessage(false, g_CREATING_MSH_ENTRANCE_FAILED, hr);
@@ -71,36 +71,36 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
 }
 
 PowerShellCoreClrWorker::PowerShellCoreClrWorker()
-    : systemCalls(new WinSystemCallFacade()), 
-      hostWrapper(new CoreClrHostingApiWrapper()), 
-      output(new PwrshPluginOutputDefault()), 
+    : systemCalls(new WinSystemCallFacade()),
+      hostWrapper(new CoreClrHostingApiWrapper()),
+      output(new PwrshPluginOutputDefault()),
       commonLib(new PwrshCommon())
 {
 }
 
 //
-// sysCalls is expected to be new'd by the caller. 
+// sysCalls is expected to be new'd by the caller.
 // It will be freed in PowerShellCoreClrWorker's destructor.
 //
 PowerShellCoreClrWorker::PowerShellCoreClrWorker(
-    SystemCallFacade* sysCalls, 
+    SystemCallFacade* sysCalls,
     ClrHostWrapper* hstWrp,
     PwrshCommon* cmnLib)
-    : systemCalls(sysCalls), 
-      hostWrapper(hstWrp), 
-      output(new PwrshPluginOutputDefault()), 
+    : systemCalls(sysCalls),
+      hostWrapper(hstWrp),
+      output(new PwrshPluginOutputDefault()),
       commonLib(cmnLib)
 {
     if (NULL == systemCalls)
     {
-        // Instantiate it even if one is not provided to guarantee that it will 
+        // Instantiate it even if one is not provided to guarantee that it will
         // always be non-NULL during execution.
         systemCalls = new WinSystemCallFacade();
     }
-    
+
     if (NULL == hostWrapper)
     {
-        // Instantiate it even if one is not provided to guarantee that it will 
+        // Instantiate it even if one is not provided to guarantee that it will
         // always be non-NULL during execution.
         hostWrapper = new CoreClrHostingApiWrapper();
     }
@@ -146,8 +146,8 @@ PowerShellCoreClrWorker::~PowerShellCoreClrWorker()
 
 #else // !CORECLR
 
-PowerShellClrWorker::PowerShellClrWorker() : 
-    pHost(NULL), 
+PowerShellClrWorker::PowerShellClrWorker() :
+    pHost(NULL),
     hManagedPluginModule(NULL),
     systemCalls(new WinSystemCallFacade()),
     g_INIT_PLUGIN("InitPlugin"),
@@ -164,7 +164,7 @@ PowerShellClrWorker::PowerShellClrWorker() :
 {}
 
 PowerShellClrWorker::PowerShellClrWorker(
-    SystemCallFacade* sysCalls) 
+    SystemCallFacade* sysCalls)
     :   pHost(NULL),
         hManagedPluginModule(NULL),
         systemCalls(sysCalls),
@@ -295,7 +295,7 @@ unsigned int PowerShellClrManagedWorker::LoadWorkerCallbackPtrs(
     HRESULT hr = S_OK;
     *pPluginException = NULL;
 
-    do 
+    do
     {
         // Get a pointer to the default AppDomain
         CComPtr<_AppDomain> spDefaultDomain = NULL;
@@ -383,7 +383,7 @@ unsigned int PowerShellClrManagedWorker::LoadWorkerCallbackPtrs(
             &varResult,
             &exception,
             &uArgErr);
-        
+
         InitPluginWkrPtrsFuncPtr entryPointDelegate = (InitPluginWkrPtrsFuncPtr)varResult.byref;
 
         if (FAILED(hr) ||

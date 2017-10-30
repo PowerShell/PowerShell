@@ -35,8 +35,8 @@
 APP=powershell
 
 # Generate status file for use by apt-get; assuming that the recipe uses no newer
-# ingredients than what would require more recent dependencies than what we assume
-# to be part of the base system
+# ingredients that would require more recent dependencies than what we assume to
+# be part of the base system
 generate_status()
 {
   mkdir -p ./tmp/archives/
@@ -385,10 +385,6 @@ cd ./$APP/
 # but not using the host system's information about what is
 # installed on the system but our own assumptions instead
 
-mkdir -p ./tmp/archives/
-mkdir -p ./tmp/lists/partial
-touch tmp/pkgcache.bin tmp/srcpkgcache.bin
-
 generate_status
 
 echo "deb http://archive.ubuntu.com/ubuntu/ trusty main universe
@@ -426,14 +422,14 @@ cd ./$APP.AppDir/
 
 find ../*.deb -exec dpkg -x {} . \; || true
 
-rm usr/bin/powershell
+rm usr/bin/pwsh
 mv opt/microsoft/powershell/*/* usr/bin/
 
 cat > $APP.desktop <<\EOF
 [Desktop Entry]
-Name=PowerShell
+Name=powershell
 Comment=Microsoft PowerShell
-Exec=powershell
+Exec=pwsh
 Keywords=shell;prompt;command;commandline;cmd;
 Icon=powershell
 Type=Application
@@ -450,7 +446,7 @@ cat > ./AppRun <<\EOF
 HERE=$(dirname $(readlink -f "${0}"))
 export PATH="${HERE}/usr/bin/":$PATH
 export LD_LIBRARY_PATH="${HERE}/usr/lib/":$LD_LIBRARY_PATH
-exec "${HERE}/usr/bin/powershell.wrapper" "$@"
+exec "${HERE}/usr/bin/pwsh.wrapper" "$@"
 EOF
 chmod a+x ./AppRun
 
@@ -468,7 +464,7 @@ VERSION=$(find ../*.deb -name $APP"_*" | head -n 1 | cut -d "~" -f 1 | cut -d "_
 echo $VERSION
 
 get_desktopintegration $APP
-sed -i -e 's|^echo|# echo|g' usr/bin/$APP.wrapper # Make less verbose
+sed -i -e 's|^echo|# echo|g' usr/bin/pwsh.wrapper # Make less verbose
 
 # Go out of AppImage
 cd ..
@@ -476,6 +472,6 @@ cd ..
 wget -c https://psgithub.blob.core.windows.net/files/appimagetool-x86_64.AppImage
 chmod a+x appimagetool-x86_64.AppImage
 ./appimagetool-x86_64.AppImage ./powershell.AppDir
-cp ./PowerShell*AppImage ..
+cp ./powershell*AppImage ..
 
 cd ..

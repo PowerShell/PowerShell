@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -67,22 +67,18 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// NoTypeInformation : should the #TYPE line be generated
+        /// IncludeTypeInformation : The #TYPE line should be generated. Default is false. Cannot specify with NoTypeInformation.
         /// </summary>
         [Parameter]
+        [Alias("ITI")]
+        public SwitchParameter IncludeTypeInformation { get; set; }
+
+        /// <summary>
+        /// NoTypeInformation : The #TYPE line should not be generated. Default is true. Cannot specify with IncludeTypeInformation.
+        /// </summary>
+        [Parameter(DontShow = true)]
         [Alias("NTI")]
-        public SwitchParameter NoTypeInformation
-        {
-            get
-            {
-                return _noTypeInformation;
-            }
-            set
-            {
-                _noTypeInformation = value;
-            }
-        }
-        private bool _noTypeInformation;
+        public SwitchParameter NoTypeInformation { get; set; } = true;
 
         #endregion Command Line Parameters
 
@@ -100,6 +96,16 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(IncludeTypeInformation)) && this.MyInvocation.BoundParameters.ContainsKey(nameof(NoTypeInformation)))
+            {
+                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyIncludeTypeInformationAndNoTypeInformation);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyIncludeTypeInformationAndNoTypeInformation", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+            if (this.MyInvocation.BoundParameters.ContainsKey("IncludeTypeInformation"))
+            {
+                NoTypeInformation = !IncludeTypeInformation;
+            }
             _delimiter = ImportExportCSVHelper.SetDelimiter(this, ParameterSetName, _delimiter, UseCulture);
         }
     }
@@ -206,8 +212,20 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; }
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -367,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     this.Path,
-                    Encoding ?? "ASCII",
+                    Encoding,
                     false, // defaultEncoding
                     Append,
                     Force,
@@ -571,8 +589,20 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        [ValidateSetAttribute(new[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; }
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are

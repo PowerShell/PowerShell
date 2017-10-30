@@ -1,8 +1,48 @@
 param(
-    [switch]$Bootstrap
+    [ValidateSet('Bootstrap','Build','Failure','Success')]
+    [String]$Stage = 'Build'
 )
+
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
+
+
+function Send-DailyWebHook
+{
+    param (
+        [Parameter(Mandatory=$true,Position=0)][ValidateSet("Pass","Fail")]$result
+        )
+
+    # Only send web hook if the environment variable is present
+    # Varible should be set in Travis-CI.org settings
+    if ($env:WebHookUrl)
+    {
+        log "Sending DailyWebHook with result '$result'."
+        $webhook = $env:WebHookUrl
+        
+        $Body = @{
+                'text'= @"
+Build Result: $result </br>     
+OS Type: $($PSVersionTable.OS) </br>
+<a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
+<a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
+"@
+        }
+        
+        $params = @{
+            Headers = @{'accept'='application/json'}
+            Body = $Body | convertto-json
+            Method = 'Post'
+            URI = $webhook 
+        }
+        
+        Invoke-RestMethod @params
+    }
+    else
+    {
+        log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
+    }
+}
 
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
@@ -120,14 +160,14 @@ $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq
 $cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
 
-if($Bootstrap.IsPresent)
+if($Stage -eq 'Bootstrap')
 {
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:(-not $isPr)
 }
-else 
+elseif($Stage -eq 'Build')
 {
     $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
@@ -193,6 +233,17 @@ else
         $result = "FAIL"
     }
 
+    try {
+        Start-PSxUnit        
+    }
+    catch {
+        $result = "FAIL"
+        if (!$resultError)
+        {
+            $resultError = $_
+        }
+    }
+
     if (-not $isPr) {
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
@@ -220,29 +271,46 @@ else
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }            
         }
-
-        # update the badge if you've done a cron build, these are not fatal issues
-        if ( $cronBuild ) {
-            try {
-                $svgData = Get-DailyBadge -result $result
-                if ( ! $svgData ) {
-                    write-warning "Could not retrieve $result badge"
-                }
-                else {
-                    Write-Verbose -verbose "Setting status badge to '$result'"
-                    Set-DailyBuildBadge -content $svgData
-                }
-            }
-            catch {
-                Write-Warning "Could not update status badge: $_"
-            }
-        }
     }
 
     # if the tests did not pass, throw the reason why
     if ( $result -eq "FAIL" ) {
         Throw $resultError
     }
+}
+elseif($Stage -in 'Failure', 'Success')
+{
+    $result = 'PASS'
+    if($Stage -eq 'Failure')
+    {
+        $result = 'FAIL'
+    }
 
-    Start-PSxUnit
+    if ($cronBuild) {
+        # update the badge if you've done a cron build, these are not fatal issues
+        try {
+            $svgData = Get-DailyBadge -result $result
+            if ( ! $svgData ) {
+                write-warning "Could not retrieve $result badge"
+            }
+            else {
+                log "Setting status badge to '$result'"
+                Set-DailyBuildBadge -content $svgData
+            }
+        }
+        catch {
+            Write-Warning "Could not update status badge: $_"
+        }
+
+        try {
+            Send-DailyWebHook -result $result
+        }
+        catch {
+            Write-Warning "Could not send webhook: $_"
+        }
+    }
+    else {
+        log 'We only send bagde or webhook update for Cron builds'
+    }
+
 }

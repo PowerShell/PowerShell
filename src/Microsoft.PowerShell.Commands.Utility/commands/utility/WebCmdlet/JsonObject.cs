@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -10,8 +10,10 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Reflection;
 
@@ -26,13 +28,26 @@ namespace Microsoft.PowerShell.Commands
         private const int maxDepthAllowed = 100;
 
         /// <summary>
-        /// Convert a Json string back to an object
+        /// Convert a Json string back to an object of type PSObject.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="error"></param>
-        /// <returns></returns>
+        /// <returns>A PSObject.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         public static object ConvertFromJson(string input, out ErrorRecord error)
+        {
+            return ConvertFromJson(input, false, out error);
+        }
+
+        /// <summary>
+        /// Convert a Json string back to an object of type PSObject or Hashtable depending on parameter <paramref name="returnHashTable"/>.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="returnHashTable"></param>
+        /// <param name="error"></param>
+        /// <returns>A PSObject or a Hashtable if the <paramref name="returnHashTable"/> parameter is true.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        public static object ConvertFromJson(string input, bool returnHashTable, out ErrorRecord error)
         {
             if (input == null)
             {
@@ -65,7 +80,14 @@ namespace Microsoft.PowerShell.Commands
                 var dictionary = obj as JObject;
                 if (dictionary != null)
                 {
-                    obj = PopulateFromJDictionary(dictionary, out error);
+                    if (returnHashTable)
+                    {
+                        obj = PopulateHashTableFromJDictionary(dictionary, out error);
+                    }
+                    else
+                    {
+                        obj = PopulateFromJDictionary(dictionary, out error);
+                    }
                 }
                 else
                 {
@@ -73,7 +95,14 @@ namespace Microsoft.PowerShell.Commands
                     var list = obj as JArray;
                     if (list != null)
                     {
-                        obj = PopulateFromJArray(list, out error);
+                        if (returnHashTable)
+                        {
+                            obj = PopulateHashTableFromJArray(list, out error);
+                        }
+                        else
+                        {
+                            obj = PopulateFromJArray(list, out error);
+                        }
                     }
                 }
             }
@@ -93,14 +122,42 @@ namespace Microsoft.PowerShell.Commands
             PSObject result = new PSObject();
             foreach (var entry in entries)
             {
+                if (string.IsNullOrEmpty(entry.Key))
+                {
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                                                    WebCmdletStrings.EmptyKeyInJsonString);
+                    error = new ErrorRecord(
+                        new InvalidOperationException(errorMsg),
+                        "EmptyKeyInJsonString",
+                        ErrorCategory.InvalidOperation,
+                        null);
+                    return null;
+                }
+
+                // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
+                // does not throw when encountering duplicates and just uses the last entry.
+                if (result.Properties.Any(psPropertyInfo => psPropertyInfo.Name.Equals(entry.Key, StringComparison.InvariantCulture)))
+                {
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    error = new ErrorRecord(
+                        new InvalidOperationException(errorMsg),
+                        "DuplicateKeysInJsonString",
+                        ErrorCategory.InvalidOperation,
+                        null);
+                    return null;
+                }
+
+                // Compare case insensitive to tell the user to use the -AsHashTable option instead.
+                // This is because PSObject cannot have keys with different casing.
                 PSPropertyInfo property = result.Properties[entry.Key];
                 if (property != null)
                 {
                     string errorMsg = string.Format(CultureInfo.InvariantCulture,
-                                                    WebCmdletStrings.DuplicateKeysInJsonString, property.Name, entry.Key);
+                                                    WebCmdletStrings.KeysWithDifferentCasingInJsonString, property.Name, entry.Key);
                     error = new ErrorRecord(
                         new InvalidOperationException(errorMsg),
-                        "DuplicateKeysInJsonString",
+                        "KeysWithDifferentCasingInJsonString",
                         ErrorCategory.InvalidOperation,
                         null);
                     return null;
@@ -165,6 +222,102 @@ namespace Microsoft.PowerShell.Commands
                 {
                     JObject dic = element as JObject;
                     PSObject dicResult = PopulateFromJDictionary(dic, out error);
+                    if (error != null)
+                    {
+                        return null;
+                    }
+                    result.Add(dicResult);
+                }
+
+                // Value
+                else // (element is JValue)
+                {
+                    result.Add(((JValue)element).Value);
+                }
+            }
+            return result.ToArray();
+        }
+
+        // This function is a clone of PopulateFromDictionary using JObject as an input.
+        private static Hashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
+        {
+            error = null;
+            Hashtable result = new Hashtable();
+            foreach (var entry in entries)
+            {
+                // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
+                // does not throw when encountering duplicates and just uses the last entry.
+                if (result.ContainsKey(entry.Key))
+                {
+                    string errorMsg = string.Format(CultureInfo.InvariantCulture,
+                                                    WebCmdletStrings.DuplicateKeysInJsonString, entry.Key);
+                    error = new ErrorRecord(
+                        new InvalidOperationException(errorMsg),
+                        "DuplicateKeysInJsonString",
+                        ErrorCategory.InvalidOperation,
+                        null);
+                    return null;
+                }
+
+                // Array
+                else if (entry.Value is JArray)
+                {
+                    JArray list = entry.Value as JArray;
+                    ICollection<object> listResult = PopulateHashTableFromJArray(list, out error);
+                    if (error != null)
+                    {
+                        return null;
+                    }
+                    result.Add(entry.Key, listResult);
+                }
+
+                // Dictionary
+                else if (entry.Value is JObject)
+                {
+                    JObject dic = entry.Value as JObject;
+                    Hashtable dicResult = PopulateHashTableFromJDictionary(dic, out error);
+                    if (error != null)
+                    {
+                        return null;
+                    }
+                    result.Add(entry.Key, dicResult);
+                }
+
+                // Value
+                else // (entry.Value is JValue)
+                {
+                    JValue theValue = entry.Value as JValue;
+                    result.Add(entry.Key, theValue.Value);
+                }
+            }
+            return result;
+        }
+
+        // This function is a clone of PopulateFromList using JArray as input.
+        private static ICollection<object> PopulateHashTableFromJArray(JArray list, out ErrorRecord error)
+        {
+            error = null;
+            List<object> result = new List<object>();
+
+            foreach (var element in list)
+            {
+                // Array
+                if (element is JArray)
+                {
+                    JArray subList = element as JArray;
+                    ICollection<object> listResult = PopulateHashTableFromJArray(subList, out error);
+                    if (error != null)
+                    {
+                        return null;
+                    }
+                    result.Add(listResult);
+                }
+
+                // Dictionary
+                else if (element is JObject)
+                {
+                    JObject dic = element as JObject;
+                    Hashtable dicResult = PopulateHashTableFromJDictionary(dic, out error);
                     if (error != null)
                     {
                         return null;

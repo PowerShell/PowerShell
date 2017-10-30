@@ -1,5 +1,17 @@
 ﻿Describe "Import-Module" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
+    BeforeAll {
+        $originalPSModulePath = $env:PSModulePath
+        New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\1.1" -Force > $null
+        New-Item -ItemType Directory -Path "$testdrive\Modules\TestModule\2.0" -Force > $null
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + "$testdrive\Modules"
+        New-ModuleManifest -Path "$testdrive\Modules\TestModule\1.1\TestModule.psd1" -ModuleVersion 1.1
+        New-ModuleManifest -Path "$testdrive\Modules\TestModule\2.0\TestModule.psd1" -ModuleVersion 2.0
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
 
     BeforeEach {
         Remove-Module -Name $moduleName -Force
@@ -24,8 +36,13 @@
 
     It "should be able to load an already loaded module" {
         Import-Module $moduleName
-        { $script:module = Import-Module $moduleName -PassThru } | Should Not Throw
+        { $script:module = Import-Module $moduleName -PassThru -ErrorAction Stop } | Should Not Throw
         Get-Module -Name $moduleName | Should Be $script:module
+    }
+
+    It "should only load the specified version" {
+        Import-Module TestModule -RequiredVersion 1.1
+        (Get-Module TestModule).Version | Should Be "1.1"
     }
 }
 
@@ -103,7 +120,7 @@ using System.Management.Automation;           // Windows PowerShell namespace.
 
 namespace ModuleCmdlets
 {
-  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]   
+  [Cmdlet(VerbsDiagnostic.Test,"BinaryModuleCmdlet1")]
   public class TestBinaryModuleCmdlet1Command : Cmdlet
   {
     protected override void BeginProcessing()
@@ -115,7 +132,7 @@ namespace ModuleCmdlets
 "@
 
     Add-Type -TypeDefinition $src -OutputAssembly $TESTDRIVE\System.dll
-    $results = powershell -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
+    $results = pwsh -noprofile -c "`$module = Import-Module $TESTDRIVE\System.dll -Passthru; `$module.ImplementingAssembly.Location; Test-BinaryModuleCmdlet1"
 
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
@@ -124,3 +141,41 @@ namespace ModuleCmdlets
     }
  }
 
+Describe "Import-Module should be case insensitive" -Tags 'CI' {
+    BeforeAll {
+        $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
+        $originalPSModulePath = $env:PSModulePath.Clone()
+        $modulesPath = "$TestDrive\Modules"
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesPath
+        $PSModuleAutoloadingPreference = "none"
+    }
+
+    AfterAll {
+        $global:PSModuleAutoloadingPreference = $defaultPSModuleAutoloadingPreference
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    AfterEach {
+        Remove-Item -Recurse -Path $modulesPath -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Import-Module can import a module using different casing using '<modulePath>' and manifest:<manifest>" -TestCases @(
+        @{modulePath="TESTMODULE/1.1"; manifest=$true},
+        @{modulePath="TESTMODULE"    ; manifest=$true},
+        @{modulePath="TESTMODULE"    ; manifest=$false}
+        ) {
+        param ($modulePath, $manifest)
+        New-Item -ItemType Directory -Path "$modulesPath/$modulePath" -Force > $null
+        if ($manifest) {
+            New-ModuleManifest -Path "$modulesPath/$modulePath/TESTMODULE.psd1" -RootModule "TESTMODULE.psm1" -ModuleVersion 1.1
+        }
+        Set-Content -Path "$modulesPath/$modulePath/TESTMODULE.psm1" -Value "function mytest { 'hello' }"
+        Import-Module testMODULE
+        $m = Get-Module TESTmodule
+        $m | Should BeOfType "System.Management.Automation.PSModuleInfo"
+        $m.Name | Should Be "TESTMODULE"
+        mytest | Should BeExactly "hello"
+        Remove-Module TestModule
+        Get-Module tESTmODULE | Should BeNullOrEmpty
+    }
+}

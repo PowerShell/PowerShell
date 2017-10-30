@@ -2,6 +2,11 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
     Context "SSHConnectionInfo Class Tests" {
 
+        BeforeAll {
+            ## Skip the test if ssh is not present.
+            $skipTest = (Get-Command 'ssh' -CommandType Application -ErrorAction SilentlyContinue) -eq $null
+        }
+
         AfterEach {
             if ($null -ne $rs) {
                 $rs.Dispose()
@@ -17,7 +22,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
                 0) } | ShouldBeErrorId "PSArgumentNullException"
         }
 
-        It "SSHConnectionInfo should throw file not found exception for invalid key file path" {
+        It "SSHConnectionInfo should throw file not found exception for invalid key file path" -Skip:$skipTest {
 
             try
             {
@@ -29,7 +34,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
                 $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
                 $rs.Open()
-                
+
                 throw "No Exception!"
             }
             catch
@@ -39,7 +44,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
         }
 
         It "SSHConnectionInfo should throw argument exception for invalid port (non 16bit uint)" {
-            try 
+            try
             {
                 $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                     "UserName",
@@ -49,7 +54,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
                 $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
                 $rs.Open()
-                
+
                 throw "No Exception!"
             }
             catch

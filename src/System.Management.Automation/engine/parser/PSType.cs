@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation.Language
 
                         SessionStateKeeper sessionStateKeeper = new SessionStateKeeper();
                         helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, sessionStateKeeper);
-                        
+
                         if (helper._fieldsToInitForMemberFunctions != null)
                         {
                             foreach (var tuple in helper._fieldsToInitForMemberFunctions)

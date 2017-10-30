@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
@@ -315,31 +315,12 @@ namespace Microsoft.PowerShell
             {
                 WriteLineToConsole(WrapToCurrentWindowWidth(fieldPrompt));
                 PSCredential credential = null;
-                // the earlier implementation contained null
-                // for caption and message in the call below
-                // Passing null is a potential security risk
-                // as any modifications made with security in
-                // mind is lost. This can lead to a malicious
-                // server prompting the user for a request
-                // which can appear to come from locally.
-                if (!PromptUsingConsole() && desc.ModifiedByRemotingProtocol)
-                {
-                    credential =
-                        PromptForCredential(
-                            caption,
-                            message,
-                            null,
-                            string.Empty);
-                }
-                else
-                {
-                    credential =
-                        PromptForCredential(
-                            null,   // caption already written
-                            null,   // message already written
-                            null,
-                            string.Empty);
-                }
+                credential =
+                    PromptForCredential(
+                        null,   // caption already written
+                        null,   // message already written
+                        null,
+                        string.Empty);
                 convertedObj = credential;
                 cancelInput = (convertedObj == null);
                 if ((credential != null) && (credential.Password.Length == 0) && listInput)

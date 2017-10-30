@@ -1,7 +1,7 @@
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2007.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
-//  Contents:  Headers used by pwrshplugin. 
+//  Contents:  Headers used by pwrshplugin.
 //  pwrshplugin is totally unmanaged.
 // ----------------------------------------------------------------------
 

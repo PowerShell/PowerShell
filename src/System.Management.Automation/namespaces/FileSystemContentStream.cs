@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -733,7 +733,7 @@ namespace Microsoft.PowerShell.Commands
                 //    (Trimming it during backward reading would not only be unnecessary, but could interfere with determining the correct start position.)
                 string contentString = content.ToString();
                 blocks.Add(
-                    !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal)
+                    !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal) && !_isRawStream
                         ? contentString.Substring(0, content.Length - actualDelimiter.Length)
                         : contentString
                 );

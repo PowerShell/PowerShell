@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -993,9 +993,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     this.ArgumentList = new object[] { psSession };
 
-                    // The correct module version has already been imported from the remote session and created locally. 
+                    // The correct module version has already been imported from the remote session and created locally.
                     // The locally created module always has a version of 1.0 regardless of the actual module version
-                    // imported from the remote session, and version checking is no longer needed and will not work while 
+                    // imported from the remote session, and version checking is no longer needed and will not work while
                     // importing this created local module.
                     BaseMinimumVersion = null;
                     BaseMaximumVersion = null;

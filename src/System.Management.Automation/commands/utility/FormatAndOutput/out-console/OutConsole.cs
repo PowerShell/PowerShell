@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 namespace Microsoft.PowerShell.Commands
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the out-default command
     /// this command it implicitly inject by the
-    /// powershell.exe host at the end of the pipeline as the
+    /// powershell host at the end of the pipeline as the
     /// default sink (display to console screen)
     /// </summary>
     [Cmdlet(VerbsData.Out, "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113362", RemotingCapability = RemotingCapability.None)]

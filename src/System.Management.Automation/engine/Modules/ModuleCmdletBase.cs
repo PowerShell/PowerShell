@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -293,34 +293,42 @@ namespace Microsoft.PowerShell.Commands
             // Now search using the module path...
             foreach (string path in modulePath)
             {
-                // a name takes the form of .../moduleDir/moduleName.<ext>
-                // if only one name has been specified, then the moduleDir
-                // and moduleName are identical and repeated...
-                // Also append th ename if the path currently points at a directory
-                string qualifiedPath = Path.Combine(path, fileBaseName);
-
-                // Load the latest valid version if it is a multi-version module directory
-                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-
-                if (!found)
+#if UNIX
+                foreach (string folder in Directory.EnumerateDirectories(path))
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    string moduleName = Path.GetFileName(folder);
+                    if (String.Compare(moduleName, fileBaseName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                    }
-                    else if (Directory.Exists(qualifiedPath))
-                    {
-                        // if it points to a directory, add the basename back onto the path...
-                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                    }
+                        fileBaseName = moduleName;
+#endif
+                        string qualifiedPath = Path.Combine(path, fileBaseName);
+                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                        if (!found)
+                        {
+                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                            {
+                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+                            }
+                            else if (Utils.NativeDirectoryExists(qualifiedPath))
+                            {
+                                // if it points to a directory, add the basename back onto the path...
+                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                            }
 
-                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                        }
+                        if (found)
+                        {
+                            break;
+                        }
+#if UNIX
+                    }
                 }
-
                 if (found)
                 {
                     break;
                 }
+#endif
             }
 
             if (found)
@@ -2150,8 +2158,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Indicates the ISS.Bind() should be called...
             bool doBind = false;
-            // Indicates that RunspaceConfig.Update() should be called.
-            bool doUpdate = false;
 
             // Set up to load any required assemblies that have been specified...
             List<string> tmpAssemblyList;
@@ -2233,36 +2239,28 @@ namespace Microsoft.PowerShell.Commands
                         string loadMessage = StringUtil.Format(Modules.LoadingFile, "TypesToProcess", fileName);
                         WriteVerbose(loadMessage);
 
-                        if (Context.RunspaceConfiguration != null)
+                        bool isAlreadyLoaded = false;
+                        string resolvedFileName = ResolveRootedFilePath(fileName, Context) ?? fileName;
+                        foreach (var entry in Context.InitialSessionState.Types)
                         {
-                            this.Context.RunspaceConfiguration.Types.Append(new TypeConfigurationEntry(fileName));
-                            doUpdate = true;
+                            if (entry.FileName == null)
+                            {
+                                continue;
+                            }
+
+                            string resolvedEntryFileName = ResolveRootedFilePath(entry.FileName, Context) ??
+                                                            entry.FileName;
+                            if (resolvedEntryFileName.Equals(resolvedFileName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                isAlreadyLoaded = true;
+                                break;
+                            }
                         }
-                        else
+
+                        if (!isAlreadyLoaded)
                         {
-                            bool isAlreadyLoaded = false;
-                            string resolvedFileName = ResolveRootedFilePath(fileName, Context) ?? fileName;
-                            foreach (var entry in Context.InitialSessionState.Types)
-                            {
-                                if (entry.FileName == null)
-                                {
-                                    continue;
-                                }
-
-                                string resolvedEntryFileName = ResolveRootedFilePath(entry.FileName, Context) ??
-                                                               entry.FileName;
-                                if (resolvedEntryFileName.Equals(resolvedFileName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    isAlreadyLoaded = true;
-                                    break;
-                                }
-                            }
-
-                            if (!isAlreadyLoaded)
-                            {
-                                iss.Types.Add(new SessionStateTypeEntry(fileName));
-                                doBind = true;
-                            }
+                            iss.Types.Add(new SessionStateTypeEntry(fileName));
+                            doBind = true;
                         }
                     }
                 }
@@ -2286,32 +2284,24 @@ namespace Microsoft.PowerShell.Commands
                         string loadMessage = StringUtil.Format(Modules.LoadingFile, "FormatsToProcess", fileName);
                         WriteVerbose(loadMessage);
 
-                        if (Context.RunspaceConfiguration != null)
+                        bool isAlreadyLoaded = false;
+                        foreach (var entry in Context.InitialSessionState.Formats)
                         {
-                            this.Context.RunspaceConfiguration.Formats.Append(new FormatConfigurationEntry(fileName));
-                            doUpdate = true;
+                            if (entry.FileName == null)
+                            {
+                                continue;
+                            }
+                            if (entry.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                isAlreadyLoaded = true;
+                                break;
+                            }
                         }
-                        else
-                        {
-                            bool isAlreadyLoaded = false;
-                            foreach (var entry in Context.InitialSessionState.Formats)
-                            {
-                                if (entry.FileName == null)
-                                {
-                                    continue;
-                                }
-                                if (entry.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    isAlreadyLoaded = true;
-                                    break;
-                                }
-                            }
 
-                            if (!isAlreadyLoaded)
-                            {
-                                iss.Formats.Add(new SessionStateFormatEntry(fileName));
-                                doBind = true;
-                            }
+                        if (!isAlreadyLoaded)
+                        {
+                            iss.Formats.Add(new SessionStateFormatEntry(fileName));
+                            doBind = true;
                         }
                     }
                 }
@@ -2406,30 +2396,6 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         iss.Bind(Context, /*updateOnly*/ true);
-                    }
-                    catch (Exception e)
-                    {
-                        this.RemoveTypesAndFormatting(exportedFormatFiles, exportedTypeFiles);
-                        ErrorRecord er = new ErrorRecord(e, "FormatXmlUpdateException", ErrorCategory.InvalidOperation,
-                            null);
-                        if (bailOnFirstError)
-                        {
-                            this.ThrowTerminatingError(er);
-                        }
-                        else if (writingErrors)
-                        {
-                            this.WriteError(er);
-                        }
-                    }
-                }
-
-                // Do the runspaceconfig binding...
-                if (doUpdate)
-                {
-                    try
-                    {
-                        this.Context.CurrentRunspace.RunspaceConfiguration.Types.Update(true);
-                        this.Context.CurrentRunspace.RunspaceConfiguration.Formats.Update(true);
                     }
                     catch (Exception e)
                     {
@@ -4039,7 +4005,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // If the RequiredModule is one of the Engine modules, then they could have been loaded as snapins (using RunspaceConfiguration or InitialSessionState.CreateDefault())
+            // If the RequiredModule is one of the Engine modules, then they could have been loaded as snapins (using InitialSessionState.CreateDefault())
             if (result == null && InitialSessionState.IsEngineModule(requiredModule.Name))
             {
                 result = ModuleCmdletBase.GetEngineSnapIn(context, requiredModule.Name);
@@ -5082,68 +5048,18 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                if (this.Context.InitialSessionState != null)
+                if (((formatFilesToRemove != null) && formatFilesToRemove.Count > 0) ||
+                    ((typeFilesToRemove != null) && typeFilesToRemove.Count > 0))
                 {
-                    if (((formatFilesToRemove != null) && formatFilesToRemove.Count > 0) ||
-                        ((typeFilesToRemove != null) && typeFilesToRemove.Count > 0))
+                    bool oldRefreshTypeFormatSetting = this.Context.InitialSessionState.RefreshTypeAndFormatSetting;
+                    try
                     {
-                        bool oldRefreshTypeFormatSetting = this.Context.InitialSessionState.RefreshTypeAndFormatSetting;
-                        try
-                        {
-                            this.Context.InitialSessionState.RefreshTypeAndFormatSetting = true;
-                            InitialSessionState.RemoveTypesAndFormats(this.Context, formatFilesToRemove, typeFilesToRemove);
-                        }
-                        finally
-                        {
-                            this.Context.InitialSessionState.RefreshTypeAndFormatSetting = oldRefreshTypeFormatSetting;
-                        }
+                        this.Context.InitialSessionState.RefreshTypeAndFormatSetting = true;
+                        InitialSessionState.RemoveTypesAndFormats(this.Context, formatFilesToRemove, typeFilesToRemove);
                     }
-                }
-                else // RunspaceConfiguration
-                {
-                    if (formatFilesToRemove != null && formatFilesToRemove.Count > 0)
+                    finally
                     {
-                        HashSet<string> formatRemoveSet = new HashSet<string>(formatFilesToRemove, StringComparer.OrdinalIgnoreCase);
-                        List<int> formatIndicesToRemove = new List<int>();
-
-                        for (int index = 0; index < this.Context.RunspaceConfiguration.Formats.Count; index++)
-                        {
-                            string fileName = Context.RunspaceConfiguration.Formats[index].FileName;
-                            if (fileName != null && formatRemoveSet.Contains(fileName))
-                            {
-                                formatIndicesToRemove.Add(index);
-                            }
-                        }
-
-                        for (int i = formatIndicesToRemove.Count - 1; i >= 0; i--)
-                        {
-                            Context.RunspaceConfiguration.Formats.RemoveItem(formatIndicesToRemove[i]);
-                        }
-
-                        this.Context.RunspaceConfiguration.Formats.Update();
-                    }
-
-                    // Remove the imported types.ps1xml files
-                    if (typeFilesToRemove != null && typeFilesToRemove.Count > 0)
-                    {
-                        HashSet<string> typeRemoveSet = new HashSet<string>(typeFilesToRemove, StringComparer.OrdinalIgnoreCase);
-                        List<int> typeIndicesToRemove = new List<int>();
-
-                        for (int index = 0; index < this.Context.RunspaceConfiguration.Types.Count; index++)
-                        {
-                            string fileName = Context.RunspaceConfiguration.Types[index].FileName;
-                            if (fileName != null && typeRemoveSet.Contains(fileName))
-                            {
-                                typeIndicesToRemove.Add(index);
-                            }
-                        }
-
-                        for (int i = typeIndicesToRemove.Count - 1; i >= 0; i--)
-                        {
-                            Context.RunspaceConfiguration.Types.RemoveItem(typeIndicesToRemove[i]);
-                        }
-
-                        this.Context.RunspaceConfiguration.Types.Update();
+                        this.Context.InitialSessionState.RefreshTypeAndFormatSetting = oldRefreshTypeFormatSetting;
                     }
                 }
             }

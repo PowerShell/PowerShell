@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Diagnostics.CodeAnalysis;
@@ -592,6 +592,542 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// Verb descriptions.
+    /// </summary>
+    internal static class VerbDescriptions
+    {
+        /// <summary>
+        /// Gets verb description from the resource file
+        /// </summary>
+        public static string GetVerbDescription(string verb)
+        {
+            return VerbDescriptionStrings.ResourceManager.GetString(verb);
+        }
+    }//VerbDescriptions
+
+    /// <summary>
+    /// Verb Alias prefixes.
+    /// </summary>
+    internal static class VerbAliasPrefixes
+    {
+        /// <summary>
+        /// "Add" verb alias prefix
+        /// </summary>
+        public const string Add = "a";
+
+        /// <summary>
+        /// "Approve" verb alias prefix
+        /// </summary>
+        public const string Approve = "ap";
+
+        /// <summary>
+        /// "Assert" verb alias prefix
+        /// </summary>
+        public const string Assert = "as";
+
+        /// <summary>
+        /// "Backup" verb alias prefix
+        /// </summary>
+        public const string Backup = "ba";
+
+        /// <summary>
+        /// "Block" verb alias prefix
+        /// </summary>
+        public const string Block = "bl";
+
+        /// <summary>
+        /// "Build" verb alias prefix
+        /// </summary>
+        public const string Build = "bd";
+
+        /// <summary>
+        /// "Checkpoint" verb alias prefix
+        /// </summary>
+        public const string Checkpoint = "ch";
+
+        /// <summary>
+        /// "Clear" verb alias prefix
+        /// </summary>
+        public const string Clear = "cl";
+
+        /// <summary>
+        /// "Close" verb alias prefix
+        /// </summary>
+        public const string Close = "cs";
+
+        /// <summary>
+        /// "Compare" verb alias prefix
+        /// </summary>
+        public const string Compare = "cr";
+
+        /// <summary>
+        /// "Complete" verb alias prefix
+        /// </summary>
+        public const string Complete = "cmp";
+
+        /// <summary>
+        /// "Compress" verb alias prefix
+        /// </summary>
+        public const string Compress = "cm";
+
+        /// <summary>
+        /// "Confirm" verb alias prefix
+        /// </summary>
+        public const string Confirm = "cn";
+
+        /// <summary>
+        /// "Connect" verb alias prefix
+        /// </summary>
+        public const string Connect = "cc";
+
+        /// <summary>
+        /// "Convert" verb alias prefix
+        /// </summary>
+        public const string Convert = "cv";
+
+        /// <summary>
+        /// "ConvertFrom" verb alias prefix
+        /// </summary>
+        public const string ConvertFrom = "cf";
+
+        /// <summary>
+        /// "ConvertTo" verb alias prefix
+        /// </summary>
+        public const string ConvertTo = "ct";
+
+        /// <summary>
+        /// "Copy" verb alias prefix
+        /// </summary>
+        public const string Copy = "cp";
+
+        /// <summary>
+        /// "Debug" verb alias prefix
+        /// </summary>
+        public const string Debug = "db";
+
+        /// <summary>
+        /// "Deny" verb alias prefix
+        /// </summary>
+        public const string Deny = "dn";
+
+        /// <summary>
+        /// "Deploy" verb alias prefix
+        /// </summary>
+        public const string Deploy = "dp";
+
+        /// <summary>
+        /// "Disable" verb alias prefix
+        /// </summary>
+        public const string Disable = "d";
+
+        /// <summary>
+        /// "Disconnect" verb alias prefix
+        /// </summary>
+        public const string Disconnect = "dc";
+
+        /// <summary>
+        /// "Dismount" verb alias prefix
+        /// </summary>
+        public const string Dismount = "dm";
+
+        /// <summary>
+        /// "Edit" verb alias prefix
+        /// </summary>
+        public const string Edit = "ed";
+
+        /// <summary>
+        /// "Enable" verb alias prefix
+        /// </summary>
+        public const string Enable = "e";
+
+        /// <summary>
+        /// "Enter" verb alias prefix
+        /// </summary>
+        public const string Enter = "et";
+
+        /// <summary>
+        /// "Exit" verb alias prefix
+        /// </summary>
+        public const string Exit = "ex";
+
+        /// <summary>
+        /// "Expand" verb alias prefix
+        /// </summary>
+        public const string Expand = "en";
+
+        /// <summary>
+        /// "Export" verb alias prefix
+        /// </summary>
+        public const string Export = "ep";
+
+        /// <summary>
+        /// "Find" verb alias prefix
+        /// </summary>
+        public const string Find = "fd";
+
+        /// <summary>
+        /// "Format" verb alias prefix
+        /// </summary>
+        public const string Format = "f";
+
+        /// <summary>
+        /// "Get" verb alias prefix
+        /// </summary>
+        public const string Get = "g";
+
+        /// <summary>
+        /// "Grant" verb alias prefix
+        /// </summary>
+        public const string Grant = "gr";
+
+        /// <summary>
+        /// "Group" verb alias prefix
+        /// </summary>
+        public const string Group = "gp";
+
+        /// <summary>
+        /// "Hide" verb alias prefix
+        /// </summary>
+        public const string Hide = "h";
+
+        /// <summary>
+        /// "Import" verb alias prefix
+        /// </summary>
+        public const string Import = "ip";
+
+        /// <summary>
+        /// "Initialize" verb alias prefix
+        /// </summary>
+        public const string Initialize = "in";
+
+        /// <summary>
+        /// "Install" verb alias prefix
+        /// </summary>
+        public const string Install = "is";
+
+        /// <summary>
+        /// "Invoke" verb alias prefix
+        /// </summary>
+        public const string Invoke = "i";
+
+        /// <summary>
+        /// "Join" verb alias prefix
+        /// </summary>
+        public const string Join = "j";
+
+        /// <summary>
+        /// "Limit" verb alias prefix
+        /// </summary>
+        public const string Limit = "l";
+
+        /// <summary>
+        /// "Lock" verb alias prefix
+        /// </summary>
+        public const string Lock = "lk";
+
+        /// <summary>
+        /// "Measure" verb alias prefix
+        /// </summary>
+        public const string Measure = "ms";
+
+        /// <summary>
+        /// "Merge" verb alias prefix
+        /// </summary>
+        public const string Merge = "mg";
+
+        /// <summary>
+        /// "Mount" verb alias prefix
+        /// </summary>
+        public const string Mount = "mt";
+
+        /// <summary>
+        /// "Move" verb alias prefix
+        /// </summary>
+        public const string Move = "m";
+
+        /// <summary>
+        /// "New" verb alias prefix
+        /// </summary>
+        public const string New = "n";
+
+        /// <summary>
+        /// "Open" verb alias prefix
+        /// </summary>
+        public const string Open = "op";
+
+        /// <summary>
+        /// "Optimize" verb alias prefix
+        /// </summary>
+        public const string Optimize = "om";
+
+        /// <summary>
+        /// "Out" verb alias prefix
+        /// </summary>
+        public const string Out = "o";
+
+        /// <summary>
+        /// "Ping" verb alias prefix
+        /// </summary>
+        public const string Ping = "pi";
+
+        /// <summary>
+        /// "Pop" verb alias prefix
+        /// </summary>
+        public const string Pop = "pop";
+
+        /// <summary>
+        /// "Protect" verb alias prefix
+        /// </summary>
+        public const string Protect = "pt";
+
+        /// <summary>
+        /// "Publish" verb alias prefix
+        /// </summary>
+        public const string Publish = "pb";
+
+        /// <summary>
+        /// "Push" verb alias prefix
+        /// </summary>
+        public const string Push = "pu";
+
+        /// <summary>
+        /// "Read" verb alias prefix
+        /// </summary>
+        public const string Read = "rd";
+
+        /// <summary>
+        /// "Receive" verb alias prefix
+        /// </summary>
+        public const string Receive = "rc";
+
+        /// <summary>
+        /// "Redo" verb alias prefix
+        /// </summary>
+        public const string Redo = "re";
+
+        /// <summary>
+        /// "Register" verb alias prefix
+        /// </summary>
+        public const string Register = "rg";
+
+        /// <summary>
+        /// "Remove" verb alias prefix
+        /// </summary>
+        public const string Remove = "r";
+
+        /// <summary>
+        /// "Rename" verb alias prefix
+        /// </summary>
+        public const string Rename = "rn";
+
+        /// <summary>
+        /// "Repair" verb alias prefix
+        /// </summary>
+        public const string Repair = "rp";
+
+        /// <summary>
+        /// "Request" verb alias prefix
+        /// </summary>
+        public const string Request = "rq";
+
+        /// <summary>
+        /// "Reset" verb alias prefix
+        /// </summary>
+        public const string Reset = "rs";
+
+        /// <summary>
+        /// "Resize" verb alias prefix
+        /// </summary>
+        public const string Resize = "rz";
+
+        /// <summary>
+        /// "Resolve" verb alias prefix
+        /// </summary>
+        public const string Resolve = "rv";
+
+        /// <summary>
+        /// "Restart" verb alias prefix
+        /// </summary>
+        public const string Restart = "rt";
+
+        /// <summary>
+        /// "Restore" verb alias prefix
+        /// </summary>
+        public const string Restore = "rr";
+
+        /// <summary>
+        /// "Resume" verb alias prefix
+        /// </summary>
+        public const string Resume = "ru";
+
+        /// <summary>
+        /// "Revoke" verb alias prefix
+        /// </summary>
+        public const string Revoke = "rk";
+
+        /// <summary>
+        /// "Save" verb alias prefix
+        /// </summary>
+        public const string Save = "sv";
+
+        /// <summary>
+        /// "Search" verb alias prefix
+        /// </summary>
+        public const string Search = "sr";
+
+        /// <summary>
+        /// "Select" verb alias prefix
+        /// </summary>
+        public const string Select = "sc";
+
+        /// <summary>
+        /// "Send" verb alias prefix
+        /// </summary>
+        public const string Send = "sd";
+
+        /// <summary>
+        /// "Set" verb alias prefix
+        /// </summary>
+        public const string Set = "s";
+
+        /// <summary>
+        /// "Show" verb alias prefix
+        /// </summary>
+        public const string Show = "sh";
+
+        /// <summary>
+        /// "Sync" verb alias prefix
+        /// </summary>
+        public const string Sync = "sy";
+
+        /// <summary>
+        /// "Skip" verb alias prefix
+        /// </summary>
+        public const string Skip = "sk";
+
+        /// <summary>
+        /// "Split" verb alias prefix
+        /// </summary>
+        public const string Split = "sl";
+
+        /// <summary>
+        /// "Start" verb alias prefix
+        /// </summary>
+        public const string Start = "sa";
+
+        /// <summary>
+        /// "Step" verb alias prefix
+        /// </summary>
+        public const string Step = "st";
+
+        /// <summary>
+        /// "Stop" verb alias prefix
+        /// </summary>
+        public const string Stop = "sp";
+
+        /// <summary>
+        /// "Submit" verb alias prefix
+        /// </summary>
+        public const string Submit = "sb";
+
+        /// <summary>
+        /// "Suspend" verb alias prefix
+        /// </summary>
+        public const string Suspend = "ss";
+
+        /// <summary>
+        /// "Switch" verb alias prefix
+        /// </summary>
+        public const string Switch = "sw";
+
+        /// <summary>
+        /// "Test" verb alias prefix
+        /// </summary>
+        public const string Test = "t";
+
+        /// <summary>
+        /// "Trace" verb alias prefix
+        /// </summary>
+        public const string Trace = "tr";
+
+        /// <summary>
+        /// "Unblock" verb alias prefix
+        /// </summary>
+        public const string Unblock = "ul";
+
+        /// <summary>
+        /// "Undo" verb alias prefix
+        /// </summary>
+        public const string Undo = "un";
+
+        /// <summary>
+        /// "Uninstall" verb alias prefix
+        /// </summary>
+        public const string Uninstall = "us";
+
+        /// <summary>
+        /// "Unlock" verb alias prefix
+        /// </summary>
+        public const string Unlock = "uk";
+
+        /// <summary>
+        /// "Unprotect" verb alias prefix
+        /// </summary>
+        public const string Unprotect = "up";
+
+        /// <summary>
+        /// "Unpublish" verb alias prefix
+        /// </summary>
+        public const string Unpublish = "ub";
+
+        /// <summary>
+        /// "Unregister" verb alias prefix
+        /// </summary>
+        public const string Unregister = "ur";
+
+        /// <summary>
+        /// "Update" verb alias prefix
+        /// </summary>
+        public const string Update = "ud";
+
+        /// <summary>
+        /// "Use" verb alias prefix
+        /// </summary>
+        public const string Use = "u";
+
+        /// <summary>
+        /// "Wait" verb alias prefix
+        /// </summary>
+        public const string Wait = "w";
+
+        /// <summary>
+        /// "Watch" verb alias prefix
+        /// </summary>
+        public const string Watch = "wc";
+
+        /// <summary>
+        /// "Write" verb alias prefix
+        /// </summary>
+        public const string Write = "wr";
+
+        /// <summary>
+        /// Gets verb prefix
+        /// </summary>
+        public static string GetVerbAliasPrefix(string verb)
+        {
+            FieldInfo aliasField = typeof(VerbAliasPrefixes).GetField(verb);
+            if(aliasField != null)
+            {
+                return (string)aliasField.GetValue(null);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+    }//VerbAliasPrefixes
+
+    /// <summary>
     /// Class for Verbs and Groups
     /// </summary>
     public class VerbInfo
@@ -605,9 +1141,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Alias Prefix
+        /// </summary>
+        public string AliasPrefix
+        {
+            get;set;
+        }
+
+        /// <summary>
         /// Group Name
         /// </summary>
         public string Group
+        {
+            get;set;
+        }
+
+        /// <summary>
+        /// Description
+        /// </summary>
+        public string Description
         {
             get;set;
         }

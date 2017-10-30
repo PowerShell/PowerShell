@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the out-string command
     /// </summary>
-    [Cmdlet(VerbsData.Out, "String", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113368", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.Out, "String", DefaultParameterSetName = "NoNewLineFormatting", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113368", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public class OutStringCommand : FrontEndCommandBase
     {
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// FALSE: accumulate all the data, then write a single string
         /// TRUE: write one line at the time
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName="StreamFormatting")]
         public SwitchParameter Stream
         {
             get { return _stream; }
@@ -45,6 +45,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Nullable<int> _width = null;
+
+        /// <summary>
+        /// False to add a newline to the end of the output string, true if not.
+        /// </summary>
+        [Parameter(ParameterSetName="NoNewLineFormatting")]
+        public SwitchParameter NoNewline
+        {
+            get { return _noNewLine; }
+            set { _noNewLine = value;}
+        }
+
+        private bool _noNewLine = false;
+
         #endregion
 
         /// <summary>
@@ -122,9 +135,20 @@ namespace Microsoft.PowerShell.Commands
         private void OnWriteLine(string s)
         {
             if (_stream)
+            {
                 this.WriteObject(s);
+            }
             else
-                _buffer.AppendLine(s);
+            {
+                if (_noNewLine)
+                {
+                    _buffer.Append(s);
+                }
+                else
+                {
+                    _buffer.AppendLine(s);
+                }
+            }
         }
 
         /// <summary>

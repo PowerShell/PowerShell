@@ -119,18 +119,18 @@
   </resheader>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}
-Copyright (C) Microsoft Corporation. All rights reserved.</value>
+Copyright (c) Microsoft Corporation. All rights reserved.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
-    <value>Usage: powershell[.exe] [[-File] &lt;filePath&gt; [args]]
-                        [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
-                                      | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
-                        [-ConfigurationName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
-                        [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
-                        [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                        [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
+    <value>Usage: pwsh[.exe] [[-File] &lt;filePath&gt; [args]]
+                  [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
+                                | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+                  [-ConfigurationName &lt;string&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
+                  [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
+                  [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
+                  [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
 
-       powershell[.exe] -h | -Help | -? | /?
+       pwsh[.exe] -h | -Help | -? | /?
 
 PowerShell Online Help https://aka.ms/pscore6-docs
 
@@ -144,8 +144,8 @@ All parameters are case-insensitive.
     If the value of Command is "-", the command text is read from standard input.
 
     If the value of Command is a script block, the script block must be enclosed
-    in braces ({}). You can specify a script block only when running 'powershell'
-    in PowerShell. The results of the script block are returned to the
+    in braces ({}). You can specify a script block only when running 'pwsh'
+    in a PowerShell session. The results of the script block are returned to the
     parent shell as deserialized XML objects, not live objects.
 
     If the value of Command is a string, Command must be the last parameter in the command,
@@ -157,15 +157,15 @@ All parameters are case-insensitive.
     causes the command to be executed.
 
     Example:
-        powershell -Command {Get-WinEvent -LogName security}
-        powershell -command "&amp; {Get-WinEvent -LogName security}"
+        pwsh -Command {Get-WinEvent -LogName security}
+        pwsh -command "&amp; {Get-WinEvent -LogName security}"
 
 -ConfigurationName | -config
     Specifies a configuration endpoint in which PowerShell is run.
     This can be any endpoint registered on the local machine including the default PowerShell
     remoting endpoints or a custom endpoint having specific user role capabilities.
 
-    Example: powershell -configurationmame AdminRoles
+    Example: pwsh -configurationmame AdminRoles
 
 -EncodedCommand | -e | -ec
     Accepts a base64 encoded string version of a command. Use this parameter to submit
@@ -175,7 +175,7 @@ All parameters are case-insensitive.
         $command = 'dir "c:\program files" '
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
         $encodedCommand = [Convert]::ToBase64String($bytes)
-        powershell -encodedcommand $encodedCommand
+        pwsh -encodedcommand $encodedCommand
 
 -ExecutionPolicy | -ex | -ep
     Sets the default execution policy for the current session and saves it
@@ -183,7 +183,7 @@ All parameters are case-insensitive.
     This parameter does not change the PowerShell execution policy
     that is set in the registry.
 
-    Example: powershell -ExecutionPolicy RemoteSigned
+    Example: pwsh -ExecutionPolicy RemoteSigned
 
 -File | -f
     Default parameter if no parameters is present but any values is present in the command line.
@@ -193,12 +193,10 @@ All parameters are case-insensitive.
     in the command, because all characters typed after the File parameter name are interpreted
     as the script file path followed by the script parameters.
 
-    Example: powershell HelloWorld.ps1
+    Example: pwsh HelloWorld.ps1
 
 -Help | -h | -? | /?
-    Shows this message. If you are typing a 'powershell' command in PowerShell on Windows
-    system, prepend the command parameters with a hyphen (-), not a forward slash (/).
-    You can use either a hyphen or forward slash in Cmd.exe.
+    Shows this help message.
 
 -InputFormat | -in | -if
     Describes the format of data sent to PowerShell.
@@ -210,7 +208,7 @@ All parameters are case-insensitive.
 -NoExit | -noe
     Does not exit after running startup commands.
 
-    Example: powershell.exe -NoExit -Command Get-Date
+    Example: pwsh -NoExit -Command Get-Date
 
 -NoLogo | -nol
     Hides the copyright banner at startup.
@@ -226,12 +224,12 @@ All parameters are case-insensitive.
     are "Text" (text strings) or "XML" (serialized CLIXML format).
     Default is "Text".
 
-    Example: powershell -o XML -c Get-Date
+    Example: pwsh -o XML -c Get-Date
 
 -Version | -v
     Shows the version of PowerShell and exits. Additional arguments are ignored.
 
-    Example: powershell -v
+    Example: pwsh -v
 
 -WindowStyle | -w
     Sets the window style to Normal, Minimized, Maximized or Hidden.

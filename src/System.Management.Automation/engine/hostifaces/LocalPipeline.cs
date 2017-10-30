@@ -1,5 +1,5 @@
 /********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * --********************************************************************/
 
 using System.Diagnostics;
@@ -912,7 +912,6 @@ namespace System.Management.Automation.Runspaces
                                 command.CreateCommandProcessor
                                     (
                                         LocalRunspace.ExecutionContext,
-                                        LocalRunspace.CommandFactory,
                                         AddToHistory,
                                         commandOrigin
                                     );

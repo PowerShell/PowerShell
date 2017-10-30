@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -745,22 +745,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string stackSet = "Stack";
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        /// <summary>
-        /// The string declaration for the Relationship parameter set in this command.
-        /// </summary>
-        private const string relationshipSet = "Relationship";
-#endif
         /// <summary>
         /// Gets or sets the path property
         /// </summary>
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        [Parameter(Position = 0, ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-#endif
         [Parameter(Position = 0, ParameterSetName = pathSet,
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string Path
@@ -813,68 +800,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = stackSet, ValueFromPipelineByPropertyName = true)]
         public string StackName { get; set; }
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        /// <summary>
-        /// Gets or sets the relationship Parameter which determines which relationship
-        /// to resolve to a path to set-location to.
-        /// </summary>
-        ///
-        [Parameter(Mandatory = true, ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-        public string Relationship
-        {
-            get
-            {
-                return relationship;
-            }
-
-            set
-            {
-                relationship = value;
-            }
-        }
-        private string relationship = String.Empty;
-
-
-        /// <summary>
-        /// Gets or sets the Property parameter value
-        /// </summary>
-        ///
-        [Parameter(ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-        public string Property
-        {
-            get
-            {
-                return property;
-            }
-
-            set
-            {
-                property = value;
-            }
-        }
-        private string property = String.Empty;
-
-        /// <summary>
-        /// Gets or sets the Target parameter value
-        /// </summary>
-        ///
-        [Parameter (ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-        public string Target
-        {
-            get
-            {
-                return target;
-            }
-
-            set
-            {
-                target = value;
-            }
-        }
-        private string target = String.Empty;
-#endif
         #endregion Command parameters
 
         #region Command data
@@ -971,76 +896,6 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
 
-#if RELATIONSHIP_SUPPORTED
-    // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-                case relationshipSet:
-                    string relationshipPath = null;
-                    try
-                    {
-                        relationshipPath =
-                            InvokeProvider.Relationship.Resolve(
-                                Relationship,
-                                Path,
-                                Property,
-                                Target);
-                    }
-                    catch (PSArgumentException argException)
-                    {
-                        WriteError(
-                            new ErrorRecord(
-                                argException.ErrorRecord,
-                                argException));
-                        return;
-                    }
-
-                    try
-                    {
-                        result = SessionState.Path.SetLocation (relationshipPath, CmdletProviderContext);
-                    }
-                    catch (PSNotSupportedException notSupported)
-                    {
-                        WriteError(
-                            new ErrorRecord(
-                                notSupported.ErrorRecord,
-                                notSupported));
-                        return;
-                    }
-                    catch (DriveNotFoundException driveNotFound)
-                    {
-                        WriteError(
-                            new ErrorRecord(
-                                driveNotFound.ErrorRecord,
-                                driveNotFound));
-                        return;
-                    }
-                    catch (ProviderNotFoundException providerNotFound)
-                    {
-                        WriteError(
-                            new ErrorRecord(
-                                providerNotFound.ErrorRecord,
-                                providerNotFound));
-                        return;
-                    }
-                    catch (PSArgumentException argException)
-                    {
-                        WriteError(
-                            new ErrorRecord(
-                                argException.ErrorRecord,
-                                argException));
-                        return;
-                    }
-                    catch (ItemNotFoundException pathNotFound)
-                    {
-                        WriteError(
-                            new ErrorRecord(
-                                pathNotFound.ErrorRecord,
-                                pathNotFound));
-                        return;
-                    }
-
-                    break;
-#endif
                 default:
                     Dbg.Diagnostics.Assert(
                         false,
@@ -1070,18 +925,9 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Command parameters
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-        private const string relationshipSet = "Relationship";
-#endif
-
         /// <summary>
         /// Gets or sets the path property
         /// </summary>
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-        [Parameter (Position = 0, ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-#endif
         [Parameter(Position = 0, ParameterSetName = "Path",
                    ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string Path
@@ -1139,10 +985,6 @@ namespace Microsoft.PowerShell.Commands
         /// to use for the push. If the parameter is missing or empty the default
         /// location stack is used.
         /// </summary>
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-        [Parameter (ParameterSetName = relationshipSet)]
-#endif
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string StackName
         {
@@ -1156,67 +998,6 @@ namespace Microsoft.PowerShell.Commands
             } //set
         } // StackName
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        /// <summary>
-        /// Gets or sets the relationship Parameter which determines which relationship
-        /// to resolve to a path to set-location to.
-        /// </summary>
-        ///
-        [Parameter (Mandatory = true, ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-        public string Relationship
-        {
-            get
-            {
-                return relationship;
-            }
-
-            set
-            {
-                relationship = value;
-            }
-        }
-        private string relationship = String.Empty;
-
-        /// <summary>
-        /// Gets or sets the Property parameter value
-        /// </summary>
-        ///
-        [Parameter (ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-        public string Property
-        {
-            get
-            {
-                return property;
-            }
-
-            set
-            {
-                property = value;
-            }
-        }
-        private string property = String.Empty;
-
-        /// <summary>
-        /// Gets or sets the Target parameter value
-        /// </summary>
-        ///
-        [Parameter (ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
-        public string Target
-        {
-            get
-            {
-                return target;
-            }
-
-            set
-            {
-                target = value;
-            }
-        }
-        private string target = String.Empty;
-#endif
         #endregion Command parameters
 
         #region Command data
@@ -1251,42 +1032,6 @@ namespace Microsoft.PowerShell.Commands
             // working directory stack
             SessionState.Path.PushCurrentLocation(_stackName);
 
-#if RELATIONSHIP_SUPPORTED
-    // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-            if (String.Equals(
-                    relationshipSet,
-                    ParameterSetName,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    Path =
-                        InvokeProvider.Relationship.Resolve(
-                            Relationship,
-                            Path,
-                            Property,
-                            Target);
-                }
-                catch (ProviderNotFoundException providerNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            providerNotFound.ErrorRecord,
-                            providerNotFound));
-
-                    return;
-                }
-                catch (PSArgumentException argException)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            argException.ErrorRecord,
-                            argException));
-                    return;
-                }
-            }
-#endif
             if (Path != null)
             {
                 try
@@ -3107,7 +2852,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedPSPaths = SessionState.Path.GetResolvedPSPathFromPSPath(path, currentContext);
-                        if (null != LiteralPath && 0 == resolvedPSPaths.Count)
+                        if (true == SuppressWildcardExpansion && 0 == resolvedPSPaths.Count)
                         {
                             ItemNotFoundException pathNotFound =
                                 new ItemNotFoundException(

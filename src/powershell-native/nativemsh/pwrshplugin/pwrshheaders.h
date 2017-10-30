@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2008.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Contents:  Headers used by internal windows teams to access certain
 //  Powershell functionality
@@ -16,7 +16,7 @@
 // returns: 0 on success, non-zero on failure.
 _Success_(return == 0)  // EXIT_CODE_SUCCESS
 extern "C"
-unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion, 
+unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion,
                       int iPSMinorVersion,
                       size_t runtimeVersionLength,
                       __inout_ecount_part(runtimeVersionLength , *pRuntimeVersionLength) wchar_t* pwszRuntimeVersion,

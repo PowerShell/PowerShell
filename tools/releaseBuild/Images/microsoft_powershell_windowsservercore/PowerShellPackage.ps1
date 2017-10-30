@@ -10,7 +10,8 @@ param (
     [switch] $Wait,
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
     [ValidateNotNullOrEmpty()]
-    [string]$ReleaseTag
+    [string]$ReleaseTag,
+    [switch] $Symbols
 )
 
 $releaseTagParam = @{}
@@ -55,7 +56,13 @@ try{
     Start-PSBootstrap -Force -Package
 
     Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-    Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime $Runtime -Configuration Release @releaseTagParam
+    $buildParams = @{}
+    if(!$Symbols.IsPresent)
+    {
+        $buildParams['CrossGen'] = $true
+    }
+
+    Start-PSBuild -Clean -PSModuleRestore -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
 
     $pspackageParams = @{'Type'='msi'}
     if ($Runtime -ne 'win10-x64')
@@ -63,8 +70,15 @@ try{
         $pspackageParams += @{'WindowsRuntime'=$Runtime}
     }
 
-    Write-Verbose "Starting powershell packaging(msi)..." -verbose
-    Start-PSPackage @pspackageParams @releaseTagParam
+    if(!$Symbols.IsPresent)
+    {
+        Write-Verbose "Starting powershell packaging(msi)..." -verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
+    }
+    else 
+    {
+        $pspackageParams += @{'IncludeSymbols' = $true}
+    }
 
     $pspackageParams['Type']='zip'
     Write-Verbose "Starting powershell packaging(zip)..." -verbose

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -89,20 +89,24 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the encoding used for the content of the body and also the subject.
+        /// This is set to ASCII to ensure there are no problems with any email server
         /// </summary>
         [Parameter()]
         [Alias("BE")]
         [ValidateNotNullOrEmpty]
-        [ArgumentToEncodingNameTransformationAttribute()]
-        public Encoding Encoding
-        {
-            get { return _encoding; }
-            set
-            {
-                _encoding = value;
-            }
-        }
-        private Encoding _encoding = new ASCIIEncoding();
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ArgumentToEncodingTransformationAttribute()]
+        public Encoding Encoding { get; set; } = Encoding.ASCII;
 
         /// <summary>
         /// Specifies the address collection that contains the
@@ -369,8 +373,8 @@ namespace Microsoft.PowerShell.Commands
             _mMailMessage.Body = _body;
 
             //set the subject and body encoding
-            _mMailMessage.SubjectEncoding = _encoding;
-            _mMailMessage.BodyEncoding = _encoding;
+            _mMailMessage.SubjectEncoding = Encoding;
+            _mMailMessage.BodyEncoding = Encoding;
 
             // Set the format of the mail message body as HTML
             _mMailMessage.IsBodyHtml = _bodyashtml;
@@ -488,38 +492,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
-    }
-
-    /// <summary>
-    /// To make it easier to specify -Encoding parameter, we add an ArgumentTransformationAttribute here.
-    /// When the input data is of type string and is valid to be converted to System.Text.Encoding, we do
-    /// the conversion and return the converted value. Otherwise, we just return the input data.
-    /// </summary>
-    internal sealed class ArgumentToEncodingNameTransformationAttribute : ArgumentTransformationAttribute
-    {
-        public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
-        {
-            string encodingName;
-            if (LanguagePrimitives.TryConvertTo<string>(inputData, out encodingName))
-            {
-                if (string.Equals(encodingName, EncodingConversion.Unknown, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.String, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Unicode, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.BigEndianUnicode, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Utf8, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Utf7, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Utf32, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Ascii, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Default, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.OEM, StringComparison.OrdinalIgnoreCase))
-                {
-                    // the encodingName is guaranteed to be valid, so it is safe to pass null to method
-                    // Convert(Cmdlet cmdlet, string encoding) as the value of 'cmdlet'.
-                    return EncodingConversion.Convert(null, encodingName);
-                }
-            }
-            return inputData;
-        }
     }
 
     #endregion

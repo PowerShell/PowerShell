@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2007.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
-//  Contents:  Headers used by pwrshplugin. 
+//  Contents:  Headers used by pwrshplugin.
 //  pwrshplugin is totally unmanaged.
 // ----------------------------------------------------------------------
 
@@ -38,9 +38,9 @@ private:
 
 public:
     // applicationIdentification:
-    // This relates to the application HTTP suffix that is hosting the plug-in.  
-    // For the main WSMan service by default this would be "wsman", whereas for 
-    // an IIS host it would relate to the application endpoint for that host and 
+    // This relates to the application HTTP suffix that is hosting the plug-in.
+    // For the main WSMan service by default this would be "wsman", whereas for
+    // an IIS host it would relate to the application endpoint for that host and
     // would be something like "MyCompany/MyApplication".
     PwrshPlugIn(PCWSTR applicationIdentification, PCWSTR pInitParams)
     {
@@ -89,8 +89,8 @@ private:
     bool bIsDisposed;
 
     // fields needed to validate 2 plugins initializing at the same time
-    CRITICAL_SECTION criticalSection; 
-    bool isCSInitSucceeded; 
+    CRITICAL_SECTION criticalSection;
+    bool isCSInitSucceeded;
 
     // Abstraction of the differences between CLR hosting environments with
     // respect to the interface with pspluginwkr.
@@ -127,7 +127,7 @@ private:
         {
             isCSInitSucceeded = true;
         }
-    }   
+    }
 
     // Clear plugin specific resources.
     void CleanUp()
@@ -199,7 +199,7 @@ public:
     }
 
     ~PwrshPlugInMediator()
-    {   
+    {
         if (isCSInitSucceeded)
         {
             DeleteCriticalSection(&criticalSection);
@@ -211,11 +211,11 @@ public:
     // Clear plugin specific resources.
     DWORD Shutdown(__in DWORD flags, __in DWORD reason) throw (...)
     {
-        // this null condition should never occur.. but for server process safety ensure we 
-        // fail safely.. 
+        // this null condition should never occur.. but for server process safety ensure we
+        // fail safely..
         if (NULL != hShutdownPluginMethodAddress)
         {
-            (hShutdownPluginMethodAddress)((PVOID)this); 
+            (hShutdownPluginMethodAddress)((PVOID)this);
         }
 
         CleanUp();
@@ -242,16 +242,16 @@ public:
         __in_opt WSMAN_DATA *inboundShellInformation)
     {
         if ((NULL == plugInToUseWithCreateShell) ||
-            (NULL == requestDetails) || 
-            (NULL == startupInfo) || 
+            (NULL == requestDetails) ||
+            (NULL == startupInfo) ||
             (NULL == requestDetails->operationInfo))
         {
             ReportError(requestDetails, g_INVALID_INPUT, L"WSManPluginShell");
             return;
         }
 
-        // this null condition should never occur.. but for server process safety ensure we 
-        // fail safely.. 
+        // this null condition should never occur.. but for server process safety ensure we
+        // fail safely..
         if (NULL == hCreateShellMethodAddress)
         {
             ReportError(requestDetails, g_MANAGED_METHOD_RESOLUTION_FAILED);
@@ -261,7 +261,7 @@ public:
         __try
         {
             PCWSTR initParameters = plugInToUseWithCreateShell->GetInitParameters();
-            (hCreateShellMethodAddress)((PVOID)this, requestDetails, flags, initParameters, startupInfo, inboundShellInformation);            
+            (hCreateShellMethodAddress)((PVOID)this, requestDetails, flags, initParameters, startupInfo, inboundShellInformation);
         }
         __except(ProcessException(requestDetails, GetExceptionCode()))
         {
@@ -270,8 +270,8 @@ public:
 
     VOID ReleaseShell(__in PVOID shellContext)
     {
-        // this null condition should never occur.. but for server process safety ensure we 
-        // fail safely.. 
+        // this null condition should never occur.. but for server process safety ensure we
+        // fail safely..
         if (NULL != hReleaseShellMethodAddress)
         {
             (hReleaseShellMethodAddress)((PVOID)this, shellContext);
@@ -300,7 +300,7 @@ public:
         __try
         {
             (hCreateCommandMethodAddress)((PVOID)this, requestDetails, flags, shellContext, commandLine, arguments);
-        }        
+        }
         __except(ProcessException(requestDetails, GetExceptionCode()))
         {
         }
@@ -309,8 +309,8 @@ public:
     VOID ReleaseCommand(__in PVOID shellContext,
         __in PVOID commandContext)
     {
-        // this null condition should never occur.. but for server process safety ensure we 
-        // fail safely.. 
+        // this null condition should never occur.. but for server process safety ensure we
+        // fail safely..
         if (NULL != hReleaseShellMethodAddress)
         {
             (hReleaseCommandMethodAddress)((PVOID)this, shellContext, commandContext);
@@ -403,7 +403,7 @@ public:
         }
     }
 
-    VOID SignalShellOrCmd(        
+    VOID SignalShellOrCmd(
         __in WSMAN_PLUGIN_REQUEST *requestDetails,
         __in DWORD flags,
         __in PVOID shellContext,
@@ -456,7 +456,7 @@ private:
         va_list args;
         va_start(args, dwMessageId);
 
-        GetFormattedErrorMessage(&extendedErrorInformation, dwMessageId, &args); 
+        GetFormattedErrorMessage(&extendedErrorInformation, dwMessageId, &args);
 
         va_end(args);
 
@@ -474,8 +474,8 @@ private:
     DWORD ReportError(WSMAN_PLUGIN_REQUEST *requestDetails, PlugInException* e)
     {
         DWORD errorCode = e->dwMessageId;
-        
-        DWORD result = WSManPluginOperationComplete(requestDetails, 0, errorCode, e->extendedErrorInformation);        
+
+        DWORD result = WSManPluginOperationComplete(requestDetails, 0, errorCode, e->extendedErrorInformation);
         return result;
     }
 
@@ -560,7 +560,7 @@ private:
     }
 
     // returns non-zero code on error + plugin exception is populated in some cases
-    // like plugin load error. so the caller is expected to check both these 
+    // like plugin load error. so the caller is expected to check both these
     // to see if there is any error.
     unsigned int LoadManagedPlugIn(
         _In_ PWSTR wszMgdPlugInFileName,
@@ -672,7 +672,7 @@ private:
         unsigned int exitCode = EXIT_CODE_SUCCESS;
         PlugInException* pErrorMsg = NULL;
 
-        do 
+        do
         {
             exitCode = ConstructPowerShellVersion(iPSMajorVersion, iPSMinorVersion, &wszMonadVersion);
             if (exitCode != EXIT_CODE_SUCCESS)
@@ -746,7 +746,7 @@ private:
         {
             delete[] wszMonadVersion;
         }
-        
+
         if (NULL != wszMgdPlugInFileName)
         {
             delete[] wszMgdPlugInFileName;
@@ -777,7 +777,7 @@ private:
                 throw new PlugInException(exitCode, msg);
             }
         }
-    }      
+    }
 
 public:
     // extraInfo is supplied by WSMan and WSMan validates the XML syntax
@@ -789,7 +789,7 @@ public:
         if (NULL == extraInfo)
         {
             PWSTR msg = NULL;
-            GetFormattedErrorMessage(&msg, 
+            GetFormattedErrorMessage(&msg,
                 g_PSVERSION_NOT_FOUND_IN_CONFIG, g_PSVERSION_CONFIG, g_INITIALIZATIONPARAM_CONFIG);
             throw new PlugInException(g_PSVERSION_NOT_FOUND_IN_CONFIG, msg);
         }
@@ -798,7 +798,7 @@ public:
         if (FAILED(StringCchLength(extraInfo, STRSAFE_MAX_CCH, &initParamsLength)))
         {
             PWSTR msg = NULL;
-            GetFormattedErrorMessage(&msg, 
+            GetFormattedErrorMessage(&msg,
                 g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
             throw new PlugInException(g_BAD_INITPARAMETERS, msg);
         }
@@ -811,7 +811,7 @@ public:
             if (FAILED(StringCchCopyNW(*initParameters, initParamsLength + 1, extraInfo, initParamsLength)))
             {
                 PWSTR msg = NULL;
-                GetFormattedErrorMessage(&msg, 
+                GetFormattedErrorMessage(&msg,
                     g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                 throw new PlugInException(g_BAD_INITPARAMETERS, msg);
             }
@@ -819,15 +819,15 @@ public:
     }
 
     void ProcessExtraInfo(PCWSTR extraInfo,
-        __deref_opt_out PWSTR *initParameters) throw(...) 
+        __deref_opt_out PWSTR *initParameters) throw(...)
     {
-        VerifyAndStoreExtraInfo(extraInfo, initParameters);        
+        VerifyAndStoreExtraInfo(extraInfo, initParameters);
 
         // Get PSVersion and MaxPSVersion values from the config xml
         wchar_t* psversion = NULL;
         wchar_t* maxpsversion = NULL;
         // Win8: 97936: To support backward compatability, if PSVersion = 2.0 and AssemblyToken
-        // is specified we set maxPSVersion = 2.0..so that the endpoint is not automatically 
+        // is specified we set maxPSVersion = 2.0..so that the endpoint is not automatically
         // transferred to PS 3.0
         wchar_t* assemblyToken = NULL;
 
@@ -838,13 +838,13 @@ public:
         if (FAILED(StringCchLength(extraInfo, STRSAFE_MAX_CCH, &initParamsLength)))
         {
             PWSTR msg = NULL;
-            GetFormattedErrorMessage(&msg, 
+            GetFormattedErrorMessage(&msg,
                 g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
             throw new PlugInException(g_BAD_INITPARAMETERS, msg);
-        }        
+        }
 
         PCWSTR param = wcsstr(extraInfo, L"<Param ");
-        param += 7;        
+        param += 7;
 
         PCWSTR name = NULL;
 
@@ -886,10 +886,10 @@ public:
 
         PWSTR msg = NULL;
         DWORD msgId = 0;
-        do 
+        do
         {
             // Win8: 97936: To support backward compatability, if PSVersion = 2.0 and AssemblyToken
-            // is specified we set maxPSVersion = 2.0..so that the endpoint is not automatically 
+            // is specified we set maxPSVersion = 2.0..so that the endpoint is not automatically
             // forwarded to PS 3.0
             if ((psversion != NULL) && (assemblyToken != NULL) && (maxpsversion == NULL))
             {
@@ -902,9 +902,9 @@ public:
                     {
                         size_t length;
                         if (FAILED(StringCchLength(psversion, STRSAFE_MAX_CCH, &length)))
-                        {        
+                        {
                             msgId = g_BAD_INITPARAMETERS;
-                            GetFormattedErrorMessage(&msg, 
+                            GetFormattedErrorMessage(&msg,
                                 g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                             break;
                         }
@@ -914,7 +914,7 @@ public:
                         if (FAILED(StringCchCopyNW(maxpsversion, length + 1, psversion, length)))
                         {
                             msgId = g_BAD_INITPARAMETERS;
-                            GetFormattedErrorMessage(&msg, 
+                            GetFormattedErrorMessage(&msg,
                                 g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                             break;
                         }
@@ -930,7 +930,7 @@ public:
 
             // we are here if no "PSVersion" value found..so report the error.
             msgId = g_PSVERSION_NOT_FOUND_IN_CONFIG;
-            GetFormattedErrorMessage(&msg, 
+            GetFormattedErrorMessage(&msg,
                 g_PSVERSION_NOT_FOUND_IN_CONFIG, g_PSVERSION_CONFIG, g_INITIALIZATIONPARAM_CONFIG);
 
         } while(false);
@@ -960,7 +960,7 @@ public:
     }
 
 
-    wchar_t* ReadConfigXmlValue(PCWSTR param, 
+    wchar_t* ReadConfigXmlValue(PCWSTR param,
         PCWSTR extraInfo, size_t initParamsLength)
     {
         // We have the PSVersion or MaxPSVersion...
@@ -1004,11 +1004,11 @@ public:
                     if (FAILED(StringCchCopyNW(version, length + 1, startVersion, length)))
                     {
                         PWSTR msg = NULL;
-                        GetFormattedErrorMessage(&msg, 
+                        GetFormattedErrorMessage(&msg,
                             g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                         throw new PlugInException(g_BAD_INITPARAMETERS, msg);
                     }
-                    return version;                                        
+                    return version;
                 }
                 catch(...)
                 {
@@ -1025,11 +1025,11 @@ public:
                     delete[] version;
                 }
             }
-        }                    
-        return NULL;   
+        }
+        return NULL;
     }
 
-    wchar_t* CalculatePowershellVersion(__in wchar_t* psversion, 
+    wchar_t* CalculatePowershellVersion(__in wchar_t* psversion,
         __in_opt wchar_t* maxpsversion)
     {
         wchar_t* version = NULL;
@@ -1045,16 +1045,16 @@ public:
                     if (majorMaxPSVersionNumber > majorPSVersionNumber)
                     {
                         PWSTR msg = NULL;
-                        GetFormattedErrorMessage(&msg, 
+                        GetFormattedErrorMessage(&msg,
                             g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
-                        throw new PlugInException(g_BAD_INITPARAMETERS, msg);                        
+                        throw new PlugInException(g_BAD_INITPARAMETERS, msg);
                     }
 
                     // TODO: why hardcoding is needed here
                     if (majorPSVersionNumber == 3 && majorMaxPSVersionNumber == 2)
                     {
                         PWSTR msg = NULL;
-                        GetFormattedErrorMessage(&msg, 
+                        GetFormattedErrorMessage(&msg,
                             g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                         throw new PlugInException(g_BAD_INITPARAMETERS, msg);
                     }
@@ -1063,9 +1063,9 @@ public:
                     {
                         size_t length;
                         if (FAILED(StringCchLength(psversion, STRSAFE_MAX_CCH, &length)))
-                        {        
+                        {
                             PWSTR msg = NULL;
-                            GetFormattedErrorMessage(&msg, 
+                            GetFormattedErrorMessage(&msg,
                                 g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                             throw new PlugInException(g_BAD_INITPARAMETERS, msg);
                         }
@@ -1075,7 +1075,7 @@ public:
                         if (FAILED(StringCchCopyNW(version, length + 1, psversion, length)))
                         {
                             PWSTR msg = NULL;
-                            GetFormattedErrorMessage(&msg, 
+                            GetFormattedErrorMessage(&msg,
                                 g_BAD_INITPARAMETERS, g_INITIALIZATIONPARAM_CONFIG);
                             throw new PlugInException(g_BAD_INITPARAMETERS, msg);
                         }

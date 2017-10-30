@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.IO;
@@ -238,17 +238,6 @@ namespace System.Management.Automation
             }
 
             return returnValue;
-        }
-
-        /// <summary>
-        /// Helper function which checks whether PSSnapIns are supported in current invocation.
-        /// </summary>
-        /// <returns>true if supported,false otherwise.</returns>
-        internal bool AreSnapInsSupported()
-        {
-            RunspaceConfigForSingleShell runspace = _helpSystem.ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
-
-            return (null == runspace ? false : true);
         }
 
         /// <summary>

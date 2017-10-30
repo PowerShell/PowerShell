@@ -20,7 +20,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "deb-arm")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -30,216 +30,341 @@ function Start-PSPackage {
 
         [Switch] $Force,
 
-        [Switch] $IncludeSymbols,
-
         [Switch] $SkipReleaseChecks
     )
 
-    # Runtime and Configuration settings required by the package
-    ($Runtime, $Configuration) = if ($WindowsRuntime) {
-        $WindowsRuntime, "Release"
-    } elseif ($Type -eq "deb-arm") {
-        New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-    } else {
-        New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+    # The package type 'deb-arm' is current disabled for '-Type' parameter because 'New-UnixPackage' doesn't support
+    # creating package for 'deb-arm'. It should be added back to the ValidateSet of '-Type' once the implementation
+    # of creating 'deb-arm' package is done.
+
+    DynamicParam {
+        if ($Type -eq "zip") {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip'.
+            # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
+            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
+            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+            $Attributes.Add($ParameterAttr) > $null
+
+            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("IncludeSymbols", [switch], $Attributes)
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            $Dict.Add("IncludeSymbols", $Parameter) > $null
+            return $Dict
+        }
     }
 
-    if($Environment.IsWindows) {
-        # Runtime will always be win7-x64 or win7-x86 on Windows.
-        # Build the name suffix for universal win-plat packages.
-        $NameSuffix = $Runtime -replace 'win\d+', 'win'
-    }
+    End {
+        $IncludeSymbols = $null
+        if ($PSBoundParameters.ContainsKey('IncludeSymbols')) {
+            log 'setting IncludeSymbols'
+            $IncludeSymbols = $PSBoundParameters['IncludeSymbols']
+        }
 
-    log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
+        # Runtime and Configuration settings required by the package
+        ($Runtime, $Configuration) = if ($WindowsRuntime) {
+            $WindowsRuntime, "Release"
+        } elseif ($Type -eq "deb-arm") {
+            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        } else {
+            New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        }
 
-    $Script:Options = Get-PSOptions
+        if($Environment.IsWindows) {
+            # Runtime will always be win7-x64 or win7-x86 on Windows.
+            # Build the name suffix for universal win-plat packages.
+            $NameSuffix = $Runtime -replace 'win\d+', 'win'
+        }
 
-    $crossGenCorrect = $false
-    if ($Type -eq "deb-arm") {
-        # crossgen doesn't support arm32 yet
-        $crossGenCorrect = $true
-    }
-    elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
-        $crossGenCorrect = $true
-    }
-    elseif ($IncludeSymbols.IsPresent -and -not $Script:Options.CrossGen) {
-        $crossGenCorrect = $true
-    }
+        log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
-    # Make sure the most recent build satisfies the package requirement
-    if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-        -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
-        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
-        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-        $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
-    {
-        # It's possible that the most recent build doesn't satisfy the package requirement but
-        # an earlier build does.
-        # It's also possible that the last build actually satisfies the package requirement but
-        # then `Start-PSPackage` runs from a new PS session or `build.psm1` was reloaded.
-        #
-        # In these cases, the user will be asked to build again even though it's technically not
-        # necessary. However, we want it that way -- being very explict when generating packages.
-        # This check serves as a simple gate to ensure that the user knows what he is doing, and
-        # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
-        # are generated, it'll be hard to verify if they were built from the correct content.
-        $params = @('-Clean')
-        if(-not $IncludeSymbols.IsPresent)
+        $Script:Options = Get-PSOptions
+
+        $crossGenCorrect = $false
+        if ($Type -eq "deb-arm") {
+            # crossgen doesn't support arm32 yet
+            $crossGenCorrect = $true
+        }
+        elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
+            $crossGenCorrect = $true
+        }
+        elseif ($IncludeSymbols.IsPresent) {
+            $crossGenCorrect = $true
+        }
+
+        # Make sure the most recent build satisfies the package requirement
+        if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
+            -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
+            $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
+            $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
+            $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
         {
-            $params += '-CrossGen'
-        }
-        $params += '-Runtime', $Runtime
-        $params += '-Configuration', $Configuration
-
-        throw "Please ensure you have run 'Start-PSBuild $params'!"
-    }
-
-    if($SkipReleaseChecks.IsPresent) {
-        Write-Warning "Skipping release checks."
-    }
-    elseif(!$Script:Options.RootInfo.IsValid){
-        throw $Script:Options.RootInfo.Warning
-    }
-
-    # If ReleaseTag is specified, use the given tag to calculate Vesrion
-    if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
-        $Version = $ReleaseTag -Replace '^v'
-    }
-
-    # Use Git tag if not given a version
-    if (-not $Version) {
-        $Version = (git --git-dir="$PSScriptRoot/../../.git" describe) -Replace '^v'
-    }
-
-    $Source = Split-Path -Path $Script:Options.Output -Parent
-    log "Packaging Source: '$Source'"
-
-    # Decide package output type
-    if (-not $Type) {
-        $Type = if ($Environment.IsLinux) {
-            if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                "deb", "nupkg"
-            } elseif ($Environment.IsRedHatFamily) {
-                "rpm", "nupkg"
-            } else {
-                throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
-            }
-        } elseif ($Environment.IsMacOS) {
-            "osxpkg", "nupkg"
-        } elseif ($Environment.IsWindows) {
-            "msi", "nupkg"
-        }
-        Write-Warning "-Type was not specified, continuing with $Type!"
-    }
-    log "Packaging Type: $Type"
-
-    # Add the symbols to the suffix
-    # if symbols are specified to be included
-    if($IncludeSymbols.IsPresent -and $NameSuffix) {
-        $NameSuffix = "symbols-$NameSuffix"
-    }
-    elseif ($IncludeSymbols.IsPresent) {
-        $NameSuffix = "symbols"
-    }
-
-    switch ($Type) {
-        "zip" {
-            $Arguments = @{
-                PackageNameSuffix = $NameSuffix
-                PackageSourcePath = $Source
-                PackageVersion = $Version
-                Force = $Force
-            }
-
-            if($pscmdlet.ShouldProcess("Create Zip Package"))
+            # It's possible that the most recent build doesn't satisfy the package requirement but
+            # an earlier build does.
+            # It's also possible that the last build actually satisfies the package requirement but
+            # then `Start-PSPackage` runs from a new PS session or `build.psm1` was reloaded.
+            #
+            # In these cases, the user will be asked to build again even though it's technically not
+            # necessary. However, we want it that way -- being very explict when generating packages.
+            # This check serves as a simple gate to ensure that the user knows what he is doing, and
+            # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
+            # are generated, it'll be hard to verify if they were built from the correct content.
+            $params = @('-Clean')
+            if(-not $IncludeSymbols.IsPresent)
             {
-                New-ZipPackage @Arguments
+                $params += '-CrossGen'
             }
+            $params += '-Runtime', $Runtime
+            $params += '-Configuration', $Configuration
+
+            throw "Please ensure you have run 'Start-PSBuild $params'!"
         }
-        "msi" {
-            $TargetArchitecture = "x64"
-            if ($Runtime -match "-x86")
-            {
-                $TargetArchitecture = "x86"
-            }
 
-            $Arguments = @{
-                ProductNameSuffix = $NameSuffix
-                ProductSourcePath = $Source
-                ProductVersion = $Version
-                AssetsPath = "$PSScriptRoot\..\..\assets"
-                LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
-                # Product Guid needs to be unique for every PowerShell version to allow SxS install
-                ProductGuid = New-Guid
-                ProductTargetArchitecture = $TargetArchitecture
-                Force = $Force
-            }
-
-            if($pscmdlet.ShouldProcess("Create MSI Package"))
-            {
-                New-MSIPackage @Arguments
-            }
+        if($SkipReleaseChecks.IsPresent) {
+            Write-Warning "Skipping release checks."
         }
-        "AppImage" {
-            if($IncludeSymbols.IsPresent)
-            {
-                throw "AppImage does not support packaging '-IncludeSymbols'"
-            }
+        elseif(!$Script:Options.RootInfo.IsValid){
+            throw $Script:Options.RootInfo.Warning
+        }
 
-            if ($Environment.IsUbuntu14) {
-                $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
-                $appImage = Get-Item PowerShell-*.AppImage
-                if ($appImage.Count -gt 1) {
-                    throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
+        # If ReleaseTag is specified, use the given tag to calculate Vesrion
+        if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
+            $Version = $ReleaseTag -Replace '^v'
+        }
+
+        # Use Git tag if not given a version
+        if (-not $Version) {
+            $Version = (git --git-dir="$PSScriptRoot/../../.git" describe) -Replace '^v'
+        }
+
+        $Source = Split-Path -Path $Script:Options.Output -Parent
+
+        # If building a symbols package, don't include the publish build.
+        if ($IncludeSymbols.IsPresent)
+        {
+            $buildSource = Split-Path -Path $Source -Parent
+            $Source = New-TempFolder
+            Get-ChildItem -Path $buildSource | Where-Object {$_.Name -ine 'Publish'} | Copy-Item -Destination $Source -Recurse
+        }
+
+        log "Packaging Source: '$Source'"
+
+        # Decide package output type
+        if (-not $Type) {
+            $Type = if ($Environment.IsLinux) {
+                if ($Environment.LinuxInfo.ID -match "ubuntu") {
+                    "deb", "nupkg"
+                } elseif ($Environment.IsRedHatFamily) {
+                    "rpm", "nupkg"
+                } else {
+                    throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
-                Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
-            } else {
-                Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
+            } elseif ($Environment.IsMacOS) {
+                "osxpkg", "nupkg"
+            } elseif ($Environment.IsWindows) {
+                "msi", "nupkg"
             }
+            Write-Warning "-Type was not specified, continuing with $Type!"
         }
-        'nupkg' {
-            $Arguments = @{
-                PackageNameSuffix = $NameSuffix
-                PackageSourcePath = $Source
-                PackageVersion = $Version
-                PackageRuntime = $Runtime
-                PackageConfiguration = $Configuration
-                Force = $Force
-            }
+        log "Packaging Type: $Type"
 
-            if($pscmdlet.ShouldProcess("Create NuPkg Package"))
-            {
-                New-NugetPackage @Arguments
-            }
+        # Add the symbols to the suffix
+        # if symbols are specified to be included
+        if($IncludeSymbols.IsPresent -and $NameSuffix) {
+            $NameSuffix = "symbols-$NameSuffix"
         }
-        'deb' {
-            $Arguments = @{
-                Type = 'deb'
-                PackageSourcePath = $Source
-                Name = $Name
-                Version = $Version
-                Force = $Force
-            }
-            foreach ($Distro in $Script:DebianDistributions) {
-                $Arguments["Distribution"] = $Distro
-                New-UnixPackage @Arguments
-            }
+        elseif ($IncludeSymbols.IsPresent) {
+            $NameSuffix = "symbols"
         }
-        default {
-            $Arguments = @{
-                Type = $_
-                PackageSourcePath = $Source
-                Name = $Name
-                Version = $Version
-                Force = $Force
-            }
 
-            if($pscmdlet.ShouldProcess("Create $_ Package"))
-            {
-                New-UnixPackage @Arguments
+        switch ($Type) {
+            "zip" {
+                $Arguments = @{
+                    PackageNameSuffix = $NameSuffix
+                    PackageSourcePath = $Source
+                    PackageVersion = $Version
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                    New-ZipPackage @Arguments
+                }
             }
+            "msi" {
+                $TargetArchitecture = "x64"
+                if ($Runtime -match "-x86") {
+                    $TargetArchitecture = "x86"
+                }
+
+                $Arguments = @{
+                    ProductNameSuffix = $NameSuffix
+                    ProductSourcePath = $Source
+                    ProductVersion = $Version
+                    AssetsPath = "$PSScriptRoot\..\..\assets"
+                    LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
+                    # Product Guid needs to be unique for every PowerShell version to allow SxS install
+                    ProductGuid = New-Guid
+                    ProductTargetArchitecture = $TargetArchitecture
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create MSI Package")) {
+                    New-MSIPackage @Arguments
+                }
+            }
+            "AppImage" {
+                if ($IncludeSymbols.IsPresent) {
+                    throw "AppImage does not support packaging '-IncludeSymbols'"
+                }
+
+                if ($Environment.IsUbuntu14) {
+                    $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
+                    $appImage = Get-Item powershell-*.AppImage
+                    if ($appImage.Count -gt 1) {
+                        throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
+                    }
+                    Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
+                } else {
+                    Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
+                }
+            }
+            'nupkg' {
+                $Arguments = @{
+                    PackageNameSuffix = $NameSuffix
+                    PackageSourcePath = $Source
+                    PackageVersion = $Version
+                    PackageRuntime = $Runtime
+                    PackageConfiguration = $Configuration
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create NuPkg Package")) {
+                    New-NugetPackage @Arguments
+                }
+            }
+            'tar' {
+                $Arguments = @{
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    New-TarballPackage @Arguments
+                }
+            }
+            'deb' {
+                $Arguments = @{
+                    Type = 'deb'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                }
+                foreach ($Distro in $Script:DebianDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create DEB Package for $Distro")) {
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
+            default {
+                $Arguments = @{
+                    Type = $_
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create $_ Package")) {
+                    New-UnixPackage @Arguments
+                }
+            }
+        }
+
+        if($IncludeSymbols.IsPresent)
+        {
+            # Source is a temporary folder when -IncludeSymbols is present.  So, we should remove it.
+            Remove-Item -Path $Source -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
+}
+
+function New-TarballPackage {
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param (
+        [Parameter(Mandatory)]
+        [string] $PackageSourcePath,
+
+        # Must start with 'powershell' but may have any suffix
+        [Parameter(Mandatory)]
+        [ValidatePattern("^powershell")]
+        [string]$Name,
+
+        [Parameter(Mandatory)]
+        [string]$Version,
+
+        [switch] $Force
+    )
+
+    $packageName = "$Name-$Version-{0}-x64.tar.gz"
+    if ($Environment.IsWindows) {
+        throw "Must be on Linux or macOS to build 'tar.gz' packages!"
+    } elseif ($Environment.IsLinux) {
+        $packageName = $packageName -f "linux"
+    } elseif ($Environment.IsMacOS) {
+        $packageName = $packageName -f "osx"
+    }
+
+    $packagePath = Join-Path -Path $PWD -ChildPath $packageName
+    Write-Verbose "Create package $packageName"
+    Write-Verbose "Package destination path: $packagePath"
+
+    if (Test-Path -Path $packagePath) {
+        if ($Force -or $PSCmdlet.ShouldProcess("Overwrite existing package file")) {
+            Write-Verbose "Overwrite existing package file at $packagePath" -Verbose
+            Remove-Item -Path $packagePath -Force -ErrorAction Stop -Confirm:$false
+        }
+    }
+
+    if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
+        if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
+            $options = "-czf"
+            if ($PSBoundParameters.ContainsKey('Verbose') -and $PSBoundParameters['Verbose'].IsPresent) {
+                # Use the verbose mode '-v' if '-Verbose' is specified
+                $options = "-czvf"
+            }
+
+            try {
+                Push-Location -Path $PackageSourcePath
+                tar $options $packagePath .
+            } finally {
+                Pop-Location
+            }
+
+            if (Test-Path -Path $packagePath) {
+                log "You can find the tarball package at $packagePath"
+                return $packagePath
+            } else {
+                throw "Failed to create $packageName"
+            }
+        }
+    } else {
+        throw "Failed to create the package because the application 'tar' cannot be found"
+    }
+}
+
+function New-TempFolder
+{
+    $tempPath = [System.IO.Path]::GetTempPath()
+
+    $tempFolder = Join-Path -Path $tempPath -ChildPath ([System.IO.Path]::GetRandomFileName())
+    if(!(Test-Path -Path $tempFolder))
+    {
+        $null = New-Item -Path $tempFolder -ItemType Directory
+    }
+
+    return $tempFolder
 }
 
 function New-UnixPackage {
@@ -361,7 +486,7 @@ function New-UnixPackage {
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
         if ($pscmdlet.ShouldProcess("Create staging folder")) {
-            New-StagingFolder -StagingPath $Staging -Name $Name
+            New-StagingFolder -StagingPath $Staging
         }
 
         # Follow the Filesystem Hierarchy Standard for Linux and macOS
@@ -380,7 +505,7 @@ function New-UnixPackage {
 
         if($pscmdlet.ShouldProcess("Create package file system"))
         {
-            New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
+            New-Item -Force -ItemType SymbolicLink -Path "/tmp/pwsh" -Target "$Destination/pwsh" >$null
 
             if ($Environment.IsRedHatFamily) {
                 # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
@@ -392,14 +517,14 @@ function New-UnixPackage {
 
                 $AfterInstallScript = [io.path]::GetTempFileName()
                 $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.RedHatAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.RedHatAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+                $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
             }
             elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
                 $AfterInstallScript = [io.path]::GetTempFileName()
                 $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.UbuntuAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+                $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
             }
 
 
@@ -407,7 +532,7 @@ function New-UnixPackage {
             # if the target of the powershell symlink exists, `fpm` aborts
             # with a `utime` error on macOS.
             # so we move it to make symlink broken
-            $symlink_dest = "$Destination/$Name"
+            $symlink_dest = "$Destination/pwsh"
             $hack_dest = "./_fpm_symlink_hack_powershell"
             if ($Environment.IsMacOS) {
                 if (Test-Path $symlink_dest) {
@@ -417,22 +542,16 @@ function New-UnixPackage {
             }
 
             # run ronn to convert man page to roff
-            $RonnFile = Join-Path $PSScriptRoot "/../../assets/powershell.1.ronn"
+            $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
             $RoffFile = $RonnFile -replace "\.ronn$"
 
             # Run ronn on assets file
             # Run does not play well with files named powershell6.0.1, so we generate and then rename
             Start-NativeExecution { ronn --roff $RonnFile }
 
-            # Setup for side-by-side man pages (noop if primary package)
-            $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
-            if ($Name -ne "powershell") {
-                Move-Item $RoffFile $FixedRoffFile
-            }
-
             # gzip in assets directory
-            $GzipFile = "$FixedRoffFile.gz"
-            Start-NativeExecution { gzip -f $FixedRoffFile }
+            $GzipFile = "$RoffFile.gz"
+            Start-NativeExecution { gzip -f $RoffFile }
 
             $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
 
@@ -441,7 +560,7 @@ function New-UnixPackage {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
                 chmod 644 $GzipFile
-                chmod 755 "$Staging/$Name" # only the executable should be executable
+                chmod 755 "$Staging/pwsh" # only the executable should be executable
             }
         }
 
@@ -500,16 +619,58 @@ function New-UnixPackage {
             $Arguments += @("--depends", $Dependency)
         }
         if ($AfterInstallScript) {
-        $Arguments += @("--after-install", $AfterInstallScript)
+            $Arguments += @("--after-install", $AfterInstallScript)
         }
         if ($AfterRemoveScript) {
-        $Arguments += @("--after-remove", $AfterRemoveScript)
+            $Arguments += @("--after-remove", $AfterRemoveScript)
         }
         $Arguments += @(
             "$Staging/=$Destination/",
             "$GzipFile=$ManFile",
-            "/tmp/$Name=$Link"
+            "/tmp/pwsh=$Link"
         )
+
+        # Add macOS powershell launcher
+        if($Type -eq "osxpkg")
+        {
+            if($pscmdlet.ShouldProcess("Add macOS launch application")) {
+                # Define folder for launch application.
+                $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+
+                # Update icns file.
+                $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+                $iconfilebase = (Get-Item -Path $iconfile).BaseName
+                # Create Resources folder, ignore error if exists.
+                New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+                Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
+
+                # Set values in plist.
+                $plist = "$macosapp/Contents/Info.plist"
+                Start-NativeExecution {
+                    defaults write $plist CFBundleIdentifier $Name
+                    defaults write $plist CFBundleVersion $Version
+                    defaults write $plist CFBundleShortVersionString $Version
+                    defaults write $plist CFBundleGetInfoString $Version
+                    defaults write $plist CFBundleIconFile $iconfilebase
+                }
+
+                # Convert to XML plist, needed because defaults native
+                # app auto converts it to binary format when it modify
+                # the plist file.
+                Start-NativeExecution {
+                    plutil -convert xml1 $plist
+                }
+                # Set permissions.
+                Start-NativeExecution {
+                    find $macosapp | xargs chmod 755
+                }
+
+                # Add app folder to fpm paths.
+                $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
+                $Arguments += "$appsfolder=/"
+            }
+        }
+
         # Build package
         try {
             if($pscmdlet.ShouldProcess("Create $type package")) {
@@ -524,11 +685,12 @@ function New-UnixPackage {
                 }
             }
             if ($AfterInstallScript) {
-            Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
             }
             if ($AfterRemoveScript) {
-            Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
             }
+            Remove-Item -Path $GzipFile -Force -ErrorAction SilentlyContinue
         }
 
         # Magic to get path output
@@ -563,32 +725,11 @@ function New-StagingFolder
     param(
         [Parameter(Mandatory)]
         [string]
-        $StagingPath,
-
-        # Must start with 'powershell' but may have any suffix
-        [Parameter(Mandatory)]
-        [ValidatePattern("^powershell")]
-        [string]
-        $Name
+        $StagingPath
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
     Copy-Item -Recurse $PackageSourcePath $StagingPath
-
-    # Rename files to given name if not "powershell"
-    if ($Name -ne "powershell") {
-        $Files = @("powershell",
-                "powershell.dll",
-                "powershell.deps.json",
-                "powershell.pdb",
-                "powershell.runtimeconfig.json",
-                "powershell.xml")
-
-        foreach ($File in $Files) {
-            $NewName = $File -replace "^powershell", $Name
-            Move-Item "$StagingPath/$File" "$StagingPath/$NewName"
-        }
-    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -714,7 +855,7 @@ function New-NugetPackage
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
     if ($pscmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $contentFolder -Name $Name
+        New-StagingFolder -StagingPath $contentFolder
     }
 
     $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'

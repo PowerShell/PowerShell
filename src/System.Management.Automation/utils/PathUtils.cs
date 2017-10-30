@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -188,17 +188,10 @@ namespace System.Management.Automation
             cmdlet.ThrowTerminatingError(errorRecord);
         }
 
-        internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, string encoding, bool isLiteralPath)
+        internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, Encoding encoding, bool isLiteralPath)
         {
             FileStream fileStream = OpenFileStream(filePath, command, isLiteralPath);
-            if (encoding == null)
-            {
-                return new StreamReader(fileStream);
-            }
-            else
-            {
-                return new StreamReader(fileStream, EncodingConversion.Convert(command, encoding));
-            }
+            return new StreamReader(fileStream, encoding);
         }
 
         internal static FileStream OpenFileStream(string filePath, PSCmdlet command, bool isLiteralPath)
@@ -434,86 +427,6 @@ namespace System.Management.Automation
 
             Directory.CreateDirectory(moduleDirectory.FullName);
             return new DirectoryInfo(moduleDirectory.FullName);
-        }
-    }
-
-    internal static class EncodingConversion
-    {
-        internal const string Unknown = "unknown";
-        internal const string String = "string";
-        internal const string Unicode = "unicode";
-        internal const string BigEndianUnicode = "bigendianunicode";
-        internal const string Ascii = "ascii";
-        internal const string Utf8 = "utf8";
-        internal const string Utf7 = "utf7";
-        internal const string Utf32 = "utf32";
-        internal const string Default = "default";
-        internal const string OEM = "oem";
-
-        /// <summary>
-        /// retrieve the encoding parameter from the command line
-        /// it throws if the encoding does not match the known ones
-        /// </summary>
-        /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
-        internal static Encoding Convert(Cmdlet cmdlet, string encoding)
-        {
-            if (string.IsNullOrEmpty(encoding))
-            {
-                // no parameter passed, default to Unicode (OS preferred)
-                return System.Text.Encoding.Unicode;
-            }
-
-            // Default to unicode (this matches Get-Content)
-            if (string.Equals(encoding, Unknown, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            if (string.Equals(encoding, String, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            // these are the encodings the CLR supports
-            if (string.Equals(encoding, Unicode, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            if (string.Equals(encoding, BigEndianUnicode, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.BigEndianUnicode;
-
-            if (string.Equals(encoding, Utf8, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF8;
-
-            if (string.Equals(encoding, Ascii, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.ASCII;
-
-            if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF7;
-
-            if (string.Equals(encoding, Utf32, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF32;
-
-            if (string.Equals(encoding, Default, StringComparison.OrdinalIgnoreCase))
-                return ClrFacade.GetDefaultEncoding();
-
-            if (string.Equals(encoding, OEM, StringComparison.OrdinalIgnoreCase))
-            {
-                return ClrFacade.GetOEMEncoding();
-            }
-
-            // error condition: unknown encoding value
-            string validEncodingValues = string.Join(
-                ", ",
-                new string[] { Unknown, String, Unicode, BigEndianUnicode, Ascii, Utf8, Utf7, Utf32, Default, OEM });
-            string msg = StringUtil.Format(PathUtilsStrings.OutFile_WriteToFileEncodingUnknown,
-                encoding, validEncodingValues);
-
-            ErrorRecord errorRecord = new ErrorRecord(
-                PSTraceSource.NewArgumentException("Encoding"),
-                "WriteToFileEncodingUnknown",
-                ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
-            cmdlet.ThrowTerminatingError(errorRecord);
-
-            return null;
         }
     }
 }

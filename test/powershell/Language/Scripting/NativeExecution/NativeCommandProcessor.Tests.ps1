@@ -1,7 +1,7 @@
 Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     }
 
     It "native | ps | native doesn't block" {
@@ -30,8 +30,8 @@ Describe 'native commands with pipeline' -tags 'Feature' {
             $result = @(ping.exe | findstr.exe count | findstr.exe ping)
             $result[0] | Should Match "Usage: ping"
         } else {
-            $result = @(ps aux | grep powershell | grep -v grep)
-            $result[0] | Should Match "powershell"
+            $result = @(ps aux | grep pwsh | grep -v grep)
+            $result[0] | Should Match "pwsh"
         }
     }
 }
