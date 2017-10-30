@@ -920,17 +920,10 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
 
-                        long initLength = 0;
-
                         // We replace 'ReadAllText' with 'StringBuilder' and 'ReadAllLines'
                         // to avoide temporary LOH allocations.
-                        foreach (string file in paths)
-                        {
-                            FileInfo f = new FileInfo(file);
-                            initLength += f.Length;
-                        }
 
-                        StringBuilder sb = new StringBuilder((int)initLength);
+                        StringBuilder sb = new StringBuilder(8192);
 
                         foreach (string file in paths)
                         {
