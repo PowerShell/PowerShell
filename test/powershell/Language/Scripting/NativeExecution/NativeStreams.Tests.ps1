@@ -49,6 +49,17 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         It 'preserves error stream as is with Out-String' {
             ($out | Out-String).Replace("`r", '') | Should Be "foo`n`nbar`n`nbazmiddlefoo`n`nbar`n`nbaz`n"
         }
+
+        It 'does not get truncated or split when redirected' {
+            $longtext = "0123456789"
+            while ($longtext.Length -lt [console]::WindowWidth) {
+                $longtext += $longtext
+            }
+            pwsh -c "& { [Console]::Error.WriteLine('$longtext') }" 2>&1 > $testdrive\error.txt
+            $e = Get-Content -Path $testdrive\error.txt
+            $e.Count | Should BeExactly 1
+            $e | Should BeExactly $longtext
+        }
     }
 }
 
@@ -56,7 +67,7 @@ Describe 'piping powershell objects to finished native executable' -Tags 'CI' {
     It 'doesn''t throw any exceptions, when we are piping to the closed executable' {
         1..3 | ForEach-Object {
             Start-Sleep -Milliseconds 100
-            # yeild some multi-line formatted object
+            # yield some multi-line formatted object
             @{'a' = 'b'}
         } | testexe -echoargs | Should Be $null
     }

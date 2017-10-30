@@ -1148,44 +1148,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        /// <summary>
-        ///
-        /// Writes text, wrapping a "word" boundaries when needed.
-        ///
-        /// </summary>
-        /// <param name="fg">
-        ///
-        /// Foreground color to output the text.
-        ///
-        /// </param>
-        /// <param name="bg">
-        ///
-        /// Background color to output the text.
-        ///
-        /// </param>
-        /// <param name="text">
-        ///
-        /// Text to be emitted.
-        ///
-        /// </param>
-
-        internal void WriteWrappedLine(ConsoleColor fg, ConsoleColor bg, string text)
-        {
-            WriteLine(fg, bg, WrapToCurrentWindowWidth(text));
-        }
-
-
-
-        // unused for now.
-        //internal
-        //void
-        //WriteWrappedLine(string text)
-        //{
-        //    WriteWrappedLine(RawUI.ForegroundColor, RawUI.BackgroundColor, text);
-        //}
-
-
-
         internal string WrapToCurrentWindowWidth(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -1207,11 +1169,7 @@ namespace Microsoft.PowerShell
             return sb.ToString();
         }
 
-
-
-        #endregion Word Wrapping
-
-
+#endregion Word Wrapping
 
         /// <summary>
         ///
@@ -1248,7 +1206,7 @@ namespace Microsoft.PowerShell
             else
             {
                 // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
-                WriteWrappedLine(
+                WriteLine(
                     DebugForegroundColor,
                     DebugBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
@@ -1309,7 +1267,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                WriteWrappedLine(
+                WriteLine(
                     VerboseForegroundColor,
                     VerboseBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
@@ -1352,7 +1310,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                WriteWrappedLine(
+                WriteLine(
                     WarningForegroundColor,
                     WarningBackgroundColor,
                     StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
