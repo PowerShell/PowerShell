@@ -2184,7 +2184,7 @@ function Restore-PSModule
         [ValidateNotNullOrEmpty()]
         [string]$Destination,
 
-        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
+        [string]$SourceLocation="https://powershell.myget.org/F/powershellmoduletest/api/v2/",
 
         [string]$RequiredVersion
         )
