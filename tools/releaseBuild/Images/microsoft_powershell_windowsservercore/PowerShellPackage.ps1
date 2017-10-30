@@ -52,6 +52,10 @@ try{
     Import-Module "$location\build.psm1" -Force
     Import-Module "$location\tools\packaging" -Force
     $env:platform = $null
+
+    Write-Verbose "Sync'ing Tags..." -verbose
+    Sync-PSTags
+
     Write-Verbose "Bootstrapping powershell build..." -verbose
     Start-PSBootstrap -Force -Package
 
