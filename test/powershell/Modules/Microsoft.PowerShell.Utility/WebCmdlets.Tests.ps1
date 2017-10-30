@@ -803,7 +803,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
     }
 
-    # Test pending support for multiple header capable server on Linux/macOS ses issue #4639
+    # Test pending support for multiple header capable server on Linux/macOS see issue #4639
     It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Multiple Link Headers are present" -Pending:$(!$IsWindows){
         $headers = @{
             Link =
