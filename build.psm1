@@ -543,6 +543,16 @@ Fix steps:
         }
     }
 
+    if ($Environment.IsUbuntu -or $Environment.IsDebian)
+    {
+        # libpsrpclient.so v1.3 now depends on libgssapi_krb5 for Kerberos support.
+        # Ubuntu 16.04 and Debian 8.* do not have this file or symbolic link which prevents
+        # tests from running.  Create the symbolic link to work around it.
+        # See tools\packaging.psm1 for similar behavior at packaging time.
+        # NOTE: PSRP client version 1.4 'should' remove the need for this workaround.
+        $null = New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2" -Path "$publishPath/libgssapi_krb5.so" -ErrorAction Stop
+    }
+
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
