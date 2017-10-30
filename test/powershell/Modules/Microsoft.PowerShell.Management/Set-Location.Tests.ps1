@@ -67,9 +67,9 @@ Describe "Set-Location" -Tags "CI" {
 
         It 'Should go back to previous locations when specifying minus twice' {
             $initialLocation = (Get-Location).Path
-            $firstLocationChange = [System.IO.Path]::GetTempPath()
-            Set-Location $firstLocation
-            Set-Location ([environment]::getfolderpath("user"))
+            Set-Location ([System.IO.Path]::GetTempPath())
+            $firstLocationChange = (Get-Location).Path
+            Set-Location ([System.Environment]::GetFolderPath("user"))
             Set-Location -
             (Get-Location).Path | Should Be $firstLocationChange
             Set-Location -
