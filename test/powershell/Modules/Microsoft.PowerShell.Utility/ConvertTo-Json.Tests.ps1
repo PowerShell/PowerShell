@@ -10,11 +10,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $properties = @{'DictObject' = $dict; 'RandomString' = 'A quick brown fox jumped over the lazy dog'}
         $object = New-Object -TypeName psobject -Property $properties
         $jsonFormat = ConvertTo-Json -InputObject $object
-        $jsonFormat.contains("TestValue1") | Should Be True 
-        $jsonFormat.contains("123456") | Should Be True
-        $jsonFormat.contains("TestValue2") | Should Be True
-        $jsonFormat.contains("78910") | Should Be True
-        $jsonFormat.contains("TestValue3") | Should Be True
-        $jsonFormat.contains("99999") | Should Be True
+        $jsonFormat | Should Match '"TestValue1": 123456'
+        $jsonFormat | Should Match '"TestValue2": 78910'
+        $jsonFormat | Should Match '"TestValue3": 99999'
     }
 }
