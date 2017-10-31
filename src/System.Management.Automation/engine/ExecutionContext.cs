@@ -1196,21 +1196,19 @@ namespace System.Management.Automation
             }
         }
 
-
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadWithPartialName")]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         internal static Assembly LoadAssembly(string name, string filename, out Exception error)
         {
             // First we try to load the assembly based on the filename
-
             Assembly loadedAssembly = null;
             error = null;
-
             if (!String.IsNullOrEmpty(filename))
             {
                 try
                 {
                     loadedAssembly = Assembly.LoadFrom(filename);
+                    return loadedAssembly;
                 }
                 catch (FileNotFoundException fileNotFound)
                 {
@@ -1219,19 +1217,22 @@ namespace System.Management.Automation
                 catch (FileLoadException fileLoadException)
                 {
                     error = fileLoadException;
+                    return null;
                 }
                 catch (BadImageFormatException badImage)
                 {
                     error = badImage;
+                    return null;
                 }
                 catch (SecurityException securityException)
                 {
                     error = securityException;
+                    return null;
                 }
             }
-            
-            // if loading from filename fails, we will try to load from assembly name again to follow the previous code logic, this avoid breaking partner's existed code.
-            if (loadedAssembly == null && !String.IsNullOrEmpty(name))
+
+            // Then we try to load the assembly based on the given name
+            if (!String.IsNullOrEmpty(name))
             {
                 string fixedName = null;
                 // Remove the '.dll' if it's there...
@@ -1247,45 +1248,33 @@ namespace System.Management.Automation
                 {
                     loadedAssembly = Assembly.Load(new AssemblyName(assemblyString));
                 }
-                // if the filename exists and error has been created, we would try NOT to override the error.
                 catch (FileNotFoundException fileNotFound)
                 {
-                    if (error != null)
-                    {
-                        error = fileNotFound;
-                    }
+                    error = fileNotFound;
                 }
                 catch (FileLoadException fileLoadException)
                 {
-                    if (error != null)
-                    {
-                        error = fileLoadException;
-                    }
+                    error = fileLoadException;
                     // this is a legitimate error on CoreCLR for a newly emited with Add-Type assemblies
                     // they cannot be loaded by name, but we are only interested in importing them by path
                 }
                 catch (BadImageFormatException badImage)
                 {
-                    if (error != null)
-                    {
-                        error = badImage;
-                    }
+                    error = badImage;
+                    return null;
                 }
                 catch (SecurityException securityException)
                 {
-                    if (error != null)
-                    {
-                        error = securityException;
-                    }
+                    error = securityException;
+                    return null;
                 }
             }
 
-            // the error is coming from loading assembly from filename, since we load the assembly from assembly name later, ignore the exception.
+            // If the assembly is loaded, we ignore error as it may come from the filepath loading.        
             if (loadedAssembly != null)
             {
                 error = null;
             }
-            // We either return the loaded Assembly, or return null.
             return loadedAssembly;
         }
 
