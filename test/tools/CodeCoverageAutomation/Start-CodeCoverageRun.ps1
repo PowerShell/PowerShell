@@ -143,6 +143,9 @@ $jsonFile = "$outputBaseFolder\CC.json"
 
 try
 {
+    # first thing to do is to be sure that no processes are running which will cause us issues
+    Get-Process pwsh | Stop-Process -Force -ErrorAction Stop
+
     ## This is required so we do not keep on merging coverage reports.
     if(Test-Path $outputLog)
     {
@@ -248,19 +251,19 @@ try
         # operations relative to where the test location is.
         # some tests rely on source files being available in $outputBaseFolder/test
         Push-Location $outputBaseFolder
+
         # clean up partial repo clone before starting
-        if ( Test-Path "$outputBaseFolder/.git" )
+        $cleanupDirectories = "${outputBaseFolder}/.git",
+            "${outputBaseFolder}/src",
+            "${outputBaseFolder}/assets"
+        foreach($directory in $cleanupDirectories)
         {
-            Remove-Item -Force -Recurse "${outputBaseFolder}/.git"
+            if ( Test-Path "$directory" )
+            {
+                Remove-Item -Force -Recurse "$directory"
+            }
         }
-        if ( Test-Path "$outputBaseFolder/src" )
-        {
-            Remove-Item -Force -Recurse "${outputBaseFolder}/src"
-        }
-        if ( Test-Path "$outputBaseFolder/assests" )
-        {
-            Remove-Item -Force -Recurse "${outputBaseFolder}/assets"
-        }
+
         Write-LogPassThru -Message "initializing repo in $outputBaseFolder"
         & $gitexe init
         Write-LogPassThru -Message "git operation 'init' returned $LASTEXITCODE"
@@ -274,8 +277,8 @@ try
         Write-LogPassThru -Message "git operation 'set sparse-checkout' returned $LASTEXITCODE"
 
         Write-LogPassThru -Message "pulling sparse repo"
-        "src" | Out-File -Encoding ascii .git\info\sparse-checkout -Force
-        "assets" | Out-File -Encoding ascii .git\info\sparse-checkout -Append
+        "/src" | Out-File -Encoding ascii .git\info\sparse-checkout -Force
+        "/assets" | Out-File -Encoding ascii .git\info\sparse-checkout -Append
         & $gitexe pull origin master
         Write-LogPassThru -Message "git operation 'pull' returned $LASTEXITCODE"
 
@@ -291,8 +294,14 @@ try
     $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
 
-    # now invoke opencover
-    Invoke-OpenCover @openCoverParams
+    try {
+        # now invoke opencover
+        Invoke-OpenCover @openCoverParams | Out-String | Write-LogPassThru
+    }
+    catch {
+        ("ERROR: " + $_.ScriptStackTrace) | Write-LogPassThru
+        $_ 2>&1 | out-string -Stream | %{ "ERROR: $_" } | Write-LogPassThru
+    }
 
     if(Test-Path $outputLog)
     {
