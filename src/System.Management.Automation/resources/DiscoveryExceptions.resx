@@ -132,9 +132,6 @@
   <data name="InvalidCmdletNameFormat" xml:space="preserve">
     <value>Cannot process the cmdlet. A cmdlet name must consist of a verb and noun pair separated by '-'.</value>
   </data>
-  <data name="CommandDiscoveryMissing" xml:space="preserve">
-    <value>Cannot retrieve an instance of CommandDiscovery.</value>
-  </data>
   <data name="CommandNotFoundException" xml:space="preserve">
     <value>The term '{0}' is not recognized as the name of a cmdlet, function, script file, or operable program.
 Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
@@ -150,9 +147,6 @@ Check the spelling of the name, or if a path was included, verify that the path 
   </data>
   <data name="CommandNameNotCmdlet" xml:space="preserve">
     <value>Parameter '{0}' with value '{1}' cannot be processed because it is not a cmdlet and cannot be processed by the CommandProcessor.</value>
-  </data>
-  <data name="ExecutionContextNotSet" xml:space="preserve">
-    <value>An ExecutionContext has not been set.</value>
   </data>
   <data name="DuplicateCmdletName" xml:space="preserve">
     <value>A cmdlet named '{0}' already exists. Cmdlets must have unique names.</value>

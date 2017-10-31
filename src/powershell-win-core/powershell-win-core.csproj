@@ -2,7 +2,7 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Core on Windows top-level project</Description>
-    <AssemblyName>powershell</AssemblyName>
+    <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>

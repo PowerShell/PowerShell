@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -94,30 +94,12 @@ namespace Microsoft.PowerShell.Commands
             _writer = new StreamingTextWriter(callback, Host.CurrentCulture);
 
             // compute the # of columns available
-            int computedWidth = 120;
+            int computedWidth = int.MaxValue;
 
             if (_width != null)
             {
                 // use the value from the command line
                 computedWidth = _width.Value;
-            }
-            else
-            {
-                // use the value we get from the console
-                try
-                {
-                    // NOTE: we subtract 1 because we want to properly handle
-                    // the following scenario:
-                    // MSH>get-foo|format-table|out-string
-                    // in this case, if the computed width is (say) 80, get-content
-                    // would cause a wrapping of the 80 column long raw strings.
-                    // Hence we set the width to 79.
-                    computedWidth = this.Host.UI.RawUI.BufferSize.Width - 1;
-                }
-                catch (HostException)
-                {
-                    // non interactive host
-                }
             }
 
             // use it to create and initialize the Line Output writer

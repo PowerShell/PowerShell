@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #pragma warning disable 1634, 1691
@@ -7,6 +7,47 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 namespace System.Management.Automation.Runspaces
 {
+    /// <summary>
+    /// Enum for describing different kind information that can be configured in runspace configuration.
+    /// </summary>
+    internal enum RunspaceConfigurationCategory
+    {
+        /// <summary>
+        /// Cmdlets
+        /// </summary>
+        Cmdlets,
+
+        /// <summary>
+        /// Providers
+        /// </summary>
+        Providers,
+
+        /// <summary>
+        /// Assemblies
+        /// </summary>
+        Assemblies,
+
+        /// <summary>
+        /// Scripts
+        /// </summary>
+        Scripts,
+
+        /// <summary>
+        /// Initialization scripts
+        /// </summary>
+        InitializationScripts,
+
+        /// <summary>
+        /// Types
+        /// </summary>
+        Types,
+
+        /// <summary>
+        /// Formats
+        /// </summary>
+        Formats,
+    }
+
     /// <summary>
     /// Define class for runspace configuration entry.
     /// </summary>

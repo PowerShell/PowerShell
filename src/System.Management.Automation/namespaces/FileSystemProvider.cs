@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -6614,12 +6614,17 @@ namespace Microsoft.PowerShell.Commands
                         delimiter = dynParams.Delimiter;
 
                     // Get the stream type
-                    usingByteEncoding = dynParams.UsingByteEncoding;
+                    usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
+
+                    if (usingByteEncoding && streamTypeSpecified)
+                    {
+                        WriteWarning(FileSystemProviderStrings.EncodingNotUsed);
+                    }
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = dynParams.Encoding;
                     }
 
                     // Get the wait value
@@ -6765,12 +6770,17 @@ namespace Microsoft.PowerShell.Commands
 
                 if (dynParams != null)
                 {
-                    usingByteEncoding = dynParams.UsingByteEncoding;
+                    usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
+
+                    if (usingByteEncoding && streamTypeSpecified)
+                    {
+                        WriteWarning(FileSystemProviderStrings.EncodingNotUsed);
+                    }
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = dynParams.Encoding;
                     }
 
 #if !UNIX
@@ -7477,73 +7487,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    /// <summary>
-    /// Defines the values that can be supplied as the encoding parameter in the
-    /// FileSystemContentDynamicParametersBase class.
-    /// </summary>
-    public enum FileSystemCmdletProviderEncoding
-    {
-        /// <summary>
-        /// No encoding.
-        /// </summary>
-        Unknown,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        String,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        Unicode,
-
-        /// <summary>
-        /// Byte encoding.
-        /// </summary>
-        Byte,
-
-        /// <summary>
-        /// Big Endian Unicode encoding.
-        /// </summary>
-        BigEndianUnicode,
-
-        /// <summary>
-        /// UTF8 encoding.
-        /// </summary>
-        UTF8,
-
-        /// <summary>
-        /// UTF7 encoding.
-        /// </summary>
-        UTF7,
-
-        /// <summary>
-        /// UTF32 encoding.
-        /// </summary>
-        UTF32,
-
-        /// <summary>
-        /// ASCII encoding.
-        /// </summary>
-        Ascii,
-
-        /// <summary>
-        /// Default encoding.
-        /// </summary>
-        Default,
-
-        /// <summary>
-        /// OEM encoding.
-        /// </summary>
-        Oem,
-
-        /// <summary>
-        /// Big Endian UTF32 encoding.
-        /// </summary>
-        BigEndianUTF32,
-    } // FileSystemCmdletProviderEncoding
-
     #endregion
 
     #region Dynamic Parameters
@@ -7647,7 +7590,39 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                _encoding = value;
+                // If an encoding was explicitly set, be sure to capture that.
+                WasStreamTypeSpecified = true;
+            }
+        }
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
+
+        /// <summary>
+        /// Return file contents as a byte stream or create file from a series of bytes
+        /// </summary>
+        [Parameter]
+        public SwitchParameter AsByteStream { get; set; }
 
 #if !UNIX
         /// <summary>
@@ -7658,39 +7633,10 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         /// <summary>
-        /// Gets the encoding from the specified StreamType parameter.
-        /// </summary>
-        public Encoding EncodingType
-        {
-            get
-            {
-                return Utils.GetEncodingFromEnum(Encoding);
-            }
-        } // EncodingType
-
-        /// <summary>
-        /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
-        /// if the stream was opened with "Byte" encoding, false otherwise.
-        /// </summary>
-        public bool UsingByteEncoding
-        {
-            get
-            {
-                return Encoding == FileSystemCmdletProviderEncoding.Byte;
-            } // get
-        } // UsingByteEncoding
-
-        /// <summary>
         /// Gets the status of the StreamType parameter.  Returns true
         /// if the stream was opened with a user-specified encoding, false otherwise.
         /// </summary>
-        public bool WasStreamTypeSpecified
-        {
-            get
-            {
-                return (Encoding != FileSystemCmdletProviderEncoding.String);
-            } // get
-        } // WasStreamTypeSpecified
+        public bool WasStreamTypeSpecified { get; private set; }
 
     } // class FileSystemContentDynamicParametersBase
 
@@ -7748,13 +7694,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _delimiter;
-            } // get
+            }
 
             set
             {
                 DelimiterSpecified = true;
                 _delimiter = value;
-            } // set
+            }
         }
         private string _delimiter = "\n";
 

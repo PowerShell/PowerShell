@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Concurrent;
@@ -31,7 +31,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Base class for all Adapters
-    /// This is the place to look every time you create a new Adapter. Consider if you 
+    /// This is the place to look every time you create a new Adapter. Consider if you
     /// should implement each of the virtual methods here.
     /// The base class deals with errors and performs additional operations before and after
     /// calling the derived virtual methods.
@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -319,7 +319,7 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-        #endregion parameterized property      
+        #endregion parameterized property
 
         #endregion virtual
 
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation
             }
 
             // Dual-purpose of ([type]<expression>).method() syntax makes this code a little bit tricky to understand.
-            // First purpose of this syntax is cast. 
+            // First purpose of this syntax is cast.
             // Second is a non-virtual super-class method call.
             //
             // Consider this code:
@@ -1126,12 +1126,12 @@ namespace System.Management.Automation
             //     [string]foo() {return 'B.foo'}
             //     [string]foo($a) {return 'B.foo'}
             // }
-            // 
+            //
             // class Q : B {
             //     [string]$Name
             //     Q([string]$name) {$this.name = $name}
             // }
-            // 
+            //
             // ([Q]'t').foo()
             // ```
             //
@@ -1139,7 +1139,7 @@ namespace System.Management.Automation
             // So methodDeclaringType is [B] and targetType is [Q]
             //
             // Now consider another code
-            // 
+            //
             // ```
             // ([object]"abc").ToString()
             // ```
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Called in GetBestMethodAndArguments after a call to FindBestMethod to perform the
         /// type conversion, copying(varArg) and optional value setting of the final arguments.
-        /// </summary>        
+        /// </summary>
         internal static object[] GetMethodArgumentsBase(string methodName,
             ParameterInformation[] parameters, object[] arguments,
             bool expandParamsOnBest)
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation
                     if (resultType == typeof(object))
                     {
                         PSObject.memberResolution.WriteLine("Parameter was an PSObject and will be converted to System.Object.");
-                        // we use PSObject.Base so we don't return 
+                        // we use PSObject.Base so we don't return
                         // PSCustomObject
                         return PSObject.Base(mshObj);
                     }
@@ -2815,8 +2815,8 @@ namespace System.Management.Automation
         {
             var typeInfo = type.GetTypeInfo();
             Type typeToGetMethod = type;
-#if CORECLR 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up 
+#if CORECLR
+            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection methods on the public parent.
             if (!TypeResolver.IsPublic(typeInfo) && DisallowPrivateReflection(typeInfo))
             {
@@ -2911,8 +2911,8 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">bindingFlags to use</param>
         private static void PopulateEventReflectionTable(Type type, Dictionary<string, EventCacheEntry> typeEvents, BindingFlags bindingFlags)
         {
-#if CORECLR 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up 
+#if CORECLR
+            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection events on the public parent.
             TypeInfo typeInfo = type.GetTypeInfo();
             if (!TypeResolver.IsPublic(typeInfo) && DisallowPrivateReflection(typeInfo))
@@ -2954,7 +2954,7 @@ namespace System.Management.Automation
         /// </summary>
         private static bool PropertyAlreadyPresent(List<PropertyInfo> previousProperties, PropertyInfo property)
         {
-            // The loop below 
+            // The loop below
             bool returnValue = false;
             ParameterInfo[] propertyParameters = property.GetIndexParameters();
             int propertyIndexLength = propertyParameters.Length;
@@ -2998,7 +2998,7 @@ namespace System.Management.Automation
         {
             var tempTable = new Dictionary<string, List<PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
             Type typeToGetPropertyAndField = type;
-#if CORECLR 
+#if CORECLR
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up the
             // derivation chain to find the first public parent, and use reflection properties/fileds on the public parent.
             TypeInfo typeInfo = type.GetTypeInfo();
@@ -3563,7 +3563,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -3832,7 +3832,7 @@ namespace System.Management.Automation
                     methodInformation.method.Name, arguments.Length, inner.Message);
             }
             //
-            // Note that FlowControlException, ScriptCallDepthException and ParameterBindingException will be wrapped in 
+            // Note that FlowControlException, ScriptCallDepthException and ParameterBindingException will be wrapped in
             // a TargetInvocationException only when the invocation uses reflection so we need to bubble them up here as well.
             //
             catch (ParameterBindingException) { throw; }
@@ -3942,7 +3942,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// this is a flavor of MethodInvokeDotNet to deal with a peculiarity of property setters:
-        /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional 
+        /// Tthe setValue is always the last parameter. This enables a parameter after a varargs or optional
         /// parameters and GetBestMethodAndArguments is not prepared for that.
         /// This method disregards the last parameter in its call to GetBestMethodAndArguments used in this case
         /// more for its "Arguments" side than for its "BestMethod" side, since there is only one method.
@@ -4223,7 +4223,7 @@ namespace System.Management.Automation
     internal class BaseDotNetAdapterForAdaptedObjects : DotNetAdapter
     {
         /// <summary>
-        /// Return a collection representing the <paramref name="obj"/> object's 
+        /// Return a collection representing the <paramref name="obj"/> object's
         /// members as returned by CLR reflection.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -4470,7 +4470,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -4528,7 +4528,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -4551,7 +4551,7 @@ namespace System.Management.Automation
         #endregion virtual
     }
     /// <summary>
-    /// Base class for all adapters that adapt only properties and retain 
+    /// Base class for all adapters that adapt only properties and retain
     /// .NET methods
     /// </summary>
     internal abstract class PropertyOnlyAdapter : DotNetAdapter
@@ -4627,7 +4627,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -5264,7 +5264,7 @@ namespace System.Management.Automation
 
             MethodInfo inferredMethod = Infer(genericMethod, typeParameters, typesOfMethodParameters, typesOfMethodArguments);
 
-            // normal inference failed, perhaps instead of inferring for 
+            // normal inference failed, perhaps instead of inferring for
             //   M<T1,T2,T3>(T1, T2, ..., params T3 [])
             // we can try to infer for this signature instead
             //   M<T1,T2,T3>)(T1, T2, ..., T3, T3, T3, T3)

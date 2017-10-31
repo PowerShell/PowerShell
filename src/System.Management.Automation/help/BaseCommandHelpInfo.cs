@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Name of command. 
+        /// Name of command.
         /// </summary>
         /// <value>Name of command</value>
         internal override string Name
@@ -130,7 +130,7 @@ namespace System.Management.Automation
         /// RelatedLinks.
         /// </summary>
         /// <returns>
-        /// Null if no Uri is specified by the helpinfo or a 
+        /// Null if no Uri is specified by the helpinfo or a
         /// valid Uri.
         /// </returns>
         /// <exception cref="InvalidOperationException">
@@ -249,8 +249,8 @@ namespace System.Management.Automation
                     if (!System.Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute))
                     {
                         // WinBlue: 545315 Online help links are broken with localized help
-                        // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (möglicherwei se auf Englisch)
-                        // Split the string based on <s> (space). We decided to go with this approach as 
+                        // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
+                        // Split the string based on <s> (space). We decided to go with this approach as
                         // UX localization authors use spaces. Correctly extracting only the wellformed URI
                         // is out-of-scope for this fix.
                         string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
@@ -316,8 +316,8 @@ namespace System.Management.Automation
                         if (!System.Uri.IsWellFormedUriString(uriString, UriKind.RelativeOrAbsolute))
                         {
                             // WinBlue: 545315 Online help links are broken with localized help
-                            // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (möglicherwei se auf Englisch)
-                            // Split the string based on <s> (space). We decided to go with this approach as 
+                            // Example: https://go.microsoft.com/fwlink/?LinkID=113324 (moglicherwei se auf Englisch)
+                            // Split the string based on <s> (space). We decided to go with this approach as
                             // UX localization authors use spaces. Correctly extracting only the wellformed URI
                             // is out-of-scope for this fix.
                             string[] tempUriSplitArray = uriString.Split(Utils.Separators.Space);
@@ -342,10 +342,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// Cmdlet help info looks for pattern in Synopsis and 
+        /// Cmdlet help info looks for pattern in Synopsis and
         /// DetailedDescription
         /// </summary>
         /// <param name="pattern"></param>
@@ -374,7 +374,7 @@ namespace System.Management.Automation
         /// Returns help information for a parameter(s) identified by pattern
         /// </summary>
         /// <param name="pattern">pattern to search for parameters</param>
-        /// <returns>A collection of parameters that match pattern</returns>        
+        /// <returns>A collection of parameters that match pattern</returns>
         internal override PSObject[] GetParameter(string pattern)
         {
             // this object knows Maml format...

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 namespace System.Management.Automation
@@ -27,64 +27,7 @@ namespace System.Management.Automation
         /// </summary>
         public RunspaceInvoke()
         {
-            RunspaceConfiguration rc = RunspaceConfiguration.Create();
-            _runspace = RunspaceFactory.CreateRunspace(rc);
-            _runspace.Open();
-            if (Runspace.DefaultRunspace == null)
-            {
-                Runspace.DefaultRunspace = _runspace;
-            }
-        }
-
-        /// <summary>
-        /// Creates a RunspaceInvoke for invoking commands. Underlying Runspace is created using
-        /// specified RunspaceConfiguration
-        /// </summary>
-        /// <param name="runspaceConfiguration">RunspaceConfiguration used for creating the runspace
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when runspaceConfiguration is null
-        /// </exception>
-        public RunspaceInvoke(RunspaceConfiguration runspaceConfiguration)
-        {
-            if (runspaceConfiguration == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("runspaceConfiguration");
-            }
-            _runspace = RunspaceFactory.CreateRunspace(runspaceConfiguration);
-            _runspace.Open();
-            if (Runspace.DefaultRunspace == null)
-            {
-                Runspace.DefaultRunspace = _runspace;
-            }
-        }
-
-        /// <summary>
-        /// Creates a RunspaceInvoke for invoking commands. Underlying Runspace is created using the
-        /// specified console file.
-        /// </summary>
-        /// <param name="consoleFilePath">Console file used for creating the underlying
-        /// runspace.</param>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown when consoleFilePath is null
-        /// </exception>
-        /// <exception cref="PSConsoleLoadException">
-        /// Thrown when errors occurs in loading one or more PSSnapins.
-        /// </exception>
-        public RunspaceInvoke(string consoleFilePath)
-        {
-            if (consoleFilePath == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("consoleFilePath");
-            }
-
-            PSConsoleLoadException warnings;
-            RunspaceConfiguration rc = RunspaceConfiguration.Create(consoleFilePath, out warnings);
-            if (warnings != null)
-            {
-                throw warnings;
-            }
-            _runspace = RunspaceFactory.CreateRunspace(rc);
+            _runspace = RunspaceFactory.CreateRunspace();
             _runspace.Open();
             if (Runspace.DefaultRunspace == null)
             {

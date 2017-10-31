@@ -1,7 +1,7 @@
 #pragma warning disable 1634, 1691
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -3212,13 +3212,6 @@ namespace System.Management.Automation
                 if (IsErrorActionSet)
                     return _errorAction;
 
-                // Debug takes preference over Verbose
-                if (Debug)
-                    return ActionPreference.Inquire;
-                if (Verbose)
-                    return ActionPreference.Continue;
-
-                // fall back to $ErrorAction
                 if (!_isErrorActionPreferenceCached)
                 {
                     bool defaultUsed = false;

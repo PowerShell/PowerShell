@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -565,7 +565,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 ComplexWriter complexWriter = new ComplexWriter();
 
-                complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                complexWriter.Initialize(_lo, int.MaxValue);
                 complexWriter.WriteObject(cve.formatValueList);
 
                 return;
@@ -921,6 +921,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
+                // Tables need to use spaces for padding to maintain table look even if console window is resized.
+                // For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
+                // If we detect that int.MaxValue is used, first we try to get the current console window width.
+                // However, if we can't read that (for example, implicit remoting has no console window), we default
+                // to something reasonable: 120 columns.
+                if (columnsOnTheScreen == int.MaxValue)
+                {
+                    try
+                    {
+                        columnsOnTheScreen = Console.WindowWidth;
+                    }
+                    catch
+                    {
+                        columnsOnTheScreen = 120;
+                    }
+                }
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)

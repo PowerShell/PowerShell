@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -12,24 +12,24 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct 
-    /// connection to the server is used 
+    /// IMPORTANT: proxy configuration is supported for HTTPS only; for HTTP, the direct
+    /// connection to the server is used
     /// </summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum ProxyAccessType
     {
         /// <summary>
-        /// ProxyAccessType is not specified. That means Proxy information (ProxyAccessType, ProxyAuthenticationMechanism 
+        /// ProxyAccessType is not specified. That means Proxy information (ProxyAccessType, ProxyAuthenticationMechanism
         /// and ProxyCredential)is not passed to WSMan at all.
         /// </summary>
         None = 0,
         /// <summary>
         /// use the Internet Explorer proxy configuration for the current user.
-        ///  Internet Explorer proxy settings for the current active network connection. 
-        ///  This option requires the user profile to be loaded, so the option can 
-        ///  be directly used when called within a process that is running under 
-        ///  an interactive user account identity; if the client application is running 
-        ///  under a user context different than the interactive user, the client 
+        ///  Internet Explorer proxy settings for the current active network connection.
+        ///  This option requires the user profile to be loaded, so the option can
+        ///  be directly used when called within a process that is running under
+        ///  an interactive user account identity; if the client application is running
+        ///  under a user context different than the interactive user, the client
         ///  application has to explicitly load the user profile prior to using this option.
         /// </summary>
         IEConfig = 1,
@@ -67,9 +67,9 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// If false, underlying WSMan infrastructure will compress data sent on the network.
-        /// If true, data will not be compressed. Compression improves performance by 
+        /// If true, data will not be compressed. Compression improves performance by
         /// reducing the amount of data sent on the network. Compression my require extra
-        /// memory consumption and CPU usage. In cases where available memory / CPU is less, 
+        /// memory consumption and CPU usage. In cases where available memory / CPU is less,
         /// set this property to "true".
         /// By default the value of this property is "false".
         /// </summary>
@@ -78,25 +78,25 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
-        /// already loaded the profile (i.e. in another session). 
+        /// already loaded the profile (i.e. in another session).
         /// </summary>
         public bool NoMachineProfile { get; set; } = false;
 
         /// <summary>
-        /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType, 
+        /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
         /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
         /// </summary>
         public ProxyAccessType ProxyAccessType { get; set; } = ProxyAccessType.None;
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
-        /// This parameter takes a set of authentication methods the user can select 
+        /// This parameter takes a set of authentication methods the user can select
         /// from.  The available options should be as follows:
-        /// - Negotiate: Use the default authentication (as defined by the underlying 
+        /// - Negotiate: Use the default authentication (as defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
         /// - Digest: Use Digest authentication for establishing a remote connection
-        /// 
+        ///
         /// Default is Negotiate.
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
@@ -130,47 +130,47 @@ namespace System.Management.Automation.Remoting
 
 
         /// <summary>
-        /// When connecting over HTTPS, the client does not validate that the server 
-        /// certificate is signed by a trusted certificate authority (CA). Use only when 
-        /// the remote computer is trusted by other means, for example, if the remote 
-        /// computer is part of a network that is physically secure and isolated or the 
+        /// When connecting over HTTPS, the client does not validate that the server
+        /// certificate is signed by a trusted certificate authority (CA). Use only when
+        /// the remote computer is trusted by other means, for example, if the remote
+        /// computer is part of a network that is physically secure and isolated or the
         /// remote computer is listed as a trusted host in WinRM configuration
         /// </summary>
         public bool SkipCACheck { get; set; }
 
         /// <summary>
-        /// Indicates that certificate common name (CN) of the server need not match the 
-        /// hostname of the server. Used only in remote operations using https. This 
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines.
         /// </summary>
         public bool SkipCNCheck { get; set; }
 
         /// <summary>
-        /// Indicates that certificate common name (CN) of the server need not match the 
-        /// hostname of the server. Used only in remote operations using https. This 
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines
         /// </summary>
         public bool SkipRevocationCheck { get; set; }
 
         /// <summary>
-        /// The duration for which PowerShell remoting waits before timing out 
-        /// for any operation. The user would like to tweak this timeout 
+        /// The duration for which PowerShell remoting waits before timing out
+        /// for any operation. The user would like to tweak this timeout
         /// depending on whether he/she is connecting to a machine in the data
         /// center or across a slow WAN.
-        /// 
+        ///
         /// Default: 3*60*1000 == 3minutes
         /// </summary>
         public TimeSpan OperationTimeout { get; set; } = TimeSpan.FromMilliseconds(BaseTransportManager.ClientDefaultOperationTimeoutMs);
 
         /// <summary>
-        /// Specifies that no encryption will be used when doing remote operations over 
-        /// http. Unencrypted traffic is not allowed by default and must be enabled in 
+        /// Specifies that no encryption will be used when doing remote operations over
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in
         /// the local configuration
         /// </summary>
         public bool NoEncryption { get; set; }
 
         /// <summary>
-        /// Indicates the request is encoded in UTF16 format rather than UTF8 format; 
+        /// Indicates the request is encoded in UTF16 format rather than UTF8 format;
         /// UTF8 is the default.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
@@ -226,31 +226,31 @@ namespace System.Management.Automation.Remoting
         public PSPrimitiveDictionary ApplicationArguments { get; set; }
 
         /// <summary>
-        /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine. 
-        /// Simply put, the timeout for a remote runspace creation. 
-        /// The user would like to tweak this timeout depending on whether 
+        /// The duration for which PowerShell remoting waits before timing out on a connection to a remote machine.
+        /// Simply put, the timeout for a remote runspace creation.
+        /// The user would like to tweak this timeout depending on whether
         /// he/she is connecting to a machine in the data center or across a slow WAN.
-        /// 
+        ///
         /// Default: 3 * 60 * 1000 = 3 minutes
         /// </summary>
         public TimeSpan OpenTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultOpenTimeout);
 
         /// <summary>
-        /// The duration for which PowerShell should wait before it times out on cancel operations 
-        /// (close runspace or stop powershell). For instance, when the user hits ctrl-C, 
-        /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state. 
-        /// The user wouldn’t mind waiting for 15 seconds, but this should be time bound and of a shorter duration. 
+        /// The duration for which PowerShell should wait before it times out on cancel operations
+        /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
+        /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
+        /// The user wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
         /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client has hung.
-        /// 
+        ///
         /// Default: 60 * 1000 = 1 minute
         /// </summary>
         public TimeSpan CancelTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.defaultCancelTimeout);
 
         /// <summary>
-        /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down. 
-        /// This is especially important as these values may have to be configured differently for enterprise administration 
+        /// The duration for which a Runspace on server needs to wait before it declares the client dead and closes itself down.
+        /// This is especially important as these values may have to be configured differently for enterprise administration
         /// and exchange scenarios.
-        /// 
+        ///
         /// Default: -1 -> Use current server value for IdleTimeout.
         /// </summary>
         public TimeSpan IdleTimeout { get; set; } = TimeSpan.FromMilliseconds(RunspaceConnectionInfo.DefaultIdleTimeout);
@@ -260,7 +260,7 @@ namespace System.Management.Automation.Remoting
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements New-PSSessionOption cmdlet.  
+    /// This class implements New-PSSessionOption cmdlet.
     /// Spec: TBD
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144305", RemotingCapability = RemotingCapability.None)]
@@ -284,9 +284,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// If false, underlying WSMan infrastructure will compress data sent on the network.
-        /// If true, data will not be compressed. Compression improves performance by 
+        /// If true, data will not be compressed. Compression improves performance by
         /// reducing the amount of data sent on the network. Compression my require extra
-        /// memory consumption and CPU usage. In cases where available memory / CPU is less, 
+        /// memory consumption and CPU usage. In cases where available memory / CPU is less,
         /// set this property to "true".
         /// By default the value of this property is "false".
         /// </summary>
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
-        /// already loaded the profile (i.e. in another session). 
+        /// already loaded the profile (i.e. in another session).
         /// </summary>
         [Parameter]
         public SwitchParameter NoMachineProfile { get; set; }
@@ -364,11 +364,11 @@ namespace Microsoft.PowerShell.Commands
         public PSPrimitiveDictionary ApplicationArguments { get; set; }
 
         /// <summary>
-        /// The duration for which PowerShell remoting waits (in milliseconds) before timing 
-        /// out on a connection to a remote machine. Simply put, the timeout for a remote 
-        /// runspace creation. 
-        /// 
-        /// The user would like to tweak this timeout depending on whether 
+        /// The duration for which PowerShell remoting waits (in milliseconds) before timing
+        /// out on a connection to a remote machine. Simply put, the timeout for a remote
+        /// runspace creation.
+        ///
+        /// The user would like to tweak this timeout depending on whether
         /// he/she is connecting to a machine in the data center or across a slow WAN.
         /// </summary>
         [Parameter]
@@ -386,11 +386,11 @@ namespace Microsoft.PowerShell.Commands
         private int? _openTimeout;
 
         /// <summary>
-        /// The duration for which PowerShell should wait (in milliseconds) before it 
+        /// The duration for which PowerShell should wait (in milliseconds) before it
         /// times out on cancel operations (close runspace or stop powershell). For
         /// instance, when the user hits ctrl-C, New-PSSession cmdlet tries to call a
-        /// stop on all remote runspaces which are in the Opening state. The user 
-        /// wouldn’t mind waiting for 15 seconds, but this should be time bound and of a 
+        /// stop on all remote runspaces which are in the Opening state. The user
+        /// wouldn't mind waiting for 15 seconds, but this should be time bound and of a
         /// shorter duration. A high timeout here like 3 minutes will give the user
         /// a feeling that the PowerShell client has hung.
         /// </summary>
@@ -410,8 +410,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The duration for which a Runspace on server needs to wait (in milliseconds) before it
-        /// declares the client dead and closes itself down. 
-        /// This is especially important as these values may have to be configured differently 
+        /// declares the client dead and closes itself down.
+        /// This is especially important as these values may have to be configured differently
         /// for enterprise administration scenarios.
         /// </summary>
         [Parameter]
@@ -433,7 +433,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters copied from New-WSManSessionOption
 
         /// <summary>
-        /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType, 
+        /// By default, ProxyAccessType is None, that means Proxy information (ProxyAccessType,
         /// ProxyAuthenticationMechanism and ProxyCredential)is not passed to WSMan at all.
         /// </summary>
         [Parameter]
@@ -442,9 +442,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
-        /// This parameter takes a set of authentication methods the user can select 
+        /// This parameter takes a set of authentication methods the user can select
         /// from.  The available options should be as follows:
-        /// - Negotiate: Use the default authentication (as defined by the underlying 
+        /// - Negotiate: Use the default authentication (as defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Basic:  Use basic authentication for establishing a remote connection
         /// - Digest: Use Digest authentication for establishing a remote connection
@@ -462,10 +462,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCACheck".
-        /// When connecting over HTTPS, the client does not validate that the server 
-        /// certificate is signed by a trusted certificate authority (CA). Use only when 
-        /// the remote computer is trusted by other means, for example, if the remote 
-        /// computer is part of a network that is physically secure and isolated or the 
+        /// When connecting over HTTPS, the client does not validate that the server
+        /// certificate is signed by a trusted certificate authority (CA). Use only when
+        /// the remote computer is trusted by other means, for example, if the remote
+        /// computer is part of a network that is physically secure and isolated or the
         /// remote computer is listed as a trusted host in WinRM configuration
         /// </summary>
         [Parameter]
@@ -478,8 +478,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCNCheck".
-        /// Indicates that certificate common name (CN) of the server need not match the 
-        /// hostname of the server. Used only in remote operations using https. This 
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines
         /// </summary>
         [Parameter]
@@ -492,8 +492,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipRevocation".
-        /// Indicates that certificate common name (CN) of the server need not match the 
-        /// hostname of the server. Used only in remote operations using https. This 
+        /// Indicates that certificate common name (CN) of the server need not match the
+        /// hostname of the server. Used only in remote operations using https. This
         /// option should only be used for trusted machines
         /// </summary>
         [Parameter]
@@ -524,8 +524,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".
-        /// Specifies that no encryption will be used when doing remote operations over 
-        /// http. Unencrypted traffic is not allowed by default and must be enabled in 
+        /// Specifies that no encryption will be used when doing remote operations over
+        /// http. Unencrypted traffic is not allowed by default and must be enabled in
         /// the local configuration
         /// </summary>
         [Parameter]
@@ -541,7 +541,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "UTF16".
-        /// Indicates the request is encoded in UTF16 format rather than UTF8 format; 
+        /// Indicates the request is encoded in UTF16 format rather than UTF8 format;
         /// UTF8 is the default.
         /// </summary>
         [Parameter]

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Management.Automation.Runspaces;
@@ -216,22 +216,6 @@ namespace System.Management.Automation
         #endregion Constructors
 
         #region Properties
-
-        /// <summary>
-        /// runspaceConfiguration information for this runspace
-        /// </summary>
-        internal override RunspaceConfiguration RunspaceConfiguration
-        {
-            get
-            {
-#pragma warning disable 56503
-
-                throw PSTraceSource.NewNotImplementedException();
-
-#pragma warning restore 56503
-            }
-        }
-
 
         /// <summary>
         /// initialsessionstate information for this runspace

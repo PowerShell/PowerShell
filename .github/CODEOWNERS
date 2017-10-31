@@ -41,7 +41,7 @@ demos/                                             @joeyaiello @SteveL-MSFT @Hem
 src/System.Management.Automation/DscSupport        @TravisEz13 @dantraMSFT
 
 # Area: engine
-src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay
+src/System.Management.Automation/engine            @daxian-dbw @lzybkr @BrucePay
 
 # Area: Debugging
 # Must be below engine to override
@@ -54,7 +54,7 @@ src/System.Management.Automation/help              @Francisco-Gamino @adityapatw
 # @daxian-dbw @lzybkr @charub
 
 # Area: Language
-# @daxian-dbw @vors @lzybkr @BrucePay
+src/System.Management.Automation/engine/parser     @daxian-dbw @vors @lzybkr @BrucePay
 
 # Area: Providers
 src/System.Management.Automation/namespaces        @BrucePay @anmenaga
@@ -77,3 +77,7 @@ src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHi
 build.*    @daxian-dbw @TravisEz13 @adityapatwardhan
 tools/     @daxian-dbw @TravisEz13 @adityapatwardhan
 docker/    @daxian-dbw @TravisEz13 @adityapatwardhan
+
+# Area: Compliance
+tools/terms    @TravisEz13
+tools/credScan @TravisEz13

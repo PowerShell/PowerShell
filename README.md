@@ -43,18 +43,30 @@ You can download and install a PowerShell package for any of the following platf
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | macOS 10.12                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
-| Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]
+| Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]       |
 
-[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x64.msi
-[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-win-x86.msi
-[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.17.04_amd64.deb
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.16.04_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.ubuntu.14.04_amd64.deb
-[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.debian.8_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell_6.0.0-beta.8-1.debian.9_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0_beta.8-1.rhel.7.x86_64.rpm
-[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/PowerShell-6.0.0-beta.8-x86_64.AppImage
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.8/powershell-6.0.0-beta.8-osx.10.12-x64.pkg
+You can also download the PowerShell binary archives for Windows, macOS and Linux.
+
+| Platform     | Downloads                                       | How to Install                 |
+| ------------ | ----------------------------------------------- | ------------------------------ |
+| Windows      | [32-bit][rl-winx86-zip]/[64-bit][rl-winx64-zip] | [Instructions][in-windows-zip] |
+| macOS        | [64-bit][rl-macos-tar]                          | [Instructions][in-tar]   |
+| Linux        | [64-bit][rl-linux-tar]                          | [Instructions][in-tar]   |
+
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/PowerShell-6.0.0-beta.9-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/PowerShell-6.0.0-beta.9-win-x86.msi
+[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell_6.0.0-beta.9-1.ubuntu.17.04_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell_6.0.0-beta.9-1.ubuntu.16.04_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell_6.0.0-beta.9-1.ubuntu.14.04_amd64.deb
+[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell_6.0.0-beta.9-1.debian.8_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell_6.0.0-beta.9-1.debian.9_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0_beta.9-1.rhel.7.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/PowerShell-6.0.0-beta.9-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-osx.10.12-x64.pkg
+[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/PowerShell-6.0.0-beta.9-win-x86.zip
+[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/PowerShell-6.0.0-beta.9-win-x64.zip
+[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-osx-x64.tar.gz
+[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-linux-x64.tar.gz
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
@@ -73,6 +85,8 @@ You can download and install a PowerShell package for any of the following platf
 [in-macos]: docs/installation/linux.md#macos-1012
 [in-docker]: docker
 [in-kali]: docs/installation/linux.md#kali
+[in-windows-zip]: docs/installation/windows.md#zip
+[in-tar]: docs/installation/linux.md#binary-archives
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 

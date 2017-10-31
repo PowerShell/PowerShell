@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -65,7 +65,7 @@ namespace System.Management.Automation
                     // Porting note: on non-Windows platforms, we want to always allow just 'commandName'
                     // as an acceptable command name. However, we also want to allow commands to be
                     // called with the .ps1 extension, so that 'script.ps1' can be called by 'script'.
-                    commandPatterns = new[] { commandName + ".ps1", commandName };
+                    commandPatterns = new[] { commandName, commandName + ".ps1" };
                 }
                 _postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
                 _acceptableCommandNames = acceptableCommandNames;

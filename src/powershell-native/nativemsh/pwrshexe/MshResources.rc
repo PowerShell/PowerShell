@@ -1,4 +1,4 @@
-// Copyright (C) 2005 Microsoft Corporation
+// Copyright (c) Microsoft Corporation. All rights reserved.
 //
 // resource script for msh.exe
 //
@@ -28,16 +28,16 @@ BEGIN
     110                       "Windows PowerShell (x86)"
     111                       "Performs object-based (command-line) functions"
     112                       "Run as 32"
-    113                       "Windows PowerShell Integrated Scripting Environment. Performs object-based (command-line) functions"    
+    113                       "Windows PowerShell Integrated Scripting Environment. Performs object-based (command-line) functions"
     118                       "Run as Administrator"
     119                       "Runs with administrator privileges"
     120                       "Windows PowerShell Cmdlet Definition XML Document"
     121                       "Windows PowerShell Session Configuration File"
     122                       "Run ISE as Administrator"
     123                       "Runs ISE with administrator privileges"
-    
+
     // Misc resources
-    
+
     // Friendly name for our OID mapping
     124                       "Document Encryption"
 END

@@ -147,6 +147,7 @@ psobjects
 psproxyjobs
 PSReadline
 PSSessionConfiguration
+pwsh
 redistributables
 Register-EngineEvent
 Register-PSSessionConfiguration
@@ -236,6 +237,7 @@ beta.4
 beta.5
 beta.6
 beta.8
+beta.9
 binding
 bool
 CDXML
@@ -244,6 +246,7 @@ CI
 cleanup
 CodeMethod
 CodeOwner
+codepage
 CommandNotFoundException
 ContentType
 ConvertTo-Html
@@ -251,11 +254,14 @@ CoreConsoleHost
 crossgen'ing
 DarwinJS
 dchristian3188
+DdWr
 deserialization
 deserialize
+dlwyatt
+dotnet
 enums
-ExecutionPolicy
 EXE's
+ExecutionPolicy
 FileCatalog
 FilterHashtable
 foreach
@@ -279,9 +285,11 @@ KeyHandler
 KirkMunro
 kittholland
 kwiknick
+kylesferrazza
 LDSpits
 Lee303
 libpsl-native
+libunwind8
 LoadFrom
 markekraus
 meta
@@ -294,6 +302,7 @@ nanoserver-insider
 non-22
 non-CIM
 non-R2
+OAuth
 oising
 oneget.org
 PetSerAl
@@ -309,9 +318,10 @@ PSScriptAnalyzer
 PSVersion
 PVS-Studio
 Pwrshplughin.dll
+raghav710
+Raspbian
 rc2-24027
 rc3-24011
-Raspbian
 README.md
 RelationLink
 richardszalay
@@ -329,14 +339,17 @@ system.manage
 Tadas
 TestCase
 TheFlyingCorpse
+thezim
 TimCurwick
 timestamp
 TimeZone
 TPA
 Travis
+travisty
 TTY's
 UserAgent
 UserData
+UserVoice
 Utf8
 UTF8NoBOM
 v0.1.0
@@ -350,6 +363,7 @@ ValidateNotNullOrEmpty
 WebListener
 WebRequest
 win7-x86
+Windos
 WindowsVersion
 WSManCredSSP
 XPath
@@ -486,6 +500,21 @@ src
 preview3
 #endregion
 
+#region docs/cmdlet-example/command-line-simple-example.md Overrides
+- docs/cmdlet-example/command-line-simple-example.md
+aka
+classlib
+dotnet
+netstandard.dll
+wsl
+#endregion
+
+#region docs/cmdlet-example/visual-studio-simple-example.md Overrides
+- docs/cmdlet-example/visual-studio-simple-example.md
+dropdown
+v3
+#endregion
+
 #region docs/community/governance.md Overrides
  - docs/community/governance.md
 Aiello
@@ -581,9 +610,27 @@ sample-dotnet2
 
 #region docs/installation/linux.md Overrides
  - docs/installation/linux.md
+compat-openssl10
+dockerfile
+libc6
 libcurl
+libcurl3
+libgcc1
+libgssapi-krb5-2
+libicu
+libicu52
+libicu55
+libicu57
+liblttng-ust0
+libssl1.0.0
+libssl1.0.2
+libstdc
+libunwind
+libunwind8
+libuuid1
+openssl-libs
 OpenSUSE
-TravisEz13
+zlib1g
 zypper
 #endregion
 
@@ -1189,4 +1236,9 @@ Start-CodeCoverageRun
 tests.zip
 v5.0
 v6.0.
+#endregion
+
+#region test/tools/WebListener/README.md Overrides
+ - test/tools/WebListener/README.md
+ResponseHeaders
 #endregion

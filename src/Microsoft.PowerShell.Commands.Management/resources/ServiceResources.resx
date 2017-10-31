@@ -162,14 +162,23 @@
   <data name="CouldNotSetService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be configured due to the following error: {2}</value>
   </data>
+  <data name="CouldNotGetServiceInfo" xml:space="preserve">
+    <value>Service '{1} ({0})' cannot be queried due to the following error: {2}</value>
+  </data>
   <data name="CouldNotSetServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' description cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotSetServiceDelayedAutoStart" xml:space="preserve">
+    <value>Service '{1} ({0})' automatic (delayed start) cannot be configured due to the following error: {2}</value>
   </data>
   <data name="CouldNotNewService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be created due to the following error: {2}</value>
   </data>
   <data name="CouldNotNewServiceDescription" xml:space="preserve">
     <value>Service '{1} ({0})' was created, but its description cannot be configured due to the following error: {2}</value>
+  </data>
+  <data name="CouldNotNewServiceDelayedAutoStart" xml:space="preserve">
+    <value>Service '{1} ({0})' was created, but its StartupType 'Automatic (Delayed Start)' could not be configured due to the following error: {2}</value>
   </data>
   <data name="CouldNotRemoveService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be removed due to the following error: {2}</value>

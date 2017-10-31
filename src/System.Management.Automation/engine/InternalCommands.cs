@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ForEachObjectCommand : PSCmdlet
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ValueFromPipeline = true, ParameterSetName = "ScriptBlockSet")]
         [Parameter(ValueFromPipeline = true, ParameterSetName = "PropertyAndMethodSet")]
@@ -295,12 +295,12 @@ namespace Microsoft.PowerShell.Commands
                                 else
                                 {
                                     // we write null out because:
-                                    // PS C:\> “$null | ForEach-object {$_.aa} | ForEach-Object {$_ + 3}”
+                                    // PS C:\> $null | ForEach-object {$_.aa} | ForEach-Object {$_ + 3}
                                     // 3
                                     // so we also want
-                                    // PS C:\> “$null | ForEach-object aa | ForEach-Object {$_ + 3}”
+                                    // PS C:\> $null | ForEach-object aa | ForEach-Object {$_ + 3}
                                     // 3
-                                    // But if we don’t write anything to the pipeline when _inputObject is null,
+                                    // But if we don't write anything to the pipeline when _inputObject is null,
                                     // the result 3 will not be generated.
                                     WriteObject(null);
                                 }
@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands
                                 // so we also want
                                 // PS C:\> "string" | ForEach-Object aa | ForEach-Object {$_ + 3}
                                 // 3
-                                // But if we don’t write anything to the pipeline when no member is found,
+                                // But if we don't write anything to the pipeline when no member is found,
                                 // the result 3 will not be generated.
                                 WriteObject(null);
                             }
@@ -579,7 +579,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the value by taking _propertyOrMethodName as the key, if the 
+        /// Get the value by taking _propertyOrMethodName as the key, if the
         /// input object is a IDictionary.
         /// </summary>
         /// <returns></returns>
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Unroll the object to be output. If it's of type IEnumerator, unroll and output it 
+        /// Unroll the object to be output. If it's of type IEnumerator, unroll and output it
         /// by calling WriteOutIEnumerator. If it's not, unroll and output it by calling WriteObject(obj, true)
         /// </summary>
         /// <param name="obj"></param>
@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Check if the language mode is the restrictedLanguageMode before invoking a method. 
+        /// Check if the language mode is the restrictedLanguageMode before invoking a method.
         /// Write out error message and return true if we are in restrictedLanguageMode.
         /// </summary>
         /// <returns></returns>
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class WhereObjectCommand : PSCmdlet
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Note:
     ///
-    /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only 
+    /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only
     /// affects the scope it was defined in.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113450")]

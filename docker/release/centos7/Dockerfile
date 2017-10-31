@@ -2,7 +2,7 @@
 
 FROM centos:7
 
-ARG POWERSHELL_VERSION=6.0.0-beta.8
+ARG POWERSHELL_VERSION=6.0.0-beta.9
 ARG IMAGE_NAME=microsoft/powershell:centos7
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -15,10 +15,10 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
       org.label-schema.vendor="PowerShell" \
       org.label-schema.version=${POWERSHELL_VERSION} \
       org.label-schema.schema-version="1.0" \
-      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" \
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} pwsh -c '$psversiontable'" \
       org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" \
-      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" \
-      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} pwsh -c Invoke-Pester" \
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} pwsh -c Get-Help"
 
 
 # TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
@@ -29,7 +29,7 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install dependencies and clean up
-RUN yum install -y \       
+RUN yum install -y \
         curl \
     && yum clean all
 
@@ -42,4 +42,4 @@ RUN yum install -y \
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
-CMD [ "powershell" ]
+CMD [ "pwsh" ]

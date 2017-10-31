@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -1293,7 +1293,7 @@ namespace Microsoft.PowerShell.Commands
             _tempRunspace.ShouldCloseOnPop = true;
             var remoteRunspace = _tempRunspace;
             _tempRunspace = null;
-            
+
             return remoteRunspace;
         }
 

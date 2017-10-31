@@ -1,9 +1,9 @@
-powershell(1) -- command-line shell and .NET REPL
+pwsh(1) -- PowerShell command-line shell and .NET REPL
 =================================================
 
 ## SYNOPSIS
 
-`powershell` [`-NoLogo`] [`-NoExit`] [`-NoProfile`] [`-NonInteractive`]
+`pwsh` [`-NoLogo`] [`-NoExit`] [`-NoProfile`] [`-NonInteractive`]
 [`-InputFormat` {Text | XML}] [`-OutputFormat` {Text | XML}]
 [`-EncodedCommand` <Base64EncodedCommand>]
 [`-File` <filePath> <args>] [`-ExecutionPolicy` <ExecutionPolicy>]
@@ -119,5 +119,5 @@ These are automatically defined PowerShell-language variables.
 
 ## COPYRIGHT
 
-Copyright (c) 2016 Microsoft Corporation.
+Copyright (c) Microsoft Corporation.
 All rights reserved.

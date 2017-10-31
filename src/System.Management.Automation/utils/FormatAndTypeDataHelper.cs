@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.IO;
@@ -69,89 +69,9 @@ namespace System.Management.Automation.Runspaces
         private const string DuplicateFile = "DuplicateFile";
         internal const string ValidationException = "ValidationException";
 
-        private static string GetBaseFolder(
-            RunspaceConfiguration runspaceConfiguration,
-            Collection<string> independentErrors)
+        private static string GetBaseFolder(Collection<string> independentErrors)
         {
-            string returnValue = CommandDiscovery.GetShellPathFromRegistry(runspaceConfiguration.ShellId);
-            if (returnValue == null)
-            {
-                returnValue = Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
-            }
-            else
-            {
-                returnValue = Path.GetDirectoryName(returnValue);
-                if (!Directory.Exists(returnValue))
-                {
-                    string newReturnValue = Path.GetDirectoryName(typeof(FormatAndTypeDataHelper).GetTypeInfo().Assembly.Location);
-                    string error = StringUtil.Format(TypesXmlStrings.CannotFindRegistryKeyPath, returnValue,
-                        Utils.GetRegistryConfigurationPath(runspaceConfiguration.ShellId), "\\Path", newReturnValue);
-                    independentErrors.Add(error);
-                    returnValue = newReturnValue;
-                }
-            }
-            return returnValue;
-        }
-
-        internal static Collection<PSSnapInTypeAndFormatErrors> GetFormatAndTypesErrors(
-            RunspaceConfiguration runspaceConfiguration,
-            PSHost host,
-            IEnumerable<RunspaceConfigurationEntry> configurationEntryCollection,
-            Collection<string> independentErrors,
-            Collection<int> entryIndicesToRemove)
-        {
-            Collection<PSSnapInTypeAndFormatErrors> returnValue = new Collection<PSSnapInTypeAndFormatErrors>();
-
-            string baseFolder = GetBaseFolder(runspaceConfiguration, independentErrors);
-            var psHome = Utils.DefaultPowerShellAppBase;
-
-            // this hashtable will be used to check whether this is duplicated file for types or formats.
-            HashSet<string> fullFileNameSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            int index = -1;
-
-            foreach (var configurationEntry in configurationEntryCollection)
-            {
-                string fileName;
-                string psSnapinName = configurationEntry.PSSnapIn == null ? runspaceConfiguration.ShellId : configurationEntry.PSSnapIn.Name;
-                index++;
-                var typeEntry = configurationEntry as TypeConfigurationEntry;
-                if (typeEntry != null)
-                {
-                    fileName = typeEntry.FileName;
-
-                    if (fileName == null)
-                    {
-                        returnValue.Add(new PSSnapInTypeAndFormatErrors(psSnapinName, typeEntry.TypeData, typeEntry.IsRemove));
-                        continue;
-                    }
-                }
-                else
-                {
-                    FormatConfigurationEntry formatEntry = (FormatConfigurationEntry)configurationEntry;
-                    fileName = formatEntry.FileName;
-
-                    if (fileName == null)
-                    {
-                        returnValue.Add(new PSSnapInTypeAndFormatErrors(psSnapinName, formatEntry.FormatData));
-                        continue;
-                    }
-                }
-
-                bool checkFileExists = configurationEntry.PSSnapIn == null || string.Equals(psHome, configurationEntry.PSSnapIn.AbsoluteModulePath, StringComparison.OrdinalIgnoreCase);
-                bool needToRemoveEntry = false;
-                string fullFileName = GetAndCheckFullFileName(psSnapinName, fullFileNameSet, baseFolder, fileName, independentErrors, ref needToRemoveEntry, checkFileExists);
-                if (fullFileName == null)
-                {
-                    if (needToRemoveEntry)
-                    {
-                        entryIndicesToRemove.Add(index);
-                    }
-                    continue;
-                }
-
-                returnValue.Add(new PSSnapInTypeAndFormatErrors(psSnapinName, fullFileName));
-            }
-            return returnValue;
+            return Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
         }
 
         private static string GetAndCheckFullFileName(

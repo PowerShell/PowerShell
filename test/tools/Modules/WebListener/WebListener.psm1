@@ -121,11 +121,14 @@ function Get-WebListenerUrl {
             'Home',
             'Multipart',
             'Redirect',
+            'ResponseHeaders',
             '/'
         )]
         [String]$Test,
 
-        [String]$TestValue
+        [String]$TestValue,
+
+        [System.Collections.IDictionary]$Query
     )
     process {
         $runningListener = Get-WebListener
@@ -151,6 +154,15 @@ function Get-WebListenerUrl {
         {
             $Uri.Path = $Test
         }
+        $StringBuilder = [System.Text.StringBuilder]::new()
+        foreach ($key in $Query.Keys)
+        {
+            $null = $StringBuilder.Append([System.Net.WebUtility]::UrlEncode($key))
+            $null = $StringBuilder.Append('=')
+            $null = $StringBuilder.Append([System.Net.WebUtility]::UrlEncode($Query[$key].ToString()))
+            $null = $StringBuilder.Append('&')
+        }
+        $Uri.Query = $StringBuilder.ToString()
 
         return [Uri]$Uri.ToString()
     }

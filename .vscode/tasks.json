@@ -1,6 +1,6 @@
 {
     "version": "0.1.0",
-    "command": "powershell",
+    "command": "pwsh",
     "isShellCommand": true,
     "showOutput": "always",
     "suppressTaskName": true,

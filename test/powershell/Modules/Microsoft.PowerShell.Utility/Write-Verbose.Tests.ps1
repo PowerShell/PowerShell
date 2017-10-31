@@ -26,4 +26,20 @@ Describe "Write-Verbose" -Tags "CI" {
 
 	$(Write-Verbose -Message "test" -Verbose:$true) 4>&1 | Should Be "test"
     }
+
+    It "Should not have added line breaks" {
+        $text = "0123456789"
+        while ($text.Length -lt [Console]::WindowWidth) {
+            $text += $text
+        }
+        $origVerbosePref = $VerbosePreference
+        $VerbosePreference = "continue"
+        try {
+            $out = Write-Verbose $text 4>&1
+            $out | Should BeExactly $text
+        }
+        finally {
+            $VerbosePreference = $origVerbosePref
+        }
+    }
 }

@@ -5,7 +5,7 @@ set -e
 
 #
 # Example use:
-#     ./InstallTarballPackage.sh "6.0.0-beta.8" "powershell-6.0.0-beta.8-linux-x64.tar.gz"
+#     ./InstallTarballPackage.sh "6.0.0-beta.9" "powershell-6.0.0-beta.9-linux-x64.tar.gz"
 #
 usage() {
     echo "usage: $0 <powershell version> <powershell package name>"
@@ -24,7 +24,7 @@ then
     usage
 fi
 
-POWERSHELL_LINKFILE=/usr/bin/powershell
+POWERSHELL_LINKFILE=/usr/bin/pwsh
 
 # Download the powershell .tar.gz package
 curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v$POWERSHELL_VERSION/$POWERSHELL_PACKAGE
@@ -35,7 +35,7 @@ mkdir -p /opt/microsoft/powershell/$POWERSHELL_VERSION
 tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/$POWERSHELL_VERSION
 
 # Create the symbolic link that points to powershell
-ln -s /opt/microsoft/powershell/$POWERSHELL_VERSION/powershell $POWERSHELL_LINKFILE
+ln -s /opt/microsoft/powershell/$POWERSHELL_VERSION/pwsh $POWERSHELL_LINKFILE
 # Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
     echo $POWERSHELL_LINKFILE > /etc/shells ;

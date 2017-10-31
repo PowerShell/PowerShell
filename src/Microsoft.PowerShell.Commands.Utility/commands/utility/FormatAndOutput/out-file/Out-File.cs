@@ -1,8 +1,9 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
@@ -72,25 +73,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Position = 1)]
-        [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] {
-            EncodingConversion.Unknown,
-            EncodingConversion.String,
-            EncodingConversion.Unicode,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf32,
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
             EncodingConversion.Ascii,
-            EncodingConversion.Default,
-            EncodingConversion.OEM })]
-        public string Encoding
-        {
-            get { return _encoding; }
-            set { _encoding = value; }
-        }
-
-        private string _encoding;
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -196,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     FilePath,
-                    _encoding,
+                    Encoding,
                     false, // defaultEncoding
                     Append,
                     Force,
@@ -211,31 +207,12 @@ namespace Microsoft.PowerShell.Commands
                 return null;
 
             // compute the # of columns available
-            int computedWidth = 120;
+            int computedWidth = int.MaxValue;
 
             if (_width != null)
             {
                 // use the value from the command line
                 computedWidth = _width.Value;
-            }
-            else
-            {
-                // use the value we get from the console
-                try
-                {
-                    // NOTE: we subtract 1 because we want to properly handle
-                    // the following scenario:
-                    // MSH>get-foo|out-file foo.txt
-                    // MSH>get-content foo.txt
-                    // in this case, if the computed width is (say) 80, get-content
-                    // would cause a wrapping of the 80 column long raw strings.
-                    // Hence we set the width to 79.
-                    computedWidth = this.Host.UI.RawUI.BufferSize.Width - 1;
-                }
-                catch (HostException)
-                {
-                    // non interactive host
-                }
             }
 
             // use the stream writer to create and initialize the Line Output writer

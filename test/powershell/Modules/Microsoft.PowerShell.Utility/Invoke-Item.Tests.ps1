@@ -2,7 +2,7 @@ using namespace System.Diagnostics
 
 Describe "Invoke-Item basic tests" -Tags "Feature" {
     BeforeAll {
-        $powershell = Join-Path $PSHOME -ChildPath powershell
+        $powershell = Join-Path $PSHOME -ChildPath pwsh
 
         $testFile1 = Join-Path -Path $TestDrive -ChildPath "text1.txt"
         New-Item -Path $testFile1 -ItemType File -Force > $null

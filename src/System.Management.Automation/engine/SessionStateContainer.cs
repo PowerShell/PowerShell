@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -1593,7 +1593,7 @@ namespace System.Management.Automation
                             }
 
                             int unUsedChildrenNotMatchingFilterCriteria = 0;
-                            ProcessPathItems(providerInstance, providerPath, recurse, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                            ProcessPathItems(providerInstance, providerPath, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
                         }
                     }
                     else
@@ -1862,6 +1862,72 @@ namespace System.Management.Automation
             ProcessMode processMode = ProcessMode.Enumerate,
             bool skipIsItemContainerCheck = false)
         {
+            // Call ProcessPathItems with 'depth' set to maximum value for infinite recursion when needed.
+            ProcessPathItems(providerInstance, path, recurse, uint.MaxValue, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck);
+        } // ProcessPathItems
+
+        /// <summary>
+        /// Since we can't do include and exclude filtering on items we have to
+        /// do the recursion ourselves. We get each child name and see if it matches
+        /// the include and exclude filters. If the child is a container we recurse
+        /// into that container.
+        /// </summary>
+        ///
+        /// <param name="providerInstance">
+        /// The instance of the provider to use.
+        /// </param>
+        ///
+        /// <param name="path">
+        /// The path to the item to get the children from.
+        /// </param>
+        ///
+        /// <param name="recurse">
+        /// Recurse into sub-containers when getting children.
+        /// </param>
+        ///
+        /// <param name="depth">
+        /// Limits the depth of recursion; uint.MaxValue performs full recursion.
+        /// </param>
+        ///
+        /// <param name="context">
+        /// The context under which the command is running.
+        /// </param>
+        ///
+        /// <param name="childrenNotMatchingFilterCriteria">
+        /// The count of items that do not match any include/exclude criteria.
+        /// </param>
+        ///
+        /// <param name="processMode">Indicates if this is a Enumerate/Remove operation</param>
+        ///
+        /// <param name="skipIsItemContainerCheck">a hint used to skip IsItemContainer checks</param>
+        ///
+        /// <exception cref="ProviderNotFoundException">
+        /// If the <paramref name="path"/> refers to a provider that could not be found.
+        /// </exception>
+        ///
+        /// <exception cref="DriveNotFoundException">
+        /// If the <paramref name="path"/> refers to a drive that could not be found.
+        /// </exception>
+        ///
+        /// <exception cref="NotSupportedException">
+        /// If the provider that the <paramref name="path"/> refers to does
+        /// not support this operation.
+        /// </exception>
+        ///
+        /// <exception cref="ProviderInvocationException">
+        /// If the provider threw an exception.
+        /// </exception>
+        ///
+        private void ProcessPathItems(
+            CmdletProvider providerInstance,
+            string path,
+            bool recurse,
+            uint depth,
+            CmdletProviderContext context,
+            out int childrenNotMatchingFilterCriteria,
+            ProcessMode processMode = ProcessMode.Enumerate,
+            bool skipIsItemContainerCheck = false)
+        {
             ContainerCmdletProvider containerCmdletProvider = GetContainerProviderInstance(providerInstance);
             childrenNotMatchingFilterCriteria = 0;
 
@@ -2016,7 +2082,7 @@ namespace System.Management.Automation
                     }
 
                     // Now recurse if it is a container
-                    if (recurse && IsPathContainer(providerInstance, qualifiedPath, context))
+                    if (recurse && IsPathContainer(providerInstance, qualifiedPath, context) && depth > 0)
                     {
                         // Making sure to obey the StopProcessing.
                         if (context.Stopping)
@@ -2024,7 +2090,7 @@ namespace System.Management.Automation
                             return;
                         }
                         // The item is a container so recurse into it.
-                        ProcessPathItems(providerInstance, qualifiedPath, recurse, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
+                        ProcessPathItems(providerInstance, qualifiedPath, recurse, depth - 1, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
                     }
                 } // for each childName
             }
@@ -2065,7 +2131,6 @@ namespace System.Management.Automation
                 }
             }
         } // ProcessPathItems
-
 
         /// <summary>
         /// Gets the dynamic parameters for the get-childitem cmdlet.
