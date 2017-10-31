@@ -44,11 +44,10 @@ dotnet run
 
 Running the program does everything else:
 
-- for each project, given a `resources` folder
-  - creates a `gen` folder
-  - for each `*.resx` file
-    - fills in a strongly typed C# class
-    - writes it out to the corresponding `*.cs` file
+- For each project, given a `resources` folder, create a `gen` folder.
+- For each `*.resx` file from the `resources` folder,
+  fill in a strongly typed C# class,
+  and write it out to the corresponding `*.cs` file in the `gen` folder.
 
 These files are *not* automatically updated on each build,
 as the project lacks the ability to detect changes.
