@@ -105,7 +105,7 @@ On Linux/macOS, PowerShell Core depends on the binary `libpsl-native.so/libpsl-n
 
 Building those native components requires setting up additional dependencies,
 which could be a burden to those who don't seek to make changes to the native components.
-At the meantime, the native component code seldome changes,
+At the meantime, the native component code seldom changes,
 so it doesn't make sense to always build them with `Start-PSBuild`.
 Therefore, we decided to wrap the native components into NuGet packages,
 so that we only need to build them once when changes are made,
@@ -116,9 +116,9 @@ and the NuGet package for `libpsl-native` is `libpsl`.
 
 ### psrp.windows
 
-To build `pwrshplugin.dll`, you need to install Visual Studio 2015 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisits.
+To build `pwrshplugin.dll`, you need to install Visual Studio 2015 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisites.
 Then run `Start-BuildNativeWindowsBinaries` to build the binary.
-For examlpe, the following builds the release flavor of the binary targeting x64 architecture.
+For example, the following builds the release flavor of the binary targeting x64 architecture.
 
 ```powershell
 Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
@@ -159,12 +159,12 @@ Lastly, run `nuget pack .` from within the folder. Note that you may need the la
 
 ### libpsl
 
-For `linux-arm`, you need to run `Start-PSBootstrap -BuildLinuxArm` to install additional prerequisits to build `libpsl-native`.
+For `linux-arm`, you need to run `Start-PSBootstrap -BuildLinuxArm` to install additional prerequisites to build `libpsl-native`.
 Note that currently you can build `linux-arm` only on a Ubuntu machine.
 
-For `linux-x64` and macOS, the initial run of `Start-PSBootstrap` would be enough -- no additional prerequisit required.
+For `linux-x64` and macOS, the initial run of `Start-PSBootstrap` would be enough -- no additional prerequisite required.
 
-After making sure the prerequisits are met, run `Start-BuildNativeUnixBinaries` to build the binary:
+After making sure the prerequisites are met, run `Start-BuildNativeUnixBinaries` to build the binary:
 
 ```powershell
 ## Build targeting linux-x64 or macOS

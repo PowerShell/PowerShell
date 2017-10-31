@@ -490,8 +490,12 @@ nanoserver-insider-powershell
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
 Catalog
+flavor
+libpsl
 MSBuild
+plugin
 powershell-unix
+psrp.windows
 src
 #endregion
 
