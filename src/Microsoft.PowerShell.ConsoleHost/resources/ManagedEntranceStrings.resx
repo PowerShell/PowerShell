@@ -121,8 +121,8 @@
     <value>PowerShell {0}
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-To get help type Help or Help followed by a command name, such as: Help Get-Process
-To get PowerShell Online Help open the link: https://aka.ms/pscore6-docs</value>
+Type 'Help' to get help.
+Type 'Start-Process https://aka.ms/pscore6-docs' to get Online Help.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
     <value>Usage: pwsh[.exe] [[-File] &lt;filePath&gt; [args]]
