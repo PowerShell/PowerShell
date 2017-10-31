@@ -303,17 +303,28 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
 }
 
 Describe "help function uses full view on non-Windows" -Tags "CI" {
-    It "help should return full view without -Full switch" -Skip:($IsWindows) {
+    BeforeAll {
+        $origDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ($IsWindows) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $origDefaultParameterValues
+    }
+
+    It "help should return full view without -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
     }
 
-    It "help should return full view even with -Full switch" -Skip:($IsWindows) {
+    It "help should return full view even with -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
     }
 
-    It "help should not append -Full when not using AllUsersView parameter set" -Skip:($IsWindows) {
+    It "help should not append -Full when not using AllUsersView parameter set" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
     }
@@ -322,29 +333,34 @@ Describe "help function uses full view on non-Windows" -Tags "CI" {
 Describe "help function does not use full view on Windows by default" -Tags "CI" {
     BeforeAll {
         $origPager = $null
-        if (Test-Path env:PAGER) {
+        $origDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if (!$IsWindows) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        elseif (Test-Path env:PAGER) {
             $origPager = $env:PAGER
             Remove-Item Env:\PAGER
         }
     }
 
     AfterAll {
+        $global:PSDefaultParameterValues = $origDefaultParameterValues
         if ($origPager) {
             New-Item Env:\PAGER -Value $origPager > $null
         }
     }
 
-    It "help should not return full view without -Full switch" -Skip:(!$IsWindows) {
+    It "help should not return full view without -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
     }
 
-    It "help should return full view with -Full switch" -Skip:(!$IsWindows) {
+    It "help should return full view with -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
     }
 
-    It "help should not append -Full when not using AllUsersView parameter set" -Skip:(!$IsWindows) {
+    It "help should not append -Full when not using AllUsersView parameter set" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
     }
@@ -352,30 +368,39 @@ Describe "help function does not use full view on Windows by default" -Tags "CI"
 
 Describe "help function uses full view on Windows if `$env:PAGER is defined" -Tags "CI" {
     BeforeAll {
-        $origPager = if (Test-Path env:PAGER) { $origPager = $env:PAGER }
-        Set-Item -Path Env:\PAGER -Value more
+        $origDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if (!$IsWindows) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else {
+            $origPager = if (Test-Path env:PAGER) { $origPager = $env:PAGER }
+            Set-Item -Path Env:\PAGER -Value more
+        }
     }
 
     AfterAll {
-        if ($origPager) {
-            Set-Item Env:\PAGER -Value $origPager
-        }
-        else {
-            Remove-Item Env:\PAGER
+        $global:PSDefaultParameterValues = $origDefaultParameterValues
+        if ($IsWindows) {
+            if ($origPager) {
+                Set-Item Env:\PAGER -Value $origPager
+            }
+            else {
+                Remove-Item Env:\PAGER
+            }
         }
     }
 
-    It "help should return full view without -Full switch" -Skip:(!$IsWindows) {
+    It "help should return full view without -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
     }
 
-    It "help should return full view even with -Full switch" -Skip:(!$IsWindows) {
+    It "help should return full view even with -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
     }
 
-    It "help should not append -Full when not using AllUsersView parameter set" -Skip:(!$IsWindows) {
+    It "help should not append -Full when not using AllUsersView parameter set" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
     }
