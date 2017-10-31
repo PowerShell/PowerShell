@@ -7,7 +7,7 @@ Describe "Range Operator" -Tags CI {
             $Range[1] | Should BeOfType [int]
             $Range[2] | Should BeOfType [int]
             $Range[3] | Should BeOfType [int]
-            
+
             $Range[0] | Should Be 5
             $Range[1] | Should Be 6
             $Range[2] | Should Be 7
@@ -15,7 +15,7 @@ Describe "Range Operator" -Tags CI {
         }
 
         It "Range operator accepts negative integer values" {
-            $Range = -8..-5            
+            $Range = -8..-5
             $Range.count | Should Be 4
             $Range[0] | Should Be -8
             $Range[1] | Should Be -7
