@@ -133,8 +133,9 @@ You can find it at `~/.nuget/packages/psrp.windows` on your windows machine if y
 Or you can download the existing package from [powershell-core feed](https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows).
 Once you get `psrp.windows.nuspec`, copy it to an empty folder.
 
-Then in the same folder, create the same layout of files as in the existing package,
-but replace the files with those newly produced from the build step.
+Then you need to build `pwrshplugin.dll` targeting both `win-x64` and `win-x86` on Windows 10.
+After building successfully, copy the produced files to the same folder,
+and create the same layout of files as in the existing package.
 The layout of files should look like this:
 
 ```none
