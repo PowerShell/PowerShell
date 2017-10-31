@@ -97,3 +97,110 @@ which generates a source file `CorePsTypeCatalog.cs` for the `Microsoft.PowerShe
 The error `The name 'InitializeTypeCatalog' does not exist in the current context`
 indicates that the `CorePsTypeCatalog.cs` source file does not exist,
 so follow the steps to generate it.
+
+## Native Components
+
+On Windows, PowerShell Core depends on the WinRM plugin `pwrshplugin.dll` to enable remoting over WinRM.
+On Linux/macOS, PowerShell Core depends on the binary `libpsl-native.so/libpsl-native.dylib` to provide some necessary supports.
+
+Building those native components requires setting up additional dependencies,
+which could be a burden to those who don't seek to make changes to the native components.
+At the meantime, the native component code seldome changes,
+so it doesn't make sense to always build them with `Start-PSBuild`.
+Therefore, we decided to wrap the native components into NuGet packages,
+so that we only need to build them once when changes are made,
+and then reuse the produced binaries for many builds subsequently.
+
+The NuGet package for `pwrshplugin.dll` is `psrp.windows`,
+and the NuGet package for `libpsl-native` is `libpsl`.
+
+### psrp.windows
+
+To build `pwrshplugin.dll`, you need to install Visual Studio 2015 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisits.
+Then run `Start-BuildNativeWindowsBinaries` to build the binary.
+For examlpe, the following builds the release flavor of the binary targeting x64 architecture.
+
+```powershell
+Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
+```
+
+After that, the binary `pwrshplugin.dll` and its PDB file will be placed under 'src/powershell-win-core'.
+The script file `Install-PowerShellRemoting.ps1` will also be placed in the same folder,
+which is supposed to be used to set up remoting configurations for PowerShell Core.
+
+To create a new NuGet package for `pwrshplugin.dll`, first you need to get the `psrp.windows.nuspec` from an existing `psrp.windows` package.
+You can find it at `~/.nuget/packages/psrp.windows` on your windows machine if you have recently built PowerShell on it.
+Or you can download the existing package from [powershell-core feed](https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows).
+Once you get `psrp.windows.nuspec`, copy it to an empty folder.
+
+Then in the same folder, create the same layout of files as in the existing package,
+but replace the files with those newly produced from the build step.
+The layout of files should look like this:
+
+```none
++---contentFiles
+|   \---any
+|       \---any
+|               Install-PowerShellRemoting.ps1
+|
+\---runtimes
+    +---win-x64
+    |   \---native
+    |           pwrshplugin.dll
+    |           pwrshplugin.pdb
+    |
+    \---win-x86
+        \---native
+                pwrshplugin.dll
+                pwrshplugin.pdb
+```
+
+Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
+
+### libpsl
+
+For `linux-arm`, you need to run `Start-PSBootstrap -BuildLinuxArm` to install additional prerequisits to build `libpsl-native`.
+Note that currently you can build `linux-arm` only on a Ubuntu machine.
+
+For `linux-x64` and macOS, the initial run of `Start-PSBootstrap` would be enough -- no additional prerequisit required.
+
+After making sure the prerequisits are met, run `Start-BuildNativeUnixBinaries` to build the binary:
+
+```powershell
+## Build targeting linux-x64 or macOS
+Start-BuildNativeUnixBinaries
+
+## Build targeting linux-arm
+Start-BuildNativeUnixBinaries -BuildLinuxArm
+```
+
+After the build succeeds, the binary `libpsl-native.so` (`libpsl-native.dylib` on macOS) will be placed under `src/powershell-unix`.
+
+To create a new NuGet package for `libpsl-native`, first you need to get the `libpsl.nuspec` from an existing `libpsl` package.
+You can find it at `~/.nuget/packages/libpsl` on your Linux or macOS machine if you have recently built PowerShell on it.
+Or you can download the existing package from [powershell-core feed](https://powershell.myget.org/feed/powershell-core/package/nuget/libpsl).
+Once you get `psrp.windows.nuspec`, copy it to an empty folder on your Windows machine.
+
+Then you need to build three binaries of `libpsl-native` targeting `linux-x64`, `linux-arm` and `osx` respectively.
+**Please note that, in order for the `linux-x64` binary `libpsl-native.so` to be portable to all other Linux distributions,
+the `linux-x64` binary needs to be built on CentOS 7**
+(.NET Core Linux native binaries are also built on CentOS 7  to ensure that they don't depend on newer `glibc`).
+
+After building successfully, copy those three binaries to the same folder,
+and create the same layout of files as in the existing package.
+The layout of files should look like this:
+
+```none
+└── runtimes
+    ├── linux-arm
+    │   └── native
+    │       └── libpsl-native.so
+    ├── linux-x64
+    │   └── native
+    │       └── libpsl-native.so
+    └── osx
+        └── native
+            └── libpsl-native.dylib
+```
+
+Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
