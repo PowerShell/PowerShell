@@ -1879,7 +1879,7 @@ function New-MSIPackage
 
     Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" (Get-PSOutput) --set-icon "$AssetsPath\Powershell_black.ico" `
         --set-file-version $ProductVersion --set-product-version $ProductVersion --set-version-string "ProductName" "PowerShell Core 6" `
-        --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
+        --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
 
     ## AppVeyor base image might update the version for Wix. Hence, we should
     ## not hard code version numbers.
