@@ -10,7 +10,7 @@ building on macOS is almost identical.
 You will want [Homebrew](http://brew.sh/), the missing package manager for macOS.
 Once installed, follow the same instructions to download and
 install a self-hosted copy of PowerShell on your macOS machine,
-and use`Start-PSBootstrap` to install the dependencies.
+and use `Start-PSBootstrap` to install the dependencies.
 
 The `Start-PSBootstrap` function does the following:
 
@@ -34,9 +34,7 @@ We cannot do this for you in the build module due to #[847][].
 
 ## Build using our module
 
-Instead of installing the Ubuntu package of PowerShell,
-download the `pkg` from our GitHub releases page using your browser, complete the wizard,
-start a `powershell` session, and use `Start-PSBuild` from the module.
+Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild` from the module.
 
 After building, PowerShell will be at `./src/powershell-unix/bin/Linux/netcoreapp2.0/osx.10.12-x64/publish/powershell`.
-Note that configuration is still `Linux` because it would be silly to make yet another separate configuration when it's used solely to work-around a CLI issue.
+Note that configuration is still `Linux`.
