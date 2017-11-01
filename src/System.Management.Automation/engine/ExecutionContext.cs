@@ -1255,18 +1255,14 @@ namespace System.Management.Automation
                 catch (FileLoadException fileLoadException)
                 {
                     error = fileLoadException;
-                    // this is a legitimate error on CoreCLR for a newly emited with Add-Type assemblies
-                    // they cannot be loaded by name, but we are only interested in importing them by path
                 }
                 catch (BadImageFormatException badImage)
                 {
                     error = badImage;
-                    return null;
                 }
                 catch (SecurityException securityException)
                 {
                     error = securityException;
-                    return null;
                 }
             }
 
