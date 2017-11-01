@@ -6,6 +6,7 @@ using System;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -131,7 +132,8 @@ namespace Microsoft.PowerShell.Commands
                     // only generate the windows user agent once
                     if(s_windowsUserAgent == null){
                         // find the version in the windows operating system description
-                        string versionText = OS.Substring(OS.LastIndexOf(" ") +1);
+                        Regex pattern = new Regex(@"\d+(\.\d+)+");
+                        string versionText = pattern.Match(OS).Value;
                         Version windowsPlatformversion = new Version(versionText);
                         s_windowsUserAgent = $"Windows NT {windowsPlatformversion.Major}.{windowsPlatformversion.Minor}";
                     }
