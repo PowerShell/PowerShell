@@ -28,9 +28,6 @@ try {
     Import-Module "$location/build.psm1"
     Import-Module "$location/tools/packaging"
     
-    Write-Verbose "Sync'ing Tags..." -verbose
-    Sync-PSTags
-
     Start-PSBootstrap -Package -NoSudo
     Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
 
