@@ -688,6 +688,14 @@ Describe 'Type building' -Tags "CI" {
             ++$a::a | Should Be 2
         }
     }
+
+    It 'should get the script from a class type' {
+        class C {}
+
+        $a = [C].Assembly.GetCustomAttributes($false).Where{
+            $_ -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute]}
+        $a.ScriptFile | Should BeExactly (& { $MyInvocation.ScriptName })
+    }
 }
 
 Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
