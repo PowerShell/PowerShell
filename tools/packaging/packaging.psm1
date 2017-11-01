@@ -629,6 +629,49 @@ function New-UnixPackage {
             "$GzipFile=$ManFile",
             "/tmp/pwsh=$Link"
         )
+
+        # Add macOS powershell launcher
+        if($Type -eq "osxpkg")
+        {
+            if($pscmdlet.ShouldProcess("Add macOS launch application")) {
+                # Define folder for launch application.
+                $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+
+                # Update icns file.
+                $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+                $iconfilebase = (Get-Item -Path $iconfile).BaseName
+                # Create Resources folder, ignore error if exists.
+                New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+                Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
+
+                # Set values in plist.
+                $plist = "$macosapp/Contents/Info.plist"
+                Start-NativeExecution {
+                    defaults write $plist CFBundleIdentifier $Name
+                    defaults write $plist CFBundleVersion $Version
+                    defaults write $plist CFBundleShortVersionString $Version
+                    defaults write $plist CFBundleGetInfoString $Version
+                    defaults write $plist CFBundleIconFile $iconfilebase
+                }
+
+                # Convert to XML plist, needed because defaults native
+                # app auto converts it to binary format when it modify
+                # the plist file.
+                Start-NativeExecution {
+                    plutil -convert xml1 $plist
+                }
+
+                # Set permissions.
+                Start-NativeExecution {
+                    find $macosapp | xargs chmod 755
+                }
+
+                # Add app folder to fpm paths.
+                $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
+                $Arguments += "$appsfolder=/"
+            }
+        }
+
         # Build package
         try {
             if($pscmdlet.ShouldProcess("Create $type package")) {
@@ -664,6 +707,20 @@ function New-UnixPackage {
                 $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
                 $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
                 $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
+            }
+            if($pscmdlet.ShouldProcess("Change macOS launcher identifier"))
+            {
+                # This is needed to prevent installer from picking up
+                # the launcher app in the build structure and updating
+                # it which locks out subsequnent package build due to
+                # increase permissions.
+                $plist = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app/Contents/Info.plist"
+                $tempguid = (New-Guid).Guid
+                Start-NativeExecution {
+                    defaults write $plist CFBundleIdentifier $tempguid
+                    # This magic forces macOS to recognized the change.
+                    touch $plist
+                }
             }
         }
 
