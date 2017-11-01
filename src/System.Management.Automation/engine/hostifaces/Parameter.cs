@@ -49,7 +49,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name != null)
             {
-                if (name.Trim().Length == 0)
+                if (string.IsNullOrWhiteSpace(name))
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -105,7 +105,7 @@ namespace System.Management.Automation.Runspaces
 
                 Diagnostics.Assert(name != null, "'name' variable should be initialized at this point");
                 Diagnostics.Assert(name[0].IsDash(), "first character in parameter name must be a dash");
-                Diagnostics.Assert(name.Trim().Length != 0, "Parameter name has to have some non-whitespace characters in it");
+                Diagnostics.Assert(name.Trim().Length != 1, "Parameter name has to have some non-whitespace characters in it");
             }
 
             if (internalParameter.ParameterAndArgumentSpecified)

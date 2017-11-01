@@ -2434,7 +2434,7 @@ namespace Microsoft.PowerShell
                             continue;
                         }
 
-                        if (line.Trim().Length == 0)
+                        if (string.IsNullOrWhiteSpace(line))
                         {
                             if (inBlockMode)
                             {
