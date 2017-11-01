@@ -3,7 +3,7 @@
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
 $dotnetCLIChannel = "release"
-$dotnetCLIRequiredVersion = "2.0.0"
+$dotnetCLIRequiredVersion = "2.0.2"
 
 # Track if tags have been sync'ed
 $tagsUpToDate = $false
