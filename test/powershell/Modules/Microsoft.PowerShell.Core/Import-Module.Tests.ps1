@@ -125,24 +125,19 @@ namespace ModuleCmdlets
 
     It "PS should try to load the assembly from assembly name if file path doesn't exist" {
 
-        if ($IsWindows)
-        {
-            New-ModuleManifest -Path $TESTDRIVE\test.psd1 -NestedModules \NOExistedPath\System.Management.Automation.dll
-        }
-        else
-        {
-            New-ModuleManifest -Path $TESTDRIVE/test.psd1 -NestedModules /NOExistedPath/System.Management.Automation.dll
-        }
+        $psdFile = Join-Path $TESTDRIVE test.psd1
+        $nestedModule = Join-Path NOExistedPath Microsoft.PowerShell.Commands.Utility.dll
+        New-ModuleManifest -Path $psdFile -NestedModules $nestedModule 
         try
         {
-            $module = Import-Module $TESTDRIVE\test.psd1 -PassThru
+            $module = Import-Module $psdFile -PassThru
             $module.NestedModules | Should Not BeNullOrEmpty
-            $assemblyLocation = [psobject].Assembly.location
+            $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
             $module.NestedModules.ImplementingAssembly.Location | Should Be $assemblyLocation
         }
         finally
         {
-            Remove-Module  $TESTDRIVE\test.psd1 -ErrorAction SilentlyContinue
+            Remove-Module $module -ErrorAction SilentlyContinue
         }
         
     }
