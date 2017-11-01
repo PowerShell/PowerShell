@@ -529,4 +529,5 @@ Describe "Verify approved aliases list" -Tags "CI" {
     It "Should have 'more' as a function" {
         Test-Path Function:more | Should Be $true
     }
+
 }
