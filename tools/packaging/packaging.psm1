@@ -149,6 +149,8 @@ function Start-PSPackage {
             $publishSource = $Source
             $buildSource = Split-Path -Path $Source -Parent
             $Source = New-TempFolder
+            
+            # files not to include as individual files.  These files will be included in publish.zip
             $toExclude = @(
                 'hostfxr.dll'
                 'hostpolicy.dll'                
@@ -159,6 +161,8 @@ function Start-PSPackage {
                 'Publish'
                 )
             Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $Source -Recurse
+
+            # Replace binaries with crossgen'ed binaires from publish folder.
             Get-ChildItem -Recurse $Source | ForEach-Object {
                 $relativePath = $_.FullName -replace $Source, ''
                 $publishPath = Join-Path $publishSource -ChildPath $relativePath
