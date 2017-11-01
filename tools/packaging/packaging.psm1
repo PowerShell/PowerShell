@@ -718,6 +718,7 @@ function New-UnixPackage {
                 $tempguid = (New-Guid).Guid
                 Start-NativeExecution {
                     defaults write $plist CFBundleIdentifier $tempguid
+                    plutil -convert xml1 $plist
                     # This magic forces macOS to recognized the change.
                     touch $plist
                 }
