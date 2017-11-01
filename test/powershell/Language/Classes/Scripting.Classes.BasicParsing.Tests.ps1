@@ -694,7 +694,7 @@ Describe 'Type building' -Tags "CI" {
 
         $a = [C].Assembly.GetCustomAttributes($false).Where{
             $_ -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute]}
-        $a.ScriptFile | Should BeExactly (& { $MyInvocation.ScriptName })
+        $a.ScriptFile | Should BeExactly $PSCommandPath
     }
 }
 

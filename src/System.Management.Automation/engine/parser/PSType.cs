@@ -19,7 +19,6 @@ namespace System.Management.Automation.Language
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
 
         private static int s_globalCounter = 0;
-        private static readonly object[] s_emptyArgArray = Utils.EmptyArray<object>();
         private static readonly CustomAttributeBuilder s_hiddenCustomAttributeBuilder =
             new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), Utils.EmptyArray<object>());
 
@@ -1115,8 +1114,6 @@ namespace System.Management.Automation.Language
             var propertyInfo = new PropertyInfo[] {
                 typeof(DynamicClassImplementationAssemblyAttribute).GetProperty(nameof(DynamicClassImplementationAssemblyAttribute.ScriptFile)) };
             var propertyArgs = new object[] { scriptFile };
-            var fieldInfoList = Utils.EmptyArray<FieldInfo>();
-            var fieldArgs = Utils.EmptyArray<object>();
 
             yield return new CustomAttributeBuilder(ctor, emptyArgs,
                 propertyInfo, propertyArgs, Utils.EmptyArray<FieldInfo>(), emptyArgs);
