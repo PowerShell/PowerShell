@@ -61,12 +61,13 @@ try{
 
     Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
     $buildParams = @{}
+    $buildParams['CrossGen'] = $true
     if(!$Symbols.IsPresent)
     {
-        $buildParams['CrossGen'] = $true
+        $buildParams['PSModuleRestore'] = $true
     }
 
-    Start-PSBuild -Clean -PSModuleRestore -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
+    Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
 
     $pspackageParams = @{'Type'='msi'}
     if ($Runtime -ne 'win10-x64')
