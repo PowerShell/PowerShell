@@ -438,6 +438,7 @@ Fix steps:
         Configuration=$Configuration
         Verbose=$true
         SMAOnly=[bool]$SMAOnly
+        PSModuleRestore=$PSModuleRestore
     }
     $script:Options = New-PSOptions @OptionsArguments
 
@@ -602,7 +603,9 @@ function New-PSOptions {
 
         [string]$Output,
 
-        [switch]$SMAOnly
+        [switch]$SMAOnly,
+        
+        [switch]$PSModuleRestore
     )
 
     # Add .NET CLI tools to PATH
@@ -716,7 +719,8 @@ function New-PSOptions {
               Framework = $Framework;
               Runtime = $Runtime;
               Output = $Output;
-              CrossGen = $CrossGen }
+              CrossGen = $CrossGen
+              PSModuleRestore = $PSModuleRestore }
 }
 
 # Get the Options of the last build

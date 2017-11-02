@@ -83,11 +83,19 @@ function Start-PSPackage {
             # crossgen doesn't support arm32 yet
             $crossGenCorrect = $true
         }
-        elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
+        elseif($Script:Options.CrossGen) {
             $crossGenCorrect = $true
         }
-        elseif ($IncludeSymbols.IsPresent) {
-            $crossGenCorrect = $true
+
+        $PSModuleRestoreCorrect = $false
+
+        # Require PSModuleRestore for packaging without symbols
+        # But Disallow it when packaging with symbols
+        if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
+            $PSModuleRestoreCorrect = $true
+        }
+        elseif ($IncludeSymbols.IsPresent -and !$Script:Options.PSModuleRestore) {
+            $PSModuleRestoreCorrect = $true
         }
 
         # Make sure the most recent build satisfies the package requirement
@@ -108,10 +116,11 @@ function Start-PSPackage {
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
             $params = @('-Clean')
-            if(-not $IncludeSymbols.IsPresent)
-            {
-                $params += '-CrossGen'
+            $params += '-CrossGen'
+            if (!$IncludeSymbols.IsPresent) {
+                $params += '-PSModuleRestore'
             }
+
             $params += '-Runtime', $Runtime
             $params += '-Configuration', $Configuration
 
@@ -140,9 +149,35 @@ function Start-PSPackage {
         # If building a symbols package, don't include the publish build.
         if ($IncludeSymbols.IsPresent)
         {
+            $publishSource = $Source
             $buildSource = Split-Path -Path $Source -Parent
             $Source = New-TempFolder
-            Get-ChildItem -Path $buildSource | Where-Object {$_.Name -ine 'Publish'} | Copy-Item -Destination $Source -Recurse
+
+            # files not to include as individual files.  These files will be included in publish.zip
+            $toExclude = @(
+                'hostfxr.dll'
+                'hostpolicy.dll'
+                'libhostfxr.so'
+                'libhostpolicy.so'
+                'libhostfxr.dylib'
+                'libhostpolicy.dylib'
+                'Publish'
+                )
+            Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $Source -Recurse
+
+            # Replace binaries with crossgen'ed binaires from publish folder.
+            Get-ChildItem -Recurse $Source | ForEach-Object {
+                $relativePath = $_.FullName -replace $Source, ''
+                $publishPath = Join-Path $publishSource -ChildPath $relativePath
+                if (Test-Path -Path $publishPath)
+                {
+                    Copy-Item -Path $publishPath -Destination $_.FullName -Force
+                }
+            }
+
+            $zipSource = Join-Path $publishSource -ChildPath '*'
+            $zipPath = Join-Path -Path $Source -ChildPath 'publish.zip'
+            Compress-Archive -Path $zipSource -DestinationPath $zipPath
         }
 
         log "Packaging Source: '$Source'"
