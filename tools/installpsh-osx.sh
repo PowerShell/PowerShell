@@ -165,7 +165,9 @@ if [[ "'$*'" =~ includeide ]] ; then
     code --install-extension ms-vscode.PowerShell
 fi
 
-pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
+Run `"pwsh`" to start a PowerShell session."'
+
 success=$?
 
 if [[ "$success" != 0 ]]; then

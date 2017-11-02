@@ -178,10 +178,12 @@ else
     grep -q "^${pwshlink}$" /etc/shells || echo $pwshlink | $SUDO tee --append /etc/shells > /dev/null ;
 fi
 
-## Remove the package
+## Remove the downloaded package file
 rm -f $package
 
-pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
+Run `"pwsh`" to start a PowerShell session."'
+
 success=$?
 
 if [[ "$success" != 0 ]]; then
