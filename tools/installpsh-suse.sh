@@ -178,6 +178,9 @@ else
     grep -q "^${pwshlink}$" /etc/shells || echo $pwshlink | $SUDO tee --append /etc/shells > /dev/null ;
 fi
 
+## Remove the package
+rm -f $package
+
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
 success=$?
 
