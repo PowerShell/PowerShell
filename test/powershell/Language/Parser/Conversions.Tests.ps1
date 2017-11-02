@@ -31,30 +31,27 @@ Describe 'conversion syntax' -Tags "CI" {
                 ## would become `, [List[int]]@(1,2)`, which is more confusing than `$result = [List[int]]@(1,2)`.
                 ## This is why the current form of `$result = [List[int]]@(1,2)` is used intentionally here.
 
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1)}; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(1) }
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1, 2)}; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(1, 2) }
-                @{ Command = {$result = [Collections.Generic.List[int]]"4"}; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(4) }
-                @{ Command = {$result = [Collections.Generic.List[int]]@("4", "5")}; CollectionType = 'List`1'; ElementType = "Int32"; Elements = @(4, 5) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};       CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};     CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1,2) }
+                @{ Command = {$result = [Collections.Generic.List[int]]"4"};        CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@("4","5")}; CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4,5) }
 
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1)}; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1, 2)}; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1", "2") }
-                @{ Command = {$result = [Collections.Generic.List[string]]1}; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
-                @{ Command = {$result = [Collections.Generic.List[string]]@("4")}; CollectionType = 'List`1'; ElementType = "String"; Elements = @("4") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};    CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)};  CollectionType = 'List`1'; ElementType = "String"; Elements = @("1","2") }
+                @{ Command = {$result = [Collections.Generic.List[string]]1};       CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@("4")};  CollectionType = 'List`1'; ElementType = "String"; Elements = @("4") }
 
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1, 2)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1, 2) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@("4", "5")}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4, 5) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};       CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)};     CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1,2) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};        CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@("4","5")}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4,5) }
 
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile')};
-                    CollectionType = 'List`1'; ElementType = "FileInfo"; Elements = @('TestFile')
-                }
+                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile1', 'TestFile2')};
-                    CollectionType = 'List`1'; ElementType = "FileInfo"; Elements = @('TestFile1', 'TestFile2')
-                }
+                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile1', 'TestFile2') }
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]'TestFile'};
-                    CollectionType = 'List`1'; ElementType = "FileInfo"; Elements = @('TestFile')
-                }
+                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
             )
         }
 
@@ -106,12 +103,12 @@ namespace TestTypeResolution {
 }
 '@
 
-        $cmdletDllDir = Join-Path $TestDrive "cmdlet"
+        $cmdletDllDir  = Join-Path $TestDrive "cmdlet"
         $dupTypeDllDir = Join-Path $TestDrive "dupType"
 
         $null = New-Item -Path $cmdletDllDir, $dupTypeDllDir -ItemType Directory -Force
 
-        $cmdletDllPath = Join-Path $cmdletDllDir "TestCmdlet.dll"
+        $cmdletDllPath  = Join-Path $cmdletDllDir "TestCmdlet.dll"
         $dupTypeDllPath = Join-Path $dupTypeDllDir "TestType.dll"
 
         Add-Type $cmdletCode -OutputAssembly $cmdletDllPath

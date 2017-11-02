@@ -6,9 +6,6 @@
     <OutputType>Exe</OutputType>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
-    <TargetFramework>$(TargetFramework)</TargetFramework>
-    <DeployOnBuild>True</DeployOnBuild>
-    <PublishProfile>FolderProfile</PublishProfile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,9 +31,6 @@
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj" />
     <ProjectReference Include="..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
-    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj">
-      <Private>true</Private>
-    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

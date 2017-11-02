@@ -2644,7 +2644,6 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsSpecial { get; private set; }
 
-
         internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method)
         {
             return Create(name, dotNetInstanceAdapter, baseObject, method, false, false);
@@ -2758,7 +2757,6 @@ namespace System.Management.Automation
             Type psMethodType = typeof(PSMethod<>).MakeGenericType(methodGroupType);
             var delegateType = typeof(Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>);
             return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>)Delegate.CreateDelegate(delegateType, psMethodType.GetMethod("Create", BindingFlags.NonPublic|BindingFlags.Static));
-
         }
 
         private static Type CreateMethodGroup(Type[] sourceTypes, int start, int count)
@@ -2836,7 +2834,6 @@ namespace System.Management.Automation
                 case 61: return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], types[15], types[16], types[17], types[18], types[19], types[20], types[21], types[22], types[23], types[24], types[25], types[26], types[27], types[28], types[29], types[30], CreateMethodGroup(types, 31, 30));
                 case 62: return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], types[15], types[16], types[17], types[18], types[19], types[20], types[21], types[22], types[23], types[24], types[25], types[26], types[27], types[28], types[29], types[30], CreateMethodGroup(types, 31, 31));
                 case 63: return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], types[15], types[16], types[17], types[18], types[19], types[20], types[21], types[22], types[23], types[24], types[25], types[26], types[27], types[28], types[29], types[30], CreateMethodGroup(types, 31, 32));
-
             }
             throw Assert.Unreachable;
         }
@@ -2848,7 +2845,6 @@ namespace System.Management.Automation
 
     abstract class PSGenericType
     {
-
         public static Type GetGenericType(int i)
         {
             switch (i)
@@ -2954,7 +2950,6 @@ namespace System.Management.Automation
         private Unit() { }
     }
 
-
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
     {
         private int _current;
@@ -2998,7 +2993,6 @@ namespace System.Management.Automation
             Current = t;
             return true;
         }
-
 
         public void Reset()
         {

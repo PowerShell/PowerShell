@@ -3220,9 +3220,10 @@ namespace System.Management.Automation
                                                       IFormatProvider formatProvider,
                                                       TypeTable backupTable)
         {
+            PSMethod psMethod;
             try
             {
-                var psMethod = (PSMethod)valueToConvert;
+                psMethod = (PSMethod) valueToConvert;
 
                 var maybeType = psMethod.instance as Type;
                 var methodInfoCandiates = maybeType != null
@@ -3246,21 +3247,21 @@ namespace System.Management.Automation
                             : candidate.CreateDelegate(resultType, psMethod.instance);
                     }
                 }
-                var msg = $"No matching overload found from {psMethod} to {resultType}";
-                typeConversion.WriteLine($"PSMethod to Func/Action exception: \"{msg}\".");
-                throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", null,
-                    ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert.ToString(), resultType.ToString(), msg);
             }
             catch (Exception e)
             {
-
-                typeConversion.WriteLine("PSMethod to Func/Action exception: \"{0}\".", e.Message);
+                typeConversion.WriteLine("PSMethod to Delegate exception: \"{0}\".", e.Message);
                 throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", e,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
             }
-        }
+
+            var msg = String.Format(ExtendedTypeSystem.PSMethodToDelegateNoMatchingOverLoad,  psMethod, resultType);
+            typeConversion.WriteLine($"PSMethod to Delegate exception: \"{msg}\".");
+            throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", null,
+                ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                valueToConvert.ToString(), resultType.ToString(), msg);
+    }
 
         private static object ConvertToNullable(object valueToConvert,
                                                 Type resultType,
@@ -4798,7 +4799,7 @@ namespace System.Management.Automation
                 var isAction = mi.ReturnType == typeof(void);
                 var comparator = new DelegateArgsComparator(mi);
                 var signatureEnumerator = new PSMethodSignatureEnumerator(fromType);
-                while(signatureEnumerator.MoveNext())
+                while (signatureEnumerator.MoveNext())
                 {
                     var candidate = signatureEnumerator.Current.GetMethod("Invoke");
 
@@ -4825,7 +4826,7 @@ namespace System.Management.Automation
 
             public bool SignatureMatches(Type returnType, ParameterInfo[] arguments)
             {
-                return ReturnTypeMatches(returnType) && ParameterTypeMatches(arguments);
+                return ReturnTypeMatches(returnType) && ParameterTypesMatches(arguments);
             }
 
             private bool ReturnTypeMatches(Type returnType)
@@ -4833,7 +4834,7 @@ namespace System.Management.Automation
                 return !PSMethod.MatchesPSMethodProjectedType(_returnType, returnType, testAssignment: true);
             }
 
-            private bool ParameterTypeMatches(ParameterInfo[] arguments)
+            private bool ParameterTypesMatches(ParameterInfo[] arguments)
             {
                 var argsCount = _targetParametersInfos.Length;
                 // void is encoded as typeof(Unit) in the PSMethod<MethodGroup<>> as the last parameter
