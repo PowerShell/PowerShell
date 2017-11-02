@@ -2681,7 +2681,10 @@ namespace System.Management.Automation
         private static Type GetPSMethodTypeProjection(Type type, bool isOut = false)
         {
             var resType = type.IsEnum ? typeof(PSEnum<>).MakeGenericType(type) : type;
-
+            if (type.IsPointer)
+            {
+                resType = typeof(PSPointer<>).MakeGenericType(resType.GetElementType());
+            }
             if (type.IsByRef)
             {
                 resType = isOut ? typeof(PSOutParameter<>).MakeGenericType(resType.GetElementType()) : typeof(PSReference<>).MakeGenericType(resType.GetElementType());
@@ -2709,7 +2712,19 @@ namespace System.Management.Automation
             }
             if (targetType.IsEnum)
             {
-                return sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() == typeof(PSEnum<>) && targetType == sourceType.GenericTypeArguments[0];
+                if (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() != typeof(PSEnum<>))
+                {
+                    return false;
+                }
+                sourceType = sourceType.GenericTypeArguments[0];
+            }
+            if (targetType.IsPointer)
+            {
+                if (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() != typeof(PSPointer<>))
+                {
+                    return false;
+                }
+                sourceType = sourceType.GenericTypeArguments[0];
             }
             if (testAssignment)
             {
@@ -2883,6 +2898,8 @@ namespace System.Management.Automation
     struct PSGenericValueType16 {}
 
     struct PSEnum<T> { }
+
+    struct PSPointer<T> { }
 
     internal abstract class MethodGroup { }
     internal class MethodGroup<T1> : MethodGroup { }
