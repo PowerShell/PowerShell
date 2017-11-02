@@ -1753,16 +1753,17 @@ namespace System.Management.Automation
 
                     for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
                     {
-                        // Say our input is: `$Emit+1` and i is 4 (points to 't')
-                        // Our shortest pattern is 4 ('Emit'), and we're about to
-                        // finish computing the hash for Emit. The previous iteration
-                        // will hold the hash for `Emi` in runningHash[3], or j-1,
-                        // so we simply add the hash for t.
+                        // Say our input is: `Emit` (our shortest pattern, len 4).
+                        // Towards the end just before matching, we will:
+                        //
+                        // iter n: compute hash on `Emi` (len 3)
+                        // iter n+1: compute hash on `Emit` (len 4) using hash from previous iteration (j-1)
+                        // iter n+1: compute hash on `mit` (len 3)
+                        //    This overwrites the previous iteration, hence we go from longest to shortest.
                         //
                         // LCG comes from a trivial (bad) random number generator,
                         // but it's sufficient for us - the hashes for our patterns
-                        // is unique, and processing of 2200 files found no false
-                        // matches.
+                        // are unique, and processing of 2200 files found no false matches.
                         runningHash[j] = LCG * runningHash[j - 1] + h;
                     }
 
