@@ -2671,26 +2671,52 @@ namespace System.Management.Automation
             {
                 var parameterInfo = parameterInfos[i];
                 var parameterType = parameterInfo.ParameterType;
-                if (parameterType.IsByRef)
-                {
-
-                    if ((parameterInfo.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out)
-                    {
-                        res[i] = typeof(PSOutParameter<>).MakeGenericType(parameterType.GetElementType());
-                    }
-                    else
-                    {
-                        res[i] = typeof(PSReference<>).MakeGenericType(parameterType.GetElementType());
-                    }
-                }
-                else {
-                    res[i] = parameterType;
-                }
-
+                res[i] = GetPSMethodTypeProjection(parameterType,
+                    (parameterInfo.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out);
             }
-            var returnType = methodInfo.ReturnType == typeof(void) ? typeof(Unit) : methodInfo.ReturnType;
+            var returnType = methodInfo.ReturnType == typeof(void) ? typeof(Unit) : GetPSMethodTypeProjection(methodInfo.ReturnType);
             res[parameterInfos.Length] = returnType;
             return DelegateHelpers.MakeDelegate(res);
+        }
+
+        private static Type GetPSMethodTypeProjection(Type type, bool isOut = false)
+        {
+            var resType = type.IsEnum ? typeof(PSEnum<>).MakeGenericType(type) : type;
+
+            if (type.IsByRef)
+            {
+                resType = isOut ? typeof(PSOutParameter<>).MakeGenericType(resType.GetElementType()) : typeof(PSReference<>).MakeGenericType(resType.GetElementType());
+            }
+
+            return resType;
+        }
+
+        internal static bool MatchesPSMethodProjectedType(Type targetType, Type projectedSourceType, bool testAssignment = false, bool isOut = false)
+        {
+            if (targetType == typeof(void) && projectedSourceType == typeof(Unit))
+            {
+                return true;
+            }
+            var sourceType = projectedSourceType;
+            if (targetType.IsByRef)
+            {
+                if (!projectedSourceType.IsGenericType) return false;
+                var defType = projectedSourceType.GetGenericTypeDefinition();
+                if (defType != (isOut ? typeof(PSOutParameter<>) : typeof(PSReference<>)))
+                {
+                    return false;
+                }
+                sourceType = defType.GenericTypeArguments[0];
+            }
+            if (targetType.IsEnum)
+            {
+                return sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() == typeof(PSEnum<>) && targetType == sourceType.GenericTypeArguments[0];
+            }
+            if (testAssignment)
+            {
+                return targetType.IsAssignableFrom(sourceType);
+            }
+            return targetType == sourceType;
         }
 
         private static MethodInfo ReplaceGenericTypeArgumentsWithMarkerTypes(MethodInfo methodInfo)
@@ -2704,7 +2730,9 @@ namespace System.Management.Automation
             var concrete = new Type[genArgs.Length];
             for (int i = 0; i < genArgs.Length; i++)
             {
-                concrete[i] = PSGenericType.GetGenericType(i);
+                concrete[i] = genArgs[i].IsValueType
+                    ? PSGenericValueType.GetGenericType(i)
+                    : PSGenericType.GetGenericType(i);
             }
             return methodInfo.MakeGenericMethod(concrete);
         }
@@ -2865,6 +2893,54 @@ namespace System.Management.Automation
     class PSGenericType15 : PSGenericType { private PSGenericType15() { } }
     class PSGenericType16 : PSGenericType { private PSGenericType16() { } }
 
+    struct PSGenericValueType
+    {
+        internal static Type GetGenericType(int i)
+        {
+            switch (i)
+            {
+                case 0: return typeof(PSGenericValueType0);
+                case 1: return typeof(PSGenericValueType1);
+                case 2: return typeof(PSGenericValueType2);
+                case 3: return typeof(PSGenericValueType3);
+                case 4: return typeof(PSGenericValueType4);
+                case 5: return typeof(PSGenericValueType5);
+                case 6: return typeof(PSGenericValueType6);
+                case 7: return typeof(PSGenericValueType7);
+                case 8: return typeof(PSGenericValueType8);
+                case 9: return typeof(PSGenericValueType9);
+                case 10: return typeof(PSGenericValueType10);
+                case 11: return typeof(PSGenericValueType11);
+                case 12: return typeof(PSGenericValueType12);
+                case 13: return typeof(PSGenericValueType13);
+                case 14: return typeof(PSGenericValueType14);
+                case 15: return typeof(PSGenericValueType15);
+                case 16: return typeof(PSGenericValueType16);
+            }
+            throw Assert.Unreachable;
+        }
+    }
+
+    struct PSGenericValueType0 {}
+    struct PSGenericValueType1 {}
+    struct PSGenericValueType2 {}
+    struct PSGenericValueType3 {}
+    struct PSGenericValueType4 {}
+    struct PSGenericValueType5 {}
+    struct PSGenericValueType6 {}
+    struct PSGenericValueType7 {}
+    struct PSGenericValueType8 {}
+    struct PSGenericValueType9 {}
+    struct PSGenericValueType10 {}
+    struct PSGenericValueType11 {}
+    struct PSGenericValueType12 {}
+    struct PSGenericValueType13 {}
+    struct PSGenericValueType14 {}
+    struct PSGenericValueType15 {}
+    struct PSGenericValueType16 {}
+
+    struct PSEnum<T> { }
+
     internal abstract class MethodGroup { }
     internal class MethodGroup<T1> : MethodGroup { }
     internal class MethodGroup<T1, T2> : MethodGroup { }
@@ -2948,18 +3024,18 @@ namespace System.Management.Automation
             return member;
         }
 
-        internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData) : base(name, adapter, baseObject, adapterData) { }
-        internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden) : base(name, adapter, baseObject, adapterData, isSpecial, isHidden) { }
+        internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData)
+            : base(name, adapter, baseObject, adapterData) { }
+        internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden)
+            : base(name, adapter, baseObject, adapterData, isSpecial, isHidden) { }
 
         /// <summary>
         /// Helper factory function since we cannot bind a delegate to a ConstructorInfo.
         /// </summary>
-        internal static PSMethod<T> Create(string name, Adapter adapter, object baseObject, object adapterData,
-            bool isSpecial, bool isHidden)
+        internal static PSMethod<T> Create(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden)
         {
             return new PSMethod<T>(name, adapter, baseObject, adapterData, isSpecial, isHidden);
         }
-
     }
 
 

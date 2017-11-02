@@ -4830,7 +4830,7 @@ namespace System.Management.Automation
 
             private bool ReturnTypeMatches(Type returnType)
             {
-                return _returnType == typeof(void) ?  returnType == typeof(Unit) : _returnType.IsAssignableFrom(returnType);
+                return !PSMethod.MatchesPSMethodProjectedType(_returnType, returnType, testAssignment: true);
             }
 
             private bool ParameterTypeMatches(ParameterInfo[] arguments)
@@ -4843,26 +4843,11 @@ namespace System.Management.Automation
                 }
                 for (int i = 0; i < arguments.Length; i++)
                 {
-                    var arg = arguments[i].ParameterType;
+                    var arg = arguments[i];
+                    var argType = arg.ParameterType;
                     var targetParamType = _targetParametersInfos[i].ParameterType;
-                    if (arg.IsGenericType && arg == typeof(PSReference<>))
-                    {
-                        if (!targetParamType.IsByRef ||
-                            arg.GenericTypeArguments[0] != targetParamType)
-                        {
-                            return false;
-                        }
-                    }
-                    if (arg.IsGenericType && arg == typeof(PSOutParameter<>)) {
-                        if ((arguments[i].Attributes | ParameterAttributes.Out) != ParameterAttributes.Out ||
-                            !targetParamType.IsByRef ||
-                            arg.GenericTypeArguments[0] != targetParamType)
-                        {
-                            return false;
-                        }
-                    }
-
-                    if (targetParamType != arg)
+                    var isOut = (arg.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out;
+                    if (!PSMethod.MatchesPSMethodProjectedType(targetParamType, argType, isOut: isOut))
                     {
                         return false;
                     }
