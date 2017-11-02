@@ -386,9 +386,9 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
-        private static readonly string s_VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
-        private static readonly string s_LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
-        private static readonly string s_LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*?$";
+        private const string s_VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
+        private const string s_LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
+        private const string s_LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*?$";
         private const string PreLabelPropertyName = "PSSemanticVersionPreLabel";
         private const string BuildLabelPropertyName = "PSSemanticVersionBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="major">The major version</param>
         /// <param name="minor">The minor version</param>
-        /// <param name="patch">The minor version</param>
+        /// <param name="patch">The patch version</param>
         /// <param name="preLabel">The preLabel for the version</param>
         /// <param name="buildLabel">The buildLabel for the version</param>
         /// <exception cref="FormatException">
@@ -428,24 +428,16 @@ namespace System.Management.Automation
         {
             if (!string.IsNullOrEmpty(preLabel))
             {
-                if (preLabel.StartsWith('-') || preLabel.Contains("+")) throw new FormatException(nameof(preLabel));
+                if (!Regex.IsMatch(preLabel, s_LabelUnitRegEx)) throw new FormatException(nameof(preLabel));
 
                 PreLabel = preLabel;
-            }
-            else
-            {
-                PreLabel = null;
             }
 
             if (!string.IsNullOrEmpty(buildLabel))
             {
-                if (buildLabel.StartsWith('-') || buildLabel.Contains("+")) throw new FormatException(nameof(buildLabel));
+                if (!Regex.IsMatch(buildLabel, s_LabelUnitRegEx)) throw new FormatException(nameof(buildLabel));
 
                 BuildLabel = buildLabel;
-            }
-            else
-            {
-                BuildLabel = null;
             }
         }
 
@@ -463,20 +455,16 @@ namespace System.Management.Automation
         public SemanticVersion(int major, int minor, int patch, string label)
             : this(major, minor, patch)
         {
+            // We presume the SymVer :
+            // 1) major.minor.patch-label
+            // 2) 'label' starts with letter or digit.
             if (!string.IsNullOrEmpty(label))
             {
-                if ((label.StartsWith('-') || label.StartsWith('.'))) throw new FormatException(nameof(label));
-
                 var match = Regex.Match(label, s_LabelRegEx);
                 if (!match.Success) throw new FormatException(nameof(label));
 
                 PreLabel = match.Groups["preLabel"].Value;
                 BuildLabel = match.Groups["buildLabel"].Value;
-            }
-            else
-            {
-                PreLabel = null;
-                BuildLabel = null;
             }
         }
 
@@ -498,8 +486,9 @@ namespace System.Management.Automation
             Major = major;
             Minor = minor;
             Patch = patch;
-            PreLabel = null;
-            BuildLabel = null;
+            // We presume:
+            // PreLabel = null;
+            // BuildLabel = null;
         }
 
         /// <summary>
@@ -602,14 +591,13 @@ namespace System.Management.Automation
         public int Patch { get; }
 
         /// <summary>
-        ///
+        /// PreLabel position in the SymVer string 'major.minor.patch-PreLabel+BuildLabel'.
         /// </summary>
-        //public string Label { get; }
 
         public string PreLabel { get; }
 
         /// <summary>
-        ///
+        /// BuildLabel position in the SymVer string 'major.minor.patch-PreLabel+BuildLabel'.
         /// </summary>
         public string BuildLabel { get; }
 
@@ -672,20 +660,24 @@ namespace System.Management.Automation
             string preLabel = null;
             string buildLabel = null;
 
+            // We parse the SymVer 'version' string 'major.minor.patch-PreLabel+BuildLabel'.
             var dashIndex = version.IndexOf('-');
             var plusIndex = version.IndexOf('+');
 
             if (dashIndex > plusIndex)
             {
+                // 'preLabel' can contains dashes.
                 if (plusIndex == -1)
                 {
-                    // No buildLabel - buildLabel == null;
+                    // No buildLabel: buildLabel == null
+                    // Format is 'major.minor.patch-PreLabel'
                     preLabel = version.Substring(dashIndex+1);
                     versionSansLabel = version.Substring(0, dashIndex);
                 }
                 else
                 {
-                    // No preLabel - preLabel == null;
+                    // No preLabel: preLabel == null
+                    // Format is 'major.minor.patch+BuildLabel'
                     buildLabel = version.Substring(plusIndex+1);
                     versionSansLabel = version.Substring(0, plusIndex);
                     dashIndex = -1;
@@ -698,10 +690,12 @@ namespace System.Management.Automation
                     // Here dashIndex == plusIndex == -1
                     // No preLabel - preLabel == null;
                     // No buildLabel - buildLabel == null;
+                    // Format is 'major.minor.patch'
                     versionSansLabel = version;
                 }
                 else
                 {
+                    // Format is 'major.minor.patch-PreLabel+BuildLabel'
                     preLabel = version.Substring(dashIndex+1, plusIndex-dashIndex-1);
                     buildLabel = version.Substring(plusIndex+1);
                     versionSansLabel = version.Substring(0, dashIndex);
@@ -780,6 +774,15 @@ namespace System.Management.Automation
             }
 
             return versionString;
+        }
+
+        /// <summary>
+        /// Implement Compare.
+        /// </summary>
+        public static int Compare(SemanticVersion versionA, SemanticVersion versionB)
+        {
+            if (versionA == null) return -1;
+            return versionA.CompareTo(versionB);
         }
 
         /// <summary>
@@ -882,7 +885,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <(SemanticVersion v1, SemanticVersion v2)
         {
-            return (v1.CompareTo(v2) < 0);
+            return (Compare(v1, v2) < 0);
         }
 
         /// <summary>
@@ -890,7 +893,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator <=(SemanticVersion v1, SemanticVersion v2)
         {
-            return (v1.CompareTo(v2) <= 0);
+            return (Compare(v1, v2) <= 0);
         }
 
         /// <summary>
@@ -898,7 +901,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator >(SemanticVersion v1, SemanticVersion v2)
         {
-            return (v1.CompareTo(v2) > 0);
+            return (Compare(v1, v2) > 0);
         }
 
         /// <summary>
@@ -906,7 +909,7 @@ namespace System.Management.Automation
         /// </summary>
         public static bool operator >=(SemanticVersion v1, SemanticVersion v2)
         {
-            return (v1.CompareTo(v2) >= 0);
+            return (Compare(v1, v2) >= 0);
         }
 
         private static int ComparePreLabel(string preLabel1, string preLabel2)
