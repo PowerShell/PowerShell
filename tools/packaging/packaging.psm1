@@ -88,6 +88,9 @@ function Start-PSPackage {
         }
 
         $PSModuleRestoreCorrect = $false
+        
+        # Require PSModuleRestore for packaging without symbols
+        # But Disallow it when packaging with symbols
         if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
             $PSModuleRestoreCorrect = $true
         }
