@@ -88,7 +88,7 @@ function Start-PSPackage {
         }
 
         $PSModuleRestoreCorrect = $false
-        
+
         # Require PSModuleRestore for packaging without symbols
         # But Disallow it when packaging with symbols
         if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
@@ -152,13 +152,13 @@ function Start-PSPackage {
             $publishSource = $Source
             $buildSource = Split-Path -Path $Source -Parent
             $Source = New-TempFolder
-            
+
             # files not to include as individual files.  These files will be included in publish.zip
             $toExclude = @(
                 'hostfxr.dll'
-                'hostpolicy.dll'                
+                'hostpolicy.dll'
                 'libhostfxr.so'
-                'libhostpolicy.so'                
+                'libhostpolicy.so'
                 'libhostfxr.dylib'
                 'libhostpolicy.dylib'
                 'Publish'
@@ -175,7 +175,7 @@ function Start-PSPackage {
                 }
             }
 
-            $zipSource = Join-Path $publishSource -ChildPath '*' 
+            $zipSource = Join-Path $publishSource -ChildPath '*'
             $zipPath = Join-Path -Path $Source -ChildPath 'publish.zip'
             Compress-Archive -Path $zipSource -DestinationPath $zipPath
         }
