@@ -406,11 +406,6 @@ u
  - demos/DSC/readme.md
 #endregion
 
-#region demos/install/README.md Overrides
- - demos/install/README.md
-download.sh
-#endregion
-
 #region demos/python/README.md Overrides
  - demos/python/README.md
 _script.ps1

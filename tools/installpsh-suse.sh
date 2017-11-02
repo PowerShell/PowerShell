@@ -22,7 +22,7 @@ VERSION="1.1.2"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=suse
-repobased=true
+repobased=false
 gitscriptname="installpsh-suse.psh"
 
 echo
@@ -116,15 +116,23 @@ fi
 
 #END Verify The Installer Choice
 
+echo
+echo "*** Installing prerequisites for PowerShell Core..."
+$SUDO zypper --non-interactive update --skip-interactive \
+    && zypper --non-interactive install \
+        glibc-locale \
+        glibc-i18ndata \
+        tar \
+        curl \
+        libunwind \
+        libicu \
+        openssl \
+    && zypper --non-interactive clean --all
 
 ##END Check requirements and prerequisites
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
-if ! hash curl 2>/dev/null; then
-    echo "curl not found, installing..."
-    $SUDO zypper install -y curl
-fi
 release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
 
 #REPO BASED (Not ready yet)
@@ -140,8 +148,8 @@ release=`curl https://api.github.com/repos/powershell/powershell/releases/latest
 #$SUDO zypper --non-interactive install powershell
 
 #DIRECT DOWNLOAD
-packagerel=`echo $release | sed 's/-/_/'`
-package=powershell-${packagerel}-1.suse.42.1.x86_64.rpm
+pwshlink=/usr/bin/pwsh
+package=powershell-${release}-linux-x64.tar.gz
 downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release/$package
 
 echo "Destination file: $package"
@@ -154,10 +162,21 @@ if [[ ! -r "$package" ]]; then
     exit 1
 fi
 
-sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo zypper --non-interactive install "./$package"
+## Create the target folder where powershell will be placed
+$SUDO mkdir -p /opt/microsoft/powershell/$release
+## Expand powershell to the target folder
+$SUDO tar zxf $package -C /opt/microsoft/powershell/$release
 
-powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+## Create the symbolic link that points to powershell
+$SUDO ln -s /opt/microsoft/powershell/$release/pwsh $pwshlink
+## Add the symbolic link path to /etc/shells
+if [ ! -f /etc/shells ] ; then
+    $SUDO echo $pwshlink > /etc/shells ;
+else
+    $SUDO grep -q "^${pwshlink}$" /etc/shells || $SUDO echo $pwshlink >> /etc/shells ;
+fi
+
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
 success=$?
 
 if [[ "$success" != 0 ]]; then
