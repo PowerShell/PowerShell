@@ -712,7 +712,7 @@ function New-UnixPackage {
             {
                 # This is needed to prevent installer from picking up
                 # the launcher app in the build structure and updating
-                # it which locks out subsequnent package build due to
+                # it which locks out subsequent package builds due to
                 # increase permissions.
                 $plist = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app/Contents/Info.plist"
                 $tempguid = (New-Guid).Guid
