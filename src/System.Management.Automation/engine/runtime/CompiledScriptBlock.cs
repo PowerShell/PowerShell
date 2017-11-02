@@ -1791,6 +1791,11 @@ namespace System.Management.Automation
                     return c;
                 }
 
+                if (pattern.Length > 29) {
+                    throw new Exception("Update runningHash in match for new longest string.\n" +
+                        "Also a longer maximum length could greatly affect the performance of this algorithm, so only increase with care.");
+                }
+
                 uint h = 0;
                 foreach (var c in pattern)
                 {
