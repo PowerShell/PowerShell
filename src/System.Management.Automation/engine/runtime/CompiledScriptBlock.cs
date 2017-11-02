@@ -13,6 +13,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Security.Cryptography.X509Certificates;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -1492,44 +1493,10 @@ namespace System.Management.Automation
 
         // Quick check for script blocks that may have suspicious content. If this
         // is true, we log them to the event log despite event log settings.
-        //
-        // Performance notes:
-        //
-        // For the current number of search terms, the this approach is about as high
-        // performance as we can get. It adds about 1ms to the invocation of a script
-        // block (we don't do this at parse time).
-        // The manual tokenization is much faster than either Regex.Split
-        // or a series of String.Split calls. Lookups in the HashSet are much faster
-        // than a ton of calls to String.IndexOf (which .NET implements in native code).
-        //
-        // If we were to expand this set of keywords much farther, it would make sense
-        // to look into implementing the Aho-Corasick algorithm (the one used by antimalware
-        // engines), but Aho-Corasick is slower than the current approach for relatively
-        // small match sets.
         internal static string CheckSuspiciousContent(Ast scriptBlockAst)
         {
-            // Split the script block text into an array of elements that have
-            // a-Z A-Z dash.
-            string scriptBlockText = scriptBlockAst.Extent.Text;
-            IEnumerable<string> elements = TokenizeWordElements(scriptBlockText);
-
-            // First check for plain-text signatures
-            ParallelOptions parallelOptions = new ParallelOptions();
-            string foundSignature = null;
-
-            Parallel.ForEach(elements, parallelOptions, (element, loopState) =>
-            {
-                if (foundSignature == null)
-                {
-                    if (s_signatures.Contains(element))
-                    {
-                        foundSignature = element;
-                        loopState.Break();
-                    }
-                }
-            });
-
-            if (!String.IsNullOrEmpty(foundSignature))
+            var foundSignature = SuspiciousContentChecker.Match(scriptBlockAst.Extent.Text);
+            if (foundSignature != null)
             {
                 return foundSignature;
             }
@@ -1556,106 +1523,285 @@ namespace System.Management.Automation
             return null;
         }
 
-        // Extract tokens of a-z A-Z and dash
-        private static IEnumerable<string> TokenizeWordElements(string scriptBlockText)
+        class SuspiciousContentChecker
         {
-            StringBuilder currentElement = new StringBuilder(100);
+            // Based on a (bad) random number generator, but good enough
+            // for our simple needs.
+            private const uint LCG = 31;
 
-            foreach (char character in scriptBlockText)
+            /// <summary>
+            /// Check if a hash code matches a small set of pre-computed hashes
+            /// for suspicious strings in a PowerShell script.
+            ///
+            /// If you need to add a new string, use the commented out
+            /// method HashNewPattern (commented out because it's dead
+            /// code - needed only to generate this switch statement below.)
+            /// </summary>
+            /// <returns>The string matching the hash, or null.</returns>
+            static string LookupHash(uint h)
             {
-                if ((character >= 'a') &&
-                   (character <= 'z'))
+                switch (h)
                 {
-                    // Capture lowercase a-z
-                    currentElement.Append(character);
-                    continue;
+                    // Calling Add-Type
+                    case 3012981990: return "Add-Type";
+                    case 3359423881: return "DllImport";
+
+                    // Doing dynamic assembly building / method indirection
+                    case 2713126922: return "DefineDynamicAssembly";
+                    case 2407049616: return "DefineDynamicModule";
+                    case 3276870517: return "DefineType";
+                    case 419507039: return "DefineConstructor";
+                    case 1370182198: return "CreateType";
+                    case 1973546644: return "DefineLiteral";
+                    case 3276413244: return "DefineEnum";
+                    case 2785322015: return "DefineField";
+                    case 837002512: return "ILGenerator";
+                    case 3117011: return "Emit";
+                    case 883134515: return "UnverifiableCodeAttribute";
+                    case 2920989166: return "DefinePInvokeMethod";
+                    case 1996222179: return "GetTypes";
+                    case 3935635674: return "GetAssemblies";
+                    case 955534258: return "Methods";
+                    case 3368914227: return "Properties";
+
+                    // Suspicious methods / properties on "Type"
+                    case 398423780: return "GetConstructor";
+                    case 3761202703: return "GetConstructors";
+                    case 1998297230: return "GetDefaultMembers";
+                    case 1982269700: return "GetEvent";
+                    case 1320818671: return "GetEvents";
+                    case 1982805860: return "GetField";
+                    case 1337439631: return "GetFields";
+                    case 2784018083: return "GetInterface";
+                    case 2864332761: return "GetInterfaceMap";
+                    case 405214768: return "GetInterfaces";
+                    case 1534378352: return "GetMember";
+                    case 321088771: return "GetMembers";
+                    case 1534592951: return "GetMethod";
+                    case 327741340: return "GetMethods";
+                    case 1116240007: return "GetNestedType";
+                    case 243701964: return "GetNestedTypes";
+                    case 1077700873: return "GetProperties";
+                    case 1020114731: return "GetProperty";
+                    case 257791250: return "InvokeMember";
+                    case 3217683173: return "MakeArrayType";
+                    case 821968872: return "MakeByRefType";
+                    case 3538448099: return "MakeGenericType";
+                    case 3207725129: return "MakePointerType";
+                    case 1617553224: return "DeclaringMethod";
+                    case 3152745313: return "DeclaringType";
+                    case 4144122198: return "ReflectedType";
+                    case 3455789538: return "TypeHandle";
+                    case 624373608: return "TypeInitializer";
+                    case 637454598: return "UnderlyingSystemType";
+
+                    // Doing things with System.Runtime.InteropServices
+                    case 1855303451: return "InteropServices";
+                    case 839491486: return "Marshal";
+                    case 1928879414: return "AllocHGlobal";
+                    case 3180922282: return "PtrToStructure";
+                    case 1718292736: return "StructureToPtr";
+                    case 3390778911: return "FreeHGlobal";
+                    case 3111215263: return "IntPtr";
+
+                    // General Obfuscation
+                    case 1606191041: return "MemoryStream";
+                    case 2147536747: return "DeflateStream";
+                    case 1820815050: return "FromBase64String";
+                    case 3656724093: return "EncodedCommand";
+                    case 2920836328: return "Bypass";
+                    case 3473847323: return "ToBase64String";
+                    case 4192166699: return "ExpandString";
+                    case 2462813217: return "GetPowerShell";
+
+                    // Suspicious Win32 API calls
+                    case 2123968741: return "OpenProcess";
+                    case 3630248714: return "VirtualAlloc";
+                    case 3303847927: return "VirtualFree";
+                    case 512407217: return "WriteProcessMemory";
+                    case 2357873553: return "CreateUserThread";
+                    case 756544032: return "CloseHandle";
+                    case 3400025495: return "GetDelegateForFunctionPointer";
+                    case 314128220: return "kernel32";
+                    case 2469462534: return "CreateThread";
+                    case 3217199031: return "memcpy";
+                    case 2283745557: return "LoadLibrary";
+                    case 3317813738: return "GetModuleHandle";
+                    case 2491894472: return "GetProcAddress";
+                    case 1757922660: return "VirtualProtect";
+                    case 2693938383: return "FreeLibrary";
+                    case 2873914970: return "ReadProcessMemory";
+                    case 2717270220: return "CreateRemoteThread";
+                    case 2867203884: return "AdjustTokenPrivileges";
+                    case 2889068903: return "WriteByte";
+                    case 3667925519: return "WriteInt32";
+                    case 2742077861: return "OpenThreadToken";
+                    case 2826980154: return "PtrToString";
+                    case 3735047487: return "ZeroFreeGlobalAllocUnicode";
+                    case 788615220: return "OpenProcessToken";
+                    case 1264589033: return "GetTokenInformation";
+                    case 2165372045: return "SetThreadToken";
+                    case 197357349: return "ImpersonateLoggedOnUser";
+                    case 1259149099: return "RevertToSelf";
+                    case 2446460563: return "GetLogonSessionData";
+                    case 2534763616: return "CreateProcessWithToken";
+                    case 3512478977: return "DuplicateTokenEx";
+                    case 3126049082: return "OpenWindowStation";
+                    case 3990594194: return "OpenDesktop";
+                    case 3195806696: return "MiniDumpWriteDump";
+                    case 3990234693: return "AddSecurityPackage";
+                    case 611728017: return "EnumerateSecurityPackages";
+                    case 4283779521: return "GetProcessHandle";
+                    case 845600244: return "DangerousGetHandle";
+
+                    // Crypto - ransomware, etc.
+                    case 2691669189: return "CryptoServiceProvider";
+                    case 1413809388: return "Cryptography";
+                    case 4113841312: return "RijndaelManaged";
+                    case 1650652922: return "SHA1Managed";
+                    case 1759701889: return "CryptoStream";
+                    case 2439640460: return "CreateEncryptor";
+                    case 1446703796: return "CreateDecryptor";
+                    case 1638240579: return "TransformFinalBlock";
+                    case 1464730593: return "DeviceIoControl";
+                    case 3966822309: return "SetInformationProcess";
+                    case 851965993: return "PasswordDeriveBytes";
+
+                    // Keylogging
+                    case 793353336: return "GetAsyncKeyState";
+                    case 293877108: return "GetKeyboardState";
+                    case 2448894537: return "GetForegroundWindow";
+
+                    // Using internal types
+                    case 4059335458: return "BindingFlags";
+                    case 1085624182: return "NonPublic";
+
+                    // Changing logging settings
+                    case 904148605: return "ScriptBlockLogging";
+                    case 4150524432: return "LogPipelineExecutionDetails";
+                    case 3704712755: return "ProtectedEventLogging";
+
+                    default: return null;
                 }
-                else if ((character >= 'A') &&
-                   (character <= 'Z'))
+            }
+
+            /// <summary>
+            /// Check the list of running hashes for any matches, but
+            /// only up to the limit of <paramref name="upTo"/>.
+            ///
+            /// If a hash matches, we ignore the possibility of a
+            /// collision. If the hash is acceptable, collisions will
+            /// be infrequent and we'll just log an occasionaly script
+            /// that isn't really suspicious.
+            /// </summary>
+            /// <returns>The string matching the hash, or null.</returns>
+            private static string CheckForMatches(uint[] runningHash, int upTo)
+            {
+                var upToMax = runningHash.Length;
+                if (upTo == 0) upTo = upToMax;
+                else if (upTo > upToMax) upTo = upToMax;
+
+                for (var i = 0; i < upTo; i++)
                 {
-                    // Capture uppercase A-Z
-                    currentElement.Append(character);
-                    continue;
+                    var result = LookupHash(runningHash[i]);
+                    if (result != null) return result;
                 }
-                else if (character == '-')
+
+                return null;
+            }
+
+            /// <summary>
+            /// Scan a string for suspicious content.
+            ///
+            /// This is based on the Rubin-Karp algorithm, but heavily
+            /// modified to support searching for multiple patterns at
+            /// the same time.
+            ///
+            /// The key difference from Rubin-Karp is that we don't undo
+            /// the hash of the first character as we shift along in the
+            /// input.
+            ///
+            /// Instead, we can rely on knowing we need the hashes for
+            /// shorter strings anyway, so we reuse their values in
+            /// computing the hash for the longer patterns. This lets us
+            /// use a much simpler hash as well - we can avoid the use of
+            /// mod.
+            /// </summary>
+            /// <returns>The string matching the hash, or null.</returns>
+            public static string Match(string text)
+            {
+                // The longest pattern is 29 characters.
+                // The values in the array are the computed hashes of length
+                // index-1 (so runningHash[0] holds the hash for length 1).
+                var runningHash = new uint[29];
+
+                int longestPossiblePattern = 0;
+                for (int i = 0; i < text.Length; i++)
                 {
-                    // Capture dash
-                    currentElement.Append(character);
-                    continue;
-                }
-                else
-                {
-                    // We hit a space or something else
-                    // Only add if the current element is 4 characters or more
-                    // (the length of the shortest string we're looking for)
-                    if (currentElement.Length >= 4)
+                    uint h = text[i];
+                    if (h >= 'A' && h <= 'Z')
                     {
-                        yield return currentElement.ToString();
+                        h = h | 0x20; // ToLower
                     }
 
-                    currentElement.Clear();
+                    // If the character isn't in any of our patterns,
+                    // don't bother hashing and reset the running length.
+                    if (!((h >= 'a' && h <= 'z') || h == '-'))
+                    {
+                        longestPossiblePattern = 0;
+                        continue;
+                    }
+
+                    for (int j = Math.Min(i, runningHash.Length) - 1; j > 0; j--)
+                    {
+                        // Say our input is: `$Emit+1` and i is 4 (points to 't')
+                        // Our shortest pattern is 4 ('Emit'), and we're about to
+                        // finish computing the hash for Emit. The previous iteration
+                        // will hold the hash for `Emi` in runningHash[3], or j-1,
+                        // so we simply add the hash for t.
+                        //
+                        // LCG comes from a trivial (bad) random number generator,
+                        // but it's sufficient for us - the hashes for our patterns
+                        // is unique, and processing of 2200 files found no false
+                        // matches.
+                        runningHash[j] = LCG * runningHash[j - 1] + h;
+                    }
+
+                    runningHash[0] = h;
+
+                    if (++longestPossiblePattern >= 4)
+                    {
+                        var result = CheckForMatches(runningHash, longestPossiblePattern);
+                        if (result != null) return result;
+                    }
                 }
+
+                return CheckForMatches(runningHash, 0);
             }
 
-            // Clean up any remaining tokens.
-            if (currentElement.Length > 0)
+#if false
+            //This code can be used when adding a new pattern.
+            internal static uint HashNewPattern(string pattern)
             {
-                yield return currentElement.ToString();
+                char ToLower(char c)
+                {
+                    if (c >= 'A' && c <= 'Z')
+                    {
+                        c = (char) (c | 0x20);
+                    }
+                    return c;
+                }
+
+                uint h = 0;
+                foreach (var c in pattern)
+                {
+                    h = LCG * h + ToLower(c);
+                }
+
+                return h;
             }
-
-            yield break;
+#endif
         }
-
-        // Regular string signatures that can be detected with just string comparison.
-        private static HashSet<string> s_signatures = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-            // Calling Add-Type
-            "Add-Type", "DllImport",
-
-            // Doing dynamic assembly building / method indirection
-            "DefineDynamicAssembly", "DefineDynamicModule", "DefineType", "DefineConstructor", "CreateType",
-            "DefineLiteral", "DefineEnum", "DefineField", "ILGenerator", "Emit", "UnverifiableCodeAttribute",
-            "DefinePInvokeMethod", "GetTypes", "GetAssemblies", "Methods", "Properties",
-
-            // Suspicious methods / properties on "Type"
-            "GetConstructor", "GetConstructors", "GetDefaultMembers", "GetEvent", "GetEvents", "GetField",
-            "GetFields", "GetInterface", "GetInterfaceMap", "GetInterfaces", "GetMember", "GetMembers",
-            "GetMethod", "GetMethods", "GetNestedType", "GetNestedTypes", "GetProperties", "GetProperty",
-            "InvokeMember", "MakeArrayType", "MakeByRefType", "MakeGenericType", "MakePointerType",
-            "DeclaringMethod", "DeclaringType", "ReflectedType", "TypeHandle", "TypeInitializer",
-            "UnderlyingSystemType",
-
-            // Doing things with System.Runtime.InteropServices
-            "InteropServices", "Marshal", "AllocHGlobal", "PtrToStructure", "StructureToPtr",
-            "FreeHGlobal", "IntPtr",
-
-            // General Obfuscation
-            "MemoryStream", "DeflateStream", "FromBase64String", "EncodedCommand", "Bypass", "ToBase64String",
-            "ExpandString", "GetPowerShell",
-
-            // Suspicious Win32 API calls
-            "OpenProcess", "VirtualAlloc", "VirtualFree", "WriteProcessMemory", "CreateUserThread", "CloseHandle",
-            "GetDelegateForFunctionPointer", "kernel32", "CreateThread", "memcpy", "LoadLibrary", "GetModuleHandle",
-            "GetProcAddress", "VirtualProtect", "FreeLibrary", "ReadProcessMemory", "CreateRemoteThread",
-            "AdjustTokenPrivileges", "WriteByte", "WriteInt32", "OpenThreadToken", "PtrToString",
-            "FreeHGlobal", "ZeroFreeGlobalAllocUnicode", "OpenProcessToken", "GetTokenInformation", "SetThreadToken",
-            "ImpersonateLoggedOnUser", "RevertToSelf", "GetLogonSessionData", "CreateProcessWithToken",
-            "DuplicateTokenEx", "OpenWindowStation", "OpenDesktop", "MiniDumpWriteDump", "AddSecurityPackage",
-            "EnumerateSecurityPackages", "GetProcessHandle", "DangerousGetHandle",
-
-            // Crypto - ransomware, etc.
-            "CryptoServiceProvider", "Cryptography", "RijndaelManaged", "SHA1Managed", "CryptoStream",
-            "CreateEncryptor", "CreateDecryptor", "TransformFinalBlock", "DeviceIoControl", "SetInformationProcess",
-            "PasswordDeriveBytes",
-
-            // Keylogging
-            "GetAsyncKeyState", "GetKeyboardState", "GetForegroundWindow",
-
-            // Using internal types
-            "BindingFlags", "NonPublic",
-
-            // Changing logging settings
-            "ScriptBlockLogging", "LogPipelineExecutionDetails", "ProtectedEventLogging",
-        };
 
         internal static bool ScriptBlockLoggingExplicitlyDisabled()
         {
