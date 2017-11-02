@@ -45,7 +45,8 @@ Describe "Native Command Arguments" -tags "CI" {
     }
 
     It "Should handle PowerShell arrays with or without spaces correctly: <arguments>" -TestCases @(
-        @{arguments = "a 1,2"; expected = "a", "1,2"}
+        @{arguments = "1,2"; expected = @("1,2")}
+        @{arguments = "1,2,3"; expected = @("1,2,3")}
         @{arguments = "1, 2"; expected = "1,", "2"}
         @{arguments = "1 ,2"; expected = "1", ",2"}
         @{arguments = "1 , 2"; expected = "1", ",", "2"}
@@ -54,9 +55,9 @@ Describe "Native Command Arguments" -tags "CI" {
         @{arguments = "1 , 2,3"; expected = "1", ",", "2,3"}
     ) {
         param($arguments, $expected)
-        $lines = Invoke-Expression "testexe -echoargs $arguments"
+        $lines = @(Invoke-Expression "testexe -echoargs $arguments")
         $lines.Count | Should Be $expected.Count
-        for ($i = 0; $i -lt $lines.Count; $i++) {
+        for ($i = 0; $i -lt $expected.Count; $i++) {
             $lines[$i] | Should Be "Arg $i is <$($expected[$i])>"
         }
     }

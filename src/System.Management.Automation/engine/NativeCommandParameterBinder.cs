@@ -366,19 +366,14 @@ namespace System.Management.Automation
             var afterPrev = prev.Extent.EndOffset;
             var beforeNext = next.Extent.StartOffset - 1;
 
-            if (afterPrev == beforeNext)
-                return ",";
+            if (afterPrev == beforeNext) return ",";
 
             var arrayText = arrayExtent.Text;
             afterPrev -= arrayExtent.StartOffset;
             beforeNext -= arrayExtent.StartOffset;
 
-            if (arrayText[afterPrev] == ',')
-                return ", ";
-
-            if (arrayText[beforeNext] == ',')
-                return " ,";
-
+            if (arrayText[afterPrev] == ',') return ", ";
+            if (arrayText[beforeNext] == ',') return " ,";
             return " , ";
         }
 
