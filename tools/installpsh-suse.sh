@@ -118,8 +118,7 @@ fi
 
 echo
 echo "*** Installing prerequisites for PowerShell Core..."
-$SUDO zypper --non-interactive update --skip-interactive \
-    && zypper --non-interactive install \
+$SUDO zypper --non-interactive install \
         glibc-locale \
         glibc-i18ndata \
         tar \
@@ -167,13 +166,16 @@ $SUDO mkdir -p /opt/microsoft/powershell/$release
 ## Expand powershell to the target folder
 $SUDO tar zxf $package -C /opt/microsoft/powershell/$release
 
+## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
+$SUDO chmod 755 /opt/microsoft/powershell/$release/pwsh
 ## Create the symbolic link that points to powershell
 $SUDO ln -s /opt/microsoft/powershell/$release/pwsh $pwshlink
+
 ## Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
-    $SUDO echo $pwshlink > /etc/shells ;
+    echo $pwshlink | $SUDO tee /etc/shells ;
 else
-    $SUDO grep -q "^${pwshlink}$" /etc/shells || $SUDO echo $pwshlink >> /etc/shells ;
+    grep -q "^${pwshlink}$" /etc/shells || echo $pwshlink | $SUDO tee --append /etc/shells > /dev/null ;
 fi
 
 pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
