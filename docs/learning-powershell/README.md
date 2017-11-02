@@ -29,9 +29,9 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 - Alternatively you can get the PowerShell by [building it](../../README.md#building-powershell)
 
-[inst-linux]: ../installation/linux.md
+[inst-linux]: ../installation/unix.md
 [inst-win]: ../installation/windows.md
-[inst-macos]: ../installation/linux.md#os-x-1011
+[inst-macos]: ../installation/unix.md#os-x-1011
 
 Getting Started with PowerShell
 ----

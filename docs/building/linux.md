@@ -24,7 +24,7 @@ and [CMake][] to build the native components.
 Installing the toolchain is as easy as running `Start-PSBootstrap` in PowerShell.
 Of course, this requires a self-hosted copy of PowerShell on Linux.
 
-Fortunately, this is as easy as [downloading and installing the package](../installation/linux.md).
+Fortunately, this is as easy as [downloading and installing the package](../installation/unix.md).
 The `./tools/download.sh` script will also install the PowerShell package.
 
 In Bash:

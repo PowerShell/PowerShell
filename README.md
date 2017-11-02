@@ -70,23 +70,23 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
-[in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
-[in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
-[in-ubuntu17]: docs/installation/linux.md#ubuntu-1704
-[in-deb8]: docs/installation/linux.md#debian-8
-[in-deb9]: docs/installation/linux.md#debian-9
-[in-centos]: docs/installation/linux.md#centos-7
-[in-rhel7]: docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
-[in-opensuse422]: docs/installation/linux.md#opensuse-422
-[in-fedora25]: docs/installation/linux.md#fedora-25
-[in-fedora26]: docs/installation/linux.md#fedora-26
-[in-archlinux]: docs/installation/linux.md#arch-linux
-[in-appimage]: docs/installation/linux.md#linux-appimage
-[in-macos]: docs/installation/linux.md#macos-1012
+[in-ubuntu14]: docs/installation/unix.md#ubuntu-1404
+[in-ubuntu16]: docs/installation/unix.md#ubuntu-1604
+[in-ubuntu17]: docs/installation/unix.md#ubuntu-1704
+[in-deb8]: docs/installation/unix.md#debian-8
+[in-deb9]: docs/installation/unix.md#debian-9
+[in-centos]: docs/installation/unix.md#centos-7
+[in-rhel7]: docs/installation/unix.md#red-hat-enterprise-linux-rhel-7
+[in-opensuse422]: docs/installation/unix.md#opensuse-422
+[in-fedora25]: docs/installation/unix.md#fedora-25
+[in-fedora26]: docs/installation/unix.md#fedora-26
+[in-archlinux]: docs/installation/unix.md#arch-linux
+[in-appimage]: docs/installation/unix.md#linux-appimage
+[in-macos]: docs/installation/unix.md#macos-1012
 [in-docker]: docker
-[in-kali]: docs/installation/linux.md#kali
+[in-kali]: docs/installation/unix.md#kali
 [in-windows-zip]: docs/installation/windows.md#zip
-[in-tar]: docs/installation/linux.md#binary-archives
+[in-tar]: docs/installation/unix.md#binary-archives
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
