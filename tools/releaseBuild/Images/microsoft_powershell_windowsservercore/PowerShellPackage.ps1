@@ -54,7 +54,7 @@ try{
     $env:platform = $null
 
     Write-Verbose "Sync'ing Tags..." -verbose
-    Sync-PSTags
+    Sync-PSTags -AddRemoteIfMissing
 
     Write-Verbose "Bootstrapping powershell build..." -verbose
     Start-PSBootstrap -Force -Package

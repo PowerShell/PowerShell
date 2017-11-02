@@ -167,7 +167,7 @@ function Start-PSPackage {
 
             # Replace binaries with crossgen'ed binaires from publish folder.
             Get-ChildItem -Recurse $Source | ForEach-Object {
-                $relativePath = $_.FullName -replace $Source, ''
+                $relativePath = $_.FullName.Replace($Source, '')
                 $publishPath = Join-Path $publishSource -ChildPath $relativePath
                 if (Test-Path -Path $publishPath)
                 {
