@@ -1743,11 +1743,10 @@ namespace System.Management.Automation
                     {
                         h = h | 0x20; // ToLower
                     }
-
-                    // If the character isn't in any of our patterns,
-                    // don't bother hashing and reset the running length.
-                    if (!((h >= 'a' && h <= 'z') || h == '-'))
+                    else if (!((h >= 'a' && h <= 'z') || h == '-'))
                     {
+                        // If the character isn't in any of our patterns,
+                        // don't bother hashing and reset the running length.
                         longestPossiblePattern = 0;
                         continue;
                     }
