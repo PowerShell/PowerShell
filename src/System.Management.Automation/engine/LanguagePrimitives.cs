@@ -4831,7 +4831,7 @@ namespace System.Management.Automation
 
             private bool ReturnTypeMatches(Type returnType)
             {
-                return !PSMethod.MatchesPSMethodProjectedType(_returnType, returnType, testAssignment: true);
+                return PSMethod.MatchesPSMethodProjectedType(_returnType, returnType, testAssignment: true);
             }
 
             private bool ParameterTypesMatches(ParameterInfo[] arguments)
