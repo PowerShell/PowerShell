@@ -257,10 +257,6 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
             log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
         }
-
-        # Place the remoting configuration script in the same directory
-        # as the binary so it will get published.
-        Copy-Item .\Install-PowerShellRemoting.ps1 $dstPath
     } finally {
         Pop-Location
     }
