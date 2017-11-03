@@ -156,8 +156,10 @@ function Start-PSPackage {
 
             try 
             {
+                # Copy files which go into the root package
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
-                # files not to include as individual files.  These files will be included in publish.zip
+
+                # files not to include as individual files.  These files will be included in the root package
                 $toExclude = @(
                     'hostfxr.dll'
                     'hostpolicy.dll'
@@ -167,8 +169,10 @@ function Start-PSPackage {
                     'libhostpolicy.dylib'
                     'Publish'
                     )
+                # Copy file which go into symbols.zip
                 Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
 
+                # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
                 $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
                 Compress-Archive -Path $zipSource -DestinationPath $zipPath
