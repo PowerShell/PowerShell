@@ -119,7 +119,10 @@
   </resheader>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}
-Copyright (c) Microsoft Corporation. All rights reserved.</value>
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+https://aka.ms/pscore6-docs
+Type 'help' to get help.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
     <value>Usage: pwsh[.exe] [[-File] &lt;filePath&gt; [args]]
