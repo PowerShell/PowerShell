@@ -146,38 +146,50 @@ function Start-PSPackage {
 
         $Source = Split-Path -Path $Script:Options.Output -Parent
 
-        # If building a symbols package, don't include the publish build.
+        # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
             $publishSource = $Source
             $buildSource = Split-Path -Path $Source -Parent
             $Source = New-TempFolder
+            $symbolsSource = New-TempFolder
 
-            # files not to include as individual files.  These files will be included in publish.zip
-            $toExclude = @(
-                'hostfxr.dll'
-                'hostpolicy.dll'
-                'libhostfxr.so'
-                'libhostpolicy.so'
-                'libhostfxr.dylib'
-                'libhostpolicy.dylib'
-                'Publish'
-                )
-            Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $Source -Recurse
+            try 
+            {
+                # Copy files which go into the root package
+                Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
 
-            # Replace binaries with crossgen'ed binaires from publish folder.
-            Get-ChildItem -Recurse $Source | ForEach-Object {
-                $relativePath = $_.FullName.Replace($Source, '')
-                $publishPath = Join-Path $publishSource -ChildPath $relativePath
-                if (Test-Path -Path $publishPath)
+                # files not to include as individual files.  These files will be included in the root package
+                # pwsh.exe is just dotnet.exe renamed by dotnet.exe during the build.
+                $toExclude = @(
+                    'hostfxr.dll'
+                    'hostpolicy.dll'
+                    'libhostfxr.so'
+                    'libhostpolicy.so'
+                    'libhostfxr.dylib'
+                    'libhostpolicy.dylib'
+                    'Publish'
+                    'pwsh.exe'
+                    )
+                # Copy file which go into symbols.zip
+                Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
+
+                # Exclude Pester until we move it to PSModuleRestore
+                $pesterPath = Join-Path -Path $symbolsSource -ChildPath 'Modules\Pester'
+                if(Test-Path -Path $pesterPath)
                 {
-                    Copy-Item -Path $publishPath -Destination $_.FullName -Force
+                    Remove-Item -Path $pesterPath -Recurse -Force -ErrorAction SilentlyContinue
                 }
-            }
 
-            $zipSource = Join-Path $publishSource -ChildPath '*'
-            $zipPath = Join-Path -Path $Source -ChildPath 'publish.zip'
-            Compress-Archive -Path $zipSource -DestinationPath $zipPath
+                # Zip symbols.zip to the root package
+                $zipSource = Join-Path $symbolsSource -ChildPath '*'
+                $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
+                Compress-Archive -Path $zipSource -DestinationPath $zipPath
+            }
+            finally
+            {
+                Remove-Item -Path $symbolsSource -Recurse -Force -ErrorAction SilentlyContinue
+            }
         }
 
         log "Packaging Source: '$Source'"
