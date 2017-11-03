@@ -4534,12 +4534,6 @@ end
                 Platform.IsWindows,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-
-            new SessionStateVariableEntry(
-                SpecialVariables.IsCoreCLR,
-                Platform.IsCoreCLR,
-                String.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
             #endregion
         };
 

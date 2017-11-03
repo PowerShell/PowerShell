@@ -2778,28 +2778,6 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
 
     Get-Details $pluginDir $h
 
-    # Workflow is not supported in PowerShell Core. Attempting to load the
-    # assembly results in a FileNotFoundException.
-    if (![System.Management.Automation.Platform]::IsCoreCLR -AND
-        $h[""AssemblyName""] -eq ""Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"") {{
-
-        $serviceCore = [Reflection.Assembly]::Load(""Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"")
-
-        if ($null -ne $serviceCore) {{
-
-            $ci = new-Object system.management.automation.cmdletinfo ""New-PSWorkflowExecutionOptions"", ([Microsoft.PowerShell.Commands.NewPSWorkflowExecutionOptionCommand])
-            $wf = [powershell]::Create(""currentrunspace"").AddCommand($ci).Invoke()
-
-            if($null -ne $wf -and $wf.Count -ne 0) {{
-                $wf = $wf[0]
-
-                foreach ($o in $wf.GetType().GetProperties()) {{
-                    $h[$o.Name] = $o.GetValue($wf, $null)
-                }}
-            }}
-        }}
-    }}
-
     if (test-path -LiteralPath $pluginDir\InitializationParameters\SessionConfigurationData) {{
         $xscd = [xml](Unescape-xml (Unescape-xml (get-item -LiteralPath $pluginDir\InitializationParameters\SessionConfigurationData).Value))
 
@@ -4906,64 +4884,6 @@ param(
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
                 restart-service winrm -confirm:$false
-            }}
-
-            # PowerShell Workflow and WOW are not supported for PowerShell Core
-            if (![System.Management.Automation.Platform]::IsCoreCLR)
-            {{
-                # Check Microsoft.PowerShell.Workflow endpoint
-                $errorCount = $error.Count
-                $endPoint = Get-PSSessionConfiguration {0}.workflow -Force:$Force -ErrorAction silentlycontinue 2>&1
-                $newErrorCount = $error.Count
-
-                # remove the 'No Session Configuration matches criteria' errors
-                for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
-                {{
-                    $error.RemoveAt(0)
-                }}
-
-                if (!$endpoint)
-                {{
-                    $qMessage = $queryForRegisterDefault -f ""Microsoft.PowerShell.Workflow"",""Register-PSSessionConfiguration Microsoft.PowerShell.Workflow -force""
-                    if ($force -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)) {{
-                        $tempxmlfile = [io.path]::Gettempfilename()
-                        ""{1}"" | out-file -force -filepath $tempxmlfile -confirm:$false
-                        $null = winrm create winrm/config/plugin?Name=Microsoft.PowerShell.Workflow -file:$tempxmlfile
-                        remove-item -path $tempxmlfile -force -confirm:$false
-                        restart-service winrm -confirm:$false
-                    }}
-                }}
-
-                $pa = $env:PROCESSOR_ARCHITECTURE
-                if ($pa -eq ""x86"")
-                {{
-                    # on 64-bit platforms, wow64 bit process has the correct architecture
-                    # available in processor_architew6432 variable
-                    $pa = $env:PROCESSOR_ARCHITEW6432
-                }}
-                if ((($pa -eq ""amd64"")) -and (test-path $env:windir\syswow64\pwrshplugin.dll))
-                {{
-                    # Check availability of WOW64 endpoint. Register if not available.
-                    $errorCount = $error.Count
-                    $endPoint = Get-PSSessionConfiguration {0}32 -Force:$Force -ErrorAction silentlycontinue 2>&1
-                    $newErrorCount = $error.Count
-
-                    # remove the 'No Session Configuration matches criteria' errors
-                    for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
-                    {{
-                        $error.RemoveAt(0)
-                    }}
-
-                    $qMessage = $queryForRegisterDefault -f ""{0}32"",""Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force""
-                    if ((!$endpoint) -and
-                        ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
-                    {{
-                        $null = Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force
-                        set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}32\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
-                        set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}32\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
-                        restart-service winrm -confirm:$false
-                    }}
-                }}
             }}
 
             # remove the 'network deny all' tag
