@@ -851,14 +851,23 @@ namespace System.Management.Automation.Host
     public
     struct Rectangle
     {
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private int left;
+        private int top;
+        private int right;
+        private int bottom;
+
         /// <summary>
         ///
         /// Gets and sets the left side of the rectangle
         ///
         /// </summary>
 
-        public int Left { get; set; }
-
+        public int Left
+        {
+            get { return left; }
+            set { left = value; }
+        }
 
         /// <summary>
         ///
@@ -866,8 +875,11 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
 
-        public int Top { get; set; }
-
+        public int Top
+        {
+            get { return top; }
+            set { top = value; }
+        }
 
         /// <summary>
         ///
@@ -875,8 +887,11 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
 
-        public int Right { get; set; }
-
+        public int Right
+        {
+            get { return right; }
+            set { right = value; }
+        }
 
         /// <summary>
         ///
@@ -884,8 +899,11 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
 
-        public int Bottom { get; set; }
-
+        public int Bottom
+        {
+            get { return bottom; }
+            set { bottom = value; }
+        }
 
         /// <summary>
         ///
@@ -933,10 +951,10 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("bottom", MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "bottom", "top");
             }
 
-            Left = left;
-            Top = top;
-            Right = right;
-            Bottom = bottom;
+            this.left = left;
+            this.top = top;
+            this.right = right;
+            this.bottom = bottom;
         }
 
 
@@ -1161,14 +1179,23 @@ namespace System.Management.Automation.Host
     public
     struct BufferCell
     {
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private char character;
+        private ConsoleColor foregroundColor;
+        private ConsoleColor backgroundColor;
+        private BufferCellType bufferCellType;
+
         /// <summary>
         ///
         /// Gets and sets the character value
         ///
         /// </summary>
 
-        public char Character { get; set; }
-
+        public char Character
+        {
+            get { return character; }
+            set { character = value; }
+        }
 
         // we reuse System.ConsoleColor - it's in the core assembly, and I think it would be confusing to create another
         // essentially identical enum
@@ -1179,7 +1206,11 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
 
-        public ConsoleColor ForegroundColor { get; set; }
+        public ConsoleColor ForegroundColor
+        {
+            get { return foregroundColor; }
+            set { foregroundColor = value; }
+        }
 
         /// <summary>
         ///
@@ -1187,7 +1218,11 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
 
-        public ConsoleColor BackgroundColor { get; set; }
+        public ConsoleColor BackgroundColor
+        {
+            get { return backgroundColor; }
+            set { backgroundColor = value; }
+        }
 
         /// <summary>
         ///
@@ -1195,8 +1230,11 @@ namespace System.Management.Automation.Host
         ///
         /// </summary>
 
-        public BufferCellType BufferCellType { get; set; }
-
+        public BufferCellType BufferCellType
+        {
+            get { return bufferCellType; }
+            set { bufferCellType = value; }
+        }
 
         /// <summary>
         ///
@@ -1228,10 +1266,10 @@ namespace System.Management.Automation.Host
         public
         BufferCell(char character, ConsoleColor foreground, ConsoleColor background, BufferCellType bufferCellType)
         {
-            Character = character;
-            ForegroundColor = foreground;
-            BackgroundColor = background;
-            BufferCellType = bufferCellType;
+            this.character = character;
+            this.foregroundColor = foreground;
+            this.backgroundColor = background;
+            this.bufferCellType = bufferCellType;
         }
 
 

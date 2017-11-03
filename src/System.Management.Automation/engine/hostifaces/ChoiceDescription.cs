@@ -19,6 +19,10 @@ namespace System.Management.Automation.Host
     public sealed
     class ChoiceDescription
     {
+        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        private readonly string label = null;
+        private string helpMessage = "";
+
         /// <summary>
         ///
         /// Initializes an new instance of ChoiceDescription and defines the Label value.
@@ -46,7 +50,7 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
             }
 
-            _label = label;
+            this.label = label;
         }
 
         /// <summary>
@@ -92,8 +96,8 @@ namespace System.Management.Automation.Host
                 throw PSTraceSource.NewArgumentNullException("helpMessage");
             }
 
-            _label = label;
-            _helpMessage = helpMessage;
+            this.label = label;
+            this.helpMessage = helpMessage;
         }
 
         /// <summary>
@@ -118,9 +122,9 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                Dbg.Assert(_label != null, "label should not be null");
+                Dbg.Assert(this.label != null, "label should not be null");
 
-                return _label;
+                return this.label;
             }
         }
 
@@ -149,9 +153,9 @@ namespace System.Management.Automation.Host
         {
             get
             {
-                Dbg.Assert(_helpMessage != null, "helpMessage should not be null");
+                Dbg.Assert(this.helpMessage != null, "helpMessage should not be null");
 
-                return _helpMessage;
+                return this.helpMessage;
             }
             set
             {
@@ -160,12 +164,9 @@ namespace System.Management.Automation.Host
                     throw PSTraceSource.NewArgumentNullException("value");
                 }
 
-                _helpMessage = value;
+                this.helpMessage = value;
             }
         }
-
-        private readonly string _label = null;
-        private string _helpMessage = "";
     }
 }
 
