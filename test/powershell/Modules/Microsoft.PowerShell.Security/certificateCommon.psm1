@@ -101,6 +101,7 @@ function Install-TestCertificates
     $script:badCertLocation = New-BadCertificate
     $script:badCertLocation | Should Not BeNullOrEmpty | Out-Null
 
+    $isCoreCLR = $true
     if ($IsCoreCLR -and $IsWindows)
     {
         # PKI module is not available for PowerShell Core, so we need to use Windows PowerShell to import the cert

@@ -8,10 +8,11 @@
 # This 'Describe' is for tests that were converted from utscripts (SDXROOT/admin/monad/tests/monad/DRT/utscripts)
 # and C# tests (SDXROOT/admin/monad/tests/monad/DRT/commands/utility/UnitTests) to Pester.
 #
+$isCoreCLR = $true
+
 Describe "Json Tests" -Tags "Feature" {
 
     BeforeAll {
-
         function ValidateSampleObject
         {
             param ($result, [switch]$hasEmbeddedSampleObject )

@@ -1,3 +1,5 @@
+$isCoreCLR = $true
+
 Describe 'Tests for indexers' -Tags "CI" {
     It 'Indexer in dictionary' {
 

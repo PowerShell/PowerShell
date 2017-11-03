@@ -1,5 +1,6 @@
 ﻿Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     BeforeAll {
+        $isCoreCLR = $true
         If (-not $IsCoreCLR) {
             Get-WmiObject -Query "select * from win32_environment where name='TestWmiInstance'"  | Remove-WmiObject
         }

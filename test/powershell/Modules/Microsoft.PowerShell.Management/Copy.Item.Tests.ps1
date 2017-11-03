@@ -7,6 +7,7 @@
 # If PS Remoting is not available, do not run the suite.
 function ShouldRun
 {
+    $isCoreCLR = $true
     if ( $IsCoreCLR ) { return $false }
     $result = Invoke-Command -ComputerName . -ScriptBlock {1} -ErrorAction SilentlyContinue
     return ($result -eq 1)

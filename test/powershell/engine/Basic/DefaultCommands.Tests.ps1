@@ -1,5 +1,6 @@
 Describe "Verify approved aliases list" -Tags "CI" {
     BeforeAll {
+        $isCoreCLR = $true
         $FullCLR = !$isCoreCLR
         $CoreWindows = $isCoreCLR -and $IsWindows
         $CoreUnix = $isCoreCLR -and !$IsWindows

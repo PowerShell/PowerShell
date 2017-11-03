@@ -1,5 +1,6 @@
 ﻿Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
+            $isCoreCLR = $true
             $orgin = $GLOBAL:errorActionPreference
         }
 

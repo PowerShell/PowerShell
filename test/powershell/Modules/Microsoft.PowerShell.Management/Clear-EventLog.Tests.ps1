@@ -1,6 +1,7 @@
 Describe "Clear-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
+        $isCoreCLR = $true
         $defaultParamValues = $PSdefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = !$IsWindows -or $IsCoreCLR
     }

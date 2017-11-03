@@ -1,4 +1,6 @@
-﻿Describe "XML cmdlets" -Tags "Feature" {
+﻿$isCoreCLR = $true
+
+Describe "XML cmdlets" -Tags "Feature" {
     Context "Select-XML" {
         BeforeAll {
             $fileName = New-Item -Path 'TestDrive:\testSelectXml.xml'

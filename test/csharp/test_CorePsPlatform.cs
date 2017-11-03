@@ -10,12 +10,6 @@ namespace PSTests
     public static class PlatformTests
     {
         [Fact]
-        public static void TestIsCoreCLR()
-        {
-            Assert.True(Platform.IsCoreCLR);
-        }
-
-        [Fact]
         public static void TestGetUserName()
         {
             var startInfo = new ProcessStartInfo

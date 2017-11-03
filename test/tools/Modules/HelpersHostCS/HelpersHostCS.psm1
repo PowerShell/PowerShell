@@ -298,6 +298,7 @@ namespace TestHost
 ## '
 function New-TestHost
 {
+    $isCoreCLR = $true
     If ($IsCoreCLR)
     {
         $references = @()

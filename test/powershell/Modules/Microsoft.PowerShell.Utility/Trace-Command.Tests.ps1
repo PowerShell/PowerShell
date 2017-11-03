@@ -1,4 +1,5 @@
-# This came from monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.command.tests.ps1
+$isCoreCLR = $true
+
 Describe "Trace-Command" -tags "CI" {
 
     Context "Listener options" {

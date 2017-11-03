@@ -1,3 +1,5 @@
+$isCoreCLR = $true
+
 Describe "Parallel foreach syntax" -Tags "CI" {
 
    Context 'Should be able to retrieve AST of parallel foreach, error in regular case' {

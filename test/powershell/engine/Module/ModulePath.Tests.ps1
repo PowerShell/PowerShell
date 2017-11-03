@@ -2,6 +2,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     BeforeAll {
 
+        $isCoreCLR = $true
         if ($IsWindows)
         {
             $powershell = "$PSHOME\pwsh.exe"

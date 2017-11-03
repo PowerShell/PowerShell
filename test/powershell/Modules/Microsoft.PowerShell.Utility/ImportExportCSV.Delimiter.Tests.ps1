@@ -1,5 +1,6 @@
 ﻿Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
     BeforeAll {
+        $isCoreCLR = $true
         # note, we will not use "," as that's the default for CSV
         $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",
               "{", "}", "|", "<", ">", ";", "'",
