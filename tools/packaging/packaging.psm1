@@ -684,6 +684,28 @@ function New-UnixPackage {
             }
         } finally {
             if ($Environment.IsMacOS) {
+                if($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                {
+                    # This is needed to prevent installer from picking up
+                    # the launcher app in the build structure and updating
+                    # it which locks out subsequent package builds due to
+                    # increase permissions.
+                    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+                    $plist = "$macosapp/Contents/Info.plist"
+                    $tempguid = (New-Guid).Guid
+                    Start-NativeExecution {
+                        defaults write $plist CFBundleIdentifier $tempguid
+                        plutil -convert xml1 $plist
+                    }
+
+                    # Restore default permissions.
+                    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+                    Start-NativeExecution {
+                        chmod 644 $shellscript
+                        chmod 644 $plist
+                    }
+                }
+
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
@@ -712,27 +734,6 @@ function New-UnixPackage {
                 $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
                 $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
                 $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
-            }
-            if($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
-            {
-                # This is needed to prevent installer from picking up
-                # the launcher app in the build structure and updating
-                # it which locks out subsequent package builds due to
-                # increase permissions.
-                $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
-                $plist = "$macosapp/Contents/Info.plist"
-                $tempguid = (New-Guid).Guid
-                Start-NativeExecution {
-                    defaults write $plist CFBundleIdentifier $tempguid
-                    plutil -convert xml1 $plist
-                }
-
-                # Restore default permissions.
-                $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
-                Start-NativeExecution {
-                    chmod 644 $shellscript
-                    chmod 644 $plist
-                }
             }
         }
 
