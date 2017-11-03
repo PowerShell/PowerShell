@@ -5,6 +5,9 @@
     "showOutput": "always",
     "suppressTaskName": true,
     "args": [ "-command" ],
+    "windows": {
+        "command": "powershell"
+    },
 
     "tasks": [
         {
