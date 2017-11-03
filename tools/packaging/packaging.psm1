@@ -160,6 +160,7 @@ function Start-PSPackage {
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
 
                 # files not to include as individual files.  These files will be included in the root package
+                # pwsh.exe is just dotnet.exe renamed by dotnet.exe during the build.
                 $toExclude = @(
                     'hostfxr.dll'
                     'hostpolicy.dll'
@@ -168,9 +169,17 @@ function Start-PSPackage {
                     'libhostfxr.dylib'
                     'libhostpolicy.dylib'
                     'Publish'
+                    'pwsh.exe'
                     )
                 # Copy file which go into symbols.zip
                 Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
+
+                # Exclude Pester until we move it to PSModuleRestore
+                $pesterPath = Join-Path -Path $symbolsSource -ChildPath 'Modules\Pester'
+                if(Test-Path -Path $pesterPath)
+                {
+                    Remove-Item -Path $pesterPath -Recurse -Force -ErrorAction SilentlyContinue
+                }
 
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
