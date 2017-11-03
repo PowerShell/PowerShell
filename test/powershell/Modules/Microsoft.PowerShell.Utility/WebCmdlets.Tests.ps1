@@ -1414,6 +1414,44 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
     }
 
+    Context "Invoke-WebRequest -SslProtocol Test" {
+        It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol>" -TestCases @(
+            @{SslProtocol = 'Default'}
+            @{SslProtocol = 'Tls'}
+            @{SslProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls12'}
+        ) {
+            param($SslProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $SslProtocol
+                SslProtocol = $SslProtocol
+                SkipCertificateCheck = $true
+            }
+            $response = Invoke-WebRequest @params
+            $result = $Response.Content | ConvertFrom-Json
+
+            $result.headers.Host | Should Be $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-WebRequest -SslProtocol -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases @(
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+        ) {
+            param( $IntendedProtocol, $ActualProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                SslProtocol = $IntendedProtocol
+                SkipCertificateCheck = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -2329,6 +2367,43 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
+        }
+    }
+
+    Context "Invoke-RestMethod -SslProtocol Test" {
+        It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol>" -TestCases @(
+            @{SslProtocol = 'Default'}
+            @{SslProtocol = 'Tls'}
+            @{SslProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls12'}
+        ) {
+            param($SslProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $SslProtocol
+                SslProtocol = $SslProtocol
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.headers.Host | Should Be $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-RestMethod -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases @(
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+        ) {
+            param( $IntendedProtocol, $ActualProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                SslProtocol = $IntendedProtocol
+                SkipCertificateCheck = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
     }
 

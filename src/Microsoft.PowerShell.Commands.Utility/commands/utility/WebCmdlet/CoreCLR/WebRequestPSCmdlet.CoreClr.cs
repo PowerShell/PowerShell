@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Xml;
@@ -191,6 +192,11 @@ namespace Microsoft.PowerShell.Commands
                     handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
                 }
             }
+
+            // Set The SslProtocol. WebSslProtocol is used because not all SslProtocols are supported by HttpClientHandler.
+            // Also SslProtocols.Default is not the "default" for HttpClientHandler as SslProtocols.Ssl3 is not supported.
+            handler.SslProtocols = (SslProtocols)SslProtocol;
+
 
             HttpClient httpClient = new HttpClient(handler);
 

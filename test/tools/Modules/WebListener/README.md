@@ -7,7 +7,7 @@ A PowerShell module for managing the WebListener App. The included SelF-Signed C
 ```powershell
 Import-Module .\build.psm1
 Publish-PSTestTools
-$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
+$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort 8086
 ```
 
 # Stopping WebListener
