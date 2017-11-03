@@ -132,7 +132,9 @@ $SUDO apt-get update
 # Install PowerShell
 $SUDO apt-get install -y powershell
 
-pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
+Run `"pwsh`" to start a PowerShell session."'
+
 success=$?
 
 if [[ "$success" != 0 ]]; then
