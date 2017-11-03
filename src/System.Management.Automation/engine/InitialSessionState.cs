@@ -4253,9 +4253,8 @@ param(
     [switch]
     ${ShowWindow})
 
-    # On non-Window systems always display the full help topic.
-    # On Windows, only display the full help topic if the user has specified a PAGER app.
-    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full -and (!$IsWindows -or (Test-Path env:PAGER))) {
+    # Display the full help topic by default but only for the AllUsersView parameter set.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full) {
         $PSBoundParameters['Full'] = $true
     }
 
