@@ -65,39 +65,8 @@ function ShouldBeParseError
         # This is a temporary solution after moving type creation from parse time to runtime
         [switch]$SkipAndCheckRuntimeError,
         # for test coverarage purpose, tests validate columnNumber or offset
-        [switch]$CheckColumnNumber,
-        # Skip this test in Travis CI nightly build
-        [switch]$SkipInTravisFullBuild
+        [switch]$CheckColumnNumber
     )
-
-    #
-    # CrossGen'ed assemblies cause a hang to happen when running tests with this helper function in Linux and macOS.
-    # The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
-    #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
-    #  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
-    # In this way, we will continue to exercise these parsing tests for each CI build, and skip them for nightly
-    # build to avoid a hang.
-    # Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue is tracked by
-    #       https://github.com/dotnet/coreclr/issues/9745
-    #
-    if ($SkipInTravisFullBuild) {
-        ## Report that we skipped the tests and return
-        ## be sure to report the same number of tests
-        ## it should have the same appearance as if the tests were run
-        Context "Parse error expected: <<$src>>" {
-            if ($SkipAndCheckRuntimeError)
-            {
-                It "error should happen at parse time, not at runtime" -Skip {}
-            }
-            It "Error count" -Skip { }
-            foreach($expectedError in $expectedErrors)
-            {
-                It "Error Id" -Skip { }
-                It "Error position" -Skip { }
-            }
-        }
-        return
-    }
 
     Context "Parse error expected: <<$src>>" {
         # Test case error if this fails
