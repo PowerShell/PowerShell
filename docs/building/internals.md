@@ -124,8 +124,6 @@ Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
 ```
 
 After that, the binary `pwrshplugin.dll` and its PDB file will be placed under 'src/powershell-win-core'.
-The script file `Install-PowerShellRemoting.ps1` will also be placed in the same folder,
-which is supposed to be used to set up remoting configurations for PowerShell Core.
 
 To create a new NuGet package for `pwrshplugin.dll`, first you need to get the `psrp.windows.nuspec` from an existing `psrp.windows` package.
 You can find it at `~/.nuget/packages/psrp.windows` on your windows machine if you have recently built PowerShell on it.
@@ -138,11 +136,6 @@ and create the same layout of files as in the existing package.
 The layout of files should look like this:
 
 ```none
-+---contentFiles
-|   \---any
-|       \---any
-|               Install-PowerShellRemoting.ps1
-|
 \---runtimes
     +---win-x64
     |   \---native
