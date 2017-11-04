@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using System;
 using System.Management.Automation;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Microsoft.PowerShell.Commands
@@ -168,28 +169,39 @@ namespace Microsoft.PowerShell.Commands
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
         {
+            bool converted;
             try
             {
                 ErrorRecord error;
                 obj = JsonObject.ConvertFromJson(json, out error);
+                converted = true;
+
+                if (null == obj)
+                {
+                    string pattern = @"^\s*null\s*$";
+                    Match matches = Regex.Match(json, pattern);
+                    converted = matches.Success;
+                }
 
                 if (error != null)
                 {
                     exRef = error.Exception;
-                    obj = null;
+                    converted = false;
                 }
             }
             catch (ArgumentException ex)
             {
                 exRef = ex;
+                converted = false;
                 obj = null;
             }
             catch (InvalidOperationException ex)
             {
                 exRef = ex;
+                converted = false;
                 obj = null;
             }
-            return (null != obj);
+            return converted;
         }
 
         #endregion
