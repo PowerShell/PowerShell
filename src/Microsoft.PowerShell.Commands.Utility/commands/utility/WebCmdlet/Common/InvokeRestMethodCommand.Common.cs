@@ -5,8 +5,9 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using System;
 using System.Management.Automation;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -169,36 +170,43 @@ namespace Microsoft.PowerShell.Commands
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
         {
-            bool converted;
+            bool converted = false;
             try
             {
                 ErrorRecord error;
                 obj = JsonObject.ConvertFromJson(json, out error);
-                converted = true;
 
                 if (null == obj)
                 {
-                    string pattern = @"^\s*null\s*$";
-                    Match matches = Regex.Match(json, pattern);
-                    converted = matches.Success;
+                    // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal. 
+                    // if not, the ArgumentException will be caught.
+                    JToken.Parse(json);
                 }
 
                 if (error != null)
                 {
                     exRef = error.Exception;
-                    converted = false;
+                    obj = null;
+                }
+                else
+                {
+                    converted = true;
                 }
             }
             catch (ArgumentException ex)
             {
                 exRef = ex;
-                converted = false;
                 obj = null;
             }
             catch (InvalidOperationException ex)
             {
                 exRef = ex;
-                converted = false;
+                obj = null;
+            }
+            catch (JsonException ex)
+            {
+                var msg = string.Format(System.Globalization.CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, ex.Message);
+                exRef = new ArgumentException(msg, ex);
                 obj = null;
             }
             return converted;
