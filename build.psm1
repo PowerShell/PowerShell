@@ -489,9 +489,13 @@ Fix steps:
     }
 
     # handle TypeGen
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs")) {
+    $incFileName = 'powershell'
+    if (-not [string]::IsNullOrEmpty($Runtime)) {
+        $incFileName = "$($incFileName)_$($Runtime.Substring(0,3))" # use the first 3 characters only because otherwise dotnet will crash due to the separation characters
+    }
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$($incFileName).inc")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
-        Start-TypeGen
+        Start-TypeGen -IncFileName $incFileName
     }
 
     # Get the folder path where pwsh.exe is located.
@@ -515,7 +519,7 @@ Fix steps:
     # publish netcoreapp2.0 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path "powershell.inc" | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
+        $refAssemblies = Get-Content -Path "$($incFileName).inc" | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -1631,7 +1635,12 @@ function Start-DevPowerShell {
 function Start-TypeGen
 {
     [CmdletBinding()]
-    param()
+    param
+    (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $IncFileName
+    )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
@@ -1652,7 +1661,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/powershell.inc"
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$($incFileName).inc"
         dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
@@ -1660,7 +1669,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershell.inc
+        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs "$($incFileName).inc"
     } finally {
         Pop-Location
     }
