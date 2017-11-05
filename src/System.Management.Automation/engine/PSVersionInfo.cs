@@ -822,12 +822,6 @@ namespace System.Management.Automation
             if (Patch != value.Patch)
                 return Patch > value.Patch ? 1 : -1;
 
-            if (PreLabel == null)
-                return value.PreLabel == null ? 0 : 1;
-
-            if (value.PreLabel == null)
-                return -1;
-
             // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return ComparePreLabel(this.PreLabel, value.PreLabel);
         }
@@ -914,6 +908,7 @@ namespace System.Management.Automation
 
         private static int ComparePreLabel(string preLabel1, string preLabel2)
         {
+            // Symver 2.0 standard p.9 - Pre-release versions have a lower precedence than the associated normal version.
             if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
             if (String.IsNullOrEmpty(preLabel2)) { return -1; }
 
