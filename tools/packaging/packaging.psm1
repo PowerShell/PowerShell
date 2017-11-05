@@ -662,6 +662,9 @@ function New-UnixPackage {
             $Arguments += @("--rpm-dist", "rhel.7")
             $Arguments += @("--rpm-os", "linux")
         }
+        if ($Environment.IsMacOS) {
+            $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
+        }
         foreach ($Dependency in $Dependencies) {
             $Arguments += @("--depends", $Dependency)
         }
