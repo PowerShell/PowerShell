@@ -648,7 +648,7 @@ function New-UnixPackage {
                 # Set values in plist.
                 $plist = "$macosapp/Contents/Info.plist"
                 Start-NativeExecution {
-                    defaults write $plist CFBundleIdentifier $Name
+                    defaults write $plist CFBundleIdentifier com.microsoft.powershell
                     defaults write $plist CFBundleVersion $Version
                     defaults write $plist CFBundleShortVersionString $Version
                     defaults write $plist CFBundleGetInfoString $Version
