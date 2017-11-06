@@ -4253,6 +4253,11 @@ param(
     [switch]
     ${ShowWindow})
 
+    # Display the full help topic by default but only for the AllUsersView parameter set.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full) {
+        $PSBoundParameters['Full'] = $true
+    }
+
     #Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
     $outputEncoding=[System.Console]::OutputEncoding
 
