@@ -631,6 +631,14 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// When true this property indicates that this runspace is associated with an interactive session,
+        /// such as a runspace for the PowerShell console.
+        /// A runspace designated as interactive host means that it is the primary runspace, and when it closes
+        /// any other open runspace on the system should be forcibly closed.
+        /// </summary>
+        public bool IsInteractiveHost { get; set; }
+
+        /// <summary>
         /// Retrieve information about current state of the runspace
         /// </summary>
         public abstract RunspaceStateInfo RunspaceStateInfo

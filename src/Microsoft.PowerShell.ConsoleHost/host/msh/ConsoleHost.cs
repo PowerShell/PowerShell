@@ -1658,6 +1658,7 @@ namespace Microsoft.PowerShell
 #endif
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
+            runspace.IsInteractiveHost = true;
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
 
