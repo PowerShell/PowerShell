@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Threading;
 using System.Diagnostics;
 
@@ -17,6 +18,12 @@ namespace TestExe
                         break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
+                        break;
+                    case "-writeoutput":
+                        WriteStandardOutput();
+                        break;
+                    case "-readinput":
+                        ReadStandardInput(args);
                         break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
@@ -37,6 +44,48 @@ namespace TestExe
             for (int i = 1; i < args.Length; i++)
             {
                 Console.WriteLine("Arg {0} is <{1}>", i-1, args[i]);
+            }
+        }
+
+        static void WriteStandardOutput()
+        {
+            // write a string of characters (bytes), this closest resembles a binary
+            // write the string "test" with an accent over the e
+            byte[] testbytes = new byte[] { 116, 233, 115, 116 };
+            foreach(byte b in testbytes)
+            {
+                Console.Write((char)b);
+            }
+        }
+
+        static void ReadStandardInput(string[] args)
+        {
+            Encoding encodingToUse = null;
+            if (args.Length > 1)
+            {
+                // the encoding page to get could be provided as an argument;
+                int result;
+                if ( int.TryParse(args[1], out result))
+                {
+                    try
+                    {
+                        encodingToUse = Encoding.GetEncoding(result);
+                    }
+                    catch
+                    {
+                        ;
+                    }
+                }
+            }
+            if ( encodingToUse == null )
+            {
+                encodingToUse = Encoding.GetEncoding(28591);
+            }
+            Console.InputEncoding = encodingToUse;
+            string pipedText = Console.In.ReadToEnd();
+            foreach(char c in pipedText.ToCharArray())
+            {
+                Console.WriteLine((byte)c);
             }
         }
 

@@ -4410,7 +4410,7 @@ end
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(
                 SpecialVariables.OutputEncoding,
-                System.Text.Encoding.ASCII,
+                Utils.iso8859,
                 RunspaceInit.OutputEncodingDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))

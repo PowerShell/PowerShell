@@ -19,6 +19,7 @@ namespace System.Management.Automation
         internal const string Unicode = "unicode";
         internal const string BigEndianUnicode = "bigendianunicode";
         internal const string Ascii = "ascii";
+        internal const string Iso8859 = "iso8859";
         internal const string Utf8 = "utf8";
         internal const string Utf8NoBom = "utf8NoBOM";
         internal const string Utf8Bom = "utf8BOM";
@@ -27,7 +28,7 @@ namespace System.Management.Automation
         internal const string Default = "default";
         internal const string OEM = "oem";
         internal static readonly string[] TabCompletionResults = {
-                Ascii, BigEndianUnicode, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
+                Ascii, BigEndianUnicode, Iso8859, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
         internal static Dictionary<string, Encoding> encodingMap = new Dictionary<string,Encoding>(StringComparer.OrdinalIgnoreCase)
@@ -37,6 +38,7 @@ namespace System.Management.Automation
             { Default, ClrFacade.GetDefaultEncoding() },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
+            { Iso8859, Utils.iso8859 },
             { Utf7, System.Text.Encoding.UTF7 },
             { Utf8, ClrFacade.GetDefaultEncoding() },
             { Utf8Bom, System.Text.Encoding.UTF8 },

@@ -1,3 +1,26 @@
+Describe "OutputEncoding is set correctly" -tags "CI" {
+    # Current architecture of the native pipe will always add an [environment]::newline to the output
+    BeforeAll {
+        $expectedResultString = "t" + [char]233 + "st`n"
+        $expectedByteString = [byte[]]$expectedResultString.ToCharArray() -join "-"
+        $expectedEncodingName = "iso-8859-1"
+    }
+    It '$OutputEncoding should be set to ''iso-8859-1''' {
+        $outputEncoding.BodyName | should be $expectedEncodingName
+    }
+    It "Should not alter the contents of data in the pipeline when piping to and from native applications" {
+        $results = testexe -writeoutput | testexe -readinput
+        $results -join "-" | should be $expectedByteString
+    }
+    It "Using an encoding for OutputEncoding other than iso-8859-1 be used" {
+        # for this case, we're using utf8 which will change the bytes
+        # in this case, utf8 changes the [char]233 to [char]195 and [char]169
+        $utf8ExpectedByteString = "116-195-169-115-116-10"
+        $results = &{ $outputEncoding = [text.utf8encoding]::new($false); testexe -writeoutput | testexe -readinput }
+        $results -join "-" | should be $utf8ExpectedByteString
+    }
+}
+
 Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {

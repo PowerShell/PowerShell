@@ -1797,8 +1797,7 @@ namespace System.Management.Automation
             //Get the encoding for writing to native command. Note we get the Encoding
             //from the current scope so a script or function can use a different encoding
             //than global value.
-            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Encoding.ASCII;
+            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??  Utils.iso8859;
 
             _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
             _streamWriter.AutoFlush = true;

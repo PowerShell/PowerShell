@@ -1239,8 +1239,9 @@ namespace System.Management.Automation
             (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
             (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
 
-        internal static readonly UTF8Encoding utf8NoBom =
-            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        internal static readonly UTF8Encoding utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+        // encoding which is essentially a passthru
+        internal static readonly Encoding iso8859 = Encoding.GetEncoding(28591);
 
 #if !CORECLR // TODO:CORECLR - WindowsIdentity.Impersonate() is not available. Use WindowsIdentity.RunImpersonated to replace it.
         /// <summary>
