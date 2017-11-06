@@ -57,8 +57,12 @@ function(add_manifest_binary)
     if (NOT ${isSet})
         set_target_properties(${ARGV0} PROPERTIES LINKER_LANGUAGE "CXX")
     endif()
+
     set_target_properties(${ARGV0} PROPERTIES LINK_FLAGS "/NODEFAULTLIB /NOENTRY")
-    set_target_properties(${ARGV0} PROPERTIES COMPILE_DEFINITIONS "CORECLR")
+
+    if (BUILD_ONECORE)
+        set_target_properties(${ARGV0} PROPERTIES COMPILE_DEFINITIONS "CORECLR")
+    endif (BUILD_ONECORE)
 
     # ensure the target is dependent on the generated files.
     add_dependencies(${ARGV0} GeneratedManifestFiles)
