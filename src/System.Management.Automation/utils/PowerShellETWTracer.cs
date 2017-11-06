@@ -809,7 +809,7 @@ namespace System.Management.Automation.Tracing
         /*
          * Making the provider static to reduce the number of buffers needed to 1.
          * */
-        private static readonly EventProvider _provider = new EventProvider(new Guid("A0C1853B-5C40-4b15-8766-3CF1C58F985A"));
+        private static readonly EventProvider _provider = new EventProvider(PSEtwLogProvider.ProviderGuid);
 
         private bool disposed;
         private PowerShellTraceKeywords _keywords;

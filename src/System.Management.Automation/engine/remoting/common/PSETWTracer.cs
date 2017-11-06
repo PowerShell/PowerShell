@@ -9,6 +9,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Defines enumerations for the keywords
     /// </summary>
+    [Flags]
     internal enum PSKeyword : ulong
     {
         Runspace = 0x1,
@@ -194,6 +195,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Defines enumerations for channels
     /// </summary>
+    [Flags]
     internal enum PSChannel : byte
     {
         Operational = 0x10,

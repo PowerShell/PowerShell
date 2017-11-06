@@ -1,6 +1,6 @@
-#if !UNIX
+#if UNIX
 //
-//    Copyright (c) Microsoft Corporation. All rights reserved.
+//    Copyright (C) Microsoft.  All rights reserved.
 //
 using System.Diagnostics.Eventing;
 using System.Management.Automation.Internal;
@@ -10,21 +10,50 @@ using System.Collections.Generic;
 namespace System.Management.Automation.Tracing
 {
     /// <summary>
-    /// ETW log provider implementation
+    /// SysLog LogProvider implementation.
     /// </summary>
-    internal class PSEtwLogProvider : LogProvider
+    internal class PSSysLogProvider : LogProvider
     {
-        private static EventProvider etwProvider;
-        internal static readonly Guid ProviderGuid = new Guid("F90714A8-5509-434A-BF6D-B1624C8A19A2");
-        private static EventDescriptor _xferEventDescriptor = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
+        private static SysLogProvider s_provider;
+
+        // by default, do not include analytic events
+        internal const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
 
         /// <summary>
-        /// Class constructor
+        /// Class constructor.
         /// </summary>
-        static PSEtwLogProvider()
+        static PSSysLogProvider()
         {
-            etwProvider = new EventProvider(ProviderGuid);
+            s_provider = new SysLogProvider(ConfigPropertyAccessor.Instance.GetSysLogIdentity(),
+                                            ConfigPropertyAccessor.Instance.GetLogLevel(),
+                                            ConfigPropertyAccessor.Instance.GetLogKeywords(),
+                                            ConfigPropertyAccessor.Instance.GetLogChannels());
         }
+
+        /// <summary>
+        /// Defines a thread local StringBuilder for building event payload strings.
+        /// </summary>
+        /// <remarks>
+        /// NOTE: do not access this field directly, use the PayloadBuilder
+        /// property to ensure correct thread initialization; otherwise, a null reference can occur.
+        /// </remarks>
+        [ThreadStatic]
+        private static StringBuilder _payloadBuilder;
+
+        private static StringBuilder PayloadBuilder
+        {
+            get
+            {
+                if (_payloadBuilder == null)
+                {
+                    // NOTE: Thread static fields must be explicitly initialized for each thread.
+                    _payloadBuilder = new StringBuilder(200);
+                }
+                return _payloadBuilder;
+            }
+        }
+
+
 
         /// <summary>
         /// Determines whether any session is requesting the specified event from the provider.
@@ -40,7 +69,7 @@ namespace System.Management.Automation.Tracing
         /// </remarks>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
-            return etwProvider.IsEnabled((byte)level, (long)keywords);
+            return s_provider.IsEnabled(level, keywords);
         }
 
         /// <summary>
@@ -53,7 +82,8 @@ namespace System.Management.Automation.Tracing
         ///
         internal override void LogEngineHealthEvent(LogContext logContext, int eventId, Exception exception, Dictionary<String, String> additionalInfo)
         {
-            StringBuilder payload = new StringBuilder();
+            StringBuilder payload = PayloadBuilder;
+            payload.Clear();
 
             AppendException(payload, exception);
             payload.AppendLine();
@@ -73,7 +103,8 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
-                StringBuilder payload = new StringBuilder();
+                StringBuilder payload = PayloadBuilder;
+                payload.Clear();
 
                 payload.AppendLine(StringUtil.Format(EtwLoggingStrings.EngineStateChange, previousState.ToString(), newState.ToString()));
 
@@ -98,7 +129,8 @@ namespace System.Management.Automation.Tracing
         /// <param name="exception"></param>
         internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
-            StringBuilder payload = new StringBuilder();
+            StringBuilder payload = PayloadBuilder;
+            payload.Clear();
 
             AppendException(payload, exception);
 
@@ -116,7 +148,8 @@ namespace System.Management.Automation.Tracing
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
                 LogContext logContext = getLogContext();
-                StringBuilder payload = new StringBuilder();
+                StringBuilder payload = PayloadBuilder;
+                payload.Clear();
 
                 if (logContext.CommandType != null)
                 {
@@ -149,7 +182,8 @@ namespace System.Management.Automation.Tracing
         /// <param name="pipelineExecutionDetail"></param>
         internal override void LogPipelineExecutionDetailEvent(LogContext logContext, List<String> pipelineExecutionDetail)
         {
-            StringBuilder payload = new StringBuilder();
+            StringBuilder payload = PayloadBuilder;
+            payload.Clear();
 
             if (pipelineExecutionDetail != null)
             {
@@ -170,7 +204,8 @@ namespace System.Management.Automation.Tracing
         /// <param name="exception"></param>
         internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
-            StringBuilder payload = new StringBuilder();
+            StringBuilder payload = PayloadBuilder;
+            payload.Clear();
 
             AppendException(payload, exception);
             payload.AppendLine();
@@ -195,7 +230,8 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
-                StringBuilder payload = new StringBuilder();
+                StringBuilder payload = PayloadBuilder;
+                payload.Clear();
 
                 payload.AppendLine(StringUtil.Format(EtwLoggingStrings.ProviderStateChange, providerName, newState.ToString()));
 
@@ -222,7 +258,8 @@ namespace System.Management.Automation.Tracing
         {
             if (IsEnabled(PSLevel.Informational, PSKeyword.Cmdlets | PSKeyword.UseAlwaysAnalytic))
             {
-                StringBuilder payload = new StringBuilder();
+                StringBuilder payload = PayloadBuilder;
+                payload.Clear();
 
                 if (previousValue == null)
                 {
@@ -238,7 +275,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// The ETW provider does not use logging variables
+        /// The SysLog provider does not use logging variables
         /// </summary>
         /// <returns></returns>
         internal override bool UseLoggingVariables()
@@ -257,8 +294,10 @@ namespace System.Management.Automation.Tracing
         /// <param name="payLoad"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
-            WriteEvent(id, channel, opcode, GetPSLevelFromSeverity(logContext.Severity), task, (PSKeyword)0x0,
-                LogContextToString(logContext), GetPSLogUserData(logContext.ExecutionContext), payLoad);
+            s_provider.Log(id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity), DefaultKeywords,
+                           LogContextToString(logContext),
+                           GetPSLogUserData(logContext.ExecutionContext),
+                           payLoad);
         }
 
         /// <summary>
@@ -273,22 +312,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
         {
-            long longKeyword = 0x00;
-
-            if (keyword == PSKeyword.UseAlwaysAnalytic ||
-                keyword == PSKeyword.UseAlwaysOperational)
-            {
-                longKeyword = 0x00;
-            }
-            else
-            {
-                longKeyword = (long)keyword;
-            }
-
-            EventDescriptor desc = new EventDescriptor((int)id, (byte)PSEventVersion.One, (byte)channel,
-                (byte)level, (byte)opcode, (int)task, longKeyword);
-
-            etwProvider.WriteEvent(ref desc, args);
+            s_provider.Log(id, channel, task, opcode, level, keyword, args);
         }
 
         /// <summary>
@@ -296,19 +320,18 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         internal void WriteTransferEvent(Guid parentActivityId)
         {
-            etwProvider.WriteTransferEvent(ref _xferEventDescriptor, parentActivityId, EtwActivity.GetActivityId(), parentActivityId);
+            s_provider.LogTransfer(parentActivityId);
         }
 
         /// <summary>
-        ///
+        /// Sets the activity id for the current thread.
         /// </summary>
-        /// <param name="newActivityId"></param>
+        /// <param name="newActivityId">the GUID identifying the activity.</param>
         internal void SetActivityIdForCurrentThread(Guid newActivityId)
         {
-            Guid result = newActivityId;
-            EventProvider.SetActivityId(ref result);
+            s_provider.SetActivity(newActivityId);
         }
     }
 }
 
-#endif
+#endif // UNIX
