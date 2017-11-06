@@ -5,7 +5,7 @@ PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and c
 for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
 It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
-[logo]: assets/Powershell_black_64.png
+[logo]: https://raw.githubusercontent.com/PowerShell/PowerShell/master/assets/Powershell_black_64.png
 
 ## Windows PowerShell vs PowerShell Core
 
@@ -19,7 +19,7 @@ Windows PowerShell specific issues should be opened on [UserVoice][].
 
 If you are new to PowerShell and would like to learn more, we recommend reviewing the [getting started][] documentation.
 
-[getting started]: docs/learning-powershell
+[getting started]: https://github.com/PowerShell/PowerShell/tree/master/docs/learning-powershell
 
 ## Get PowerShell
 
@@ -68,25 +68,25 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-osx-x64.tar.gz
 [rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.9/powershell-6.0.0-beta.9-linux-x64.tar.gz
 
-[installation]: docs/installation
-[in-windows]: docs/installation/windows.md#msi
-[in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
-[in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
-[in-ubuntu17]: docs/installation/linux.md#ubuntu-1704
-[in-deb8]: docs/installation/linux.md#debian-8
-[in-deb9]: docs/installation/linux.md#debian-9
-[in-centos]: docs/installation/linux.md#centos-7
-[in-rhel7]: docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
-[in-opensuse422]: docs/installation/linux.md#opensuse-422
-[in-fedora25]: docs/installation/linux.md#fedora-25
-[in-fedora26]: docs/installation/linux.md#fedora-26
-[in-archlinux]: docs/installation/linux.md#arch-linux
-[in-appimage]: docs/installation/linux.md#linux-appimage
-[in-macos]: docs/installation/linux.md#macos-1012
-[in-docker]: docker
-[in-kali]: docs/installation/linux.md#kali
-[in-windows-zip]: docs/installation/windows.md#zip
-[in-tar]: docs/installation/linux.md#binary-archives
+[installation]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation
+[in-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#msi
+[in-ubuntu14]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1404
+[in-ubuntu16]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1604
+[in-ubuntu17]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1704
+[in-deb8]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#debian-8
+[in-deb9]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#debian-9
+[in-centos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#centos-7
+[in-rhel7]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
+[in-opensuse422]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#opensuse-422
+[in-fedora25]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-25
+[in-fedora26]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-26
+[in-archlinux]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#arch-linux
+[in-appimage]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#linux-appimage
+[in-macos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#macos-1012
+[in-docker]: https://github.com/PowerShell/PowerShell/tree/master/docker
+[in-kali]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#kali
+[in-windows-zip]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#zip
+[in-tar]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#binary-archives
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
@@ -132,11 +132,11 @@ If you have any problems building, please consult the developer [FAQ][].
 |--------------------------|-------------------|-------------------|----------------------|
 | [![av-nightly-image][]][av-nightly-site] | [![linux-nightly-image][]][tv-site] | [![macOS-nightly-image][]][tv-site] | [![cc-image][]][cc-site] |
 
-[bd-linux]: docs/building/linux.md
-[bd-windows]: docs/building/windows-core.md
-[bd-macOS]: docs/building/macos.md
+[bd-linux]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/linux.md
+[bd-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/windows-core.md
+[bd-macOS]: https://github.com/PowerShell/PowerShell/tree/master/docs/building/macos.md
 
-[FAQ]: docs/FAQ.md
+[FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
 
 [tv-image]: https://travis-ci.org/PowerShell/PowerShell.svg?branch=master
 [tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
@@ -165,7 +165,7 @@ If you already cloned but forgot to use `--recursive`, you can update submodules
 git submodule update --init
 ```
 
-See [working with the PowerShell repository](docs/git) for more information.
+See [working with the PowerShell repository](https://github.com/PowerShell/PowerShell/tree/master/docs/git) for more information.
 
 ## Developing and Contributing
 
@@ -177,9 +177,9 @@ If you are developing .NET Core C# applications targeting PowerShell Core, pleas
 
 Also make sure to check out our [PowerShell-RFC repository](https://github.com/powershell/powershell-rfc) for request-for-comments (RFC) documents to submit and give comments on proposed and future designs.
 
-[check out our FAQ]: docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
-[Contribution Guide]: .github/CONTRIBUTING.md
-[known issues]: docs/KNOWNISSUES.md
+[check out our FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md#where-do-i-get-the-powershell-core-sdk-package
+[Contribution Guide]: https://github.com/PowerShell/PowerShell/tree/master/.github/CONTRIBUTING.md
+[known issues]: https://github.com/PowerShell/PowerShell/tree/master/docs/KNOWNISSUES.md
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]:https://github.com/PowerShell/PowerShell/issues/new
 
@@ -187,7 +187,7 @@ Also make sure to check out our [PowerShell-RFC repository](https://github.com/p
 
 PowerShell is licensed under the [MIT license][].
 
-[MIT license]: LICENSE.txt
+[MIT license]: https://github.com/PowerShell/PowerShell/tree/master/LICENSE.txt
 
 ### Windows Docker Files and Images
 
@@ -216,4 +216,4 @@ For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact [open
 [conduct-code]: http://opensource.microsoft.com/codeofconduct/
 [conduct-FAQ]: http://opensource.microsoft.com/codeofconduct/faq/
 [conduct-email]: mailto:opencode@microsoft.com
-[conduct-md]: ./CODE_OF_CONDUCT.md
+[conduct-md]: https://github.com/PowerShell/PowerShell/tree/master/./CODE_OF_CONDUCT.md
