@@ -25,9 +25,12 @@ namespace System.Management.Automation.Host
     public
     struct Coordinates
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private int x;
         private int y;
+
+        #endregion
 
         /// <summary>
         ///
@@ -267,9 +270,12 @@ namespace System.Management.Automation.Host
     public
     struct Size
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private int width;
         private int height;
+
+        #endregion
 
         /// <summary>
         ///
@@ -618,11 +624,14 @@ namespace System.Management.Automation.Host
     public
     struct KeyInfo
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private int virtualKeyCode;
         private char character;
         private ControlKeyStates controlKeyState;
         private bool keyDown;
+
+        #endregion
 
         /// <summary>
         ///
@@ -870,11 +879,14 @@ namespace System.Management.Automation.Host
     public
     struct Rectangle
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private int left;
         private int top;
         private int right;
         private int bottom;
+
+        #endregion
 
         /// <summary>
         ///
@@ -1198,11 +1210,14 @@ namespace System.Management.Automation.Host
     public
     struct BufferCell
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private char character;
         private ConsoleColor foregroundColor;
         private ConsoleColor backgroundColor;
         private BufferCellType bufferCellType;
+
+        #endregion
 
         /// <summary>
         ///

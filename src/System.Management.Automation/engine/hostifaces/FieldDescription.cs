@@ -482,7 +482,8 @@ namespace System.Management.Automation.Host
         #region Helper
         #endregion Helper
 
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private readonly string name = null;
         private string label = "";
         private string parameterTypeName = null;
@@ -495,6 +496,8 @@ namespace System.Management.Automation.Host
         private Collection<Attribute> metadata = new Collection<Attribute>();
         private bool modifiedByRemotingProtocol = false;
         private bool isFromRemoteHost = false;
+
+        #endregion
     }
 }
 

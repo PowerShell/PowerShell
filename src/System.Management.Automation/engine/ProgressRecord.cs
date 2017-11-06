@@ -467,7 +467,8 @@ namespace System.Management.Automation
 
         #endregion
 
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         [DataMemberAttribute()]
         private int id;
 
@@ -491,6 +492,8 @@ namespace System.Management.Automation
 
         [DataMemberAttribute()]
         private ProgressRecordType type = ProgressRecordType.Processing;
+
+        #endregion
 
         #region Serialization / deserialization for remoting
 

@@ -19,9 +19,13 @@ namespace System.Management.Automation.Host
     public sealed
     class ChoiceDescription
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell compatibility with Windows PowerShell
+
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell compatibility with Windows PowerShell
+
         private readonly string label = null;
         private string helpMessage = "";
+
+        #endregion
 
         /// <summary>
         ///

@@ -19,13 +19,16 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class RemoteSessionCapability
     {
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private Version _psversion;
         private Version _serversion;
         private Version _protocolVersion;
         private RemotingDestination _remotingDestination;
         private static byte[] _timeZoneInByteFormat;
         private TimeZoneInfo _timeZone;
+
+        #endregion
 
         internal Version ProtocolVersion
         {
@@ -167,8 +170,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Data.
         /// </summary>
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private Dictionary<HostDefaultDataId, object> data;
+
+        #endregion
 
         /// <summary>
         /// Private constructor to force use of Create.
@@ -367,9 +374,12 @@ namespace System.Management.Automation.Remoting
 
         private readonly bool _isHostNull;
 
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private readonly HostDefaultData _hostDefaultData;
         private bool _useRunspaceHost;
+
+        #endregion
 
         /// <summary>
         /// Is host raw ui null.
