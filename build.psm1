@@ -257,6 +257,35 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
             log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
         }
+
+        # Place the remoting configuration script in the same directory
+        # as the binary so it will get published.
+        Copy-Item .\Install-PowerShellRemoting.ps1 $dstPath
+
+        #
+        #   Build the ETW manifest resource-only binary
+        #
+        $location = "$PSScriptRoot\src\PowerShell.Core.Instrumentation"
+        Set-Location -Path $location
+
+        $command = @"
+cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+"@
+        log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
+        Start-NativeExecution { Invoke-Expression -Command:$command }
+
+        # Copy the binaries and manifest to the packaging directory
+        $dstPath = "$PSScriptRoot\src\powershell-win-core"
+        $FilesToCopy = @(
+            [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll'),
+            [IO.Path]::Combine($location, 'PowerShell.Core.Instrumentation.man')
+        )
+        $FilesToCopy | ForEach-Object {
+            $srcPath = $_
+            log "  Copying $srcPath to $dstPath"
+            Copy-Item -Path $srcPath -Destination $dstPath
+        }
+
     } finally {
         Pop-Location
     }
@@ -600,7 +629,7 @@ function New-PSOptions {
         [string]$Output,
 
         [switch]$SMAOnly,
-        
+
         [switch]$PSModuleRestore
     )
 
