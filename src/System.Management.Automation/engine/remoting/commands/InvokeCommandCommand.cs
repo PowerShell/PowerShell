@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
             var hostDebugger = GetHostDebugger();
             if (hostDebugger == null)
             {
-                // Do not allow RemoteDebug if there is no host debugger available.  Otherwise script will hang indefinitely.
+                // Do not allow RemoteDebug if there is no host debugger available.  Otherwise script will not respond indefinitely.
                 RemoteDebug = false;
             }
             else if (hostDebugger.IsDebuggerSteppingEnabled)
@@ -939,7 +939,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Use remote steppable pipeline only for non-input piping case.
                         // Win8 Bug:898011 - We are restricting remote steppable pipeline because
-                        // of this bug in Win8 where hangs can occur during data piping.
+                        // of this bug in Win8 where not responding can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
                         if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))

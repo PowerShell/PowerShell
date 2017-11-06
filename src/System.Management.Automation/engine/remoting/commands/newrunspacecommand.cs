@@ -1308,7 +1308,7 @@ namespace Microsoft.PowerShell.Commands
         // callbacks for two reasons:
         //  a) To ensure callbacks are made in list order (first added, first called).
         //  b) To ensure all callbacks are fired by manually invoking callbacks and handling
-        //     any exceptions thrown on this thread. (ThrottleManager will hang if it doesn't
+        //     any exceptions thrown on this thread. (ThrottleManager will not respond if it doesn't
         //     get a start/stop complete callback).
         private List<EventHandler<OperationStateEventArgs>> _internalCallbacks = new List<EventHandler<OperationStateEventArgs>>();
         internal override event EventHandler<OperationStateEventArgs> OperationComplete
@@ -1401,7 +1401,7 @@ namespace Microsoft.PowerShell.Commands
             }
             foreach (var callbackDelegate in copyCallbacks)
             {
-                // Ensure all callbacks get called to prevent ThrottleManager hang.
+                // Ensure all callbacks get called to prevent ThrottleManager from not responding.
                 try
                 {
                     callbackDelegate.SafeInvoke(this, operationStateEventArgs);

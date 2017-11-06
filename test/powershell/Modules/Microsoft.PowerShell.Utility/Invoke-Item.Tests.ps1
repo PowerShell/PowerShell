@@ -27,7 +27,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
         }
 
         ## Run this test only on macOS because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
-        ## causing this test to fail or the build to hang.
+        ## causing this test to fail or the build to not respond.
         It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsMacOS) -TestCases $textFileTestCases {
             param($TestFile)
 
