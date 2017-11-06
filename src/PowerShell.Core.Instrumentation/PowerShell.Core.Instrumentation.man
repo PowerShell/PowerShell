@@ -12,7 +12,7 @@
   <assemblyIdentity
       buildType="$(build.buildType)"
       language="neutral"
-      name="PowerShellCore-Instrumentation"
+      name="PowerShell.Core.Instrumentation"
       processorArchitecture="msil"
       publicKeyToken="$(build.WindowsPublicKeyToken)"
       version="$(build.version)"
@@ -31,9 +31,9 @@
           first uninstalled and then installed again (using wevtutil)-->
       <provider
           guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}"
-          messageFileName="System.Management.Automation.dll"
-          name="PowerShellCore"
-          resourceFileName="System.Management.Automation.dll"
+          messageFileName="PowerShell.Core.Instrumentation.dll"
+          name="Microsoft-PowerShellCore"
+          resourceFileName="PowerShell.Core.Instrumentation.dll"
           symbol="PS_PROVIDER"
           >
         <!--The following section defines the events which can be written
@@ -2196,7 +2196,7 @@
               enabled="true"
               isolation="Application"
               message="$(string.PS_CHANNEL_OPERATIONAL.ChannelMessage)"
-              name="PowerShellCore/Operational"
+              name="Microsoft-PowerShellCore/Operational"
               symbol="C_OPERATIONAL"
               type="Operational"
               >
@@ -2213,7 +2213,7 @@
               enabled="false"
               isolation="Application"
               message="$(string.PS_CHANNEL_ANALYTIC.ChannelMessage)"
-              name="PowerShellCore/Analytic"
+              name="Microsoft-PowerShellCore/Analytic"
               symbol="C_ANALYTIC"
               type="Analytic"
               >
@@ -2240,7 +2240,7 @@
               enabled="false"
               isolation="Application"
               message="$(string.PS_CHANNEL_DEBUG.ChannelMessage)"
-              name="PowerShellCore/Debug"
+              name="Microsoft-PowerShellCore/Debug"
               symbol="C_DEBUG"
               type="Debug"
               >
@@ -2267,7 +2267,7 @@
               enabled="true"
               isolation="Application"
               message="$(string.PS_CHANNEL_ADMIN.ChannelMessage)"
-              name="PowerShellCore/Admin"
+              name="Microsoft-PowerShellCore/Admin"
               symbol="C_ADMIN"
               type="Admin"
               >
@@ -5419,19 +5419,19 @@
             />
         <string
             id="PS_CHANNEL_OPERATIONAL.ChannelMessage"
-            value="PowerShellCore/Operational"
+            value="Microsoft-PowerShellCore/Operational"
             />
         <string
             id="PS_CHANNEL_ANALYTIC.ChannelMessage"
-            value="PowerShellCore/Analytic"
+            value="Microsoft-PowerShellCore/Analytic"
             />
         <string
             id="PS_CHANNEL_DEBUG.ChannelMessage"
-            value="PowerShellCore/Debug"
+            value="Microsoft-PowerShellCore/Debug"
             />
         <string
             id="PS_CHANNEL_ADMIN.ChannelMessage"
-            value="PowerShellCore/Admin"
+            value="Microsoft-PowerShellCore/Admin"
             />
         <string
             id="PS_PROVIDER.event.E_O_ScheduledJobStarted.message"

@@ -279,6 +279,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
         $FilesToCopy = @(
             [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll'),
             [IO.Path]::Combine($location, 'PowerShell.Core.Instrumentation.man')
+            [IO.Path]::Combine($location, 'RegisterManifest.ps1')
         )
         $FilesToCopy | ForEach-Object {
             $srcPath = $_
