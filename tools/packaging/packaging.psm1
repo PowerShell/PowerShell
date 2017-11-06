@@ -679,6 +679,54 @@ function New-UnixPackage {
             "$GzipFile=$ManFile",
             "/tmp/pwsh=$Link"
         )
+
+        # Add macOS powershell launcher
+        if($Type -eq "osxpkg")
+        {
+            if($pscmdlet.ShouldProcess("Add macOS launch application")) {
+                # Define folder for launch application.
+                $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+
+                # Update icns file.
+                $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+                $iconfilebase = (Get-Item -Path $iconfile).BaseName
+
+                # Create Resources folder, ignore error if exists.
+                New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+                Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
+
+                # Set values in plist.
+                $plist = "$macosapp/Contents/Info.plist"
+                Start-NativeExecution {
+                    defaults write $plist CFBundleIdentifier com.microsoft.powershell
+                    defaults write $plist CFBundleVersion $Version
+                    defaults write $plist CFBundleShortVersionString $Version
+                    defaults write $plist CFBundleGetInfoString $Version
+                    defaults write $plist CFBundleIconFile $iconfilebase
+                }
+
+                # Convert to XML plist, needed because defaults native
+                # app auto converts it to binary format when it modify
+                # the plist file.
+                Start-NativeExecution {
+                    plutil -convert xml1 $plist
+                }
+
+                # Set permissions for plist and shell script. Note that
+                # defaults native app sets 700 when writing to the plist
+                # file from above. Both of these will be reset post fpm.
+                $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+                Start-NativeExecution {
+                    chmod 644 $plist
+                    chmod 755 $shellscript
+                }
+
+                # Add app folder to fpm paths.
+                $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
+                $Arguments += "$appsfolder=/"
+            }
+        }
+
         # Build package
         try {
             if($pscmdlet.ShouldProcess("Create $type package")) {
@@ -686,6 +734,28 @@ function New-UnixPackage {
             }
         } finally {
             if ($Environment.IsMacOS) {
+                if($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                {
+                    # This is needed to prevent installer from picking up
+                    # the launcher app in the build structure and updating
+                    # it which locks out subsequent package builds due to
+                    # increase permissions.
+                    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+                    $plist = "$macosapp/Contents/Info.plist"
+                    $tempguid = (New-Guid).Guid
+                    Start-NativeExecution {
+                        defaults write $plist CFBundleIdentifier $tempguid
+                        plutil -convert xml1 $plist
+                    }
+
+                    # Restore default permissions.
+                    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+                    Start-NativeExecution {
+                        chmod 644 $shellscript
+                        chmod 644 $plist
+                    }
+                }
+
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
