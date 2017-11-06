@@ -32,7 +32,7 @@
       <provider
           guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}"
           messageFileName="PowerShell.Core.Instrumentation.dll"
-          name="Microsoft-PowerShellCore"
+          name="PowerShellCore"
           resourceFileName="PowerShell.Core.Instrumentation.dll"
           symbol="PS_PROVIDER"
           >
@@ -2196,7 +2196,7 @@
               enabled="true"
               isolation="Application"
               message="$(string.PS_CHANNEL_OPERATIONAL.ChannelMessage)"
-              name="Microsoft-PowerShellCore/Operational"
+              name="PowerShellCore/Operational"
               symbol="C_OPERATIONAL"
               type="Operational"
               >
@@ -2213,7 +2213,7 @@
               enabled="false"
               isolation="Application"
               message="$(string.PS_CHANNEL_ANALYTIC.ChannelMessage)"
-              name="Microsoft-PowerShellCore/Analytic"
+              name="PowerShellCore/Analytic"
               symbol="C_ANALYTIC"
               type="Analytic"
               >
@@ -2240,7 +2240,7 @@
               enabled="false"
               isolation="Application"
               message="$(string.PS_CHANNEL_DEBUG.ChannelMessage)"
-              name="Microsoft-PowerShellCore/Debug"
+              name="PowerShellCore/Debug"
               symbol="C_DEBUG"
               type="Debug"
               >
@@ -2267,7 +2267,7 @@
               enabled="true"
               isolation="Application"
               message="$(string.PS_CHANNEL_ADMIN.ChannelMessage)"
-              name="Microsoft-PowerShellCore/Admin"
+              name="PowerShellCore/Admin"
               symbol="C_ADMIN"
               type="Admin"
               >
@@ -5419,19 +5419,19 @@
             />
         <string
             id="PS_CHANNEL_OPERATIONAL.ChannelMessage"
-            value="Microsoft-PowerShellCore/Operational"
+            value="PowerShellCore/Operational"
             />
         <string
             id="PS_CHANNEL_ANALYTIC.ChannelMessage"
-            value="Microsoft-PowerShellCore/Analytic"
+            value="PowerShellCore/Analytic"
             />
         <string
             id="PS_CHANNEL_DEBUG.ChannelMessage"
-            value="Microsoft-PowerShellCore/Debug"
+            value="PowerShellCore/Debug"
             />
         <string
             id="PS_CHANNEL_ADMIN.ChannelMessage"
-            value="Microsoft-PowerShellCore/Admin"
+            value="PowerShellCore/Admin"
             />
         <string
             id="PS_PROVIDER.event.E_O_ScheduledJobStarted.message"
