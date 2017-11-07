@@ -489,13 +489,13 @@ Fix steps:
     }
 
     # handle TypeGen
-    $incFileName = 'powershell'
+    $incFileName = 'powershell.inc'
     if (-not [string]::IsNullOrEmpty($Runtime)) {
         # File name must be different for Windows and Linux to allow build on Windows and WSL.
         # Append the first 3 characters fo the Runtime only because otherwise dotnet will crash due to the separation characters. The underscore is only for better readability.
-        $incFileName = "$($incFileName)_$($Runtime.Substring(0,3))"
+        $incFileName = "$($incFileName)_$($Runtime.Substring(0,3)).inc"
     }
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$($incFileName).inc")) {
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$($incFileName)")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
     }
@@ -521,7 +521,7 @@ Fix steps:
     # publish netcoreapp2.0 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path "$($incFileName).inc" | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
+        $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -1663,7 +1663,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$($incFileName).inc"
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$($incFileName)"
         dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
@@ -1671,7 +1671,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs "$($incFileName).inc"
+        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $incFileName
     } finally {
         Pop-Location
     }
