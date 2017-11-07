@@ -47,9 +47,9 @@ To use the `Microsoft.PowerShell.SDK` NuGet package, declare `PackageReference` 
 
 ```xml
 <ItemGroup>
-  <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.0-beta.3" />
-  <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="6.0.0-beta.3" />
-  <PackageReference Include="Microsoft.WSMan.Management" Version="6.0.0-beta.3"/>
+  <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.0-beta.9" />
+  <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="6.0.0-beta.9" />
+  <PackageReference Include="Microsoft.WSMan.Management" Version="6.0.0-beta.9"/>
 </ItemGroup>
 ```
 
