@@ -37,7 +37,9 @@
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols"
+        "BinaryBucket": "symbols",
+        "BinariesExpected": 1,
+        "VariableForExtractedBinariesPath": "Symbols_x64"
     },
     {
         "Name": "win7-x86-symbols",
@@ -50,7 +52,9 @@
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
         "AdditionalContextFiles" :[ ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1"],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols"
+        "BinaryBucket": "symbols",
+        "BinariesExpected": 1,
+        "VariableForExtractedBinariesPath": "Symbols_x86"
     }
   ],
   "Linux": [
