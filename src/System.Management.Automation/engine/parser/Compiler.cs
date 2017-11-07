@@ -3443,13 +3443,11 @@ namespace System.Management.Automation.Language
                         splatted = variableExpression.Splatted;
                     }
 
-                    bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(element);
                     elementExprs[i] =
                         Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateArgument,
                                         Expression.Convert(GetCommandArgumentExpression(element), typeof(object)),
                                         Expression.Constant(element),
-                                        ExpressionCache.Constant(splatted),
-                                        ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
+                                        ExpressionCache.Constant(splatted));
                 }
             }
 
@@ -3519,31 +3517,6 @@ namespace System.Management.Automation.Language
             return CallAddPipe(expr, s_getCurrentPipe);
         }
 
-        private bool ArgumentIsNotReallyArrayIfCommandIsNative(Ast arg)
-        {
-            var arrayLiteralAst = arg as ArrayLiteralAst;
-            if (arrayLiteralAst == null)
-            {
-                return false;
-            }
-
-            Diagnostics.Assert(arrayLiteralAst.Elements.Count > 1, "Single dimension array arguments are surrounded with parens if the value is an argument");
-            var previousElement = arrayLiteralAst.Elements[0];
-            for (int index = 1; index < arrayLiteralAst.Elements.Count; index++)
-            {
-                var element = arrayLiteralAst.Elements[index];
-                // EndOffset is 1 past the end which puts it on the comma, so if +1 is not the next element,
-                // there is whitespace between elements
-                if (previousElement.Extent.EndOffset + 1 != element.Extent.StartOffset)
-                {
-                    return false;
-                }
-                previousElement = element;
-            }
-
-            return true;
-        }
-
         public object VisitCommandParameter(CommandParameterAst commandParameterAst)
         {
             var arg = commandParameterAst.Argument;
@@ -3552,15 +3525,13 @@ namespace System.Management.Automation.Language
             {
                 bool spaceAfterParameter = (errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
                                             errorPos.EndColumnNumber != arg.Extent.StartColumnNumber);
-                bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(arg);
                 return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterWithArgument,
                                        Expression.Constant(commandParameterAst),
                                        Expression.Constant(commandParameterAst.ParameterName),
                                        Expression.Constant(errorPos.Text),
                                        Expression.Constant(arg),
                                        Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
-                                       ExpressionCache.Constant(spaceAfterParameter),
-                                       ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
+                                       ExpressionCache.Constant(spaceAfterParameter));
             }
 
             return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameter,
