@@ -388,7 +388,7 @@ namespace System.Management.Automation
     {
         private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
         private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
-        private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*?$";
+        private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*$";
         private const string PreLabelPropertyName = "PSSemanticVersionPreLabel";
         private const string BuildLabelPropertyName = "PSSemanticVersionBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
@@ -407,7 +407,7 @@ namespace System.Management.Automation
             Major = v.Major;
             Minor = v.Minor;
             Patch = v.Patch < 0 ? 0 : v.Patch;
-            PreLabel = v.PreLabel;
+            PreReleaseLabel = v.PreReleaseLabel;
             BuildLabel = v.BuildLabel;
         }
 
@@ -420,8 +420,8 @@ namespace System.Management.Automation
         /// <param name="preLabel">The preLabel for the version</param>
         /// <param name="buildLabel">The buildLabel for the version</param>
         /// <exception cref="FormatException">
-        /// If <paramref name="preLabel"/> starts with '-' ot contains '+'.
-        /// If <paramref name="buildLabel"/> contains '+'.
+        /// If <paramref name="preLabel"/> don't match 'LabelUnitRegEx'.
+        /// If <paramref name="buildLabel"/> don't match 'LabelUnitRegEx'.
         /// </exception>
         public SemanticVersion(int major, int minor, int patch, string preLabel, string buildLabel)
             : this(major, minor, patch)
@@ -430,7 +430,7 @@ namespace System.Management.Automation
             {
                 if (!Regex.IsMatch(preLabel, LabelUnitRegEx)) throw new FormatException(nameof(preLabel));
 
-                PreLabel = preLabel;
+                PreReleaseLabel = preLabel;
             }
 
             if (!string.IsNullOrEmpty(buildLabel))
@@ -450,7 +450,7 @@ namespace System.Management.Automation
         /// <param name="label">The label for the version</param>
         /// <exception cref="PSArgumentException">
         /// <exception cref="FormatException">
-        /// If <paramref name="label"/> starts with '-'.
+        /// If <paramref name="label"/> don't match 'LabelRegEx'.
         /// </exception>
         public SemanticVersion(int major, int minor, int patch, string label)
             : this(major, minor, patch)
@@ -463,7 +463,7 @@ namespace System.Management.Automation
                 var match = Regex.Match(label, LabelRegEx);
                 if (!match.Success) throw new FormatException(nameof(label));
 
-                PreLabel = match.Groups["preLabel"].Value;
+                PreReleaseLabel = match.Groups["preLabel"].Value;
                 BuildLabel = match.Groups["buildLabel"].Value;
             }
         }
@@ -487,7 +487,7 @@ namespace System.Management.Automation
             Minor = minor;
             Patch = patch;
             // We presume:
-            // PreLabel = null;
+            // PreReleaseLabel = null;
             // BuildLabel = null;
         }
 
@@ -533,7 +533,7 @@ namespace System.Management.Automation
             var preLabelNote = psobj.Properties[PreLabelPropertyName];
             if (preLabelNote != null)
             {
-                PreLabel = preLabelNote.Value as string;
+                PreReleaseLabel = preLabelNote.Value as string;
             }
             var buildLabelNote = psobj.Properties[BuildLabelPropertyName];
             if (buildLabelNote != null)
@@ -544,7 +544,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Convert a <see cref="SemanticVersion"/> to a <see cref="Version"/>.
-        /// If there is a <see cref="PreLabel"/> or/and a <see cref="BuildLabel"/>,
+        /// If there is a <see cref="PreReleaseLabel"/> or/and a <see cref="BuildLabel"/>,
         /// it is added as a NoteProperty to the result so that you can round trip
         /// back to a <see cref="SemanticVersion"/> without losing the label.
         /// </summary>
@@ -555,13 +555,13 @@ namespace System.Management.Automation
 
             var result = new Version(semver.Major, semver.Minor, semver.Patch);
 
-            if (!string.IsNullOrEmpty(semver.PreLabel) || !string.IsNullOrEmpty(semver.BuildLabel))
+            if (!string.IsNullOrEmpty(semver.PreReleaseLabel) || !string.IsNullOrEmpty(semver.BuildLabel))
             {
                 psobj = new PSObject(result);
 
-                if (!string.IsNullOrEmpty(semver.PreLabel))
+                if (!string.IsNullOrEmpty(semver.PreReleaseLabel))
                 {
-                    psobj.Properties.Add(new PSNoteProperty(PreLabelPropertyName, semver.PreLabel));
+                    psobj.Properties.Add(new PSNoteProperty(PreLabelPropertyName, semver.PreReleaseLabel));
                 }
 
                 if (!string.IsNullOrEmpty(semver.BuildLabel))
@@ -591,13 +591,12 @@ namespace System.Management.Automation
         public int Patch { get; }
 
         /// <summary>
-        /// PreLabel position in the SymVer string 'major.minor.patch-PreLabel+BuildLabel'.
+        /// PreReleaseLabel position in the SymVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
         /// </summary>
-
-        public string PreLabel { get; }
+        public string PreReleaseLabel { get; }
 
         /// <summary>
-        /// BuildLabel position in the SymVer string 'major.minor.patch-PreLabel+BuildLabel'.
+        /// BuildLabel position in the SymVer string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
         /// </summary>
         public string BuildLabel { get; }
 
@@ -660,7 +659,7 @@ namespace System.Management.Automation
             string preLabel = null;
             string buildLabel = null;
 
-            // We parse the SymVer 'version' string 'major.minor.patch-PreLabel+BuildLabel'.
+            // We parse the SymVer 'version' string 'major.minor.patch-PreReleaseLabel+BuildLabel'.
             var dashIndex = version.IndexOf('-');
             var plusIndex = version.IndexOf('+');
 
@@ -670,7 +669,7 @@ namespace System.Management.Automation
                 if (plusIndex == -1)
                 {
                     // No buildLabel: buildLabel == null
-                    // Format is 'major.minor.patch-PreLabel'
+                    // Format is 'major.minor.patch-PreReleaseLabel'
                     preLabel = version.Substring(dashIndex+1);
                     versionSansLabel = version.Substring(0, dashIndex);
                 }
@@ -695,7 +694,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // Format is 'major.minor.patch-PreLabel+BuildLabel'
+                    // Format is 'major.minor.patch-PreReleaseLabel+BuildLabel'
                     preLabel = version.Substring(dashIndex+1, plusIndex-dashIndex-1);
                     buildLabel = version.Substring(plusIndex+1);
                     versionSansLabel = version.Substring(0, dashIndex);
@@ -760,9 +759,9 @@ namespace System.Management.Automation
 
                 result.Append(Major).Append(Utils.Separators.Dot).Append(Minor).Append(Utils.Separators.Dot).Append(Patch);
 
-                if (!string.IsNullOrEmpty(PreLabel))
+                if (!string.IsNullOrEmpty(PreReleaseLabel))
                 {
-                    result.Append("-").Append(PreLabel);
+                    result.Append("-").Append(PreReleaseLabel);
                 }
 
                 if (!string.IsNullOrEmpty(BuildLabel))
@@ -823,7 +822,7 @@ namespace System.Management.Automation
                 return Patch > value.Patch ? 1 : -1;
 
             // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
-            return ComparePreLabel(this.PreLabel, value.PreLabel);
+            return ComparePreLabel(this.PreReleaseLabel, value.PreReleaseLabel);
         }
 
         /// <summary>
@@ -842,7 +841,7 @@ namespace System.Management.Automation
             // SymVer 2.0 standard requires to ignore 'BuildLabel' (Build metadata).
             return other != null &&
                    (Major == other.Major) && (Minor == other.Minor) && (Patch == other.Patch) &&
-                   string.Equals(PreLabel, other.PreLabel, StringComparison.Ordinal);
+                   string.Equals(PreReleaseLabel, other.PreReleaseLabel, StringComparison.Ordinal);
         }
 
         /// <summary>
