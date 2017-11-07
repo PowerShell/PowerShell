@@ -121,7 +121,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Win32Exception accessException)
                     {
-                        WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                        // -2147467259 - File not found.
+                        // If the block stream not found the 'path' file was not blocked and we successfully return.
+                        if (accessException.HResult != -2147467259)
+                        {
+                            WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                        }
                     }
 
                 }
