@@ -1485,22 +1485,19 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (IsNewLine(ch))
                 {
-                    if (ch == '\r')
-                    {
-                        ReadChar();
-                    }
-
                     if (seenBeginQuote)
                     {
                         //newline inside quote are valid
                         current.Append(ch);
-                        if (ch == '\r')
+                        if (ch == '\r' && PeekNextChar('\n'))
                         {
+                            ReadChar();
                             current.Append('\n');
                         }
                     }
                     else
                     {
+                        SkipNewLine();
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
                         //New line outside quote is end of word and end of record
@@ -1524,19 +1521,17 @@ namespace Microsoft.PowerShell.Commands
         bool
         IsNewLine(char ch)
         {
-            bool newLine = false;
-            if (ch == '\n')
+            return ch == '\r' || ch == '\n';
+        }
+
+        private
+        void
+        SkipNewLine()
+        {
+            if (PeekNextChar('\n'))
             {
-                newLine = true;
+                ReadChar();
             }
-            else if (ch == '\r')
-            {
-                if (PeekNextChar('\n'))
-                {
-                    newLine = true;
-                }
-            }
-            return newLine;
         }
 
         /// <summary>
@@ -1577,10 +1572,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (IsNewLine(ch))
                 {
                     endOfRecord = true;
-                    if (ch == '\r')
-                    {
-                        ReadChar();
-                    }
+                    SkipNewLine();
                     break;
                 }
                 else
