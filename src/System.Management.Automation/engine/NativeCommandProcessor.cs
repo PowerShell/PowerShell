@@ -1798,7 +1798,7 @@ namespace System.Management.Automation
             //from the current scope so a script or function can use a different encoding
             //than global value.
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Encoding.ASCII;
+                                    Utils.utf8NoBom;
 
             _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
             _streamWriter.AutoFlush = true;
