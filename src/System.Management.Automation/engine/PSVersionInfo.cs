@@ -386,9 +386,9 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
-        private const string s_VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
-        private const string s_LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
-        private const string s_LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*?$";
+        private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
+        private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
+        private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*?$";
         private const string PreLabelPropertyName = "PSSemanticVersionPreLabel";
         private const string BuildLabelPropertyName = "PSSemanticVersionBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
@@ -428,14 +428,14 @@ namespace System.Management.Automation
         {
             if (!string.IsNullOrEmpty(preLabel))
             {
-                if (!Regex.IsMatch(preLabel, s_LabelUnitRegEx)) throw new FormatException(nameof(preLabel));
+                if (!Regex.IsMatch(preLabel, LabelUnitRegEx)) throw new FormatException(nameof(preLabel));
 
                 PreLabel = preLabel;
             }
 
             if (!string.IsNullOrEmpty(buildLabel))
             {
-                if (!Regex.IsMatch(buildLabel, s_LabelUnitRegEx)) throw new FormatException(nameof(buildLabel));
+                if (!Regex.IsMatch(buildLabel, LabelUnitRegEx)) throw new FormatException(nameof(buildLabel));
 
                 BuildLabel = buildLabel;
             }
@@ -460,7 +460,7 @@ namespace System.Management.Automation
             // 2) 'label' starts with letter or digit.
             if (!string.IsNullOrEmpty(label))
             {
-                var match = Regex.Match(label, s_LabelRegEx);
+                var match = Regex.Match(label, LabelRegEx);
                 if (!match.Success) throw new FormatException(nameof(label));
 
                 PreLabel = match.Groups["preLabel"].Value;
@@ -713,7 +713,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            var match = Regex.Match(versionSansLabel, s_VersionSansRegEx);
+            var match = Regex.Match(versionSansLabel, VersionSansRegEx);
             if (!match.Success)
             {
                 result.SetFailure(ParseFailureKind.FormatException);
@@ -738,8 +738,8 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (preLabel != null && !Regex.IsMatch(preLabel, s_LabelUnitRegEx) ||
-               (buildLabel != null && !Regex.IsMatch(buildLabel, s_LabelUnitRegEx)))
+            if (preLabel != null && !Regex.IsMatch(preLabel, LabelUnitRegEx) ||
+               (buildLabel != null && !Regex.IsMatch(buildLabel, LabelUnitRegEx)))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;
