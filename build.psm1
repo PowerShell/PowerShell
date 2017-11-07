@@ -270,18 +270,10 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
         log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
 
-        # Copy the binaries and manifest to the packaging directory
-        $dstPath = "$PSScriptRoot\src\powershell-win-core"
-        $FilesToCopy = @(
-            [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll'),
-            [IO.Path]::Combine($location, 'PowerShell.Core.Instrumentation.man')
-            [IO.Path]::Combine($location, 'RegisterManifest.ps1')
-        )
-        $FilesToCopy | ForEach-Object {
-            $srcPath = $_
-            log "  Copying $srcPath to $dstPath"
-            Copy-Item -Path $srcPath -Destination $dstPath
-        }
+        # Copy the binary to the packaging directory
+        # NOTE: No PDB file; it's a resource-only DLL.
+        $srcPath = [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        Copy-Item -Path $srcPath -Destination $dstPath
 
     } finally {
         Pop-Location
