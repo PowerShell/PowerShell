@@ -24,7 +24,7 @@ The free Community edition of Visual Studio 2015 can be downloaded [here](https:
 ### Visual Studio Code
 
 Building PowerShell using [Visual Studio Code](https://code.visualstudio.com/) depends on the PowerShell executable to be called `pwsh` which means
-that you must have PowerShell Core 6 beta.9 (or newer) installed to successfully build this project (typically for the purpose of debugging).
+that you must have PowerShell Core 6 Beta.9 (or newer) installed to successfully build this project (typically for the purpose of debugging).
 
 ### .NET CLI
 
