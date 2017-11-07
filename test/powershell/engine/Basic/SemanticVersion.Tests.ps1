@@ -8,7 +8,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.Major | Should Be 1
             $v.Minor | Should Be 2
             $v.Patch | Should Be 3
-            $v.PreLabel | Should Be "Alpha-super.3"
+            $v.PreReleaseLabel | Should Be "Alpha-super.3"
             $v.BuildLabel | Should Be "BLD.a1-xxx.03"
             $v.ToString() | Should Be "1.2.3-Alpha-super.3+BLD.a1-xxx.03"
 
@@ -16,7 +16,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.Major | Should Be 1
             $v.Minor | Should Be 0
             $v.Patch | Should Be 0
-            $v.PreLabel | Should BeNullOrEmpty
+            $v.PreReleaseLabel | Should BeNullOrEmpty
             $v.BuildLabel | Should BeNullOrEmpty
             $v.ToString() | Should Be "1.0.0"
 
@@ -24,7 +24,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.Major | Should Be 3
             $v.Minor | Should Be 0
             $v.Patch | Should Be 0
-            $v.PreLabel | Should BeNullOrEmpty
+            $v.PreReleaseLabel | Should BeNullOrEmpty
             $v.BuildLabel | Should BeNullOrEmpty
             $v.ToString() | Should Be "3.0.0"
 
@@ -32,7 +32,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.Major | Should Be 2
             $v.Minor | Should Be 0
             $v.Patch | Should Be 0
-            $v.PreLabel | Should BeNullOrEmpty
+            $v.PreReleaseLabel | Should BeNullOrEmpty
             $v.BuildLabel | Should BeNullOrEmpty
             $v.ToString() | Should Be "2.0.0"
         }
