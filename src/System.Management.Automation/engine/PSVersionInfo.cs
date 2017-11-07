@@ -780,8 +780,20 @@ namespace System.Management.Automation
         /// </summary>
         public static int Compare(SemanticVersion versionA, SemanticVersion versionB)
         {
-            if (versionA == null) return -1;
-            return versionA.CompareTo(versionB);
+            if (versionA != null) {
+                if (versionB != null)
+                {
+                    return versionA.CompareTo(versionB);
+                }
+                return 1;
+            }
+
+            if (versionB != null)
+            {
+                return -1;
+            }
+
+            return 0;
         }
 
         /// <summary>
@@ -849,7 +861,7 @@ namespace System.Management.Automation
         /// </summary>
         public override int GetHashCode()
         {
-            return versionString.GetHashCode();
+            return this.ToString().GetHashCode();
         }
 
         /// <summary>
@@ -907,7 +919,15 @@ namespace System.Management.Automation
 
         private static int ComparePreLabel(string preLabel1, string preLabel2)
         {
-            // Symver 2.0 standard p.9 - Pre-release versions have a lower precedence than the associated normal version.
+            // Symver 2.0 standard p.9
+            // Pre-release versions have a lower precedence than the associated normal version.
+            // Comparing each dot separated identifier from left to right
+            // until a difference is found as follows:
+            //     identifiers consisting of only digits are compared numerically
+            //     and identifiers with letters or hyphens are compared lexically in ASCII sort order.
+            // Numeric identifiers always have lower precedence than non-numeric identifiers.
+            // A larger set of pre-release fields has a higher precedence than a smaller set,
+            // if all of the preceding identifiers are equal.
             if (String.IsNullOrEmpty(preLabel1)) { return String.IsNullOrEmpty(preLabel2) ? 0 : 1; }
             if (String.IsNullOrEmpty(preLabel2)) { return -1; }
 
