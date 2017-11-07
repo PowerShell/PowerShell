@@ -2179,14 +2179,14 @@ namespace System.Management.Automation.Runspaces
             {
                 Debug.Assert(stdinFd >= 0, "Invalid Fd");
                 standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
-                    Utils.utf8NoBom, StreamBufferSize)
+                    Utils.iso8859, StreamBufferSize)
                 { AutoFlush = true };
             }
             if (startInfo.RedirectStandardOutput)
             {
                 Debug.Assert(stdoutFd >= 0, "Invalid Fd");
                 standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
-                    startInfo.StandardOutputEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+                    startInfo.StandardOutputEncoding ?? Utils.iso8859, true, StreamBufferSize);
             }
             if (startInfo.RedirectStandardError)
             {
