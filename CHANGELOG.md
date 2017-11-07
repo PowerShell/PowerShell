@@ -447,7 +447,7 @@ For more information on this, we invite you to read [this blog post explaining P
 
 ### Remoting
 
-- Fixed not responding when the SSH client abruptly terminates. (#4123)
+- Fixed PowerShell not responding when the SSH client abruptly terminates. (#4123)
 
 ### Documentation
 
