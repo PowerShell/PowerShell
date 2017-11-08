@@ -13,7 +13,9 @@ foreach($folder in $ArtifactFolder)
     # Find Symbols zip which contains compliance files
     Write-Host "ArtifactFolder: $folder"
     $filename = Join-Path -Path $folder -ChildPath 'symbols.zip'
-    $name = Split-Path -Path $folder -Leaf
+    
+    # Use hash of folder name because some of the compliance tools didn't like the full names
+    $name = 'c' + (Split-Path -Path $folder -Leaf).GetHashCode()
 
     # Throw is compliance zip does not exist
     if (!(Test-Path $filename))
