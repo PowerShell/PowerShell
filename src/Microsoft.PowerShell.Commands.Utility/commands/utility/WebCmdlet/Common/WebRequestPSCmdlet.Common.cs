@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Commands
             if (!isInternetExplorerConfigurationComplete)
             {
                 // Verify that if IE is installed, it has been through the RunOnce check.
-                // Otherwise, the call will hang waiting for users to go through First Run
+                // Otherwise, the call will stop responding waiting for users to go through First Run
                 // personalization.
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Internet Explorer\\Main"))
                 {

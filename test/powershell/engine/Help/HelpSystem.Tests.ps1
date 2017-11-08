@@ -239,7 +239,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
 
-    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally.
+    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
     # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
     # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
 

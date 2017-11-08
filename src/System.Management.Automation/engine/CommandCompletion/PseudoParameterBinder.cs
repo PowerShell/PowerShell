@@ -664,7 +664,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            // Catch any hanging parameters at the end of the command
+            // Catch any extra parameters at the end of the command
             if (currentParameter != null)
             {
                 // Assume it was a switch
