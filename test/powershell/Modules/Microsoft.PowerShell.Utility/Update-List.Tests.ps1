@@ -1,6 +1,6 @@
 Describe "Update-List tests" -Tags CI {
     BeforeEach {
-        $list = [System.Collections.Generic.List``1[int]]::new()
+        $list = [System.Collections.Generic.List[int]]::new()
         $list.Add(1)
         $list.Add(2)
         $list.Add(3)
