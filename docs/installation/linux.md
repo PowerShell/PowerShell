@@ -379,9 +379,9 @@ sudo yum remove powershell
 
 ## OpenSUSE 42.2
 
-> **Note:** When installing PowerShell Core, OpenSUSE may report that nothing provides libcurl.
-libcurl should already be installed on supported versions of OpenSUSE.
-Run zypper search libcurl to confirm.
+> **Note:** When installing PowerShell Core, OpenSUSE may report that nothing provides `libcurl`.
+`libcurl` should already be installed on supported versions of OpenSUSE.
+Run `zypper search libcurl` to confirm.
 The error will present 2 'solutions'. Choose 'Solution 2' to continue installing PowerShell Core.
 
 ### Installation via Package Repository (preferred) - OpenSUSE 42.2
