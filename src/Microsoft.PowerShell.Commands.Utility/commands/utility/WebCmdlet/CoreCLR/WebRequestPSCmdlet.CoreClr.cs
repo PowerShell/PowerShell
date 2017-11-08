@@ -193,8 +193,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Set The SslProtocol. WebSslProtocol is used because not all SslProtocols are supported by HttpClientHandler.
-            // Also SslProtocols.Default is not the "default" for HttpClientHandler as SslProtocols.Ssl3 is not supported.
+            // Set The SslProtocol.
             handler.SslProtocols = (SslProtocols)SslProtocol;
 
 

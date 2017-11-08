@@ -13,12 +13,14 @@ dotnet WebListener.dll ServerCert.pfx password 8083 8084 8085 8086
 
 The test site can then be accessed via `http://localhost:8083/`, `https://localhost:8084/`, `https://localhost:8085/`, or `https://localhost:8086/`.
 
-The `WebListener.dll` takes 4 arguments: 
+The `WebListener.dll` takes 6 arguments: 
 
 * The path to the Server Certificate
 * The Server Certificate Password
 * The TCP Port to bind on for HTTP
-* The TCP Port to bind on for HTTPS
+* The TCP Port to bind on for HTTPS using TLS 2.0
+* The TCP Port to bind on for HTTPS using TLS 1.1
+* The TCP Port to bind on for HTTPS using TLS 1.0
 
 # Run With WebListener Module
 

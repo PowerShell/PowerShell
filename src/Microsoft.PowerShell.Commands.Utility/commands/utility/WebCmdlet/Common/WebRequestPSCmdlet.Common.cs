@@ -47,6 +47,8 @@ namespace Microsoft.PowerShell.Commands
         OAuth,
     }
 
+    // WebSslProtocol is used because not all SslProtocols are supported by HttpClientHandler.
+    // Also SslProtocols.Default is not the "default" for HttpClientHandler as SslProtocols.Ssl3 is not supported.
     /// <summary>
     /// The valid values for the -SslProtocol parameter for Invoke-RestMethod and Invoke-WebRequest
     /// </summary>
