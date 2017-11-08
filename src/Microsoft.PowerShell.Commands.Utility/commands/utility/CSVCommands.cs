@@ -1488,7 +1488,6 @@ namespace Microsoft.PowerShell.Commands
                     if (seenBeginQuote)
                     {
                         //newline inside quote are valid
-                        current.Append(ch);
                         current.Append(newLine);
                     }
                     else
