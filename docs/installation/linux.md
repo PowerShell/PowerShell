@@ -455,7 +455,7 @@ pwsh
 
 Download the RPM package
 `powershell-6.0.0_beta.9-1.rhel.7.x86_64.rpm`
-from the [releases][] page onto the Red Hat Enterprise Linux machine.
+from the [releases][] page onto the Fedora machine.
 
 Then execute the following in the terminal:
 
@@ -505,7 +505,7 @@ pwsh
 
 Download the RPM package
 `powershell-6.0.0_beta.9-1.rhel.7.x86_64.rpm`
-from the [releases][] page onto the Red Hat Enterprise Linux machine.
+from the [releases][] page onto the Fedora machine.
 
 Then execute the following in the terminal:
 
