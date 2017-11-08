@@ -501,8 +501,8 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Minor")
                         .AddPropertyColumn("Build")
                         .AddPropertyColumn("Revision")
-                        .AddPropertyColumn("PSSemanticVersionPreLabel")
-                        .AddPropertyColumn("PSSemanticVersionBuildLabel")
+                        .AddPropertyColumn("PSSemVerPreReleaseLabel")
+                        .AddPropertyColumn("PSSemVerBuildLabel")
                     .EndRowDefinition()
                 .EndTable());
         }
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Major")
                         .AddPropertyColumn("Minor")
                         .AddPropertyColumn("Patch")
-                        .AddPropertyColumn("PreLabel")
+                        .AddPropertyColumn("PreReleaseLabel")
                         .AddPropertyColumn("BuildLabel")
                     .EndRowDefinition()
                 .EndTable());

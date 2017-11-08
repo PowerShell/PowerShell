@@ -75,8 +75,8 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v2.Major | Should Be 3
             $v2.Minor | Should Be 2
             $v2.Build | Should Be 1
-            $v2.PSSemanticVersionPreLabel | Should Be "prerelease"
-            $v2.PSSemanticVersionBuildLabel | Should Be "meta"
+            $v2.PSSemVerPreReleaseLabel | Should Be "prerelease"
+            $v2.PSSemVerBuildLabel | Should Be "meta"
             $v2.ToString() | Should Be "3.2.1-prerelease+meta"
         }
 

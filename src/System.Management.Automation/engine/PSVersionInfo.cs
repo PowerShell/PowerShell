@@ -389,8 +389,8 @@ namespace System.Management.Automation
         private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
         private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
         private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*$";
-        private const string PreLabelPropertyName = "PSSemanticVersionPreLabel";
-        private const string BuildLabelPropertyName = "PSSemanticVersionBuildLabel";
+        private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
+        private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
         private string versionString;
 
@@ -417,20 +417,20 @@ namespace System.Management.Automation
         /// <param name="major">The major version</param>
         /// <param name="minor">The minor version</param>
         /// <param name="patch">The patch version</param>
-        /// <param name="preLabel">The preLabel for the version</param>
-        /// <param name="buildLabel">The buildLabel for the version</param>
+        /// <param name="preReleaseLabel">The pre-release label for the version</param>
+        /// <param name="buildLabel">The build metadata for the version</param>
         /// <exception cref="FormatException">
-        /// If <paramref name="preLabel"/> don't match 'LabelUnitRegEx'.
+        /// If <paramref name="preReleaseLabel"/> don't match 'LabelUnitRegEx'.
         /// If <paramref name="buildLabel"/> don't match 'LabelUnitRegEx'.
         /// </exception>
-        public SemanticVersion(int major, int minor, int patch, string preLabel, string buildLabel)
+        public SemanticVersion(int major, int minor, int patch, string preReleaseLabel, string buildLabel)
             : this(major, minor, patch)
         {
-            if (!string.IsNullOrEmpty(preLabel))
+            if (!string.IsNullOrEmpty(preReleaseLabel))
             {
-                if (!Regex.IsMatch(preLabel, LabelUnitRegEx)) throw new FormatException(nameof(preLabel));
+                if (!Regex.IsMatch(preReleaseLabel, LabelUnitRegEx)) throw new FormatException(nameof(preReleaseLabel));
 
-                PreReleaseLabel = preLabel;
+                PreReleaseLabel = preReleaseLabel;
             }
 
             if (!string.IsNullOrEmpty(buildLabel))
@@ -665,7 +665,7 @@ namespace System.Management.Automation
 
             if (dashIndex > plusIndex)
             {
-                // 'preLabel' can contains dashes.
+                // 'PreReleaseLabel' can contains dashes.
                 if (plusIndex == -1)
                 {
                     // No buildLabel: buildLabel == null
@@ -675,7 +675,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // No preLabel: preLabel == null
+                    // No PreReleaseLabel: preLabel == null
                     // Format is 'major.minor.patch+BuildLabel'
                     buildLabel = version.Substring(plusIndex+1);
                     versionSansLabel = version.Substring(0, plusIndex);
@@ -705,7 +705,7 @@ namespace System.Management.Automation
                 (plusIndex != - 1 && String.IsNullOrEmpty(buildLabel)) ||
                 String.IsNullOrEmpty(versionSansLabel))
             {
-                // We have dash and no preLabel or
+                // We have dash and no preReleaseLabel  or
                 // we have plus and no buildLabel or
                 // we have no main version part (versionSansLabel==null)
                 result.SetFailure(ParseFailureKind.FormatException);
@@ -780,12 +780,9 @@ namespace System.Management.Automation
         /// </summary>
         public static int Compare(SemanticVersion versionA, SemanticVersion versionB)
         {
-            if (versionA != null) {
-                if (versionB != null)
-                {
-                    return versionA.CompareTo(versionB);
-                }
-                return 1;
+            if (versionA != null)
+            {
+                return versionA.CompareTo(versionB);
             }
 
             if (versionB != null)

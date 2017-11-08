@@ -1987,13 +1987,13 @@ namespace System.Management.Automation.Runspaces
             td252.Members.Add("ToString",
                 new ScriptMethodData(@"ToString", GetScriptBlock(@"
           $suffix = """"
-          if (![String]::IsNullOrEmpty($this.PSSemanticVersionPreLabel))
+          if (![String]::IsNullOrEmpty($this.PSSemVerPreReleaseLabel))
           {
-              $suffix = ""-""+$this.PSSemanticVersionPreLabel
+              $suffix = ""-""+$this.PSSemVerPreReleaseLabel
           }
-          if (![String]::IsNullOrEmpty($this.PSSemanticVersionBuildLabel))
+          if (![String]::IsNullOrEmpty($this.PSSemVerBuildLabel))
           {
-              $suffix += ""+""+$this.PSSemanticVersionBuildLabel
+              $suffix += ""+""+$this.PSSemVerBuildLabel
           }
           ""$($this.Major).$($this.Minor).$($this.Build)""+$suffix
             ")));
