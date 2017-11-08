@@ -127,6 +127,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
                         }
+                        else
+                        {
+                            WriteVerbose("File stream 'Zone.Identifier': "+accessException.Message);
+                        }
                     }
 
                 }
