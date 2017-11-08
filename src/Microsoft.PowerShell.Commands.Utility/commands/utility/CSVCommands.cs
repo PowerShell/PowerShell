@@ -1483,21 +1483,16 @@ namespace Microsoft.PowerShell.Commands
                             break;
                     }
                 }
-                else if (IsNewLine(ch))
+                else if (IsNewLine(ch, out string newLine))
                 {
                     if (seenBeginQuote)
                     {
                         //newline inside quote are valid
                         current.Append(ch);
-                        if (ch == '\r' && PeekNextChar('\n'))
-                        {
-                            ReadChar();
-                            current.Append('\n');
-                        }
+                        current.Append(newLine);
                     }
                     else
                     {
-                        SkipNewLine();
                         result.Add(current.ToString());
                         current.Remove(0, current.Length);
                         //New line outside quote is end of word and end of record
@@ -1517,21 +1512,30 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
+        // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
         private
         bool
-        IsNewLine(char ch)
+        IsNewLine(char ch, out string newLine)
         {
-            return ch == '\r' || ch == '\n';
-        }
-
-        private
-        void
-        SkipNewLine()
-        {
-            if (PeekNextChar('\n'))
+            newLine = "";
+            if (ch == '\r')
             {
-                ReadChar();
+                if (PeekNextChar('\n'))
+                {
+                    ReadChar();
+                    newLine = "\r\n";
+                }
+                else
+                {
+                    newLine = "\r";
+                }
             }
+            else if (ch == '\n')
+            {
+                newLine = "\n";
+            }
+
+            return newLine != "";
         }
 
         /// <summary>
@@ -1569,10 +1573,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
-                else if (IsNewLine(ch))
+                else if (IsNewLine(ch, out string newLine))
                 {
                     endOfRecord = true;
-                    SkipNewLine();
                     break;
                 }
                 else
