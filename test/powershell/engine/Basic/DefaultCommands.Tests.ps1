@@ -449,7 +449,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Unregister-PSSessionConfiguration",                  ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Update-FormatData",                                  ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Update-Help",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Update-List",                                        ,                     $($FullCLR                               )
+"Cmdlet", "Update-List",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Update-TypeData",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Use-Transaction",                                    ,                     $($FullCLR                               )
 "Cmdlet", "Wait-Debugger",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)

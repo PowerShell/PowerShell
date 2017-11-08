@@ -32,7 +32,6 @@
     <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterType.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandProxy.cs" />
-    <Compile Remove="commands\utility\update-list.cs" />
     <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
     <Compile Remove="commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs" />
     <Compile Remove="commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs" />
@@ -48,7 +47,6 @@
     <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
     <Compile Remove="gen\OutPrinterDisplayStrings.cs" />
-    <Compile Remove="gen\UpdateListStrings.cs" />
     <Compile Remove="gen\ConvertFromStringResources.cs" />
     <Compile Remove="gen\ConvertStringResources.cs" />
     <Compile Remove="gen\FlashExtractStrings.cs" />
@@ -57,7 +55,6 @@
     <EmbeddedResource Remove="resources\FormatAndOut_out_gridview.resx" />
     <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\OutPrinterDisplayStrings.resx" />
-    <EmbeddedResource Remove="resources\UpdateListStrings.resx" />
     <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
     <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
     <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
