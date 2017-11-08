@@ -234,8 +234,7 @@ namespace System.Management.Automation.Runspaces
 
             var td46 = new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject",
-                ViewsOf_Microsoft_PowerShell_Commands_BasicHtmlWebResponseObject_Microsoft_PowerShell_Commands_HtmlWebResponseObject());
-            td46.TypeNames.Add("Microsoft.PowerShell.Commands.HtmlWebResponseObject");
+                ViewsOf_Microsoft_PowerShell_Commands_BasicHtmlWebResponseObject());
             yield return td46;
 
             yield return new ExtendedTypeDefinition(
@@ -1241,9 +1240,9 @@ namespace System.Management.Automation.Runspaces
                 .EndList());
         }
 
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_BasicHtmlWebResponseObject_Microsoft_PowerShell_Commands_HtmlWebResponseObject()
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_BasicHtmlWebResponseObject()
         {
-            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.HtmlWebResponseObject",
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject",
                 ListControl.Create()
                     .StartEntry()
                         .AddItemProperty(@"StatusCode")
@@ -1260,12 +1259,10 @@ namespace System.Management.Automation.Runspaces
                                   if($result.Length -eq 200) { $result += ""..."" }
                                   $result
                                 ", label: "RawContent")
-                        .AddItemProperty(@"Forms")
                         .AddItemProperty(@"Headers")
                         .AddItemProperty(@"Images")
                         .AddItemProperty(@"InputFields")
                         .AddItemProperty(@"Links")
-                        .AddItemProperty(@"ParsedHtml")
                         .AddItemProperty(@"RawContentLength")
                         .AddItemProperty(@"RelationLink")
                     .EndEntry()
