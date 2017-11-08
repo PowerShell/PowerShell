@@ -1,11 +1,14 @@
 <#
 .Synopsis
     Install PowerShell Core on Windows.
-    The release PowerShell Core package will be installed by default.
+.DESCRIPTION
+    By default, the latest PowerShell Core release package will be installed.
+    If '-Daily' is specified, then the latest PowerShell Core daily package will be installed.
 .Parameter Destination
     The destination path to install PowerShell Core to.
 .Parameter Daily
     Install PowerShell Core from the daily build.
+    Note that the 'PackageManagement' module is required to install a daily package.
 .Parameter NotOverwrite
     Do not overwrite the destination folder if it already exists.
 .Parameter AddToPath
@@ -58,6 +61,10 @@ $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRan
 New-Item -ItemType Directory -Path $tempDir -Force > $null
 try {
     if ($Daily) {
+        if (-not (Get-Module -Name PackageManagement -ListAvailable)) {
+            throw "PackageManagement module is required to install daily PowerShell Core."
+        }
+
         if ($architecture -ne "x64") {
             throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64 Windows."
         }
