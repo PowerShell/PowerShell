@@ -6,7 +6,7 @@
 
 #define VER_FILETYPE    		VFT_DLL
 #define VER_FILESUBTYPE 		VFT2_UNKNOWN
-#define VER_FILEDESCRIPTION_STR     	"DSC"
+#define VER_FILEDESCRIPTION_STR     	"PowerShellCore"
 #define VER_INTERNALNAME_STR        	"PowerShell.Core.Instrumentation.dll"
 #define VER_ORIGINALFILENAME_STR    	"PowerShell.Core.Instrumentation.dll"
 
