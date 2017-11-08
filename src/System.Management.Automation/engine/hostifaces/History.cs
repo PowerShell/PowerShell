@@ -152,23 +152,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private long _pipelineId;
 
-        /// <summary>
-        /// Gets a string representation of the execution time
-        /// </summary>
-        /// <returns></returns>
-        public string GetExecutionTimeString()
-        {
-            var duration = Duration;
-            if (duration.Days > 0)
-            {
-                return $@"{duration:d\.hh\:mm\:ss}";
-            }
-            if (duration.Hours > 1)
-            { 
-                return $@"{duration:hh\:mm\:ss}";
-            }
-            return $@"{duration:mm\:ss\.fff}";
-        }
 
         /// <summary>
         /// Returns a clone of this object

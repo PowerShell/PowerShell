@@ -343,11 +343,11 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("time",
                 TableControl.Create()
                     .AddHeader(Alignment.Right, width: 4)
-                    .AddHeader(Alignment.Right, width: 13, label: "Duration")
+                    .AddHeader(Alignment.Right, width: 13)
                     .AddHeader()
                     .StartRowDefinition()
                         .AddPropertyColumn("Id")
-                        .AddScriptBlockColumn("$_.GetExecutionTimeString()")
+                        .AddPropertyColumn("Duration")
                         .AddPropertyColumn("CommandLine")
                     .EndRowDefinition()
                     .EndTable());
