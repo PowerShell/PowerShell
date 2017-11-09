@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SignConfigXML>
-  <!-- ****Begin**** Should be BothDual - Dual (Sha256 and Sha1) AuthenticodeDual) and StrongName ******** -->
+  <!-- ****Begin**** BothDual - Dual (Sha256 and Sha1) AuthenticodeDual) and should be StrongName, but we will add this in 6.1.0 ******** -->
  <job platform="" configuration="" dest="__OUTPATHROOT__\signed" jobname="PowerShell" approvers="vigarg;gstolt">
     <file src="__INPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" />
     <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" />
@@ -27,6 +27,7 @@
     <file src="__INPATHROOT__\Install-PowerShellRemoting.ps1" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Install-PowerShellRemoting.ps1" />
   -->
  <!-- ****Begin**** Authenticode - Authenticode SHA256 ************* -->
+ <!-- PowerShell script files cannot be dual signed, so we will sign them only with a SHA256 cert -->
 
     <file src="__INPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" />
