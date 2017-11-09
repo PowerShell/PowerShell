@@ -19,12 +19,32 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal class RemoteSessionCapability
     {
-        internal Version ProtocolVersion { get; set; }
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
-        internal Version PSVersion { get; }
-        internal Version SerializationVersion { get; }
-        internal RemotingDestination RemotingDestination { get; }
-        private static byte[] s_timeZoneInByteFormat;
+        private Version _psversion;
+        private Version _serversion;
+        private Version _protocolVersion;
+        private RemotingDestination _remotingDestination;
+        private static byte[] _timeZoneInByteFormat;
+        private TimeZoneInfo _timeZone;
+
+        #endregion
+
+        internal Version ProtocolVersion
+        {
+            get
+            {
+                return _protocolVersion;
+            }
+            set
+            {
+                _protocolVersion = value;
+            }
+        }
+
+        internal Version PSVersion { get { return _psversion; } }
+        internal Version SerializationVersion { get { return _serversion; } }
+        internal RemotingDestination RemotingDestination { get { return _remotingDestination; } }
 
         /// <summary>
         /// Constructor for RemoteSessionCapability.
@@ -33,13 +53,13 @@ namespace System.Management.Automation.Remoting
         /// </remarks>
         internal RemoteSessionCapability(RemotingDestination remotingDestination)
         {
-            ProtocolVersion = RemotingConstants.ProtocolVersion;
+            _protocolVersion = RemotingConstants.ProtocolVersion;
             // PS Version 3 is fully backward compatible with Version 2
             // In the remoting protocol sense, nothing is changing between PS3 and PS2
             // For negotiation to succeed with old client/servers we have to use 2.
-            PSVersion = new Version(2, 0); //PSVersionInfo.PSVersion;
-            SerializationVersion = PSVersionInfo.SerializationVersion;
-            RemotingDestination = remotingDestination;
+            _psversion = new Version(2,0); //PSVersionInfo.PSVersion;
+            _serversion = PSVersionInfo.SerializationVersion;
+            _remotingDestination = remotingDestination;
         }
 
         internal RemoteSessionCapability(RemotingDestination remotingDestination,
@@ -47,10 +67,10 @@ namespace System.Management.Automation.Remoting
             Version psVersion,
             Version serVersion)
         {
-            ProtocolVersion = protocolVersion;
-            PSVersion = psVersion;
-            SerializationVersion = serVersion;
-            RemotingDestination = remotingDestination;
+            _protocolVersion = protocolVersion;
+            _psversion = psVersion;
+            _serversion = serVersion;
+            _remotingDestination = remotingDestination;
         }
 
         /// <summary>
@@ -76,7 +96,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()
         {
-            if (null == s_timeZoneInByteFormat)
+            if (null == _timeZoneInByteFormat)
             {
                 Exception e = null;
                 try
@@ -88,7 +108,7 @@ namespace System.Management.Automation.Remoting
                         stream.Seek(0, SeekOrigin.Begin);
                         byte[] result = new byte[stream.Length];
                         stream.Read(result, 0, (int)stream.Length);
-                        s_timeZoneInByteFormat = result;
+                        _timeZoneInByteFormat = result;
                     }
                 }
                 catch (ArgumentNullException ane)
@@ -108,17 +128,21 @@ namespace System.Management.Automation.Remoting
                 // ignore it and dont try to serialize again.
                 if (null != e)
                 {
-                    s_timeZoneInByteFormat = Utils.EmptyArray<byte>();
+                    _timeZoneInByteFormat = Utils.EmptyArray<byte>();
                 }
             }
 
-            return s_timeZoneInByteFormat;
+            return _timeZoneInByteFormat;
         }
 
         /// <summary>
         /// Gets the TimeZone of the destination machine. This may be null
         /// </summary>
-        internal TimeZoneInfo TimeZone { get; set; }
+        internal TimeZoneInfo TimeZone
+        {
+            get { return _timeZone; }
+            set { _timeZone = value; }
+        }
     }
 
     /// <summary>
@@ -146,8 +170,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Data.
         /// </summary>
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private Dictionary<HostDefaultDataId, object> data;
+
+        #endregion
 
         /// <summary>
         /// Private constructor to force use of Create.
@@ -346,9 +374,12 @@ namespace System.Management.Automation.Remoting
 
         private readonly bool _isHostNull;
 
-        // DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting
+        #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
+
         private readonly HostDefaultData _hostDefaultData;
         private bool _useRunspaceHost;
+
+        #endregion
 
         /// <summary>
         /// Is host raw ui null.
