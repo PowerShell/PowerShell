@@ -193,7 +193,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Set The SslProtocol.
             handler.SslProtocols = (SslProtocols)SslProtocol;
 
 

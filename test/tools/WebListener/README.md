@@ -18,7 +18,7 @@ The `WebListener.dll` takes 6 arguments:
 * The path to the Server Certificate
 * The Server Certificate Password
 * The TCP Port to bind on for HTTP
-* The TCP Port to bind on for HTTPS using TLS 2.0
+* The TCP Port to bind on for HTTPS using TLS 1.2
 * The TCP Port to bind on for HTTPS using TLS 1.1
 * The TCP Port to bind on for HTTPS using TLS 1.0
 

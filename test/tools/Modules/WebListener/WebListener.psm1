@@ -161,7 +161,7 @@ function Get-WebListenerUrl {
             {
                 'Tls11' { $Uri.Port = $runningListener.Tls11Port }
                 'Tls'   { $Uri.Port = $runningListener.TlsPort }
-                # The base HTTPs port is configured for Tls2 only
+                # The base HTTPs port is configured for Tls12 only
                 default { $Uri.Port = $runningListener.HttpsPort }
             }
             $Uri.Scheme = 'Https'
