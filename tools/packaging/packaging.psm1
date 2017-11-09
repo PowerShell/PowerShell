@@ -20,7 +20,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -32,10 +32,6 @@ function Start-PSPackage {
 
         [Switch] $SkipReleaseChecks
     )
-
-    # The package type 'deb-arm' is current disabled for '-Type' parameter because 'New-UnixPackage' doesn't support
-    # creating package for 'deb-arm'. It should be added back to the ValidateSet of '-Type' once the implementation
-    # of creating 'deb-arm' package is done.
 
     DynamicParam {
         if ($Type -eq "zip") {
@@ -62,7 +58,7 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
-        } elseif ($Type -eq "deb-arm") {
+        } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -79,7 +75,7 @@ function Start-PSPackage {
         $Script:Options = Get-PSOptions
 
         $crossGenCorrect = $false
-        if ($Type -eq "deb-arm") {
+        if ($Type -eq "tar-arm") {
             # crossgen doesn't support arm32 yet
             $crossGenCorrect = $true
         }
@@ -154,7 +150,7 @@ function Start-PSPackage {
             $Source = New-TempFolder
             $symbolsSource = New-TempFolder
 
-            try 
+            try
             {
                 # Copy files which go into the root package
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
@@ -287,12 +283,25 @@ function Start-PSPackage {
                     New-NugetPackage @Arguments
                 }
             }
-            'tar' {
+            "tar" {
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    New-TarballPackage @Arguments
+                }
+            }
+            "tar-arm" {
+                $Arguments = @{
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    Architecture = "arm32"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -346,15 +355,18 @@ function New-TarballPackage {
         # Must start with 'powershell' but may have any suffix
         [Parameter(Mandatory)]
         [ValidatePattern("^powershell")]
-        [string]$Name,
+        [string] $Name,
 
         [Parameter(Mandatory)]
-        [string]$Version,
+        [string] $Version,
+
+        [Parameter()]
+        [string] $Architecture = "x64",
 
         [switch] $Force
     )
 
-    $packageName = "$Name-$Version-{0}-x64.tar.gz"
+    $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
     if ($Environment.IsWindows) {
         throw "Must be on Linux or macOS to build 'tar.gz' packages!"
     } elseif ($Environment.IsLinux) {

@@ -19,23 +19,23 @@ function Send-DailyWebHook
     {
         log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
-        
+
         $Body = @{
                 'text'= @"
-Build Result: $result </br>     
+Build Result: $result </br>
 OS Type: $($PSVersionTable.OS) </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
 "@
         }
-        
+
         $params = @{
             Headers = @{'accept'='application/json'}
             Body = $Body | convertto-json
             Method = 'Post'
-            URI = $webhook 
+            URI = $webhook
         }
-        
+
         Invoke-RestMethod @params
     }
     else
@@ -126,7 +126,7 @@ function Set-DailyBuildBadge
 
     $headers["Authorization"]  = "SharedKey " + $storageAccountName + ":" + $signature
 
-    if ( $PSCmdlet.ShouldProcess("$signaturestring")) 
+    if ( $PSCmdlet.ShouldProcess("$signaturestring"))
     {
         # if this fails, it will throw, you can't check the response for a success code
         $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
@@ -174,17 +174,17 @@ elseif($Stage -eq 'Build')
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     $originalProgressPreference = $ProgressPreference
-    $ProgressPreference = 'SilentlyContinue' 
+    $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
         Start-PSBuild -CrossGen -PSModuleRestore
     }
     finally{
-        $ProgressPreference = $originalProgressPreference    
+        $ProgressPreference = $originalProgressPreference
     }
 
-    $pesterParam = @{ 
-        'binDir'   = $output 
+    $pesterParam = @{
+        'binDir'   = $output
         'PassThru' = $true
         'Terse'    = $true
     }
@@ -222,7 +222,7 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        Start-PSxUnit        
+        Start-PSxUnit
     }
     catch {
         $result = "FAIL"
@@ -253,8 +253,11 @@ elseif($Stage -eq 'Build')
             {
                 log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-            }            
+            }
         }
+        # Create and package Raspbian .tgz
+        Start-PSBuild -Clean -Runtime linux-arm
+        Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
     }
 
     # if the tests did not pass, throw the reason why
