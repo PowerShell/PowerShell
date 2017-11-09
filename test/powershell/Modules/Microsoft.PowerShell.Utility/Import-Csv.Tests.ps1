@@ -90,6 +90,7 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         $importTypes = $importObjectList[0].psobject.TypeNames
         $importTypes[0] | Should Be $expectedProcessTypes[0]
         $importTypes[1] | Should Be $expectedProcessTypes[1]
+        $importTypes.Count | Should Be $expectedProcessTypes.Count
     }
 }
 
