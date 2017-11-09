@@ -113,6 +113,7 @@ function Get-WebListenerUrl {
     param (
         [switch]$Https,
         [ValidateSet(
+            'Auth',
             'Cert',
             'Compression',
             'Delay',

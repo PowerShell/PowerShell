@@ -1312,6 +1312,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $credential = [pscredential]::new("testuser",$token)
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+            $httpBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic'
+            $httpsBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
+            $httpNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate'
+            $httpsNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate' -Https
             $testCases = @(
                 @{Authentication = "bearer"}
                 @{Authentication = "OAuth"}
@@ -1411,6 +1415,75 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result = $response.Content | ConvertFrom-Json
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
+        }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential over HTTPS" {
+            $params = @{
+                Uri = $httpsBasicUri
+                Credential = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential Requires HTTPS" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                ErrorAction = 'Stop'
+            }
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                AllowUnencryptedAuthentication = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials over HTTPS" -Skip:$(!$IsWindows) {
+            $params = @{
+                Uri = $httpsNegotiateUri
+                Credential = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should Match '^Negotiate '
+        }
+
+        # The error condition can at least be tested on all platforms.
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials Requires HTTPS" {
+            $params = @{
+                Uri = $httpNegotiateUri
+                UseDefaultCredentials = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) {
+            $params = @{
+                Uri = $httpNegotiateUri
+                UseDefaultCredentials = $true
+                AllowUnencryptedAuthentication = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should Match '^Negotiate '
         }
     }
 
@@ -2233,6 +2306,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $credential = [pscredential]::new("testuser",$token)
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+            $httpBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic'
+            $httpsBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
+            $httpNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate'
+            $httpsNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate' -Https
             $testCases = @(
                 @{Authentication = "bearer"}
                 @{Authentication = "OAuth"}
@@ -2329,6 +2406,71 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result = Invoke-RestMethod @params
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential over HTTPS" {
+            $params = @{
+                Uri = $httpsBasicUri
+                Credential = $credential
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential Requires HTTPS" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                ErrorAction = 'Stop'
+            }
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                AllowUnencryptedAuthentication = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials over HTTPS" -Skip:$(!$IsWindows) {
+            $params = @{
+                Uri = $httpsNegotiateUri
+                Credential = $credential
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should Match '^Negotiate '
+        }
+
+        # The error condition can at least be tested on all platforms.
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials Requires HTTPS" {
+            $params = @{
+                Uri = $httpNegotiateUri
+                UseDefaultCredentials = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) {
+            $params = @{
+                Uri = $httpNegotiateUri
+                UseDefaultCredentials = $true
+                AllowUnencryptedAuthentication = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should Match '^Negotiate '
         }
     }
 
