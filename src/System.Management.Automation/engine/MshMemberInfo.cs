@@ -2959,7 +2959,7 @@ namespace System.Management.Automation
 
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
     {
-        private int _current;
+        private int _currentIndex;
         private readonly Type _t;
 
         internal PSMethodSignatureEnumerator(Type t)
@@ -2967,13 +2967,13 @@ namespace System.Management.Automation
             Diagnostics.Assert(t.IsSubclassOf(typeof(PSMethod)), "Must be a PSMethod<MethodGroup<>>");
             _t = t.GenericTypeArguments[0];
             Current = null;
-            _current = -1;
+            _currentIndex = -1;
         }
 
         public bool MoveNext()
         {
-            _current++;
-            return MoveNext(_t, _current);
+            _currentIndex++;
+            return MoveNext(_t, _currentIndex);
         }
 
         bool MoveNext(Type type, int index)
@@ -3003,7 +3003,7 @@ namespace System.Management.Automation
 
         public void Reset()
         {
-            _current = -1;
+            _currentIndex = -1;
             Current = null;
         }
 
