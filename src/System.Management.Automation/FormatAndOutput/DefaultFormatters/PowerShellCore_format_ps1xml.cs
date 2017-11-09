@@ -192,6 +192,14 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_Job());
 
             yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TextMeasureInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_TextMeasureInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.GenericMeasureInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_GenericMeasureInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "Deserialized.Microsoft.PowerShell.Commands.TextMeasureInfo",
                 ViewsOf_Deserialized_Microsoft_PowerShell_Commands_TextMeasureInfo());
 
@@ -1062,11 +1070,11 @@ namespace System.Management.Automation.Runspaces
                 ListControl.Create()
                     .StartEntry()
                         .AddItemProperty(@"Count")
-                        .AddItemProperty(@"Average")
-                        .AddItemProperty(@"Sum")
-                        .AddItemProperty(@"Maximum")
-                        .AddItemProperty(@"Minimum")
-                        .AddItemProperty(@"Property")
+                        .AddItemProperty(@"Average",  itemSelectionContition: DisplayEntry.CreatePropertyEntry("Average"))
+                        .AddItemProperty(@"Sum",      itemSelectionContition: DisplayEntry.CreatePropertyEntry("Sum"))
+                        .AddItemProperty(@"Maximum",  itemSelectionContition: DisplayEntry.CreatePropertyEntry("Maximum"))
+                        .AddItemProperty(@"Minimum",  itemSelectionContition: DisplayEntry.CreatePropertyEntry("Minimum"))
+                        .AddItemProperty(@"Property", itemSelectionContition: DisplayEntry.CreatePropertyEntry("Property"))
                     .EndEntry()
                 .EndList());
         }
