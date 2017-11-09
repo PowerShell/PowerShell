@@ -253,6 +253,8 @@ The layout of files looks like this:
     │       └── PowerShell.Core.Instrumentation.dll
 ```
 
+NOTE: Since these are native binaries used on Windows, they need to be AuthenticodeDual signed, certificate code: 402 before creating the nuget package.
+
 Lastly, run `nuget pack` from teh root of the repo. The following command creates the nuget package from the c:\mypackage directory and places the nuget package in .\src\powershell-win-core.  Note that you may need the latest `nuget.exe`.
 
 ```powershell
