@@ -219,6 +219,7 @@ if (Test-Path -Path c:\mypackage)
 $null = New-Item -Path c:\mypackage\runtimes\win-x64\native -ItemType Directory
 $null = New-Item -Path c:\mypackage\runtimes\win-x86\native -ItemType Directory
 ```
+
 You will need to build `PowerShell.Core.Instrumentation.dll` targeting both `win-x64` and `win-x86` on Windows 10.
 The output files will be placed under src\powershell-win-core.
 
@@ -229,6 +230,7 @@ Build the `win-x64` platform and copy the `PowerShell.Core.Instrumentation.dll` 
 Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
 Copy-Item -Path .\src\powershell-win-core\PowerShell.Core.Instrumentation.dll -Destination c:\mypackage\runtimes\win-x64\native
 ```
+
 Next, build the `win-x86` platform and copy `PowerShell.Core.Instrumentation.dll` to the win-x86 portion of the tree.
 
 ```powershell
@@ -238,6 +240,7 @@ Copy-Item -Path .\src\powershell-win-core\PowerShell.Core.Instrumentation.dll -D
 ```
 
 The layout of files looks like this:
+
 ```none
 └── runtimes
     ├── win-x64
@@ -248,6 +251,7 @@ The layout of files looks like this:
     │   └── native
     │       └── PowerShell.Core.Instrumentation.dll
 ```
+
 Lastly, run `nuget pack` from teh root of the repo. The following command creates the nuget package from the c:\mypackage directory and places the nuget package in .\src\powershell-win-core.  Note that you may need the latest `nuget.exe`.
 
 ```powershell
