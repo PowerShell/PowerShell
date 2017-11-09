@@ -2354,7 +2354,7 @@ namespace System.Management.Automation
         {
             internal MethodInformation[] methodInformationStructures;
             /// <summary>
-            /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationsStructures.
+            /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationStructures.
             /// </summary>
             internal Func<string , DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool , PSMethod> psmethodCtor;
 
