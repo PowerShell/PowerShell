@@ -257,6 +257,24 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
             log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
         }
+
+        #
+        #   Build the ETW manifest resource-only binary
+        #
+        $location = "$PSScriptRoot\src\PowerShell.Core.Instrumentation"
+        Set-Location -Path $location
+
+        $command = @"
+cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+"@
+        log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
+        Start-NativeExecution { Invoke-Expression -Command:$command }
+
+        # Copy the binary to the packaging directory
+        # NOTE: No PDB file; it's a resource-only DLL.
+        $srcPath = [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        Copy-Item -Path $srcPath -Destination $dstPath
+
     } finally {
         Pop-Location
     }
@@ -600,7 +618,7 @@ function New-PSOptions {
         [string]$Output,
 
         [switch]$SMAOnly,
-        
+
         [switch]$PSModuleRestore
     )
 

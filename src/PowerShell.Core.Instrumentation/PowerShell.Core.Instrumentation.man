@@ -12,7 +12,7 @@
   <assemblyIdentity
       buildType="$(build.buildType)"
       language="neutral"
-      name="PowerShellCore-Instrumentation"
+      name="PowerShell.Core.Instrumentation"
       processorArchitecture="msil"
       publicKeyToken="$(build.WindowsPublicKeyToken)"
       version="$(build.version)"
@@ -31,9 +31,9 @@
           first uninstalled and then installed again (using wevtutil)-->
       <provider
           guid="{f90714a8-5509-434a-bf6d-b1624c8a19a2}"
-          messageFileName="System.Management.Automation.dll"
+          messageFileName="PowerShell.Core.Instrumentation.dll"
           name="PowerShellCore"
-          resourceFileName="System.Management.Automation.dll"
+          resourceFileName="PowerShell.Core.Instrumentation.dll"
           symbol="PS_PROVIDER"
           >
         <!--The following section defines the events which can be written
