@@ -883,6 +883,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     fpt.expression = expression;
                     fpt.fieldFormattingDirective.formatString = listItem.FormatString;
                     lvid.formatTokenList.Add(fpt);
+                    if (listItem.ItemSelectionCondition != null)
+                    {
+                        var conditionToken = LoadExpressionFromObjectModel(listItem.ItemSelectionCondition, viewIndex, typeName);
+                        lvid.conditionToken = conditionToken;
+                    }
                 }
 
                 if (!String.IsNullOrEmpty(listItem.Label))

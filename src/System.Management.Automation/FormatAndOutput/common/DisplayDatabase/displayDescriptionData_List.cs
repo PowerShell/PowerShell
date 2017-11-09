@@ -370,7 +370,7 @@ namespace System.Management.Automation
             _listEntry = listEntry;
         }
 
-        private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format)
+        private ListEntryBuilder AddItem(string value, string label, DisplayEntryValueType kind, string format, DisplayEntry itemSelectionContition)
         {
             if (string.IsNullOrEmpty(value))
                 throw PSTraceSource.NewArgumentNullException("property");
@@ -379,22 +379,23 @@ namespace System.Management.Automation
             {
                 DisplayEntry = new DisplayEntry(value, kind),
                 Label = label,
-                FormatString = format
+                FormatString = format,
+                ItemSelectionCondition = itemSelectionContition,
             });
 
             return this;
         }
 
         /// <summary></summary>
-        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null)
+        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionContition = null )
         {
-            return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format);
+            return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format, itemSelectionContition);
         }
 
         /// <summary></summary>
-        public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null)
+        public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null, DisplayEntry itemSelectionContition = null)
         {
-            return AddItem(property, label, DisplayEntryValueType.Property, format);
+            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionContition);
         }
 
         /// <summary></summary>
