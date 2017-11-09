@@ -16,6 +16,7 @@
     <PackageReference Include="System.Security.Permissions" Version="4.4.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
+    <PackageReference Include="PowerShell.Core.Instrumentation" Version="6.0.0-beta*" />
   </ItemGroup>
 
   <PropertyGroup>
