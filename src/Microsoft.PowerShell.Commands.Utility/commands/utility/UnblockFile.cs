@@ -129,10 +129,9 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            WriteVerbose("File stream 'Zone.Identifier': "+accessException.Message);
+                            WriteVerbose(StringUtil.Format(UtilityCommonStrings.NoZoneIdentifierFileStream, path));
                         }
                     }
-
                 }
             }
         }
