@@ -199,6 +199,7 @@ The layout of files should look like this:
 Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
 
 ### PowerShell.Core.Instrumentation
+
 To successfully decode PowerShell Core ETW events, The manifest and resource binary need to be registered on the system.
 
 To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the PowerShell.Core.Instrumentation.nuspec found in the repo under src\PowerShell.Core.Instrumentation.
