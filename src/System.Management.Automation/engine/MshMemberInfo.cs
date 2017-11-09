@@ -2787,7 +2787,6 @@ namespace System.Management.Automation
             return methodInfo.MakeGenericMethod(concrete);
         }
 
-
         private static Func<string, DotNetAdapter, object, object, bool, bool, PSMethod> CreatePSMethodConstructor(MethodInformation[] methods)
         {
             var types = new Type[methods.Length];
@@ -2837,8 +2836,6 @@ namespace System.Management.Automation
         }
     }
 
-
-
     class PSOutParameter<T> { private PSOutParameter() { }}
 
     abstract class PSNonBindableType { }
@@ -2872,13 +2869,13 @@ namespace System.Management.Automation
         }
     }
 
-   class PSGenericType0 : PSGenericType { internal PSGenericType0() { } }
-   class PSGenericType1 : PSGenericType { internal PSGenericType1() { } }
+    class PSGenericType0 : PSGenericType { internal PSGenericType0() { } }
+    class PSGenericType1 : PSGenericType { internal PSGenericType1() { } }
     class PSGenericType2 : PSGenericType { internal PSGenericType2() { } }
     class PSGenericType3 : PSGenericType { internal PSGenericType3() { } }
-   class PSGenericType4 : PSGenericType { internal PSGenericType4() { } }
+    class PSGenericType4 : PSGenericType { internal PSGenericType4() { } }
     class PSGenericType5 : PSGenericType { internal PSGenericType5() { } }
-   class PSGenericType6 : PSGenericType { internal PSGenericType6() { } }
+    class PSGenericType6 : PSGenericType { internal PSGenericType6() { } }
     class PSGenericType7 : PSGenericType { internal PSGenericType7() { } }
     class PSGenericType8 : PSGenericType { internal PSGenericType8() { } }
     class PSGenericType9 : PSGenericType { internal PSGenericType9() { } }
