@@ -33,10 +33,6 @@ function Start-PSPackage {
         [Switch] $SkipReleaseChecks
     )
 
-    # The package type 'deb-arm' is current disabled for '-Type' parameter because 'New-UnixPackage' doesn't support
-    # creating package for 'deb-arm'. It should be added back to the ValidateSet of '-Type' once the implementation
-    # of creating 'deb-arm' package is done.
-
     DynamicParam {
         if ($Type -eq "zip") {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip'.
@@ -154,7 +150,7 @@ function Start-PSPackage {
             $Source = New-TempFolder
             $symbolsSource = New-TempFolder
 
-            try 
+            try
             {
                 # Copy files which go into the root package
                 Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
