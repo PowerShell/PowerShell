@@ -155,7 +155,7 @@ else
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
-$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $commitMessage -match '\[daily\]'
 # only update the build badge for the cron job
 $cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
