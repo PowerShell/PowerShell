@@ -200,9 +200,9 @@ Lastly, run `nuget pack .` from within the folder. Note that you may need the la
 
 ### PowerShell.Core.Instrumentation
 
-To successfully decode PowerShell Core ETW events, The manifest and resource binary need to be registered on the system.
+To successfully decode PowerShell Core ETW events, the manifest and resource binary need to be registered on the system.
 
-To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the PowerShell.Core.Instrumentation.nuspec found in the repo under src\PowerShell.Core.Instrumentation.
+To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under src\PowerShell.Core.Instrumentation.
 
 Update the version information for the package.
 
@@ -210,7 +210,7 @@ Update the version information for the package.
 <version>6.0.0-RC</version>
 ```
 
-Next,  create the directory structure needed for the contents of the nuget packagestructure. The final directory and file layout is listed below.
+Next, create the directory structure needed for the contents of the nuget package structure. The final directory and file layout is listed below.
 
 ```powershell
 if (Test-Path -Path c:\mypackage)
@@ -253,11 +253,10 @@ The layout of files looks like this:
     │       └── PowerShell.Core.Instrumentation.dll
 ```
 
-NOTE: Since these are native binaries used on Windows, they need to be AuthenticodeDual signed, certificate code: 402 before creating the nuget package.
+NOTE: Since these are native binaries used on Windows, they need to be Authenticode Dual signed before creating the nuget package.
 
-Lastly, run `nuget pack` from teh root of the repo. The following command creates the nuget package from the c:\mypackage directory and places the nuget package in .\src\powershell-win-core.  Note that you may need the latest `nuget.exe`.
+Lastly, run the following command from the root of the repo to create the nuget package. The nuget package is placed `.\src\powershell-win-core`.  Note that you may need the latest `nuget.exe`.
 
 ```powershell
-nuget pack .\src\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.nuspec -BasePath c:\mypackage -OutputDirectory .\src\powershell-win-
-core
+nuget pack .\src\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.nuspec -BasePath c:\mypackage -OutputDirectory .\src\powershell-win-core
 ```
