@@ -560,18 +560,14 @@ Fix steps:
 
     if ($Environment.IsWindows) {
         ## need RCEdit to modify the binaries embedded resources
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-        {
+        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
         }
 
         $ReleaseVersion = ""
-        if ($ReleaseTagToUse)
-        {
+        if ($ReleaseTagToUse) {
             $ReleaseVersion = $ReleaseTagToUse
-        }
-        else
-        {
+        } else {
             $ReleaseVersion = (Get-PSCommitId) -replace '^v'
         }
 
@@ -582,8 +578,7 @@ Fix steps:
 
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
-    if($PSModuleRestore)
-    {
+    if ($PSModuleRestore) {
         $ProgressPreference = "SilentlyContinue"
         log "Restore PowerShell modules to $publishPath"
 
