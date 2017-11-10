@@ -1,6 +1,4 @@
-﻿#if CORECLR
-
-/********************************************************************++
+﻿/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -350,19 +348,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     content = psBody.BaseObject;
                 }
-
-                /* TODO: This needs to be enable after the dependency on mshtml is resolved.
-                var html = content as HtmlWebResponseObject;
-                if (html != null)
-                {
-                    // use the form if it's the only one present
-                    if (html.Forms.Count == 1)
-                    {
-                        SetRequestContent(request, html.Forms[0].Fields);
-                    }
-                }
-                else if (content is FormObject)
-                */
 
                 if (content is FormObject)
                 {
@@ -870,4 +855,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Helper Methods
     }
 }
-#endif
