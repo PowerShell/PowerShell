@@ -1420,16 +1420,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
             @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
             @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
-            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
-            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
-
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+            }
         ) {
             param($SslProtocol, $ActualProtocol)
             $params = @{
@@ -1450,9 +1453,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
-            @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
-            @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
+                @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
+                @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+            }
         ) {
             param( $IntendedProtocol, $ActualProtocol)
             $params = @{
@@ -2390,16 +2397,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
             @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
             @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
-            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
-            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
-            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
-
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+            }
         ) {
             param($SslProtocol, $ActualProtocol)
             $params = @{
@@ -2418,10 +2428,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
             @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}            
-            @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
-            @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
+                @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
+                @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+            }
         ) {
             param( $IntendedProtocol, $ActualProtocol)
             $params = @{
