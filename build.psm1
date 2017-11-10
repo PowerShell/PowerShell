@@ -565,10 +565,13 @@ Fix steps:
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
         }
 
-        $ProductVersion = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+        if (!$ReleaseTag)
+        {
+            $ReleaseTag = Get-PSCommitId
+        }
 
         Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" "$($Options.Output)" --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
-            --set-file-version $ProductVersion --set-product-version $ProductVersion --set-version-string "ProductName" "PowerShell Core 6" `
+            --set-file-version $ReleaseTag --set-product-version $ReleaseTag --set-version-string "ProductName" "PowerShell Core 6" `
             --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
     }
 
