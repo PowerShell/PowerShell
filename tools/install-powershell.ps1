@@ -12,7 +12,9 @@
 .Parameter DoNotOverwrite
     Do not overwrite the destination folder if it already exists.
 .Parameter AddToPath
-    Add the absolute destination path to the 'User' scope environment variable 'Path'
+    On Windows, add the absolute destination path to the 'User' scope environment variable 'Path';
+    On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
+    On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
 #>
 [CmdletBinding()]
 param(
