@@ -4,6 +4,7 @@ FROM fedora:26
 RUN dnf install -y \
         curl \
         glibc-locale-source \
+        compat-openssl10 \
         git
 
 # Setup the locale
