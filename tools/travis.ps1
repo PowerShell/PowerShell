@@ -255,9 +255,12 @@ elseif($Stage -eq 'Build')
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
-        # Create and package Raspbian .tgz
-        Start-PSBuild -Clean -Runtime linux-arm
-        Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
+        if ($IsLinux)
+        {
+            # Create and package Raspbian .tgz
+            Start-PSBuild -Clean -Runtime linux-arm
+            Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
+        }
     }
 
     # if the tests did not pass, throw the reason why
