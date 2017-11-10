@@ -1483,21 +1483,12 @@ namespace Microsoft.PowerShell.Commands
                             break;
                     }
                 }
-                else if (IsNewLine(ch))
+                else if (IsNewLine(ch, out string newLine))
                 {
-                    if (ch == '\r')
-                    {
-                        ReadChar();
-                    }
-
                     if (seenBeginQuote)
                     {
                         //newline inside quote are valid
-                        current.Append(ch);
-                        if (ch == '\r')
-                        {
-                            current.Append('\n');
-                        }
+                        current.Append(newLine);
                     }
                     else
                     {
@@ -1520,23 +1511,30 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
+        // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
         private
         bool
-        IsNewLine(char ch)
+        IsNewLine(char ch, out string newLine)
         {
-            bool newLine = false;
-            if (ch == '\n')
-            {
-                newLine = true;
-            }
-            else if (ch == '\r')
+            newLine = "";
+            if (ch == '\r')
             {
                 if (PeekNextChar('\n'))
                 {
-                    newLine = true;
+                    ReadChar();
+                    newLine = "\r\n";
+                }
+                else
+                {
+                    newLine = "\r";
                 }
             }
-            return newLine;
+            else if (ch == '\n')
+            {
+                newLine = "\n";
+            }
+
+            return newLine != "";
         }
 
         /// <summary>
@@ -1574,13 +1572,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
-                else if (IsNewLine(ch))
+                else if (IsNewLine(ch, out string newLine))
                 {
                     endOfRecord = true;
-                    if (ch == '\r')
-                    {
-                        ReadChar();
-                    }
                     break;
                 }
                 else
