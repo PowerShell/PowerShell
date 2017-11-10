@@ -1314,8 +1314,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
             $httpBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic'
             $httpsBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
-            $httpNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate'
-            $httpsNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate' -Https
             $testCases = @(
                 @{Authentication = "bearer"}
                 @{Authentication = "OAuth"}
@@ -1451,22 +1449,26 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
-        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials over HTTPS" -Skip:$(!$IsWindows) {
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials with '<AuthType>' over HTTPS" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
             $params = @{
-                Uri = $httpsNegotiateUri
-                Credential = $credential
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType -Https
+                UseDefaultCredentials = $true
                 SkipCertificateCheck = $true
             }
             $Response = Invoke-WebRequest @params
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.Authorization | Should Match '^Negotiate '
+            $result.Headers.Authorization | Should Match "^$AuthType "
         }
 
         # The error condition can at least be tested on all platforms.
         It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials Requires HTTPS" {
             $params = @{
-                Uri = $httpNegotiateUri
+                Uri = $httpUri
                 UseDefaultCredentials = $true
                 ErrorAction = 'Stop'
             }
@@ -1474,16 +1476,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
-        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) {
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials with '<AuthType>' Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
             $params = @{
-                Uri = $httpNegotiateUri
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType
                 UseDefaultCredentials = $true
                 AllowUnencryptedAuthentication = $true
             }
             $Response = Invoke-WebRequest @params
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.Authorization | Should Match '^Negotiate '
+            $result.Headers.Authorization | Should Match "^$AuthType "
         }
     }
 
@@ -2308,8 +2314,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
             $httpBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic'
             $httpsBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
-            $httpNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate'
-            $httpsNegotiateUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate' -Https
             $testCases = @(
                 @{Authentication = "bearer"}
                 @{Authentication = "OAuth"}
@@ -2440,21 +2444,25 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
-        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials over HTTPS" -Skip:$(!$IsWindows) {
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials with '<AuthType>' over HTTPS" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
             $params = @{
-                Uri = $httpsNegotiateUri
-                Credential = $credential
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType -Https
+                UseDefaultCredentials = $true
                 SkipCertificateCheck = $true
             }
             $result = Invoke-RestMethod @params
 
-            $result.Headers.Authorization | Should Match '^Negotiate '
+            $result.Headers.Authorization | Should Match "^$AuthType "
         }
 
         # The error condition can at least be tested on all platforms.
         It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials Requires HTTPS" {
             $params = @{
-                Uri = $httpNegotiateUri
+                Uri = $httpUri
                 UseDefaultCredentials = $true
                 ErrorAction = 'Stop'
             }
@@ -2462,15 +2470,19 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
-        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) {
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials with '<AuthType>' Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
             $params = @{
-                Uri = $httpNegotiateUri
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType
                 UseDefaultCredentials = $true
                 AllowUnencryptedAuthentication = $true
             }
             $result = Invoke-RestMethod @params
 
-            $result.Headers.Authorization | Should Match '^Negotiate '
+            $result.Headers.Authorization | Should Match "^$AuthType "
         }
     }
 
