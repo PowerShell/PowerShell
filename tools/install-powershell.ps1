@@ -100,10 +100,13 @@ try {
         $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
         $userPath = $Destination + [System.IO.Path]::PathSeparator + $userPath
         [System.Environment]::SetEnvironmentVariable("Path", $userPath, "User")
+        Write-Verbose "'$Destination' is added to the Path" -Verbose
 
-        ## Add to the 'Path' for the current process
-        $env:Path = $Destination + [System.IO.Path]::PathSeparator + $env:Path
-        Write-Verbose "'$Destination' is added to Path" -Verbose
+        ## Add to the current process 'Path' if the process is not 'pwsh'
+        $runningProcessName = (Get-Process -Id $PID).ProcessName
+        if ($runningProcessName -ne 'pwsh') {
+            $env:Path = $Destination + [System.IO.Path]::PathSeparator + $env:Path
+        }
     }
 
     Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
