@@ -1239,5 +1239,7 @@ v6.0.
 
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
+Auth
+NTLM
 ResponseHeaders
 #endregion

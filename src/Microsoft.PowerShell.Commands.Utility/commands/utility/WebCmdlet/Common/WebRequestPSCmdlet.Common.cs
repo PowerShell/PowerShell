@@ -354,6 +354,12 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
+            if (!AllowUnencryptedAuthentication && (null != Credential || UseDefaultCredentials) && (Uri.Scheme != "https"))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
+                                                       "WebCmdletAllowUnencryptedAuthenticationRequiredException");
+                ThrowTerminatingError(error);
+            }
 
             // credentials
             if (UseDefaultCredentials && (null != Credential))
