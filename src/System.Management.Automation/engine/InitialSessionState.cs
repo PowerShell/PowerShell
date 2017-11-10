@@ -4258,10 +4258,20 @@ param(
         $PSBoundParameters['Full'] = $true
     }
 
-    #Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
+    # Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
     $outputEncoding=[System.Console]::OutputEncoding
 
-    Get-Help @PSBoundParameters | more
+    $help = Get-Help @PSBoundParameters
+
+    # If a list of help is returned, don't pipe to more
+    if (($help | Select-Object -First 1).PSTypeNames -Contains 'HelpInfoShort')
+    {
+        $help
+    }
+    else
+    {
+        $help | more
+    }
 ";
         }
 
