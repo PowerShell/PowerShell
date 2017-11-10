@@ -255,7 +255,7 @@ The layout of files looks like this:
 
 NOTE: Since these are native binaries used on Windows, they need to be Authenticode Dual signed before creating the nuget package.
 
-Lastly, run the following command from the root of the repo to create the nuget package. The nuget package is placed `.\src\powershell-win-core`.  Note that you may need the latest `nuget.exe`.
+Lastly, run the following command from the root of the repo to create the nuget package. The nuget package is placed at `.\src\powershell-win-core`.  Note that you may need the latest `nuget.exe`.
 
 ```powershell
 nuget pack .\src\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.nuspec -BasePath c:\mypackage -OutputDirectory .\src\powershell-win-core
