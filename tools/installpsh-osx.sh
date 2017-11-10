@@ -138,6 +138,7 @@ for count in {1..2}; do
     fi
 
     # The update failed for the first try. An error we see a lot in our CI is "RPC failed; curl 56 SSLRead() return error -36".
+    # What 'brew update' does is to fetch the newest version of Homebrew from GitHub using git, and the error comes from git.
     # A potential solution is to increase the Git buffer size to a larger number, say 150 mb. The default buffer size is 1 mb.
     echo "First attempt of update failed. Increase Git buffer size and try again ..."
     git config --global http.postBuffer 157286400
