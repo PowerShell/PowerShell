@@ -151,7 +151,7 @@ try {
                 }
                 elseif ($linkItem.Target -contains $targetPath) {
                     ## The link already points to the target
-                    Write-Verbose "'$symlink' already points to '$targetPath'"
+                    Write-Verbose "'$symlink' already points to '$targetPath'" -Verbose
                     $needNewSymlink = $false
                 }
             }
@@ -159,6 +159,8 @@ try {
             if ($needNewSymlink) {
                 $uid = id -u
                 $SUDO = if ($uid -ne "0") { "sudo" } else { "" }
+
+                Write-Verbose "Make symbolic link '$symlink' point to '$targetPath'..." -Verbose
                 Invoke-Expression -Command "$SUDO ln -fs $targetPath $symlink"
 
                 if ($LASTEXITCODE -ne 0) {
