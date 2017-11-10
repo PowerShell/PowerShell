@@ -429,7 +429,7 @@ namespace System.Management.Automation.Interpreter
                     // In the second path, the continuation mechanism is not involved and frame.InstructionIndex is not updated
 #if DEBUG
                     bool isFromJump = frame.IsJumpHappened();
-                    Debug.Assert(!isFromJump || (isFromJump && _tryHandler.FinallyStartIndex == frame.InstructionIndex), "we should already jump to the first instruction of the finally");
+                    Debug.Assert(!isFromJump || _tryHandler.FinallyStartIndex == frame.InstructionIndex, "we should already jump to the first instruction of the finally");
 #endif
                     // run the finally block
                     // we cannot jump out of the finally block, and we cannot have an immediate rethrow in it

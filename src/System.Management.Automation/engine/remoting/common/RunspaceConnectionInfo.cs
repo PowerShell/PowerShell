@@ -1212,11 +1212,6 @@ namespace System.Management.Automation.Runspaces
                     PortSetting = -1;
                     UseDefaultWSManPort = true;
                 }
-                else if (port.Value == DefaultPortHttp || port.Value == DefaultPortHttps)
-                {
-                    PortSetting = port.Value;
-                    UseDefaultWSManPort = false;
-                }
                 else
                 {
                     PortSetting = port.Value;
