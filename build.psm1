@@ -3,7 +3,7 @@
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
 $dotnetCLIChannel = "release"
-$dotnetCLIRequiredVersion = "2.0.2"
+$dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
 $tagsUpToDate = $false
@@ -1703,13 +1703,23 @@ function Start-ResGen
 
 function Find-Dotnet() {
     $originalPath = $env:PATH
-    $dotnetPath = if ($Environment.IsWindows) {
-        "$env:LocalAppData\Microsoft\dotnet"
-    } else {
-        "$env:HOME/.dotnet"
-    }
+    $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
-    if (-not (precheck 'dotnet' "Could not find 'dotnet', appending $dotnetPath to PATH.")) {
+    # If there dotnet is already in the PATH, check to see if that version of dotnet can find the required SDK
+    # This is "typically" the globally installed dotnet
+    if (precheck dotnet) {
+        # Must run from within repo to ensure global.json can specify the required SDK version
+        Push-Location $PSScriptRoot
+        $dotnetCLIInstalledVersion = (dotnet --version)
+        Pop-Location
+        if ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
+            Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
+            # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
+            $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
+        }
+    }
+    else {
+        Write-Warning "Could not find 'dotnet', appending $dotnetPath to PATH."
         $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
     }
 
