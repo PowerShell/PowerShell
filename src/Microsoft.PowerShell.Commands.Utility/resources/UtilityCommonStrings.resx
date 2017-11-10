@@ -175,6 +175,6 @@
     <value>'{0}' is not supported in this system.</value>
   </data>
   <data name="NoZoneIdentifierFileStream" xml:space="preserve">
-    <value>"No 'Zone.Identifier' file stream. The file was already not blocked: {0}"</value>
+    <value>The file is not blocked: {0}</value>
   </data>
 </root>
