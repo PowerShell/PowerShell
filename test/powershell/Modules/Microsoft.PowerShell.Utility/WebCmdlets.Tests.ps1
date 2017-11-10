@@ -1415,15 +1415,25 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     Context "Invoke-WebRequest -SslProtocol Test" {
-        It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol>" -TestCases @(
-            @{SslProtocol = 'Default'}
-            @{SslProtocol = 'Tls'}
-            @{SslProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls12'}
+        It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases @(
+            @{SslProtocol = 'Default'; ActualProtocol = 'Default'}
+            @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+
         ) {
-            param($SslProtocol)
+            param($SslProtocol, $ActualProtocol)
             $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $SslProtocol
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
                 SslProtocol = $SslProtocol
                 SkipCertificateCheck = $true
             }
@@ -1440,6 +1450,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
         ) {
             param( $IntendedProtocol, $ActualProtocol)
             $params = @{
@@ -1450,6 +1463,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             }
             { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
+
     }
 
     BeforeEach {
@@ -2371,15 +2385,25 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Invoke-RestMethod -SslProtocol Test" {
-        It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol>" -TestCases @(
-            @{SslProtocol = 'Default'}
-            @{SslProtocol = 'Tls'}
-            @{SslProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls12'}
+        It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases @(
+            @{SslProtocol = 'Default'; ActualProtocol = 'Default'}
+            @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
+            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+
         ) {
-            param($SslProtocol)
+            param($SslProtocol, $ActualProtocol)
             $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $SslProtocol
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
                 SslProtocol = $SslProtocol
                 SkipCertificateCheck = $true
             }
@@ -2394,7 +2418,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
             @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}            
+            @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
         ) {
             param( $IntendedProtocol, $ActualProtocol)
             $params = @{
@@ -2405,6 +2432,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             }
             { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
+
+
     }
 
     BeforeEach {
