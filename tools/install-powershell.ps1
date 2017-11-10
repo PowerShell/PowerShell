@@ -9,7 +9,7 @@
 .Parameter Daily
     Install PowerShell Core from the daily build.
     Note that the 'PackageManagement' module is required to install a daily package.
-.Parameter NotOverwrite
+.Parameter DoNotOverwrite
     Do not overwrite the destination folder if it already exists.
 .Parameter AddToPath
     Add the absolute destination path to the 'User' scope environment variable 'Path'
@@ -24,7 +24,7 @@ param(
     [switch] $Daily,
 
     [Parameter()]
-    [switch] $NotOverwrite,
+    [switch] $DoNotOverwrite,
 
     [Parameter()]
     [switch] $AddToPath
@@ -34,15 +34,15 @@ Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
 if (-not $Destination) {
-    $Destination = "~/pscore"
+    $Destination = "$env:LOCALAPPDATA\Microsoft\powershell"
     if ($Daily) {
         $Destination = "${Destination}-daily"
     }
 }
 
 if (Test-Path -Path $Destination) {
-    if ($NotOverwrite) {
-        throw "Destination folder '$Destination' already exist. Use a different path or omit '-NotOverwrite' to overwrite."
+    if ($DoNotOverwrite) {
+        throw "Destination folder '$Destination' already exist. Use a different path or omit '-DoNotOverwrite' to overwrite."
     }
     Remove-Item -Path $Destination -Recurse -Force
 }
@@ -50,12 +50,10 @@ New-Item -ItemType Directory -Path $Destination -Force > $null
 $Destination = Resolve-Path -Path $Destination | ForEach-Object -MemberName Path
 Write-Verbose "Destination: $Destination" -Verbose
 
-$architecture = Get-CimInstance win32_operatingsystem | ForEach-Object {
-                    switch ($_.OSArchitecture) {
-                        "64-bit" { "x64" }
-                        "32-bit" { "x86" }
-                        default  { throw "Daily package for OS architecture '$_' is not supported." }
-                    }
+$architecture = switch ($env:PROCESSOR_ARCHITECTURE) {
+                    "AMD64" { "x64" }
+                    "x86"   { "x86" }
+                    default  { throw "PowerShell package for OS architecture '$_' is not supported." }
                 }
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 New-Item -ItemType Directory -Path $tempDir -Force > $null
@@ -100,11 +98,11 @@ try {
     if ($AddToPath -and (-not $env:Path.Contains($Destination))) {
         ## Add to the User scope 'Path' environment variable
         $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
-        $userPath += [System.IO.Path]::PathSeparator + $Destination
+        $userPath = $Destination + [System.IO.Path]::PathSeparator + $userPath
         [System.Environment]::SetEnvironmentVariable("Path", $userPath, "User")
 
         ## Add to the 'Path' for the current process
-        $env:Path += [System.IO.Path]::PathSeparator + $Destination
+        $env:Path = $Destination + [System.IO.Path]::PathSeparator + $env:Path
         Write-Verbose "'$Destination' is added to Path" -Verbose
     }
 
