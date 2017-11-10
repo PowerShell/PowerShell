@@ -1460,6 +1460,14 @@ function Start-PSBootstrap {
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
         if ($Environment.IsWindows) {
+            ## The VSCode build task requires 'pwsh.exe' to be found in Path
+            if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction SilentlyContinue))
+            {
+                log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
+                $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
+                & $psInstallFile -AddToPath
+            }
+
             ## need RCEdit to modify the binaries embedded resources
             if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
             {
