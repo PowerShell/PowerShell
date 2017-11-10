@@ -566,9 +566,9 @@ Fix steps:
         }
 
         $ReleaseVersion = ""
-        if ($ReleaseTag)
+        if ($ReleaseTagToUse)
         {
-            $ReleaseVersion = $ReleaseTag -replace '^v'
+            $ReleaseVersion = $ReleaseTagToUse
         }
         else
         {
