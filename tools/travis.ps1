@@ -155,6 +155,7 @@ else
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
 $hasPackageTag = $commitMessage -match '\[package\]'
+$createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
 $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 # only update the build badge for the cron job
@@ -166,7 +167,7 @@ if($Stage -eq 'Bootstrap')
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    Start-PSBootstrap -Package:(-not $isPr)
+    Start-PSBootstrap -Package:$createPackages
 }
 elseif($Stage -eq 'Build')
 {
@@ -233,7 +234,7 @@ elseif($Stage -eq 'Build')
         }
     }
 
-    if (-not $isPr -or $hasPackageTag) {
+    if ($createPackages) {
         $packageParams = @{}
         if($env:TRAVIS_BUILD_NUMBER)
         {
