@@ -578,23 +578,35 @@ Fix steps:
 
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
-    if ($PSModuleRestore) {
-        $ProgressPreference = "SilentlyContinue"
-        log "Restore PowerShell modules to $publishPath"
-
-        $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-
-        # Restore modules from myget feed
-        Restore-PSModule -Destination $modulesDir -Name @(
-            # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-            'PowerShellGet'
-        )
-
-        # Restore modules from powershellgallery feed
-        Restore-PSModule -Destination $modulesDir -Name @(
-            'Microsoft.PowerShell.Archive'
-        ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
+    if($PSModuleRestore)
+    {
+        Restore-PSModuleToBuild -PublishPath $publishPath
     }
+}
+
+function Restore-PSModuleToBuild
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $PublishPath
+    )
+
+    $ProgressPreference = "SilentlyContinue"
+    log "Restore PowerShell modules to $publishPath"
+
+    $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
+
+    # Restore modules from myget feed
+    Restore-PSModule -Destination $modulesDir -Name @(
+        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+        'PowerShellGet'
+    )
+
+    # Restore modules from powershellgallery feed
+    Restore-PSModule -Destination $modulesDir -Name @(
+        'Microsoft.PowerShell.Archive'
+    ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
 }
 
 function Compress-TestContent {
@@ -759,6 +771,13 @@ function Get-PSOptions {
     return $script:Options
 }
 
+function Set-PSOptions {
+    param(
+        $Options
+    )
+
+    $script:Options = $Options
+}
 
 function Get-PSOutput {
     [CmdletBinding()]param(
