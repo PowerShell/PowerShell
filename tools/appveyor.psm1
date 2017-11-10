@@ -95,9 +95,9 @@ Function Test-DailyBuild
         return $true
     }
 
-    # if [Feature] is in the commit message,
+    # if [Feature] or [Package] is in the commit message,
     # Run Daily tests
-    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
+    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '(\[feature\])|(\[package\])')
     {
         Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
