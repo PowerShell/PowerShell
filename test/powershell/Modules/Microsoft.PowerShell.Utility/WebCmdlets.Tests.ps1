@@ -1425,17 +1425,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             {
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
                 @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
                 @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
                 @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
                 @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
             }
             # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
             if($IsWindows)
             {
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+                
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
             }
         ) {
             param($SslProtocol, $ActualProtocol)
@@ -2406,17 +2407,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             {
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
                 @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
                 @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
                 @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
                 @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
             }
             # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
             if($IsWindows)
             {
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
             }
         ) {
             param($SslProtocol, $ActualProtocol)
