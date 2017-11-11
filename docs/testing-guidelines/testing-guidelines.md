@@ -78,12 +78,24 @@ Additionally, the tag:
 
 #### Requesting additional tests for a PR
 
-In our CI systems, we normally run only run tests tagged with `CI`.  If in the first line of the last (most recent) commit description you add `[Feature]`,
-we will ensure that we will also run the tests tagged with `Feature`.  When you would want to do this:
+In our CI systems, we normally run only run tests tagged with `CI`.
+If in the first line of the last (most recent) commit description you add `[Feature]`,
+we will ensure that we will also run the tests tagged with `Feature`.
+When you would want to do this:
 
 - You have added or changed a `Feature` test.
 - A maintainer asks you to run the `Feature` tests.
 - Based on experience, you are confident that a maintainer will ask you to run the `Feature` tests.
+
+#### Validating packaging changes for a PR
+
+By default, our CI system does a build and run tests for a PR and does not exercise code to create a package.
+If your PR includes changes to packaging, you can have the CI system exercise the packaging code by
+using `[Package]` as the first line in the commit message.
+When you would want to do this:
+
+- You made change to PowerShell Core packaging
+- A maintainer asks you to run as `[Package]`
 
 ### xUnit
 
@@ -100,7 +112,8 @@ Two helper functions are part of the build.psm1 module to help with that:
 
 Our CI system runs these as well; there should be no difference between running these on your dev system, versus in CI.
 
-Make sure that the git submodules have been loaded into your project before running `Start-PSPester`, or it will fail to run. If you did not clone the project with the `--recursive` flag, you can load the submodules by running: 
+Make sure that the git submodules have been loaded into your project before running `Start-PSPester`, or it will fail to run.
+If you did not clone the project with the `--recursive` flag, you can load the submodules by running: 
 
 ```
 git submodule update --init
