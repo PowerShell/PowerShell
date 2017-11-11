@@ -195,7 +195,7 @@ function Get-ContainerPowerShellVersion
 # During the process Docker files are filled out and executed with Docker build;
 # During the build PS packages are downloaded onto Docker containers, installed and selected Pester tests from PowerShell Github repo are executed.
 # This function must be run on a Docker host machine in 'Linux containers' mode, such as Windows 10 server with Hyper-V role installed.
-function ValidatePSPackage
+function Test-PSPackage
 {
     param(
         [string]
@@ -222,25 +222,15 @@ function ValidatePSPackage
 
     Copy-Item -Recurse $SourceFolder $RootFolder
 
-    $versionRpmStubName = '{PSVERSIONSTUBRPM}'
+    $versionRpmStubName = 'PSVERSIONSTUBRPM'
     $versionRpmStubValue = $PSVersion -replace '-','_'
-    $versionStubName = '{PSVERSIONSTUB}'
+    $versionStubName = 'PSVERSIONSTUB'
     $versionStubValue = $PSVersion
-    $testlistStubName = '{TESTLISTSTUB}'
+    $testlistStubName = 'TESTLISTSTUB'
     $testlistStubValue = $TestList
-    $packageLocationStubName = '{PACKAGELOCATIONSTUB}'
+    $packageLocationStubName = 'PACKAGELOCATIONSTUB'
     $packageLocationStubValue = $PSPackageLocation
 
-    $tempateFiles = (Get-ChildItem -Recurse -Path $RootFolder -Filter Dockerfile).FullName
-
-    foreach($file in $tempateFiles)
-    {
-        (Get-Content $file)`
-            -replace $versionRpmStubName,$versionRpmStubValue`
-            -replace $versionStubName,$versionStubValue`
-            -replace $testlistStubName,$testlistStubValue`
-            -replace $packageLocationStubName,$packageLocationStubValue | Set-Content $file
-    }
 
     $results = @{}
     $returnValue = $true
@@ -248,7 +238,14 @@ function ValidatePSPackage
     # run builds sequentially, but don't block for errors so that configs after failed one can run
     foreach($dir in Get-ChildItem -Path $RootFolder)
     {
-        $dockerResult = Invoke-Docker -Command 'build' -Params $dir.FullName -FailureAction warning
+        $buildArgs = @()
+        $buildArgs += "--build-arg","$versionRpmStubName=$versionRpmStubValue"
+        $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
+        $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
+        $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += $dir.FullName
+
+        $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning
         $results.Add($dir.Name, $dockerResult)
         if (-not $dockerResult) {$returnValue = $false}
     }
