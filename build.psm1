@@ -558,10 +558,27 @@ Fix steps:
         }
     }
 
+    if ($Environment.IsWindows) {
+        ## need RCEdit to modify the binaries embedded resources
+        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+            throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
+        }
+
+        $ReleaseVersion = ""
+        if ($ReleaseTagToUse) {
+            $ReleaseVersion = $ReleaseTagToUse
+        } else {
+            $ReleaseVersion = (Get-PSCommitId) -replace '^v'
+        }
+
+        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" "$($Options.Output)" --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
+            --set-file-version $ReleaseVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
+            --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
+    }
+
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
-    if($PSModuleRestore)
-    {
+    if ($PSModuleRestore) {
         $ProgressPreference = "SilentlyContinue"
         log "Restore PowerShell modules to $publishPath"
 
@@ -1906,16 +1923,6 @@ function New-MSIPackage
         # Force overwrite of package
         [Switch] $Force
     )
-
-    ## need RCEdit to modify the binaries embedded resources
-    if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-    {
-        throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
-    }
-
-    Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" (Get-PSOutput) --set-icon "$AssetsPath\Powershell_black.ico" `
-        --set-file-version $ProductVersion --set-product-version $ProductVersion --set-version-string "ProductName" "PowerShell Core 6" `
-        --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
 
     ## AppVeyor base image might update the version for Wix. Hence, we should
     ## not hard code version numbers.
