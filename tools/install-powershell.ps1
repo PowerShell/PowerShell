@@ -12,7 +12,9 @@
 .Parameter DoNotOverwrite
     Do not overwrite the destination folder if it already exists.
 .Parameter AddToPath
-    Add the absolute destination path to the 'User' scope environment variable 'Path'
+    On Windows, add the absolute destination path to the 'User' scope environment variable 'Path';
+    On Linux, make the symlink '/usr/bin/pwsh' points to "$Destination/pwsh";
+    On MacOS, make the symlink '/usr/local/bin/pwsh' points to "$Destination/pwsh".
 #>
 [CmdletBinding()]
 param(
@@ -33,8 +35,17 @@ param(
 Set-StrictMode -Version latest
 $ErrorActionPreference = "Stop"
 
+$IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
+$IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
+$IsWinEnv   = !$IsLinuxEnv -and !$IsMacOSEnv
+
 if (-not $Destination) {
-    $Destination = "$env:LOCALAPPDATA\Microsoft\powershell"
+    $Destination = if ($IsWinEnv) {
+        "$env:LOCALAPPDATA\Microsoft\powershell"
+    } else {
+        "~/.powershell"
+    }
+
     if ($Daily) {
         $Destination = "${Destination}-daily"
     }
@@ -50,11 +61,15 @@ New-Item -ItemType Directory -Path $Destination -Force > $null
 $Destination = Resolve-Path -Path $Destination | ForEach-Object -MemberName Path
 Write-Verbose "Destination: $Destination" -Verbose
 
-$architecture = switch ($env:PROCESSOR_ARCHITECTURE) {
-                    "AMD64" { "x64" }
-                    "x86"   { "x86" }
-                    default  { throw "PowerShell package for OS architecture '$_' is not supported." }
-                }
+$architecture = if (-not $IsWinEnv) {
+    "x64"
+} else {
+    switch ($env:PROCESSOR_ARCHITECTURE) {
+        "AMD64" { "x64" }
+        "x86"   { "x86" }
+        default  { throw "PowerShell package for OS architecture '$_' is not supported." }
+    }
+}
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 New-Item -ItemType Directory -Path $tempDir -Force > $null
 try {
@@ -74,7 +89,14 @@ try {
             Register-PackageSource -Name powershell-core-daily -Location $packageSource -ProviderName nuget -Trusted > $null
         }
 
-        $packageName = "powershell-win-x64-win7-x64"
+        $packageName = if ($IsWinEnv) {
+            "powershell-win-x64-win7-x64"
+        } elseif ($IsLinuxEnv) {
+            "powershell-linux-x64"
+        } elseif ($IsMacOSEnv) {
+            "powershell-osx.10.12-x64"
+        }
+
         $package = Find-Package -Source powershell-core-daily -AllowPrereleaseVersions -Name $packageName
         Write-Verbose "Daily package found. Name: $packageName; Version: $($package.Version)" -Verbose
         Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
@@ -85,25 +107,75 @@ try {
         $metadata = Invoke-RestMethod https://api.github.com/repos/powershell/powershell/releases/latest
         $release = $metadata.tag_name -replace '^v'
 
-        $packageName = "PowerShell-${release}-win-${architecture}.zip"
+        $packageName = if ($IsWinEnv) {
+            "PowerShell-${release}-win-${architecture}.zip"
+        } elseif ($IsLinuxEnv) {
+            "powershell-${release}-linux-${architecture}.tar.gz"
+        } elseif ($IsMacOSEnv) {
+            "powershell-${release}-osx-${architecture}.tar.gz"
+        }
+
         $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
 
-        Expand-Archive -Path $packagePath -DestinationPath $Destination
+        if ($IsWinEnv) {
+            Expand-Archive -Path $packagePath -DestinationPath $Destination
+        } else {
+            tar zxf $packagePath -C $Destination
+        }
     }
 
-    if ($AddToPath -and (-not $env:Path.Contains($Destination))) {
-        ## Add to the User scope 'Path' environment variable
-        $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
-        $userPath = $Destination + [System.IO.Path]::PathSeparator + $userPath
-        [System.Environment]::SetEnvironmentVariable("Path", $userPath, "User")
+    ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
+    if (-not $IsWinEnv) { chmod 755 "$Destination/pwsh" }
 
-        ## Add to the 'Path' for the current process
-        $env:Path = $Destination + [System.IO.Path]::PathSeparator + $env:Path
-        Write-Verbose "'$Destination' is added to Path" -Verbose
+    if ($AddToPath) {
+        if ($IsWinEnv -and (-not $env:Path.Contains($Destination))) {
+            ## Add to the User scope 'Path' environment variable
+            $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
+            $userPath = $Destination + [System.IO.Path]::PathSeparator + $userPath
+            [System.Environment]::SetEnvironmentVariable("Path", $userPath, "User")
+            Write-Verbose "'$Destination' is added to the Path" -Verbose
+        }
+
+        if (-not $IsWinEnv) {
+            $targetPath = Join-Path -Path $Destination -ChildPath "pwsh"
+            $symlink = if ($IsLinuxEnv) { "/usr/bin/pwsh" } elseif ($IsMacOSEnv) { "/usr/local/bin/pwsh" }
+            $needNewSymlink = $true
+
+            if (Test-Path -Path $symlink) {
+                $linkItem = Get-Item -Path $symlink
+                if ($linkItem.LinkType -ne "SymbolicLink") {
+                    Write-Warning "'$symlink' already exists but it's not a symbolic link. Abort adding to PATH."
+                    $needNewSymlink = $false
+                }
+                elseif ($linkItem.Target -contains $targetPath) {
+                    ## The link already points to the target
+                    Write-Verbose "'$symlink' already points to '$targetPath'" -Verbose
+                    $needNewSymlink = $false
+                }
+            }
+
+            if ($needNewSymlink) {
+                $uid = id -u
+                $SUDO = if ($uid -ne "0") { "sudo" } else { "" }
+
+                Write-Verbose "Make symbolic link '$symlink' point to '$targetPath'..." -Verbose
+                Invoke-Expression -Command "$SUDO ln -fs $targetPath $symlink"
+
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Error "Could not add to PATH: failed to make '$symlink' point to '$targetPath'."
+                }
+            }
+        }
+
+        ## Add to the current process 'Path' if the process is not 'pwsh'
+        $runningProcessName = (Get-Process -Id $PID).ProcessName
+        if ($runningProcessName -ne 'pwsh') {
+            $env:Path = $Destination + [System.IO.Path]::PathSeparator + $env:Path
+        }
     }
 
     Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
