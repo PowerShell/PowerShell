@@ -2624,9 +2624,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         It "Invoke-RestMethod Supports a Single Value JSON null and ignores whitespace" {
             $url = '{0}{1}' -f $baseUrl, "            null         "
             Invoke-RestMethod -Uri $url | Should Be $null
-            $url = '{0}{1}' -f $baseUrl, "            
-                                            null         
-                                         "
+            $url = '{0}{1}' -f $baseUrl, "           null         `n"
             Invoke-RestMethod -Uri $url | Should Be $null
         }
     }
