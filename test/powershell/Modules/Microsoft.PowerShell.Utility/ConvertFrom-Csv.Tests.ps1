@@ -61,6 +61,7 @@ a,b,c
 
     It "Should Contain the Imported Type data" {
         $actualData = $testTypeData | ConvertFrom-Csv
+        $actualData.PSObject.TypeNames.Count | Should Be 2
         $actualData.PSObject.TypeNames[0] | Should Be "My.Custom.Object"
         $actualData.PSObject.TypeNames[1] | Should Be "CSV:My.Custom.Object"
     }
