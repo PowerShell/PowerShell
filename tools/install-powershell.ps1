@@ -19,7 +19,6 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [ValidateNotNullOrEmpty()]
     [string] $Destination,
 
     [Parameter()]
