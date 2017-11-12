@@ -1,4 +1,4 @@
-[cmdletbinding(DefaultParameterSetName='default')]
+[cmdletbinding(DefaultParameterSetName='Build')]
 param(
     [Parameter(ParameterSetName='packageSigned')]
     [Parameter(ParameterSetName='Build')]

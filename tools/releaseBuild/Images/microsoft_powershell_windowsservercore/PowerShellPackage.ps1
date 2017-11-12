@@ -9,7 +9,7 @@ param (
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win81-x64", "win10-x64", "win7-x86")]
+    [ValidateSet("win7-x64", "win7-x86")]
     [string]$Runtime = 'win10-x64',
 
     [switch] $Wait,

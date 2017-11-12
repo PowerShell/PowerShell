@@ -757,13 +757,13 @@ function New-PSOptions {
     }
 
     return @{ RootInfo = [PSCustomObject]$RootInfo
-              Top = $Top;
-              Configuration = $Configuration;
-              Framework = $Framework;
-              Runtime = $Runtime;
-              Output = $Output;
-              CrossGen = $CrossGen
-              PSModuleRestore = $PSModuleRestore }
+              Top = $Top
+              Configuration = $Configuration
+              Framework = $Framework
+              Runtime = $Runtime
+              Output = $Output
+              CrossGen = $CrossGen.IsPresent
+              PSModuleRestore = $PSModuleRestore.IsPresent }
 }
 
 # Get the Options of the last build
@@ -773,6 +773,7 @@ function Get-PSOptions {
 
 function Set-PSOptions {
     param(
+        [PSObject]
         $Options
     )
 

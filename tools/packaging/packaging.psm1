@@ -479,7 +479,6 @@ function Expand-PSSignedBuild
     remove-item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
     $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
-    $linuxExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh')
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
@@ -488,10 +487,6 @@ function Expand-PSSignedBuild
     if(Test-Path -Path $windowsExecutablePath)
     {
         $options.Output = $windowsExecutablePath
-    }
-    elseif(Test-Path -Path $linuxExecutablePath) 
-    {
-        $options.Output = $linuxExecutablePath
     }
     else
     {
