@@ -202,7 +202,7 @@ Lastly, run `nuget pack .` from within the folder. Note that you may need the la
 
 To successfully decode PowerShell Core ETW events, the manifest and resource binary need to be registered on the system.
 
-To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under src\PowerShell.Core.Instrumentation.
+To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under `src\PowerShell.Core.Instrumentation`.
 
 Update the version information for the package.
 
@@ -253,7 +253,7 @@ The layout of files looks like this:
     │       └── PowerShell.Core.Instrumentation.dll
 ```
 
-NOTE: Since these are native binaries used on Windows, they need to be Authenticode Dual signed before creating the nuget package.
+NOTE: Since these are native binaries used on Windows, they need to be `authenticode dual signed` before creating the nuget package.
 
 Lastly, run the following command from the root of the repo to create the nuget package. The nuget package is placed at `.\src\powershell-win-core`.  Note that you may need the latest `nuget.exe`.
 

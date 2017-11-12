@@ -25,6 +25,7 @@ artifact
 artifacts
 ASP.NET
 AssemblyLoadContext
+authenticode
 authenticodesignature
 behavior
 behaviors
@@ -135,6 +136,7 @@ parameterized
 patwardhan
 powershell
 PowerShell
+PowerShell.Core.Instrumentation
 powershell.exe
 PowerShellGet
 program.cs
