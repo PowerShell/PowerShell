@@ -38,6 +38,12 @@ $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
 $IsWinEnv   = !$IsLinuxEnv -and !$IsMacOSEnv
 
+if ($env:PSCoreDaily -eq $true)
+{
+    $Daily = $true
+    $AddToPath = $true
+}
+
 if (-not $Destination) {
     $Destination = if ($IsWinEnv) {
         "$env:LOCALAPPDATA\Microsoft\powershell"
@@ -49,16 +55,20 @@ if (-not $Destination) {
         $Destination = "${Destination}-daily"
     }
 }
-
-if (Test-Path -Path $Destination) {
-    if ($DoNotOverwrite) {
-        throw "Destination folder '$Destination' already exist. Use a different path or omit '-DoNotOverwrite' to overwrite."
-    }
-    Remove-Item -Path $Destination -Recurse -Force
-}
-New-Item -ItemType Directory -Path $Destination -Force > $null
-$Destination = Resolve-Path -Path $Destination | ForEach-Object -MemberName Path
 Write-Verbose "Destination: $Destination" -Verbose
+
+Function Remove-Destination([string] $Destination) {
+    if (Test-Path -Path $Destination) {
+        if ($DoNotOverwrite) {
+            throw "Destination folder '$Destination' already exist. Use a different path or omit '-DoNotOverwrite' to overwrite."
+        }
+        Write-Verbose "Removing old installation: $Destination" -Verbose
+        if (Test-Path -Path "$Destination.old") {
+            Remove-Item "$Destination.old" -Recurse -Force
+        }
+        Move-Item "$Destination" "$Destination.old"
+    }
+}
 
 $architecture = if (-not $IsWinEnv) {
     "x64"
@@ -78,7 +88,7 @@ try {
         }
 
         if ($architecture -ne "x64") {
-            throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64 Windows."
+            throw "The OS architecture is '$architecture'. However, we currently only support daily package for x64."
         }
 
         ## Register source if not yet
@@ -98,10 +108,12 @@ try {
 
         $package = Find-Package -Source powershell-core-daily -AllowPrereleaseVersions -Name $packageName
         Write-Verbose "Daily package found. Name: $packageName; Version: $($package.Version)" -Verbose
+
         Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
+        Remove-Destination $Destination
 
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
-        Copy-Item -Path $contentPath\* -Destination $Destination -Recurse -Force
+        Move-Item -Path $contentPath -Destination $Destination
     } else {
         $metadata = Invoke-RestMethod https://api.github.com/repos/powershell/powershell/releases/latest
         $release = $metadata.tag_name -replace '^v'
@@ -120,15 +132,19 @@ try {
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
 
+        New-Item -ItemType Directory -Path "$Destination.new" > $null
         if ($IsWinEnv) {
-            Expand-Archive -Path $packagePath -DestinationPath $Destination
+            Expand-Archive -Path $packagePath -DestinationPath "$Destination.new"
         } else {
-            tar zxf $packagePath -C $Destination
+            tar zxf $packagePath -C "$Destination.new"
         }
+
+        Remove-Destination $Destination
+        Move-Item -Path "$Destination.new" -Destination $Destination
     }
 
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
-    if (-not $IsWinEnv) { chmod 755 "$Destination/pwsh" }
+    if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
     if ($AddToPath) {
         if ($IsWinEnv -and (-not $env:Path.Contains($Destination))) {
