@@ -483,6 +483,7 @@ function Expand-PSSignedBuild
     Restore-PSModuleToBuild -PublishPath $buildPath
 
     $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+    $options.PSModuleRestore = $true
 
     if(Test-Path -Path $windowsExecutablePath)
     {
