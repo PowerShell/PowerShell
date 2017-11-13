@@ -312,7 +312,8 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 }
             }
 
-            $byteArray = [System.IO.File]::ReadAllBytes("$PSHOME\System.Management.Automation.dll")
+            $filePath  = Join-Path -Path $PSHOME -ChildPath System.Management.Automation.dll
+            $byteArray = [System.IO.File]::ReadAllBytes($filePath)
             $byteList  = [System.Collections.Generic.List[byte]] $byteArray
             $byteCollection = [System.Collections.ObjectModel.Collection[byte]] $byteArray
             ## Use the running time of 'MandType -Value $byteArray' as the baseline time
@@ -380,3 +381,4 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
     }
 }
+
