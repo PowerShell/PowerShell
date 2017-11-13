@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Xml;
@@ -189,6 +190,9 @@ namespace Microsoft.PowerShell.Commands
                     handler.MaxAutomaticRedirections = WebSession.MaximumRedirection;
                 }
             }
+
+            handler.SslProtocols = (SslProtocols)SslProtocol;
+
 
             HttpClient httpClient = new HttpClient(handler);
 

@@ -11,6 +11,7 @@ using System.Text;
 using System.Collections;
 using System.Globalization;
 using System.Security;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.Win32;
@@ -41,6 +42,35 @@ namespace Microsoft.PowerShell.Commands
         /// RFC-6750 OAuth 2.0 Bearer Authentication. Requires -Token
         /// </summary>
         OAuth,
+    }
+
+    // WebSslProtocol is used because not all SslProtocols are supported by HttpClientHandler.
+    // Also SslProtocols.Default is not the "default" for HttpClientHandler as SslProtocols.Ssl3 is not supported.
+    /// <summary>
+    /// The valid values for the -SslProtocol parameter for Invoke-RestMethod and Invoke-WebRequest
+    /// </summary>
+    [Flags]
+    public enum WebSslProtocol
+    {
+        /// <summary>
+        ///  No SSL protocol will be set and the system defaults will be used.
+        /// </summary>
+        Default = 0,
+
+        /// <summary>
+        /// Specifies the TLS 1.0 security protocol. The TLS protocol is defined in IETF RFC 2246.
+        /// </summary>
+        Tls = SslProtocols.Tls,
+
+        /// <summary>
+        ///  Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// </summary>
+        Tls11 = SslProtocols.Tls11,
+
+        /// <summary>
+        /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246
+        /// </summary>
+        Tls12 = SslProtocols.Tls12
     }
 
     /// <summary>
@@ -133,6 +163,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public virtual SwitchParameter SkipCertificateCheck { get; set; }
+
+        /// <summary>
+        /// Gets or sets the TLS/SSL protocol used by the Web Cmdlet
+        /// </summary>
+        [Parameter]
+        public virtual WebSslProtocol SslProtocol { get; set; } = WebSslProtocol.Default;
 
         /// <summary>
         /// Gets or sets the Token property. Token is required by Authentication OAuth and Bearer.

@@ -8,24 +8,26 @@ ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
 dotnet restore
 dotnet publish --output bin --configuration Release
 cd bin
-dotnet WebListener.dll ServerCert.pfx password 8083 8084
+dotnet WebListener.dll ServerCert.pfx password 8083 8084 8085 8086
 ```
 
-The test site can then be accessed via `http://localhost:8083/` or `https://localhost:8084/`.  
+The test site can then be accessed via `http://localhost:8083/`, `https://localhost:8084/`, `https://localhost:8085/`, or `https://localhost:8086/`.
 
-The `WebListener.dll` takes 4 arguments: 
+The `WebListener.dll` takes 6 arguments: 
 
 * The path to the Server Certificate
 * The Server Certificate Password
 * The TCP Port to bind on for HTTP
-* The TCP Port to bind on for HTTPS
+* The TCP Port to bind on for HTTPS using TLS 1.2
+* The TCP Port to bind on for HTTPS using TLS 1.1
+* The TCP Port to bind on for HTTPS using TLS 1.0
 
 # Run With WebListener Module
 
 ```powershell
 Import-Module .\build.psm1
 Publish-PSTestTools
-$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
+$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort = 8086
 ```
 
 # Tests
