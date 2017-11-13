@@ -110,7 +110,7 @@
   </resheader>
   <resheader name="version">
     <value>2.0</value>
-   </resheader>
+  </resheader>
   <resheader name="reader">
     <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
@@ -120,7 +120,7 @@
   <data name="NamedParameterNotFound" xml:space="preserve">
     <value>A parameter cannot be found that matches parameter name '{1}'.</value>
   </data>
-   <data name="PositionalParameterNotFound" xml:space="preserve">
+  <data name="PositionalParameterNotFound" xml:space="preserve">
     <value>A positional parameter cannot be found that accepts argument '{1}'.</value>
   </data>
   <data name="MissingArgument" xml:space="preserve">
