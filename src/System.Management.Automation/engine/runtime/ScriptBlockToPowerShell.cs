@@ -742,7 +742,7 @@ namespace System.Management.Automation
             // If it's an enumerable, then distribute the values as $args and finally
             // if it's a scalar, then the effect is equivalent to $var
             object splattedValue = _context.GetVariableValue(variableAst.VariablePath);
-            foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst.Extent))
+            foreach (var splattedParameter in PipelineOps.Splat(splattedValue, variableAst))
             {
                 CommandParameter publicParameter = CommandParameter.FromCommandParameterInternal(splattedParameter);
                 _powershell.AddParameter(publicParameter.Name, publicParameter.Value);

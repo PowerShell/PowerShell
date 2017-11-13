@@ -901,7 +901,7 @@ namespace System.Management.Automation
             string resourceId,
             params object[] args)
         {
-            if (String.IsNullOrEmpty(template) || 1 >= template.Trim().Length)
+            if (string.IsNullOrWhiteSpace(template))
             {
                 _textLookupError = PSTraceSource.NewInvalidOperationException(
                     ErrorPackage.ErrorDetailsEmptyTemplate,

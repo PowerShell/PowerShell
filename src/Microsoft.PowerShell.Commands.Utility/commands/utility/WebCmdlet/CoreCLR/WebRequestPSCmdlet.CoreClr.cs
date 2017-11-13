@@ -1,6 +1,4 @@
-﻿#if CORECLR
-
-/********************************************************************++
+﻿/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -13,6 +11,7 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Xml;
@@ -192,6 +191,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            handler.SslProtocols = (SslProtocols)SslProtocol;
+
+
             HttpClient httpClient = new HttpClient(handler);
 
             // check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
@@ -350,19 +352,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     content = psBody.BaseObject;
                 }
-
-                /* TODO: This needs to be enable after the dependency on mshtml is resolved.
-                var html = content as HtmlWebResponseObject;
-                if (html != null)
-                {
-                    // use the form if it's the only one present
-                    if (html.Forms.Count == 1)
-                    {
-                        SetRequestContent(request, html.Forms[0].Fields);
-                    }
-                }
-                else if (content is FormObject)
-                */
 
                 if (content is FormObject)
                 {
@@ -847,17 +836,20 @@ namespace Microsoft.PowerShell.Commands
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {
-                foreach(string link in links.FirstOrDefault().Split(","))
+                foreach (string linkHeader in links)
                 {
-                    Match match = Regex.Match(link, pattern);
-                    if (match.Success)
+                    foreach (string link in linkHeader.Split(","))
                     {
-                        string url = match.Groups["url"].Value;
-                        string rel = match.Groups["rel"].Value;
-                        if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
+                        Match match = Regex.Match(link, pattern);
+                        if (match.Success)
                         {
-                            Uri absoluteUri = new Uri(requestUri, url);
-                            _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());
+                            string url = match.Groups["url"].Value;
+                            string rel = match.Groups["rel"].Value;
+                            if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
+                            {
+                                Uri absoluteUri = new Uri(requestUri, url);
+                                _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());
+                            }
                         }
                     }
                 }
@@ -867,4 +859,3 @@ namespace Microsoft.PowerShell.Commands
         #endregion Helper Methods
     }
 }
-#endif

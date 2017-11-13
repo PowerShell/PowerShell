@@ -27,7 +27,7 @@ try {
     Set-Location $location
     Import-Module "$location/build.psm1"
     Import-Module "$location/tools/packaging"
-
+    
     Start-PSBootstrap -Package -NoSudo
     Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
 

@@ -41,12 +41,6 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
-        /// We use this convention for names to archive it.
-        /// </summary>
-        internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
-
         #region Assembly
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)
@@ -65,7 +59,8 @@ namespace System.Management.Automation
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
             return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
-            AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
+                   AppDomain.CurrentDomain.GetAssemblies().Where(a =>
+                       !TypeDefiner.DynamicClassAssemblyName.Equals(a.GetName().Name, StringComparison.Ordinal));
         }
 
         /// <summary>

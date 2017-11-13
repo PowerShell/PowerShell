@@ -52,7 +52,7 @@ namespace TestPSReadLine
 
                 // This is a workaround to ensure the command analysis cache has been created before
                 // we enter into ReadLine.  It's a little slow and infrequently needed, so just
-                // uncomment if you hit a hang, run it once, then comment it out again.
+                // uncomment host stops responding, run it once, then comment it out again.
                 //ps.Commands.Clear();
                 //ps.AddCommand("Get-Command").Invoke();
             }

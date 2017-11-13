@@ -284,7 +284,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "Input redirected but not reading from stdin (not really interactive)" {
         # Tests under this context are testing that we do not read from StandardInput
-        # even though it is redirected - we want to make sure we don't hang.
+        # even though it is redirected - we want to make sure we don't stop responding.
         # So none of these tests should close StandardInput
 
         It "Redirected input w/ implicit -Command w/ -NonInteractive" {

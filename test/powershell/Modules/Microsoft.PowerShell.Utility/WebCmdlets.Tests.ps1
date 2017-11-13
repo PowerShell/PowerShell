@@ -803,6 +803,24 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
     }
 
+    # Test pending support for multiple header capable server on Linux/macOS see issue #4639
+    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Multiple Link Headers are present" -Pending:$(!$IsWindows){
+        $headers = @{
+            Link =
+                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1>; rel="self"',
+                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2>; rel="next"',
+                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5>; rel="last"'
+        } | ConvertTo-Json -Compress
+        $headers = [uri]::EscapeDataString($headers)
+        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK&headers=$headers"
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.RelationLink.Count | Should BeExactly 3
+        $result.Output.RelationLink["self"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1"
+        $result.Output.RelationLink["next"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2"
+        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
+    }
+
     It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property: <type>" -TestCases @(
         @{ type = "noUrl" }
         @{ type = "malformed" }
@@ -1294,6 +1312,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $credential = [pscredential]::new("testuser",$token)
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+            $httpBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic'
+            $httpsBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
             $testCases = @(
                 @{Authentication = "bearer"}
                 @{Authentication = "OAuth"}
@@ -1394,6 +1414,147 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
         }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential over HTTPS" {
+            $params = @{
+                Uri = $httpsBasicUri
+                Credential = $credential
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential Requires HTTPS" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                ErrorAction = 'Stop'
+            }
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
+
+        It "Verifies Invoke-WebRequest Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                AllowUnencryptedAuthentication = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials with '<AuthType>' over HTTPS" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType -Https
+                UseDefaultCredentials = $true
+                SkipCertificateCheck = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should Match "^$AuthType "
+        }
+
+        # The error condition can at least be tested on all platforms.
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials Requires HTTPS" {
+            $params = @{
+                Uri = $httpUri
+                UseDefaultCredentials = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-WebRequest Negotiated -UseDefaultCredentials with '<AuthType>' Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType
+                UseDefaultCredentials = $true
+                AllowUnencryptedAuthentication = $true
+            }
+            $Response = Invoke-WebRequest @params
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.Authorization | Should Match "^$AuthType "
+        }
+    }
+
+    Context "Invoke-WebRequest -SslProtocol Test" {
+        It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases @(
+            @{SslProtocol = 'Default'; ActualProtocol = 'Default'}
+            @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+            }
+            # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
+            if($IsWindows)
+            {
+                
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
+            }
+        ) {
+            param($SslProtocol, $ActualProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                SslProtocol = $SslProtocol
+                SkipCertificateCheck = $true
+            }
+            $response = Invoke-WebRequest @params
+            $result = $Response.Content | ConvertFrom-Json
+
+            $result.headers.Host | Should Be $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-WebRequest -SslProtocol -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases @(
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
+                @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
+                @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+            }
+        ) {
+            param( $IntendedProtocol, $ActualProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                SslProtocol = $IntendedProtocol
+                SkipCertificateCheck = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
     }
 
     BeforeEach {
@@ -2215,6 +2376,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $credential = [pscredential]::new("testuser",$token)
             $httpUri = Get-WebListenerUrl -Test 'Get'
             $httpsUri = Get-WebListenerUrl -Test 'Get' -Https
+            $httpBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic'
+            $httpsBasicUri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
             $testCases = @(
                 @{Authentication = "bearer"}
                 @{Authentication = "OAuth"}
@@ -2312,6 +2475,142 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
             $result.Headers.Authorization | Should BeExactly "Bearer testpassword"
         }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential over HTTPS" {
+            $params = @{
+                Uri = $httpsBasicUri
+                Credential = $credential
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential Requires HTTPS" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                ErrorAction = 'Stop'
+            }
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+
+        It "Verifies Invoke-RestMethod Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
+            $params = @{
+                Uri = $httpBasicUri
+                Credential = $credential
+                AllowUnencryptedAuthentication = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should BeExactly "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials with '<AuthType>' over HTTPS" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType -Https
+                UseDefaultCredentials = $true
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should Match "^$AuthType "
+        }
+
+        # The error condition can at least be tested on all platforms.
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials Requires HTTPS" {
+            $params = @{
+                Uri = $httpUri
+                UseDefaultCredentials = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+
+        # UseDefaultCredentials is only reliably testable on Windows
+        It "Verifies Invoke-RestMethod Negotiated -UseDefaultCredentials with '<AuthType>' Can use HTTP with -AllowUnencryptedAuthentication" -Skip:$(!$IsWindows) -TestCases @(
+            @{AuthType = 'NTLM'}
+            @{AuthType = 'Negotiate'}
+        ) {
+            param($AuthType)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Auth' -TestValue $AuthType
+                UseDefaultCredentials = $true
+                AllowUnencryptedAuthentication = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.Headers.Authorization | Should Match "^$AuthType "
+        }
+    }
+
+    Context "Invoke-RestMethod -SslProtocol Test" {
+        It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases @(
+            @{SslProtocol = 'Default'; ActualProtocol = 'Default'}
+            @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
+            @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
+            @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
+                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
+            }
+            # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
+            if($IsWindows)
+            {
+                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
+            }
+        ) {
+            param($SslProtocol, $ActualProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                SslProtocol = $SslProtocol
+                SkipCertificateCheck = $true
+            }
+            $result = Invoke-RestMethod @params
+
+            $result.headers.Host | Should Be $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-RestMethod -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases @(
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
+            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
+            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
+            # macOS does not support multiple SslProtocols
+            if (-not $IsMacOS) 
+            {
+                @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
+                @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
+                @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+            }
+        ) {
+            param( $IntendedProtocol, $ActualProtocol)
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                SslProtocol = $IntendedProtocol
+                SkipCertificateCheck = $true
+                ErrorAction = 'Stop'
+            }
+            { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+
     }
 
     BeforeEach {

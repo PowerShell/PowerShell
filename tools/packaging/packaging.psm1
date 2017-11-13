@@ -20,7 +20,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -32,10 +32,6 @@ function Start-PSPackage {
 
         [Switch] $SkipReleaseChecks
     )
-
-    # The package type 'deb-arm' is current disabled for '-Type' parameter because 'New-UnixPackage' doesn't support
-    # creating package for 'deb-arm'. It should be added back to the ValidateSet of '-Type' once the implementation
-    # of creating 'deb-arm' package is done.
 
     DynamicParam {
         if ($Type -eq "zip") {
@@ -62,7 +58,7 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
-        } elseif ($Type -eq "deb-arm") {
+        } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
@@ -79,15 +75,23 @@ function Start-PSPackage {
         $Script:Options = Get-PSOptions
 
         $crossGenCorrect = $false
-        if ($Type -eq "deb-arm") {
+        if ($Type -eq "tar-arm") {
             # crossgen doesn't support arm32 yet
             $crossGenCorrect = $true
         }
-        elseif(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
+        elseif($Script:Options.CrossGen) {
             $crossGenCorrect = $true
         }
-        elseif ($IncludeSymbols.IsPresent) {
-            $crossGenCorrect = $true
+
+        $PSModuleRestoreCorrect = $false
+
+        # Require PSModuleRestore for packaging without symbols
+        # But Disallow it when packaging with symbols
+        if (!$IncludeSymbols.IsPresent -and $Script:Options.PSModuleRestore) {
+            $PSModuleRestoreCorrect = $true
+        }
+        elseif ($IncludeSymbols.IsPresent -and !$Script:Options.PSModuleRestore) {
+            $PSModuleRestoreCorrect = $true
         }
 
         # Make sure the most recent build satisfies the package requirement
@@ -108,10 +112,11 @@ function Start-PSPackage {
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
             $params = @('-Clean')
-            if(-not $IncludeSymbols.IsPresent)
-            {
-                $params += '-CrossGen'
+            $params += '-CrossGen'
+            if (!$IncludeSymbols.IsPresent) {
+                $params += '-PSModuleRestore'
             }
+
             $params += '-Runtime', $Runtime
             $params += '-Configuration', $Configuration
 
@@ -137,12 +142,51 @@ function Start-PSPackage {
 
         $Source = Split-Path -Path $Script:Options.Output -Parent
 
-        # If building a symbols package, don't include the publish build.
+        # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
+            $publishSource = $Source
             $buildSource = Split-Path -Path $Source -Parent
             $Source = New-TempFolder
-            Get-ChildItem -Path $buildSource | Where-Object {$_.Name -ine 'Publish'} | Copy-Item -Destination $Source -Recurse
+            $symbolsSource = New-TempFolder
+
+            try
+            {
+                # Copy files which go into the root package
+                Get-ChildItem -Path $publishSource | Copy-Item -Destination $Source -Recurse
+
+                # files not to include as individual files.  These files will be included in the root package
+                # pwsh.exe is just dotnet.exe renamed by dotnet.exe during the build.
+                $toExclude = @(
+                    'hostfxr.dll'
+                    'hostpolicy.dll'
+                    'libhostfxr.so'
+                    'libhostpolicy.so'
+                    'libhostfxr.dylib'
+                    'libhostpolicy.dylib'
+                    'Publish'
+                    'pwsh.exe'
+                    )
+                # Copy file which go into symbols.zip
+                Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
+
+                # Exclude Pester until we move it to PSModuleRestore
+                $pesterPath = Join-Path -Path $symbolsSource -ChildPath 'Modules\Pester'
+                if(Test-Path -Path $pesterPath)
+                {
+                    Remove-Item -Path $pesterPath -Recurse -Force -ErrorAction SilentlyContinue
+                }
+
+                # Zip symbols.zip to the root package
+                $zipSource = Join-Path $symbolsSource -ChildPath '*'
+                $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
+                $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath (Join-Path -Path $source -ChildPath 'psoptions.json')
+                Compress-Archive -Path $zipSource -DestinationPath $zipPath
+            }
+            finally
+            {
+                Remove-Item -Path $symbolsSource -Recurse -Force -ErrorAction SilentlyContinue
+            }
         }
 
         log "Packaging Source: '$Source'"
@@ -240,12 +284,25 @@ function Start-PSPackage {
                     New-NugetPackage @Arguments
                 }
             }
-            'tar' {
+            "tar" {
                 $Arguments = @{
                     PackageSourcePath = $Source
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                    New-TarballPackage @Arguments
+                }
+            }
+            "tar-arm" {
+                $Arguments = @{
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    Architecture = "arm32"
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
@@ -299,15 +356,18 @@ function New-TarballPackage {
         # Must start with 'powershell' but may have any suffix
         [Parameter(Mandatory)]
         [ValidatePattern("^powershell")]
-        [string]$Name,
+        [string] $Name,
 
         [Parameter(Mandatory)]
-        [string]$Version,
+        [string] $Version,
+
+        [Parameter()]
+        [string] $Architecture = "x64",
 
         [switch] $Force
     )
 
-    $packageName = "$Name-$Version-{0}-x64.tar.gz"
+    $packageName = "$Name-$Version-{0}-$Architecture.tar.gz"
     if ($Environment.IsWindows) {
         throw "Must be on Linux or macOS to build 'tar.gz' packages!"
     } elseif ($Environment.IsLinux) {
@@ -365,6 +425,75 @@ function New-TempFolder
     }
 
     return $tempFolder
+}
+function New-PSSignedBuildZip
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildPath,
+        [Parameter(Mandatory)]
+        [string]$SignedFilesPath,
+        [Parameter(Mandatory)]
+        [string]$DestinationFolder,
+        [parameter(HelpMessage='VSTS variable to set for path to zip')]
+        [string]$VstsVariableName
+    )
+
+    # Replace unsigned binaries with signed
+    $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
+    Get-ChildItem -path $signedFilesFilter -Recurse | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
+        $relativePath = $_.Replace($signedFilesPath,'')
+        $destination = Join-Path -Path $buildPath -ChildPath $relativePath
+        log "replacing $destination with $_"
+        Copy-Item -Path $_ -Destination $destination -force
+    }
+
+    $name = split-path -Path $BuildPath -Leaf
+    $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
+    Compress-Archive -Path $BuildPath\* -DestinationPath $zipLocationPath
+    Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name]$zipLocationPath"
+    if ($VstsVariableName)
+    {
+        # set VSTS variable with path to package files
+        log "Setting $VstsVariableName to $zipLocationPath"
+        Write-Host "##vso[task.setvariable variable=$VstsVariableName]$zipLocationPath"
+    }
+    else 
+    {
+        return $zipLocationPath
+    }
+}
+
+function Expand-PSSignedBuild
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildZip
+    )
+
+    $psModulePath = Split-Path -path $PSScriptRoot
+    # Expand unsigned build
+    $buildPath = Join-Path -path $psModulePath -childpath 'ExpandedBuild'
+    New-Item -path $buildPath -itemtype Directory -force
+    Expand-Archive -path $BuildZip -destinationpath $buildPath -Force
+    remove-item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
+
+    $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+
+    Restore-PSModuleToBuild -PublishPath $buildPath
+
+    $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+
+    if(Test-Path -Path $windowsExecutablePath)
+    {
+        $options.Output = $windowsExecutablePath
+    }
+    else
+    {
+        throw 'Could not find pwsh'
+    }
+
+    Set-PSOptions -Options $options
 }
 
 function New-UnixPackage {
@@ -615,6 +744,9 @@ function New-UnixPackage {
             $Arguments += @("--rpm-dist", "rhel.7")
             $Arguments += @("--rpm-os", "linux")
         }
+        if ($Environment.IsMacOS) {
+            $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
+        }
         foreach ($Dependency in $Dependencies) {
             $Arguments += @("--depends", $Dependency)
         }
@@ -640,6 +772,7 @@ function New-UnixPackage {
                 # Update icns file.
                 $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
                 $iconfilebase = (Get-Item -Path $iconfile).BaseName
+
                 # Create Resources folder, ignore error if exists.
                 New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
                 Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
@@ -647,7 +780,7 @@ function New-UnixPackage {
                 # Set values in plist.
                 $plist = "$macosapp/Contents/Info.plist"
                 Start-NativeExecution {
-                    defaults write $plist CFBundleIdentifier $Name
+                    defaults write $plist CFBundleIdentifier com.microsoft.powershell
                     defaults write $plist CFBundleVersion $Version
                     defaults write $plist CFBundleShortVersionString $Version
                     defaults write $plist CFBundleGetInfoString $Version
@@ -660,9 +793,14 @@ function New-UnixPackage {
                 Start-NativeExecution {
                     plutil -convert xml1 $plist
                 }
-                # Set permissions.
+
+                # Set permissions for plist and shell script. Note that
+                # defaults native app sets 700 when writing to the plist
+                # file from above. Both of these will be reset post fpm.
+                $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
                 Start-NativeExecution {
-                    find $macosapp | xargs chmod 755
+                    chmod 644 $plist
+                    chmod 755 $shellscript
                 }
 
                 # Add app folder to fpm paths.
@@ -678,6 +816,28 @@ function New-UnixPackage {
             }
         } finally {
             if ($Environment.IsMacOS) {
+                if($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                {
+                    # This is needed to prevent installer from picking up
+                    # the launcher app in the build structure and updating
+                    # it which locks out subsequent package builds due to
+                    # increase permissions.
+                    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+                    $plist = "$macosapp/Contents/Info.plist"
+                    $tempguid = (New-Guid).Guid
+                    Start-NativeExecution {
+                        defaults write $plist CFBundleIdentifier $tempguid
+                        plutil -convert xml1 $plist
+                    }
+
+                    # Restore default permissions.
+                    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+                    Start-NativeExecution {
+                        chmod 644 $shellscript
+                        chmod 644 $plist
+                    }
+                }
+
                 # this is continuation of a fpm hack for a weird bug
                 if (Test-Path $hack_dest) {
                     Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"

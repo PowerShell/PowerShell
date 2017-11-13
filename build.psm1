@@ -3,7 +3,7 @@
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
 $dotnetCLIChannel = "release"
-$dotnetCLIRequiredVersion = "2.0.0"
+$dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
 $tagsUpToDate = $false
@@ -258,9 +258,23 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
             Copy-Item $srcPath $dstPath
         }
 
-        # Place the remoting configuration script in the same directory
-        # as the binary so it will get published.
-        Copy-Item .\Install-PowerShellRemoting.ps1 $dstPath
+        #
+        #   Build the ETW manifest resource-only binary
+        #
+        $location = "$PSScriptRoot\src\PowerShell.Core.Instrumentation"
+        Set-Location -Path $location
+
+        $command = @"
+cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+"@
+        log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
+        Start-NativeExecution { Invoke-Expression -Command:$command }
+
+        # Copy the binary to the packaging directory
+        # NOTE: No PDB file; it's a resource-only DLL.
+        $srcPath = [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        Copy-Item -Path $srcPath -Destination $dstPath
+
     } finally {
         Pop-Location
     }
@@ -438,6 +452,7 @@ Fix steps:
         Configuration=$Configuration
         Verbose=$true
         SMAOnly=[bool]$SMAOnly
+        PSModuleRestore=$PSModuleRestore
     }
     $script:Options = New-PSOptions @OptionsArguments
 
@@ -543,26 +558,55 @@ Fix steps:
         }
     }
 
+    if ($Environment.IsWindows) {
+        ## need RCEdit to modify the binaries embedded resources
+        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+            throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
+        }
+
+        $ReleaseVersion = ""
+        if ($ReleaseTagToUse) {
+            $ReleaseVersion = $ReleaseTagToUse
+        } else {
+            $ReleaseVersion = (Get-PSCommitId) -replace '^v'
+        }
+
+        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" "$($Options.Output)" --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
+            --set-file-version $ReleaseVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
+            --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
+    }
+
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
     {
-        $ProgressPreference = "SilentlyContinue"
-        log "Restore PowerShell modules to $publishPath"
-
-        $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-
-        # Restore modules from myget feed
-        Restore-PSModule -Destination $modulesDir -Name @(
-            # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-            'PowerShellGet'
-        )
-
-        # Restore modules from powershellgallery feed
-        Restore-PSModule -Destination $modulesDir -Name @(
-            'Microsoft.PowerShell.Archive'
-        ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
+        Restore-PSModuleToBuild -PublishPath $publishPath
     }
+}
+
+function Restore-PSModuleToBuild
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $PublishPath
+    )
+
+    $ProgressPreference = "SilentlyContinue"
+    log "Restore PowerShell modules to $publishPath"
+
+    $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
+
+    # Restore modules from myget feed
+    Restore-PSModule -Destination $modulesDir -Name @(
+        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+        'PowerShellGet'
+    )
+
+    # Restore modules from powershellgallery feed
+    Restore-PSModule -Destination $modulesDir -Name @(
+        'Microsoft.PowerShell.Archive'
+    ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
 }
 
 function Compress-TestContent {
@@ -602,7 +646,9 @@ function New-PSOptions {
 
         [string]$Output,
 
-        [switch]$SMAOnly
+        [switch]$SMAOnly,
+
+        [switch]$PSModuleRestore
     )
 
     # Add .NET CLI tools to PATH
@@ -711,12 +757,13 @@ function New-PSOptions {
     }
 
     return @{ RootInfo = [PSCustomObject]$RootInfo
-              Top = $Top;
-              Configuration = $Configuration;
-              Framework = $Framework;
-              Runtime = $Runtime;
-              Output = $Output;
-              CrossGen = $CrossGen }
+              Top = $Top
+              Configuration = $Configuration
+              Framework = $Framework
+              Runtime = $Runtime
+              Output = $Output
+              CrossGen = $CrossGen.IsPresent
+              PSModuleRestore = $PSModuleRestore.IsPresent }
 }
 
 # Get the Options of the last build
@@ -724,6 +771,14 @@ function Get-PSOptions {
     return $script:Options
 }
 
+function Set-PSOptions {
+    param(
+        [PSObject]
+        $Options
+    )
+
+    $script:Options = $Options
+}
 
 function Get-PSOutput {
     [CmdletBinding()]param(
@@ -1442,6 +1497,14 @@ function Start-PSBootstrap {
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
         if ($Environment.IsWindows) {
+            ## The VSCode build task requires 'pwsh.exe' to be found in Path
+            if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction SilentlyContinue))
+            {
+                log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
+                $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
+                & $psInstallFile -AddToPath
+            }
+
             ## need RCEdit to modify the binaries embedded resources
             if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
             {
@@ -1685,13 +1748,23 @@ function Start-ResGen
 
 function Find-Dotnet() {
     $originalPath = $env:PATH
-    $dotnetPath = if ($Environment.IsWindows) {
-        "$env:LocalAppData\Microsoft\dotnet"
-    } else {
-        "$env:HOME/.dotnet"
-    }
+    $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
-    if (-not (precheck 'dotnet' "Could not find 'dotnet', appending $dotnetPath to PATH.")) {
+    # If there dotnet is already in the PATH, check to see if that version of dotnet can find the required SDK
+    # This is "typically" the globally installed dotnet
+    if (precheck dotnet) {
+        # Must run from within repo to ensure global.json can specify the required SDK version
+        Push-Location $PSScriptRoot
+        $dotnetCLIInstalledVersion = (dotnet --version)
+        Pop-Location
+        if ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
+            Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
+            # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
+            $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
+        }
+    }
+    else {
+        Write-Warning "Could not find 'dotnet', appending $dotnetPath to PATH."
         $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
     }
 
@@ -1871,16 +1944,6 @@ function New-MSIPackage
         [Switch] $Force
     )
 
-    ## need RCEdit to modify the binaries embedded resources
-    if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-    {
-        throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
-    }
-
-    Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" (Get-PSOutput) --set-icon "$AssetsPath\Powershell_black.ico" `
-        --set-file-version $ProductVersion --set-product-version $ProductVersion --set-version-string "ProductName" "PowerShell Core 6" `
-        --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
-
     ## AppVeyor base image might update the version for Wix. Hence, we should
     ## not hard code version numbers.
     $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
@@ -1888,7 +1951,7 @@ function New-MSIPackage
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
-        throw "Wix Toolset is required to create MSI package. Please install Wix from https://wix.codeplex.com/downloads/get/1540240"
+        throw "Wix Toolset is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311.exe"
     }
 
     ## Get the latest if multiple versions exist.

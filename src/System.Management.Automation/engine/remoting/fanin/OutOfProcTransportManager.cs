@@ -625,7 +625,7 @@ namespace System.Management.Automation.Remoting.Client
             lock (syncObject)
             {
                 // We always need to remove commands from collection, even if isClosed is true.
-                // If we don't then we hang because CloseAsync() will not complete until all
+                // If we don't then we will not respond because CloseAsync() will not complete until all
                 // commands are closed.
                 if (!_cmdTransportManagers.Remove(key))
                 {

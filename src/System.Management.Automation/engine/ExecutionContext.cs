@@ -1193,21 +1193,19 @@ namespace System.Management.Automation
             }
         }
 
-
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadWithPartialName")]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         internal static Assembly LoadAssembly(string name, string filename, out Exception error)
         {
             // First we try to load the assembly based on the filename
-
             Assembly loadedAssembly = null;
             error = null;
-
             if (!String.IsNullOrEmpty(filename))
             {
                 try
                 {
                     loadedAssembly = Assembly.LoadFrom(filename);
+                    return loadedAssembly;
                 }
                 catch (FileNotFoundException fileNotFound)
                 {
@@ -1216,17 +1214,22 @@ namespace System.Management.Automation
                 catch (FileLoadException fileLoadException)
                 {
                     error = fileLoadException;
+                    return null;
                 }
                 catch (BadImageFormatException badImage)
                 {
                     error = badImage;
+                    return null;
                 }
                 catch (SecurityException securityException)
                 {
                     error = securityException;
+                    return null;
                 }
             }
-            else if (!String.IsNullOrEmpty(name))
+
+            // Then we try to load the assembly based on the given name
+            if (!String.IsNullOrEmpty(name))
             {
                 string fixedName = null;
                 // Remove the '.dll' if it's there...
@@ -1249,8 +1252,6 @@ namespace System.Management.Automation
                 catch (FileLoadException fileLoadException)
                 {
                     error = fileLoadException;
-                    // this is a legitimate error on CoreCLR for a newly emited with Add-Type assemblies
-                    // they cannot be loaded by name, but we are only interested in importing them by path
                 }
                 catch (BadImageFormatException badImage)
                 {
@@ -1262,7 +1263,11 @@ namespace System.Management.Automation
                 }
             }
 
-            // We either return the loaded Assembly, or return null.
+            // If the assembly is loaded, we ignore error as it may come from the filepath loading.        
+            if (loadedAssembly != null)
+            {
+                error = null;
+            }
             return loadedAssembly;
         }
 

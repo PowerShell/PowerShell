@@ -426,6 +426,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 rv = obj;
             }
+            else if (obj is Newtonsoft.Json.Linq.JObject jObject)
+            {
+                rv = jObject.ToObject<Dictionary<object,object>>();
+            }
             else
             {
                 TypeInfo t = obj.GetType().GetTypeInfo();

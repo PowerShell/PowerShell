@@ -389,7 +389,7 @@ namespace System.Management.Automation
             {
                 // Since this is being invoked asynchronously on a single pipeline thread
                 // any invoke failures (such as possible debugger failures) need to be
-                // passed back to client or the original client invoke request will hang.
+                // passed back to client or the original client invoke request will not respond.
                 string failedCommand = LocalPowerShell.Commands.Commands[0].CommandText;
                 LocalPowerShell.Commands.Clear();
                 string msg = StringUtil.Format(

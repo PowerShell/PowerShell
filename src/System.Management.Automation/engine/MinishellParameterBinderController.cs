@@ -136,9 +136,9 @@ namespace System.Management.Automation
                         }
 
                         // Replace the parameters with -EncodedCommand <base64 encoded scriptblock>
-                        parameters[i - 1] = CommandParameterInternal.CreateParameter(parameter.ParameterExtent, EncodedCommandParameter, "-" + EncodedCommandParameter);
+                        parameters[i - 1] = CommandParameterInternal.CreateParameter(EncodedCommandParameter, "-" + EncodedCommandParameter, parameter.ParameterAst);
                         string encodedScript = StringToBase64Converter.StringToBase64String(argumentValue.ToString());
-                        parameters[i] = CommandParameterInternal.CreateArgument(scriptBlockArgument.ArgumentExtent, encodedScript);
+                        parameters[i] = CommandParameterInternal.CreateArgument(encodedScript, scriptBlockArgument.ArgumentAst);
                     }
                     else if (InputFormatParameter.StartsWith(parameterName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -157,8 +157,8 @@ namespace System.Management.Automation
                         i += 1;
                         var inputFormatArg = parameters[i];
                         inputFormat = ProcessFormatParameterValue(InputFormatParameter, inputFormatArg.ArgumentValue);
-                        parameters[i - 1] = CommandParameterInternal.CreateParameter(parameter.ParameterExtent, InputFormatParameter, "-" + InputFormatParameter);
-                        parameters[i] = CommandParameterInternal.CreateArgument(inputFormatArg.ArgumentExtent, inputFormat);
+                        parameters[i - 1] = CommandParameterInternal.CreateParameter(InputFormatParameter, "-" + InputFormatParameter, parameter.ParameterAst);
+                        parameters[i] = CommandParameterInternal.CreateArgument(inputFormat, inputFormatArg.ArgumentAst);
                     }
                     else if (OutputFormatParameter.StartsWith(parameterName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -177,8 +177,8 @@ namespace System.Management.Automation
                         i += 1;
                         var outputFormatArg = parameters[i];
                         outputFormat = ProcessFormatParameterValue(OutputFormatParameter, outputFormatArg.ArgumentValue);
-                        parameters[i - 1] = CommandParameterInternal.CreateParameter(parameter.ParameterExtent, OutputFormatParameter, "-" + OutputFormatParameter);
-                        parameters[i] = CommandParameterInternal.CreateArgument(outputFormatArg.ArgumentExtent, outputFormat);
+                        parameters[i - 1] = CommandParameterInternal.CreateParameter(OutputFormatParameter, "-" + OutputFormatParameter, parameter.ParameterAst);
+                        parameters[i] = CommandParameterInternal.CreateArgument(outputFormat, outputFormatArg.ArgumentAst);
                     }
                     else if (ArgsParameter.StartsWith(parameterName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -196,8 +196,8 @@ namespace System.Management.Automation
                         i += 1;
                         var argsArg = parameters[i];
                         var encodedArgs = ConvertArgsValueToEncodedString(argsArg.ArgumentValue);
-                        parameters[i - 1] = CommandParameterInternal.CreateParameter(parameter.ParameterExtent, EncodedArgsParameter, "-" + EncodedArgsParameter);
-                        parameters[i] = CommandParameterInternal.CreateArgument(argsArg.ArgumentExtent, encodedArgs);
+                        parameters[i - 1] = CommandParameterInternal.CreateParameter(EncodedArgsParameter, "-" + EncodedArgsParameter, parameter.ParameterAst);
+                        parameters[i] = CommandParameterInternal.CreateArgument(encodedArgs, argsArg.ArgumentAst);
                     }
                 }
                 else
@@ -212,9 +212,9 @@ namespace System.Management.Automation
                         // Replace the argument with -EncodedCommand <base64 encoded scriptblock>
                         string encodedScript = StringToBase64Converter.StringToBase64String(argumentValue.ToString());
                         parameters[i] = CommandParameterInternal.CreateParameterWithArgument(
-                            parameter.ArgumentExtent, EncodedCommandParameter, "-" + EncodedCommandParameter,
-                            parameter.ArgumentExtent, encodedScript,
-                            spaceAfterParameter: true, arrayIsSingleArgumentForNativeCommand: false);
+                            parameter.ArgumentAst, EncodedCommandParameter, "-" + EncodedCommandParameter,
+                            parameter.ArgumentAst, encodedScript,
+                            spaceAfterParameter: true);
                     }
                 }
             }
@@ -223,8 +223,8 @@ namespace System.Management.Automation
             if (inputFormat == null)
             {
                 // For minishell default input format is xml
-                parameters.Add(CommandParameterInternal.CreateParameter(PositionUtilities.EmptyExtent, InputFormatParameter, "-" + InputFormatParameter));
-                parameters.Add(CommandParameterInternal.CreateArgument(PositionUtilities.EmptyExtent, XmlFormatValue));
+                parameters.Add(CommandParameterInternal.CreateParameter(InputFormatParameter, "-" + InputFormatParameter));
+                parameters.Add(CommandParameterInternal.CreateArgument(XmlFormatValue));
                 inputFormat = XmlFormatValue;
             }
 
@@ -232,8 +232,8 @@ namespace System.Management.Automation
             {
                 // If output is redirected, output format should be xml
                 outputFormat = outputRedirected ? XmlFormatValue : TextFormatValue;
-                parameters.Add(CommandParameterInternal.CreateParameter(PositionUtilities.EmptyExtent, OutputFormatParameter, "-" + OutputFormatParameter));
-                parameters.Add(CommandParameterInternal.CreateArgument(PositionUtilities.EmptyExtent, outputFormat));
+                parameters.Add(CommandParameterInternal.CreateParameter(OutputFormatParameter, "-" + OutputFormatParameter));
+                parameters.Add(CommandParameterInternal.CreateArgument(outputFormat));
             }
 
             // Set the output and input format class variable
@@ -251,7 +251,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(hostName) || !hostName.Equals("ConsoleHost", StringComparison.OrdinalIgnoreCase))
             {
                 NonInteractive = true;
-                parameters.Insert(0, CommandParameterInternal.CreateParameter(PositionUtilities.EmptyExtent, NonInteractiveParameter, "-" + NonInteractiveParameter));
+                parameters.Insert(0, CommandParameterInternal.CreateParameter(NonInteractiveParameter, "-" + NonInteractiveParameter));
             }
 
             ((NativeCommandParameterBinder)DefaultParameterBinder).BindParameters(parameters);

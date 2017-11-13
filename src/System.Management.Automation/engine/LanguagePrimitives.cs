@@ -3688,7 +3688,7 @@ namespace System.Management.Automation
                     ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
                     object result = null;
 
-                    if ((ecFromTLS == null) || (ecFromTLS != null && ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage))
+                    if (ecFromTLS == null || ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage)
                     {
                         result = _constructor();
                         var psobject = valueToConvert as PSObject;

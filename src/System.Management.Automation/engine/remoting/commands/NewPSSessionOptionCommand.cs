@@ -240,7 +240,7 @@ namespace System.Management.Automation.Remoting
         /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
         /// New-PSSession cmdlet tries to call a stop on all remote runspaces which are in the Opening state.
         /// The user wouldn't mind waiting for 15 seconds, but this should be time bound and of a shorter duration.
-        /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client has hung.
+        /// A high timeout here like 3 minutes will give the user a feeling that the PowerShell client is not responding.
         ///
         /// Default: 60 * 1000 = 1 minute
         /// </summary>
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
         /// stop on all remote runspaces which are in the Opening state. The user
         /// wouldn't mind waiting for 15 seconds, but this should be time bound and of a
         /// shorter duration. A high timeout here like 3 minutes will give the user
-        /// a feeling that the PowerShell client has hung.
+        /// a feeling that the PowerShell client is not responding.
         /// </summary>
         [Parameter]
         [Alias("CancelTimeoutMSec")]

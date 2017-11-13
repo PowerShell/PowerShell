@@ -1,3 +1,10 @@
+Describe 'Native pipeline should have proper encoding' -tags 'CI' {
+    It '$OutputEncoding should be set to UTF8 without BOM' {
+        $OutputEncoding.BodyName | Should Be "utf-8"
+        $OutputEncoding.GetPreamble().Length | Should Be 0
+    }
+}
+
 Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {

@@ -2,24 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
 
-try {
-#
-# CrossGen'ed assemblies cause a hang to happen intermittently when running this test suite in Linux and macOS.
-# The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
-#  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
-#  2. For daily build, build with '-CrossGen' but don't run the parsing tests
-# In this way, we will continue to exercise these parsing tests for each CI build, and skip them for daily
-# build to avoid a hang.
-# Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue is tracked by
-#       https://github.com/dotnet/coreclr/issues/9745
-#
-$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
-$defaultParamValues = $PSdefaultParameterValues.Clone()
-$IsSkipped = (!$IsWindows -and $isDailyBuild)
-$PSDefaultParameterValues["it:skip"] = $IsSkipped
-$PSDefaultParameterValues["ShouldBeParseError:SkipInTravisFullBuild"] = $IsSkipped
-
-
 Describe 'Positive Parse Properties Tests' -Tags "CI" {
     It 'PositiveParsePropertiesTest' {
         # Just a bunch of random basic things here
@@ -688,6 +670,14 @@ Describe 'Type building' -Tags "CI" {
             ++$a::a | Should Be 2
         }
     }
+
+    It 'should get the script from a class type' {
+        class C {}
+
+        $a = [C].Assembly.GetCustomAttributes($false).Where{
+            $_ -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute]}
+        $a.ScriptFile | Should BeExactly $PSCommandPath
+    }
 }
 
 Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
@@ -850,8 +840,4 @@ Describe 'variable analysis' -Tags "CI" {
 
         [B]::getA().getFoo() | Should Be 'foo'
     }
-}
-
-} finally {
-    $global:PSdefaultParameterValues = $defaultParamValues
 }

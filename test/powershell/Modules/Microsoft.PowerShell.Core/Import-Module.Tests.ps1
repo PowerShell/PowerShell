@@ -139,6 +139,25 @@ namespace ModuleCmdlets
     $results[0] | Should Be $path
     $results[1] | Should BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
+
+    It "PS should try to load the assembly from assembly name if file path doesn't exist" {
+
+        $psdFile = Join-Path $TESTDRIVE test.psd1
+        $nestedModule = Join-Path NOExistedPath Microsoft.PowerShell.Commands.Utility.dll
+        New-ModuleManifest -Path $psdFile -NestedModules $nestedModule 
+        try
+        {
+            $module = Import-Module $psdFile -PassThru
+            $module.NestedModules | Should Not BeNullOrEmpty
+            $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
+            $module.NestedModules.ImplementingAssembly.Location | Should Be $assemblyLocation
+        }
+        finally
+        {
+            Remove-Module $module -ErrorAction SilentlyContinue
+        }
+        
+    }
  }
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {

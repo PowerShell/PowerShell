@@ -3438,7 +3438,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // raise an OperationComplete event here. Else the
-                // throttle manager will hang as it will be waiting for
+                // throttle manager will not respond as it will be waiting for
                 // this StopOperation to complete
                 RaiseOperationCompleteEvent();
             }

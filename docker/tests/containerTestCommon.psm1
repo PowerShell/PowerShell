@@ -190,3 +190,69 @@ function Get-ContainerPowerShellVersion
     }
     return (Get-Content -Encoding Ascii $testContext.resolvedLogPath)[0]
 }
+
+# This function is used for basic validation of PS packages during a release;
+# During the process Docker files are filled out and executed with Docker build;
+# During the build PS packages are downloaded onto Docker containers, installed and selected Pester tests from PowerShell Github repo are executed.
+# This function must be run on a Docker host machine in 'Linux containers' mode, such as Windows 10 server with Hyper-V role installed.
+function Test-PSPackage
+{
+    param(
+        [string]
+        [Parameter(Mandatory=$true)]
+        $PSPackageLocation, # e.g. Azure storage
+        [string]
+        $PSVersion = "6.0.0-beta.9",
+        [string]
+        $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
+    )
+
+    $PSPackageLocation = $PSPackageLocation.TrimEnd('/','\')
+    Write-Verbose "Ensure that PowerShell packages of version $PSVersion exist at $PSPackageLocation" -Verbose
+
+    $tempFolder = $env:Temp
+    if (-not $tempFolder) {$tempFolder = "~"}
+    $RootFolder = Join-Path $tempFolder 'PSPackageDockerValidation'
+    $SourceFolder = Join-Path $PSScriptRoot 'Templates'
+
+    if (Test-Path $RootFolder)
+    {
+        Remove-Item $RootFolder -Recurse -Force
+    }
+
+    Copy-Item -Recurse $SourceFolder $RootFolder
+
+    $versionRpmStubName = 'PSVERSIONSTUBRPM'
+    $versionRpmStubValue = $PSVersion -replace '-','_'
+    $versionStubName = 'PSVERSIONSTUB'
+    $versionStubValue = $PSVersion
+    $testlistStubName = 'TESTLISTSTUB'
+    $testlistStubValue = $TestList
+    $packageLocationStubName = 'PACKAGELOCATIONSTUB'
+    $packageLocationStubValue = $PSPackageLocation
+
+
+    $results = @{}
+    $returnValue = $true
+
+    # run builds sequentially, but don't block for errors so that configs after failed one can run
+    foreach($dir in Get-ChildItem -Path $RootFolder)
+    {
+        $buildArgs = @()
+        $buildArgs += "--build-arg","$versionRpmStubName=$versionRpmStubValue"
+        $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
+        $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
+        $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += $dir.FullName
+
+        $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning
+        $results.Add($dir.Name, $dockerResult)
+        if (-not $dockerResult) {$returnValue = $false}
+    }
+
+    # in the end print results for all configurations
+    Write-Verbose "Package validation results:" -Verbose
+    $results
+    
+    return $returnValue
+}

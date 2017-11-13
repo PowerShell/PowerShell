@@ -19,23 +19,23 @@ function Send-DailyWebHook
     {
         log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
-        
+
         $Body = @{
                 'text'= @"
-Build Result: $result </br>     
+Build Result: $result </br>
 OS Type: $($PSVersionTable.OS) </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
 "@
         }
-        
+
         $params = @{
             Headers = @{'accept'='application/json'}
             Body = $Body | convertto-json
             Method = 'Post'
-            URI = $webhook 
+            URI = $webhook
         }
-        
+
         Invoke-RestMethod @params
     }
     else
@@ -126,7 +126,7 @@ function Set-DailyBuildBadge
 
     $headers["Authorization"]  = "SharedKey " + $storageAccountName + ":" + $signature
 
-    if ( $PSCmdlet.ShouldProcess("$signaturestring")) 
+    if ( $PSCmdlet.ShouldProcess("$signaturestring"))
     {
         # if this fails, it will throw, you can't check the response for a success code
         $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
@@ -154,6 +154,8 @@ else
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
+$hasPackageTag = $commitMessage -match '\[package\]'
+$createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
 $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 # only update the build badge for the cron job
@@ -165,7 +167,7 @@ if($Stage -eq 'Bootstrap')
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    Start-PSBootstrap -Package:(-not $isPr)
+    Start-PSBootstrap -Package:$createPackages
 }
 elseif($Stage -eq 'Build')
 {
@@ -173,30 +175,18 @@ elseif($Stage -eq 'Build')
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
-    # CrossGen'ed assemblies cause a hang to happen intermittently when running powershell class
-    # basic parsing tests in Linux/macOS. The hang seems to happen when generating dynamic assemblies.
-    # This issue has been reported to CoreCLR team. We need to work around it for now because
-    # the Travis CI build failures caused by this is draining our builder resource and severely
-    # affect our daily work. The workaround is:
-    #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
-    #  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
-    # With this workaround, CI builds triggered by pull request and push commit will exercise
-    # the parsing tests with IL assemblies, while nightly builds will exercise CrossGen'ed assemblies
-    # without running those class parsing tests so as to avoid the hang.
-    # NOTE: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue
-    #       is tracked by https://github.com/dotnet/coreclr/issues/9745
     $originalProgressPreference = $ProgressPreference
-    $ProgressPreference = 'SilentlyContinue' 
+    $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
-        Start-PSBuild -CrossGen:$isDailyBuild -PSModuleRestore
+        Start-PSBuild -CrossGen -PSModuleRestore
     }
     finally{
-        $ProgressPreference = $originalProgressPreference    
+        $ProgressPreference = $originalProgressPreference
     }
 
-    $pesterParam = @{ 
-        'binDir'   = $output 
+    $pesterParam = @{
+        'binDir'   = $output
         'PassThru' = $true
         'Terse'    = $true
     }
@@ -234,7 +224,7 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        Start-PSxUnit        
+        Start-PSxUnit
     }
     catch {
         $result = "FAIL"
@@ -244,11 +234,7 @@ elseif($Stage -eq 'Build')
         }
     }
 
-    if (-not $isPr) {
-        # Run 'CrossGen' for push commit, so that we can generate package.
-        # It won't rebuild powershell, but only CrossGen the already built assemblies.
-        if (-not $isDailyBuild) { Start-PSBuild -CrossGen }
-        
+    if ($createPackages) {
         $packageParams = @{}
         if($env:TRAVIS_BUILD_NUMBER)
         {
@@ -269,7 +255,13 @@ elseif($Stage -eq 'Build')
             {
                 log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-            }            
+            }
+        }
+        if ($IsLinux)
+        {
+            # Create and package Raspbian .tgz
+            Start-PSBuild -Clean -Runtime linux-arm
+            Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         }
     }
 

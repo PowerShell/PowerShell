@@ -2222,7 +2222,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         private void WriteDebuggerMessage(string line)
         {
-            this.ui.WriteWrappedLine(this.ui.DebugForegroundColor, this.ui.DebugBackgroundColor, line);
+            this.ui.WriteLine(this.ui.DebugForegroundColor, this.ui.DebugBackgroundColor, line);
         }
 
         #endregion debugger
@@ -2434,7 +2434,7 @@ namespace Microsoft.PowerShell
                             continue;
                         }
 
-                        if (line.Trim().Length == 0)
+                        if (string.IsNullOrWhiteSpace(line))
                         {
                             if (inBlockMode)
                             {

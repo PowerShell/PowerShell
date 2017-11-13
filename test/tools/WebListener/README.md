@@ -8,24 +8,26 @@ ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
 dotnet restore
 dotnet publish --output bin --configuration Release
 cd bin
-dotnet WebListener.dll ServerCert.pfx password 8083 8084
+dotnet WebListener.dll ServerCert.pfx password 8083 8084 8085 8086
 ```
 
-The test site can then be accessed via `http://localhost:8083/` or `https://localhost:8084/`.  
+The test site can then be accessed via `http://localhost:8083/`, `https://localhost:8084/`, `https://localhost:8085/`, or `https://localhost:8086/`.
 
-The `WebListener.dll` takes 4 arguments: 
+The `WebListener.dll` takes 6 arguments: 
 
 * The path to the Server Certificate
 * The Server Certificate Password
 * The TCP Port to bind on for HTTP
-* The TCP Port to bind on for HTTPS
+* The TCP Port to bind on for HTTPS using TLS 1.2
+* The TCP Port to bind on for HTTPS using TLS 1.1
+* The TCP Port to bind on for HTTPS using TLS 1.0
 
 # Run With WebListener Module
 
 ```powershell
 Import-Module .\build.psm1
 Publish-PSTestTools
-$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
+$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort = 8086
 ```
 
 # Tests
@@ -33,6 +35,76 @@ $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
 ## / or /Home/
 
 Returns a static HTML page containing links and descriptions of the available tests in WebListener. This can be used as a default or general test where no specific test functionality or return data is required.
+
+## /Auth/Basic/
+
+Provides a mock Basic authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
+
+```powershell
+$credential = Get-Credential
+$uri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
+Invoke-RestMethod -Uri $uri -Credential $credential -SkipCertificateCheck
+```
+
+```json
+{
+    "headers":{
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+        "Connection": "Keep-Alive",
+        "Authorization": "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", 
+        "Host": "localhost:8084"
+    },
+    "origin": "127.0.0.1",
+    "args": {},
+    "url": "https://localhost:8084/Auth/Basic"
+}
+```
+
+## /Auth/Negotiate/
+
+Provides a mock Negotiate authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate' -Https
+Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
+```
+
+```json
+{
+    "headers":{
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+        "Connection": "Keep-Alive",
+        "Authorization": "Negotiate jjaguasgtisi7tiqkagasjjajvs", 
+        "Host": "localhost:8084"
+    },
+    "origin": "127.0.0.1",
+    "args": {},
+    "url": "https://localhost:8084/Auth/Negotiate"
+}
+```
+
+## /Auth/NTLM/
+
+Provides a mock NTLM authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Auth' -TestValue 'NTLM' -Https
+Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
+```
+
+```json
+{
+    "headers":{
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+        "Connection": "Keep-Alive",
+        "Authorization": "NTLM jjaguasgtisi7tiqkagasjjajvs", 
+        "Host": "localhost:8084"
+    },
+    "origin": "127.0.0.1",
+    "args": {},
+    "url": "https://localhost:8084/Auth/NTLM"
+}
+```
 
 ## /Cert/
 

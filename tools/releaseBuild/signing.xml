@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SignConfigXML>
+  <!-- ****Begin**** BothDual - Dual (Sha256 and Sha1) AuthenticodeDual) and should be StrongName, but we will add this in 6.1.0 ******** -->
+ <job platform="" configuration="" dest="__OUTPATHROOT__\signed" jobname="PowerShell" approvers="vigarg;gstolt">
+    <file src="__INPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.Management.Infrastructure.CimCmdlets.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Diagnostics.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Management.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Management.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Commands.Utility.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.ConsoleHost.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.CoreCLR.Eventing.dll" />
+    <file src="__INPATHROOT__\Microsoft.PowerShell.Security.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.Security.dll" />
+    <file src="__INPATHROOT__\Microsoft.WSMan.Management.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.WSMan.Management.dll" />
+    <file src="__INPATHROOT__\Microsoft.WSMan.Runtime.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Microsoft.WSMan.Runtime.dll" />
+    <file src="__INPATHROOT__\System.Management.Automation.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\System.Management.Automation.dll" />
+    <file src="__INPATHROOT__\pwsh.dll" signType="AuthenticodeDual" dest="__OUTPATHROOT__\pwsh.dll" />
+
+<!-- not actually a code file, don't sign for now
+    <file src="__INPATHROOT__\Microsoft.PowerShell.SDK.dll" signType="BothDual" dest="__OUTPATHROOT__\Microsoft.PowerShell.SDK.dll" />
+-->
+
+ <!-- ****Begin**** AuthenticodeDual - Dual (Sha256 and Sha1) Authenticode ************* -->
+
+    <file src="__INPATHROOT__\pwsh.exe" signType="AuthenticodeDual" dest="__OUTPATHROOT__\pwsh.exe" />
+
+
+ <!--
+    <file src="__INPATHROOT__\Install-PowerShellRemoting.ps1" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Install-PowerShellRemoting.ps1" />
+  -->
+ <!-- ****Begin**** Authenticode - Authenticode SHA256 ************* -->
+ <!-- PowerShell script files cannot be dual signed, so we will sign them only with a SHA256 cert -->
+
+    <file src="__INPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psm1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" />
+    <file src="__INPATHROOT__\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.psm1" />
+    <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" />
+    <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psm1" />
+    <file src="__INPATHROOT__\Modules\PSReadLine\PSReadLine.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSReadLine\PSReadLine.psd1" />
+    <file src="__INPATHROOT__\Modules\PSReadLine\PSReadLine.psm1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\PSReadLine\PSReadLine.psm1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.WSMan.Management\WSMan.format.ps1xml" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Event.format.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Event.format.ps1xml" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\GetEvent.types.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\GetEvent.types.ps1xml" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Diagnostics.format.ps1xml" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Diagnostics.format.ps1xml" />
+  </job>
+</SignConfigXML>

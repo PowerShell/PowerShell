@@ -213,7 +213,7 @@ namespace System.Management.Automation.Interpreter
 
         private static bool IndexIsNotReturnType(int index, MethodInfo target, ParameterInfo[] pi)
         {
-            return pi.Length != index || (pi.Length == index && !target.IsStatic);
+            return pi.Length != index || !target.IsStatic;
         }
 
         /// <summary>

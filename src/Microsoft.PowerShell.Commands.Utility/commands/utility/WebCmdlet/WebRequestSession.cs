@@ -20,12 +20,10 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Dictionary<string, string> Headers { get; set; }
 
-#if CORECLR
         /// <summary>
         /// gets or sets the content Headers when using HttpClient
         /// </summary>
         internal Dictionary<string, string> ContentHeaders { get; set; }
-#endif
 
         /// <summary>
         /// gets or sets the Cookies property
@@ -74,9 +72,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // build the headers collection
             Headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-#if CORECLR
             ContentHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-#endif
 
             // build the cookie jar
             Cookies = new CookieContainer();

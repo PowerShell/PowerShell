@@ -3403,7 +3403,7 @@ namespace System.Management.Automation
                          (command.Commands[0].CommandText.IndexOf(".EnterNestedPrompt()", StringComparison.OrdinalIgnoreCase) > 0))
                 {
                     // Prevent a host EnterNestedPrompt() call from occuring in an active debugger.
-                    // Host nested prompt makes no sense in this case and can cause hangs depending on host implementation.
+                    // Host nested prompt makes no sense in this case and can cause host to stop responding depending on host implementation.
                     throw new PSNotSupportedException();
                 }
 

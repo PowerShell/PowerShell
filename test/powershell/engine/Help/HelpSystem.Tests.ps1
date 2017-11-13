@@ -239,7 +239,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
 
-    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally.
+    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
     # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
     # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
 
@@ -278,7 +278,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     }
 }
 
-  Describe "Get-Help should find pattern alias" -Tags "CI" {
+Describe "Get-Help should find pattern alias" -Tags "CI" {
     # Remove test alias
     AfterAll {
         Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
@@ -300,5 +300,21 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
        $help.Category | Should BeExactly "Alias"
        $help.Synopsis | Should BeExactly "Where-Object"
     }
+}
 
+Describe "help function uses full view by default" -Tags "CI" {
+    It "help should return full view without -Full switch" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+    }
+
+    It "help should return full view even with -Full switch" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+    }
+
+    It "help should not append -Full when not using AllUsersView parameter set" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
+    }
 }

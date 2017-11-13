@@ -379,9 +379,9 @@ sudo yum remove powershell
 
 ## OpenSUSE 42.2
 
-> **Note:** When installing PowerShell Core, OpenSUSE may report that nothing provides libcurl.
-libcurl should already be installed on supported versions of OpenSUSE.
-Run zypper search libcurl to confirm.
+> **Note:** When installing PowerShell Core, OpenSUSE may report that nothing provides `libcurl`.
+`libcurl` should already be installed on supported versions of OpenSUSE.
+Run `zypper search libcurl` to confirm.
 The error will present 2 'solutions'. Choose 'Solution 2' to continue installing PowerShell Core.
 
 ### Installation via Package Repository (preferred) - OpenSUSE 42.2
@@ -455,7 +455,7 @@ pwsh
 
 Download the RPM package
 `powershell-6.0.0_beta.9-1.rhel.7.x86_64.rpm`
-from the [releases][] page onto the Red Hat Enterprise Linux machine.
+from the [releases][] page onto the Fedora machine.
 
 Then execute the following in the terminal:
 
@@ -505,7 +505,7 @@ pwsh
 
 Download the RPM package
 `powershell-6.0.0_beta.9-1.rhel.7.x86_64.rpm`
-from the [releases][] page onto the Red Hat Enterprise Linux machine.
+from the [releases][] page onto the Fedora machine.
 
 Then execute the following in the terminal:
 

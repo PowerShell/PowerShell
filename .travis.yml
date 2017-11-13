@@ -16,7 +16,7 @@ matrix:
 addons:
   artifacts:
     paths:
-      - $(ls powershell*{deb,pkg,AppImage} | tr "\n" ":")
+      - $(ls powershell*{deb,pkg,AppImage,gz} | tr "\n" ":")
       - pester-tests.xml
 
 install:

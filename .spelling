@@ -25,6 +25,7 @@ artifact
 artifacts
 ASP.NET
 AssemblyLoadContext
+authenticode
 authenticodesignature
 behavior
 behaviors
@@ -135,6 +136,7 @@ parameterized
 patwardhan
 powershell
 PowerShell
+PowerShell.Core.Instrumentation
 powershell.exe
 PowerShellGet
 program.cs
@@ -406,11 +408,6 @@ u
  - demos/DSC/readme.md
 #endregion
 
-#region demos/install/README.md Overrides
- - demos/install/README.md
-download.sh
-#endregion
-
 #region demos/python/README.md Overrides
  - demos/python/README.md
 _script.ps1
@@ -490,8 +487,12 @@ nanoserver-insider-powershell
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
 Catalog
+flavor
+libpsl
 MSBuild
+plugin
 powershell-unix
+psrp.windows
 src
 #endregion
 
@@ -1240,5 +1241,7 @@ v6.0.
 
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
+Auth
+NTLM
 ResponseHeaders
 #endregion
