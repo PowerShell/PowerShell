@@ -890,14 +890,11 @@ namespace System.Management.Automation.Runspaces
             RaiseRunspaceStateEvents();
 
             // Close all open runspaces to ensure that any associated pipeline thread is released.
-            // Normally the pipeline threads are closed via the CLR finalizer.  But the finalizer does not 
-            // seem to be getting called for .Net Core.
-            // This is a temporary workaround.
             if (closeAllOpenRunspaces)
             {
                 foreach (Runspace runspace in RunspaceList)
                 {
-                    if ((runspace.RunspaceStateInfo.State == RunspaceState.Opened) && !runspace.IsInteractiveHost)
+                    if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                     {
                         runspace.Dispose();
                     }
