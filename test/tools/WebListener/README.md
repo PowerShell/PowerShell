@@ -34,6 +34,76 @@ $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
 
 Returns a static HTML page containing links and descriptions of the available tests in WebListener. This can be used as a default or general test where no specific test functionality or return data is required.
 
+## /Auth/Basic/
+
+Provides a mock Basic authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
+
+```powershell
+$credential = Get-Credential
+$uri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Basic' -Https
+Invoke-RestMethod -Uri $uri -Credential $credential -SkipCertificateCheck
+```
+
+```json
+{
+    "headers":{
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+        "Connection": "Keep-Alive",
+        "Authorization": "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", 
+        "Host": "localhost:8084"
+    },
+    "origin": "127.0.0.1",
+    "args": {},
+    "url": "https://localhost:8084/Auth/Basic"
+}
+```
+
+## /Auth/Negotiate/
+
+Provides a mock Negotiate authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Auth' -TestValue 'Negotiate' -Https
+Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
+```
+
+```json
+{
+    "headers":{
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+        "Connection": "Keep-Alive",
+        "Authorization": "Negotiate jjaguasgtisi7tiqkagasjjajvs", 
+        "Host": "localhost:8084"
+    },
+    "origin": "127.0.0.1",
+    "args": {},
+    "url": "https://localhost:8084/Auth/Negotiate"
+}
+```
+
+## /Auth/NTLM/
+
+Provides a mock NTLM authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Auth' -TestValue 'NTLM' -Https
+Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
+```
+
+```json
+{
+    "headers":{
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+        "Connection": "Keep-Alive",
+        "Authorization": "NTLM jjaguasgtisi7tiqkagasjjajvs", 
+        "Host": "localhost:8084"
+    },
+    "origin": "127.0.0.1",
+    "args": {},
+    "url": "https://localhost:8084/Auth/NTLM"
+}
+```
+
 ## /Cert/
 
 Returns a JSON object containing the details of the Client Certificate if one is provided in the request.

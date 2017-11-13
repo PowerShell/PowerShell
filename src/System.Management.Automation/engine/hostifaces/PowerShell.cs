@@ -3283,7 +3283,7 @@ namespace System.Management.Automation
                     BatchInvocationContext context = new BatchInvocationContext(ExtraCommands[i], objs);
 
                     // Queue a batch work item here.
-                    // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to hang.
+                    // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to not respond.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(BatchInvocationWorkItem), context);
                     context.Wait();
                 }
@@ -4037,7 +4037,7 @@ namespace System.Management.Automation
 
                         // This object can be disconnected even if "BeginStop" was called if it is a remote object
                         // and robust connections is retrying a failed network connection.
-                        // In this case release the stop wait handle to prevent hangs.
+                        // In this case release the stop wait handle to prevent not responding.
                         if (tempStopAsyncResult != null)
                         {
                             tempStopAsyncResult.SetAsCompleted(null);
@@ -4431,11 +4431,7 @@ namespace System.Management.Automation
                 finally
                 {
                     RunningExtraCommands = false;
-
-                    if (_isBatching)
-                    {
-                        EndAsyncBatchExecution();
-                    }
+                    EndAsyncBatchExecution();
                 }
             }
             else

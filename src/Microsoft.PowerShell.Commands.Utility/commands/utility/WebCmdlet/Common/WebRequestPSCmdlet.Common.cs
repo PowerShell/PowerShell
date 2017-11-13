@@ -13,9 +13,6 @@ using System.Globalization;
 using System.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-#if !CORECLR
-using mshtml;
-#endif
 using Microsoft.Win32;
 
 namespace Microsoft.PowerShell.Commands
@@ -56,10 +53,10 @@ namespace Microsoft.PowerShell.Commands
         #region URI
 
         /// <summary>
-        /// gets or sets the parameter UseBasicParsing
+        /// Deprecated. Gets or sets UseBasicParsing. This has no affect on the operation of the Cmdlet.
         /// </summary>
-        [Parameter]
-        public virtual SwitchParameter UseBasicParsing { get; set; }
+        [Parameter(DontShow = true)]
+        public virtual SwitchParameter UseBasicParsing { get; set; } = true;
 
         /// <summary>
         /// gets or sets the Uri property
@@ -354,6 +351,12 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletAllowUnencryptedAuthenticationRequiredException");
                 ThrowTerminatingError(error);
             }
+            if (!AllowUnencryptedAuthentication && (null != Credential || UseDefaultCredentials) && (Uri.Scheme != "https"))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.AllowUnencryptedAuthenticationRequired,
+                                                       "WebCmdletAllowUnencryptedAuthenticationRequiredException");
+                ThrowTerminatingError(error);
+            }
 
             // credentials
             if (UseDefaultCredentials && (null != Credential))
@@ -576,81 +579,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Helper Properties
 
         #region Helper Methods
-
-        /// <summary>
-        /// Verifies that Internet Explorer is available, and that its first-run
-        /// configuration is complete.
-        /// </summary>
-        /// <param name="checkComObject">True if we should try to access IE's COM object. Not
-        /// needed if an HtmlDocument will be created shortly.</param>
-        protected bool VerifyInternetExplorerAvailable(bool checkComObject)
-        {
-            // TODO: Remove this code once the dependency on mshtml has been resolved.
-#if CORECLR
-            return false;
-#else
-            bool isInternetExplorerConfigurationComplete = false;
-            // Check for IE for both PS Full and PS Core on windows.
-            // The registry key DisableFirstRunCustomize can exits at one of the following path.
-            // IE uses the same descending order (as mentioned) to check for the presence of this key.
-            // If the value of DisableFirstRunCustomize key is set to greater than zero then Run first
-            // is disabled.
-            string[] disableFirstRunCustomizePaths = new string[] {
-                     @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Internet Explorer\Main",
-                     @"HKEY_CURRENT_USER\Software\Policies\Microsoft\Internet Explorer\Main",
-                     @"HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main",
-                     @"HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer\Main"  };
-
-            foreach (string currentRegPath in disableFirstRunCustomizePaths)
-            {
-                object val = Registry.GetValue(currentRegPath, "DisableFirstRunCustomize", string.Empty);
-                if (val != null && !string.Empty.Equals(val) && Convert.ToInt32(val, CultureInfo.InvariantCulture) > 0)
-                {
-                    isInternetExplorerConfigurationComplete = true;
-                    break;
-                }
-            }
-
-            if (!isInternetExplorerConfigurationComplete)
-            {
-                // Verify that if IE is installed, it has been through the RunOnce check.
-                // Otherwise, the call will hang waiting for users to go through First Run
-                // personalization.
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Internet Explorer\\Main"))
-                {
-                    if (key != null)
-                    {
-                        foreach (string setting in key.GetValueNames())
-                        {
-                            if (setting.IndexOf("RunOnce", StringComparison.OrdinalIgnoreCase) > -1)
-                            {
-                                isInternetExplorerConfigurationComplete = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (isInternetExplorerConfigurationComplete && checkComObject)
-            {
-                try
-                {
-                    IHTMLDocument2 ieCheck = (IHTMLDocument2)new HTMLDocument();
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(ieCheck);
-                }
-                catch (System.Runtime.InteropServices.COMException)
-                {
-                    isInternetExplorerConfigurationComplete = false;
-                }
-            }
-
-            // Throw exception in PS Full only
-            if (!isInternetExplorerConfigurationComplete)
-                throw new NotSupportedException(WebCmdletStrings.IEDomNotSupported);
-            return isInternetExplorerConfigurationComplete;
-#endif
-        }
 
         private Uri PrepareUri(Uri uri)
         {

@@ -1982,6 +1982,22 @@ namespace System.Management.Automation.Runspaces
             var td251 = new TypeData(@"Deserialized.System.Management.Automation.DebuggerCommandResults", true);
             td251.TargetTypeForDeserialization = typeof(Microsoft.PowerShell.DeserializingTypeConverter);
             yield return td251;
+
+            var td252 = new TypeData(@"System.Version#IncludeLabel", true);
+            td252.Members.Add("ToString",
+                new ScriptMethodData(@"ToString", GetScriptBlock(@"
+          $suffix = """"
+          if (![String]::IsNullOrEmpty($this.PSSemVerPreReleaseLabel))
+          {
+              $suffix = ""-""+$this.PSSemVerPreReleaseLabel
+          }
+          if (![String]::IsNullOrEmpty($this.PSSemVerBuildLabel))
+          {
+              $suffix += ""+""+$this.PSSemVerBuildLabel
+          }
+          ""$($this.Major).$($this.Minor).$($this.Build)""+$suffix
+            ")));
+            yield return td252;
         }
     }
 }

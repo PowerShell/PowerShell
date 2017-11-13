@@ -760,17 +760,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Perform common error checks.
         /// Populate source code.
+        /// We only keep the code for backward compatibility.
         /// </summary>
         protected override void EndProcessing()
         {
-            // Prevent code compilation in ConstrainedLanguage mode
-            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
-            {
-                ThrowTerminatingError(
-                    new ErrorRecord(
-                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType), "CannotDefineNewType", ErrorCategory.PermissionDenied, null));
-            }
-
             // Generate an error if they've specified an output
             // assembly type without an output assembly
             if (String.IsNullOrEmpty(outputAssembly) && outputTypeSpecified)
@@ -786,6 +779,37 @@ namespace Microsoft.PowerShell.Commands
 
                 ThrowTerminatingError(errorRecord);
                 return;
+            }
+
+            PopulateSource();
+        }
+
+        // We only keep the code for backward compatibility.
+        internal void PopulateSource()
+        {
+            // Prevent code compilation in ConstrainedLanguage mode
+            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType), "CannotDefineNewType", ErrorCategory.PermissionDenied, null));
+            }
+
+            // Load the source if they want to load from a file
+            if (String.Equals(ParameterSetName, "FromPath", StringComparison.OrdinalIgnoreCase) ||
+                String.Equals(ParameterSetName, "FromLiteralPath", StringComparison.OrdinalIgnoreCase)
+                )
+            {
+                sourceCode = "";
+                foreach (string file in paths)
+                {
+                    sourceCode += System.IO.File.ReadAllText(file) + "\n";
+                }
+            }
+
+            if (String.Equals(ParameterSetName, "FromMember", StringComparison.OrdinalIgnoreCase))
+            {
+                sourceCode = GenerateTypeSource(typeNamespace, Name, sourceCode, language);
             }
         }
 
@@ -891,7 +915,30 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            base.EndProcessing();
+            // Prevent code compilation in ConstrainedLanguage mode
+            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            {
+                ThrowTerminatingError(
+                    new ErrorRecord(
+                        new PSNotSupportedException(AddTypeStrings.CannotDefineNewType), "CannotDefineNewType", ErrorCategory.PermissionDenied, null));
+            }
+
+            // Generate an error if they've specified an output
+            // assembly type without an output assembly
+            if (String.IsNullOrEmpty(outputAssembly) && outputTypeSpecified)
+            {
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new Exception(
+                        String.Format(
+                            CultureInfo.CurrentCulture,
+                            AddTypeStrings.OutputTypeRequiresOutputAssembly)),
+                    "OUTPUTTYPE_REQUIRES_ASSEMBLY",
+                    ErrorCategory.InvalidArgument,
+                    outputType);
+
+                ThrowTerminatingError(errorRecord);
+                return;
+            }
 
             if (loadAssembly)
             {

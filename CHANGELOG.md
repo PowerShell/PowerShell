@@ -447,7 +447,7 @@ For more information on this, we invite you to read [this blog post explaining P
 
 ### Remoting
 
-- Fixed hang when the SSH client abruptly terminates. (#4123)
+- Fixed PowerShell not responding when the SSH client abruptly terminates. (#4123)
 
 ### Documentation
 
@@ -778,7 +778,7 @@ We made a number of fixes to the progress bar rendering and the `ProgressRecord`
 
 - Add '-Title' to 'Get-Credential' and unify the prompt experience
 - Update dependency list for PowerShell Core on Linux and OS X
-- Fix 'powershell -Command -' to not hang and to not ignore the last command
+- Fix 'powershell -Command -' to not stop responding and to not ignore the last command
 - Fix binary operator tab completion
 - Enable 'ConvertTo-Html' in PowerShell Core
 - Remove most Maximum* capacity variables

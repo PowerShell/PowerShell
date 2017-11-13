@@ -121,7 +121,7 @@
     <value>Access to the path '{0}' is denied.</value>
   </data>
   <data name="AllowUnencryptedAuthenticationRequired" xml:space="preserve">
-    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To supress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
+    <value>The cmdlet cannot protect plain text secrets sent over unencrypted connections. To suppress this warning and send plain text secrets over unencrypted networks, reissue the command specifying the AllowUnencryptedAuthentication parameter.</value>
   </data>
   <data name="AuthenticationConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Authentication and UseDefaultCredentials. Authentication does not support Default Credentials. Specify either Authentication or UseDefaultCredentials, then retry.</value>
@@ -151,7 +151,7 @@
     <value>Cannot convert the JSON string because a dictionary that was converted from the string contains the duplicated key '{0}'.</value>
   </data>
   <data name="KeysWithDifferentCasingInJsonString" xml:space="preserve">
-    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the exisiting key '{0}' was '{1}'.</value>
+    <value>Cannot convert the JSON string because it contains keys with different casing. Please use the -AsHashTable switch instead. The key that was attempted to be added to the existing key '{0}' was '{1}'.</value>
   </data>
   <data name="ExtendedProfileRequired" xml:space="preserve">
     <value>The ConvertTo-Json and ConvertFrom-Json cmdlets require the installation of the .NET Client Profile, sometimes called the .NET extended profile.</value>

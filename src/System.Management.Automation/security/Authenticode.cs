@@ -619,7 +619,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Diagnostics.Assert(((error == 0) && (signature != null)) || (error != 0), "GetSignatureFromWintrustData: general crypto failure");
+            Diagnostics.Assert(error != 0 || signature != null, "GetSignatureFromWintrustData: general crypto failure");
 
             if ((signature == null) && (error != 0))
             {

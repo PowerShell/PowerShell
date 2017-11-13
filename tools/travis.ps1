@@ -19,23 +19,23 @@ function Send-DailyWebHook
     {
         log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
-        
+
         $Body = @{
                 'text'= @"
-Build Result: $result </br>     
+Build Result: $result </br>
 OS Type: $($PSVersionTable.OS) </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/builds/$env:TRAVIS_BUILD_ID">Build $env:TRAVIS_BUILD_NUMBER</a>  </br>
 <a href="https://travis-ci.org/$env:TRAVIS_REPO_SLUG/jobs/$env:TRAVIS_JOB_ID">Job $env:TRAVIS_JOB_NUMBER</a>
 "@
         }
-        
+
         $params = @{
             Headers = @{'accept'='application/json'}
             Body = $Body | convertto-json
             Method = 'Post'
-            URI = $webhook 
+            URI = $webhook
         }
-        
+
         Invoke-RestMethod @params
     }
     else
@@ -126,7 +126,7 @@ function Set-DailyBuildBadge
 
     $headers["Authorization"]  = "SharedKey " + $storageAccountName + ":" + $signature
 
-    if ( $PSCmdlet.ShouldProcess("$signaturestring")) 
+    if ( $PSCmdlet.ShouldProcess("$signaturestring"))
     {
         # if this fails, it will throw, you can't check the response for a success code
         $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
@@ -154,6 +154,8 @@ else
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
+$hasPackageTag = $commitMessage -match '\[package\]'
+$createPackages = -not $isPr -or $hasPackageTag
 $hasRunFailingTestTag = $commitMessage -match '\[includeFailingTest\]'
 $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 # only update the build badge for the cron job
@@ -165,7 +167,7 @@ if($Stage -eq 'Bootstrap')
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    Start-PSBootstrap -Package:(-not $isPr)
+    Start-PSBootstrap -Package:$createPackages
 }
 elseif($Stage -eq 'Build')
 {
@@ -174,17 +176,17 @@ elseif($Stage -eq 'Build')
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     $originalProgressPreference = $ProgressPreference
-    $ProgressPreference = 'SilentlyContinue' 
+    $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
         Start-PSBuild -CrossGen -PSModuleRestore
     }
     finally{
-        $ProgressPreference = $originalProgressPreference    
+        $ProgressPreference = $originalProgressPreference
     }
 
-    $pesterParam = @{ 
-        'binDir'   = $output 
+    $pesterParam = @{
+        'binDir'   = $output
         'PassThru' = $true
         'Terse'    = $true
     }
@@ -222,7 +224,7 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        Start-PSxUnit        
+        Start-PSxUnit
     }
     catch {
         $result = "FAIL"
@@ -232,7 +234,7 @@ elseif($Stage -eq 'Build')
         }
     }
 
-    if (-not $isPr) {
+    if ($createPackages) {
         $packageParams = @{}
         if($env:TRAVIS_BUILD_NUMBER)
         {
@@ -253,7 +255,13 @@ elseif($Stage -eq 'Build')
             {
                 log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-            }            
+            }
+        }
+        if ($IsLinux)
+        {
+            # Create and package Raspbian .tgz
+            Start-PSBuild -Clean -Runtime linux-arm
+            Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         }
     }
 

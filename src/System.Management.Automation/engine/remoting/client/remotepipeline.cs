@@ -912,8 +912,7 @@ namespace System.Management.Automation
 
             // Check to see if this pipeline already exists in the runspace.
             RemotePipeline currentPipeline = (RemotePipeline)((RemoteRunspace)_runspace).GetCurrentlyRunningPipeline();
-            if (currentPipeline == null ||
-                currentPipeline != null && !ReferenceEquals(currentPipeline, this))
+            if (!ReferenceEquals(currentPipeline, this))
             {
                 ((RemoteRunspace)_runspace).DoConcurrentCheckAndAddToRunningPipelines(this, syncCall);
             }
