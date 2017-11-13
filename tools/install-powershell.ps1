@@ -49,6 +49,7 @@ if (-not $Destination) {
         $Destination = "${Destination}-daily"
     }
 }
+$Destination = $PSCmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
 Write-Verbose "Destination: $Destination" -Verbose
 
 Function Remove-Destination([string] $Destination) {
@@ -70,6 +71,7 @@ Function Remove-Destination([string] $Destination) {
                 }
             }
         } else {
+            # Unix systems don't keep open file handles so you can just move files/folders even if in use
             Move-Item "$Destination" "$Destination.old"
         }
     }
@@ -115,15 +117,7 @@ try {
         Write-Verbose "Daily package found. Name: $packageName; Version: $($package.Version)" -Verbose
 
         Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
-        Remove-Destination $Destination
-
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
-        if (Test-Path $Destination) {
-            Write-Verbose "Copying files" -Verbose
-            Copy-Item -Recurse -Path "$contentPath\*" -Destination $Destination -ErrorAction Ignore
-        } else {
-            Move-Item -Path $contentPath -Destination $Destination
-        }
     } else {
         $metadata = Invoke-RestMethod https://api.github.com/repos/powershell/powershell/releases/latest
         $release = $metadata.tag_name -replace '^v'
@@ -141,16 +135,24 @@ try {
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
-        New-Item -ItemType Directory -Path "$Destination.new" > $null
+        New-Item -ItemType Directory -Path $contentPath > $null
         if ($IsWinEnv) {
-            Expand-Archive -Path $packagePath -DestinationPath "$Destination.new"
+            Expand-Archive -Path $packagePath -DestinationPath $contentPath
         } else {
-            tar zxf $packagePath -C "$Destination.new"
+            tar zxf $packagePath -C $contentPath
         }
-
-        Remove-Destination $Destination
-        Move-Item -Path "$Destination.new" -Destination $Destination
+    }
+    Remove-Destination $Destination
+    if (Test-Path $Destination) {
+        Write-Verbose "Copying files" -Verbose
+        # only copy files as folders will already exist at $Destination
+        Get-ChildItem -Recurse -Path "$contentPath\*" -File | ForEach-Object {
+            Copy-Item $_ -Destination $Destination
+        }
+    } else {
+        Move-Item -Path $contentPath -Destination $Destination
     }
 
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
