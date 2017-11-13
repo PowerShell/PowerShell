@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>PowerShell.Core.Instrumentation</id>
+    <version>6.0.0-beta.10</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>PowerShell Core ETW resource binary</description>
+    <copyright>(c) Microsoft Corporation. All rights reserved.</copyright>
+  </metadata>
+</package>

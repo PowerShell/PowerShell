@@ -197,3 +197,66 @@ The layout of files should look like this:
 ```
 
 Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
+
+### PowerShell.Core.Instrumentation
+
+To successfully decode PowerShell Core ETW events, the manifest and resource binary need to be registered on the system.
+
+To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under `src\PowerShell.Core.Instrumentation`.
+
+Update the version information for the package.
+
+```none
+<version>6.0.0-RC</version>
+```
+
+Next, create the directory structure needed for the contents of the nuget package structure. The final directory and file layout is listed below.
+
+```powershell
+if (Test-Path -Path c:\mypackage)
+{
+  Remove-Item -Recurse -Force -Path c:\mypackage
+}
+$null = New-Item -Path c:\mypackage\runtimes\win-x64\native -ItemType Directory
+$null = New-Item -Path c:\mypackage\runtimes\win-x86\native -ItemType Directory
+```
+
+You will need to build `PowerShell.Core.Instrumentation.dll` targeting both `win-x64` and `win-x86` on Windows 10.
+The output files will be placed under src\powershell-win-core.
+
+Build the `win-x64` platform and copy the `PowerShell.Core.Instrumentation.dll` to the win-x86 portion of the tree.
+
+```powershell
+## Build targeting win-x64
+Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
+Copy-Item -Path .\src\powershell-win-core\PowerShell.Core.Instrumentation.dll -Destination c:\mypackage\runtimes\win-x64\native
+```
+
+Next, build the `win-x86` platform and copy `PowerShell.Core.Instrumentation.dll` to the win-x86 portion of the tree.
+
+```powershell
+## Build targeting win-x86
+Start-BuildNativeWindowsBinaries -Configuration Release -Arch x86
+Copy-Item -Path .\src\powershell-win-core\PowerShell.Core.Instrumentation.dll -Destination c:\mypackage\runtimes\win-x86\native
+```
+
+The layout of files looks like this:
+
+```none
+└── runtimes
+    ├── win-x64
+    │   └── native
+    │       └── PowerShell.Core.Instrumentation.dll
+    │
+    ├── win-x86
+    │   └── native
+    │       └── PowerShell.Core.Instrumentation.dll
+```
+
+NOTE: Since these are native binaries used on Windows, they need to be `authenticode dual signed` before creating the nuget package.
+
+Lastly, run the following command from the root of the repo to create the nuget package. The nuget package is placed at `.\src\powershell-win-core`.  Note that you may need the latest `nuget.exe`.
+
+```powershell
+nuget pack .\src\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.nuspec -BasePath c:\mypackage -OutputDirectory .\src\powershell-win-core
+```
