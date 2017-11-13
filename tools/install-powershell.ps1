@@ -38,12 +38,6 @@ $IsLinuxEnv = (Get-Variable -Name "IsLinux" -ErrorAction Ignore) -and $IsLinux
 $IsMacOSEnv = (Get-Variable -Name "IsMacOS" -ErrorAction Ignore) -and $IsMacOS
 $IsWinEnv   = !$IsLinuxEnv -and !$IsMacOSEnv
 
-if ($env:PSCoreDaily -eq $true)
-{
-    $Daily = $true
-    $AddToPath = $true
-}
-
 if (-not $Destination) {
     $Destination = if ($IsWinEnv) {
         "$env:LOCALAPPDATA\Microsoft\powershell"
@@ -72,7 +66,7 @@ Function Remove-Destination([string] $Destination) {
                 if ($_.extension -eq "old") {
                     Remove-Item $_
                 } else {
-                    Move-Item $_.fullname "$($_.fullname).old" 
+                    Move-Item $_.fullname "$($_.fullname).old"
                 }
             }
         } else {
@@ -122,7 +116,7 @@ try {
 
         Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
         Remove-Destination $Destination
-        
+
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
         if (Test-Path $Destination) {
             Write-Verbose "Copying files" -Verbose
