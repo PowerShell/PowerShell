@@ -260,4 +260,123 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                 $ScriptBlock | Should Not Throw
         }
     }
+
+    Context "ValidateNotNull, ValidateNotNullOrEmpty and Not-Null-Or-Empty check for Mandatory parameter" {
+
+        BeforeAll {
+            function MandType {
+                param(
+                    [Parameter(Mandatory, ParameterSetName = "ByteArray")]
+                    [byte[]] $ByteArray,
+
+                    [Parameter(Mandatory, ParameterSetName = "ByteList")]
+                    [System.Collections.Generic.List[byte]] $ByteList,
+
+                    [Parameter(Mandatory, ParameterSetName = "ByteCollection")]
+                    [System.Collections.ObjectModel.Collection[byte]] $ByteCollection,
+
+                    [Parameter(ParameterSetName = "Default")]
+                    $Value
+                )
+            }
+
+            function NotNullFunc {
+                param(
+                    [ValidateNotNull()]
+                    $Value,
+                    [string] $TestType
+                )
+
+                switch ($TestType) {
+                    "COM-Enumerable" { $Value | ForEach-Object Name }
+                    "Enumerator"     {
+                        $items = foreach ($i in $Value) { $i }
+                        $items -join ","
+                    }
+                }
+            }
+
+            function NotNullOrEmptyFunc {
+                param(
+                    [ValidateNotNullOrEmpty()]
+                    $Value,
+                    [string] $TestType
+                )
+
+                switch ($TestType) {
+                    "COM-Enumerable" { $Value | ForEach-Object Name }
+                    "Enumerator"     {
+                        $items = foreach ($i in $Value) { $i }
+                        $items -join ","
+                    }
+                }
+            }
+
+            $byteArray = [System.IO.File]::ReadAllBytes("$PSHOME\System.Management.Automation.dll")
+            $byteList  = [System.Collections.Generic.List[byte]] $byteArray
+            $byteCollection = [System.Collections.ObjectModel.Collection[byte]] $byteArray
+            ## Use the running time of 'MandType -Value $byteArray' as the baseline time
+            $baseline = (Measure-Command { MandType -Value $byteArray }).Milliseconds
+            ## Running time should be less than 'expected'
+            $expected = $baseline + 20
+
+            if ($IsWindows) {
+                $null = New-Item -Path $TESTDRIVE/file1 -ItemType File
+            }
+
+            $testCases = @(
+                @{ ScriptBlock = { MandType -ByteArray $byteArray } }
+                @{ ScriptBlock = { MandType -ByteList $byteList } }
+                @{ ScriptBlock = { MandType -ByteCollection $byteCollection } }
+                @{ ScriptBlock = { NotNullFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullFunc -Value $byteCollection } }
+                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteArray } }
+                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteList } }
+                @{ ScriptBlock = { NotNullOrEmptyFunc -Value $byteCollection } }
+            )
+        }
+
+        It "Validate running time '<ScriptBlock>'" -TestCases $testCases {
+            param ($ScriptBlock)
+            (Measure-Command $ScriptBlock).Milliseconds | Should BeLessThan $expected
+        }
+
+        It "COM enumerable argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" -Skip:(!$IsWindows) {
+            $shell = New-Object -ComObject "Shell.Application"
+            $folder = $shell.Namespace("$TESTDRIVE")
+            $items = $folder.Items()
+
+            NotNullFunc -Value $items -TestType "COM-Enumerable" | Should Be "file1"
+            NotNullOrEmptyFunc -Value $items -TestType "COM-Enumerable" | Should Be "file1"
+        }
+
+        It "Enumerator argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" {
+            $data = @(1,2,3)
+            NotNullFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should Be "1,2,3"
+            NotNullOrEmptyFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should Be "1,2,3"
+        }
+
+        It "'ValidateNotNull' should throw on null element of a collection argument" {
+            ## Should throw on null element
+            { NotNullFunc -Value @("string", $null, 2) } | Should Throw
+            ## Should not throw on empty string element
+            { NotNullFunc -Value @("string", "", 2) } | Should Not Throw
+            ## Should not throw on an empty collection
+            { NotNullFunc -Value @() } | Should Not Throw
+        }
+
+        It "'ValidateNotNullOrEmpty' should throw on null element of a collection argument or empty collection/dictionary" {
+            { NotNullOrEmptyFunc -Value @("string", $null, 2) } | Should Throw
+            { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should Throw
+            { NotNullOrEmptyFunc -Value @() } | Should Throw
+            { NotNullOrEmptyFunc -Value @{} } | Should Throw
+        }
+
+        It "Mandatory parameter should throw on empty collection" {
+            { MandType -ByteArray ([byte[]]@()) } | Should Throw
+            { MandType -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should Throw
+            { MandType -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should Throw
+        }
+    }
 }
