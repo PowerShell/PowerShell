@@ -142,7 +142,7 @@
     <value>Cannot bind positional parameters because no names were given.</value>
   </data>
   <data name="AmbiguousParameterSet" xml:space="preserve">
-    <value>Parameter set cannot be resolved using the specified named parameters.</value>
+    <value>Parameter set cannot be resolved using the specified named parameters.One or few of the parameters mentioned cannot be used together.Do a Get-command {0} to see the available parameter sets.</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
     <value>Cannot process command because of one or more missing mandatory parameters:{1}.</value>
