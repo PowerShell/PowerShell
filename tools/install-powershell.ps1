@@ -66,7 +66,18 @@ Function Remove-Destination([string] $Destination) {
         if (Test-Path -Path "$Destination.old") {
             Remove-Item "$Destination.old" -Recurse -Force
         }
-        Move-Item "$Destination" "$Destination.old"
+        if ($IsWinEnv -and ($Destination -eq $PSHome)) {
+            # handle the case where the updated folder is currently in use
+            Get-ChildItem -Recurse -File -Path $PSHome | ForEach-Object {
+                if ($_.extension -eq "old") {
+                    Remove-Item $_
+                } else {
+                    Move-Item $_.fullname "$($_.fullname).old" 
+                }
+            }
+        } else {
+            Move-Item "$Destination" "$Destination.old"
+        }
     }
 }
 
@@ -111,9 +122,14 @@ try {
 
         Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
         Remove-Destination $Destination
-
+        
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
-        Move-Item -Path $contentPath -Destination $Destination
+        if (Test-Path $Destination) {
+            Write-Verbose "Copying files" -Verbose
+            Copy-Item -Recurse -Path "$contentPath\*" -Destination $Destination -ErrorAction Ignore
+        } else {
+            Move-Item -Path $contentPath -Destination $Destination
+        }
     } else {
         $metadata = Invoke-RestMethod https://api.github.com/repos/powershell/powershell/releases/latest
         $release = $metadata.tag_name -replace '^v'
@@ -194,6 +210,9 @@ try {
     }
 
     Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
+    if ($Destination -eq $PSHome) {
+        Write-Host "Please restart pwsh" -ForegroundColor Magenta
+    }
 } finally {
     Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
 }
