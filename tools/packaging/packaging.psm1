@@ -180,6 +180,7 @@ function Start-PSPackage {
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
                 $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
+                $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath (Join-Path -Path $source -ChildPath 'psoptions.json')
                 Compress-Archive -Path $zipSource -DestinationPath $zipPath
             }
             finally
@@ -424,6 +425,75 @@ function New-TempFolder
     }
 
     return $tempFolder
+}
+function New-PSSignedBuildZip
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildPath,
+        [Parameter(Mandatory)]
+        [string]$SignedFilesPath,
+        [Parameter(Mandatory)]
+        [string]$DestinationFolder,
+        [parameter(HelpMessage='VSTS variable to set for path to zip')]
+        [string]$VstsVariableName
+    )
+
+    # Replace unsigned binaries with signed
+    $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
+    Get-ChildItem -path $signedFilesFilter -Recurse | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
+        $relativePath = $_.Replace($signedFilesPath,'')
+        $destination = Join-Path -Path $buildPath -ChildPath $relativePath
+        log "replacing $destination with $_"
+        Copy-Item -Path $_ -Destination $destination -force
+    }
+
+    $name = split-path -Path $BuildPath -Leaf
+    $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
+    Compress-Archive -Path $BuildPath\* -DestinationPath $zipLocationPath
+    Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name]$zipLocationPath"
+    if ($VstsVariableName)
+    {
+        # set VSTS variable with path to package files
+        log "Setting $VstsVariableName to $zipLocationPath"
+        Write-Host "##vso[task.setvariable variable=$VstsVariableName]$zipLocationPath"
+    }
+    else 
+    {
+        return $zipLocationPath
+    }
+}
+
+function Expand-PSSignedBuild
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildZip
+    )
+
+    $psModulePath = Split-Path -path $PSScriptRoot
+    # Expand unsigned build
+    $buildPath = Join-Path -path $psModulePath -childpath 'ExpandedBuild'
+    New-Item -path $buildPath -itemtype Directory -force
+    Expand-Archive -path $BuildZip -destinationpath $buildPath -Force
+    remove-item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
+
+    $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+
+    Restore-PSModuleToBuild -PublishPath $buildPath
+
+    $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+
+    if(Test-Path -Path $windowsExecutablePath)
+    {
+        $options.Output = $windowsExecutablePath
+    }
+    else
+    {
+        throw 'Could not find pwsh'
+    }
+
+    Set-PSOptions -Options $options
 }
 
 function New-UnixPackage {

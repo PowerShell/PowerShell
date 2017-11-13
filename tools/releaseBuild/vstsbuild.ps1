@@ -1,7 +1,18 @@
+[cmdletbinding(DefaultParameterSetName='Build')]
 param(
+    [Parameter(ParameterSetName='packageSigned')]
     [Parameter(ParameterSetName='Build')]
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
-    [string]$ReleaseTag
+    [string]$ReleaseTag,
+
+    # full paths to files to add to container to run the build
+    [Parameter(Mandatory,ParameterSetName='packageSigned')]
+    [string]
+    $BuildPath,
+
+    [Parameter(Mandatory,ParameterSetName='packageSigned')]
+    [string]
+    $SignedFilesPath
 )
 
 DynamicParam {
@@ -36,6 +47,29 @@ Begin {
 
 End {
     $ErrorActionPreference = 'Stop'
+
+    $additionalFiles = @()
+    $buildPackageName = $null
+    # If specified, Add package file to container
+    if ($BuildPath)
+    {
+        Import-Module (Join-Path -path $PSScriptRoot -childpath '..\..\build.psm1')
+        Import-Module (Join-Path -path $PSScriptRoot -childpath '..\packaging')
+
+        # Use temp as destination if not running in VSTS
+        $destFolder = $env:temp 
+        if($env:Build_ArtifactStagingDirectory)
+        {
+            # Use artifact staging if running in VSTS
+            $destFolder = $env:Build_ArtifactStagingDirectory
+        }
+
+        $BuildPackagePath = New-PSSignedBuildZip -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath -DestinationFolder $destFolder
+        Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name-singed.zip]$BuildPackagePath"
+        $buildPackageName = Split-Path -Path $BuildPackagePath -Leaf
+        $additionalFiles += $BuildPackagePath
+    }
+
 
     $psReleaseBranch = 'master'
     $psReleaseFork = 'PowerShell'
@@ -74,7 +108,12 @@ End {
         Import-Module "$location/dockerBasedBuild" -Force
         Clear-VstsTaskState
 
-        Invoke-Build -RepoPath $resolvedRepoRoot  -BuildJsonPath './tools/releaseBuild/build.json' -Name $Name -Parameters $PSBoundParameters
+        $buildParameters = @{
+            ReleaseTag = $ReleaseTag
+            BuildPackageName = $buildPackageName
+        }
+
+        Invoke-Build -RepoPath $resolvedRepoRoot  -BuildJsonPath './tools/releaseBuild/build.json' -Name $Name -Parameters $buildParameters -AdditionalFiles $AdditionalFiles
     }
     catch
     {
