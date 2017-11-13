@@ -488,13 +488,9 @@ Fix steps:
         Start-ResGen
     }
 
-    # handle TypeGen
-    $incFileName = 'powershell.inc'
-    if (-not [string]::IsNullOrEmpty($Runtime)) {
-        # File name must be different for Windows and Linux to allow build on Windows and WSL.
-        # Append the first 3 characters for the Runtime only because otherwise dotnet will crash due to the separation characters. The underscore is only for better readability.
-        $incFileName = "$($incFileName)_$($Runtime).inc"
-    }
+    # Handle TypeGen
+    # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
+    $incFileName = "powershell_$($Options.Runtime).inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$($incFileName)")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
