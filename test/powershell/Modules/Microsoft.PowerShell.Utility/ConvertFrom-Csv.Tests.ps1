@@ -10,6 +10,11 @@ Describe "ConvertFrom-Csv" -Tags "CI" {
 a,b,c
 1,2,3
 "@
+        $testTypeData = @"
+#TYPE My.Custom.Object
+a,b,c
+1,2,3
+"@
     }
 
     It "Should be able to be called" {
@@ -52,6 +57,13 @@ a,b,c
         $actualLength = $($( $actualData | gm) | Where-Object {$_.MemberType -eq "NoteProperty" }).Length
 
         $actualLength | Should Be 3
+    }
+
+    It "Should Contain the Imported Type data" {
+        $actualData = $testTypeData | ConvertFrom-Csv
+        $actualData.PSObject.TypeNames.Count | Should Be 2
+        $actualData.PSObject.TypeNames[0] | Should Be "My.Custom.Object"
+        $actualData.PSObject.TypeNames[1] | Should Be "CSV:My.Custom.Object"
     }
 }
 

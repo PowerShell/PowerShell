@@ -80,16 +80,17 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         Remove-Item -Path $testfile -Force -ErrorAction SilentlyContinue
         $processlist = (Get-Process)[0..1]
         $processlist | Export-Csv -Path $testfile -Force -IncludeTypeInformation
-        # Import-Csv add "CSV:" before actual type
-        $expectedProcessType = "CSV:System.Diagnostics.Process"
+        $expectedProcessTypes = "System.Diagnostics.Process","CSV:System.Diagnostics.Process"
     }
 
     It "Test import-csv import Object" {
         $importObjectList = Import-Csv -Path $testfile
         $processlist.Count | Should Be $importObjectList.Count
 
-        $importType = $importObjectList[0].psobject.TypeNames[0]
-        $importType | Should Be $expectedProcessType
+        $importTypes = $importObjectList[0].psobject.TypeNames
+        $importTypes.Count | Should Be $expectedProcessTypes.Count
+        $importTypes[0] | Should Be $expectedProcessTypes[0]
+        $importTypes[1] | Should Be $expectedProcessTypes[1]
     }
 }
 
