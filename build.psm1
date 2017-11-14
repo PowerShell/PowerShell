@@ -569,10 +569,28 @@ Fix steps:
             $ReleaseVersion = $ReleaseTagToUse
         } else {
             $ReleaseVersion = (Get-PSCommitId) -replace '^v'
+            $fileVersion = $ReleaseVersion.Split("-")[0]
+        }
+        if (!$ReleaseVersion) {
+            $ReleaseVersion = "6.0.0"
+            $fileVersion = "6.0.0"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" "$($Options.Output)" --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
-            --set-file-version $ReleaseVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
+        Write-Verbose "Release version: $ReleaseVersion" -Verbose
+
+        $pwshPath = $Options.Output
+        if ($Environment.IsWindows) {
+            if (!$pwshPath.EndsWith("pwsh.exe")) {
+                $pwshPath = Join-Path $Options.Output "pwsh.exe"
+            }
+        } else {
+            if (!$pwshPath.EndsWith("pwsh")) {
+                $pwshPath = Join-Path $Options.Output "pwsh"
+            }
+        }
+
+        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
+            --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
     }
 
