@@ -346,6 +346,7 @@ function Start-PSBuild {
 
         # These runtimes must match those in project.json
         # We do not use ValidateScript since we want tab completion
+        # If this parameter is not provided it will get determined automatically.
         [ValidateSet("win7-x64",
                      "win7-x86",
                      "osx.10.12-x64",
@@ -491,7 +492,7 @@ Fix steps:
     # Handle TypeGen
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
     $incFileName = "powershell_$($Options.Runtime).inc"
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$($incFileName)")) {
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$incFileName")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
     }
@@ -1635,9 +1636,8 @@ function Start-TypeGen
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        $IncFileName
+        $IncFileName = 'powershell.inc'
     )
 
     # Add .NET CLI tools to PATH
@@ -1659,7 +1659,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$($incFileName)"
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$IncFileName"
         dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
@@ -1667,7 +1667,7 @@ function Start-TypeGen
 
     Push-Location "$PSScriptRoot/src/TypeCatalogGen"
     try {
-        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $incFileName
+        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName
     } finally {
         Pop-Location
     }
