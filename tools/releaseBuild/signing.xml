@@ -23,12 +23,11 @@
     <file src="__INPATHROOT__\pwsh.exe" signType="AuthenticodeDual" dest="__OUTPATHROOT__\pwsh.exe" />
 
 
- <!--
-    <file src="__INPATHROOT__\Install-PowerShellRemoting.ps1" signType="AuthenticodeDual" dest="__OUTPATHROOT__\Install-PowerShellRemoting.ps1" />
-  -->
  <!-- ****Begin**** Authenticode - Authenticode SHA256 ************* -->
  <!-- PowerShell script files cannot be dual signed, so we will sign them only with a SHA256 cert -->
 
+    <file src="__INPATHROOT__\Install-PowerShellRemoting.ps1" signType="Authenticode" dest="__OUTPATHROOT__\Install-PowerShellRemoting.ps1" />
+    <file src="__INPATHROOT__\RegisterManifest.ps1" signType="Authenticode" dest="__OUTPATHROOT__\RegisterManifest.ps1" />
     <file src="__INPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\CimCmdlets\CimCmdlets.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Diagnostics\Microsoft.PowerShell.Diagnostics.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" signType="Authenticode" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" />

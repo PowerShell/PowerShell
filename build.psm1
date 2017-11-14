@@ -2256,8 +2256,8 @@ function Restore-PSModule
     $RepositoryName = "mygetpsmodule"
 
     # Check if the PackageManagement works in the base-oS or PowerShellCore
-    Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
-    Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
+    $null = Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
+    $null = Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
 
     # Get the existing registered PowerShellGet repositories
     $psrepos = PowerShellGet\Get-PSRepository
