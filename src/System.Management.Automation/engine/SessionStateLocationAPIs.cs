@@ -233,11 +233,6 @@ namespace System.Management.Automation
             string providerId = null;
 
             // Replace path with last working directory when '-' was passed.
-            if (_workingLocationHistoryStack == null)
-            {
-                const int locationHistoryLimit = 1000;
-                _workingLocationHistoryStack = new BoundedStack<PathInfo>(locationHistoryLimit);
-            }
             bool pushNextLocation = true;
             if (originalPath.Equals("-"))            
             {
