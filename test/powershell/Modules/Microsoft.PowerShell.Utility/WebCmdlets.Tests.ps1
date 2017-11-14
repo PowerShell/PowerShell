@@ -2613,6 +2613,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     }
 
+    Context "Invoke-RestMethod Single Value JSON null support" {
+        BeforeAll {
+            $baseUrl = 'http://localhost:8081/PowerShell?test=response&contenttype=application/json&output='
+        }
+        It "Invoke-RestMethod Supports a Single Value JSON null" {
+            $url = '{0}{1}' -f $baseUrl, 'null'
+            Invoke-RestMethod -Uri $url | Should Be $null
+        }
+        It "Invoke-RestMethod Supports a Single Value JSON null and ignores whitespace" {
+            $url = '{0}{1}' -f $baseUrl, "            null         "
+            Invoke-RestMethod -Uri $url | Should Be $null
+            $url = '{0}{1}' -f $baseUrl, "           null         `n"
+            Invoke-RestMethod -Uri $url | Should Be $null
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy

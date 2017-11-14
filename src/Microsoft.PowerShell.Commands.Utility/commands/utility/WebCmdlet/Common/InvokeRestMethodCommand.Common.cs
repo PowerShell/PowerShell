@@ -6,6 +6,8 @@ using System;
 using System.Management.Automation;
 using System.IO;
 using System.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -168,15 +170,27 @@ namespace Microsoft.PowerShell.Commands
 
         private bool TryConvertToJson(string json, out object obj, ref Exception exRef)
         {
+            bool converted = false;
             try
             {
                 ErrorRecord error;
                 obj = JsonObject.ConvertFromJson(json, out error);
 
+                if (null == obj)
+                {
+                    // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal. 
+                    // if not, the ArgumentException will be caught.
+                    JToken.Parse(json);
+                }
+
                 if (error != null)
                 {
                     exRef = error.Exception;
                     obj = null;
+                }
+                else
+                {
+                    converted = true;
                 }
             }
             catch (ArgumentException ex)
@@ -189,7 +203,13 @@ namespace Microsoft.PowerShell.Commands
                 exRef = ex;
                 obj = null;
             }
-            return (null != obj);
+            catch (JsonException ex)
+            {
+                var msg = string.Format(System.Globalization.CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, ex.Message);
+                exRef = new ArgumentException(msg, ex);
+                obj = null;
+            }
+            return converted;
         }
 
         #endregion
