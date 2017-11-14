@@ -601,7 +601,7 @@ function Restore-PSModuleToBuild
     Restore-PSModule -Destination $modulesDir -Name @(
         # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
         'PowerShellGet'
-    )
+    ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
 
     # Restore modules from powershellgallery feed
     Restore-PSModule -Destination $modulesDir -Name @(
