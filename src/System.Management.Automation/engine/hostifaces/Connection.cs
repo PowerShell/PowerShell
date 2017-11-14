@@ -534,16 +534,10 @@ namespace System.Management.Automation.Runspaces
 
             set
             {
-                lock (s_syncObject)
+                var result = Interlocked.CompareExchange<Runspace>(ref s_primaryRunspace, value, null);
+                if (result != null)
                 {
-                    if (s_primaryRunspace == null)
-                    {
-                        s_primaryRunspace = value;
-                    }
-                    else
-                    {
-                        throw new PSInvalidOperationException(RunspaceStrings.PrimaryRunspaceAlreadySet);
-                    }
+                    throw new PSInvalidOperationException(RunspaceStrings.PrimaryRunspaceAlreadySet);
                 }
             }
         }

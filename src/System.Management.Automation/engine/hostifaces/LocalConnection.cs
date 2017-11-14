@@ -826,7 +826,7 @@ namespace System.Management.Automation.Runspaces
             var closeAllOpenRunspaces = isPrimaryRunspace && haveOpenRunspaces;
 
             // Stop all transcriptions and unitialize AMSI if we're the last runspace to exit or we are exiting the primary runspace.
-            if (isPrimaryRunspace || !haveOpenRunspaces)
+            if (!haveOpenRunspaces)
             {
                 ExecutionContext executionContext = this.GetExecutionContext;
                 if (executionContext != null)
@@ -902,7 +902,6 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Report telemetry if we have no more open runspaces.
-            // TODO: Is this still needed?
 #if LEGACYTELEMETRY
             bool allRunspacesClosed = true;
             bool hostProvidesExitTelemetry = false;
