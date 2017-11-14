@@ -34,13 +34,11 @@ write-host should_not_hang_at_exit
 exit
 '@
         $process = Start-Process pwsh -ArgumentList $command -PassThru
-        for ($i = 0; -not $process.HasExited -and $i -lt 5; $i++) {
-            Start-Sleep -Seconds 1
-        }
+        Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 > $null
 
         $expect = "powershell process exits in 5 seconds"
         if (-not $process.HasExited) {
-            Stop-Process -InputObject $process -Force
+            Stop-Process -InputObject $process -Force -ErrorAction SilentlyContinue
             "powershell process doesn't exit in 5 seconds" | Should Be $expect
         } else {
             $expect | Should Be $expect
