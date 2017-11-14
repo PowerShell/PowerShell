@@ -63,7 +63,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
     It "Call with ListAvailable switch returns a list containing TimeZoneInfo.Local" {
         $observedIdList = Get-TimeZone -ListAvailable | Select-Object -ExpandProperty BaseUtcOffset
         $oneExpectedOffset = ([System.TimeZoneInfo]::Local).BaseUtcOffset
-        $observedIdList -eq $oneExpectedOffset | Should Be $oneExpectedOffset
+        $oneExpectedOffset | Should BeIn $observedIdList
     }
 
     ## The local time zone could be set to UTC or GMT*. In this case, the .NET API returns the region ID
@@ -71,7 +71,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
     It "Call with ListAvailable switch returns a list containing one returned by Get-TimeZone" {
         $observedIdList = Get-TimeZone -ListAvailable | Select-Object -ExpandProperty BaseUtcOffset
         $oneExpectedOffset = (Get-TimeZone).BaseUtcOffset
-        $observedIdList -eq $oneExpectedOffset | Should Be $oneExpectedOffset
+        $oneExpectedOffset | Should BeIn $observedIdList
     }
 
     It "Call Get-TimeZone using ID param and single item" {

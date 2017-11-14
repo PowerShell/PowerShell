@@ -378,8 +378,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         BeforeEach {
             $file = New-Item -ItemType File -Path $filePath -Force
         }
-        AfterEach
-        {
+        AfterEach {
             Remove-Item -Force -Recurse -Path $dirPath -ErrorAction SilentlyContinue
             Remove-Item -Force -LiteralPath $newPath -ErrorAction SilentlyContinue
         }

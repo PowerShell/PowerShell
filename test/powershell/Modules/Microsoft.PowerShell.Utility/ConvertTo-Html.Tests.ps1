@@ -138,7 +138,9 @@ After the object
 
     It "Test ConvertTo-HTML meta with invalid properties should throw warning" {
         $parms = @{"authors"="John Doe";"keywords"="PowerShell,PSv6"}
-        ($customObject | ConvertTo-HTML -Meta $parms 3>&1) -match $parms["authors"]  | Should Be $true
+        # make this a string, rather than an array of string so match will behave
+        [string]$observedProperties = $customObject | ConvertTo-HTML -Meta $parms 3>&1
+        $observedProperties | Should Match $parms["authors"]
     }
 
     It "Test ConvertTo-HTML charset"{

@@ -67,8 +67,8 @@ set-psbreakpoint -command foo
 
     It "-script and -line can take multiple items" {
         $brk = sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName
-        $brk.Line | Should Be 11,12,13
-        $brk.Column | Should Be 1
+        $brk.Line | Should BeIn 11,12,13
+        $brk.Column | Should BeIn 1
         Remove-PSBreakPoint -Id $brk.Id
     }
 
