@@ -811,40 +811,34 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         private void DoCloseHelper()
         {
-            // Stop any transcription if we're the last runspace to exit
-            ExecutionContext executionContext = this.GetExecutionContext;
-            if (executionContext != null)
+            var isPrimaryRunspace = (Runspace.PrimaryRunspace == this);
+            var haveOpenRunspaces = false;
+            foreach (Runspace runspace in RunspaceList)
             {
-                Runspace hostRunspace = null;
-                try
+                if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
                 {
-                    hostRunspace = executionContext.EngineHostInterface.Runspace;
+                    haveOpenRunspaces = true;
+                    break;
                 }
-                catch (PSNotImplementedException)
+            }
+
+            // When closing the primary runspace, ensure all other local runspaces are closed.
+            var closeAllOpenRunspaces = isPrimaryRunspace && haveOpenRunspaces;
+
+            // Stop all transcriptions and unitialize AMSI if we're the last runspace to exit or we are exiting the primary runspace.
+            if (!haveOpenRunspaces)
+            {
+                ExecutionContext executionContext = this.GetExecutionContext;
+                if (executionContext != null)
                 {
-                    // EngineHostInterface.Runspace throws PSNotImplementedException if there
-                    // is no interactive host.
+                    PSHostUserInterface hostUI = executionContext.EngineHostInterface.UI;
+                    if (hostUI != null)
+                    {
+                        hostUI.StopAllTranscribing();
+                    }
                 }
 
-                if ((hostRunspace == null) || (this == hostRunspace))
-                {
-                    // We should close transcripting only if we are closing the last opened runspace.
-                    foreach (Runspace runspace in RunspaceList)
-                    {
-                        // At this stage, the last opened runspace should be at closing state.
-                        if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
-                        {
-                            return;
-                        }
-                    }
-
-                    PSHostUserInterface host = executionContext.EngineHostInterface.UI;
-                    if (host != null)
-                    {
-                        host.StopAllTranscribing();
-                    }
-                    AmsiUtils.Uninitialize();
-                }
+                AmsiUtils.Uninitialize();
             }
 
             // Generate the shutdown event
@@ -852,7 +846,6 @@ namespace System.Management.Automation.Runspaces
                 Events.GenerateEvent(PSEngineEvent.Exiting, null, new object[] { }, null, true, false);
 
             //Stop all running pipelines
-
             //Note:Do not perform the Cancel in lock. Reason is
             //Pipeline executes in separate thread, say threadP.
             //When pipeline is canceled/failed/completed in
@@ -897,8 +890,18 @@ namespace System.Management.Automation.Runspaces
             //Raise Event
             RaiseRunspaceStateEvents();
 
-            // Report telemetry if we have no more open runspaces.
+            if (closeAllOpenRunspaces)
+            {
+                foreach (Runspace runspace in RunspaceList)
+                {
+                    if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+                    {
+                        runspace.Dispose();
+                    }
+                }
+            }
 
+            // Report telemetry if we have no more open runspaces.
 #if LEGACYTELEMETRY
             bool allRunspacesClosed = true;
             bool hostProvidesExitTelemetry = false;

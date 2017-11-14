@@ -521,6 +521,29 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// A PrimaryRunspace is a runspace that persists for the entire lifetime of the PowerShell session. It is only
+        /// closed or disposed when the session is ending.  So when the PrimaryRunspace is closing it will trigger on-exit
+        /// cleanup that includes closing any other local runspaces left open, and will allow the process to exit.
+        /// </summary>
+        internal static Runspace PrimaryRunspace
+        {
+            get
+            {
+                return s_primaryRunspace;
+            }
+
+            set
+            {
+                var result = Interlocked.CompareExchange<Runspace>(ref s_primaryRunspace, value, null);
+                if (result != null)
+                {
+                    throw new PSInvalidOperationException(RunspaceStrings.PrimaryRunspaceAlreadySet);
+                }
+            }
+        }
+        private static Runspace s_primaryRunspace;
+
+        /// <summary>
         /// Returns true if Runspace.DefaultRunspace can be used to
         /// create an instance of the PowerShell class with
         /// 'UseCurrentRunspace = true'.
