@@ -21,3 +21,29 @@ Describe 'Basic engine APIs' -Tags "CI" {
         }
     }
 }
+
+Describe "Clean up open Runspaces when exit powershell process" -Tags "Feature" {
+    It "PowerShell process should not freeze at exit" {
+        $command = @'
+-c $rs = [runspacefactory]::CreateRunspacePool(1,5)
+$rs.Open()
+$ps = [powershell]::Create()
+$ps.RunspacePool = $rs
+$null = $ps.AddScript(1).Invoke()
+write-host should_not_hang_at_exit
+exit
+'@
+        $process = Start-Process pwsh -ArgumentList $command -PassThru
+        for ($i = 0; -not $process.HasExited -and $i -lt 5; $i++) {
+            Start-Sleep -Seconds 1
+        }
+
+        $expect = "powershell process exits in 5 seconds"
+        if (-not $process.HasExited) {
+            Stop-Process -InputObject $process -Force
+            "powershell process doesn't exit in 5 seconds" | Should Be $expect
+        } else {
+            $expect | Should Be $expect
+        }
+    }
+}
