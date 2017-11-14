@@ -474,9 +474,9 @@ function Expand-PSSignedBuild
     $psModulePath = Split-Path -path $PSScriptRoot
     # Expand unsigned build
     $buildPath = Join-Path -path $psModulePath -childpath 'ExpandedBuild'
-    New-Item -path $buildPath -itemtype Directory -force
+    $null = New-Item -path $buildPath -itemtype Directory -force
     Expand-Archive -path $BuildZip -destinationpath $buildPath -Force
-    remove-item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
+    Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
     $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
 
