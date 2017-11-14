@@ -2305,12 +2305,11 @@ function Restore-PSModule
             PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
         }
 
-        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
-        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
-        if($ev)
-        {
-            throw ("Failed to register repository '{0}'" -f $RepositoryName)
-        }
+        Invoke-ScriptBlockWithRetry -ScriptBlock {
+            param($RepositoryName, $SourceLocation)
+            log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
+            PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorAction Stop
+        } -Retries 3 -ArgumentList @($RepositoryName,$SourceLocation)
 
         $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
         if(-not $regVar)
@@ -2336,14 +2335,21 @@ function Restore-PSModule
             $command.Add("RequiredVersion", $RequiredVersion)
         }
 
-        # pull down the module
-        log "running save-module $_"
-        PowerShellGet\Save-Module @command -Force
+        Invoke-ScriptBlockWithRetry -ScriptBlock {
+            param($command)
+            # pull down the module
+            log "running save-module $_"
+            PowerShellGet\Save-Module @command -Force
+        } -Retries 3 -ArgumentList @($command)
 
         # Remove PSGetModuleInfo.xml file
-        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
-            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
-        }
+        Invoke-ScriptBlockWithRetry -ScriptBlock {
+            param($RepositoryName,$Destination)
+            # pull down the module
+            Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
+                Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
+            }
+        } -Retries 3 -ArgumentList @($RepositoryName,$Destination)
     }
 
     # Clean up
@@ -2355,6 +2361,42 @@ function Restore-PSModule
             log "Unregistering PSRepository with name: $RepositoryName"
             PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
         }
+    }
+}
+
+function Invoke-ScriptBlockWithRetry
+{
+    param(
+        [Parameter(Mandatory)]
+        [ScriptBlock]$ScriptBlock,
+        [int]$Retries = 3,
+        [object[]] $ArgumentList
+    )
+
+    $originalErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Stop'
+    try
+    {    
+        $retry=0
+        while($retry -le $Retries)
+        {
+            $retry++
+            Write-Verbose -message "Executing $ScriptBlock - try $retry"
+            try
+            {
+                return $ScriptBlock.InvokeReturnAsIs($ArgumentList)
+            }
+            catch
+            {
+                $lastError = $_
+            }
+        }
+        Write-Verbose -message "throwing last error"
+        throw $lastError
+    }
+    finally
+    {
+        $ErrorActionPreference=$originalErrorActionPreference
     }
 }
 
