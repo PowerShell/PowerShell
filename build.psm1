@@ -568,7 +568,7 @@ Fix steps:
         if ($ReleaseTagToUse) {
             $ReleaseVersion = $ReleaseTagToUse
         } else {
-            $ReleaseVersion = (Get-PSCommitId -WarningAction SilentlyContinue) -replace '^v'
+            $ReleaseVersion = (Get-PSCommitId) -replace '^v'
         }
 
         Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" "$($Options.Output)" --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `

@@ -322,7 +322,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             $expected = $baseline + 20
 
             if ($IsWindows) {
-                $null = New-Item -Path $TESTDRIVE/file1 -ItemType File
+                $null = New-Item -Path $TESTDRIVE/file1
             }
 
             $testCases = @(
