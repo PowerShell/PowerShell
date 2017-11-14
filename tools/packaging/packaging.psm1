@@ -180,7 +180,10 @@ function Start-PSPackage {
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
                 $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
-                $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath (Join-Path -Path $source -ChildPath 'psoptions.json')
+                $psOptionsPath = Join-Path -Path $source -ChildPath 'psoptions.json'
+                log "Creating psoptions: $psOptionsPath..."
+                $Script:Options | ConvertTo-Json -Depth 3 | Out-File -Encoding utf8 -FilePath $psOptionsPath
+                log "Creating symbols zip: $zipPath..."
                 Compress-Archive -Path $zipSource -DestinationPath $zipPath
             }
             finally
