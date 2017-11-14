@@ -142,7 +142,7 @@
     <value>Cannot bind positional parameters because no names were given.</value>
   </data>
   <data name="AmbiguousParameterSet" xml:space="preserve">
-    <value>Parameter set cannot be resolved using the specified named parameters. One or more of the parameters issued cannot be used together. Do a Get-Help on your script/function/cmdlet for the syntax help.</value>
+    <value>Parameter set cannot be resolved using the specified named parameters. One or more parameters issued cannot be used together or a parameter which will decide the parameter set is not provided. Use Get-Help with your script, function, or cmdlet for syntax help.</value>
   </data>
   <data name="MissingMandatoryParameter" xml:space="preserve">
     <value>Cannot process command because of one or more missing mandatory parameters:{1}.</value>
