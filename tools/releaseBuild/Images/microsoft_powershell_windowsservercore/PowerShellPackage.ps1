@@ -96,6 +96,8 @@ try{
         $pspackageParams += @{'WindowsRuntime'=$Runtime}
     }
 
+    Get-PSOptions | Out-String | Write-Verbose -Verbose
+
     if(!$Symbols.IsPresent)
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
