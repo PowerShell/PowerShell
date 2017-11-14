@@ -811,7 +811,8 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         private void DoCloseHelper()
         {
-            bool haveOpenRunspaces = false;
+            var isPrimaryRunspace = (Runspace.PrimaryRunspace == this);
+            var haveOpenRunspaces = false;
             foreach (Runspace runspace in RunspaceList)
             {
                 if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
@@ -821,11 +822,11 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            // When closing the interactive host runspace, ensure all other local runspaces are closed.
-            var closeAllOpenRunspaces = this.IsInteractiveHost && haveOpenRunspaces;
+            // When closing the primary runspace, ensure all other local runspaces are closed.
+            var closeAllOpenRunspaces = isPrimaryRunspace && haveOpenRunspaces;
 
-            // Stop all transcriptions and unitialize AMSI if we're the last runspace to exit or we are an exiting interactive host.
-            if (this.IsInteractiveHost || !haveOpenRunspaces)
+            // Stop all transcriptions and unitialize AMSI if we're the last runspace to exit or we are exiting the primary runspace.
+            if (isPrimaryRunspace || !haveOpenRunspaces)
             {
                 ExecutionContext executionContext = this.GetExecutionContext;
                 if (executionContext != null)
@@ -889,7 +890,6 @@ namespace System.Management.Automation.Runspaces
             //Raise Event
             RaiseRunspaceStateEvents();
 
-            // Close all open runspaces to ensure that any associated pipeline thread is released.
             if (closeAllOpenRunspaces)
             {
                 foreach (Runspace runspace in RunspaceList)
@@ -902,7 +902,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Report telemetry if we have no more open runspaces.
-
+            // TODO: Is this still needed?
 #if LEGACYTELEMETRY
             bool allRunspacesClosed = true;
             bool hostProvidesExitTelemetry = false;

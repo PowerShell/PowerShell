@@ -521,6 +521,35 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
+        /// A PrimaryRunspace is a runspace that persists for the entire lifetime of the PowerShell session. It is only
+        /// closed or disposed when the session is ending.  So when the PrimaryRunspace is closing it will trigger on-exit
+        /// cleanup that includes closing any other local runspaces left open, and will allow the process to exit.
+        /// </summary>
+        internal static Runspace PrimaryRunspace
+        {
+            get
+            {
+                return s_primaryRunspace;
+            }
+
+            set
+            {
+                lock (s_syncObject)
+                {
+                    if (s_primaryRunspace == null)
+                    {
+                        s_primaryRunspace = value;
+                    }
+                    else
+                    {
+                        throw new PSInvalidOperationException(RunspaceStrings.PrimaryRunspaceAlreadySet);
+                    }
+                }
+            }
+        }
+        private static Runspace s_primaryRunspace;
+
+        /// <summary>
         /// Returns true if Runspace.DefaultRunspace can be used to
         /// create an instance of the PowerShell class with
         /// 'UseCurrentRunspace = true'.
@@ -629,14 +658,6 @@ namespace System.Management.Automation.Runspaces
                 return !(this is LocalRunspace || ConnectionInfo == null);
             }
         }
-
-        /// <summary>
-        /// When true this property indicates that this runspace is associated with an interactive session,
-        /// such as a runspace for the PowerShell console.
-        /// A runspace designated as interactive host means that it is the primary runspace, and when it closes
-        /// any other open runspace on the system should be forcibly closed.
-        /// </summary>
-        public bool IsInteractiveHost { get; set; }
 
         /// <summary>
         /// Retrieve information about current state of the runspace
