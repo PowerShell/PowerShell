@@ -148,8 +148,9 @@ try {
     if (Test-Path $Destination) {
         Write-Verbose "Copying files" -Verbose
         # only copy files as folders will already exist at $Destination
-        Get-ChildItem -Recurse -Path "$contentPath\*" -File | ForEach-Object {
-            Copy-Item $_ -Destination $Destination
+        Get-ChildItem -Recurse -Path "$contentPath" -File | ForEach-Object {
+            $DestinationFilePath = Join-Path $Destination $_.fullname.replace($contentPath,"")
+            Copy-Item $_.fullname -Destination $DestinationFilePath
         }
     } else {
         Move-Item -Path $contentPath -Destination $Destination
