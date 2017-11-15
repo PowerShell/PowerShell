@@ -47,7 +47,7 @@
         {
             "label": "Clean Build",
             "type": "shell",
-            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Clean",
+            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Clean -Output (Join-Path ${workspaceFolder} debug)",
             "problemMatcher": "$msCompile"
         },
         {
