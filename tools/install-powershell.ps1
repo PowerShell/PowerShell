@@ -207,10 +207,8 @@ try {
     }
 
     # Edit icon to disambiguate daily builds.
-    if ($IsWinEnv -and $Daily.IsPresent)
-    {
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
-        {
+    if ($IsWinEnv -and $Daily.IsPresent) {
+        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             Write-Verbose "Install RCEdit for modifying exe resources"
             $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
             New-Item -Path "~/.rcedit" -Type Directory -Force > $null
