@@ -8,7 +8,7 @@
             "justMyCode": false,
             "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/pwsh",
-            "preLaunchTask": "build",
+            "preLaunchTask": "Build",
             "externalConsole": true,
             "cwd": "${workspaceRoot}"
         },

@@ -569,24 +569,19 @@ Fix steps:
             $ReleaseVersion = $ReleaseTagToUse
         } else {
             $ReleaseVersion = (Get-PSCommitId) -replace '^v'
-            $fileVersion = $ReleaseVersion.Split("-")[0]
         }
+        # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value 
         if (!$ReleaseVersion) {
             $ReleaseVersion = "6.0.0"
             $fileVersion = "6.0.0"
+        } else {
+            $fileVersion = $ReleaseVersion.Split("-")[0]
         }
 
-        Write-Verbose "Release version: $ReleaseVersion" -Verbose
-
+        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
         $pwshPath = $Options.Output
-        if ($Environment.IsWindows) {
-            if (!$pwshPath.EndsWith("pwsh.exe")) {
-                $pwshPath = Join-Path $Options.Output "pwsh.exe"
-            }
-        } else {
-            if (!$pwshPath.EndsWith("pwsh")) {
-                $pwshPath = Join-Path $Options.Output "pwsh"
-            }
+        if (!$pwshPath.EndsWith("pwsh.exe")) {
+            $pwshPath = Join-Path $Options.Output "pwsh.exe"
         }
 
         Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
