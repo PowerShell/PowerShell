@@ -461,7 +461,7 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish")
+    $Arguments = @("publish","/property:GenerateFullPaths=true")
     if ($Output) {
         $Arguments += "--output", $Output
     }
@@ -570,7 +570,7 @@ Fix steps:
         } else {
             $ReleaseVersion = (Get-PSCommitId) -replace '^v'
         }
-        # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value 
+        # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value
         if (!$ReleaseVersion) {
             $ReleaseVersion = "6.0.0"
             $fileVersion = "6.0.0"
