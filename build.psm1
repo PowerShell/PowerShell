@@ -462,7 +462,7 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish")
+    $Arguments = @("publish","/property:GenerateFullPaths=true")
     if ($Output) {
         $Arguments += "--output", $Output
     }
@@ -573,9 +573,22 @@ Fix steps:
         } else {
             $ReleaseVersion = (Get-PSCommitId -WarningAction SilentlyContinue) -replace '^v'
         }
+        # in VSCode, depending on where you started it from, the git commit id may be empty so provide a default value
+        if (!$ReleaseVersion) {
+            $ReleaseVersion = "6.0.0"
+            $fileVersion = "6.0.0"
+        } else {
+            $fileVersion = $ReleaseVersion.Split("-")[0]
+        }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" "$($Options.Output)" --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
-            --set-file-version $ReleaseVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
+        # in VSCode, the build output folder doesn't include the name of the exe so we have to add it for rcedit
+        $pwshPath = $Options.Output
+        if (!$pwshPath.EndsWith("pwsh.exe")) {
+            $pwshPath = Join-Path $Options.Output "pwsh.exe"
+        }
+
+        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
+            --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
     }
 

@@ -1,16 +1,63 @@
 {
-    "version": "0.1.0",
-    "command": "pwsh",
-    "isShellCommand": true,
-    "showOutput": "always",
-    "suppressTaskName": true,
-    "args": [ "-command" ],
+    "version": "2.0.0",
+
+    "windows": {
+        "options": {
+            "shell": {
+                "executable": "pwsh.exe",
+                "args": [
+                    "-NoProfile",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-Command"
+                ]
+            }
+        }
+    },
+    "linux": {
+        "options": {
+            "shell": {
+                "executable": "/usr/bin/pwsh",
+                "args": [
+                    "-NoProfile",
+                    "-Command"
+                ]
+            }
+        }
+    },
+    "osx": {
+        "options": {
+            "shell": {
+                "executable": "/usr/local/bin/pwsh",
+                "args": [
+                    "-NoProfile",
+                    "-Command"
+                ]
+            }
+        }
+    },
 
     "tasks": [
         {
-            "taskName": "build",
-            "args": [ "Import-Module ${workspaceRoot}/build.psm1; Start-PSBuild -Output ${workspaceRoot}/debug" ],
-            "isBuildCommand": true,
+            "label": "Bootstrap",
+            "type": "shell",
+            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBootstrap",
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Clean -Output (Join-Path ${workspaceFolder} debug)",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Output (Join-Path ${workspaceFolder} debug)",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "problemMatcher": "$msCompile"
         }
     ]
