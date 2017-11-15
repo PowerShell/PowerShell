@@ -104,6 +104,7 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+    <HighEntropyVA>true</HighEntropyVA>
   </PropertyGroup>
 
 </Project>
