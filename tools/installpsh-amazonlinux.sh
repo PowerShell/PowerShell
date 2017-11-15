@@ -2,8 +2,8 @@
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
-#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-suse.sh) ARGUMENTS
-#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-suse.sh) <ARGUMENTS>
+#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-amazonlinux.sh) ARGUMENTS
+#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-amazonlinux.sh) <ARGUMENTS>
 
 #Usage - if you do not have the ability to run scripts directly from the web, 
 #        pull all files in this repo folder and execute, this script
@@ -21,9 +21,9 @@
 VERSION="1.1.2"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
-thisinstallerdistro=suse
+thisinstallerdistro=amazonlinux
 repobased=false
-gitscriptname="installpsh-suse.psh"
+gitscriptname="installpsh-amazonlinux.psh"
 
 echo
 echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
@@ -40,18 +40,25 @@ trap '
   kill -s INT "$$"
 ' INT
 
-#Verify The Installer Choice (for direct runs of this script)
 lowercase(){
-    #echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
-    echo "$1" | tr [A-Z] [a-z]
+    echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
+
+OS=`lowercase \`uname\``
+KERNEL=`uname -r`
+MACH=`uname -m`
+
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
+    SCRIPTFOLDER=$(dirname $(readlink -f $0))
 elif [ "${OS}" == "darwin" ]; then
     OS=osx
     DistroBasedOn=osx
+    # readlink doesn't work the same on macOS
+    SCRIPTFOLDER=$(dirname $0)
 else
+    SCRIPTFOLDER=$(dirname $(readlink -f $0))
     OS=`uname`
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
@@ -64,20 +71,46 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+            DIST=`cat /etc/redhat-release |sed s/\ release.*//`
+            PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
+            REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+        elif [ -f /etc/system-release ] ; then
+            DIST=`cat /etc/system-release |sed s/\ release.*//`
+            PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
+            REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
+            PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
+            REV=`cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //`
         elif [ -f /etc/mandrake-release ] ; then
             DistroBasedOn='mandrake'
+            PSUEDONAME=`cat /etc/mandrake-release | sed s/.*\(// | sed s/\)//`
+            REV=`cat /etc/mandrake-release | sed s/.*release\ // | sed s/\ .*//`
         elif [ -f /etc/debian_version ] ; then
             DistroBasedOn='debian'
+            DIST=`cat /etc/lsb-release | grep '^DISTRIB_ID' | awk -F=  '{ print $2 }'`
+            PSUEDONAME=`cat /etc/lsb-release | grep '^DISTRIB_CODENAME' | awk -F=  '{ print $2 }'`
+            REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
         fi
         if [ -f /etc/UnitedLinux-release ] ; then
-            DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION//`]"
-            DistroBasedOn=unitedlinux
+            DIST="${DIST}[`cat /etc/UnitedLinux-release | tr "\n" ' ' | sed s/VERSION.*//`]"
         fi
         OS=`lowercase $OS`
         DistroBasedOn=`lowercase $DistroBasedOn`
+        readonly OS
+        readonly DIST
+        readonly DistroBasedOn
+        readonly PSUEDONAME
+        readonly REV
+        readonly KERNEL
+        readonly MACH
     fi
+
 fi
 
 if [ "$DistroBasedOn" != "$thisinstallerdistro" ]; then
@@ -104,47 +137,25 @@ if [[ "$SUDO" -eq "sudo" ]]; then
 fi
 
 #Collect any variation details if required for this distro
-REV=`cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //`
-MAJORREV=`echo $REV | sed 's/\..*//'`
-#END Collect any variation details if required for this distro
-
-#If there are known incompatible versions of this distro, put the test, message and script exit here:
-if [[ $MAJORREV < 42 ]]; then
-    echo "OpenSUSE $VERSION_ID is not supported!" >&2
-    exit 2
-fi
 
 #END Verify The Installer Choice
 
 echo
 echo "*** Installing prerequisites for PowerShell Core..."
-$SUDO zypper --non-interactive install \
-        glibc-locale \
-        glibc-i18ndata \
-        tar \
+$SUDO yum install -y \
         curl \
         libunwind \
         libicu \
+        libcurl \
         openssl \
-    && zypper --non-interactive clean --all
+        libuuid.x86_64 \
+    && yum clean all
 
 ##END Check requirements and prerequisites
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
 release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
-
-#REPO BASED (Not ready yet)
-#echo "*** Setting up PowerShell Core repo..."
-#echo "*** Current version on git is: $release, repo version may differ slightly..."
-## Install the Microsoft public key so that zypper trusts the package
-#sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-##Add the Repo
-#$SUDO sh -c 'echo -e "[code]\nname=PowerShell Core\nbaseurl=https://packages.microsoft.com/yumrepos/microsoft-sles12-prod\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/zypp/repos.d/powershellcore.repo'
-## Update zypper
-#$SUDO zypper refresh
-## Install PowerShell
-#$SUDO zypper --non-interactive install powershell
 
 #DIRECT DOWNLOAD
 pwshlink=/usr/bin/pwsh
@@ -194,22 +205,12 @@ fi
 
 if [[ "'$*'" =~ includeide ]] ; then
     echo
-    echo "*** Installing VS Code PowerShell IDE..."
-    echo "*** Setting up VS Code repo..."
-    $SUDO sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/zypp/repos.d/vscode.repo'
-    $SUDO zypper refresh
-    $SUDO zypper --non-interactive install code
-
-    echo
-    echo "*** Installing VS Code PowerShell Extension"
-    code --install-extension ms-vscode.PowerShell
+    echo "Amazon Linux does not have a desktop manager to support vscode, ignoring -includeide"
 fi
 
-
 if [[ "'$*'" =~ -interactivetesting ]] ; then
-    echo "*** Loading test code in VS Code"
-    curl -O ./testpowershell.ps1 https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/testpowershell.ps1
-    code ./testpowershell.ps1        
+    echo
+    echo "Amazon Linux does not have a desktop manager to support vscode, ignoring -includeide"
 fi
 
 if [[ "$repobased" == true ]] ; then

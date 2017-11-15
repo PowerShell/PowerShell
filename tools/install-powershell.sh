@@ -75,10 +75,14 @@ else
             PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
             REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
         elif [ -f /etc/system-release ] ; then
-            DistroBasedOn='redhat'
             DIST=`cat /etc/system-release |sed s/\ release.*//`
             PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
             REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
             PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
@@ -130,7 +134,7 @@ if [[ "'$*'" =~ appimage ]] ; then
       echo "Pulling it from \"$gitreposcriptroot/appimage.sh\""
       bash <(wget -qO- $gitreposcriptroot/appimage.sh) $@
    fi
-elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ]; then
+elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
     echo "Configuring PowerShell Core Enviornment for: $DistroBasedOn $DIST $REV"
     if [ -f $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh ]; then
       #Script files were copied local - use them
