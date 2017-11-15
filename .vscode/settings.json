@@ -1,0 +1,16 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "markdownlint.config": {
+    "MD004": false,
+    "MD024": false,
+    "MD033": false,
+    "MD034": false,
+    "MD038": false,
+    "MD042": false
+  },
+  "[powershell]": {
+    "files.trimTrailingWhitespace": true
+  }
+}
