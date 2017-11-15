@@ -119,8 +119,8 @@ try {
         Install-Package -InputObject $package -Destination $tempDir -ExcludeVersion > $null
         $contentPath = [System.IO.Path]::Combine($tempDir, $packageName, "content")
     } else {
-        $metadata = Invoke-RestMethod https://api.github.com/repos/powershell/powershell/releases/latest
-        $release = $metadata.tag_name -replace '^v'
+        $metadata = Invoke-RestMethod https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/metadata.json
+        $release = $metadata.ReleaseTag -replace '^v'
 
         $packageName = if ($IsWinEnv) {
             "PowerShell-${release}-win-${architecture}.zip"
