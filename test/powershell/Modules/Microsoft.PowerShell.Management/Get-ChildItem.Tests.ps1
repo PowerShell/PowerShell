@@ -76,9 +76,14 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters" {
-            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6
+            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6 
             (Get-ChildItem -Path $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
             (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+        }
+        
+        It "get-childitem -LiteralPath should accept 'Include' or 'Exclude' filter" {
+            (Get-ChildItem -LiteralPath $PSHOME -Exclude *).Count | Should Be 0
+            (Get-ChildItem -LiteralPath $PSHOME -Include *.dll).Count | Should Be (Get-ChildItem $PSHOME -Include *.dll).Count
         }
     }
 

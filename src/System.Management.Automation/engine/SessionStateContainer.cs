@@ -1648,7 +1648,25 @@ namespace System.Management.Automation
 
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
 
-                if (path != null && this.ItemExists(providerInstance, path, context))
+                if (
+                    (context.Include != null && context.Include.Count > 0) ||
+                    (context.Exclude != null && context.Exclude.Count > 0))
+                {
+                    // Do the recursion manually so that we can apply the
+                    // include and exclude filters
+                    int unUsedChildrenNotMatchingFilterCriteria = 0;
+                try
+                {
+                    // Temeporary set literal path as false to apply filter
+                    context.SuppressWildcardExpansion = false;
+                    ProcessPathItems(providerInstance, path, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                }
+                finally
+                {
+                    context.SuppressWildcardExpansion = true;       
+                }
+                }
+                else if (path != null && this.ItemExists(providerInstance, path, context))
                 {
                     if (IsItemContainer(providerInstance, path, context))
                     {
