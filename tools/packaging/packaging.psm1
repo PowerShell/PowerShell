@@ -451,7 +451,6 @@ function New-PSSignedBuildZip
     $name = split-path -Path $BuildPath -Leaf
     $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
     Compress-Archive -Path $BuildPath\* -DestinationPath $zipLocationPath
-    Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name]$zipLocationPath"
     if ($VstsVariableName)
     {
         # set VSTS variable with path to package files
