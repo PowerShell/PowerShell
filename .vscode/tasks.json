@@ -48,7 +48,7 @@
             "label": "Clean Build",
             "type": "shell",
             "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSBuild -Clean",
-            "problemMatcher": []
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "Build",
@@ -59,16 +59,6 @@
                 "isDefault": true
             },
             "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "Test",
-            "type": "shell",
-            "command": "Import-Module ${workspaceFolder}/build.psm1; Start-PSPester -Path ${workspaceFolder}/test",
-            "group": {
-                "kind": "test",
-                "isDefault": true
-            },
-            "problemMatcher": "$pester"
         }
     ]
 }
