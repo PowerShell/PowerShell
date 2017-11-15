@@ -78,7 +78,7 @@ Describe "Set-Location" -Tags "CI" {
 
         It 'Location History is limited' {
             $initialLocation = (Get-Location).Path
-            $maximumLocationHistory = 1000
+            $maximumLocationHistory = 20
             foreach ($i in 1..$maximumLocationHistory) {
                 Set-Location ([System.IO.Path]::GetTempPath())
             }
