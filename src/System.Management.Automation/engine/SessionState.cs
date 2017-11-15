@@ -67,7 +67,8 @@ namespace System.Management.Automation
             // is used for the pushd and popd commands
 
             _workingLocationStack = new Dictionary<String, Stack<PathInfo>>(StringComparer.OrdinalIgnoreCase);
-            const int locationHistoryLimit = 20; # conservative choice to limit the memory impact in case of a regression
+            // conservative choice to limit the memory impact in case of a regression
+            const int locationHistoryLimit = 20;
             _workingLocationHistoryStack = new BoundedStack<PathInfo>(locationHistoryLimit);
 
             GlobalScope = new SessionStateScope(null);
