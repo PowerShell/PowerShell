@@ -1655,16 +1655,16 @@ namespace System.Management.Automation
                     // Do the recursion manually so that we can apply the
                     // include and exclude filters
                     int unUsedChildrenNotMatchingFilterCriteria = 0;
-                try
-                {
-                    // Temeporary set literal path as false to apply filter
-                    context.SuppressWildcardExpansion = false;
-                    ProcessPathItems(providerInstance, path, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
-                }
-                finally
-                {
-                    context.SuppressWildcardExpansion = true;       
-                }
+                    try
+                    {
+                        // Temeporary set literal path as false to apply filter
+                        context.SuppressWildcardExpansion = false;
+                        ProcessPathItems(providerInstance, path, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                    }
+                    finally
+                    {
+                        context.SuppressWildcardExpansion = true;       
+                    }
                 }
                 else if (path != null && this.ItemExists(providerInstance, path, context))
                 {
