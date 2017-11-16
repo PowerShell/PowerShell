@@ -2,7 +2,7 @@
 
 FROM centos:7
 
-ARG POWERSHELL_VERSION=6.0.0-beta.9
+ARG POWERSHELL_VERSION=6.0.0-rc
 ARG IMAGE_NAME=microsoft/powershell:centos7
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

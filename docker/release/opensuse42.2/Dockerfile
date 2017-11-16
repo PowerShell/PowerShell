@@ -2,8 +2,8 @@
 
 FROM opensuse:42.2
 
-ARG POWERSHELL_VERSION=6.0.0-beta.9
-ARG POWERSHELL_PACKAGE=powershell-6.0.0-beta.9-linux-x64.tar.gz
+ARG POWERSHELL_VERSION=6.0.0-rc
+ARG POWERSHELL_PACKAGE=powershell-6.0.0-rc-linux-x64.tar.gz
 ARG IMAGE_NAME=microsoft/powershell:opensuse42.2
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
