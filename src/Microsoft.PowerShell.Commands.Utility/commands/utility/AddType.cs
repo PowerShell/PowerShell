@@ -187,11 +187,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (value != null)
                 {
-                    String.Join("\n", value);
-                    for (int counter = 0; counter < value.Length; counter++)
-                    {
-                        sourceCode += value[counter] + "\n";
-                    }
+                    sourceCode = String.Join("\n", value);
                 }
             }
         }
