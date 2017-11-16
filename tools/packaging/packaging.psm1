@@ -1088,10 +1088,10 @@ function Get-PackageSemanticVersion
     Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
     $packageVersionTokens = $Version.Split('.')
 
-    if (3 -eq $packageVersionTokens.Count) {
-        # In case the input is of the form a.b.c, add a '0' at the end for revision field
-        $packageSemanticVersion = $Version,'0' -join '.'
-    } elseif (3 -lt $packageVersionTokens.Count) {
+    if ($packageVersionTokens.Count -eq 3) {
+        # In case the input is of the form a.b.c, we use the same form
+        $packageSemanticVersion = $Version
+    } elseif ($packageVersionTokens.Count -eq 4) {
         # We have all the four fields
         $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
         if($NuGet.IsPresent)
