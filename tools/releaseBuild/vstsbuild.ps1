@@ -2,7 +2,7 @@
 param(
     [Parameter(ParameterSetName='packageSigned')]
     [Parameter(ParameterSetName='Build')]
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [string]$ReleaseTag,
 
     # full paths to files to add to container to run the build
@@ -33,7 +33,7 @@ DynamicParam {
     $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
     $Attributes.Add($ParameterAttr) > $null
     $Attributes.Add($ValidateSetAttr) > $null
-    
+
     # Create the parameter
     $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Name", [string], $Attributes)
     $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
@@ -57,7 +57,7 @@ End {
         Import-Module (Join-Path -path $PSScriptRoot -childpath '..\packaging')
 
         # Use temp as destination if not running in VSTS
-        $destFolder = $env:temp 
+        $destFolder = $env:temp
         if($env:Build_ArtifactStagingDirectory)
         {
             # Use artifact staging if running in VSTS
@@ -101,7 +101,7 @@ End {
     $unresolvedRepoRoot = Join-Path -Path $PSScriptRoot '../..'
     $resolvedRepoRoot = (Resolve-Path -Path $unresolvedRepoRoot).ProviderPath
 
-    try 
+    try
     {
         Write-Verbose "Starting build at $resolvedRepoRoot  ..." -Verbose
         Import-Module "$location/vstsBuild" -Force

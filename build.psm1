@@ -377,7 +377,7 @@ function Start-PSBuild {
 
         [switch]$CrossGen,
 
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
     )
@@ -1604,7 +1604,7 @@ function Publish-NuGetFeed
 {
     param(
         [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
     )
