@@ -11,7 +11,7 @@ function Start-PSPackage {
         [string]$Version,
 
         [Parameter(ParameterSetName = "ReleaseTag")]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
 
@@ -457,7 +457,7 @@ function New-PSSignedBuildZip
         log "Setting $VstsVariableName to $zipLocationPath"
         Write-Host "##vso[task.setvariable variable=$VstsVariableName]$zipLocationPath"
     }
-    else 
+    else
     {
         return $zipLocationPath
     }
