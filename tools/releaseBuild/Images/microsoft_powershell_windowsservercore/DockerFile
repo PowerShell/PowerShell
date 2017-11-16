@@ -12,8 +12,7 @@ SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-comma
 COPY dockerInstall.psm1 containerFiles/dockerInstall.psm1
 RUN Import-Module ./containerFiles/dockerInstall.psm1; `
     Install-ChocolateyPackage -PackageName git -Executable git.exe; `
-    Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe; `
-    Install-ChocolateyPackage -PackageName cmake.install -Executable cmake.exe -Cleanup
+    Install-ChocolateyPackage -PackageName nuget.commandline -Executable nuget.exe  -Cleanup
 
 # Install WIX
 ADD https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip /wix.zip
