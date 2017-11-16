@@ -100,8 +100,8 @@
 
 ### Compliance Work
 
-Compliance work is required for Microsoft to continue to
-sign and release packages from the project as official Microsoft packages.
+[Compliance](https://github.com/PowerShell/PowerShell/blob/master/docs/maintainers/issue-management.md#miscellaneous-labels)
+work is required for Microsoft to continue to sign and release packages from the project as official Microsoft packages.
 
 - Replace the word `hang` with something more appropriate and add rules about other terms. (#5213, #5297, #5358)
 - Use simplified names for compliance folders (#5388)
