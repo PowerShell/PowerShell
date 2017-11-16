@@ -10,6 +10,7 @@
 - Change `$OutputEncoding` default to be `UTF8` without `BOM` rather than `ASCII`. (#5369)
 - Add error on legacy credential over non-HTTPS for Web Cmdlets. (#5402) (Thanks @markekraus!)
 - Fix single value JSON `null` in `Invoke-RestMethod`. (#5338) (Thanks @markekraus!)
+- Add `PSTypeName` Support for `Import-Csv` and `ConvertFrom-Csv`. (#5389) (Thanks @markekraus!)
 
 ### Engine updates and fixes
 
@@ -51,7 +52,6 @@
 - Make `Import-Csv` support `CR`, `LF` and `CRLF` as line delimiters. (#5363) (Thanks @iSazonov!)
 - Fix spelling in Web Cmdlet errors. (#5427) (Thanks @markekraus!)
 - Add `SslProtocol` support to Web Cmdlets. (#5329) (Thanks @markekraus!)
-- Add `PSTypeName` Support for `Import-Csv` and `ConvertFrom-Csv`. (#5389) (Thanks @markekraus!)
 
 ### Build and Packaging Improvements
 
