@@ -8,7 +8,7 @@ param (
     # Destination location of the package on docker host
     [string] $destination = '/mnt',
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
@@ -27,7 +27,7 @@ try {
     Set-Location $location
     Import-Module "$location/build.psm1"
     Import-Module "$location/tools/packaging"
-    
+
     Start-PSBootstrap -Package -NoSudo
     Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
 
