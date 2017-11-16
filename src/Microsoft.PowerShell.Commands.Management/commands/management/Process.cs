@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -1780,6 +1781,28 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
+        /// If specified, wait for this number of seconds
+        /// </summary>
+        [Parameter]
+        [Alias("TimeoutSec")]
+        [ValidateNotNullOrEmpty]
+        [ValidateRange(1, 32767)]
+        public int Timeout
+        {
+            get
+            {
+                return _timeout;
+            }
+            set
+            {
+                _timeout = value * 1000;
+                _timeoutSpecified = true;
+            }
+        }
+        private int _timeout = System.Threading.Timeout.Infinite;
+        private bool _timeoutSpecified;
+
+        /// <summary>
         ///  Default Environment
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
@@ -2013,14 +2036,17 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Wait.IsPresent)
+            if (Wait.IsPresent || _timeoutSpecified)
             {
                 if (process != null)
                 {
                     if (!process.HasExited)
                     {
 #if UNIX
-                        process.WaitForExit();
+                        if (!process.WaitForExit(_timeout))
+                        {
+                            StopProcessOnTimeout(process);
+                        }
 #else
                         _waithandle = new ManualResetEvent(false);
 
@@ -2028,15 +2054,22 @@ namespace Microsoft.PowerShell.Commands
                         ProcessCollection jobObject = new ProcessCollection();
                         if (jobObject.AssignProcessToJobObject(process))
                         {
-                            // Wait for the job object to finish
-                            jobObject.WaitOne(_waithandle);
+                            // Wait for the job object to finish, or kill it if a timeout occurs
+                            jobObject.WaitOne(_waithandle, _timeout);
+                            if (!process.HasExited)
+                            {
+                                StopProcessOnTimeout(process);
+                            }
                         }
                         else if (!process.HasExited)
                         {
                             // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
                             process.Exited += new EventHandler(myProcess_Exited);
                             process.EnableRaisingEvents = true;
-                            process.WaitForExit();
+                            if (!process.WaitForExit(_timeout))
+                            {
+                                StopProcessOnTimeout(process);
+                            }
                         }
 #endif
                     }
@@ -2121,6 +2154,123 @@ namespace Microsoft.PowerShell.Commands
                     processEnvironment.Add(entry.Key.ToString(), entry.Value.ToString());
                 }
             }
+        }
+
+        /// <summary>
+        /// Attempt to stop the process when the timeout has expired.
+        /// <see cref="StopProcessCommand" /> is used to stop the process
+        /// </summary>
+        /// <param name="process">
+        /// The process that should be stopped
+        /// </param>
+        private void StopProcessOnTimeout(Process process)
+        {
+            string message = StringUtil.Format(ProcessResources.StartProcessTimeoutExceeded, process.ProcessName);
+            ErrorRecord er = new ErrorRecord(new TimeoutException(message), "StartProcessTimeoutExceeded", ErrorCategory.OperationTimeout, process);
+
+            StopProcessCommand stop = new StopProcessCommand();
+            stop.Id = GetProcessTreeIds(process);
+            foreach (Process p in stop.Invoke<Process>()) { }
+
+            ThrowTerminatingError(er);
+        }
+
+        /// <summary>
+        /// Gets IDs of descendant processes, started by a process
+        /// On Windows, this reads output from WMI commands
+        /// On UNIX, this reads output from `ps axo pid,ppid`
+        /// </summary>
+        /// <param name="parentProcess">
+        /// The parent process to use to resolve the process tree IDs
+        /// </param>
+        /// <returns>
+        /// IDs of the parent process and all its descendants
+        /// </returns>
+        private int[] GetProcessTreeIds(Process parentProcess)
+        {
+            List<int> stopProcessIds = new List<int> {parentProcess.Id};
+            string processRelationships = "";
+#if UNIX
+            try
+            {
+                Process ps = new Process();
+                ps.StartInfo.FileName = "ps";
+                ps.StartInfo.Arguments = "axo pid,ppid";
+                ps.StartInfo.UseShellExecute = false;
+                ps.StartInfo.RedirectStandardOutput = true;
+                ps.Start();
+
+                processRelationships = ps.StandardOutput.ReadToEnd();
+
+                ps.WaitForExit();
+                ps.Close();
+            }
+            catch (Win32Exception)
+            {
+                WriteWarning(
+                    StringUtil.Format(ProcessResources.CouldNotResolveProcessTree, parentProcess.ProcessName)
+                    + " "
+                    + ProcessResources.DescendantProcessesPossiblyRunning
+                );
+                return stopProcessIds.ToArray();
+            }
+#else
+            string searchQuery = "Select ProcessID, ParentProcessID From Win32_Process";
+            try
+            {
+                using (CimSession cimSession = CimSession.Create(null))
+                {
+                    IEnumerable<CimInstance> processCollection =
+                        cimSession.QueryInstances("root/cimv2", "WQL", searchQuery);
+                    StringBuilder sb = new StringBuilder();
+                    foreach (CimInstance processInstance in processCollection)
+                    {
+                        sb.Append(processInstance.CimInstanceProperties["ProcessID"].Value.ToString());
+                        sb.Append(' ');
+                        sb.Append(processInstance.CimInstanceProperties["ParentProcessID"].Value.ToString());
+                        sb.Append(Environment.NewLine);
+                    }
+                    processRelationships = sb.ToString();
+                }
+            }
+            catch (CimException)
+            {
+                WriteWarning(
+                    StringUtil.Format(ProcessResources.CouldNotResolveProcessTree, parentProcess.ProcessName)
+                    + " "
+                    + ProcessResources.DescendantProcessesPossiblyRunning
+                );
+                return stopProcessIds.ToArray();
+            }
+#endif
+
+            // processList - key: process ID, value: parent process ID
+            Dictionary<int, int> processList = new Dictionary<int, int>();
+            int pid = 0;
+            int ppid = 0;
+            string relationshipPattern = @"\s?([0-9]+)\s+([0-9]+)";
+            foreach (Match psLine in Regex.Matches(processRelationships, relationshipPattern))
+            {
+                pid = int.Parse(psLine.Groups[1].Value);
+                ppid = int.Parse(psLine.Groups[2].Value);
+                processList.Add(pid, ppid);
+            }
+
+            int position = 0;
+            do
+            {
+                foreach (KeyValuePair<int, int> process in processList)
+                {
+                    if (process.Value == stopProcessIds[position])
+                    {
+                        stopProcessIds.Add(process.Key);
+                    }
+                }
+
+                position++;
+            } while (position <= (stopProcessIds.Count - 1));
+
+            return stopProcessIds.ToArray();
         }
 
         private Process Start(ProcessStartInfo startInfo)
@@ -2605,12 +2755,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="waitHandleToUse">
         /// WaitHandle to use for waiting on the job object.
         /// </param>
-        internal void WaitOne(ManualResetEvent waitHandleToUse)
+        /// <param name="timeout">
+        /// Wait for this number of milliseconds before a time-out occurs
+        /// </param>
+        internal void WaitOne(ManualResetEvent waitHandleToUse, Int32 timeout = Timeout.Infinite)
         {
             TimerCallback jobObjectStatusCb = this.CheckJobStatus;
             using (Timer stateTimer = new Timer(jobObjectStatusCb, waitHandleToUse, 0, 1000))
             {
-                waitHandleToUse.WaitOne();
+                waitHandleToUse.WaitOne(timeout);
             }
         }
     }
