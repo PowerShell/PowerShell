@@ -1089,8 +1089,8 @@ function Get-PackageSemanticVersion
     $packageVersionTokens = $Version.Split('.')
 
     if ($packageVersionTokens.Count -eq 3) {
-        # In case the input is of the form a.b.c
-        $packageSemanticVersion = $Version -join '.'
+        # In case the input is of the form a.b.c, we use the same form
+        $packageSemanticVersion = $Version
     } elseif ($packageVersionTokens.Count -eq 4) {
         # We have all the four fields
         $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
