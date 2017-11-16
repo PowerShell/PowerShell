@@ -156,6 +156,19 @@ try {
         Move-Item -Path $contentPath -Destination $Destination
     }
 
+    # Edit icon to disambiguate daily builds.
+    if ($IsWinEnv -and $Daily.IsPresent) {
+        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+            Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
+            $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
+            New-Item -Path "~/.rcedit" -Type Directory -Force > $null
+            Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
+        }
+
+        Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
+        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_av_colors.ico"
+    }
+
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
@@ -204,19 +217,6 @@ try {
         if ($runningProcessName -ne 'pwsh') {
             $env:Path = $Destination + [System.IO.Path]::PathSeparator + $env:Path
         }
-    }
-
-    # Edit icon to disambiguate daily builds.
-    if ($IsWinEnv -and $Daily.IsPresent) {
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
-            Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
-            $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
-            New-Item -Path "~/.rcedit" -Type Directory -Force > $null
-            Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
-        }
-
-        Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
-        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_av_colors.ico"
     }
 
     Write-Host "PowerShell Core has been installed at $Destination" -ForegroundColor Green
