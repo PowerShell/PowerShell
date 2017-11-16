@@ -119,21 +119,6 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
     }
 
-    It 'Should complete about help topic' {
-
-        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
-
-        ## If help content does not exist, tab completion will not work. So update it first.
-        if(-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
-        {
-            Update-Help -Force -ErrorAction SilentlyContinue
-        }
-
-        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-        $res.CompletionMatches.Count | Should Be 1
-        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
-    }
-
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
@@ -950,6 +935,23 @@ dir -Recurse `
             }
             $completionOptions | Should Be ([string]::Join("", $expected))
         }
+    }
+}
+
+Describe "Tab completion help test" -Tags @('RequireAdminOnWindows', 'CI') {
+    It 'Should complete about help topic' {
+
+        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+
+        ## If help content does not exist, tab completion will not work. So update it first.
+        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
+        {
+            Update-Help -Force -ErrorAction SilentlyContinue
+        }
+
+        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+        $res.CompletionMatches.Count | Should Be 1
+        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
     }
 }
 
