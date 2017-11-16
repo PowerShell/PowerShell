@@ -3,6 +3,7 @@
 # Ensure PowerShell is available in the provided image
 
 param (
+    # Set default location to where VSTS cloned the repository locally.
     [string] $location = $env:BUILD_REPOSITORY_LOCALPATH,
 
     # Destination location of the package on docker host
@@ -16,8 +17,12 @@ param (
     [string[]]$ExtraPackage
 )
 
+# We must build in /PowerShell
+
+# cleanup the folder but don't delete it or the build agent will loose ownership of the folder
 Get-ChildItem -Path /PowerShell/* -Attributes Hidden,Normal,Directory | Remove-Item -Recurse -Force
 
+# clone the repositor to the location we must build from
 git clone $location /PowerShell
 
 $releaseTagParam = @{}
