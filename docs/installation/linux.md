@@ -715,6 +715,9 @@ sudo mkdir -p /opt/microsoft/powershell/6.0.0-rc
 # Expand powershell to the target folder
 sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/6.0.0-rc
 
+# Set execute permissions
+sudo chmod +x /usr/local/microsoft/powershell/6.0.0-rc/pwsh
+
 # Create the symbolic link that points to pwsh
 sudo ln -s /opt/microsoft/powershell/6.0.0-rc/pwsh /usr/bin/pwsh
 ```
@@ -730,6 +733,9 @@ sudo mkdir -p /usr/local/microsoft/powershell/6.0.0-rc
 
 # Expand powershell to the target folder
 sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell/6.0.0-rc
+
+# Set execute permissions
+sudo chmod +x /usr/local/microsoft/powershell/6.0.0-rc/pwsh
 
 # Create the symbolic link that points to pwsh
 sudo ln -s /usr/local/microsoft/powershell/6.0.0-rc/pwsh /usr/local/bin/pwsh
