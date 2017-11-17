@@ -80,7 +80,7 @@ The `Start-PSPackage` function delegates to `New-UnixPackage`.
 It relies on the [Effing Package Management][fpm] project,
 which makes building packages for any (non-Windows) platform a breeze.
 Similarly, the PowerShell man-page is generated from the Markdown-like file
-[`assets/powershell.1.ronn`][man] using [Ronn][].
+[`assets/pwsh.1.ronn`][man] using [Ronn][].
 The function `Start-PSBootstrap -Package` will install both these tools.
 
 To modify any property of the packages, edit the `New-UnixPackage` function.
@@ -94,7 +94,7 @@ license, category, dependencies, and file layout).
 To support side-by-side Unix packages, we use the following design:
 
 We will maintain a `powershell` package
-which owns the `/usr/bin/powershell` symlink,
+which owns the `/usr/bin/pwsh` symlink,
 is the latest version, and is upgradeable.
 This is the only package named `powershell`
 and similarly is the only package owning any symlinks,
@@ -136,7 +136,7 @@ Without `-Name` specified, the primary `powershell`
 package will instead be created.
 
 [fpm]: https://github.com/jordansissel/fpm
-[man]: ../../assets/powershell.1.ronn
+[man]: ../../assets/pwsh.1.ronn
 [ronn]: https://github.com/rtomayko/ronn
 
 ### Build and Packaging Examples
@@ -177,10 +177,7 @@ In the `release` branch, run `Publish-NuGetFeed` to generate PowerShell NuGet pa
 
 ```powershell
 # Assume the to-be-used release tag is 'v6.0.0-beta.1'
-$VersionSuffix = ("v6.0.0-beta.1" -split '-')[-1]
-
-# Generate NuGet packages
-Publish-NuGetFeed -VersionSuffix $VersionSuffix
+Publish-NuGetFeed -ReleaseTag 'v6.0.0-beta.1'
 ```
 
 PowerShell NuGet packages and the corresponding symbol packages will be generated at `PowerShell/nuget-artifacts` by default.
