@@ -5,7 +5,7 @@ set -e
 
 #
 # Example use:
-#     ./InstallTarballPackage.sh "6.0.0-rc" "powershell-6.0.0-rc-linux-x64.tar.gz"
+#     ./InstallTarballPackage.sh "6.0.0-beta.9" "powershell-6.0.0-beta.9-linux-x64.tar.gz"
 #
 usage() {
     echo "usage: $0 <powershell version> <powershell package name>"
