@@ -271,8 +271,10 @@ GetParentProcess
 GitCommitId
 globbing
 HelpersCommon.psm1
+Himura2la
 honors
 hostname
+IISResetMe
 IncludeUserName
 InformationRecord
 IoT
@@ -305,10 +307,12 @@ non-22
 non-CIM
 non-R2
 OAuth
+offthewoll
 oising
 oneget.org
 PetSerAl
 powercode
+PowershellNinja
 PowerShellProperties
 preview1-24530-04
 ProductVersion
@@ -322,6 +326,7 @@ PVS-Studio
 Pwrshplughin.dll
 raghav710
 Raspbian
+rc
 rc2-24027
 rc3-24011
 README.md
