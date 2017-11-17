@@ -177,8 +177,8 @@
   <data name="ProcessNotTerminated" xml:space="preserve">
     <value>This command stopped operation because process "{0} ({1})" is not stopped in the specified time-out.</value>
   </data>
-  <data name="StartProcessTimeoutExceeded" xml:space="preserve">
-    <value>This command stopped operation because process "{0}" did not complete within the specified time-out.</value>
+  <data name="StartProcessExitTimeoutExceeded" xml:space="preserve">
+    <value>This command stopped operation because process "{0}" did not exit within the specified time-out.</value>
   </data>
   <data name="InvalidStartProcess" xml:space="preserve">
     <value>This command cannot be run due to the error: {0}.</value>
