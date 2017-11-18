@@ -1920,7 +1920,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
 
 <#
 .Synopsis
-    Creates a Windows installer MSI file and assumes that the binaries are already built using 'Start-PSBuild'.
+    Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
     This only works on a Windows machine due to the usage of WiX.
 .EXAMPLE
     # This example shows how to produce a Debug-x64 installer for development purposes only.

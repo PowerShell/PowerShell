@@ -78,7 +78,7 @@ You can run our cross-platform Pester tests with `Start-PSPester`.
 
 We currently have the issue [#3400](https://github.com/PowerShell/PowerShell/issues/3400) tracking this task.
 
-## Building an installer
+## Building an installable Package
 
 The installer is `WiX` based. You can create a Debug-x64 MSI as follows:
 
