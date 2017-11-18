@@ -5,7 +5,7 @@ function Get-DockerEngineOs
     docker info --format '{{ .OperatingSystem }}'
 }
 
-# Call Docker with appropriate result checksfunction Invoke-Docker 
+# Call Docker with appropriate result checksfunction Invoke-Docker
 function Invoke-Docker
 {
     param(
@@ -33,7 +33,7 @@ function Invoke-Docker
     {
         $result = docker $command $params 2>&1
     }
-    else 
+    else
     {
         &'docker' $command $params 2>&1 | Tee-Object -Variable result -ErrorAction SilentlyContinue | Out-String -Stream -ErrorAction SilentlyContinue | Write-Host -ErrorAction SilentlyContinue
     }
@@ -58,7 +58,7 @@ function Invoke-Docker
     {
         return $false
     }
-    
+
     return $true
 }
 
@@ -72,7 +72,7 @@ function Get-LinuxContainer
             Path = "$psscriptroot/../release/$os"
         }
     }
-    
+
 }
 
 # Return a list of Windows Container Test Cases
@@ -117,7 +117,7 @@ function Get-TestContext
 {
     param(
         [ValidateSet('Linux','Windows','macOS')]
-        [string]$Type 
+        [string]$Type
     )
 
     $resultFileName = 'results.xml'
@@ -151,7 +151,7 @@ function Get-ContainerPowerShellVersion
         [string] $RepoName,
         [string] $Name
     )
-    
+
     $imageTag = "${script:repoName}:${Name}"
 
     if($TestContext.ForcePull)
@@ -202,7 +202,7 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.0-beta.9",
+        $PSVersion = "6.0.0-rc",
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
     )
@@ -253,6 +253,6 @@ function Test-PSPackage
     # in the end print results for all configurations
     Write-Verbose "Package validation results:" -Verbose
     $results
-    
+
     return $returnValue
 }
