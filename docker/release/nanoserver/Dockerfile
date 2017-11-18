@@ -16,7 +16,7 @@ ENV PS_DOWNLOAD_URL https://github.com/PowerShell/PowerShell/releases/download/v
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-RUN if (!($env:PS_VERSION -match '^\d+\.\d+\.\d+(-\w+(\.\d+)?)?$' )) {throw ('PS_Version ({0}) must match the regex "^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$"' -f $env:PS_VERSION)}
+RUN if (!($env:PS_VERSION -match '^\d+\.\d+\.\d+(-\w+(\.\d+)?)?$' )) {throw ('PS_Version ({0}) must match the regex "^\d+\.\d+\.\d+(-\w+(\.\d+)?)?$"' -f $env:PS_VERSION)}
 RUN Invoke-WebRequest $Env:PS_DOWNLOAD_URL -OutFile powershell.zip
 
 RUN Expand-Archive powershell.zip -DestinationPath \PowerShell
