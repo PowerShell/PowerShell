@@ -26,10 +26,6 @@ using namespace NativeMsh;
 // Forward declaration of class PwrshPlugIn
 class PwrshPlugIn;
 
-// To report the plugin completion using WSManPluginReportCompletion API
-// g_pPluginContext MUST be the same context that plugin provided to the WSManPluginStartup method
-PwrshPlugIn* g_pPluginContext;
-
 class PwrshPlugIn
 {
 private:
@@ -230,7 +226,6 @@ public:
         // storing the extra info for plugin use later.
         VerifyAndStoreExtraInfo(extraInfo, &initParameters);
         PwrshPlugIn* result = new PwrshPlugIn(applicationIdentification, initParameters);
-        g_pPluginContext = result;
         return result;
     }
 
