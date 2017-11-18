@@ -1918,6 +1918,17 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersion
 }
 
+<#
+.Synopsis
+    Creates a Windows installer MSI file and assumes that the binaries are already built using 'Start-PSBuild'.
+    This only works on a Windows machine due to the usage of WiX.
+.EXAMPLE
+    # This example shows how to produce a Debug-x64 installer for development purposes only.
+    cd $RootPathOfPowerShellCheckout
+    Import-Module .\build.psm1
+    Start-PSBuild
+    New-MSIPackage -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
 function New-MSIPackage
 {
     [CmdletBinding()]
@@ -1946,17 +1957,18 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
         [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath,
+        [ValidateScript({Test-Path $_})]
+        [string] $AssetsPath = "$PSScriptRoot\assets",
 
         # Path to license.rtf file - for the EULA
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $LicenseFilePath,
+        [ValidateScript({Test-Path $_})]
+        [string] $LicenseFilePath = "$PSScriptRoot\assets\license.rtf",
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
@@ -1986,6 +1998,11 @@ function New-MSIPackage
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
 
+    if ($null -eq (Get-Module packaging))
+    {
+        # Import Get-PackageSemanticVersion function from packaging module
+        Import-Module "$PSScriptRoot\tools\packaging\packaging.psd1"
+    }
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
