@@ -1918,18 +1918,6 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersion
 }
 
-<#
-.Synopsis
-    Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
-    This only works on a Windows machine due to the usage of WiX.
-.EXAMPLE
-    # This example shows how to produce a Debug-x64 installer for development purposes only.
-    cd $RootPathOfPowerShellCheckout
-    Import-Module .\build.psm1
-    Start-PSBuild
-    New-MSIPackage -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
-#>
-
 function Start-CrossGen {
     [CmdletBinding()]
     param(
