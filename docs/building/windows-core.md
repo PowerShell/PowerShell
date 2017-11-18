@@ -81,6 +81,7 @@ We currently have the issue [#3400](https://github.com/PowerShell/PowerShell/iss
 ## Building an installer
 
 The installer is `WiX` based. You can create a Debug-x64 MSI as follows:
+
 ````powershell
 Import-Module .\build.psm1
 Start-PSBuild
