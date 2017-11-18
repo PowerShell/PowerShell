@@ -674,13 +674,13 @@ dpkg -r powershell_6.0.0-rc-1.ubuntu.16.04_amd64.deb
 
 ## Raspbian
 
-Currently, PowerShell is only supported on Rasbian Stretch.
+Currently, PowerShell is only supported on Raspbian Stretch.
 
 ### Installation
 
 ```sh
 # Install prerequisites
-sudo apt-get install libunwind8 libicu57
+sudo apt-get install libunwind8
 
 # Grab the latest tar.gz
 wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-linux-arm32.tar.gz
