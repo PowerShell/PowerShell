@@ -77,13 +77,3 @@ You can run our cross-platform Pester tests with `Start-PSPester`.
 ## Building in Visual Studio
 
 We currently have the issue [#3400](https://github.com/PowerShell/PowerShell/issues/3400) tracking this task.
-
-## Building an installable Package
-
-The installer is `WiX` based. You can create a Debug-x64 MSI as follows:
-
-````powershell
-Import-Module .\build.psm1
-Start-PSBuild
-New-MSIPackage -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
-````
