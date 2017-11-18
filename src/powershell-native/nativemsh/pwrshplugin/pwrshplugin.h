@@ -1090,13 +1090,3 @@ public:
         return version;
     }
 };
-
-extern "C"
-void WINAPI PerformWSManPluginReportCompletion()
-{
-    // Now report the plugin completion, to indicate that plugin is ready to shutdown.
-    // This API is used by plugins to report completion
-    // - pluginContext MUST be the same context that plugin provided to the WSManPluginStartup method
-    // - flags are reserved, so 0
-    WSManPluginReportCompletion(g_pPluginContext, 0);
-}
