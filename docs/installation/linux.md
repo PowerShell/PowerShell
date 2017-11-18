@@ -672,6 +672,35 @@ chmod a+x powershell-6.0.0-rc-x86_64.AppImage
 dpkg -r powershell_6.0.0-rc-1.ubuntu.16.04_amd64.deb
 ```
 
+## Raspbian
+
+Currently, PowerShell is only supported on Rasbian Stretch.
+
+### Installation
+
+```sh
+# Install prerequisites
+sudo apt-get install libunwind8 libicu57
+
+# Grab the latest tar.gz
+wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-linux-arm32.tar.gz
+
+# Make folder to put powershell
+mkdir ~/powershell
+
+# Unpack the tar.gz file
+tar -xvf ./powershell-6.0.0-rc-linux-arm32.tar.gz -C ~/powershell
+
+# Start PowerShell
+~/powershell/pwsh
+```
+
+### Uninstallation - Raspbian
+
+```sh
+rm -rf ~/powershell
+```
+
 ## Binary Archives
 
 PowerShell binary `tar.gz` archives are provided for macOS and Linux platforms to enable advanced deployment scenarios.
