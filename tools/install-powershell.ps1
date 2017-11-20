@@ -1,6 +1,6 @@
 <#
 .Synopsis
-    Install PowerShell Core on Windows.
+    Install PowerShell Core on Windows, Linux or macOS.
 .DESCRIPTION
     By default, the latest PowerShell Core release package will be installed.
     If '-Daily' is specified, then the latest PowerShell Core daily package will be installed.
