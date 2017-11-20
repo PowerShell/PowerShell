@@ -806,7 +806,7 @@ namespace System.Management.Automation
                         parameterMetadata.CollectionTypeInformation.ElementType,
                         element,
                         false);
-                } while (ParserOps.MoveNext(null, null, ienum))
+                } while (ParserOps.MoveNext(null, null, ienum));
             }
 
             if (isEmpty && !parameterMetadata.AllowsEmptyCollectionArgument)
