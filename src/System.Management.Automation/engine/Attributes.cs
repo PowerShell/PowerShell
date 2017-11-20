@@ -1994,32 +1994,33 @@ namespace System.Management.Automation
             {
                 bool isEmpty = true;
                 IEnumerator ienum = LanguagePrimitives.GetEnumerator(arguments);
-                while (ienum.MoveNext())
+                if (ienum.MoveNext()) { isEmpty = false; }
+
+                // If the element of the collection is of value type, then no need to check for null
+                // because a value-type value cannot be null.
+                if (!isEmpty && !isElementValueType)
                 {
-                    isEmpty = false;
-                    // If the element of the collection is of value type, then no need to check for null
-                    // because a value-type value cannot be null.
-                    if (isElementValueType) { break; }
-
-                    object element = ienum.Current;
-                    if (element == null || element == AutomationNull.Value)
-                    {
-                        throw new ValidationMetadataException(
-                            "ArgumentIsNull",
-                            null,
-                            Metadata.ValidateNotNullOrEmptyCollectionFailure);
-                    }
-
-                    if (element is string elementAsString)
-                    {
-                        if (String.IsNullOrEmpty(elementAsString))
+                    do {
+                        object element = ienum.Current;
+                        if (element == null || element == AutomationNull.Value)
                         {
                             throw new ValidationMetadataException(
-                                "ArgumentCollectionContainsEmpty",
+                                "ArgumentIsNull",
                                 null,
                                 Metadata.ValidateNotNullOrEmptyCollectionFailure);
                         }
-                    }
+
+                        if (element is string elementAsString)
+                        {
+                            if (String.IsNullOrEmpty(elementAsString))
+                            {
+                                throw new ValidationMetadataException(
+                                    "ArgumentCollectionContainsEmpty",
+                                    null,
+                                    Metadata.ValidateNotNullOrEmptyCollectionFailure);
+                            }
+                        }
+                    } while (ienum.MoveNext());
                 }
 
                 if (isEmpty)
