@@ -43,7 +43,7 @@ char *GetFullyQualifiedName()
     }
 
     // return the first canonical name in the list
-    fullName = strndup(info->ai_canonname, strlen(info->ai_canonname));
+    fullName = strndup(info->ai_canonname, strnlen(info->ai_canonname, NI_MAXHOST));
 
     // only free info if getaddrinfo was successful
     freeaddrinfo(info);
