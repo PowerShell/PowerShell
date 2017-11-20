@@ -1173,7 +1173,7 @@ function Get-NugetSemanticVersion
     cd $RootPathOfPowerShellCheckout
     Import-Module .\build.psm1
     Start-PSBuild
-    Import-Module .\tools\packaging\packaging.psd1
+    Import-Module .\tools\packaging\packaging.psm1
     New-MSIPackage -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
