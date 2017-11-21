@@ -168,19 +168,20 @@ function Invoke-AppVeyorFull
 # Implements the AppVeyor 'build_script' step
 function Invoke-AppVeyorBuild
 {
-      # check to be sure our test tags are correct
-      $result = Get-PesterTag
-      if ( $result.Result -ne "Pass" ) {
+    $releaseTag = Get-ReleaseTag
+    # check to be sure our test tags are correct
+    $result = Get-PesterTag
+    if ( $result.Result -ne "Pass" ) {
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
-      }
+    }
 
-      if(Test-DailyBuild)
-      {
-          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
-      }
+    if(Test-DailyBuild)
+    {
+        Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -ReleaseTag $releaseTag
+    }
 
-      Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
+    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
 }
 
 # Implements the AppVeyor 'install' step
@@ -420,13 +421,19 @@ function Get-PackageName
     return $name
 }
 
+function Get-ReleaseTag
+{
+    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+    return $metadata.ReleaseTag+'-'+$env:APPVEYOR_BUILD_NUMBER
+
+}
+
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
     try {
-        $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
-        $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-        $releaseTag = $metadata.ReleaseTag+'-'+$env:APPVEYOR_BUILD_NUMBER
+        $releaseTag = Get-ReleaseTag
 
         $packageParams = @{}
         if($env:APPVEYOR_BUILD_VERSION)

@@ -171,7 +171,15 @@ if($Stage -eq 'Bootstrap')
 }
 elseif($Stage -eq 'Build')
 {
-    $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
+    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+    $releaseTag = $metadata.ReleaseTag
+
+    if($env:TRAVIS_BUILD_NUMBER)
+    {
+        $releaseTag = $metadata.ReleaseTag+'-'+$env:TRAVIS_BUILD_NUMBER
+    }
+
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
@@ -179,7 +187,7 @@ elseif($Stage -eq 'Build')
     $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
-        Start-PSBuild -CrossGen -PSModuleRestore
+        Start-PSBuild -CrossGen -PSModuleRestore -ReleaseTag $releaseTag
     }
     finally{
         $ProgressPreference = $originalProgressPreference
@@ -235,16 +243,10 @@ elseif($Stage -eq 'Build')
     }
 
     if ($createPackages) {
-        $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
-        $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-        $releaseTag = $metadata.ReleaseTag
 
         $packageParams = @{}
-        if($env:TRAVIS_BUILD_NUMBER)
-        {
-            $releaseTag = $metadata.ReleaseTag+'-'+$env:TRAVIS_BUILD_NUMBER
-            $packageParams += @{ReleaseTag=$releaseTag}
-        }
+        $packageParams += @{ReleaseTag=$releaseTag}
+
         # Only build packages for branches, not pull requests
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
         # Packaging AppImage depends on the deb package
