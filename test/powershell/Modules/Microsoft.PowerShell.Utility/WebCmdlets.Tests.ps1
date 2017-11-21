@@ -2740,22 +2740,22 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
 Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
 
     BeforeAll {
-        $response = Start-HttpListener -Port 8082
+        $response = Start-HttpListener -Port 8079
     }
 
     AfterAll {
-        $null = Stop-HttpListener -Port 8082
+        $null = Stop-HttpListener -Port 8079
         $response.PowerShell.Dispose()
     }
 
     It "Execute Invoke-WebRequest" {
-        $result = iwr "http://localhost:8082/PowerShell?test=response&output=hello" -TimeoutSec 5
+        $result = iwr "http://localhost:8079/PowerShell?test=response&output=hello" -TimeoutSec 5
         $result.StatusCode | Should Be "200"
         $result.Content | Should Be "hello"
     }
 
     It "Execute Invoke-RestMethod" {
-        $result = irm "http://localhost:8082/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
+        $result = irm "http://localhost:8079/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
         $result.Hello | Should Be "world"
     }
 }
