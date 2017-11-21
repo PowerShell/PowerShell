@@ -424,10 +424,14 @@ function Get-PackageName
 function Invoke-AppveyorFinish
 {
     try {
+        $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+        $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+        $releaseTag = $metadata.ReleaseTag+'-'+$env:APPVEYOR_BUILD_NUMBER
+
         $packageParams = @{}
         if($env:APPVEYOR_BUILD_VERSION)
         {
-            $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
+            $packageParams += @{ReleaseTag=$releaseTag}
         }
 
         # Build packages
@@ -454,7 +458,7 @@ function Invoke-AppveyorFinish
         }
         else
         {
-            $previewVersion = (git describe --abbrev=0).Split('-')
+            $previewVersion = $releaseTag.Split('-')
             $previewPrefix = $previewVersion[0]
             $previewLabel = $previewVersion[1].replace('.','')
 

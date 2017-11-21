@@ -235,11 +235,15 @@ elseif($Stage -eq 'Build')
     }
 
     if ($createPackages) {
+        $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+        $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+        $releaseTag = $metadata.ReleaseTag
+
         $packageParams = @{}
         if($env:TRAVIS_BUILD_NUMBER)
         {
-            $version = $BaseVersion + $env:TRAVIS_BUILD_NUMBER
-            $packageParams += @{Version=$version}
+            $releaseTag = $metadata.ReleaseTag+'-'+$env:TRAVIS_BUILD_NUMBER
+            $packageParams += @{ReleaseTag=$releaseTag}
         }
         # Only build packages for branches, not pull requests
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
