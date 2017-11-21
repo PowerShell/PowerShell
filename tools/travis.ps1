@@ -44,6 +44,21 @@ OS Type: $($PSVersionTable.OS) </br>
     }
 }
 
+function Get-ReleaseTag
+{
+    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+
+    $releaseTag = $metadata.NextReleaseTag
+    if($env:TRAVIS_BUILD_NUMBER)
+    {
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag+'.'+$env:TRAVIS_BUILD_NUMBER
+    }
+
+    return $releaseTag
+}
+
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
 # the location in azure is public readonly
@@ -171,7 +186,8 @@ if($Stage -eq 'Bootstrap')
 }
 elseif($Stage -eq 'Build')
 {
-    $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
+    $releaseTag = Get-ReleaseTag
+
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
@@ -179,7 +195,7 @@ elseif($Stage -eq 'Build')
     $ProgressPreference = 'SilentlyContinue'
     try {
         ## We use CrossGen build to run tests only if it's the daily build.
-        Start-PSBuild -CrossGen -PSModuleRestore
+        Start-PSBuild -CrossGen -PSModuleRestore -ReleaseTag $releaseTag
     }
     finally{
         $ProgressPreference = $originalProgressPreference
@@ -235,12 +251,10 @@ elseif($Stage -eq 'Build')
     }
 
     if ($createPackages) {
+
         $packageParams = @{}
-        if($env:TRAVIS_BUILD_NUMBER)
-        {
-            $version = $BaseVersion + $env:TRAVIS_BUILD_NUMBER
-            $packageParams += @{Version=$version}
-        }
+        $packageParams += @{ReleaseTag=$releaseTag}
+
         # Only build packages for branches, not pull requests
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
         # Packaging AppImage depends on the deb package
