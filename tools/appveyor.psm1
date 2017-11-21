@@ -430,7 +430,8 @@ function Get-ReleaseTag
     $releaseTag = $metadata.NextReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
-        $releaseTag = $metadata.ReleaseTag+'-'+$env:APPVEYOR_BUILD_NUMBER
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag+'.'+$env:APPVEYOR_BUILD_NUMBER
     }
 
     return $releaseTag

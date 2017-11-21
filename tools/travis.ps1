@@ -52,7 +52,8 @@ function Get-ReleaseTag
     $releaseTag = $metadata.NextReleaseTag
     if($env:TRAVIS_BUILD_NUMBER)
     {
-        $releaseTag = $metadata.ReleaseTag+'-'+$env:TRAVIS_BUILD_NUMBER
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag+'.'+$env:TRAVIS_BUILD_NUMBER
     }
 
     return $releaseTag
