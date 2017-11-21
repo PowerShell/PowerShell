@@ -189,9 +189,10 @@ function Invoke-AppVeyorInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
+    $releaseTag = Get-ReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
-        Update-AppveyorBuild -Version "$(Get-PSVersion -OmitCommitId)-$env:APPVEYOR_BUILD_NUMBER"
+        Update-AppveyorBuild -Version $releaseTag
     }
 
     if(Test-DailyBuild){
