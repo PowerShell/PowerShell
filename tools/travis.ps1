@@ -44,6 +44,20 @@ OS Type: $($PSVersionTable.OS) </br>
     }
 }
 
+function Get-ReleaseTag
+{
+    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+
+    $releaseTag = $metadata.NextReleaseTag
+    if($env:TRAVIS_BUILD_NUMBER)
+    {
+        $releaseTag = $metadata.ReleaseTag+'-'+$env:TRAVIS_BUILD_NUMBER
+    }
+
+    return $releaseTag
+}
+
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
 # the location in azure is public readonly
@@ -171,14 +185,7 @@ if($Stage -eq 'Bootstrap')
 }
 elseif($Stage -eq 'Build')
 {
-    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
-    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-    $releaseTag = $metadata.ReleaseTag
-
-    if($env:TRAVIS_BUILD_NUMBER)
-    {
-        $releaseTag = $metadata.ReleaseTag+'-'+$env:TRAVIS_BUILD_NUMBER
-    }
+    $releaseTag = Get-ReleaseTag
 
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))

@@ -426,8 +426,14 @@ function Get-ReleaseTag
 {
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
     $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-    return $metadata.ReleaseTag+'-'+$env:APPVEYOR_BUILD_NUMBER
 
+    $releaseTag = $metadata.NextReleaseTag
+    if($env:APPVEYOR_BUILD_NUMBER)
+    {
+        $releaseTag = $metadata.ReleaseTag+'-'+$env:APPVEYOR_BUILD_NUMBER
+    }
+
+    return $releaseTag
 }
 
 # Implements AppVeyor 'on_finish' step
