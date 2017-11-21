@@ -65,7 +65,7 @@ function Invoke-Docker
 # Return a list of Linux Container Test Cases
 function Get-LinuxContainer
 {
-    foreach($os in 'amazonlinux','centos7','opensuse42.2','ubuntu14.04','ubuntu16.04')
+    foreach($os in 'centos7','ubuntu14.04','ubuntu16.04')
     {
         Write-Output @{
             Name = $os
