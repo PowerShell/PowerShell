@@ -1,3 +1,4 @@
 {
-    "ReleaseTag": "v6.1.0-preview.1"
+    "ReleaseTag": "v6.0.0-rc",
+    "NextReleaseTag": "v6.0.0-review.1"
 }
