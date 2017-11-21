@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal static partial class HttpKnownHeaderNames
+    internal static class HttpKnownHeaderNames
     {
         #region Known_HTTP_Header_Names
 

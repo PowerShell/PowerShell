@@ -45,6 +45,11 @@
     <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs" />
     <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs" />
     <Compile Remove="commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\BasicHtmlWebResponseObject.CoreClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\ContentHelper.CoreClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\InvokeRestMethodCommand.CoreClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\WebRequestPSCmdlet.CoreClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\WebResponseObject.CoreClr.cs" />
     <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
     <Compile Remove="gen\OutPrinterDisplayStrings.cs" />

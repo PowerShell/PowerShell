@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Net;
+using System.Net.Http;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Response object for html content without DOM parsing
     /// </summary>
-    public partial class BasicHtmlWebResponseObject : WebResponseObject
+    public class BasicHtmlWebResponseObject : WebResponseObject
     {
         #region Properties
 
@@ -115,6 +116,31 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Properties
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for BasicHtmlWebResponseObject
+        /// </summary>
+        /// <param name="response"></param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response)
+            : this(response, null)
+        { }
+
+        /// <summary>
+        /// Constructor for HtmlWebResponseObject with memory stream
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="contentStream"></param>
+        public BasicHtmlWebResponseObject(HttpResponseMessage response, Stream contentStream)
+            : base(response, contentStream)
+        {
+            EnsureHtmlParser();
+            InitializeContent();
+            InitializeRawContent(response);
+        }
+
+        #endregion Constructors
 
         #region Private Fields
 
@@ -240,6 +266,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.Content = string.Empty;
             }
+        }
+
+         private void InitializeRawContent(HttpResponseMessage baseResponse)
+        {
+            StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
+            raw.Append(Content);
+            this.RawContent = raw.ToString();
         }
 
         #endregion Methods
