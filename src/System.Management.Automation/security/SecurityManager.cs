@@ -186,6 +186,7 @@ namespace Microsoft.PowerShell
             if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
                 // Product binaries are always trusted
+                // This avoids signature and security zone checks
                 if (SecuritySupport.IsProductBinary(path))
                     return true;
 
