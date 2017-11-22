@@ -34,7 +34,6 @@ if ($ReleaseTag)
 Push-Location
 try {
     Set-Location /PowerShell
-    git submodule update --init --recursive --quiet
     Import-Module "/PowerShell/build.psm1"
     Import-Module "/PowerShell/tools/packaging"
 
