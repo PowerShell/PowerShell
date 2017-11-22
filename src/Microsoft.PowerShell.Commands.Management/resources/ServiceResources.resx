@@ -132,9 +132,6 @@
   <data name="ServiceHasDependentServicesNoForce" xml:space="preserve">
     <value>Cannot stop service '{1} ({0})' because it has dependent services.</value>
   </data>
-  <data name="ServiceIsDependentOnNoForce" xml:space="preserve">
-    <value>Cannot stop service '{1} ({0})' because it is dependent on other services.</value>
-  </data>
   <data name="CouldNotStopService" xml:space="preserve">
     <value>Service '{1} ({0})' cannot be stopped due to the following error: {2}</value>
   </data>
