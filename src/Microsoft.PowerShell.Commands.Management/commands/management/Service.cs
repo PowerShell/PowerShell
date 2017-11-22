@@ -1541,7 +1541,7 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter "Force".
         /// This parameter is useful only when parameter "Stop" is enabled.
         /// If "Force" is enabled, it will also stop the dependent services.
-        /// If not, it will send an error when this service has dependent ones. 
+        /// If not, it will send an error when this service has dependent ones.
         /// </summary>
         [Parameter]
         public SwitchParameter Force { get; set; }
