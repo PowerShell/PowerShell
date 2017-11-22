@@ -168,20 +168,19 @@ function Invoke-AppVeyorFull
 # Implements the AppVeyor 'build_script' step
 function Invoke-AppVeyorBuild
 {
-    $releaseTag = Get-ReleaseTag
-    # check to be sure our test tags are correct
-    $result = Get-PesterTag
-    if ( $result.Result -ne "Pass" ) {
+      # check to be sure our test tags are correct
+      $result = Get-PesterTag
+      if ( $result.Result -ne "Pass" ) {
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
-    }
+      }
 
-    if(Test-DailyBuild)
-    {
-        Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -ReleaseTag $releaseTag
-    }
+      if(Test-DailyBuild)
+      {
+          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
+      }
 
-    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+      Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
 }
 
 # Implements the AppVeyor 'install' step
@@ -189,10 +188,9 @@ function Invoke-AppVeyorInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
-    $releaseTag = Get-ReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
-        Update-AppveyorBuild -Version $releaseTag
+        Update-AppveyorBuild -Version "$(Get-PSVersion -OmitCommitId)-$env:APPVEYOR_BUILD_NUMBER"
     }
 
     if(Test-DailyBuild){
@@ -422,31 +420,14 @@ function Get-PackageName
     return $name
 }
 
-function Get-ReleaseTag
-{
-    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
-    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
-
-    $releaseTag = $metadata.NextReleaseTag
-    if($env:APPVEYOR_BUILD_NUMBER)
-    {
-        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
-        $releaseTag = $releaseTag+'.'+$env:APPVEYOR_BUILD_NUMBER
-    }
-
-    return $releaseTag
-}
-
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
     try {
-        $releaseTag = Get-ReleaseTag
-
         $packageParams = @{}
         if($env:APPVEYOR_BUILD_VERSION)
         {
-            $packageParams += @{ReleaseTag=$releaseTag}
+            $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
         }
 
         # Build packages
@@ -473,7 +454,7 @@ function Invoke-AppveyorFinish
         }
         else
         {
-            $previewVersion = $releaseTag.Split('-')
+            $previewVersion = (git describe --abbrev=0).Split('-')
             $previewPrefix = $previewVersion[0]
             $previewLabel = $previewVersion[1].replace('.','')
 
