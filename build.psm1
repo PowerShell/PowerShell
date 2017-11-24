@@ -510,7 +510,7 @@ Fix steps:
     # Handle TypeGen
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
     $incFileName = "powershell_$($Options.Runtime).inc"
-    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/TypeCatalogGen/$incFileName")) {
+    if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
         log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
     }
