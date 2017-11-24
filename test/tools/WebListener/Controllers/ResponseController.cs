@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -79,6 +80,8 @@ namespace mvc.Controllers
                      httpContext.Response.ContentType = contentType;
                      return Task.FromResult(0);
                 }, HttpContext);
+
+            Response.ContentLength = Encoding.UTF8.GetBytes(output).Length;
 
             return output;
         }
