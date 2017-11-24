@@ -136,6 +136,7 @@ function Get-WebListenerUrl {
             'Home',
             'Multipart',
             'Redirect',
+            'Response',
             'ResponseHeaders',
             '/'
         )]
