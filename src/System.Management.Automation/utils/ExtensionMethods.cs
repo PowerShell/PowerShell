@@ -36,7 +36,7 @@ namespace System.Management.Automation
                 yield return t;
         }
 
-        internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs) where T : class
+        internal static int SequenceGetHashCode<T>(this IEnumerable<T> xs)
         {
             // algorithm based on http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
             if (xs == null)
