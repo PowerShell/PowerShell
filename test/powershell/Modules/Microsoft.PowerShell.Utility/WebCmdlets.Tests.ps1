@@ -2439,9 +2439,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Invoke-RestMethod Single Value JSON null support" {
-        BeforeAll {
-
-        }
         It "Invoke-RestMethod Supports a Single Value JSON null" {
             $query = @{
                 contenttype = 'application/json'

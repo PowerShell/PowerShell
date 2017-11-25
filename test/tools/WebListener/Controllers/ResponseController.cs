@@ -19,7 +19,6 @@ namespace mvc.Controllers
     {
         public String Index()
         {
-            
             string output = String.Empty;
             string contentType = Constants.ApplicationJson;
 
