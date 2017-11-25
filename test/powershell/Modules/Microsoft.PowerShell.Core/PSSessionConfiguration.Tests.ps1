@@ -488,7 +488,7 @@ namespace PowershellTestConfigNamespace
 
                     $Result.Session.Name | Should be $TestSessionConfigName
                     $Result.Session.SessionType | Should be "Default"
-                    $Result.Session.PSVersion | Should be 6.0
+                    $Result.Session.PSVersion | Should be 6.1
                     $Result.Session.Enabled | Should be $true
                     $Result.Session.lang | Should be $Result.Culture
                     $Result.Session.pssessionthreadoptions | Should be $pssessionthreadoptions
@@ -557,7 +557,7 @@ namespace PowershellTestConfigNamespace
                     $Result = [PSObject]@{Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName) ; Culture = (Get-Item WSMan:\localhost\Plugin\microsoft.powershell\lang -ea SilentlyContinue).value}
 
                     $Result.Session.Name | Should be $TestSessionConfigName
-                    $Result.Session.PSVersion | Should be 6.0
+                    $Result.Session.PSVersion | Should be 6.1
                     $Result.Session.Enabled | Should be $true
                     $Result.Session.lang | Should be $result.Culture
                     $Result.Session.pssessionthreadoptions | Should be $pssessionthreadoptions
