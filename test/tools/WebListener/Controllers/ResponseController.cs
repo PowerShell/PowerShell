@@ -30,10 +30,8 @@ namespace mvc.Controllers
 
             StringValues statusCodes;
             Int32 statusCode;
-            if (
-                Request.Query.TryGetValue("statuscode", out statusCodes) && 
-                Int32.TryParse(statusCodes.FirstOrDefault(), out statusCode)
-            )
+            if (Request.Query.TryGetValue("statuscode", out statusCodes) && 
+                Int32.TryParse(statusCodes.FirstOrDefault(), out statusCode))
             {
                 Response.StatusCode = statusCode;
             }
