@@ -12,7 +12,7 @@ namespace System.Management.Automation
     using System;
 
     /// <summary>
-    /// Possible types of CompletionResults
+    /// Possible types of CompletionResults.
     /// </summary>
     public enum CompletionResultType
     {
@@ -64,7 +64,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class used to store a tab completion or Intellisense result
+    /// Class used to store a tab completion or Intellisense result.
     /// </summary>
     public class CompletionResult
     {
@@ -94,7 +94,7 @@ namespace System.Management.Automation
         private static readonly CompletionResult s_nullInstance = new CompletionResult();
 
         /// <summary>
-        /// Gets the text to be used as the auto completion result
+        /// Gets the text to be used as the auto completion result.
         /// </summary>
         public string CompletionText
         {
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the text to be displayed in a list
+        /// Gets the text to be displayed in a list.
         /// </summary>
         public string ListItemText
         {
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the type of completion result
+        /// Gets the type of completion result.
         /// </summary>
         public CompletionResultType ResultType
         {
@@ -139,7 +139,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the text for the tooltip with details to be displayed about the object
+        /// Gets the text for the tooltip with details to be displayed about the object.
         /// </summary>
         public string ToolTip
         {
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the null instance of type CompletionResult
+        /// Gets the null instance of type CompletionResult.
         /// </summary>
         internal static CompletionResult Null
         {
@@ -162,12 +162,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the CompletionResult class
+        /// Initializes a new instance of the CompletionResult class.
         /// </summary>
-        /// <param name="completionText">the text to be used as the auto completion result</param>
-        /// <param name="listItemText">he text to be displayed in a list</param>
-        /// <param name="resultType">the type of completion result</param>
-        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="completionText">The text to be used as the auto completion result.</param>
+        /// <param name="listItemText">The text to be displayed in a list.</param>
+        /// <param name="resultType">The type of completion result.</param>
+        /// <param name="toolTip">The text for the tooltip with details to be displayed about the object.</param>
         public CompletionResult(string completionText, string listItemText, CompletionResultType resultType, string toolTip)
         {
             if (String.IsNullOrEmpty(completionText))
@@ -198,9 +198,9 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Initializes a new instance of this class internally if the result out of TabExpansion is a string
+        /// Initializes a new instance of this class internally if the result out of TabExpansion is a string.
         /// </summary>
-        /// <param name="completionText">completion text</param>
+        /// <param name="completionText">Completion text.</param>
         public CompletionResult(string completionText)
             : this(completionText, completionText, CompletionResultType.Text, completionText)
         {
