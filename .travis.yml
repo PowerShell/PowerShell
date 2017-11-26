@@ -3,14 +3,16 @@ language: cpp
 git:
   depth: 1000
 
-os:
-  - linux
-  - osx
-sudo: required
-dist: trusty
-osx_image: xcode8.1
-
 matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+    - os: linux
+      dist: trusty
+      sudo: false
+    - os: osx
+      osx_image: xcode8.1
   fast_finish: true
 
 addons:

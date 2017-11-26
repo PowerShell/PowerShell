@@ -87,9 +87,9 @@ fi
 
 ## Check requirements and prerequisites
 
-#Only do SUDO if we are not root
+#Only do SUDO if we are not root and not a Travis CI container
 SUDO=''
-if (( $EUID != 0 )); then
+if ( (( $EUID != 0 )) && [[ $TRAVIS_SUDO != 'false' ]] ); then
     SUDO='sudo'
 fi
 
