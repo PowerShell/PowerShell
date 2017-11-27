@@ -16,46 +16,46 @@ namespace System.Management.Automation
     /// </summary>
     public enum CompletionResultType
     {
-        /// <summary> An unknown result type, kept as text only</summary>
+        /// <summary> An unknown result type, kept as text only.</summary>
         Text = 0,
 
-        /// <summary>A history result type like the items out of get-history</summary>
+        /// <summary>A history result type like the items out of get-history.</summary>
         History = 1,
 
-        /// <summary>A command result type like the items out of get-command</summary>
+        /// <summary>A command result type like the items out of get-command.</summary>
         Command = 2,
 
-        /// <summary>A provider item</summary>
+        /// <summary>A provider item.</summary>
         ProviderItem = 3,
 
-        /// <summary>A provider container</summary>
+        /// <summary>A provider container.</summary>
         ProviderContainer = 4,
 
-        /// <summary>A property result type like the property items out of get-member</summary>
+        /// <summary>A property result type like the property items out of get-member.</summary>
         Property = 5,
 
-        /// <summary>A method result type like the method items out of get-member</summary>
+        /// <summary>A method result type like the method items out of get-member.</summary>
         Method = 6,
 
-        /// <summary>A parameter name result type like the Parameters property out of get-command items</summary>
+        /// <summary>A parameter name result type like the Parameters property out of get-command items.</summary>
         ParameterName = 7,
 
-        /// <summary>A parameter value result type</summary>
+        /// <summary>A parameter value result type.</summary>
         ParameterValue = 8,
 
-        /// <summary>A variable result type like the items out of get-childitem variable:</summary>
+        /// <summary>A variable result type like the items out of get-childitem variable.</summary>
         Variable = 9,
 
-        /// <summary>A namespace</summary>
+        /// <summary>A namespace.</summary>
         Namespace = 10,
 
-        /// <summary>A type name</summary>
+        /// <summary>A type name.</summary>
         Type = 11,
 
-        /// <summary>A keyword</summary>
+        /// <summary>A keyword.</summary>
         Keyword = 12,
 
-        /// <summary>A dynamic keyword</summary>
+        /// <summary>A dynamic keyword.</summary>
         DynamicKeyword = 13,
 
         // If a new enum is added, there is a range test that uses DynamicKeyword for parameter validation
@@ -69,27 +69,27 @@ namespace System.Management.Automation
     public class CompletionResult
     {
         /// <summary>
-        /// Text to be used as the auto completion result
+        /// Text to be used as the auto completion result.
         /// </summary>
         private string _completionText;
 
         /// <summary>
-        /// Text to be displayed in a list
+        /// Text to be displayed in a list.
         /// </summary>
         private string _listItemText;
 
         /// <summary>
-        /// The text for the tooltip with details to be displayed about the object
+        /// The text for the tooltip with details to be displayed about the object.
         /// </summary>
         private string _toolTip;
 
         /// <summary>
-        /// Type of completion result
+        /// Type of completion result.
         /// </summary>
         private CompletionResultType _resultType;
 
         /// <summary>
-        /// Private member for null instance
+        /// Private member for null instance.
         /// </summary>
         private static readonly CompletionResult s_nullInstance = new CompletionResult();
 
