@@ -44,6 +44,7 @@ You can download and install a PowerShell package for any of the following platf
 | macOS 10.12                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
 | Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]       |
+| Raspbian (Stretch)                 | [.tgz][rl-raspbian]    | [Instructions][in-raspbian]   |
 
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
 
@@ -67,6 +68,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/PowerShell-6.0.0-rc-win-x64.zip
 [rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-osx-x64.tar.gz
 [rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-linux-x64.tar.gz
+[rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-linux-arm32.tar.gz
 
 [installation]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation
 [in-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#msi
@@ -87,6 +89,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-kali]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#kali
 [in-windows-zip]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#zip
 [in-tar]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#binary-archives
+[in-raspbian]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#raspbian
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
