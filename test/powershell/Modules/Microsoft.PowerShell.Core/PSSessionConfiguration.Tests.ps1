@@ -116,7 +116,7 @@ try
 
                     $LocalConfigFilePath = CreateTestConfigFile
 
-                    $expectedPSVersion = "$($PSVersionTable.PSVersion.Major)`.$($PSVersionTable.PSVersion.Minor)"
+                    $expectedPSVersion = "$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
                 }
             }
 
@@ -326,6 +326,8 @@ try
             BeforeAll {
                 if ($IsNotSkipped)
                 {
+                    $expectedPSVersion = "$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
+
                     function ValidateRemoteEndpoint {
                         param ($TestSessionConfigName, $ScriptToExecute, $ExpectedOutput)
 
@@ -472,8 +474,6 @@ namespace PowershellTestConfigNamespace
                         $TestSessionConfigName = "TestRegisterPSSesionConfig"
                         Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                     }
-
-                    $expectedPSVersion = "$($PSVersionTable.PSVersion.Major)`.$($PSVersionTable.PSVersion.Minor)"
                 }
 
                 AfterEach {
@@ -503,12 +503,12 @@ namespace PowershellTestConfigNamespace
 
                 It "Validate Register-PSSessionConfiguration -PSVersion" {
 
-                Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
-                $Session = Get-PSSessionConfiguration -Name $TestSessionConfigName
+                    Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
+                    $Session = Get-PSSessionConfiguration -Name $TestSessionConfigName
 
-                $Session.Name | Should be $TestSessionConfigName
-                $Session.PSVersion | Should Be 5.1
-            }
+                    $Session.Name | Should be $TestSessionConfigName
+                    $Session.PSVersion | Should BeExactly 5.1
+                }
 
                 It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
 
@@ -585,7 +585,7 @@ namespace PowershellTestConfigNamespace
                     $Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName)
 
                     $Session.Name | Should be $TestSessionConfigName
-                    $Session.PSVersion | Should Be 5.1
+                    $Session.PSVersion | Should BeExactly 5.1
                 }
 
                 It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {
