@@ -936,7 +936,7 @@ ZoneId=$FileType
             }
 
             $error = "UnauthorizedAccess"
-            $skipTestData = @(
+            $pendingTestData = @(
                 # The following files are not signed correctly when generated, so we will skip for now
                 # filed https://github.com/PowerShell/PowerShell/issues/5559
                 @{
@@ -964,7 +964,7 @@ ZoneId=$FileType
                     error = $null
                 }
             )
-            It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $skipTestData -Skip  {}
+            It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $pendingTestData -Pending  {}
 
             $testData = @(
                 @{
