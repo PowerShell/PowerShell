@@ -244,11 +244,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
 
             StringCollection[] scArray = new StringCollection[validColumnCount];
+            bool addPadding = true;
             for (int k = 0; k < scArray.Length; k++)
             {
+                // for the last column, don't pad it with trailing spaces
+                if (k == scArray.Length-1)
+                {
+                    addPadding = false;
+                }
+
                 // obtain a set of tokens for each field
                 scArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k],
-                                                                        alignment[validColumnArray[k]], ds);
+                    alignment[validColumnArray[k]], ds, addPadding);
 
                 // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
@@ -283,7 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // add padding for the columns that are shorter
-            for (int col = 0; col < scArray.Length; col++)
+            for (int col = 0; col < scArray.Length-1; col++)
             {
                 int paddingBlanks = _si.columnInfo[validColumnArray[col]].width;
                 if (col > 0)
@@ -317,15 +324,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return rows;
         }
 
-        private StringCollection GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc)
+        private StringCollection GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc, bool addPadding)
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
-            // if length is shorter, do some padding
-            for (int col = 0; col < sc.Count; col++)
+            if (addPadding)
             {
-                if (dc.Length(sc[col]) < _si.columnInfo[k].width)
-                    sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, alignment, dc);
+                // if length is shorter, do some padding
+                for (int col = 0; col < sc.Count; col++)
+                {
+                    if (dc.Length(sc[col]) < _si.columnInfo[k].width)
+                        sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, alignment, dc, addPadding);
+                }
             }
             return sc;
         }
@@ -334,8 +344,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             StringBuilder sb = new StringBuilder();
 
+            bool addPadding = true;
             for (int k = 0; k < _si.columnInfo.Length; k++)
             {
+                // don't pad the last column
+                if (k == _si.columnInfo.Length -1)
+                {
+                    addPadding = false;
+                }
+
                 if (_si.columnInfo[k].width <= 0)
                 {
                     // skip columns that are not at least a single character wide
@@ -357,12 +374,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.Append(StringUtil.Padding(_startColumn));
                     }
                 }
-                sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc));
+                sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
             }
             return sb.ToString();
         }
 
-        private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc)
+        private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc, bool addPadding)
         {
             // make sure the string does not have any embedded <CR> in it
             string s = StringManipulationHelper.TruncateAtNewLine(val) ?? "";
@@ -370,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string currentValue = s;
             int currentValueDisplayLength = dc.Length(currentValue);
 
-            if (currentValueDisplayLength < width)
+            if (addPadding && currentValueDisplayLength < width)
             {
                 // the string is shorter than the width of the column
                 // need to pad with with blanks to reach the desired width
@@ -499,7 +516,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 default:
                     {
                         // left align is the default
-                        s += " ";
+                        if (addPadding)
+                        {
+                            s += " ";
+                        }
                     }
                     break;
             }
