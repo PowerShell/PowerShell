@@ -581,7 +581,7 @@ namespace PowershellTestConfigNamespace
 
                 It "Validate Set-PSSessionConfiguration -PSVersion" {
 
-                    Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVerion 5.1
+                    Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
                     $Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName)
 
                     $Session.Name | Should be $TestSessionConfigName
