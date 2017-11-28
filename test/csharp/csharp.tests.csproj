@@ -12,6 +12,12 @@
     <RuntimeIdentifiers>win7-x86;win7-x64;osx.10.12-x64;linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj"/>
     <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj"/>

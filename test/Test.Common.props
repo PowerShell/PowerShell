@@ -9,9 +9,5 @@
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
   </PropertyGroup>
 </Project>
