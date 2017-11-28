@@ -47,18 +47,20 @@ function Install-ChocolateyPackage
             $exeSource = Get-ChildItem -path "${env:ProgramFiles(x86)}\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         }
 
+        # Don't search the chocolatey program data until more official locations have been searched
         if(!$exeSource)
         {
             Write-Verbose "Falling back to chocolatey..." -Verbose
             $exeSource = Get-ChildItem -path "$env:ProgramData\chocolatey\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         }
 
+        # all obvious locations are exhausted, use brute force and search from the root of the filesystem
         if(!$exeSource)
         {
             Write-Verbose "Falling back to the root of the drive..." -Verbose
             $exeSource = Get-ChildItem -path "/$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         }
-        
+
         if(!$exeSource)
         {
             throw "$Executable not found"
@@ -90,10 +92,10 @@ function Append-Path
         [System.Environment]::SetEnvironmentVariable('path',$newPath,[System.EnvironmentVariableTarget]::Machine)
         Write-Verbose "Added $path to path." -Verbose
     }
-    else 
+    else
     {
         Write-Verbose "$path already in path." -Verbose
-    }    
+    }
 }
 
 function Remove-Folder
@@ -107,5 +109,5 @@ function Remove-Folder
     $filter = Join-Path -Path $Folder -ChildPath *
     [int]$measuredCleanupMB = (Get-ChildItem $filter -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
     Remove-Item -recurse -force $filter -ErrorAction SilentlyContinue
-    Write-Verbose "Cleaned up $measuredCleanupMB MB from $Folder" -Verbose  
+    Write-Verbose "Cleaned up $measuredCleanupMB MB from $Folder" -Verbose
 }
