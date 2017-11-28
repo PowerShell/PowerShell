@@ -1330,8 +1330,17 @@ function Start-PSxUnit {
         }
         else
         {
+            if($Environment.IsMacOS)
+            {
+                $nativeLib = "$Content/libpsl-native.dylib"
+            }
+            else
+            {
+                $nativeLib = "$Content/libpsl-native.so"
+            }
+
             $requiredDependencies = @(
-                "$Content/libpsl-native.so",
+                $nativeLib,
                 "$Content/Microsoft.Management.Infrastructure.dll",
                 "$Content/System.Text.Encoding.CodePages.dll"
             )
