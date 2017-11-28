@@ -1867,7 +1867,7 @@ namespace System.Management.Automation
     #region NULL validation attributes
 
     /// <summary>
-    /// Base type of Null Validation attributes
+    /// Base type of Null Validation attributes.
     /// </summary>
     public abstract class NullValidationAttributeBase : ValidateArgumentsAttribute
     {

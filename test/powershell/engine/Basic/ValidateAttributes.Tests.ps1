@@ -264,7 +264,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
     Context "ValidateNotNull, ValidateNotNullOrEmpty and Not-Null-Or-Empty check for Mandatory parameter" {
 
         BeforeAll {
-            function MandType {
+            function MandatoryFunc {
                 param(
                     [Parameter(Mandatory, ParameterSetName = "ByteArray")]
                     [byte[]] $ByteArray,
@@ -316,8 +316,8 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             $byteArray = [System.IO.File]::ReadAllBytes($filePath)
             $byteList  = [System.Collections.Generic.List[byte]] $byteArray
             $byteCollection = [System.Collections.ObjectModel.Collection[byte]] $byteArray
-            ## Use the running time of 'MandType -Value $byteArray' as the baseline time
-            $baseline = (Measure-Command { MandType -Value $byteArray }).Milliseconds
+            ## Use the running time of 'MandatoryFunc -Value $byteArray' as the baseline time
+            $baseline = (Measure-Command { MandatoryFunc -Value $byteArray }).Milliseconds
             ## Running time should be less than 'expected'
             $expected = $baseline + 20
 
@@ -326,9 +326,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             }
 
             $testCases = @(
-                @{ ScriptBlock = { MandType -ByteArray $byteArray } }
-                @{ ScriptBlock = { MandType -ByteList $byteList } }
-                @{ ScriptBlock = { MandType -ByteCollection $byteCollection } }
+                @{ ScriptBlock = { MandatoryFunc -ByteArray $byteArray } }
+                @{ ScriptBlock = { MandatoryFunc -ByteList $byteList } }
+                @{ ScriptBlock = { MandatoryFunc -ByteCollection $byteCollection } }
                 @{ ScriptBlock = { NotNullFunc -Value $byteArray } }
                 @{ ScriptBlock = { NotNullFunc -Value $byteList } }
                 @{ ScriptBlock = { NotNullFunc -Value $byteCollection } }
@@ -375,9 +375,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
 
         It "Mandatory parameter should throw on empty collection" {
-            { MandType -ByteArray ([byte[]]@()) } | Should Throw
-            { MandType -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should Throw
-            { MandType -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should Throw
+            { MandatoryFunc -ByteArray ([byte[]]@()) } | Should Throw
+            { MandatoryFunc -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should Throw
+            { MandatoryFunc -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should Throw
         }
     }
 }
