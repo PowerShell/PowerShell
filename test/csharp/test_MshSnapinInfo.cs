@@ -21,6 +21,7 @@ namespace PSTests
         [SkippableFact]
         public void TestReadCoreEngineSnapIn()
         {
+            Skip.IfNot(Platform.IsWindows);
             PSSnapInInfo pSSnapInInfo = PSSnapInReader.ReadCoreEngineSnapIn();
             Assert.Contains("PublicKeyToken=31bf3856ad364e35", pSSnapInInfo.AssemblyName);
         }

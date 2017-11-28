@@ -1207,7 +1207,7 @@ function Test-XUnitTestResults
     }
     catch
     {
-        Write-Error $_
+        throw "Cannot convert $TestResultsFile to xml : $($_.message)"
     }
 
     $failedTests = $results.'assemblies'.'assembly'.'collection' | Where-Object failed -gt 0
