@@ -52,17 +52,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// True if PowerShell was built targeting .NET Core.
-        /// </summary>
-        public static bool IsCoreCLR
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
         public static bool IsNanoServer

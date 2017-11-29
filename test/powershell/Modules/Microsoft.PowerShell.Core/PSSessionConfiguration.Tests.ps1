@@ -4,6 +4,7 @@ try
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
     $originalWarningPreference = $WarningPreference
     $WarningPreference = "SilentlyContinue"
+    $isCoreCLR = $true
     $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 

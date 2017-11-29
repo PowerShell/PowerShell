@@ -215,6 +215,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     Context "COM TESTS" {
         # DRT for 133807 SetBreakpointWithShortPath
         BeforeAll {
+            $isCoreCLR = $true
             if ( $IsCoreCLR ) { return } # no COM on core
             $scriptPath1 = Join-Path $TestDrive SBPShortPathBug133807.DRT.tmp.ps1
             $scriptPath1 = setup -f SBPShortPathBug133807.DRT.tmp.ps1 -content '

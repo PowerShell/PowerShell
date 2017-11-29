@@ -1,6 +1,7 @@
 
 Describe "Type accelerators" -Tags "CI" {
     BeforeAll {
+        $isCoreCLR = $true
         $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
         $TypeAccelerators = $TypeAcceleratorsType::Get
     }

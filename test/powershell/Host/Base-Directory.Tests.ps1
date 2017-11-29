@@ -1,6 +1,7 @@
 Describe "Configuration file locations" -tags "CI","Slow" {
 
     BeforeAll {
+        $isCoreCLR = $true
         $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
         $profileName = "Microsoft.PowerShell_profile.ps1"
     }

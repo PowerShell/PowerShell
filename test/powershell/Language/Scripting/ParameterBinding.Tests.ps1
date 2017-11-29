@@ -1,4 +1,6 @@
-﻿Describe "Tests for parameter binding" -Tags "CI" {
+﻿$isCoreCLR = $true
+
+Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
         BeforeAll {
             $f = "function get-foo { param([Parameter(mandatory=`$true)] `$a) `$a };"

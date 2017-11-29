@@ -1,4 +1,6 @@
-﻿Describe "Trace-Command" -tags "Feature" {
+﻿$isCoreCLR = $true
+
+Describe "Trace-Command" -tags "Feature" {
 
     Context "Listener options" {
         BeforeAll {

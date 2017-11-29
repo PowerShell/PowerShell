@@ -1,3 +1,5 @@
+$isCoreCLR = $true
+
 if ( $IsCoreCLR ) {
     return
 }

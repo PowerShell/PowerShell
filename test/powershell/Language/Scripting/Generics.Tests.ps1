@@ -1,5 +1,8 @@
 ﻿using namespace system.collections.generic
 using namespace System.Management.Automation
+
+$isCoreCLR = $true
+
 Describe "Generics support" -Tags "CI" {
     # list and stack are in different assemblies, and dictionary
     # takes more than one type parameter.

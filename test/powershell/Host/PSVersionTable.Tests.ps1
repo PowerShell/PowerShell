@@ -1,6 +1,7 @@
 Describe "PSVersionTable" -Tags "CI" {
 
     BeforeAll {
+        $isCoreCLR = $true
         $sma = Get-Item (Join-Path $PSHome "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
