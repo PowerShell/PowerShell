@@ -20,9 +20,8 @@ namespace PSTests
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
-            RunspaceConfiguration runspaceConfiguration =  RunspaceConfiguration.Create();
             InitialSessionState iss = InitialSessionState.CreateDefault2();
-            AutomationEngine engine = new AutomationEngine(hostInterface, runspaceConfiguration, iss);
+            AutomationEngine engine = new AutomationEngine(hostInterface, iss);
             ExecutionContext executionContext = new ExecutionContext(engine, hostInterface, iss);
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
             Collection<PSDriveInfo> drives = sessionState.Drives(null);
