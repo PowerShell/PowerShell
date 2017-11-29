@@ -18,6 +18,9 @@ namespace TestExe
                     case "-createchildprocess":
                         CreateChildProcess(args);
                         break;
+                    case "-echostderr":
+                        EchoStderr(args);
+                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
@@ -38,6 +41,17 @@ namespace TestExe
             {
                 Console.WriteLine("Arg {0} is <{1}>", i-1, args[i]);
             }
+        }
+
+        // <Summary>
+        // Echos back to stderr the arguments passed in
+        // </Summary>
+        static void EchoStderr(string[] args)
+        {
+             for (int i = 1; i < args.Length; i++)
+             {
+                 Console.Error.WriteLine("{0}", args[i]);
+             }
         }
 
         // <Summary>

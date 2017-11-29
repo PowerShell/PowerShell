@@ -1032,10 +1032,8 @@ namespace System.Management.Automation
 
             if (outputValue.Stream == MinishellStream.Error)
             {
-                ErrorRecord record = outputValue.Data as ErrorRecord;
-                Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
-                record.SetInvocationInfo(this.Command.MyInvocation);
-                this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
+                // write stderr as string instead of as ErrorRecord
+                this.commandRuntime._WriteErrorSkipAllowCheck(outputValue.Data);
             }
             else if (outputValue.Stream == MinishellStream.Output)
             {

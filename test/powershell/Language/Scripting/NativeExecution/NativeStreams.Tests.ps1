@@ -18,7 +18,7 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         # this check should be the first one, because $error is a global shared variable
         It 'should not add records to $error variable' {
             # we are keeping existing Windows PS v5.1 behavior for $error variable
-            $error.Count | Should Be 9
+            $error.Count | Should Be 0
         }
 
         It 'uses ErrorRecord object to return stderr output' {

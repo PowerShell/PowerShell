@@ -2579,6 +2579,32 @@ namespace System.Management.Automation
             this.OutputPipe.Add(sendToPipeline);
         }
 
+        // Use this variant to write stderr as string and skip the ThrowIfWriteNotPermitted check
+        /// <exception cref="System.Management.Automation.PipelineStoppedException">
+        /// The pipeline has already been terminated, or was terminated
+        /// during the execution of this method.
+        /// The Cmdlet should generally just allow PipelineStoppedException
+        /// to percolate up to the caller of ProcessRecord etc.
+        /// </exception>
+        internal void _WriteErrorSkipAllowCheck(object sendToPipeline)
+        {
+            ThrowIfStopping();
+
+            if (AutomationNull.Value == sendToPipeline)
+                return;
+
+            sendToPipeline = LanguagePrimitives.AsPSObjectOrNull(sendToPipeline);
+
+            if (ErrorMergeTo != MergeDataStream.None)
+            {
+                Dbg.Assert(ErrorMergeTo == MergeDataStream.Output, "Only merging to success output is supported.");
+                this.OutputPipe.Add(sendToPipeline);
+            }
+            else
+            {
+                this.ErrorOutputPipe.Add(sendToPipeline);
+            }
+        }
 
         // NOTICE-2004/06/08-JonN 959638
         // Use this variant to skip the ThrowIfWriteNotPermitted check
