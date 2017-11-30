@@ -4,15 +4,18 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
 using System;
 using System.Management.Automation;
+using System.Management.Automation.Runspaces;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
 using System.IO;
 using System.Text;
 using System.Collections;
 using System.Globalization;
 using System.Security.Authentication;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Xml;
 using System.Collections.Generic;
@@ -172,6 +175,45 @@ namespace Microsoft.PowerShell.Commands
             {
                 handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            }
+            else if (CertificateValidationScript != null)
+            {
+                // validationCallBackWrapper wraps the CertificateValidationScript ScriptBlock so the async callback properly execute ScriptBlock
+                Func<HttpRequestMessage,X509Certificate2,X509Chain,SslPolicyErrors,bool> validationCallBackWrapper = 
+                    delegate(HttpRequestMessage httpRequestMessage, X509Certificate2 x509Certificate2, X509Chain x509Chain, SslPolicyErrors sslPolicyErrors)
+                    {
+                        InitialSessionState iss = InitialSessionState.CreateDefault();
+                        
+                        // Add $_ variable with the Delegate parameters as members
+                        PSObject dollarUnderbar = new PSObject();
+                        dollarUnderbar.Members.Add(new PSNoteProperty("Request", httpRequestMessage));
+                        dollarUnderbar.Members.Add(new PSNoteProperty("Certificate", x509Certificate2));
+                        dollarUnderbar.Members.Add(new PSNoteProperty("CertificateChain", x509Chain));
+                        dollarUnderbar.Members.Add(new PSNoteProperty("SslErrors", sslPolicyErrors));
+                        iss.Variables.Add(new SessionStateVariableEntry(name: "_", value: dollarUnderbar, description: String.Empty));
+
+                        Boolean result = false;
+                        try
+                        {
+                            using (Runspace rs = RunspaceFactory.CreateRunspace(iss))
+                            using (var ps = System.Management.Automation.PowerShell.Create())
+                            {
+                                ps.Runspace = rs;
+                                rs.Open();
+                                ps.AddScript(CertificateValidationScript.ToString());
+
+                                result = LanguagePrimitives.IsTrue(ps.Invoke().First());
+                            }
+                        }
+                        catch // Treat all exceptions as Certificate failures.
+                        {
+                            result = false;
+                        }
+
+                        return result;
+                    };
+
+                handler.ServerCertificateCustomValidationCallback = validationCallBackWrapper;
             }
 
             // This indicates GetResponse will handle redirects.

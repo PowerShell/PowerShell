@@ -1557,6 +1557,58 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     }
 
+    Context "Invoke-WebRequest CertificateValidationScript Tests" {
+        It "Verifies Invoke-WebRequest -CertificateValidationScript can accept all certificates" -Pending:$PendingCertificateTest {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { $true }
+            }
+            # WebListener uses a self-signed cert. Without -SkipCertificateCheck this would normally fail
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-WebRequest -CertificateValidationScript is ignored when -SkipCertificateCheck is present" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                SkipCertificateCheck = $true
+                # This script would fail all certificates
+                CertificateValidationScript = { $false }                
+            }
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It 'Verifies Invoke-WebRequest -CertificateValidationScript script has a $_' -Pending:$PendingCertificateTest {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { 
+                    $_.Certificate.Thumbprint -eq 'C8747A1C4A46E52EEC688A6766967010F86C58E3' -and
+                    $_.CertificateChain.ChainElements[0].Certificate.Thumbprint -eq 'C8747A1C4A46E52EEC688A6766967010F86C58E3' -and
+                    $_.SslErrors -eq 'RemoteCertificateChainErrors' -and
+                    $_.Request.Method.Method -eq 'GET'
+                }
+            }
+            $result = Invoke-WebRequest @Params
+            $jsonResult = $result.Content | ConvertFrom-Json
+            $jsonResult.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-WebRequest -CertificateValidationScript treats exceptions as Certificate failures" -Pending:$PendingCertificateTest {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { throw 'Bad Cert' }
+            }
+            { Invoke-WebRequest @Params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -2626,6 +2678,56 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             Invoke-RestMethod -Uri $url | Should Be $null
             $url = '{0}{1}' -f $baseUrl, "           null         `n"
             Invoke-RestMethod -Uri $url | Should Be $null
+        }
+    }
+
+    Context "Invoke-RestMethod CertificateValidationScript Tests" {
+        It "Verifies Invoke-RestMethod -CertificateValidationScript can accept all certificates" -Pending:$PendingCertificateTest {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { $true }
+            }
+            # WebListener uses a self-signed cert. Without -SkipCertificateCheck this would normally fail
+            $result = Invoke-RestMethod @Params
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-RestMethod -CertificateValidationScript is ignored when -SkipCertificateCheck is present" {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                SkipCertificateCheck = $true
+                # This script would fail all certificates
+                CertificateValidationScript = { $false }                
+            }
+            $result = Invoke-RestMethod @Params
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+        
+        It 'Verifies Invoke-RestMethod -CertificateValidationScript script has a $_' -Pending:$PendingCertificateTest {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = {
+                    $WebListenerThumbprint = 'C8747A1C4A46E52EEC688A6766967010F86C58E3'
+                    $_.Certificate.Thumbprint -eq $WebListenerThumbprint -and
+                    $_.CertificateChain.ChainElements[0].Certificate.Thumbprint -eq $WebListenerThumbprint -and
+                    $_.SslErrors -eq 'RemoteCertificateChainErrors' -and
+                    $_.Request.Method.Method -eq 'GET'
+                }
+            }
+            $result = Invoke-RestMethod @Params 
+            $result.Headers.Host | Should BeExactly $params.Uri.Authority
+        }
+
+        It "Verifies Invoke-RestMethod -CertificateValidationScript treats exceptions as Certificate failures" -Pending:$PendingCertificateTest {
+            $params = @{
+                Uri = Get-WebListenerUrl -Test 'Get' -Https
+                ErrorAction = 'Stop'
+                CertificateValidationScript = { throw 'Bad Cert' }
+            }
+            { Invoke-RestMethod @Params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
     }
 
