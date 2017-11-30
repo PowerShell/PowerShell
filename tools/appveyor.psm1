@@ -372,7 +372,7 @@ function Invoke-AppVeyorTest
         Test-PSPesterResults -TestResultsFile $_
     }
 
-    Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
+    $testPassResult = Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
 
     Set-BuildVariable -Name TestPassed -Value True
 }

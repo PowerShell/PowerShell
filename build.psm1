@@ -1210,7 +1210,7 @@ function Test-XUnitTestResults
         throw "Cannot convert $TestResultsFile to xml : $($_.message)"
     }
 
-    $failedTests = $results.'assemblies'.'assembly'.'collection' | Where-Object failed -gt 0
+    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -gt 0
 
     if(-not $failedTests)
     {
@@ -1305,8 +1305,6 @@ function Start-PSxUnit {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    $options = New-PSOptions
-
     $Content = Split-Path -Parent (Get-PSOutput)
     if (-not (Test-Path $Content)) {
         throw "PowerShell must be built before running tests!"
@@ -1347,6 +1345,7 @@ function Start-PSxUnit {
 
             if((Test-Path $requiredDependencies) -notcontains $false)
             {
+                $options = New-PSOptions
                 $Destination = "bin/$($options.configuration)/$($options.framework)"
                 New-Item $Destination -ItemType Directory -Force > $null
                 Copy-Item -Path $requiredDependencies -Destination $Destination -Force
