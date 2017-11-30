@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Update the contribution guideline to note that updating the changelog is required. (#TBD)
+- Update the contribution guideline to note that updating the changelog is required. (#5586)
 
 ## v6.0.0-rc - 2017-11-16
 
