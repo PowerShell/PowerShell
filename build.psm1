@@ -100,12 +100,12 @@ function Get-EnvironmentInformation
     # Use the .NET Core APIs to determine the current platform.
     # If a runtime exception is thrown, we are on Windows PowerShell, not PowerShell Core,
     # because System.Runtime.InteropServices.RuntimeInformation
-    # and System.Runtime.InteropServices.OSPlatform do not exist in Windows PowerShell.
+    # and System.Runtime.InteropServices.OSPlatform do not exist in .NET versions older than 4.7.1.
     try {
         $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
         $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
 
-        $environment += @{'IsCoreCLR' = $true}
+        $environment += @{'IsCoreCLR' = 'Core' -eq $PSVersionTable.PSEdition}
         $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
         $environment += @{'IsMacOS' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
         $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
