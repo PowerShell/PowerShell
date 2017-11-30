@@ -76,9 +76,17 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters" {
-            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6
+            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6 
             (Get-ChildItem -Path $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
             (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+        }
+        
+        It "get-childitem <PATH>/* -file should include <Path> as search directory" {
+            $rootPath = Join-Path $TestDrive "TestPS"
+            $subPath = Join-Path $rootPath "D1"
+            $filePath = Join-Path $subPath "File1.txt"
+            New-Item $filePath -type file -Force
+            (Get-ChildItem -Path $rootPath/* -File -Recurse).Name | Should Be "File1.txt"
         }
     }
 
