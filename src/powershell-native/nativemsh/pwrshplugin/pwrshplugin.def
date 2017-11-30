@@ -15,4 +15,3 @@ WSManPluginSend
 WSManPluginSignal
 WSManPluginReceive
 WSManPluginConnect
-PerformWSManPluginReportCompletion

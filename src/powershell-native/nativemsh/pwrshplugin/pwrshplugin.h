@@ -26,10 +26,6 @@ using namespace NativeMsh;
 // Forward declaration of class PwrshPlugIn
 class PwrshPlugIn;
 
-// To report the plugin completion using WSManPluginReportCompletion API
-// g_pPluginContext MUST be the same context that plugin provided to the WSManPluginStartup method
-PwrshPlugIn* g_pPluginContext;
-
 class PwrshPlugIn
 {
 private:
@@ -230,7 +226,6 @@ public:
         // storing the extra info for plugin use later.
         VerifyAndStoreExtraInfo(extraInfo, &initParameters);
         PwrshPlugIn* result = new PwrshPlugIn(applicationIdentification, initParameters);
-        g_pPluginContext = result;
         return result;
     }
 
@@ -1090,13 +1085,3 @@ public:
         return version;
     }
 };
-
-extern "C"
-void WINAPI PerformWSManPluginReportCompletion()
-{
-    // Now report the plugin completion, to indicate that plugin is ready to shutdown.
-    // This API is used by plugins to report completion
-    // - pluginContext MUST be the same context that plugin provided to the WSManPluginStartup method
-    // - flags are reserved, so 0
-    WSManPluginReportCompletion(g_pPluginContext, 0);
-}

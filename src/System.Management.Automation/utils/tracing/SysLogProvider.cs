@@ -357,6 +357,7 @@ namespace System.Management.Automation.Tracing
 
     internal static class NativeMethods
     {
+        const string libpslnative = "libpsl-native";
         /// <summary>
         /// Write a message to the system logger, which in turn writes the message to the system console, log files, etc.
         /// See man 3 syslog for more info.
@@ -365,13 +366,13 @@ namespace System.Management.Automation.Tracing
         /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry.
         /// </param>
         /// <param name="message">The message to put in the log entry.</param>
-        [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
+        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]
         internal static extern void SysLog(SysLogPriority priority, string message);
 
-        [DllImport("psl-native", CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
+        [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_OpenLog")]
         internal static extern void OpenLog(IntPtr ident, SysLogPriority facility);
 
-        [DllImport("psl-native", EntryPoint = "Native_CloseLog")]
+        [DllImport(libpslnative, EntryPoint = "Native_CloseLog")]
         internal static extern void CloseLog();
 
         [Flags]

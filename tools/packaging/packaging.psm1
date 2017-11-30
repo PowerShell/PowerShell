@@ -448,6 +448,12 @@ function New-PSSignedBuildZip
         Copy-Item -Path $_ -Destination $destination -force
     }
 
+    # Remove `signed` folder in buildpath now that signed binaries are copied
+    if (Test-Path $BuildPath\signed)
+    {
+        Remove-Item -Recurse -Force -Path $BuildPath\signed
+    }
+
     $name = split-path -Path $BuildPath -Leaf
     $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
     Compress-Archive -Path $BuildPath\* -DestinationPath $zipLocationPath
