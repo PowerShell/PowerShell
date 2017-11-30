@@ -129,18 +129,18 @@ Additional references:
   If the changes are related to an existing GitHub issue,
   please reference the issue in PR description (e.g. ```Fix #11```).
   See [this][closing-via-message] for more details.
-* If the change warrants a note in the [changelog](../CHANGELOG.MD)
-  either update the changelog in your pull request or
-  add a comment in the PR description saying that the change may warrant a note in the changelog.
-  New changes always go into the **Unreleased** section.
+
+#### Pull request - Change log
+
+* All PRs must either update the [changelog](../CHANGELOG.MD) in your pull request.
+  New changes always go into the **Unreleased** section at the top of the changelog.
   Keeping the changelog up-to-date simplifies the release process for Maintainers.
   An example (with an associated PR #):
 
   ```markdown
-  Unreleased
-  ----------
+  ## Unreleased
 
-  * `Update-Item` now supports `-FriendlyName` (#1234).
+  * `Update-Item` now supports `-FriendlyName` (#1234, @ExampleUser).
   ```
 
 * Please use the present tense and imperative mood when describing your changes:
