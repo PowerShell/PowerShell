@@ -787,18 +787,26 @@ namespace System.Management.Automation
 
             // Ensure that each element abides by the metadata
             bool isEmpty = true;
+            Type elementType = parameterMetadata.CollectionTypeInformation.ElementType;
+            bool isElementValueType = elementType != null && elementType.IsValueType;
+
             // Note - we explicitly don't pass the context here because we don't want
             // the overhead of the calls that check for stopping.
-            while (ParserOps.MoveNext(null, null, ienum))
+            if (ParserOps.MoveNext(null, null, ienum)) { isEmpty = false; }
+
+            // If the element of the collection is of value type, then no need to check for null
+            // because a value-type value cannot be null.
+            if (!isEmpty && !isElementValueType)
             {
-                object element = ParserOps.Current(null, ienum);
-                isEmpty = false;
-                ValidateNullOrEmptyArgument(
-                    parameter,
-                    parameterMetadata,
-                    parameterMetadata.CollectionTypeInformation.ElementType,
-                    element,
-                    false);
+                do {
+                    object element = ParserOps.Current(null, ienum);
+                    ValidateNullOrEmptyArgument(
+                        parameter,
+                        parameterMetadata,
+                        parameterMetadata.CollectionTypeInformation.ElementType,
+                        element,
+                        false);
+                } while (ParserOps.MoveNext(null, null, ienum));
             }
 
             if (isEmpty && !parameterMetadata.AllowsEmptyCollectionArgument)
