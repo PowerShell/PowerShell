@@ -224,7 +224,10 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        Start-PSxUnit
+        $testResultsXUnitFile = "$pwd/TestResultsXUnit.xml"
+        Start-PSxUnit -TestResultsFile $testResultsXUnitFile
+        # If there are failures, Test-XUnitTestResults throws
+        $testPassResult = Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
     }
     catch {
         $result = "FAIL"
