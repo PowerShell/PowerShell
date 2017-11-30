@@ -4,14 +4,12 @@ using System.Management.Automation;
 
 namespace PSTests
 {
-    [Collection("AssemblyLoadContext")]
     public static class PSTypeExtensionsTests
     {
         [Fact]
-        public static void TestIsComObject()
+        public static void TestIsNumeric()
         {
-            // It just needs an arbitrary type
-            Assert.False(PSTypeExtensions.IsComObject(42.GetType()));
+            Assert.True(PSTypeExtensions.IsNumeric(42.GetType()));
         }
     }
 }

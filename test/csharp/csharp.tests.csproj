@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\Test.Common.props"/>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="../Test.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell On Linux xUnit Tests</Description>
@@ -9,13 +13,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\System.Management.Automation\System.Management.Automation.csproj" />
+    <ProjectReference Include="../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj"/>
+    <ProjectReference Include="../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj"/>
+    <ProjectReference Include="../../src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj"/>    
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="xunit" Version="2.2.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit" Version="2.3.0" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.3.3" />
   </ItemGroup>
 
 </Project>

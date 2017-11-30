@@ -1188,6 +1188,53 @@ function Show-PSPesterError
 
 }
 
+function Test-XUnitTestResults
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string] $TestResultsFile
+    )
+
+    if(-not (Test-Path $TestResultsFile))
+    {
+        throw "File not found $TestResultsFile"
+    }
+
+    try
+    {
+        $results = [xml] (Get-Content $TestResultsFile)
+    }
+    catch
+    {
+        Write-Error $_
+    }
+
+    $failedTests = $results.'assemblies'.'assembly'.'collection' | Where-Object failed -gt 0
+
+    if(-not $failedTests)
+    {
+        return $true
+    }
+
+    foreach($failure in $failedTests)
+    {
+        $description = $failure.test.type
+        $name = $failure.test.method
+        $message = $failure.test.failure.message.'#cdata-section'
+        $stackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
+
+        logerror ("Description: " + $description)
+        logerror ("Name:        " + $name)
+        logerror "message:"
+        logerror $message
+        logerror "stack-trace:"
+        logerror $stackTrace
+    }
+
+    throw "$($failedTests.failed) tests failed"
+}
+
 #
 # Read the test result file and
 # Throw if a test failed
@@ -1251,46 +1298,59 @@ function Test-PSPesterResults
 
 
 function Start-PSxUnit {
-    [CmdletBinding()]param()
-
-    log "xUnit tests are currently disabled pending fixes due to API and AssemblyLoadContext changes - @andschwa"
-    return
-
-    if ($Environment.IsWindows) {
-        throw "xUnit tests are only currently supported on Linux / OS X"
-    }
-
-    if ($Environment.IsMacOS) {
-        log "Not yet supported on OS X, pretending they passed..."
-        return
-    }
+    [CmdletBinding()]param(
+        [string] $TestResultsFile = "XUnitResults.xml"
+    )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    $Arguments = "--configuration", "Linux", "-parallel", "none"
-    if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-        $Arguments += "-verbose"
-    }
+    $options = New-PSOptions
 
     $Content = Split-Path -Parent (Get-PSOutput)
     if (-not (Test-Path $Content)) {
         throw "PowerShell must be built before running tests!"
     }
 
+    if(Test-Path $TestResultsFile)
+    {
+        Remove-Item $TestResultsFile -Force -ErrorAction SilentlyContinue
+    }
+
     try {
         Push-Location $PSScriptRoot/test/csharp
+
         # Path manipulation to obtain test project output directory
-        $Output = Join-Path $pwd ((Split-Path -Parent (Get-PSOutput)) -replace (New-PSOptions).Top)
-        Write-Verbose "Output is $Output"
+        dotnet restore
 
-        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination $Output
-        Start-NativeExecution { dotnet test $Arguments }
-
-        if ($LASTEXITCODE -ne 0) {
-            throw "$LASTEXITCODE xUnit tests failed"
+        # --fx-version workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
+        if($Environment.IsWindows)
+        {
+            dotnet xunit --fx-version 2.0.0 -xml $TestResultsFile
         }
-    } finally {
+        else
+        {
+            $requiredDependencies = @(
+                "$Content/libpsl-native.so",
+                "$Content/Microsoft.Management.Infrastructure.dll",
+                "$Content/System.Text.Encoding.CodePages.dll"
+            )
+
+            if((Test-Path $requiredDependencies) -notcontains $false)
+            {
+                $Destination = "bin/$($options.configuration)/$($options.framework)"
+                New-Item $Destination -ItemType Directory -Force > $null
+                Copy-Item -Path $requiredDependencies -Destination $Destination -Force
+            }
+            else
+            {
+                throw "Dependencies $requiredDependencies not met."
+            }
+
+            dotnet xunit --fx-version 2.0.0 -configuration $Options.configuration -xml $TestResultsFile
+        }
+    }
+    finally {
         Pop-Location
     }
 }
