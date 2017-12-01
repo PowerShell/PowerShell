@@ -97,19 +97,12 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # Use the .NET Core APIs to determine the current platform.
-    # If a runtime exception is thrown, we are on Windows PowerShell, not PowerShell Core,
-    # because System.Runtime.InteropServices.RuntimeInformation
-    # and System.Runtime.InteropServices.OSPlatform do not exist in .NET versions older than 4.7.1.
-    try {
-        $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
-        $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
-
-        $environment += @{'IsCoreCLR' = 'Core' -eq $PSVersionTable.PSEdition}
-        $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
-        $environment += @{'IsMacOS' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
-        $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
-    } catch {
+    if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
+        $environment += @{'IsCoreCLR' = $true}
+        $environment += @{'IsLinux' = $IsLinux}
+        $environment += @{'IsMacOS' = $IsMacOS}
+        $environment += @{'IsWindows' = $IsWindows}
+    } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
