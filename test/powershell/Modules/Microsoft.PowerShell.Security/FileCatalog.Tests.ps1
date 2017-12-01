@@ -233,11 +233,14 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             try
             {
                 copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue
-                $null = New-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath -CatalogVersion 1.0
-                $result = Test-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath
+                Push-Location "$env:TEMP\UserConfigProv"
+                # When -Path is not specified, it should use current directory
+                $null = New-FileCatalog -CatalogFilePath $catalogPath -CatalogVersion 1.0
+                $result = Test-FileCatalog -CatalogFilePath $catalogPath
             }
             finally
             {
+                Pop-Location
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
                 Remove-Item "$env:temp\UserConfigProv\" -Force -ErrorAction SilentlyContinue -Recurse
             }
