@@ -132,7 +132,7 @@ Additional references:
 
 #### Pull request - Change log
 
-* All PRs must either update the [changelog](../CHANGELOG.MD) in your pull request.
+* All PRs must update the [changelog](../CHANGELOG.MD) in your pull request.
   New changes always go into the **Unreleased** section at the top of the changelog.
   Keeping the changelog up-to-date simplifies the release process for Maintainers.
   An example (with an associated PR #):
@@ -142,6 +142,7 @@ Additional references:
 
   * `Update-Item` now supports `-FriendlyName` (#1234, @ExampleUser).
   ```
+  Note:  Please add `**Breaking Change**` to the front of the entry in the changelog if the change is [breaking.](#making-breaking-changes)
 
 * Please use the present tense and imperative mood when describing your changes:
     * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
