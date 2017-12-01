@@ -2660,6 +2660,11 @@ namespace System.Management.Automation
 
         static Type GetMethodGroupType(MethodInfo methodInfo)
         {
+            if (methodInfo.DeclaringType.IsGenericTypeDefinition)
+            {
+                return typeof(Func<PSNonBindableType>);
+            }
+
             if (methodInfo.IsGenericMethodDefinition)
             {
                 methodInfo = ReplaceGenericTypeArgumentsWithMarkerTypes(methodInfo);
@@ -2669,11 +2674,13 @@ namespace System.Management.Automation
                     return typeof(Func<PSNonBindableType>);
                 }
             }
-            if (methodInfo.DeclaringType.IsGenericTypeDefinition)
+
+            var parameterInfos = methodInfo.GetParameters();
+            if (parameterInfos.Length > 16)
             {
                 return typeof(Func<PSNonBindableType>);
             }
-            var parameterInfos = methodInfo.GetParameters();
+
             var res = new Type[parameterInfos.Length + 1];
             for (int i = 0; i < res.Length - 1; i++)
             {
@@ -2682,13 +2689,9 @@ namespace System.Management.Automation
                 res[i] = GetPSMethodTypeProjection(parameterType,
                     (parameterInfo.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out);
             }
-            var returnType = methodInfo.ReturnType == typeof(void) ? typeof(Unit) : GetPSMethodTypeProjection(methodInfo.ReturnType);
+            var returnType = GetPSMethodTypeProjection(methodInfo.ReturnType);
             res[parameterInfos.Length] = returnType;
 
-            if (res.Length > 17)
-            {
-                return typeof(Func<PSNonBindableType>);
-            }
             try
             {
                 return DelegateHelpers.MakeDelegate(res);
@@ -2703,7 +2706,7 @@ namespace System.Management.Automation
         {
             if (type == typeof(void))
             {
-                type = typeof(Unit);
+                return typeof(Unit);
             }
             if (type == typeof(TypedReference))
             {

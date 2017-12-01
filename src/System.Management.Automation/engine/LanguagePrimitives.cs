@@ -4796,7 +4796,6 @@ namespace System.Management.Automation
             {
                 var mi = toType.GetMethod("Invoke");
 
-                var isAction = mi.ReturnType == typeof(void);
                 var comparator = new DelegateArgsComparator(mi);
                 var signatureEnumerator = new PSMethodSignatureEnumerator(fromType);
                 while (signatureEnumerator.MoveNext())
