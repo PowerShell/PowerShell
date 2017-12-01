@@ -396,5 +396,4 @@ Describe 'method conversion' -Tags 'CI' {
         [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f72 = [M]::Foo
         $f72.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
     }
-
 }

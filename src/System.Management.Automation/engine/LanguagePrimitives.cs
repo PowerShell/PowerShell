@@ -4856,7 +4856,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private static PSConverter<object> FigureStaticCreateMethodConversion(Type fromType, Type toType)
         {
             // after discussing this with Jason, we decided that for now we only want to support string->CimSession conversion
