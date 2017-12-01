@@ -97,6 +97,7 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
+    # PowerShell Core will likely not be built on pre-1709 nanoserver
     if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
         $environment += @{'IsCoreCLR' = $true}
         $environment += @{'IsLinux' = $IsLinux}
