@@ -59,13 +59,13 @@ If you wish to use a specific installation of PowerShell with Visual Studio Code
 
   ```json
     // On Windows:
-    "powershell.powerShellExePath": "c:/Program Files/PowerShell/<version>/powershell.exe"
+    "powershell.powerShellExePath": "c:/Program Files/PowerShell/<version>/pwsh.exe"
 
     // On Linux:
-    "powershell.powerShellExePath": "/opt/microsoft/powershell/<version>/powershell"
+    "powershell.powerShellExePath": "/opt/microsoft/powershell/<version>/pwsh"
 
     // On macOS:
-    "powershell.powerShellExePath": "/usr/local/microsoft/powershell/<version>/powershell"
+    "powershell.powerShellExePath": "/usr/local/microsoft/powershell/<version>/pwsh"
   ```
 
 3. Replace the setting with the path to the desired PowerShell executable
