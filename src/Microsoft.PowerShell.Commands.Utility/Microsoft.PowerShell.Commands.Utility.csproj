@@ -34,17 +34,6 @@
     <Compile Remove="commands\utility\ShowCommand\ShowCommandProxy.cs" />
     <Compile Remove="commands\utility\update-list.cs" />
     <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs" />
-    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs" />
     <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
     <Compile Remove="gen\OutPrinterDisplayStrings.cs" />

@@ -1,21 +1,66 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Text;
-using System.Net.Http;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Net.Http;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// WebResponseObject
     /// </summary>
-    public partial class WebResponseObject
+    public class WebResponseObject
     {
         #region Properties
+
+        /// <summary>
+        /// gets or protected sets the Content property
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
+        public byte[] Content { get; protected set; }
+
+        /// <summary>
+        /// gets the StatusCode property
+        /// </summary>
+        public int StatusCode
+        {
+            get { return (WebResponseHelper.GetStatusCode(BaseResponse)); }
+        }
+
+        /// <summary>
+        /// gets the StatusDescription property
+        /// </summary>
+        public string StatusDescription
+        {
+            get { return (WebResponseHelper.GetStatusDescription(BaseResponse)); }
+        }
+
+        private MemoryStream _rawContentStream;
+        /// <summary>
+        /// gets the RawContentStream property
+        /// </summary>
+        public MemoryStream RawContentStream
+        {
+            get { return (_rawContentStream); }
+        }
+
+        /// <summary>
+        /// gets the RawContentLength property
+        /// </summary>
+        public long RawContentLength
+        {
+            get { return (null == RawContentStream ? -1 : RawContentStream.Length); }
+        }
+
+        /// <summary>
+        /// gets or protected sets the RawContent property
+        /// </summary>
+        public string RawContent { get; protected set; }
 
         /// <summary>
         /// gets or sets the BaseResponse property
@@ -37,7 +82,6 @@ namespace Microsoft.PowerShell.Commands
                 return _headers;
             }
         }
-
         private Dictionary<string, IEnumerable<string>> _headers = null;
 
         /// <summary>
@@ -45,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public Dictionary<string, string> RelationLink { get; internal set; }
 
-        #endregion
+        #endregion Properties
 
         #region Constructors
 
@@ -73,6 +117,14 @@ namespace Microsoft.PowerShell.Commands
 
         #region Methods
 
+        /// <summary>
+        /// Reads the response content from the web response.
+        /// </summary>
+        private void InitializeContent()
+        {
+            this.Content = this.RawContentStream.ToArray();
+        }
+
         private void InitializeRawContent(HttpResponseMessage baseResponse)
         {
             StringBuilder raw = ContentHelper.GetRawContentHeader(baseResponse);
@@ -84,6 +136,29 @@ namespace Microsoft.PowerShell.Commands
             }
 
             this.RawContent = raw.ToString();
+        }
+
+        private bool IsPrintable(char c)
+        {
+            return (Char.IsLetterOrDigit(c) || Char.IsPunctuation(c) || Char.IsSeparator(c) || Char.IsSymbol(c) || Char.IsWhiteSpace(c));
+        }
+
+        /// <summary>
+        /// Returns the string representation of this web response.
+        /// </summary>
+        /// <returns>The string representation of this web response.</returns>
+        public sealed override string ToString()
+        {
+            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
+            for (int counter = 0; counter < stringContent.Length; counter++)
+            {
+                if (!IsPrintable(stringContent[counter]))
+                {
+                    stringContent[counter] = '.';
+                }
+            }
+
+            return new string(stringContent);
         }
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
@@ -117,6 +192,6 @@ namespace Microsoft.PowerShell.Commands
             _rawContentStream.Position = 0;
         }
 
-        #endregion
+        #endregion Methods
     }
 }
