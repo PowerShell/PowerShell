@@ -18,8 +18,18 @@ Describe "Windows Installer" -Tags "Scenario" {
     ## Running 'Invoke-WebRequest' with WMF download URLs has been failing intermittently,
     ## because sometimes the URLs lead to a 'this download is no longer available' page.
     ## Therefore, this test is disabled for now.
-    It "Pre-Requisistes link for '<Name>' is reachable: <url>" -TestCases $linkCheckTestCases -Skip {
+    It "Pre-Requisistes link for '<Name>' is reachable: <url>" -TestCases $linkCheckTestCases {
         param ($Url)
-        (Invoke-WebRequest $Url -UseBasicParsing) | Should Not Be $null
+
+        foreach ($i in 1..5) {
+            try {
+                $result = Invoke-WebRequest $Url -UseBasicParsing
+                break;
+            } catch {
+                Start-Sleep -Seconds 1
+            }
+        }
+
+        $result | Should Not Be $null
     }
 }
