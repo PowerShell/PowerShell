@@ -342,6 +342,41 @@ Location: /Get/
 <p>You should be redirected automatically to target URL: <a href="/Get/">/Get/</a>.  If not click the link.
 ```
 
+## /Response/
+
+Will return a response crafted from the query string. The following four fields are supported:
+
+* `body` - a string containing the response body
+* `statuscode` - the HTTP Status Code to return
+* `contenttype` - The `Content-Type` response header
+* `headers` - a JSON string containing response headers. `Content-Type` will be ignored in `headers`. Use `contenttype` instead.
+
+```powershell
+$Query = @{
+    statsucode = 200
+    contenttype = 'application/json'
+    body = '{"key1": "value1"}'
+    headers = @{
+        "X-Header" = "Response header value"
+    } | ConvertTo-Json
+}
+$Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+Invoke-RestMethod -Uri $uri
+```
+
+Response headers:
+
+```none
+Content-Type: application/json
+X-Header: Response header value
+```
+
+Response Body:
+
+```json
+{"key1": "value1"}
+```
+
 ## /ResponseHeaders/
 
 Will return the response headers passed in query string. The response body will be the supplied headers as a JSON object.
