@@ -14,7 +14,7 @@
       <Link>PowerShellProperties.json</Link>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*" Exclude="..\Modules\Shared\Pester\.git*;..\Modules\Shared\Pester\*.yml">
+    <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*">
       <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
