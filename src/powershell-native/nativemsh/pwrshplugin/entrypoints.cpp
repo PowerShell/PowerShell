@@ -31,15 +31,17 @@ LPCWSTR g_MAIN_BINARY_NAME = L"pwrshplugin.dll";
 // the caller should free pwszErrorMessage using LocalFree().
 // returns: If the function succeeds the return value is the number of CHARs stored int the output
 // buffer, excluding the terminating null character. If the function fails the return value is zero.
-#pragma prefast(push)
-#pragma prefast (disable: 28196)
-DWORD GetFormattedErrorMessage(__deref_out PWSTR * pwszErrorMessage, DWORD dwMessageId, va_list* arguments)
-#pragma prefast(pop)
+_Success_(return >= 0)
+DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId, va_list* arguments)
 {
     DWORD dwLength = 0;
 
     do
     {
+        if (NULL == pwszErrorMessage)
+        {
+            break;
+        }
         *pwszErrorMessage = NULL;
 
         if (NULL == g_hResourceInstance)
@@ -83,7 +85,7 @@ DWORD GetFormattedErrorMessage(__deref_out PWSTR * pwszErrorMessage, DWORD dwMes
     return dwLength;
 }
 
-DWORD GetFormattedErrorMessage(__deref_out PZPWSTR pwszErrorMessage, DWORD dwMessageId, ...)
+DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId, ...)
 {
     DWORD result = 0;
 
@@ -299,6 +301,7 @@ unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion,
 
 DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorCode)
 {
+    WCHAR szMessage[256] = L"\0";
     if (NULL == requestDetails)
     {
         // cannot report if requestDetails is NULL.
@@ -307,11 +310,14 @@ DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorC
 
     DWORD result = EXIT_CODE_SUCCESS;
     PWSTR pwszErrorMessage = NULL;
-    GetFormattedErrorMessage(&pwszErrorMessage, errorCode);
+    if (GetFormattedErrorMessage(&pwszErrorMessage, errorCode) == 0)
+    {
+        swprintf_s(szMessage,_countof(szMessage), L"ReportOperationComplete: %d", errorCode);
+    }
 
     result = WSManPluginOperationComplete(requestDetails, 0, errorCode, pwszErrorMessage);
 
-    if (NULL != pwszErrorMessage)
+    if (NULL != pwszErrorMessage && pwszErrorMessage != szMessage)
     {
         delete[] pwszErrorMessage;
     }

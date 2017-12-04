@@ -490,6 +490,11 @@ private:
         {
             iMajorVersion = iVPSMajorVersion;
 
+            if (NULL != wszMgdPlugInFileName)
+            {
+                *wszMgdPlugInFileName = NULL;
+            }
+
             exitCode = ConstructPowerShellVersion(iVPSMajorVersion, iVPSMinorVersion, &wszMonadVersion);
             if (EXIT_CODE_SUCCESS != exitCode)
             {
@@ -561,9 +566,18 @@ private:
         _In_ PWSTR wszMgdPlugInFileName,
         _In_ PWSTR wszVCLRVersion,  // Conditionally set to wszCLRVersion on success
         _In_ PWSTR wszVAppBase,     // Conditionally set to wszAppBase on success
-        __out_opt PlugInException** pPluginException )
+        __out PlugInException** pPluginException )
     {
         unsigned int exitCode = EXIT_CODE_SUCCESS;
+
+        if (NULL != pPluginException)
+        {
+            *pPluginException = NULL;
+        }
+        else
+        {
+             return g_INVALID_INPUT;
+        }
 
         if (bIsPluginLoaded)
         {
@@ -577,8 +591,6 @@ private:
 
         do
         {
-            *pPluginException = NULL;
-
             // Setting global AppBase and CLR Version
             wszCLRVersion = wszVCLRVersion;
             wszAppBase = wszVAppBase;
@@ -768,7 +780,9 @@ private:
             else
             {
                 PWSTR msg = NULL;
-                GetFormattedErrorMessage(&msg, g_OPTION_SET_NOT_COMPLY, g_BUILD_VERSION);
+                (void) GetFormattedErrorMessage(&msg, g_OPTION_SET_NOT_COMPLY, g_BUILD_VERSION);
+                /* NOTE: Passing possible NULL msg. PlugInExpecption requires allocated
+                   or NULL. Literal strings are not supported. */
                 throw new PlugInException(exitCode, msg);
             }
         }
