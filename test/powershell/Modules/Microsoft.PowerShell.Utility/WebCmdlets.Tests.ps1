@@ -788,7 +788,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest returns empty RelationLink property if there is no Link Header" {
 
-        $command = "Invoke-WebRequest -Uri http://localhost:8080/PowerShell?test=response"
+        $uri = $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
         $result.Output.RelationLink.Count | Should Be 0
@@ -805,14 +806,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     # Test pending support for multiple header capable server on Linux/macOS see issue #4639
     It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Multiple Link Headers are present" -Pending:$(!$IsWindows){
-        $headers = @{
-            Link =
-                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1>; rel="self"',
-                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2>; rel="next"',
-                '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5>; rel="last"'
-        } | ConvertTo-Json -Compress
-        $headers = [uri]::EscapeDataString($headers)
-        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK&headers=$headers"
+        $Query = @{
+            body = "ok"
+            contenttype  = 'text/plain'
+            headers = @{
+                Link = @(
+                    '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1>; rel="self"'
+                    '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2>; rel="next"'
+                    '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5>; rel="last"'
+                )
+            } | ConvertTo-Json -Compress
+        }
+        $Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
         $result.Output.RelationLink.Count | Should BeExactly 3
@@ -946,9 +951,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     Context  "BasicHtmlWebResponseObject Encoding tests" {
         It "Verifies Invoke-WebRequest detects charset meta value when the ContentType header does not define it." {
-            $output = '<html><head><meta charset="Unicode"></head></html>'
+            $query = @{
+                contenttype = 'text/html'
+                body = '<html><head><meta charset="Unicode"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -956,17 +965,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
-            $output = @'
-<html>
-    <head>
-        <meta
-            charset="Unicode"
-            >
-    </head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body = "<html>`n    <head>`n        <meta`n            charset=`"Unicode`"`n            >`n    </head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -974,9 +979,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when the attribute value is unquoted." {
-            $output = '<html><head><meta charset = Unicode></head></html>'
+            $query = @{
+                contenttype = 'text/html'
+                body = '<html><head><meta charset = Unicode></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -984,14 +993,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value when the ContentType header does not define it." {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Unicode">
-</head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Unicode`">`n</head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -999,16 +1007,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." {
-            $output = @'
-<html><head>
-<meta
-    http-equiv="content-type"
-    content="text/html; charset=Unicode">
-</head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body = "<html><head>`n<meta`n    http-equiv=`"content-type`"`n    content=`"text/html; charset=Unicode`">`n</head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -1016,10 +1021,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." {
-            $output = '<html><head><meta charset="utf-32"></head></html>'
+            $query = @{
+                contenttype = 'text/html; charset=utf-8'
+                body = '<html><head><meta charset="utf-32"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::UTF8
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-8&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -1027,10 +1036,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" {
-            $output = '<html><head><meta charset="utf-32"></head></html>'
+            $query = @{
+                contenttype = 'text/html; charset=utf-16'
+                body = '<html><head><meta charset="utf-32"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-16&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -1038,9 +1051,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
-            $output = '<html><head><meta charset="invalid"></head></html>'
+            $query = @{
+                contenttype = 'text/html'
+                body = '<html><head><meta charset="invalid"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -1048,14 +1065,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Invalid">
-</head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body =  "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output" -UseBasicParsing
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -1063,127 +1079,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
     }
 
-    Context  "HtmlWebResponseObject Encoding" {
-        # these tests are dependent on https://github.com/PowerShell/PowerShell/issues/2867
-        # Currently, all paths return BasicHtmlWebResponseObject
-        It "Verifies Invoke-WebRequest detects charset meta value when the ContentType header does not define it." -Pending {
-            $output = '<html><head><meta charset="Unicode"></head></html>'
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." -Pending {
-            $output = @'
-<html>
-    <head>
-        <meta
-            charset="Unicode"
-            >
-    </head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." -Pending {
-            $output = '<html><head><meta charset="utf-16"></head></html>'
-            # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::UTF8
-            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-8&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest detects http-equiv charset meta value when the ContentType header does not define it." -Pending {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Unicode">
-</head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." -Pending {
-            $output = @'
-<html><head>
-<meta
-    http-equiv="content-type"
-    content="text/html; charset=Unicode">
-</head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" -Pending {
-            $output = '<html><head><meta charset="utf-32"></head></html>'
-            # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-16&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" -Pending {
-            $output = '<html><head><meta charset="invalid"></head></html>'
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-
-        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" -Pending {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Invalid">
-</head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
-        }
-    }
-
     #endregion charset encoding tests
 
     #region Content Header Inclusion
+
     It "Verifies Invoke-WebRequest includes Content headers in Headers property" {
-        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK"
+        $query = @{
+            contenttype = 'text/plain'
+            body ='OK'
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
         ValidateResponse $result
@@ -1193,7 +1098,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Verifies Invoke-WebRequest includes Content headers in RawContent property" {
-        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK"
+        $query = @{
+            contenttype = 'text/plain'
+            body ='OK'
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
         ValidateResponse $result
@@ -1202,13 +1111,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RawContent | Should Match ([regex]::Escape('Content-Length: 2'))
     }
 
-    # Test pending due to HttpListener limitation on Linux/macOS
+    # Test pending due to limitation on Linux/macOS
     # https://github.com/PowerShell/PowerShell/pull/4640
-    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" -Pending {
-        $headers = @{
-            'X-Fake-Header' = 'testvalue01','testvalue02'
-        } | ConvertTo-Json -Compress
-        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK&headers=$headers"
+    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" -Pending:$(!$IsWindows) {
+        $query = @{
+            contenttype = 'text/plain'
+            body ='OK'
+            headers = @{
+                'X-Fake-Header' = @('testvalue01','testvalue02')
+            } | ConvertTo-Json -Compress
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
         ValidateResponse $result
@@ -1500,7 +1413,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
             @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
             # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS) 
+            if (-not $IsMacOS)
             {
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
                 @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
@@ -1514,7 +1427,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
             if($IsWindows)
             {
-                
+
                 @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
             }
         ) {
@@ -1538,7 +1451,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
             # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS) 
+            if (-not $IsMacOS)
             {
                 @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
                 @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
@@ -1909,7 +1822,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -FollowRelLink doesn't fail if no Link Header is present" {
 
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=response&output=foo' -FollowRelLink"
+        $query = @{
+            contenttype = 'application/json'
+            body = '"foo"'
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
         $result.Output | Should BeExactly "foo"
@@ -2135,212 +2053,119 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     Context  "Invoke-RestMethod Encoding tests with BasicHtmlWebResponseObject response" {
         It "Verifies Invoke-RestMethod detects charset meta value when the ContentType header does not define it." {
-            $output = '<html><head><meta charset="Unicode"></head></html>'
+            $query = @{
+                contenttype = 'text/html'
+                body =  '<html><head><meta charset="Unicode"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
-            $output = @'
-<html>
-    <head>
-        <meta
-            charset="Unicode"
-            >
-    </head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body = "<html>`n    <head>`n        <meta`n            charset=`"Unicode`"`n            >`n    </head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod detects charset meta value when the attribute value is unquoted." {
-            $output = '<html><head><meta charset = Unicode></head></html>'
+            $query = @{
+                contenttype = 'text/html'
+                body = '<html><head><meta charset = Unicode></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod detects http-equiv charset meta value when the ContentType header does not define it." {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Unicode">
-</head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body = "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Unicode`">`n</head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod detects http-equiv charset meta value newlines are encountered in the element." {
-            $output = @'
-<html><head>
-<meta
-    http-equiv="content-type"
-    content="text/html; charset=Unicode">
-</head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body = "<html><head>`n<meta`n    http-equiv=`"content-type`"`n    content=`"text/html; charset=Unicode`">`n</head>`n</html>`n"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod ignores meta charset value when Content-Type header defines it." {
-            $output = '<html><head><meta charset="utf-32"></head></html>'
+            $query = @{
+                contenttype = 'text/html; charset=utf-8'
+                body = '<html><head><meta charset="utf-32"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::UTF8
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html; charset=utf-8&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod honors non-utf8 charsets in the Content-Type header" {
-            $output = '<html><head><meta charset="utf-32"></head></html>'
+            $query = @{
+                contenttype = 'text/html; charset=utf-16'
+                body = '<html><head><meta charset="utf-32"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html; charset=utf-16&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
-            $output = '<html><head><meta charset="invalid"></head></html>'
+            $query = @{
+                contenttype = 'text/html'
+                body = '<html><head><meta charset="invalid"></head></html>'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html&output=$output" -UseBasicParsing
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
         }
 
         It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Invalid">
-</head>
-</html>
-'@
+            $query = @{
+                contenttype = 'text/html'
+                body =  "<html><head>`n<meta http-equiv=`"content-type`" content=`"text/html; charset=Invalid`">`n</head>`n</html>"
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html&output=$output" -UseBasicParsing
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-    }
-
-    Context  "Invoke-RestMethod Encoding tests with HtmlWebResponseObject response" {
-        # these tests are dependent on https://github.com/PowerShell/PowerShell/issues/2867
-        # Currently, all paths return BasicHtmlWebResponseObject
-        It "Verifies Invoke-RestMethod detects charset meta value when the ContentType header does not define it." -Pending {
-            $output = '<html><head><meta charset="Unicode"></head></html>'
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod detects charset meta value when newlines are encountered in the element." -Pending {
-            $output = @'
-<html>
-    <head>
-        <meta
-            charset="Unicode"
-            >
-    </head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod ignores meta charset value when Content-Type header defines it." -Pending {
-            $output = '<html><head><meta charset="utf-16"></head></html>'
-            # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::UTF8
-            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html; charset=utf-8&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod detects http-equiv charset meta value when the ContentType header does not define it." -Pending {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Unicode">
-</head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod detects http-equiv charset meta value newlines are encountered in the element." -Pending {
-            $output = @'
-<html><head>
-<meta
-    http-equiv="content-type"
-    content="text/html; charset=Unicode">
-</head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod honors non-utf8 charsets in the Content-Type header" -Pending {
-            $output = '<html><head><meta charset="utf-32"></head></html>'
-            # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html; charset=utf-16&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared" -Pending {
-            $output = '<html><head><meta charset="invalid"></head></html>'
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html&output=$output"
-
-            $response.Error | Should BeNullOrEmpty
-            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
-        }
-
-        It "Verifies Invoke-RestMethod defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" -Pending {
-            $output = @'
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=Invalid">
-</head>
-</html>
-'@
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
-            $response = ExecuteRestMethod -Uri "http://localhost:8081/PowerShell?test=response&contenttype=text/html&output=$output"
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -2557,7 +2382,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
             @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
             # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS) 
+            if (-not $IsMacOS)
             {
                 @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
                 @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
@@ -2593,7 +2418,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
             @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
             # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS) 
+            if (-not $IsMacOS)
             {
                 @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
                 @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
@@ -2614,18 +2439,24 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Invoke-RestMethod Single Value JSON null support" {
-        BeforeAll {
-            $baseUrl = 'http://localhost:8081/PowerShell?test=response&contenttype=application/json&output='
-        }
         It "Invoke-RestMethod Supports a Single Value JSON null" {
-            $url = '{0}{1}' -f $baseUrl, 'null'
-            Invoke-RestMethod -Uri $url | Should Be $null
+            $query = @{
+                contenttype = 'application/json'
+                body = 'null'
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+            Invoke-RestMethod -Uri $uri | Should Be $null
         }
         It "Invoke-RestMethod Supports a Single Value JSON null and ignores whitespace" {
-            $url = '{0}{1}' -f $baseUrl, "            null         "
-            Invoke-RestMethod -Uri $url | Should Be $null
-            $url = '{0}{1}' -f $baseUrl, "           null         `n"
-            Invoke-RestMethod -Uri $url | Should Be $null
+            $query = @{
+                contenttype = 'application/json'
+                body = "            null         "
+            }
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+            Invoke-RestMethod -Uri $uri | Should Be $null
+            $query['body'] = "           null         `n"
+            $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+            Invoke-RestMethod -Uri $uri | Should Be $null
         }
     }
 
@@ -2740,22 +2571,27 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
 Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
 
     BeforeAll {
-        $response = Start-HttpListener -Port 8079
-    }
-
-    AfterAll {
-        $null = Stop-HttpListener -Port 8079
-        $response.PowerShell.Dispose()
+        $WebListener = Start-WebListener
     }
 
     It "Execute Invoke-WebRequest" {
-        $result = iwr "http://localhost:8079/PowerShell?test=response&output=hello" -TimeoutSec 5
+        $query = @{
+            body = "hello"
+            contenttype  = 'text/plain'
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $result = iwr $uri -TimeoutSec 5
         $result.StatusCode | Should Be "200"
         $result.Content | Should Be "hello"
     }
 
     It "Execute Invoke-RestMethod" {
-        $result = irm "http://localhost:8079/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
+        $query = @{
+            contenttype = 'application/json'
+            body = @{Hello = "world"} | ConvertTo-Json -Compress
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $result = irm $uri -TimeoutSec 5
         $result.Hello | Should Be "world"
     }
 }
