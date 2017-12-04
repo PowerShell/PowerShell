@@ -170,7 +170,6 @@ namespace System.Management.Automation.Remoting
                     {
                         _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
                     }
-                    _dataToBeSent = null;
 
                     lock (_syncObjects[(int)DataPriorityType.Default])
                     {
