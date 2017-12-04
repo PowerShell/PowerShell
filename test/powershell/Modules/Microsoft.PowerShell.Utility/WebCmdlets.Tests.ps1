@@ -1407,67 +1407,69 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     Context "Invoke-WebRequest -SslProtocol Test" {
-        It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases @(
-            @{SslProtocol = 'Default'; ActualProtocol = 'Default'}
-            @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
-            @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
-            # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS)
-            {
-                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
-                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
-                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
-                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
-                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
-                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
-                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
-            }
-            # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
-            if($IsWindows)
-            {
+        BeforeAll {
+            ## Test cases for the 1st 'It'
+            $testCases1 = @(
+                @{ Test = @{SslProtocol = 'Default'; ActualProtocol = 'Default'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
+                # these two currently fail on Travis CI macOS build
+                @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                # macOS does not support multiple SslProtocols
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                # macOS does not support multiple SslProtocols and possible CoreFX issue for this combo on Linux
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = -not $IsWindows }
+            )
 
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
-            }
-        ) {
-            param($SslProtocol, $ActualProtocol)
-            $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
-                SslProtocol = $SslProtocol
-                SkipCertificateCheck = $true
-            }
-            $response = Invoke-WebRequest @params
-            $result = $Response.Content | ConvertFrom-Json
-
-            $result.headers.Host | Should Be $params.Uri.Authority
+            $testCases2 = @(
+                @{ Test = @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                # these two currently fail on Travis CI macOS build
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                # macOS does not support multiple SslProtocols
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+            )
         }
 
-        It "Verifies Invoke-WebRequest -SslProtocol -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases @(
-            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}
-            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}
-            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
-            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
-            # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS)
-            {
-                @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
-                @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
-                @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+        foreach ($entry in $testCases1) {
+            It "Verifies Invoke-WebRequest -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+                param($SslProtocol, $ActualProtocol)
+                $params = @{
+                    Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                    SslProtocol = $SslProtocol
+                    SkipCertificateCheck = $true
+                }
+                $response = Invoke-WebRequest @params
+                $result = $Response.Content | ConvertFrom-Json
+
+                $result.headers.Host | Should Be $params.Uri.Authority
             }
-        ) {
-            param( $IntendedProtocol, $ActualProtocol)
-            $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
-                SslProtocol = $IntendedProtocol
-                SkipCertificateCheck = $true
-                ErrorAction = 'Stop'
-            }
-            { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
+        foreach ($entry in $testCases2) {
+            It "Verifies Invoke-WebRequest -SslProtocol -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+                param( $IntendedProtocol, $ActualProtocol)
+                $params = @{
+                    Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                    SslProtocol = $IntendedProtocol
+                    SkipCertificateCheck = $true
+                    ErrorAction = 'Stop'
+                }
+                { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+            }
+        }
     }
 
     BeforeEach {
@@ -2376,66 +2378,67 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Invoke-RestMethod -SslProtocol Test" {
-        It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases @(
-            @{SslProtocol = 'Default'; ActualProtocol = 'Default'}
-            @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}
-            @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}
-            @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}
-            # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS)
-            {
-                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}
-                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}
-                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}
-                @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}
-                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}
-                @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}
-                @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}
-            }
-            # macOS does not support multiple SslProtocols and possible CoreFX for this combo on Linux
-            if($IsWindows)
-            {
-                @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}
-            }
-        ) {
-            param($SslProtocol, $ActualProtocol)
-            $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
-                SslProtocol = $SslProtocol
-                SkipCertificateCheck = $true
-            }
-            $result = Invoke-RestMethod @params
+        BeforeAll {
+            $testCases1 = @(
+                @{ Test = @{SslProtocol = 'Default'; ActualProtocol = 'Default'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
+                # these two currently fail on Travis CI macOS build
+                @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                # macOS does not support multiple SslProtocols
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                # macOS does not support multiple SslProtocols and possible CoreFX issue for this combo on Linux
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = -not $IsWindows }
+            )
 
-            $result.headers.Host | Should Be $params.Uri.Authority
+            $testCases2 = @(
+                @{ Test = @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                # these two currently fail on Travis CI macOS build
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                # macOS does not support multiple SslProtocols
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+            )
         }
 
-        It "Verifies Invoke-RestMethod -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases @(
-            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls12'}
-            @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}
-            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}
-            @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}
-            @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}
-            # macOS does not support multiple SslProtocols
-            if (-not $IsMacOS)
-            {
-                @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}
-                @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}
-                @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}
+        foreach ($entry in $testCases1) {
+            It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+                param($SslProtocol, $ActualProtocol)
+                $params = @{
+                    Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                    SslProtocol = $SslProtocol
+                    SkipCertificateCheck = $true
+                }
+                $result = Invoke-RestMethod @params
+
+                $result.headers.Host | Should Be $params.Uri.Authority
             }
-        ) {
-            param( $IntendedProtocol, $ActualProtocol)
-            $params = @{
-                Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
-                SslProtocol = $IntendedProtocol
-                SkipCertificateCheck = $true
-                ErrorAction = 'Stop'
-            }
-            { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
-
+        foreach ($entry in $testCases2) {
+            It "Verifies Invoke-RestMethod -SslProtocol <IntendedProtocol> fails on a <ActualProtocol> only connection" -TestCases ($entry.Test) -Pending:($entry.Pending) {
+                param( $IntendedProtocol, $ActualProtocol)
+                $params = @{
+                    Uri = Get-WebListenerUrl -Test 'Get' -Https -SslProtocol $ActualProtocol
+                    SslProtocol = $IntendedProtocol
+                    SkipCertificateCheck = $true
+                    ErrorAction = 'Stop'
+                }
+                { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+            }
+        }
     }
 
     Context "Invoke-RestMethod Single Value JSON null support" {
