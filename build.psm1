@@ -351,6 +351,7 @@ function Start-PSBuild {
         [switch]$TypeGen,
         [switch]$Clean,
         [switch]$PSModuleRestore,
+        [switch]$CI,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -590,7 +591,7 @@ Fix steps:
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
     {
-        Restore-PSModuleToBuild -PublishPath $publishPath
+        Restore-PSModuleToBuild -PublishPath $publishPath -CI:$CI.IsPresent
     }
 }
 
@@ -599,7 +600,9 @@ function Restore-PSModuleToBuild
     param(
         [Parameter(Mandatory)]
         [string]
-        $PublishPath
+        $PublishPath,
+        [Switch]
+        $CI
     )
 
     $ProgressPreference = "SilentlyContinue"
@@ -613,8 +616,12 @@ function Restore-PSModuleToBuild
         'PowerShellGet'
         'Microsoft.PowerShell.Archive'
     ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
-}
 
+    if($CI.IsPresent)
+    {
+        Restore-GitModule -Destination $modulesDir -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
+    }
+}
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -2318,6 +2325,55 @@ function Clear-PSRepo
         Write-Verbose "Cleaning $_ ..."
         git clean -fdX $_
     }
+}
+
+
+# Install PowerShell modules from a git Repo such as PSL-Pester
+function Restore-GitModule
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Uri,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Destination,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$CommitSha
+        )
+
+        log 'Restoring module from git repo:'
+        log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
+
+        $clonePath = Join-Path -Path $Destination -ChildPath $Name
+        if(Test-Path $clonePath)
+        {
+            remove-Item -Path $clonePath -recurse -force
+        }
+
+        $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
+        Push-location
+        try {
+            Set-Location $clonePath
+
+            $null = Start-NativeExecution {git checkout -b desiredCommit $CommitSha} -SuppressOutput
+
+            $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
+            $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
+            Get-ChildItem -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
+        }
+        finally
+        {
+            pop-location
+        }
 }
 
 # Install PowerShell modules such as PackageManagement, PowerShellGet
