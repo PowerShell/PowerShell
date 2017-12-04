@@ -24,7 +24,9 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       rvm install ruby-2.3.3;
       rvm --default use 2.3.3;
-      # Ensure that libcurl+openssl is used for greater feature coverage.
+    fi
+  # Ensure that libcurl+openssl is used on macOS for greater feature support.
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       export DYLD_LIBRARY_PATH=/usr/local/opt/curl/lib:${DYLD_LIBRARY_PATH};
     fi
   - pushd tools
