@@ -40,7 +40,7 @@ script:
   - pwsh -File tools/travis.ps1
   # spellcheck
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell '**/*.md' '!powershell/**/*.md' --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!powershell/**/*.md' '!publish/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
 
 after_failure:
