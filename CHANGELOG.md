@@ -6,6 +6,7 @@
 - Remove Pester as a module include with the PowerShell Packages.
   In the future, you should be able to add it by running `Install-Module Pester`. (#5623, #5631)
 - Make Travis CI use `libcurl+openssl+gssapi` (#5629, @markekraus)
+- Refactor `New-UnixPackaging` into funtions to make the large function more readable. (#5625)
 
 ## v6.0.0-rc - 2017-11-16
 
