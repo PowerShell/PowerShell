@@ -732,6 +732,7 @@ function New-UnixPackage {
 
         if (Test-Path $createdPackage)
         {
+            Write-Verbose "Created package: $createdPackage" -Verbose
             return $createdPackage
         }
         else
