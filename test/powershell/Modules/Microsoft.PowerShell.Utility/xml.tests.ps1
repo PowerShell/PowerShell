@@ -2,15 +2,15 @@
     Context "Select-XML" {
         BeforeAll {
             $fileName = New-Item -Path 'TestDrive:\testSelectXml.xml'
-	        Push-Location "$fileName\.."
-	        "<Root>" | out-file -LiteralPath $fileName
-	        "   <Node Attribute='blah' />" | out-file -LiteralPath $fileName -Append
-	        "</Root>" | out-file -LiteralPath $fileName -Append
+            Push-Location "$fileName\.."
+            "<Root>" | out-file -LiteralPath $fileName
+            "   <Node Attribute='blah' />" | out-file -LiteralPath $fileName -Append
+            "</Root>" | out-file -LiteralPath $fileName -Append
 
             $fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
 
             $driveLetter = [string]($fileName.FullName)[0]
-	        $fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
+            $fileNameAsNetworkPath = "\\localhost\$driveLetter`$" + $fileName.FullName.SubString(2)
 
             class TestData
             {
@@ -65,7 +65,7 @@
                 $file = 'env:xmltestfile'
                 $params = @{$parameter=$file}
                 $err = $null
-                Select-XML @params "Root" -ErrorVariable err
+                Select-XML @params "Root" -ErrorVariable err -ErrorAction SilentlyContinue
                 $err.FullyQualifiedErrorId | Should Be $expectedError
             }
             finally
@@ -78,7 +78,7 @@
             $testfile = "$testdrive/test.xml"
             Set-Content -Path $testfile -Value "<a><b>"
             $err = $null
-            Select-Xml -Path $testfile -XPath foo -ErrorVariable err
+            Select-Xml -Path $testfile -XPath foo -ErrorVariable err -ErrorAction SilentlyContinue
             $err.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
@@ -93,13 +93,13 @@
         It "Returns error for invalid xmlnamespace" {
             $err = $null
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
-            Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorVariable err
+            Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorVariable err -ErrorAction SilentlyContinue
             $err.FullyQualifiedErrorId | Should Be 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "Returns error for invalid content" {
             $err = $null
-            Select-Xml -Content "hello" -XPath foo -ErrorVariable err
+            Select-Xml -Content "hello" -XPath foo -ErrorVariable err -ErrorAction SilentlyContinue
             $err.FullyQualifiedErrorId | Should Be 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
