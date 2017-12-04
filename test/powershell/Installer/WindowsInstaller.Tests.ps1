@@ -1,6 +1,7 @@
 Describe "Windows Installer" -Tags "Scenario" {
 
     BeforeAll {
+        $skipTest = -not $IsWindows
         $preRequisitesLink =  'https://aka.ms/pscore6-prereq'
         $linkCheckTestCases = @(
             @{ Name = "Universal C Runtime"; Url = $preRequisitesLink }
@@ -10,7 +11,7 @@ Describe "Windows Installer" -Tags "Scenario" {
         )
     }
 
-    It "WiX (Windows Installer XML) file contains pre-requisites link $preRequisitesLink" {
+    It "WiX (Windows Installer XML) file contains pre-requisites link $preRequisitesLink" -skip:$skipTest {
         $wixProductFile = Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\assets\Product.wxs"
         (Get-Content $wixProductFile -Raw).Contains($preRequisitesLink) | Should Be $true
     }
@@ -18,7 +19,7 @@ Describe "Windows Installer" -Tags "Scenario" {
     ## Running 'Invoke-WebRequest' with WMF download URLs has been failing intermittently,
     ## because sometimes the URLs lead to a 'this download is no longer available' page.
     ## We use a retry logic here. Retry for 5 times with 1 second interval.
-    It "Pre-Requisistes link for '<Name>' is reachable: <url>" -TestCases $linkCheckTestCases {
+    It "Pre-Requisistes link for '<Name>' is reachable: <url>" -TestCases $linkCheckTestCases -skip:$skipTest {
         param ($Url)
 
         foreach ($i in 1..5) {
