@@ -49,6 +49,8 @@ namespace System.Management.Automation.Remoting
         // fragmentor used to serialize & fragment objects added to this collection.
         private Fragmentor _fragmentor;
         private object[] _syncObjects;
+        // synchronize access to _syncObjects and _dataToBeSent as a set.
+        private object _syncObject = new Object();
 
         // callbacks used if no data is available at any time.
         // these callbacks are used to notify when data becomes available under
@@ -154,15 +156,30 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Clear()
         {
-            Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
-            lock (_syncObjects[(int)DataPriorityType.PromptResponse])
+            /* Lock _syncObjects and _dataToBeSent as a set to ensure atomic cleanup. */
+            lock (_syncObject)
             {
-                _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
-            }
+                /*
+                    NOTE: Error paths during initialization can cause _syncObjects to be null
+                    causing an unhandled exception in finalize and a process crash.
+                */
+                if (null != _syncObjects)
+                {
+                    Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
+                    lock (_syncObjects[(int)DataPriorityType.PromptResponse])
+                    {
+                        _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
+                    }
+                    _dataToBeSent = null;
 
-            lock (_syncObjects[(int)DataPriorityType.Default])
-            {
-                _dataToBeSent[(int)DataPriorityType.Default].Dispose();
+                    lock (_syncObjects[(int)DataPriorityType.Default])
+                    {
+                        _dataToBeSent[(int)DataPriorityType.Default].Dispose();
+                    }
+
+                    _dataToBeSent = null;
+                    _syncObjects = null;
+                }
             }
         }
 
