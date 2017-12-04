@@ -416,9 +416,8 @@ $redirectTests = @(
 )
 
 $PendingCertificateTest = $false
-# we can't check for Certificate on MacOS and Centos libcurl (currently 7.29.0) returns the following error:
+# we can't check for Certificate on Centos libcurl (currently 7.29.0) returns the following error:
 # The handler does not support client authentication certificates with this combination of libcurl (7.29.0) and its SSL backend ("NSS/3.21 Basic ECC")
-if ( $IsMacOS ) { $PendingCertificateTest = $true }
 if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
 
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
@@ -1412,20 +1411,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $testCases1 = @(
                 @{ Test = @{SslProtocol = 'Default'; ActualProtocol = 'Default'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
-                # these two currently fail on Travis CI macOS build
-                @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols and possible CoreFX issue for this combo on Linux
-                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = -not $IsWindows }
+                @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                # Possible CoreFX issue for this combo on Linux
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsLinux }
             )
 
             $testCases2 = @(
@@ -1433,13 +1430,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 @{ Test = @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
-                # these two currently fail on Travis CI macOS build
-                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}; Pending = $false }
             )
         }
 
@@ -2382,20 +2377,18 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $testCases1 = @(
                 @{ Test = @{SslProtocol = 'Default'; ActualProtocol = 'Default'}; Pending = $false }
                 @{ Test = @{SslProtocol = 'Tls'; ActualProtocol = 'Tls'}; Pending = $false }
-                # these two currently fail on Travis CI macOS build
-                @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols and possible CoreFX issue for this combo on Linux
-                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = -not $IsWindows }
+                @{ Test = @{SslProtocol = 'Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls12'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls11, Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                # Possible CoreFX issue for this combo on Linux
+                @{ Test = @{SslProtocol = 'Tls, Tls12'; ActualProtocol = 'Tls12'}; Pending = $IsLinux }
             )
 
             $testCases2 = @(
@@ -2403,13 +2396,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 @{ Test = @{IntendedProtocol = 'Tls';   ActualProtocol = 'Tls11'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls12'}; Pending = $false }
                 @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls11'}; Pending = $false }
-                # these two currently fail on Travis CI macOS build
-                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                # macOS does not support multiple SslProtocols
-                @{ Test = @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}; Pending = $IsMacOS }
-                @{ Test = @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}; Pending = $IsMacOS }
+                @{ Test = @{IntendedProtocol = 'Tls11'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls12'; ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls11, Tls12';   ActualProtocol = 'Tls'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls12';   ActualProtocol = 'Tls11'}; Pending = $false }
+                @{ Test = @{IntendedProtocol = 'Tls, Tls11';   ActualProtocol = 'Tls12'}; Pending = $false }
             )
         }
 

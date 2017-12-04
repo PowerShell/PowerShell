@@ -24,6 +24,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       rvm install ruby-2.3.3;
       rvm --default use 2.3.3;
+      export DYLD_LIBRARY_PATH=/usr/local/opt/curl/lib:${DYLD_LIBRARY_PATH};
     fi
   - pushd tools
   - ./install-powershell.sh
