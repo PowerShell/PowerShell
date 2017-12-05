@@ -2363,7 +2363,7 @@ function Restore-GitModule
 
     Push-location $clonePath
     try {
-        $null = Start-NativeExecution {git checkout -b desiredCommit $CommitSha} -SuppressOutput
+        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
 
         $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
         $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
