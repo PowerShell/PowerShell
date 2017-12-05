@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
-    <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" Exclude="..\Modules\Shared\Pester\.git*;..\Modules\Shared\Pester\*.yml">
+    <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" >
       <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
