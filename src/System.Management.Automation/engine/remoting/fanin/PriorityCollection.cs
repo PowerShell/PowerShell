@@ -46,11 +46,17 @@ namespace System.Management.Automation.Remoting
         // actual data store(s) to store priority based data and its
         // corresponding sync objects to provide thread safety.
         private SerializedDataStream[] _dataToBeSent;
+        // array of sync objects, one for each element in _dataToBeSent
+        private object[] _dataSyncObjects;
+
+        // synchronize access to _dataSyncObjects and _dataToBeSent as a set.
+        // while the elements in _dataSyncObjects are used to synchronize
+        // access to a specific element in _dataToBeSent, _syncObject is used
+        // to syncronize access to the set.
+        private object _syncObject = new Object();
+
         // fragmentor used to serialize & fragment objects added to this collection.
         private Fragmentor _fragmentor;
-        private object[] _syncObjects;
-        // synchronize access to _syncObjects and _dataToBeSent as a set.
-        private object _syncObject = new Object();
 
         // callbacks used if no data is available at any time.
         // these callbacks are used to notify when data becomes available under
@@ -97,11 +103,11 @@ namespace System.Management.Automation.Remoting
                 // create serialized streams using fragment size.
                 string[] names = Enum.GetNames(typeof(DataPriorityType));
                 _dataToBeSent = new SerializedDataStream[names.Length];
-                _syncObjects = new object[names.Length];
+                _dataSyncObjects = new object[names.Length];
                 for (int i = 0; i < names.Length; i++)
                 {
                     _dataToBeSent[i] = new SerializedDataStream(_fragmentor.FragmentSize);
-                    _syncObjects[i] = new object();
+                    _dataSyncObjects[i] = new object();
                 }
             }
         }
@@ -128,7 +134,7 @@ namespace System.Management.Automation.Remoting
             // make sure the only one object is fragmented and added to the collection
             // at any give time. This way the order of fragment is maintained
             // in the SendDataCollection(s).
-            lock (_syncObjects[(int)priority])
+            lock (_dataSyncObjects[(int)priority])
             {
                 _fragmentor.Fragment<T>(data, _dataToBeSent[(int)priority]);
             }
@@ -156,28 +162,28 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Clear()
         {
-            /* Lock _syncObjects and _dataToBeSent as a set to ensure atomic cleanup. */
+            /* Lock _dataSyncObjects and _dataToBeSent as a set to ensure atomic cleanup. */
             lock (_syncObject)
             {
                 /*
-                    NOTE: Error paths during initialization can cause _syncObjects to be null
+                    NOTE: Error paths during initialization can cause _dataSyncObjects to be null
                     causing an unhandled exception in finalize and a process crash.
                 */
-                if (null != _syncObjects)
+                if (null != _dataSyncObjects)
                 {
                     Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
-                    lock (_syncObjects[(int)DataPriorityType.PromptResponse])
+                    lock (_dataSyncObjects[(int)DataPriorityType.PromptResponse])
                     {
                         _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
                     }
 
-                    lock (_syncObjects[(int)DataPriorityType.Default])
+                    lock (_dataSyncObjects[(int)DataPriorityType.Default])
                     {
                         _dataToBeSent[(int)DataPriorityType.Default].Dispose();
                     }
 
                     _dataToBeSent = null;
-                    _syncObjects = null;
+                    _dataSyncObjects = null;
                 }
             }
         }
