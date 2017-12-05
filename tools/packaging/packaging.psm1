@@ -677,7 +677,7 @@ function New-UnixPackage {
             -Iteration $Iteration `
             -Description $Description `
             -Type $Type `
-            -Dependencies $Dependecies `
+            -Dependencies $Dependencies `
             -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
             -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
             -Staging $Staging `
@@ -780,14 +780,34 @@ function Get-FpmArguments
         [String]$LinkDestination,
 
         [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
-        [String[]]$Dependencies,
+        [ValidateScript({
+            if (!$Environment.IsMacOS -and $_.Count -eq 0)
+            {
+                throw "Must not be null or empty on this environment."
+            }
+            return $true
+        })]        [String[]]$Dependencies,
 
         [Parameter(HelpMessage='Script to run after the package installation.')]
         [AllowNull()]
+        [ValidateScript({
+            if (!$Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
         [String]$AfterInstallScript,
 
         [Parameter(HelpMessage='Script to run after the package removal.')]
         [AllowNull()]
+        [ValidateScript({
+            if (!$Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
         [String]$AfterRemoveScript
     )
 
