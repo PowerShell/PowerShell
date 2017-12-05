@@ -2348,32 +2348,31 @@ function Restore-GitModule
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$CommitSha
-        )
+    )
 
-        log 'Restoring module from git repo:'
-        log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
+    log 'Restoring module from git repo:'
+    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
 
-        $clonePath = Join-Path -Path $Destination -ChildPath $Name
-        if(Test-Path $clonePath)
-        {
-            remove-Item -Path $clonePath -recurse -force
-        }
+    $clonePath = Join-Path -Path $Destination -ChildPath $Name
+    if(Test-Path $clonePath)
+    {
+        remove-Item -Path $clonePath -recurse -force
+    }
 
-        $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
-        Push-location
-        try {
-            Set-Location $clonePath
+    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
 
-            $null = Start-NativeExecution {git checkout -b desiredCommit $CommitSha} -SuppressOutput
+    Push-location $clonePath
+    try {
+        $null = Start-NativeExecution {git checkout -b desiredCommit $CommitSha} -SuppressOutput
 
-            $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
-            $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-            Get-ChildItem -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
-        }
-        finally
-        {
-            pop-location
-        }
+        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
+        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
+        Get-ChildItem -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
+    }
+    finally
+    {
+        pop-location
+    }
 }
 
 # Install PowerShell modules such as PackageManagement, PowerShellGet
