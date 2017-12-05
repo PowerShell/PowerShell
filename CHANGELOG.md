@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Update the contribution guideline to note that updating the changelog is required. (#5586)
+- Remove Pester as a module include with the PowerShell Packages.
+  In the future, you should be able to add it by running `Install-Module Pester`. (#5623, #5631)
 
 ## v6.0.0-rc - 2017-11-16
 
