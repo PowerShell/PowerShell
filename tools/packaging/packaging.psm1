@@ -829,32 +829,34 @@ function Get-FpmArguments
 
     return $Arguments
 }
-function Get-PackageDependencies
-{
-    param()
-    DynamicParam {
-        if ($Environment.IsUbuntu -or $Environment.IsDebian) {
-            # Add a dynamic parameter '-Distribution' when the environment is Ubuntu or Debian
-            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
-            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
-            $ParameterAttr.Mandatory = $true
-            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:DebianDistributions
-            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
-            $Attributes.Add($ParameterAttr) > $null
-            $Attributes.Add($ValidateSetAttr) > $null
 
-            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-            $Dict.Add("Distribution", $Parameter) > $null
-            return $Dict
-        }
+function Test-Distribution
+{
+    param(
+        [String]
+        $Distribution
+    )
+
+    if ( ($Environment.IsUbuntu -or $Environment.IsDebian) -and !$Distribution )
+    {
+        throw "$Distribution is require for a Debian based distribution."
     }
 
-    End {
-        if ($PSBoundParameters.ContainsKey('Distribution')) {
-            $DebDistro = $PSBoundParameters['Distribution']
-        }
+    if($Script:DebianDistributions -notcontains $Distribution)
+    {
+        throw "$Distribution should be one of the following: $Script:DebianDistributions"
+    }
+    return $true
+}
+function Get-PackageDependencies
+{
+    param(
+        [String]
+        [ValidateScript({Test-Distribution -Distribution $_})]
+        $Distribution
+    )
 
+    End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
         if ($Environment.IsUbuntu -or $Environment.IsDebian) {
@@ -870,13 +872,13 @@ function Get-PackageDependencies
                 "zlib1g"
             )
 
-            switch ($DebDistro) {
+            switch ($Distribution) {
                 "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.04" { $Dependencies += @("libssl1.0.0", "libicu57") }
                 "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
-                default { throw "Debian distro '$DebDistro' is not supported." }
+                default { throw "Debian distro '$Distribution' is not supported." }
             }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
