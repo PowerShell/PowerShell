@@ -2213,7 +2213,7 @@ function Start-CrossGen {
             "win-x86"
         } elseif ($Runtime -match "-x64") {
             "win-x64"
-        } elseif (!$env:PROCESSOR_ARCHITECTURE -match "arm") {
+        } elseif (!($env:PROCESSOR_ARCHITECTURE -match "arm")) {
             throw "crossgen for 'win-arm' and 'win-arm64' must be run on that platform"
         }
     } elseif ($Runtime -eq "linux-arm") {
