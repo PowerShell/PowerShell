@@ -170,13 +170,6 @@ function Start-PSPackage {
                 # Copy file which go into symbols.zip
                 Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
 
-                # Exclude Pester until we move it to PSModuleRestore
-                $pesterPath = Join-Path -Path $symbolsSource -ChildPath 'Modules\Pester'
-                if(Test-Path -Path $pesterPath)
-                {
-                    Remove-Item -Path $pesterPath -Recurse -Force -ErrorAction SilentlyContinue
-                }
-
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
                 $zipPath = Join-Path -Path $Source -ChildPath 'symbols.zip'
@@ -426,6 +419,7 @@ function New-TempFolder
 
     return $tempFolder
 }
+
 function New-PSSignedBuildZip
 {
     param(
@@ -441,17 +435,17 @@ function New-PSSignedBuildZip
 
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
-    Get-ChildItem -path $signedFilesFilter -Recurse | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
+    Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
         $relativePath = $_.Replace($signedFilesPath,'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
         log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
     }
 
-    # Remove `signed` folder in buildpath now that signed binaries are copied
-    if (Test-Path $BuildPath\signed)
+    # Remove '$signedFilesPath' now that signed binaries are copied
+    if (Test-Path $signedFilesPath)
     {
-        Remove-Item -Recurse -Force -Path $BuildPath\signed
+        Remove-Item -Recurse -Force -Path $signedFilesPath
     }
 
     $name = split-path -Path $BuildPath -Leaf
@@ -477,10 +471,12 @@ function Expand-PSSignedBuild
     )
 
     $psModulePath = Split-Path -path $PSScriptRoot
-    # Expand unsigned build
+    # Expand signed build
     $buildPath = Join-Path -path $psModulePath -childpath 'ExpandedBuild'
     $null = New-Item -path $buildPath -itemtype Directory -force
     Expand-Archive -path $BuildZip -destinationpath $buildPath -Force
+    # Remove the zip file that contains only those files from the parent folder of 'publish'.
+    # That zip file is used for compliance scan.
     Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
     $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')

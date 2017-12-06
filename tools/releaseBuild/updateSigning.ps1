@@ -27,7 +27,7 @@ $signingXml.SignConfigXML.job | ForEach-Object -Process {
         {
             $newSignType = $signTypes[$signType]
             Write-Host "Updating $($_.src) to $newSignType"
-            $_.signType = $signTypes[$signType]
+            $_.signType = $newSignType
         }
     }
 }
