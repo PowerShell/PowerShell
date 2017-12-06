@@ -11,5 +11,5 @@ Note: Please mark anything not applicable to this PR `NA`.
 - [ ] User facing [Documentation needed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
     - [ ] Issue filed - Issue link:
 - [ ] [Change is not breaking](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#making-breaking-changes)
-- [ ] [Make sure you've added a new test, if existing tests do not effectively test the code changed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#before-submitting)
+- [ ] [Make sure you've added a new test if existing tests do not effectively test the code changed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#before-submitting)
     - [ ] [Add `[feature]` if the change is significant or affectes feature tests](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/testing-guidelines.md#requesting-additional-tests-for-a-pr)
