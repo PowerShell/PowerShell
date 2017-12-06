@@ -1533,7 +1533,7 @@ function Start-PSBootstrap {
                 Start-NativeExecution { brew install $Deps } -IgnoreExitcode
 
                 # Install patched version of curl
-                Start-NativeExecution { brew install curl --with-openssl } -IgnoreExitcode
+                Start-NativeExecution { brew install curl --with-openssl --with-gssapi } -IgnoreExitcode
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
