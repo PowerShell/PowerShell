@@ -587,7 +587,7 @@ function New-UnixPackage {
         }
 
         # Verify depenecies are installed and in the path
-        Test-Dependecies
+        Test-Dependencies
 
         $Description = $packagingStrings.Description
 
@@ -639,7 +639,7 @@ function New-UnixPackage {
                 }
             }
 
-            # Generate gzip of mann file
+            # Generate gzip of man file
             $ManGzipInfo = New-ManGzip
 
             # Change permissions for packaging
@@ -682,8 +682,8 @@ function New-UnixPackage {
             -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
             -Staging $Staging `
             -Destination $Destination `
-            -MannGzipFile $ManGzipInfo.GzipFile `
-            -MannDestination $ManGzipInfo.ManFile `
+            -ManGzipFile $ManGzipInfo.GzipFile `
+            -ManDestination $ManGzipInfo.ManFile `
             -LinkSource $LinkSource `
             -LinkDestination $Link
 
@@ -758,6 +758,8 @@ function Get-FpmArguments
         [Parameter(Mandatory,HelpMessage='Package description')]
         [String]$Description,
 
+        # From start-PSPackage without modification, already validated
+        # Values: deb, rpm, osxpkg
         [Parameter(Mandatory,HelpMessage='Installer Type')]
         [String]$Type,
 
@@ -767,11 +769,11 @@ function Get-FpmArguments
         [Parameter(Mandatory,HelpMessage='Install path on target machine')]
         [String]$Destination,
 
-        [Parameter(Mandatory,HelpMessage='The built and gzipped mann file.')]
-        [String]$MannGzipFile,
+        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
 
-        [Parameter(Mandatory,HelpMessage='The destination of the mann file')]
-        [String]$MannDestination,
+        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
 
         [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
         [String]$LinkSource,
@@ -829,18 +831,23 @@ function Get-FpmArguments
         $Arguments += @("--rpm-dist", "rhel.7")
         $Arguments += @("--rpm-os", "linux")
     }
+
     if ($Environment.IsMacOS) {
         $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
     }
+
     foreach ($Dependency in $Dependencies) {
         $Arguments += @("--depends", $Dependency)
     }
+
     if ($AfterInstallScript) {
         $Arguments += @("--after-install", $AfterInstallScript)
     }
+
     if ($AfterRemoveScript) {
         $Arguments += @("--after-remove", $AfterRemoveScript)
     }
+
     $Arguments += @(
         "$Staging/=$Destination/",
         "$MannGzipFile=$MannDestination",
@@ -859,7 +866,7 @@ function Test-Distribution
 
     if ( ($Environment.IsUbuntu -or $Environment.IsDebian) -and !$Distribution )
     {
-        throw "$Distribution is require for a Debian based distribution."
+        throw "$Distribution is required for a Debian based distribution."
     }
 
     if($Script:DebianDistributions -notcontains $Distribution)
@@ -913,7 +920,7 @@ function Get-PackageDependencies
     }
 }
 
-function Test-Dependecies
+function Test-Dependencies
 {
     foreach ($Dependency in "fpm", "ronn") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
