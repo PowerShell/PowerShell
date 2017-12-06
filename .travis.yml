@@ -42,7 +42,7 @@ script:
   # Ignore 'powershell.AppDir' folder from AppImage creation
   # Ignore publish folders because they have 3rd party files
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell '**/*.md' '!**/powershell.AppDir/**/*.md' '!**/publish/**/*.md' --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!**/powershell.AppDir/**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
 
 after_failure:
