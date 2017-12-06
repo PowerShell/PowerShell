@@ -40,7 +40,7 @@ script:
   - pwsh -File tools/travis.ps1
   # spellcheck
   # Ignore 'powershell.AppDir' folder from AppImage creation
-  # Ignore publish folders because they have 3rd party files
+  # Ignore 'Pester' folder because it's third party
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       mdspell '**/*.md' '!**/powershell.AppDir/**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
