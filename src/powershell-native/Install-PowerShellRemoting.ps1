@@ -57,11 +57,11 @@ function Register-WinRmPlugin
     # Name = PowerShell.6.0.0
     #
     $pluginArchitecture = "64"
-    if ($env:PROCESSOR_ARCHITECTURE -match "x86")
+    if ($env:PROCESSOR_ARCHITECTURE -match "x86" -or $env:PROCESSOR_ARCHITECTURE -eq "ARM")
     {
         $pluginArchitecture = "32"
     }
-    $regKeyValueFormatString = '<PlugInConfiguration xmlns=\"http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration\" Name=\"{0}\" Filename=\"{1}\" SDKVersion=\"2\" XmlRenderingType=\"text\" Enabled=\"True\" OutputBufferingMode=\"Block\" ProcessIdleTimeoutSec=\"0\" Architecture=\"{2}\" UseSharedProcess=\"false\" RunAsUser=\"\" RunAsPassword=\"\" AutoRestart=\"false\"><InitializationParameters><Param Name=\"PSVersion\" Value=\"5.0\"/></InitializationParameters><Resources><Resource ResourceUri=\"http://schemas.microsoft.com/powershell/{0}\" SupportsOptions=\"true\" ExactMatch=\"true\"><Security Uri=\"http://schemas.microsoft.com/powershell/{0}\" ExactMatch=\"true\" Sddl=\"O:NSG:BAD:P(A;;GA;;;BA)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)\"/><Capability Type=\"Shell\"/></Resource></Resources><Quotas IdleTimeoutms=\"7200000\" MaxConcurrentUsers=\"5\" MaxProcessesPerShell=\"15\" MaxMemoryPerShellMB=\"1024\" MaxShellsPerUser=\"25\" MaxConcurrentCommandsPerShell=\"1000\" MaxShells=\"25\" MaxIdleTimeoutms=\"43200000\"/></PlugInConfiguration>'
+    $regKeyValueFormatString = '<PlugInConfiguration xmlns=\"http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration\" Name=\"{0}\" Filename=\"{1}\" SDKVersion=\"2\" XmlRenderingType=\"text\" Enabled=\"True\" OutputBufferingMode=\"Block\" ProcessIdleTimeoutSec=\"0\" Architecture=\"{2}\" UseSharedProcess=\"false\" RunAsUser=\"\" RunAsPassword=\"\" AutoRestart=\"false\"><InitializationParameters><Param Name=\"PSVersion\" Value=\"6.0\"/></InitializationParameters><Resources><Resource ResourceUri=\"http://schemas.microsoft.com/powershell/{0}\" SupportsOptions=\"true\" ExactMatch=\"true\"><Security Uri=\"http://schemas.microsoft.com/powershell/{0}\" ExactMatch=\"true\" Sddl=\"O:NSG:BAD:P(A;;GA;;;BA)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)\"/><Capability Type=\"Shell\"/></Resource></Resources><Quotas IdleTimeoutms=\"7200000\" MaxConcurrentUsers=\"5\" MaxProcessesPerShell=\"15\" MaxMemoryPerShellMB=\"1024\" MaxShellsPerUser=\"25\" MaxConcurrentCommandsPerShell=\"1000\" MaxShells=\"25\" MaxIdleTimeoutms=\"43200000\"/></PlugInConfiguration>'
     $valueString = $regKeyValueFormatString -f $pluginEndpointName, $pluginAbsolutePath, $pluginArchitecture
     $keyValuePair = $regKeyName -f $valueString
 
@@ -72,7 +72,7 @@ function Register-WinRmPlugin
     Set-Content -path .\$fileName "$header$regKey$keyValuePair`n"
 
     Write-Verbose "Performing WinRM registration with: $fileName"
-    reg.exe import .\$fileName
+    reg.exe import .\$fileName 2>&1 # this tool sends status to stderr
 
     # Clean up
     Remove-Item .\$fileName
@@ -148,7 +148,7 @@ $fixedPluginPath = $pluginRawPath -replace '\\','\\'
 Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
 
 $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
-Generate-PluginConfigFile $pluginFile $targetPsHome
+Generate-PluginConfigFile $pluginFile (Resolve-Path $targetPsHome)
 
 $pluginEndpointName = "powershell.$targetPsVersion"
 

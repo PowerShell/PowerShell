@@ -195,10 +195,16 @@ function Start-BuildNativeWindowsBinaries {
         throw 'Win 10 SDK not found. Run "Start-PSBootstrap -BuildWindowsNative" or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
     }
 
-    #$vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
-    $vcPath = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC"
-    $atlMfcIncludePath = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.12.25827\atlmfc\include"
-    #$atlMfcIncludePath = Join-Path -Path $vcPath -ChildPath 'atlmfc/include'
+    if ($env:VS140COMNTOOLS -ne $null) {
+        $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+    } else {
+        $vcPath = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017" -Filter "VC" -Directory -Recurse | Select-Object -First 1).FullName
+    }
+
+    $atlMfcIncludePath = Join-Path -Path $vcPath -ChildPath 'atlmfc/include'
+    if (!(Test-Path $atlMfcIncludePath)) { # for VS2017, need to search for it
+        $atlMfcIncludePath = (Get-ChildItem $vcPath -Filter AtlBase.h -Recurse -File | Select-Object -First 1).DirectoryName
+    }
 
     # atlbase.h is included in the pwrshplugin project
     if ((Test-Path -Path $atlMfcIncludePath\atlbase.h) -eq $false) {
@@ -206,7 +212,11 @@ function Start-BuildNativeWindowsBinaries {
     }
 
     # vcvarsall.bat is used to setup environment variables
-    $vcvarsallbatPath = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat"
+    $vcvarsallbatPath = "$vcPath\vcvarsall.bat"
+    if (!(Test-Path -Path $vcvarsallbatPath)) { # for VS2017, need to search for it
+        $vcvarsallbatPath = (Get-ChildItem $vcPath -Filter vcvarsall.bat -Recurse -File | Select-Object -First 1).FullName
+    }
+
     if ((Test-Path -Path $vcvarsallbatPath) -eq $false) {
         throw "Could not find Visual Studio vcvarsall.bat at $vcvarsallbatPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
     }
@@ -215,21 +225,25 @@ function Start-BuildNativeWindowsBinaries {
 
     if ($Clean) {
         git clean -fdx
+        # remove cmake generated cache
+        Remove-Item -Recurse $HOME\Source -Force -ErrorAction SilentlyContinue
     }
 
     try {
         Push-Location "$PSScriptRoot\src\powershell-native"
 
         # setup cmakeGenerator
+        $cmakeGeneratorPlatform = ""
         if ($Arch -eq 'x86') {
             $cmakeGenerator = 'Visual Studio 15 2017'
             $cmakeArch = 'x86'
-        } elseif ($Arch -eq 'amd64_arm') {
+        } elseif ($Arch -eq 'x64_arm') {
             $cmakeGenerator = 'Visual Studio 15 2017 ARM'
             $cmakeArch = 'arm'
-        } elseif ($Arch -eq 'amd64_arm64') {
+        } elseif ($Arch -eq 'x64_arm64') {
             $cmakeGenerator = 'Visual Studio 15 2017'
             $cmakeArch = 'arm64'
+            $cmakeGeneratorPlatform = "-A ARM64"
         } else {
             $cmakeGenerator = 'Visual Studio 15 2017 Win64'
             $cmakeArch = 'x64'
@@ -248,11 +262,13 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" mc.exe -
             }
         }
 
+        # make sure we use version we installed and not from VS
+        $cmakePath = (Get-Command cmake).Source
         # Disabling until I figure out if it is necessary
         # $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
         $overrideFlags = ""
         $command = @"
-cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" "$currentLocation" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$currentLocation" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
         log "  Executing Build Command: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -274,7 +290,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" cmake "$
         Set-Location -Path $location
 
         $command = @"
-cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$location" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
         log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
