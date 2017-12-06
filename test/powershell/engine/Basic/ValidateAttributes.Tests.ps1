@@ -273,7 +273,10 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     [System.Collections.Generic.List[byte]] $ByteList,
 
                     [Parameter(Mandatory, ParameterSetName = "ByteCollection")]
-                    [System.Collections.ObjectModel.Collection[byte]] $ByteCollection
+                    [System.Collections.ObjectModel.Collection[byte]] $ByteCollection,
+
+                    [Parameter(ParameterSetName = "Default")]
+                    $Value
                 )
             }
 
@@ -313,13 +316,16 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             $byteArray = [System.IO.File]::ReadAllBytes($filePath)
             $byteList  = [System.Collections.Generic.List[byte]] $byteArray
             $byteCollection = [System.Collections.ObjectModel.Collection[byte]] $byteArray
+            ## Use the running time of 'MandatoryFunc -Value $byteArray' as the baseline time
+            ## because it does no check on the argument.
+            $baseline = (Measure-Command { MandatoryFunc -Value $byteArray }).Milliseconds
             ## Running time should be less than 'UpperBoundTime'
             ## This is not really a performance test (perf test cannot run reliably in our CI), but a test
             ## to make sure we don't check the elements of a value-type collection.
-            ## The crossgen'ed 'S.M.A.dll' is about 28mb in size, and it would take over 2000ms if we check
-            ## each byte of the array, list or collection. We use 200ms as the upper bound value in tests to
-            ## prove that we don't check each byte.
-            $UpperBoundTime = 200
+            ## The crossgen'ed 'S.M.A.dll' is about 28mb in size, and it would take more than 2000ms if we
+            ## check each byte of the array, list or collection. We use ($baseline + 200)ms as the upper
+            ## bound value in tests to prove that we don't check each byte.
+            $UpperBoundTime = $baseline + 200
 
             if ($IsWindows) {
                 $null = New-Item -Path $TESTDRIVE/file1
