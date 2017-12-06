@@ -75,7 +75,7 @@ elseif (BUILD_ARCH_ARM64)
     add_definitions(-D_WIN64)
     add_definitions(-DBIT64=1)
     add_definitions(-D_M_ARM64)
-    endif ()
+endif ()
 
 # Define the CRT lib references that link into Desktop imports
 set(STATIC_MT_CRT_LIB  "libcmt$<$<OR:$<CONFIG:Debug>,$<CONFIG:Checked>>:d>.lib")
