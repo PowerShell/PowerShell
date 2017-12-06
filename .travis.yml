@@ -39,9 +39,9 @@ install:
 script:
   - pwsh -File tools/travis.ps1
   # spellcheck
-  # Ignore publish folders because they have 3rd party files
+  # Ignore 'Pester' folder because it's third party
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell '**/*.md' '!**/publish/**/*.md' --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
 
 after_failure:
