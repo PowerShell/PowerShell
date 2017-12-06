@@ -49,7 +49,7 @@
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols",
+        "BinaryBucket": "results",
         "ArtifactsExpected": 1,
         "VariableForExtractedBinariesPath": "Symbols_x64"
     },
@@ -68,7 +68,7 @@
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols",
+        "BinaryBucket": "results",
         "ArtifactsExpected": 1,
         "VariableForExtractedBinariesPath": "Symbols_x86"
     },
