@@ -317,9 +317,15 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             $byteList  = [System.Collections.Generic.List[byte]] $byteArray
             $byteCollection = [System.Collections.ObjectModel.Collection[byte]] $byteArray
             ## Use the running time of 'MandatoryFunc -Value $byteArray' as the baseline time
+            ## because it does no check on the argument.
             $baseline = (Measure-Command { MandatoryFunc -Value $byteArray }).Milliseconds
-            ## Running time should be less than 'expected'
-            $expected = $baseline + 20
+            ## Running time should be less than 'UpperBoundTime'
+            ## This is not really a performance test (perf test cannot run reliably in our CI), but a test
+            ## to make sure we don't check the elements of a value-type collection.
+            ## The crossgen'ed 'S.M.A.dll' is about 28mb in size, and it would take more than 2000ms if we
+            ## check each byte of the array, list or collection. We use ($baseline + 200)ms as the upper
+            ## bound value in tests to prove that we don't check each byte.
+            $UpperBoundTime = $baseline + 200
 
             if ($IsWindows) {
                 $null = New-Item -Path $TESTDRIVE/file1
@@ -340,7 +346,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
         It "Validate running time '<ScriptBlock>'" -TestCases $testCases {
             param ($ScriptBlock)
-            (Measure-Command $ScriptBlock).Milliseconds | Should BeLessThan $expected
+            (Measure-Command $ScriptBlock).Milliseconds | Should BeLessThan $UpperBoundTime
         }
 
         It "COM enumerable argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" -Skip:(!$IsWindows) {
