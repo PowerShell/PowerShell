@@ -49,8 +49,8 @@
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols",
-        "BinariesExpected": 1,
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
         "VariableForExtractedBinariesPath": "Symbols_x64"
     },
     {
@@ -68,8 +68,8 @@
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols",
-        "BinariesExpected": 1,
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
         "VariableForExtractedBinariesPath": "Symbols_x86"
     },
     {
@@ -88,7 +88,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "BinariesExpected": 2
+        "ArtifactsExpected": 2
     },
     {
         "Name": "win7-x86-package",
@@ -106,7 +106,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "BinariesExpected": 2
+        "ArtifactsExpected": 2
     }
   ],
   "Linux": [
