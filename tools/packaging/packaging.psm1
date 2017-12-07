@@ -850,7 +850,7 @@ function Get-FpmArguments
 
     $Arguments += @(
         "$Staging/=$Destination/",
-        "$MannGzipFile=$MannDestination",
+        "$ManGzipFile=$ManDestination",
         "$LinkSource=$LinkDestination"
     )
 
