@@ -669,7 +669,7 @@ function New-UnixPackage {
         }
 
         # Setup package dependencies
-        $Dependencies = Get-PackageDependencies @packageDependenciesParams
+        $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
 
         $Arguments = Get-FpmArguments `
             -Name $Name `
@@ -718,7 +718,7 @@ function New-UnixPackage {
         $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
-            if($pscmdlet.ShouldProcess("Fix package name"))
+            if ($pscmdlet.ShouldProcess("Fix package name"))
             {
                 # Add the OS information to the macOS package file name.
                 $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
@@ -726,7 +726,14 @@ function New-UnixPackage {
 
                 $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
                 $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
-                $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
+
+                # -Force is not deleting the NewName if it exists, so delete it if it does
+                if ($Force -and (Test-Path -Path $newPackagePath))
+                {
+                    Remove-Item -Force $newPackagePath
+                }
+
+                $createdPackage = Rename-Item -Path $createdPackage.FullName -NewName $newPackagePath -PassThru -ErrorAction Stop
             }
         }
 
@@ -788,7 +795,8 @@ function Get-FpmArguments
                 throw "Must not be null or empty on this environment."
             }
             return $true
-        })]        [String[]]$Dependencies,
+        })]
+        [String[]]$Dependencies,
 
         [Parameter(HelpMessage='Script to run after the package installation.')]
         [AllowNull()]
