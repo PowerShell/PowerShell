@@ -13,7 +13,7 @@ $Initialized = $false
 
 function IsInbox { $PSHOME.EndsWith('\WindowsPowerShell\v1.0', [System.StringComparison]::OrdinalIgnoreCase) }
 function IsWindows { $PSVariable = Get-Variable -Name IsWindows -ErrorAction Ignore; return (-not $PSVariable -or $PSVariable.Value) }
-function IsCoreCLR { $PSVariable = Get-Variable -Name IsCoreCLR -ErrorAction Ignore; return ($PSVariable -and $PSVariable.Value) }
+function IsCoreCLR { $PSVersionTable.ContainsKey('PSEdition') -and $PSVersionTable.PSEdition -eq 'Core' }
 
 #endregion
 
@@ -23,22 +23,26 @@ if(IsInbox)
 {
     $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath "WindowsPowerShell"
 }
-else
+elseif(IsCoreCLR){
+    if(IsWindows) {
+        $script:ProgramFilesPSPath = Microsoft.PowerShell.Management\Join-Path -Path $env:ProgramFiles -ChildPath 'PowerShell'
+    }
+    else {
+        $script:ProgramFilesPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('SHARED_MODULES')) -Parent
+    }
+}
+
+try
 {
-    $script:ProgramFilesPSPath = $PSHome
+    $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
+}
+catch
+{
+    $script:MyDocumentsFolderPath = $null
 }
 
 if(IsInbox)
 {
-    try
-    {
-        $script:MyDocumentsFolderPath = [Environment]::GetFolderPath("MyDocuments")
-    }
-    catch
-    {
-        $script:MyDocumentsFolderPath = $null
-    }
-
     $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
                                 {
                                     Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
@@ -48,13 +52,22 @@ if(IsInbox)
                                     Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
                                 }
 }
-elseif(IsWindows)
-{
-    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath 'Documents\PowerShell'
-}
-else
-{
-    $script:MyDocumentsPSPath = Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath '.local/share/powershell'
+elseif(IsCoreCLR) {
+    if(IsWindows)
+    {
+        $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
+        {
+            Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath 'PowerShell'
+        }
+        else
+        {
+            Microsoft.PowerShell.Management\Join-Path -Path $HOME -ChildPath "Documents\PowerShell"
+        }
+    }
+    else
+    {
+        $script:MyDocumentsPSPath = Split-Path -Path ([System.Management.Automation.Platform]::SelectProductNameForDirectory('USER_MODULES')) -Parent
+    }
 }
 
 $script:ProgramFilesModulesPath = Microsoft.PowerShell.Management\Join-Path -Path $script:ProgramFilesPSPath -ChildPath 'Modules'
@@ -143,7 +156,8 @@ Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdmin
         Remove-InstalledModules
     }
 
-    It "Should install a module correctly to the required location with default AllUsers scope" {
+    ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Travis CI Linux build
+    It "Should install a module correctly to the required location with default AllUsers scope" -Pending:$IsLinux {
         Install-Module -Name $ContosoServer -Repository $RepositoryName
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
@@ -212,7 +226,8 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
         Remove-InstalledScripts
     }
 
-    It "Should install a script correctly to the required location with default AllUsers scope" {
+    ## Marked as 'Pending' on Linux for now because the test requires root privilege but we cannot do it now in our Travis CI Linux build
+    It "Should install a script correctly to the required location with default AllUsers scope" -Pending:$IsLinux {
         Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate
         $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
 
