@@ -73,8 +73,8 @@ function Register-WinRmPlugin
 "@
     $valueString = $regKeyValueFormatString -f $pluginEndpointName, $pluginAbsolutePath, $pluginArchitecture
 
-    New-Item $regKey -Force
-    New-ItemProperty -Path $regKey -Name ConfigXML -Value $valueString
+    New-Item $regKey -Force > $null
+    New-ItemProperty -Path $regKey -Name ConfigXML -Value $valueString > $null
 }
 
 function Generate-PluginConfigFile

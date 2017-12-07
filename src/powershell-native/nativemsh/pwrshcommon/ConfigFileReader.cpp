@@ -44,30 +44,42 @@ namespace NativeMsh
                 }
                 else if (*iter == L'p' || *iter == L'P')
                 {
-                    this->pathToPowerShellAssemblies = this->getValueFromLine(line, psHomeDirTag);
-                    if (this->pathToPowerShellAssemblies.size() > 0) // Found a match
+                    std::wstring psHomeDir = this->getValueFromLine(line, psHomeDirTag);
+                    HANDLE dirHandle = CreateFileW(psHomeDir.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+                    if (INVALID_HANDLE_VALUE != dirHandle)
                     {
-                        std::wstring::const_iterator slashIter = this->pathToPowerShellAssemblies.end();
-                        slashIter--;
-                        if (*slashIter != L'\\')
+                        CloseHandle(dirHandle);
+                        this->pathToPowerShellAssemblies = psHomeDir;
+                        if (this->pathToPowerShellAssemblies.size() > 0) // Found a match
                         {
-                            // Guarantee that there is a '\' at the end of the path
-                            this->pathToPowerShellAssemblies.append(L"\\");
+                            std::wstring::const_iterator slashIter = this->pathToPowerShellAssemblies.end();
+                            slashIter--;
+                            if (*slashIter != L'\\')
+                            {
+                                // Guarantee that there is a '\' at the end of the path
+                                this->pathToPowerShellAssemblies.append(L"\\");
+                            }
                         }
                     }
                     break;
                 }
                 else if (*iter == L'c' || *iter == L'C')
                 {
-                    this->coreClrDirectory = this->getValueFromLine(line, coreClrDirTag);
-                    if (this->coreClrDirectory.size() > 0) // Found a match
+                    std::wstring coreClrDir = this->getValueFromLine(line, coreClrDirTag);
+                    HANDLE dirHandle = CreateFileW(coreClrDir.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+                    if (INVALID_HANDLE_VALUE != dirHandle)
                     {
-                        std::wstring::const_iterator slashIter = this->coreClrDirectory.end();
-                        slashIter--;
-                        if (*slashIter != L'\\')
+                        CloseHandle(dirHandle);
+                        this->coreClrDirectory = this->getValueFromLine(line, coreClrDirTag);
+                        if (this->coreClrDirectory.size() > 0) // Found a match
                         {
-                            // Guarantee that there is a '\' at the end of the path
-                            this->coreClrDirectory.append(L"\\");
+                            std::wstring::const_iterator slashIter = this->coreClrDirectory.end();
+                            slashIter--;
+                            if (*slashIter != L'\\')
+                            {
+                                // Guarantee that there is a '\' at the end of the path
+                                this->coreClrDirectory.append(L"\\");
+                            }
                         }
                     }
                     break;

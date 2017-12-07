@@ -172,6 +172,8 @@ function Start-BuildNativeWindowsBinaries {
         [ValidateSet('Debug', 'Release')]
         [string]$Configuration = 'Release',
 
+        # The `x64_arm` syntax is the build environment for VS2017, `x64` means the host is an x64 machine and will use
+        # the x64 built tool.  The `arm` refers to the target architecture when doing cross compilation.
         [ValidateSet('x64', 'x86', 'x64_arm64', 'x64_arm')]
         [string]$Arch = 'x64',
 
