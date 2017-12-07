@@ -582,7 +582,7 @@ function New-UnixPackage {
             }
         }
 
-        # Verify depenecies are installed and in the path
+        # Verify dependencies are installed and in the path
         Test-Dependencies
 
         $Description = $packagingStrings.Description
@@ -702,10 +702,10 @@ function New-UnixPackage {
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
             if ($AfterScriptInfo.AfterRemoveScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript -Force
             }
             Remove-Item -Path $ManGzipInfo.GzipFile -Force -ErrorAction SilentlyContinue
         }
