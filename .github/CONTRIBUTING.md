@@ -148,6 +148,10 @@ Additional references:
   Even better, all contributors are free to contribute the documentation themselves.
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 
+### Pull Request - Work in Progress
+
+* If your pull request in not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
+
 #### Pull Request - Automatic Checks
 
 * If this is your first contribution to PowerShell,
