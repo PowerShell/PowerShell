@@ -150,7 +150,7 @@ Additional references:
 
 ### Pull Request - Work in Progress
 
-* If your pull request in not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
+* If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
 
 #### Pull Request - Automatic Checks
 
