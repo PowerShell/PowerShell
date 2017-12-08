@@ -48,4 +48,29 @@ case "$1" in
         ;;
 esac
 '@
+# see https://developer.apple.com/library/content/documentation/DeveloperTools/Reference/DistributionDefinitionRef/Chapters/Distribution_XML_Ref.html
+OsxDistributionTemplate = @'
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<installer-gui-script minSpecVersion="1">
+    <title>{0}</title>
+    <options hostArchitectures="x86_64"/>
+    <options customize="never" rootVolumeOnly="true"/>
+    <background file="macDialog.png" scaling="tofit" alignment="bottomleft"/>
+    <allowed-os-versions>
+        <os-version min="{3}" />
+    </allowed-os-versions>
+    <options customize="never" require-scripts="false"/>
+    <product id="com.microsoft.powershell" version="{1}" />
+    <choices-outline>
+        <line choice="default">
+            <line choice="powershell"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="powershell" visible="false">
+        <pkg-ref id="com.microsoft.powershell"/>
+    </choice>
+    <pkg-ref id="com.microsoft.powershell" version="{1}" onConclusion="none">{2}</pkg-ref>
+</installer-gui-script>
+'@
 }
