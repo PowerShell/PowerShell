@@ -172,8 +172,12 @@ function Start-BuildNativeWindowsBinaries {
         [ValidateSet('Debug', 'Release')]
         [string]$Configuration = 'Release',
 
-        [ValidateSet('x64', 'x86')]
-        [string]$Arch = 'x64'
+        # The `x64_arm` syntax is the build environment for VS2017, `x64` means the host is an x64 machine and will use
+        # the x64 built tool.  The `arm` refers to the target architecture when doing cross compilation.
+        [ValidateSet('x64', 'x86', 'x64_arm64', 'x64_arm')]
+        [string]$Arch = 'x64',
+
+        [switch]$Clean
     )
 
     if (-not $Environment.IsWindows) {
@@ -193,8 +197,16 @@ function Start-BuildNativeWindowsBinaries {
         throw 'Win 10 SDK not found. Run "Start-PSBootstrap -BuildWindowsNative" or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
     }
 
-    $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+    if ($env:VS140COMNTOOLS -ne $null) {
+        $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+    } else {
+        $vcPath = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017" -Filter "VC" -Directory -Recurse | Select-Object -First 1).FullName
+    }
+
     $atlMfcIncludePath = Join-Path -Path $vcPath -ChildPath 'atlmfc/include'
+    if (!(Test-Path $atlMfcIncludePath)) { # for VS2017, need to search for it
+        $atlMfcIncludePath = (Get-ChildItem $vcPath -Filter AtlBase.h -Recurse -File | Select-Object -First 1).DirectoryName
+    }
 
     # atlbase.h is included in the pwrshplugin project
     if ((Test-Path -Path $atlMfcIncludePath\atlbase.h) -eq $false) {
@@ -202,42 +214,62 @@ function Start-BuildNativeWindowsBinaries {
     }
 
     # vcvarsall.bat is used to setup environment variables
-    if ((Test-Path -Path $vcPath\vcvarsall.bat) -eq $false) {
-        throw "Could not find Visual Studio vcvarsall.bat at $vcPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
+    $vcvarsallbatPath = "$vcPath\vcvarsall.bat"
+    if (!(Test-Path -Path $vcvarsallbatPath)) { # for VS2017, need to search for it
+        $vcvarsallbatPath = (Get-ChildItem $vcPath -Filter vcvarsall.bat -Recurse -File | Select-Object -First 1).FullName
+    }
+
+    if ((Test-Path -Path $vcvarsallbatPath) -eq $false) {
+        throw "Could not find Visual Studio vcvarsall.bat at $vcvarsallbatPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
     }
 
     log "Start building native Windows binaries"
+
+    if ($Clean) {
+        git clean -fdx
+        Remove-Item $HOME\source\cmakecache.txt -ErrorAction SilentlyContinue
+    }
 
     try {
         Push-Location "$PSScriptRoot\src\powershell-native"
 
         # setup cmakeGenerator
+        $cmakeGeneratorPlatform = ""
         if ($Arch -eq 'x86') {
-            $cmakeGenerator = 'Visual Studio 14 2015'
+            $cmakeGenerator = 'Visual Studio 15 2017'
+            $cmakeArch = 'x86'
+        } elseif ($Arch -eq 'x64_arm') {
+            $cmakeGenerator = 'Visual Studio 15 2017 ARM'
+            $cmakeArch = 'arm'
+        } elseif ($Arch -eq 'x64_arm64') {
+            $cmakeGenerator = 'Visual Studio 15 2017'
+            $cmakeArch = 'arm64'
+            $cmakeGeneratorPlatform = "-A ARM64"
         } else {
-            $cmakeGenerator = 'Visual Studio 14 2015 Win64'
+            $cmakeGenerator = 'Visual Studio 15 2017 Win64'
+            $cmakeArch = 'x64'
         }
 
         # Compile native resources
         $currentLocation = Get-Location
-        @("nativemsh/pwrshplugin") | ForEach-Object {
+        @("nativemsh\pwrshplugin") | ForEach-Object {
             $nativeResourcesFolder = $_
             Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | ForEach-Object {
                 $command = @"
-cmd.exe /C cd /d "$currentLocation" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$currentLocation\$nativeResourcesFolder" -r "$currentLocation\$nativeResourcesFolder"
 "@
                 log "  Executing mc.exe Command: $command"
-                Start-NativeExecution { Invoke-Expression -Command:$command 2>&1 }
+                Start-NativeExecution { Invoke-Expression -Command:$command }
             }
         }
 
+        # make sure we use version we installed and not from VS
+        $cmakePath = (Get-Command cmake).Source
         # Disabling until I figure out if it is necessary
         # $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
         $overrideFlags = ""
-        $location = Get-Location
-
         $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$currentLocation" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
         log "  Executing Build Command: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -258,15 +290,18 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
         $location = "$PSScriptRoot\src\PowerShell.Core.Instrumentation"
         Set-Location -Path $location
 
+        Remove-Item $HOME\source\cmakecache.txt -ErrorAction SilentlyContinue
+
         $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$location" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
         log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
 
         # Copy the binary to the packaging directory
         # NOTE: No PDB file; it's a resource-only DLL.
-        $srcPath = [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        # VS2017 puts this in $HOME\source
+        $srcPath = [IO.Path]::Combine($HOME, "source", $Configuration, 'PowerShell.Core.Instrumentation.dll')
         Copy-Item -Path $srcPath -Destination $dstPath
 
     } finally {
@@ -364,7 +399,9 @@ function Start-PSBuild {
                      "win7-x86",
                      "osx.10.12-x64",
                      "linux-x64",
-                     "linux-arm")]
+                     "linux-arm",
+                     "win-arm",
+                     "win-arm64")]
         [string]$Runtime,
 
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
@@ -379,6 +416,10 @@ function Start-PSBuild {
 
     if ($Runtime -eq "linux-arm" -and -not $Environment.IsUbuntu) {
         throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
+    if ("win-arm","win-arm64" -contains $Runtime -and -not $Environment.IsWindows) {
+        throw "Cross compiling for win-arm or win-arm64 is only supported on Windows environment"
     }
 
     function Stop-DevPowerShell {
@@ -652,7 +693,9 @@ function New-PSOptions {
                      "win7-x64",
                      "osx.10.12-x64",
                      "linux-x64",
-                     "linux-arm")]
+                     "linux-arm",
+                     "win-arm",
+                     "win-arm64")]
         [string]$Runtime,
 
         [switch]$CrossGen,
@@ -1631,11 +1674,11 @@ function Start-PSBootstrap {
 
                 # Install cmake
                 $cmakePath = "${env:ProgramFiles}\CMake\bin"
-                if($cmakePresent) {
+                if($cmakePresent -and !($force.IsPresent)) {
                     log "Cmake is already installed. Skipping installation."
                 } else {
-                    log "Cmake not present. Installing cmake."
-                    Start-NativeExecution { choco install cmake -y --version 3.6.0 }
+                    log "Cmake not present or -Force used. Installing cmake."
+                    Start-NativeExecution { choco install cmake -y --version 3.10.0 }
                     if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
                         log "Adding $cmakePath to Path environment variable"
                         $env:Path += ";$cmakePath"
@@ -2132,7 +2175,9 @@ function Start-CrossGen {
                      "win7-x64",
                      "osx.10.12-x64",
                      "linux-x64",
-                     "linux-arm")]
+                     "linux-arm",
+                     "win-arm",
+                     "win-arm64")]
         [string]
         $Runtime
     )
@@ -2186,8 +2231,10 @@ function Start-CrossGen {
     $crossGenRuntime = if ($Environment.IsWindows) {
         if ($Runtime -match "-x86") {
             "win-x86"
-        } else {
+        } elseif ($Runtime -match "-x64") {
             "win-x64"
+        } elseif (!($env:PROCESSOR_ARCHITECTURE -match "arm")) {
+            throw "crossgen for 'win-arm' and 'win-arm64' must be run on that platform"
         }
     } elseif ($Runtime -eq "linux-arm") {
         throw "crossgen is not available for 'linux-arm'"
