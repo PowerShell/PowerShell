@@ -582,7 +582,7 @@ function New-UnixPackage {
             }
         }
 
-        # Verify depenecies are installed and in the path
+        # Verify dependencies are installed and in the path
         Test-Dependencies
 
         $Description = $packagingStrings.Description
@@ -653,8 +653,7 @@ function New-UnixPackage {
             if($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
-                $appsfolder = New-MacOSLauncher -Version $Version
-                $Arguments += "$appsfolder=/"
+                $AppsFolder = New-MacOSLauncher -Version $Version
             }
         }
 
@@ -681,7 +680,9 @@ function New-UnixPackage {
             -ManGzipFile $ManGzipInfo.GzipFile `
             -ManDestination $ManGzipInfo.ManFile `
             -LinkSource $LinkSource `
-            -LinkDestination $Link
+            -LinkDestination $Link `
+            -AppsFolder $AppsFolder `
+            -ErrorAction Stop
 
         # Build package
         try {
@@ -702,10 +703,10 @@ function New-UnixPackage {
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
             if ($AfterScriptInfo.AfterRemoveScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript
+                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript -Force
             }
             Remove-Item -Path $ManGzipInfo.GzipFile -Force -ErrorAction SilentlyContinue
         }
@@ -714,22 +715,9 @@ function New-UnixPackage {
         $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
-            if ($pscmdlet.ShouldProcess("Fix package name"))
+            if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
-                # Add the OS information to the macOS package file name.
-                $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
-                $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
-
-                $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
-                $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
-
-                # -Force is not deleting the NewName if it exists, so delete it if it does
-                if ($Force -and (Test-Path -Path $newPackagePath))
-                {
-                    Remove-Item -Force $newPackagePath
-                }
-
-                $createdPackage = Rename-Item -Path $createdPackage.FullName -NewName $newPackagePath -PassThru -ErrorAction Stop
+                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage
             }
         }
 
@@ -745,7 +733,70 @@ function New-UnixPackage {
     }
 }
 
+function New-MacOsDistributionPackage
+{
+    param(
+        [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
+        [System.IO.FileInfo]$FpmPackage
+    )
 
+    if(!$Environment.IsMacOS)
+    {
+        throw 'New-MacOsDistributionPackage is only supported on macOS!'
+    }
+
+    $packageName = Split-Path -leaf -Path $FpmPackage
+
+    # Create a temp directory to store the needed files
+    $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Path $tempDir -Force > $null
+
+    $resourcesDir = Join-Path -path $tempDir -childPath 'resources'
+    New-Item -ItemType Directory -Path $resourcesDir -Force > $null
+    #Copy background file to temp directory
+    $backgroundFile = Join-Path $PSScriptRoot "/../../assets/macDialog.png"
+    Copy-Item -Path $backgroundFile -Destination $resourcesDir
+    # Move the current package to the temp directory
+    $tempPackagePath = Join-Path -path $tempDir -ChildPath $packageName
+    Move-Item -Path $FpmPackage -Destination $tempPackagePath -Force
+
+    # Add the OS information to the macOS package file name.
+    $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
+    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name)
+
+    $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
+    $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
+
+    # -Force is not deleting the NewName if it exists, so delete it if it does
+    if ($Force -and (Test-Path -Path $newPackagePath))
+    {
+        Remove-Item -Force $newPackagePath
+    }
+
+    # Create the distribution xml
+    $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
+
+    # format distribution template with:
+    # 0 - title
+    # 1 - version
+    # 2 - package path
+    # 2 - minimum os version
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $Version", $Version, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+
+    log "Applying distribution.xml to package..."
+    Push-Location $tempDir
+    try
+    {
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
+    }
+    finally
+    {
+        Pop-Location
+        Remove-item -Path $tempDir -Recurse -Force
+    }
+
+    return $newPackagePath
+}
 function Get-FpmArguments
 {
     param(
@@ -814,7 +865,18 @@ function Get-FpmArguments
             }
             return $true
         })]
-        [String]$AfterRemoveScript
+        [String]$AfterRemoveScript,
+
+        [Parameter(HelpMessage='AppsFolder used to add macOS launcher')]
+        [AllowNull()]
+        [ValidateScript({
+            if ($Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
+        [String]$AppsFolder
     )
 
     $Arguments = @(
@@ -857,6 +919,12 @@ function Get-FpmArguments
         "$ManGzipFile=$ManDestination",
         "$LinkSource=$LinkDestination"
     )
+
+    if($AppsFolder)
+    {
+        $Arguments += "$AppsFolder=/"
+    }
+
 
     return $Arguments
 }
