@@ -113,7 +113,7 @@
     {
         "Name": "ubuntu.14.04",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage AppImage",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage AppImage,tar,tar-arm",
         "BuildDockerOptions": [
             "--cap-add",
             "SYS_ADMIN",
@@ -140,7 +140,7 @@
     {
         "Name": "centos.7",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage tar",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
         "DockerImageName": "ps-centos-7",
