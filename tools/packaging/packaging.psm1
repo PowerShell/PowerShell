@@ -787,6 +787,7 @@ function New-MacOsDistributionPackage
     Push-Location $tempDir
     try
     {
+        # productbuild is an xcode command line tool, and those tools are installed when you install brew
         Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
     }
     finally
@@ -924,7 +925,6 @@ function Get-FpmArguments
     {
         $Arguments += "$AppsFolder=/"
     }
-
 
     return $Arguments
 }
