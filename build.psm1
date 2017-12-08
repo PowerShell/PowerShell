@@ -227,8 +227,7 @@ function Start-BuildNativeWindowsBinaries {
 
     if ($Clean) {
         git clean -fdx
-        # remove cmake generated cache
-        Remove-Item -Recurse $HOME\Source -Force -ErrorAction SilentlyContinue
+        Remove-Item $HOME\source\cmakecache.txt -ErrorAction SilentlyContinue
     }
 
     try {
@@ -291,6 +290,8 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakeP
         $location = "$PSScriptRoot\src\PowerShell.Core.Instrumentation"
         Set-Location -Path $location
 
+        Remove-Item $HOME\source\cmakecache.txt -ErrorAction SilentlyContinue
+
         $command = @"
 cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$location" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
@@ -299,7 +300,8 @@ cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$
 
         # Copy the binary to the packaging directory
         # NOTE: No PDB file; it's a resource-only DLL.
-        $srcPath = [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        # VS2017 puts this in $HOME\source
+        $srcPath = [IO.Path]::Combine($HOME, "source", $Configuration, 'PowerShell.Core.Instrumentation.dll')
         Copy-Item -Path $srcPath -Destination $dstPath
 
     } finally {

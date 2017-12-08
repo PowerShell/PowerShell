@@ -50,15 +50,12 @@ namespace NativeMsh
                     {
                         CloseHandle(dirHandle);
                         this->pathToPowerShellAssemblies = psHomeDir;
-                        if (this->pathToPowerShellAssemblies.size() > 0) // Found a match
+                        std::wstring::const_iterator slashIter = this->pathToPowerShellAssemblies.end();
+                        slashIter--;
+                        if (*slashIter != L'\\')
                         {
-                            std::wstring::const_iterator slashIter = this->pathToPowerShellAssemblies.end();
-                            slashIter--;
-                            if (*slashIter != L'\\')
-                            {
-                                // Guarantee that there is a '\' at the end of the path
-                                this->pathToPowerShellAssemblies.append(L"\\");
-                            }
+                            // Guarantee that there is a '\' at the end of the path
+                            this->pathToPowerShellAssemblies.append(L"\\");
                         }
                     }
                     break;
@@ -70,16 +67,13 @@ namespace NativeMsh
                     if (INVALID_HANDLE_VALUE != dirHandle)
                     {
                         CloseHandle(dirHandle);
-                        this->coreClrDirectory = this->getValueFromLine(line, coreClrDirTag);
-                        if (this->coreClrDirectory.size() > 0) // Found a match
+                        this->coreClrDirectory = coreClrDir;
+                        std::wstring::const_iterator slashIter = this->coreClrDirectory.end();
+                        slashIter--;
+                        if (*slashIter != L'\\')
                         {
-                            std::wstring::const_iterator slashIter = this->coreClrDirectory.end();
-                            slashIter--;
-                            if (*slashIter != L'\\')
-                            {
-                                // Guarantee that there is a '\' at the end of the path
-                                this->coreClrDirectory.append(L"\\");
-                            }
+                            // Guarantee that there is a '\' at the end of the path
+                            this->coreClrDirectory.append(L"\\");
                         }
                     }
                     break;
