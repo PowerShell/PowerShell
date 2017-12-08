@@ -773,7 +773,7 @@ function New-MacOsDistributionPackage
     }
 
     # Create the distribution xml
-    $distributionXmlPath = Join-Path -Path $tempDir -ChildPath '/powershellDistribution.xml'
+    $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
 
     # format distribution template with:
     # 0 - title
@@ -782,7 +782,6 @@ function New-MacOsDistributionPackage
     # 2 - minimum os version
     $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $Version", $Version, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
-    #$FpmPackage = Rename-Item -Path $FpmPackage.FullName -NewName $newPackagePath -PassThru -ErrorAction Stop
     log "Applying distribution.xml to package..."
     Push-Location $tempDir
     try
