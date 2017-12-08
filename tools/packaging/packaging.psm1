@@ -653,8 +653,7 @@ function New-UnixPackage {
             if($pscmdlet.ShouldProcess("Add macOS launch application"))
             {
                 # Generate launcher app folder
-                $appsfolder = New-MacOSLauncher -Version $Version
-                $Arguments += "$appsfolder=/"
+                $AppsFolder = New-MacOSLauncher -Version $Version
             }
         }
 
@@ -681,7 +680,9 @@ function New-UnixPackage {
             -ManGzipFile $ManGzipInfo.GzipFile `
             -ManDestination $ManGzipInfo.ManFile `
             -LinkSource $LinkSource `
-            -LinkDestination $Link
+            -LinkDestination $Link `
+            -AppsFolder $AppsFolder `
+            -ErrorAction Stop
 
         # Build package
         try {
@@ -864,7 +865,18 @@ function Get-FpmArguments
             }
             return $true
         })]
-        [String]$AfterRemoveScript
+        [String]$AfterRemoveScript,
+
+        [Parameter(HelpMessage='AppsFolder used to add macOS launcher')]
+        [AllowNull()]
+        [ValidateScript({
+            if ($Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
+        [String]$AppsFolder
     )
 
     $Arguments = @(
@@ -907,6 +919,12 @@ function Get-FpmArguments
         "$ManGzipFile=$ManDestination",
         "$LinkSource=$LinkDestination"
     )
+
+    if($AppsFolder)
+    {
+        $Arguments += "$AppsFolder=/"
+    }
+
 
     return $Arguments
 }
