@@ -13,7 +13,7 @@ param (
     [string]$ReleaseTag,
 
     [switch]$AppImage,
-    [switch]$Tar,
+    [switch]$TarX64,
     [switch]$TarArm
 )
 
@@ -34,7 +34,7 @@ try {
 
     Start-PSPackage @releaseTagParam
     if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
-    if ($Tar) { Start-PSPackage -Type tar @releaseTagParam }
+    if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
 
     if ($TarArm) {
         ## Build 'linux-arm' and create 'tar.gz' package for it.

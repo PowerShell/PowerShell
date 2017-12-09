@@ -113,7 +113,7 @@
     {
         "Name": "ubuntu.14.04",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage -Tar -TarArm",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage -TarX64 -TarArm",
         "BuildDockerOptions": [
             "--cap-add",
             "SYS_ADMIN",
