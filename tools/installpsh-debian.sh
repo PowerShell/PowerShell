@@ -17,21 +17,6 @@
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
-# Parse Arguments
-while [ $# -gt 0 ]; do
-  case "$1" in
-    --skip-sudo-check=*)
-      skip_sudo_check="${1#*=}"
-      ;;
-    *)
-      printf "***************************\n"
-      printf "* Error: Invalid argument.*\n"
-      printf "***************************\n"
-      exit 1
-  esac
-  shift
-done
-
 VERSION="1.1.2"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
@@ -108,7 +93,7 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -eq "sudo" && "$skip_sudo_check" -ne "TRUE" ]]; then
+if [[ "$SUDO" -eq "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 
     $SUDO -v
     if [ $? -ne 0 ]; then
