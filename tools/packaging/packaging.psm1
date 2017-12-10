@@ -34,8 +34,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -eq "zip") {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip'.
+        if ("zip" -eq $Type) {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
