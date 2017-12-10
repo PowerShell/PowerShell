@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +30,25 @@ namespace mvc.Controllers
                 {"args"   , args},
                 {"headers", headers},
                 {"origin" , Request.HttpContext.Connection.RemoteIpAddress.ToString()},
-                {"url"    , UriHelper.GetDisplayUrl(Request)}
+                {"url"    , UriHelper.GetDisplayUrl(Request)},
+                {"method" , Request.Method}
             };
+
+            if(Request.HasFormContentType){
+                Hashtable form = new Hashtable();
+                foreach (var key in Request.Form.Keys)
+                {
+                    form.Add(key,Request.Form[key]);
+                }
+                output["form"] = form;
+            }
+
+            string data = new StreamReader(Request.Body).ReadToEnd();
+            if (!String.IsNullOrEmpty(data))
+            {
+                output["data"] = data;
+            }
+
             return Json(output);
         }
         public IActionResult Error()

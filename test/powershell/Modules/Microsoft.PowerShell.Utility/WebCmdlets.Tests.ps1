@@ -3,7 +3,7 @@
 #
 # This is a Pester test suite which validate the Web cmdlets.
 #
-# Note: These tests use data from http://httpbin.org/
+# Note: These tests use data from WebListener
 #
 
 # Invokes the given command via script block invocation.
@@ -642,7 +642,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     # patch Returns PATCH data.
     # put Returns PUT data.
     # delete Returns DELETE data
-    $testMethods = @("GET", "POST", "PATCH", "PUT", "DELETE")
+    $testMethods = @("POST", "PATCH", "PUT", "DELETE")
     $contentTypes = @("text/plain", "application/xml", "application/json")
 
     foreach ($contentType in $contentTypes)
@@ -650,20 +650,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         foreach ($method in $testMethods)
         {
             # Operation options
-            $operation = $method.ToLower()
-            $uri = "http://httpbin.org/$operation"
+            $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
+            $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
 
-            if ($method -eq "GET")
-            {
-                $command = "Invoke-WebRequest -Uri $uri"
-            }
-            else
-            {
-                $command = "Invoke-WebRequest -Uri $uri -Body '$body' -Method $method -ContentType $contentType -TimeoutSec 5"
-            }
-
-            It "$command" {
+            It "Invoke-WebRequest -Uri $uri  -Method $method -ContentType $contentType -Body [body data]" {
 
                 $result = ExecuteWebCommand -command $command
                 ValidateResponse -response $result
@@ -671,21 +662,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should Match $uri
-
-                # For a GET request, there is no data property to validate.
-                if ($method -ne "GET")
+                $jsonContent.headers.'Content-Type' | Should Match $contentType
+                # Validate that the response Content.data field is the same as what we sent.
+                if ($contentType -eq "application/xml")
                 {
-                    $jsonContent.headers.'Content-Type' | Should Match $contentType
-
-                    # Validate that the response Content.data field is the same as what we sent.
-                    if ($contentType -eq "application/xml")
-                    {
-                        $jsonContent.data | Should Be $body
-                    }
-                    else
-                    {
-                        $jsonContent.data | Should Match $body
-                    }
+                    $jsonContent.data | Should Be $body
+                }
+                else
+                {
+                    $jsonContent.data | Should Match $body
                 }
             }
         }
@@ -760,7 +745,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
 
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
+        $uri = Get-WebListenerUrl -Test 'Post'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         ($result.Output.Content | ConvertFrom-Json).form.testparam | Should Be "testvalue"
     }
@@ -775,14 +761,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest returns HTTP errors in exception" {
 
-        $command = "Invoke-WebRequest -Uri http://httpbin.org/status/418"
+        $query = @{
+            body = "I am a teapot!!!"
+            statuscode = 418
+            responsephrase = "I am a teapot"
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
-        $result.Error.ErrorDetails.Message | Should Match "\-=\[ teapot \]"
+        $result.Error.ErrorDetails.Message | Should be $query.body
         $result.Error.Exception | Should BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $result.Error.Exception.Response.StatusCode | Should Be 418
-        $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
-        $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
+        $result.Error.Exception.Response.ReasonPhrase | Should Be $query.responsephrase
+        $result.Error.Exception.Message | Should Match ": 418 \($($query.responsephrase)\)\."
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
@@ -1622,7 +1614,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod error with -Proxy option - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/' -Proxy '${proxy_address}'"
+        # A non-loopback URI is required but the external resource will not be accessed
+        $uri = 'http://httpbin.org'
+        $command = "Invoke-RestMethod -Uri '$uri' -Proxy '${proxy_address}'"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
@@ -1679,7 +1673,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     # patch Returns PATCH data.
     # put Returns PUT data.
     # delete Returns DELETE data
-    $testMethods = @("GET", "POST", "PATCH", "PUT", "DELETE")
+    $testMethods = @("POST", "PATCH", "PUT", "DELETE")
     $contentTypes = @("text/plain", "application/xml", "application/json")
 
     foreach ($contentType in $contentTypes)
@@ -1687,40 +1681,26 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         foreach ($method in $testMethods)
         {
             # Operation options
-            $operation = $method.ToLower()
-            $uri = "http://httpbin.org/$operation"
+            $uri = Get-WebListenerUrl -Test $method
             $body = GetTestData -contentType $contentType
+            $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType"
 
-            if ($method -eq "GET")
-            {
-                $command = "Invoke-RestMethod -Uri $uri"
-            }
-            else
-            {
-                $command = "Invoke-RestMethod -Uri $uri -Body '$body' -Method $method -ContentType $contentType -TimeoutSec 5"
-            }
-
-            It "$command" {
+            It "Invoke-RestMethod -Uri $uri -Method $method -ContentType $contentType -Body [body data]" {
 
                 $result = ExecuteWebCommand -command $command
 
                 # Validate response
                 $result.Output.url | Should Match $uri
+                $result.Output.headers.'Content-Type' | Should Match $contentType
 
-                # For a GET request, there is no data property to validate.
-                if ($method -ne "GET")
+                # Validate that the response Content.data field is the same as what we sent.
+                if ($contentType -eq "application/xml")
                 {
-                    $result.Output.headers.'Content-Type' | Should Match $contentType
-
-                    # Validate that the response Content.data field is the same as what we sent.
-                    if ($contentType -eq "application/xml")
-                    {
-                        $result.Output.data | Should Be $body
-                    }
-                    else
-                    {
-                        $result.Output.data | Should Match $body
-                    }
+                    $result.Output.data | Should Be $body
+                }
+                else
+                {
+                    $result.Output.data | Should Match $body
                 }
             }
         }
@@ -1794,7 +1774,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
 
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
+        $uri = Get-WebListenerUrl -Test 'Post'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should Be "testvalue"
     }
@@ -1809,14 +1790,20 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod returns HTTP errors in exception" {
 
-        $command = "Invoke-RestMethod -Uri http://httpbin.org/status/418"
+        $query = @{
+            body = "I am a teapot!!!"
+            statuscode = 418
+            responsephrase = "I am a teapot"
+        }
+        $uri =  Get-WebListenerUrl -Test 'Response' -Query $query
+        $command = "Invoke-RestMethod -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
-        $result.Error.ErrorDetails.Message | Should Match "\-=\[ teapot \]"
+        $result.Error.ErrorDetails.Message | Should Be $query.body
         $result.Error.Exception | Should BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $result.Error.Exception.Response.StatusCode | Should Be 418
-        $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
-        $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
+        $result.Error.Exception.Response.ReasonPhrase | Should Be $query.responsephrase
+        $result.Error.Exception.Message | Should Match ": 418 \($($query.responsephrase)\)\."
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
@@ -2489,48 +2476,50 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
 
     Context "InFile parameter negative tests" {
-
-        $testCases = @(
+        BeforeAll {
+            $uri = Get-WebListenerUrl -Test 'Post'
+            $testCases = @(
 #region INVOKE-WEBREQUEST
-            @{
-                Name = 'Validate error for Invoke-WebRequest -InFile ""'
-                ScriptBlock = {Invoke-WebRequest -Uri http://httpbin.org/post -Method Post -InFile ""}
-                ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
-            }
+                @{
+                    Name = 'Validate error for Invoke-WebRequest -InFile ""'
+                    ScriptBlock = {Invoke-WebRequest -Uri $uri -Method Post -InFile ""}
+                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
 
-            @{
-                Name = 'Validate error for Invoke-WebRequest -InFile'
-                ScriptBlock = {Invoke-WebRequest -Uri http://httpbin.org/post -Method Post -InFile}
-                ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
-            }
+                @{
+                    Name = 'Validate error for Invoke-WebRequest -InFile'
+                    ScriptBlock = {Invoke-WebRequest -Uri $uri -Method Post -InFile}
+                    ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
 
-            @{
-                Name = "Validate error for Invoke-WebRequest -InFile  $TestDrive\content.txt"
-                ScriptBlock = {Invoke-WebRequest -Uri http://httpbin.org/post -Method Post -InFile  $TestDrive\content.txt}
-                ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
-            }
+                @{
+                    Name = "Validate error for Invoke-WebRequest -InFile  $TestDrive\content.txt"
+                    ScriptBlock = {Invoke-WebRequest -Uri $uri -Method Post -InFile  $TestDrive\content.txt}
+                    ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                }
 #endregion
 
 #region INVOKE-RESTMETHOD
-            @{
-                Name = "Validate error for Invoke-RestMethod -InFile ''"
-                ScriptBlock = {Invoke-RestMethod -Uri http://httpbin.org/post -Method Post -InFile ''}
-                ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
-            }
+                @{
+                    Name = "Validate error for Invoke-RestMethod -InFile ''"
+                    ScriptBlock = {Invoke-RestMethod -Uri $uri -Method Post -InFile ''}
+                    ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
 
-            @{
-                Name = "Validate error for Invoke-RestMethod -InFile <null>"
-                ScriptBlock = {Invoke-RestMethod -Uri http://httpbin.org/post -Method Post -InFile}
-                ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
-            }
+                @{
+                    Name = "Validate error for Invoke-RestMethod -InFile <null>"
+                    ScriptBlock = {Invoke-RestMethod -Uri $uri -Method Post -InFile}
+                    ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
 
-            @{
-                Name = "Validate error for Invoke-RestMethod -InFile  $TestDrive\content.txt"
-                ScriptBlock = {Invoke-RestMethod -Uri http://httpbin.org/post -Method Post -InFile $TestDrive\content.txt}
-                ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
-            }
+                @{
+                    Name = "Validate error for Invoke-RestMethod -InFile  $TestDrive\content.txt"
+                    ScriptBlock = {Invoke-RestMethod -Uri $uri -Method Post -InFile $TestDrive\content.txt}
+                    ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                }
 #endregion
-        )
+            )
+        }
 
         It "<Name>" -TestCases $testCases {
             param ($scriptblock, $expectedFullyQualifiedErrorId)
@@ -2551,18 +2540,19 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
 
         BeforeAll {
             $filePath = Join-Path $TestDrive test.txt
-            New-Item -Path $filePath -Value "hello" -ItemType File -Force
+            New-Item -Path $filePath -Value "hello=world" -ItemType File -Force
+            $uri = Get-WebListenerUrl -Test 'Post'
         }
 
         It "Invoke-WebRequest -InFile" {
-            $result = Invoke-WebRequest -InFile $filePath  -Uri http://httpbin.org/post -Method Post
+            $result = Invoke-WebRequest -InFile $filePath  -Uri $uri -Method Post
             $content = $result.Content | ConvertFrom-Json
-            $content.form | Should Match "hello"
+            $content.form.hello[0] | Should Match "world"
         }
 
         It "Invoke-RestMethod -InFile" {
-            $result = Invoke-RestMethod -InFile $filePath  -Uri http://httpbin.org/post -Method Post
-            $result.form | Should Match "hello"
+            $result = Invoke-RestMethod -InFile $filePath  -Uri $uri -Method Post
+            $result.form.hello[0] | Should Match "world"
         }
     }
 }
