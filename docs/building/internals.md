@@ -113,9 +113,9 @@ and then reuse the produced binaries for many builds subsequently.
 The NuGet package for `pwrshplugin.dll` is `psrp.windows`,
 and the NuGet package for `libpsl-native` is `libpsl`.
 
-### psrp.windows
+### Windows packages: PSRP.Windows and PowerShell.Core.Instrumentation
 
-To build `pwrshplugin.dll`, you need to install Visual Studio 2017 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisites.
+To build `pwrshplugin.dll` and `PowerShell.Core.Instrumentation.dll`, you need to install Visual Studio 2017 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisites.
 
 Ensure the following individual components are selected:
 
@@ -139,9 +139,9 @@ Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64_arm64
 Be sure to build and test for all supported architectures: x86, x64, x64_arm, and x64_arm64.
 
 The `x64_arm` and `x64_arm64` architectures mean that the host system needs to be x64 to cross-compile to ARM.
-When building for multiple architectures, be sure to use the `-clean` switch as cmake will cache the previous run and the wrong compiler will be used to generate the subsequent architecutes.
+When building for multiple architectures, be sure to use the `-clean` switch as cmake will cache the previous run and the wrong compiler will be used to generate the subsequent architectures.
 
-After that, the binary `pwrshplugin.dll` and its PDB file will be placed under 'src\powershell-native\bin\release\coreclr'.
+After that, the binary `pwrshplugin.dll`, its PDB file, and `powershell.core.instrumentation.dll` will be placed under 'src\powershell-win-core'.
 
 To create a new NuGet package for `pwrshplugin.dll`, first you need to get the `psrp.windows.nuspec` from an existing `psrp.windows` package.
 You can find it at `~/.nuget/packages/psrp.windows` on your windows machine if you have recently built PowerShell on it.
@@ -173,10 +173,15 @@ The layout of files should look like this:
                 pwrshplugin.pdb
 ```
 
-Have the dlls signed and run `nuget pack` from the parent of the `runtimes` folder where `psrp.windows.nuspec` resides.
+Have the DLLs signed with `authenticode dual` certificate and run `nuget pack` from the parent of the `runtimes` folder where `psrp.windows.nuspec` resides.
 Be sure to use the latest recommended version of [nuget.exe](https://www.nuget.org/downloads).
 
 Publish latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows.
+
+`PowerShell.Core.Instrumentation.dll` NuGet package is created the same way, but in a separate directory following the same layout above.
+To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under `src\PowerShell.Core.Instrumentation`.
+
+Publish latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/PowerShell.Core.Instrumentation.
 
 ### libpsl
 
@@ -225,66 +230,3 @@ The layout of files should look like this:
 ```
 
 Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
-
-### PowerShell.Core.Instrumentation
-
-To successfully decode PowerShell Core ETW events, the manifest and resource binary need to be registered on the system.
-
-To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under `src\PowerShell.Core.Instrumentation`.
-
-Update the version information for the package.
-
-```none
-<version>6.0.0-RC</version>
-```
-
-Next, create the directory structure needed for the contents of the nuget package structure. The final directory and file layout is listed below.
-
-```powershell
-if (Test-Path -Path c:\mypackage)
-{
-  Remove-Item -Recurse -Force -Path c:\mypackage
-}
-$null = New-Item -Path c:\mypackage\runtimes\win-x64\native -ItemType Directory
-$null = New-Item -Path c:\mypackage\runtimes\win-x86\native -ItemType Directory
-```
-
-You will need to build `PowerShell.Core.Instrumentation.dll` targeting both `win-x64` and `win-x86` on Windows 10.
-The output files will be placed under src\powershell-win-core.
-
-Build the `win-x64` platform and copy the `PowerShell.Core.Instrumentation.dll` to the win-x86 portion of the tree.
-
-```powershell
-## Build targeting win-x64
-Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
-Copy-Item -Path .\src\powershell-win-core\PowerShell.Core.Instrumentation.dll -Destination c:\mypackage\runtimes\win-x64\native
-```
-
-Next, build the `win-x86` platform and copy `PowerShell.Core.Instrumentation.dll` to the win-x86 portion of the tree.
-
-```powershell
-## Build targeting win-x86
-Start-BuildNativeWindowsBinaries -Configuration Release -Arch x86
-Copy-Item -Path .\src\powershell-win-core\PowerShell.Core.Instrumentation.dll -Destination c:\mypackage\runtimes\win-x86\native
-```
-
-The layout of files looks like this:
-
-```none
-└── runtimes
-    ├── win-x64
-    │   └── native
-    │       └── PowerShell.Core.Instrumentation.dll
-    │
-    ├── win-x86
-    │   └── native
-    │       └── PowerShell.Core.Instrumentation.dll
-```
-
-NOTE: Since these are native binaries used on Windows, they need to be `authenticode dual signed` before creating the nuget package.
-
-Lastly, run the following command from the root of the repo to create the nuget package. The nuget package is placed at `.\src\powershell-win-core`.  Note that you may need the latest `nuget.exe`.
-
-```powershell
-nuget pack .\src\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.nuspec -BasePath c:\mypackage -OutputDirectory .\src\powershell-win-core
-```

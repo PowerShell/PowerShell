@@ -21,6 +21,7 @@ AppImage
 AppVeyor
 argumentlist
 arm32
+arm64
 artifact
 artifacts
 ASP.NET
@@ -484,14 +485,18 @@ nanoserver-insider-powershell
 
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
+_arm
+_arm64
 Catalog
 flavor
 libpsl
 MSBuild
+nuget.exe
 plugin
 powershell-unix
 psrp.windows
 src
+v141
 #endregion
 
 #region docs/building/macos.md Overrides
