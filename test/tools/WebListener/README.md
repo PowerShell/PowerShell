@@ -491,10 +491,12 @@ Will return a response crafted from the query string. The following four fields 
 * `statuscode` - the HTTP Status Code to return
 * `contenttype` - The `Content-Type` response header
 * `headers` - a JSON string containing response headers. `Content-Type` will be ignored in `headers`. Use `contenttype` instead.
+* `responsephrase` - the HTTP response phrase to return
 
 ```powershell
 $Query = @{
     statsucode = 200
+    responsephrase = 'OK'
     contenttype = 'application/json'
     body = '{"key1": "value1"}'
     headers = @{

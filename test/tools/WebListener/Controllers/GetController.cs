@@ -34,7 +34,8 @@ namespace mvc.Controllers
                 {"method" , Request.Method}
             };
 
-            if(Request.HasFormContentType){
+            if (Request.HasFormContentType)
+            {
                 Hashtable form = new Hashtable();
                 foreach (var key in Request.Form.Keys)
                 {

@@ -664,14 +664,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 $jsonContent.url | Should Match $uri
                 $jsonContent.headers.'Content-Type' | Should Match $contentType
                 # Validate that the response Content.data field is the same as what we sent.
-                if ($contentType -eq "application/xml")
-                {
-                    $jsonContent.data | Should Be $body
-                }
-                else
-                {
-                    $jsonContent.data | Should Match $body
-                }
+                $jsonContent.data | Should Be $body
             }
         }
     }
@@ -748,7 +741,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Post'
         $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
-        ($result.Output.Content | ConvertFrom-Json).form.testparam | Should Be "testvalue"
+        $jsonResult = $result.Output.Content | ConvertFrom-Json
+        $jsonResult.form.testparam | Should Be "testvalue"
+        $jsonResult.Headers.'Content-Type' | Should Be "application/x-www-form-urlencoded"
     }
 
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET" {
@@ -770,8 +765,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
-        $result.Error.ErrorDetails.Message | Should be $query.body
-        $result.Error.Exception | Should BeOfType Microsoft.PowerShell.Commands.HttpResponseException
+        $result.Error.ErrorDetails.Message | Should Be $query.body
+        $result.Error.Exception | Should BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $result.Error.Exception.Response.StatusCode | Should Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should Be $query.responsephrase
         $result.Error.Exception.Message | Should Match ": 418 \($($query.responsephrase)\)\."
@@ -1694,14 +1689,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 $result.Output.headers.'Content-Type' | Should Match $contentType
 
                 # Validate that the response Content.data field is the same as what we sent.
-                if ($contentType -eq "application/xml")
-                {
-                    $result.Output.data | Should Be $body
-                }
-                else
-                {
-                    $result.Output.data | Should Match $body
-                }
+                $result.Output.data | Should Be $body
             }
         }
     }
@@ -1778,6 +1766,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should Be "testvalue"
+        $result.Output.Headers.'Content-Type' | Should Be "application/x-www-form-urlencoded"
     }
 
     It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET" {
@@ -1800,7 +1789,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should Be $query.body
-        $result.Error.Exception | Should BeOfType Microsoft.PowerShell.Commands.HttpResponseException
+        $result.Error.Exception | Should BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $result.Error.Exception.Response.StatusCode | Should Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should Be $query.responsephrase
         $result.Error.Exception.Message | Should Match ": 418 \($($query.responsephrase)\)\."
@@ -2547,11 +2536,13 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
         It "Invoke-WebRequest -InFile" {
             $result = Invoke-WebRequest -InFile $filePath  -Uri $uri -Method Post
             $content = $result.Content | ConvertFrom-Json
+            $content.form.hello.Count | Should Be 1
             $content.form.hello[0] | Should Match "world"
         }
 
         It "Invoke-RestMethod -InFile" {
             $result = Invoke-RestMethod -InFile $filePath  -Uri $uri -Method Post
+            $result.form.hello.Count | Should Be 1
             $result.form.hello[0] | Should Match "world"
         }
     }
