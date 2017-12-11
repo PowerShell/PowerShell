@@ -24,7 +24,7 @@ function Start-PSPackage {
         [string[]]$Type,
 
         # Generate windows downlevel package
-        [ValidateSet("win7-x86", "win7-x64")]
+        [ValidateSet("win7-x86", "win7-x64", "win-arm", "win-arm64")]
         [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
@@ -34,8 +34,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -eq "zip") {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip'.
+        if ("zip" -eq $Type) {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
@@ -65,9 +65,13 @@ function Start-PSPackage {
         }
 
         if($Environment.IsWindows) {
-            # Runtime will always be win7-x64 or win7-x86 on Windows.
+            # Runtime will be one of win7-x64, win7-x86, "win-arm" and "win-arm64" on Windows.
             # Build the name suffix for universal win-plat packages.
-            $NameSuffix = $Runtime -replace 'win\d+', 'win'
+            switch ($Runtime) {
+                "win-arm"   { $NameSuffix = "win-arm32" }
+                "win-arm64" { $NameSuffix = "win-arm64" }
+                default     { $NameSuffix = $_ -replace 'win\d+', 'win' }
+            }
         }
 
         log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
@@ -75,11 +79,11 @@ function Start-PSPackage {
         $Script:Options = Get-PSOptions
 
         $crossGenCorrect = $false
-        if ($Type -eq "tar-arm") {
-            # crossgen doesn't support arm32 yet
+        if ($Runtime -match "arm") {
+            # crossgen doesn't support arm32/64
             $crossGenCorrect = $true
         }
-        elseif($Script:Options.CrossGen) {
+        elseif ($Script:Options.CrossGen) {
             $crossGenCorrect = $true
         }
 
@@ -97,6 +101,7 @@ function Start-PSPackage {
         # Make sure the most recent build satisfies the package requirement
         if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
+            -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
             $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
