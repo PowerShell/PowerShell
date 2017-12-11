@@ -739,6 +739,29 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
     }
 
+    It "Invoke-WebRequest can retry the specified number of times" {
+        try {
+            ## Setup test hook to force 2 retries.
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("FailWebRequestCount", 2)
+
+            $outputFilePath = Join-Path $TestDrive "verboseoutput.txt"
+
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $command = "Invoke-WebRequest -Uri '$uri' -Verbose -RetryCount 2 -RetryIntervalSec 1 4>$outputFilePath"
+            $result = ExecuteWebCommand -command $command
+
+            ## The webrequest call succeeds after 2 retries.
+            $result.output.StatusCode | Should Be "200"
+
+            # Expect 2 verbose messages as we are retrying twice.
+            (Select-String -Path $outputFilePath -Pattern 'Retrying after interval').Count | Should Be 2
+        }
+        finally {
+            ## Reset test hook.
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("FailWebRequestCount", 0)
+        }
+    }
+
     #region Redirect tests
 
     It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {

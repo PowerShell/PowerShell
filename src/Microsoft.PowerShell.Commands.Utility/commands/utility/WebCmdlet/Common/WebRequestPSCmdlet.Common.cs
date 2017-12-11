@@ -21,6 +21,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -227,6 +228,20 @@ namespace Microsoft.PowerShell.Commands
             set { _maximumRedirection = value; }
         }
         private int _maximumRedirection = -1;
+
+        /// <summary>
+        /// gets or sets the RetryCount property
+        /// </summary>
+        [Parameter]
+        [ValidateRange(0, Int32.MaxValue)]
+        public virtual int RetryCount { get; set; } = 0;
+
+        /// <summary>
+        /// gets or sets the TimeOut property
+        /// </summary>
+        [Parameter]
+        [ValidateRange(1, Int32.MaxValue)]
+        public virtual int RetryIntervalSec { get; set; } = 10;
 
         #endregion
 
@@ -1389,121 +1404,133 @@ namespace Microsoft.PowerShell.Commands
                             WriteVerbose(linkVerboseMsg);
                         }
 
-                        using (HttpRequestMessage request = GetRequest(uri))
+                        int retriesLeft = RetryCount;
+                        HttpResponseMessage response = null;
+
+                        bool isSuccessful = true;
+
+                        do
                         {
-                            FillRequestStream(request);
-                            try
+                            using (HttpRequestMessage request = GetRequest(uri, stripAuthorization: false))
                             {
-                                long requestContentLength = 0;
-                                if (request.Content != null)
-                                    requestContentLength = request.Content.Headers.ContentLength.Value;
-
-                                string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
-                                    WebCmdletStrings.WebMethodInvocationVerboseMsg,
-                                    request.Method,
-                                    request.RequestUri,
-                                    requestContentLength);
-                                WriteVerbose(reqVerboseMsg);
-
-                                HttpResponseMessage response = GetResponse(client, request, keepAuthorization);
-
-                                string contentType = ContentHelper.GetContentType(response);
-                                string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
-                                    WebCmdletStrings.WebResponseVerboseMsg,
-                                    response.Content.Headers.ContentLength,
-                                    contentType);
-                                WriteVerbose(respVerboseMsg);
-
-                                bool _isSuccess = response.IsSuccessStatusCode;
-
-                                // Check if the Resume range was not satisfiable because the file already completed downloading.
-                                // This happens when the local file is the same size as the remote file.
-                                if (Resume.IsPresent &&
-                                    response.StatusCode == HttpStatusCode.RequestedRangeNotSatisfiable &&
-                                    response.Content.Headers.ContentRange.HasLength &&
-                                    response.Content.Headers.ContentRange.Length == _resumeFileSize)
+                                FillRequestStream(request);
+                                try
                                 {
-                                    _isSuccess = true;
-                                    WriteVerbose(String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
-                                    // Disable writing to the OutFile.
-                                    OutFile = null;
-                                }
+                                    long requestContentLength = 0;
+                                    if (request.Content != null)
+                                        requestContentLength = request.Content.Headers.ContentLength.Value;
 
-                                if (!_isSuccess)
-                                {
-                                    string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
-                                        (int)response.StatusCode, response.ReasonPhrase);
-                                    HttpResponseException httpEx = new HttpResponseException(message, response);
-                                    ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                    string detailMsg = string.Empty;
-                                    StreamReader reader = null;
-                                    try
+                                    string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                                        WebCmdletStrings.WebMethodInvocationVerboseMsg,
+                                        request.Method,
+                                        request.RequestUri,
+                                        requestContentLength);
+                                    WriteVerbose(reqVerboseMsg);
+
+                                    response = GetResponse(client, request, stripAuthorization);
+
+                                    bool causeFailureForTesting = (System.Management.Automation.Internal.InternalTestHooks.FailWebRequestCount > 0) && retriesLeft > 0;
+
+                                    isSuccessful = response.IsSuccessStatusCode && !causeFailureForTesting;
+
+                                    if (!isSuccessful && retriesLeft > 0)
                                     {
-                                        reader = new StreamReader(StreamHelper.GetResponseStream(response));
-                                        // remove HTML tags making it easier to read
-                                        detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", string.Empty);
+                                        retriesLeft--;
+
+                                        string retryMessage = string.Format(CultureInfo.CurrentCulture,
+                                            WebCmdletStrings.RetryVerboseMsg,
+                                            RetryIntervalSec,
+                                            response.StatusCode
+                                            );
+
+                                        WriteVerbose(retryMessage);
+                                        Task.Delay(RetryIntervalSec * 1000).GetAwaiter().GetResult();
+                                        continue;
                                     }
-                                    catch (Exception)
+
+                                    string contentType = ContentHelper.GetContentType(response);
+                                    string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
+                                        WebCmdletStrings.WebResponseVerboseMsg,
+                                        response.Content.Headers.ContentLength,
+                                        contentType);
+                                    WriteVerbose(respVerboseMsg);
+
+                                    if (!response.IsSuccessStatusCode)
                                     {
-                                        // catch all
-                                    }
-                                    finally
-                                    {
-                                        if (reader != null)
+                                        string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                            (int)response.StatusCode, response.ReasonPhrase);
+                                        HttpResponseException httpEx = new HttpResponseException(message, response);
+                                        ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                        string detailMsg = "";
+                                        StreamReader reader = null;
+                                        try
                                         {
-                                            reader.Dispose();
+                                            reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                                            // remove HTML tags making it easier to read
+                                            detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>", "");
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // catch all
+                                        }
+                                        finally
+                                        {
+                                            if (reader != null)
+                                            {
+                                                reader.Dispose();
+                                            }
+                                        }
+                                        if (!String.IsNullOrEmpty(detailMsg))
+                                        {
+                                            er.ErrorDetails = new ErrorDetails(detailMsg);
+                                        }
+                                        ThrowTerminatingError(er);
+                                    }
+
+                                    if (_parseRelLink || _followRelLink)
+                                    {
+                                        ParseLinkHeader(response, uri);
+                                    }
+                                    ProcessResponse(response);
+                                    UpdateSession(response);
+
+                                    // If we hit our maximum redirection count, generate an error.
+                                    // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
+                                    // impossible to detect programmatically when we hit this limit. By handling this ourselves
+                                    // (and still writing out the result), users can debug actual HTTP redirect problems.
+                                    if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                                    {
+                                        if (response.StatusCode == HttpStatusCode.Found ||
+                                            response.StatusCode == HttpStatusCode.Moved ||
+                                            response.StatusCode == HttpStatusCode.MovedPermanently)
+                                        {
+                                            ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                            er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                            WriteError(er);
                                         }
                                     }
-                                    if (!String.IsNullOrEmpty(detailMsg))
+                                }
+                                catch (HttpRequestException ex)
+                                {
+                                    ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                    if (ex.InnerException != null)
                                     {
-                                        er.ErrorDetails = new ErrorDetails(detailMsg);
+                                        er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
                                     }
                                     ThrowTerminatingError(er);
                                 }
 
-                                if (_parseRelLink || _followRelLink)
+                                if (_followRelLink)
                                 {
-                                    ParseLinkHeader(response, uri);
-                                }
-                                ProcessResponse(response);
-                                UpdateSession(response);
-
-                                // If we hit our maximum redirection count, generate an error.
-                                // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
-                                // impossible to detect programmatically when we hit this limit. By handling this ourselves
-                                // (and still writing out the result), users can debug actual HTTP redirect problems.
-                                if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
-                                {
-                                    if (response.StatusCode == HttpStatusCode.Found ||
-                                        response.StatusCode == HttpStatusCode.Moved ||
-                                        response.StatusCode == HttpStatusCode.MovedPermanently)
+                                    if (!_relationLink.ContainsKey("next"))
                                     {
-                                        ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                                        er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
-                                        WriteError(er);
+                                        return;
                                     }
+                                    uri = new Uri(_relationLink["next"]);
+                                    followedRelLink++;
                                 }
                             }
-                            catch (HttpRequestException ex)
-                            {
-                                ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                if (ex.InnerException != null)
-                                {
-                                    er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
-                                }
-                                ThrowTerminatingError(er);
-                            }
-
-                            if (_followRelLink)
-                            {
-                                if (!_relationLink.ContainsKey("next"))
-                                {
-                                    return;
-                                }
-                                uri = new Uri(_relationLink["next"]);
-                                followedRelLink++;
-                            }
-                        }
+                        } while (!isSuccessful);
                     }
                     while (_followRelLink && (followedRelLink < _maximumFollowRelLink));
                 }
