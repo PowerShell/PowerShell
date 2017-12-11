@@ -9,7 +9,7 @@ param (
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win7-x86")]
+    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64")]
     [string]$Runtime = 'win7-x64',
 
     [switch] $Wait,
@@ -80,7 +80,7 @@ try{
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-        $buildParams = @{'CrossGen'=$true}
+        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm"}
         if(!$Symbols.IsPresent)
         {
             $buildParams['PSModuleRestore'] = $true
@@ -90,17 +90,14 @@ try{
     }
 
     $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
-    if(!$Symbols.IsPresent)
+    if(!$Symbols.IsPresent -and $Runtime -notmatch "arm")
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
-    else
-    {
-        $pspackageParams += @{'IncludeSymbols' = $true}
-    }
 
     $pspackageParams['Type']='zip'
+    $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
     Write-Verbose "Starting powershell packaging(zip)..." -verbose
     Start-PSPackage @pspackageParams @releaseTagParam
 
