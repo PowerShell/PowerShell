@@ -1,5 +1,4 @@
-Submodules
-==========
+# Submodules
 
 While most developers will not have to deal with submodules on a regular basis, those who do should read this information.
 The submodules currently in this project are:
@@ -11,8 +10,7 @@ The submodules currently in this project are:
 
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
-Rebase and Fast-Forward Merge Pull Requests in Submodules
-=========================================================
+## Rebase and Fast-Forward Merge Pull Requests in Submodules
 
 *This is not necessary in the superproject, only submodules!*
 

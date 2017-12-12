@@ -1,10 +1,10 @@
-
 # Testing Guidelines
 
 Testing is a critical and required part of the PowerShell project.
 
 The Microsoft PowerShell team created nearly 100,000 tests over the last 12 years which we run as part of the release process for Windows PowerShell.
-Having all of those tests available for the initial release of PowerShell was not feasible, and we have targeted those tests which we believe will provide us the ability to catch regressions in the areas which have had the largest changes for PowerShell.
+Having all of those tests available for the initial release of PowerShell was not feasible,
+and we have targeted those tests which we believe will provide us the ability to catch regressions in the areas which have had the largest changes for PowerShell.
 It is our intent to continue to release more and more of our tests until we have the coverage we need.
 
 For creating new tests, please review the [documents](https://github.com/PowerShell/PowerShell/tree/master/docs/testing-guidelines) on how to create tests for PowerShell.
@@ -69,7 +69,8 @@ The Pester framework allows `Describe` blocks to be tagged, and our CI system re
 One of the following tags must be used:
 
 * `CI` - this tag indicates that the tests in the `Describe` block will be executed as part of the CI/PR process
-* `Feature` - tests with this tag will not be executed as part of the CI/PR process, but they will be executed on a daily basis as part of a `cron` driven build. They indicate that the test will be validating more behavior, or will be using remote network resources (ex: package management tests)
+* `Feature` - tests with this tag will not be executed as part of the CI/PR process, but they will be executed on a daily basis as part of a `cron` driven build.
+  They indicate that the test will be validating more behavior, or will be using remote network resources (ex: package management tests)
 * `Scenario` - this tag indicates a larger scale test interacting with multiple areas of functionality and/or remote resources, these tests are also run daily.
 
 Additionally, the tag:
@@ -124,20 +125,20 @@ environment is not the default or has any customization.
 
 For example, to run all the Pester tests for CI (assuming you are at the root of the PowerShell repo):
 
-```
+```PowerShell
 Import-Module ./build.psm1
 Start-PSPester
 ```
 
 If you wish to run specific tests, that is possible as well:
 
-```
+```PowerShell
 Start-PSPester -Path test/powershell/engine/Api
 ```
 
 Or a specific Pester test file:
 
-```
+```PowerShell
 Start-PSPester -Path test/powershell/engine/Api/XmlAdapter.Tests.ps1
 ```
 
@@ -147,8 +148,6 @@ When your PR has successfully passed the CI test gates, your changes will be use
 in Microsoft's internal test frameworks.
 The tests that you created for your change and the library of historical tests will be run to determine if any regressions are present.
 If these tests find regressions, you'll be notified that your PR is not ready, and provided with enough information to investigate why the failure happened.
-
-
 
 ## Test Layout
 
