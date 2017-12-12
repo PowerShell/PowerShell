@@ -3,8 +3,6 @@
 While most developers will not have to deal with submodules on a regular basis, those who do should read this information.
 The submodules currently in this project are:
 
-- `src/Modules/Pester`: The Pester testing framework for PowerShell
-
 - `src/libpsl-native/test/googletest`: The GoogleTest framework for
   Linux native code
 
