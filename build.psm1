@@ -660,8 +660,20 @@ function Restore-PSModuleToBuild
 
     if($CI.IsPresent)
     {
-        Restore-GitModule -Destination $modulesDir -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
+        Restore-PSPester -Destination $modulesDir
     }
+}
+
+function Restore-PSPester
+{
+    param
+    (
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+    )
+
+    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
 }
 function Compress-TestContent {
     [CmdletBinding()]
