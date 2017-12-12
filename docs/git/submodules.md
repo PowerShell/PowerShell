@@ -10,7 +10,7 @@ The submodules currently in this project are:
 
 ## Rebase and Fast-Forward Merge Pull Requests in Submodules
 
-*This is not necessary in the superproject, only submodules!*
+Note: *This is not necessary in the superproject, only submodules!*
 
 **DO NOT** commit updates unless absolutely necessary.
 When submodules must be updated, a separate Pull Request must be submitted, reviewed, and merged before updating the superproject.
