@@ -200,7 +200,8 @@ namespace System.Management.Automation
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
-                if (!String.IsNullOrEmpty(qualifier) && !String.IsNullOrEmpty(result))
+                if (!String.IsNullOrEmpty(qualifier) && (!String.IsNullOrEmpty(result)
+                    || ((Platform.IsLinux || Platform.IsMacOS) && isDriveQualified)))
                 {
                     result = AddQualifier(result, provider, qualifier, isProviderQualified, isDriveQualified);
                 }
