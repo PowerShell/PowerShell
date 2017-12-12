@@ -939,10 +939,8 @@ function Publish-PSTestTools {
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
         @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
     )
-    if ($null -eq $Options)
-    {
-        $Options = New-PSOptions
-    }
+
+    $Options = Get-PSOptions -DefaultToNew
 
     # Publish tools so it can be run by tests
     foreach ($tool in $tools)
