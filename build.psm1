@@ -984,8 +984,8 @@ function Start-PSPester {
     {
         Write-Warning @"
 Pester module not found.
-Make sure that the proper git submodules are installed by running:
-    git submodule update --init
+Restore to module to '$Pester' by running:
+    Restore-PSPester
 "@
         return;
     }
