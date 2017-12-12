@@ -984,7 +984,7 @@ function Start-PSPester {
     {
         Write-Warning @"
 Pester module not found.
-Restore to module to '$Pester' by running:
+Restore the module to '$Pester' by running:
     Restore-PSPester
 "@
         return;
