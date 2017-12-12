@@ -2435,7 +2435,7 @@ function Restore-GitModule
 
         $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
         $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
+        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
     }
     finally
     {
