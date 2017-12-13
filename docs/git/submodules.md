@@ -1,20 +1,16 @@
-Submodules
-==========
+# Submodules
 
 While most developers will not have to deal with submodules on a regular basis, those who do should read this information.
 The submodules currently in this project are:
-
-- `src/Modules/Pester`: The Pester testing framework for PowerShell
 
 - `src/libpsl-native/test/googletest`: The GoogleTest framework for
   Linux native code
 
 [submodules]: https://www.git-scm.com/book/en/v2/Git-Tools-Submodules
 
-Rebase and Fast-Forward Merge Pull Requests in Submodules
-=========================================================
+## Rebase and Fast-Forward Merge Pull Requests in Submodules
 
-*This is not necessary in the superproject, only submodules!*
+Note: *This is not necessary in the superproject, only submodules!*
 
 **DO NOT** commit updates unless absolutely necessary.
 When submodules must be updated, a separate Pull Request must be submitted, reviewed, and merged before updating the superproject.
