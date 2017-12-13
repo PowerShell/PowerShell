@@ -54,21 +54,21 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | macOS        | [64-bit][rl-macos-tar]                          | [Instructions][in-tar]   |
 | Linux        | [64-bit][rl-linux-tar]                          | [Instructions][in-tar]   |
 
-[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/PowerShell-6.0.0-rc-win-x64.msi
-[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/PowerShell-6.0.0-rc-win-x86.msi
-[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell_6.0.0-rc-1.ubuntu.17.04_amd64.deb
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell_6.0.0-rc-1.ubuntu.16.04_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell_6.0.0-rc-1.ubuntu.14.04_amd64.deb
-[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell_6.0.0-rc-1.debian.8_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell_6.0.0-rc-1.debian.9_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
-[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/PowerShell-6.0.0-rc-x86_64.AppImage
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-osx.10.12-x64.pkg
-[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/PowerShell-6.0.0-rc-win-x86.zip
-[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/PowerShell-6.0.0-rc-win-x64.zip
-[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-osx-x64.tar.gz
-[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-linux-x64.tar.gz
-[rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0-rc-linux-arm32.tar.gz
+[rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-x64.msi
+[rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-x86.msi
+[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.ubuntu.17.04_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.ubuntu.16.04_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.ubuntu.14.04_amd64.deb
+[rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.debian.8_amd64.deb
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.debian.9_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-osx.10.12-x64.pkg
+[rl-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-x86.zip
+[rl-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-x64.zip
+[rl-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-osx-x64.tar.gz
+[rl-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-linux-x64.tar.gz
+[rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-linux-arm32.tar.gz
 
 [installation]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation
 [in-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#msi
