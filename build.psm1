@@ -660,8 +660,20 @@ function Restore-PSModuleToBuild
 
     if($CI.IsPresent)
     {
-        Restore-GitModule -Destination $modulesDir -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
+        Restore-PSPester -Destination $modulesDir
     }
+}
+
+function Restore-PSPester
+{
+    param
+    (
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+    )
+
+    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
 }
 function Compress-TestContent {
     [CmdletBinding()]
@@ -824,6 +836,17 @@ function New-PSOptions {
 
 # Get the Options of the last build
 function Get-PSOptions {
+    param(
+        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not ocurred.')]
+        [switch]
+        $DefaultToNew
+    )
+
+    if(!$script:Options -and $DefaultToNew.IsPresent)
+    {
+        return New-PSOptions
+    }
+
     return $script:Options
 }
 
@@ -916,10 +939,8 @@ function Publish-PSTestTools {
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
         @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
     )
-    if ($null -eq $Options)
-    {
-        $Options = New-PSOptions
-    }
+
+    $Options = Get-PSOptions -DefaultToNew
 
     # Publish tools so it can be run by tests
     foreach ($tool in $tools)
@@ -947,7 +968,7 @@ function Start-PSPester {
         [string[]]$Tag = @("CI","Feature"),
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
-        [string]$binDir = (Split-Path (New-PSOptions).Output),
+        [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $binDir 'pwsh'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
@@ -963,8 +984,8 @@ function Start-PSPester {
     {
         Write-Warning @"
 Pester module not found.
-Make sure that the proper git submodules are installed by running:
-    git submodule update --init
+Restore the module to '$Pester' by running:
+    Restore-PSPester
 "@
         return;
     }
@@ -2414,7 +2435,7 @@ function Restore-GitModule
 
         $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
         $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
+        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
     }
     finally
     {
