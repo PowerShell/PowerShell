@@ -1,12 +1,80 @@
 # Changelog
 
-## Unreleased
+## v6.0.0-rc.2 - 2017-11-14
 
-- Update the contribution guideline to note that updating the changelog is required. (#5586)
+### Breaking changes
+
+- Skip null-element check for collections with a value-type element type (#5432)
+- Make 'AllSigned' execution policy require modules under $PSHome to be signed (#5511)
+
+### Engine updates and fixes
+
+- Update powershell to use `2.0.4` dotnet core runtime. (#5677)
+- Remove references to the old executable `powershell` or `powershell.exe` (#5408)
+
+### General cmdlet updates and fixes
+
+- Remove unncessary check for Paths.count > 0, in the `*-FileCatalog` CmdLets, as there is code later to use the current (#5596)
+- Use explicit libpsl-native binary name for dllimport. (#5580)
+
+### Build and Packaging Improvements
+
+- Fix Get-EnvironmentInformation to properly check for CoreCLR (#5592) (Thanks @markekraus!)
+- Make Travis CI use `libcurl+openssl+gssapi` (#5629) (Thanks @markekraus!)
+- Disambiguate icon for daily builds on Windows (#5467) (Thanks @bergmeister!)
+- Fix Import-CliXml tests which still use `powershell` instead of `pwsh` and make sure it fails if it regresses (#5521) (Thanks @markekraus!)
+- Update port used to WebCmdLet test which broke due to a change in AppVeyor (#5520) (Thanks @markekraus!)
+- Clean up use of 'Runspaceconfiguration' from comments and xunit test code (#5569) (Thanks @Bhaal22)
 - Remove Pester as a module include with the PowerShell Packages.
   In the future, you should be able to add it by running `Install-Module Pester`. (#5623, #5631)
-- Make Travis CI use `libcurl+openssl+gssapi` (#5629, @markekraus)
 - Refactor `New-UnixPackaging` into functions to make the large function more readable. (#5625)
+- Make the experience better when start-pspester doesn't find pester (#5673)
+- Update packaging and release build scripts to produce zip packages for win-arm/win-arm64 (#5664)
+- Enable `Install-Debian` to work with VSTS Hosted Linux Preview (#5659)
+- Add linux-arm tarball package to release build (#5652, #5660)
+- Enable building for win-arm and win-arm64 (#5524)
+- Make macOS package require 10.12 or newer (#5649, #5654)
+- Update signing subjects to something meaningful (#5650)
+- Make `New-UnixPackage` more readable (#5625)
+- Update `PowerShellGet` tests to validate the new install location of AllUsers scope. (#5633)
+- Increase reliability of flaky test that fails intermittently in CI (#5641)
+- Exclude markdown files from 'Pester' folder from the Markdown meta test (#5636)
+- Run tests for Windows installer only on Windows (#5619)
+- Supress the expected errors from Select-Xml tests (#5591)
+- Make the -SslProtocol tests pending (#5605)
+- Add retry logic to prerequisite URL and output URL on failure so you can more easily troubleshoot (#5601, #5570)
+- Replace HttpListener Response Tests with WebListener (#5540)
+- Make sure submodule are initialized when running Mac release build (#5496)
+- Update version regex for nanoserver docker
+- Remove duplicate files in Windows packages in a folder called `signed` (#5527)
+- Add PowerShell VSCode style settings (#5529) (Thanks @bergmeister)
+- Add Travis CI matrix for improved job tagging (#5547)
+- Fix the path to 'powershell_xxx.inc' in Start-Build (#5538)
+- Remove community docker files from official docker image validation (#5508)
+
+### Documentation and Help Content
+
+- XML documentation fix for CompletionResult (#5550) (Thanks @bergmeister!)
+- Change synopsis of `install-powershell.ps1` to reflect that it works cross-platform (#5465) (Thanks @bergmeister!)
+- Add more helpful message for AmbiguousParameterSet exception (#5537) (Thanks @kvprasoon!)
+- Update the contribution guideline to note that updating the changelog is required. (#5586)
+- Updated doc to build arm/arm64 versions of psrp.windows and PowerShell.Core.Instrumentation.dll libraries (#5668)
+- Update Contribution guidelines with work in progress guidance (#5655)
+- Update code coverage tests to get GitCommitId using the ProductVersion from Assembly (#5651)
+- Remove requirement to updating changelog update in PR (#5644, #5586)
+- Minor refactoring of the release build scripts (#5632)
+- Update PowerShell executable name in using-vscode.md (#5593)
+- Fix xunnit test for PS (#4780)
+- Update install link and instructions for R-Pi (#5495)
+
+### Compliance Work
+
+[Compliance](https://github.com/PowerShell/PowerShell/blob/master/docs/maintainers/issue-management.md#miscellaneous-labels)
+work is required for Microsoft to continue to sign and release packages from the project as official Microsoft packages.
+
+- Remove PerformWSManPluginReportCompletion, which was not used, from pwrshplugin.dll (#5498) (Thanks @bergmeister!)
+- Remove exclusion for hang and add context exception for remaining instances (#5595)
+- Replace strlen with strnlen in native code (#5510)
 
 ## v6.0.0-rc - 2017-11-16
 
