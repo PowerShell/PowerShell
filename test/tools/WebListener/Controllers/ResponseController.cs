@@ -12,6 +12,7 @@ using Microsoft.Extensions.Primitives;
 using mvc.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace mvc.Controllers
 {
@@ -34,6 +35,12 @@ namespace mvc.Controllers
                 Int32.TryParse(statusCodes.FirstOrDefault(), out statusCode))
             {
                 Response.StatusCode = statusCode;
+            }
+
+            StringValues responsePhrase;
+            if ( Request.Query.TryGetValue("responsephrase", out responsePhrase))
+            {
+                Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = responsePhrase.FirstOrDefault();
             }
 
             StringValues body;
