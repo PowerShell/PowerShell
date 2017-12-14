@@ -739,10 +739,10 @@ and then extracts the Linux `tar.gz` archive.
 curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-linux-x64.tar.gz
 
 # Create the target folder where powershell will be placed
-sudo mkdir -p /opt/microsoft/powershell6.0.0-rc.2
+sudo mkdir -p /opt/microsoft/powershell/6.0.0-rc.2
 
 # Expand powershell to the target folder
-sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell6.0.0-rc.2
+sudo tar zxf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/6.0.0-rc.2
 
 # Set execute permissions
 sudo chmod +x /usr/local/microsoft/powershell/6.0.0-rc.2/pwsh
@@ -758,10 +758,10 @@ sudo ln -s /opt/microsoft/powershell/6.0.0-rc.2/pwsh /usr/bin/pwsh
 curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-osx-x64.tar.gz
 
 # Create the target folder where powershell will be placed
-sudo mkdir -p /usr/local/microsoft/powershell6.0.0-rc.2
+sudo mkdir -p /usr/local/microsoft/powershell/6.0.0-rc.2
 
 # Expand powershell to the target folder
-sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell6.0.0-rc.2
+sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell/6.0.0-rc.2
 
 # Set execute permissions
 sudo chmod +x /usr/local/microsoft/powershell/6.0.0-rc.2/pwsh
