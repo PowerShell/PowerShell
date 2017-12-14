@@ -55,9 +55,9 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 | Platform                            | Downloads                                        | How to Install                 |
 | ------------------------------------| ------------------------------------------------ | ------------------------------ |
 | Windows                             | [32-bit][rl-winx86-zip]/[64-bit][rl-winx64-zip]  | [Instructions][in-windows-zip] |
-| Windows (arm) **Experimental**      | [32-bit][rl-winarm]/[64-bit][rl-winarm64]        | [Instructions][in-windows-zip] |
 | macOS                               | [64-bit][rl-macos-tar]                           | [Instructions][in-tar]         |
 | Linux                               | [64-bit][rl-linux-tar]                           | [Instructions][in-tar]         |
+| Windows (arm) **Experimental**      | [32-bit][rl-winarm]/[64-bit][rl-winarm64]        | [Instructions][in-windows-zip] |
 | Raspbian (Stretch) **Experimental** | [.tgz][rl-raspbian]                              | [Instructions][in-raspbian]    |
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-x64.msi
