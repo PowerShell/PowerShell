@@ -62,7 +62,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.ubuntu.14.04_amd64.deb
 [rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.debian.8_amd64.deb
 [rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell_6.0.0-rc.2-1.debian.9_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 [rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-x86_64.AppImage
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-osx.10.12-x64.pkg
 [rl-winarm]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/PowerShell-6.0.0-rc.2-win-arm32.zip

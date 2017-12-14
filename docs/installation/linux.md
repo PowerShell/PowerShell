@@ -310,19 +310,19 @@ you just need to use `sudo yum update powershell` to update PowerShell.
 ### Installation via Direct Download - CentOS 7
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_rc-1.rhel.7.x86_64.rpm`
+`powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo yum install powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 ### Uninstallation - CentOS 7
@@ -356,19 +356,19 @@ you just need to use `sudo yum update powershell` to update PowerShell.
 ### Installation via Direct Download - Red Hat Enterprise Linux (RHEL) 7
 
 Download the RPM package
-`powershell-6.0.0_rc-1.rhel.7.x86_64.rpm`
+`powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm`
 from the [releases][] page onto the Red Hat Enterprise Linux machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo yum install powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 ### Uninstallation - Red Hat Enterprise Linux (RHEL) 7
@@ -407,19 +407,19 @@ pwsh
 
 ### Installation via Direct Download - OpenSUSE 42.2
 
-Download the RPM package `powershell-6.0.0_rc-1.rhel.7.x86_64.rpm`
+Download the RPM package `powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm`
 from the [releases][] page onto the OpenSUSE machine.
 
 ```sh
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo zypper install powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo zypper install powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 ### Uninstallation - OpenSUSE 42.2
@@ -454,19 +454,19 @@ pwsh
 ### Installation via Direct Download - Fedora 25
 
 Download the RPM package
-`powershell-6.0.0_rc-1.rhel.7.x86_64.rpm`
+`powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm`
 from the [releases][] page onto the Fedora machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dnf install powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo dnf install powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 ### Uninstallation - Fedora 25
@@ -504,7 +504,7 @@ pwsh
 ### Installation via Direct Download - Fedora 26
 
 Download the RPM package
-`powershell-6.0.0_rc-1.rhel.7.x86_64.rpm`
+`powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm`
 from the [releases][] page onto the Fedora machine.
 
 Then execute the following in the terminal:
@@ -512,7 +512,7 @@ Then execute the following in the terminal:
 ```sh
 sudo dnf update
 sudo dnf install compat-openssl10
-sudo dnf install powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo dnf install powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
@@ -520,7 +520,7 @@ You can also install the RPM without the intermediate step of downloading it:
 ```sh
 sudo dnf update
 sudo dnf install compat-openssl10
-sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc-1.rhel.7.x86_64.rpm
+sudo dnf install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc/powershell-6.0.0_rc.2-1.rhel.7.x86_64.rpm
 ```
 
 ### Uninstallation - Fedora 26
