@@ -47,8 +47,8 @@ You can download and install a PowerShell package for any of the following platf
 | Platform                 | Downloads               | How to Install                |
 | -------------------------| ------------------------| ----------------------------- |
 | Arch Linux               |                         | [Instructions][in-archlinux]  |
-| Many Linux distributions | [.AppImage][rl-ai]      | [Instructions][in-appimage]   |
 | Kali Linux               | [.deb][rl-ubuntu16]     | [Instructions][in-kali]       |
+| Many Linux distributions | [.AppImage][rl-ai]      | [Instructions][in-appimage]   |
 
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
 
