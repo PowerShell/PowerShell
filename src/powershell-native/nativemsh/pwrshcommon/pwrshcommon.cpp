@@ -1270,7 +1270,7 @@ namespace NativeMsh
 
         if (NULL != pwszMonadVersion)
         {
-            pwszMonadVersion = NULL;
+            *pwszMonadVersion = NULL;
         }
 
         do

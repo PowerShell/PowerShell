@@ -270,7 +270,7 @@ unsigned int PowerShellClrWorker::LoadWorkerCallbackPtrs(
     {
         PWSTR msg = NULL;
         exitCode = g_MANAGED_METHOD_RESOLUTION_FAILED;
-        /* NOTE: dont' use a string literal for a fallback; PlugInException expects msg to allocated
+        /* NOTE: don't use a string literal for a fallback; PlugInException expects msg to allocated
            and will free it but also supports NULL.
         */
         (void) GetFormattedErrorMessage(&msg, exitCode);

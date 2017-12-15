@@ -31,7 +31,7 @@ LPCWSTR g_MAIN_BINARY_NAME = L"pwrshplugin.dll";
 // the caller should free pwszErrorMessage using LocalFree().
 // returns: If the function succeeds the return value is the number of CHARs stored int the output
 // buffer, excluding the terminating null character. If the function fails the return value is zero.
-_Success_(return >= 0)
+_Success_(return > 0)
 DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId, va_list* arguments)
 {
     DWORD dwLength = 0;
@@ -313,6 +313,7 @@ DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorC
     if (GetFormattedErrorMessage(&pwszErrorMessage, errorCode) == 0)
     {
         swprintf_s(szMessage,_countof(szMessage), L"ReportOperationComplete: %d", errorCode);
+        pwszErrorMessage = szMessage;
     }
 
     result = WSManPluginOperationComplete(requestDetails, 0, errorCode, pwszErrorMessage);
