@@ -24,4 +24,4 @@ RUN curl -L -o powershell_$PSVERSIONSTUB-1.debian.9_amd64.deb $PACKAGELOCATIONST
 RUN dpkg -i powershell_$PSVERSIONSTUB-1.debian.9_amd64.deb || :
 RUN apt-get install -y -f
 RUN git clone --recursive https://github.com/PowerShell/PowerShell.git
-RUN pwsh -c "Import-Module /PowerShell/build.psm1;exit (Invoke-Pester $TESTLISTSTUB -PassThru).FailedCount"
+RUN pwsh -c "Import-Module /PowerShell/build.psm1;Restore-PSPester -Destination /usr/local/share/powershell/Modules;exit (Invoke-Pester $TESTLISTSTUB -PassThru).FailedCount"
