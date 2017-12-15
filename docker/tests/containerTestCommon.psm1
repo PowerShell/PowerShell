@@ -243,6 +243,7 @@ function Test-PSPackage
         $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
         $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
         $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += "--no-cache"
         $buildArgs += $dir.FullName
 
         $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning
