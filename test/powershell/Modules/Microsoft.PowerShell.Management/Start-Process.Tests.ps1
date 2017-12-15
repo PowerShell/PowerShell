@@ -48,6 +48,17 @@ Describe "Start-Process" -Tags @("Feature") {
 	    $process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
     }
 
+    # Ensures that issue 5576 remains fixed: https://github.com/PowerShell/PowerShell/issues/5576
+    It "Should handle whitespace in arguments of ArgumentList correctly" {
+        try {
+            '"Hello World!"' > '.\testFile with WhiteSpace In Name.ps1'
+            Start-Process -Wait -NoNewWindow pwsh.exe -ArgumentList '-noprofile', '-file', '.\testFile with WhiteSpace In Name.ps1' -RedirectStandardOutput stdout.txt
+            Get-Content .\stdout.txt | Should Be "Hello World!"
+        } finally {
+            Remove-Item './testFile with WhiteSpace In Name.ps1'
+        }
+    }
+
     It "Should work correctly with WorkingDirectory argument" {
 	    $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
 
@@ -108,7 +119,7 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should be able to use the -WhatIf switch without performing the actual action" {
         $pingOutput = Join-Path $TestDrive "pingOutput.txt"
         { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop } | Should Not Throw
-        $pingOutput | Should Not Exist 
+        $pingOutput | Should Not Exist
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {

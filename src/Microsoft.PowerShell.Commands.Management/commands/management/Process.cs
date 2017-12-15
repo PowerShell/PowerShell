@@ -1857,10 +1857,22 @@ namespace Microsoft.PowerShell.Commands
             if (ArgumentList != null)
             {
                 StringBuilder sb = new StringBuilder();
-                foreach (string str in ArgumentList)
+                foreach (string argument in ArgumentList)
                 {
-                    sb.Append(str);
-                    sb.Append(' ');
+                    if (argument != null && argument.Contains(" "))
+                    {
+                        // Arguments containing spaces need to be wrapped in double quotes.
+                        // https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.arguments?view=netcore-2.0#System_Diagnostics_ProcessStartInfo_Arguments
+                        sb.Append('\"');
+                        sb.Append(argument);
+                        sb.Append('\"');
+                        sb.Append(' ');
+                    }
+                    else
+                    {
+                        sb.Append(argument);
+                        sb.Append(' ');
+                    }
                 }
                 startInfo.Arguments = sb.ToString(); ;
             }
