@@ -1309,14 +1309,16 @@ namespace System.Management.Automation.Language
             // 'ValidateSet([CustomGeneratorType], IgnoreCase=$false)' is supported in scripts.
             if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is TypeExpressionAst generatorTypeAst)
             {
-                if (TypeResolver.TryResolveType(generatorTypeAst.TypeName.FullName, out Type generatorType))
+                var generatorType = TypeResolver.ResolveITypeName(generatorTypeAst.TypeName, out Exception exception);
+                if (generatorType != null)
                 {
                     result = new ValidateSetAttribute(generatorType);
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(ast, typeof(RuntimeException), ast.Extent,
-                        "TypeNotFound", ParserStrings.TypeNotFound, generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
+                    throw InterpreterError.NewInterpreterExceptionWithInnerException(
+                        ast, typeof(RuntimeException), ast.Extent, "TypeNotFound", ParserStrings.TypeNotFound, exception,
+                        generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
                 }
             }
             else
