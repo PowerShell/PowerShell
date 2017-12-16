@@ -1859,10 +1859,11 @@ namespace Microsoft.PowerShell.Commands
                 StringBuilder sb = new StringBuilder();
                 foreach (string argument in ArgumentList)
                 {
-                    if (argument != null && argument.Contains(" "))
+                    // Arguments containing spaces need to be wrapped in double quotes.
+                    // However, do this only if the argument is not quoted already because double and triple quoting have a special meaning.
+                    // https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.arguments?view=netcore-2.0#System_Diagnostics_ProcessStartInfo_Arguments
+                    if (argument != null && argument.Contains(" ") && !argument.StartsWith("\""))
                     {
-                        // Arguments containing spaces need to be wrapped in double quotes.
-                        // https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.arguments?view=netcore-2.0#System_Diagnostics_ProcessStartInfo_Arguments
                         sb.Append('\"');
                         sb.Append(argument);
                         sb.Append('\"');
