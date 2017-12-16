@@ -52,10 +52,10 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should handle whitespace in arguments of ArgumentList correctly" {
         try {
             '"Hello World!"' > '.\testFile with WhiteSpace In Name.ps1'
-            Start-Process -Wait -NoNewWindow pwsh.exe -ArgumentList '-noprofile', '-file', '.\testFile with WhiteSpace In Name.ps1' -RedirectStandardOutput stdout.txt
+            Start-Process -Wait -NoNewWindow pwsh -ArgumentList '-noprofile', '-file', '.\testFile with WhiteSpace In Name.ps1' -RedirectStandardOutput stdout.txt
             Get-Content .\stdout.txt | Should Be "Hello World!"
         } finally {
-            Remove-Item './testFile with WhiteSpace In Name.ps1'
+            Remove-Item '.\testFile with WhiteSpace In Name.ps1'
         }
     }
 
@@ -119,7 +119,7 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should be able to use the -WhatIf switch without performing the actual action" {
         $pingOutput = Join-Path $TestDrive "pingOutput.txt"
         { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop } | Should Not Throw
-        $pingOutput | Should Not Exist
+        $pingOutput | Should Not Exist 
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {
