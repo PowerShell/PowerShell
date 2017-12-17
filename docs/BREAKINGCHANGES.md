@@ -63,7 +63,7 @@ TODO: Closed, not merged
 
 
 ### -Verbose should not override $ErrorActionPreference [5113](https://github.com/PowerShell/PowerShell/issues/5113)
-`$ErrorActionPreference` is longer overwritten by the `-Verbose` or `-Debug` parameters.
+`$ErrorActionPreference` is nolonger overwritten by the `-Verbose` or `-Debug` parameters.
 
 
 ### Web Cmdlets should warn when  legacy -Credential is sent over unencrypted connections [5112](https://github.com/PowerShell/PowerShell/issues/5112)
@@ -98,10 +98,6 @@ The following features were removed as they are not supported in PowerShell Core
 In PSCore6 only InitialSessionState is supported.  Since the RunspaceConfiguration api was made internal, the code related to RunspaceConfiguration has been removed.  This means that some public apis have changed and it was decided that it was best to have a compile time error.
 
 
-### Add Tests for *-computer cmdlets [4926](https://github.com/PowerShell/PowerShell/issues/4926)
-TODO
-
-
 ### CommandInvocationIntrinsics.InvokeScript bind arguments to $input instead of $args [4923](https://github.com/PowerShell/PowerShell/issues/4923)
 An incorrect position of a parameter resulted in the args passed as input instead of as args.
 
@@ -119,7 +115,8 @@ Using `-literalpath` with an asterisk and the filesystem provider will now retur
 TODO : Looks like this a change in test cases, not sure what the documentation process should be
 
 ### Enhance the -split operator with negative maximum token counts to split from the end [4765](https://github.com/PowerShell/PowerShell/issues/4765)
-TODO
+After the enhancement, only a `<Max-substrings>` value of `0` will be accepted as the explicit signal that all tokens should be returned, however many are found in the input string(s).
+Negative `<Max-substrings>` values will work analogously to the already supported positive values, except that: they return the specified number of strings from the end of the string(s) and all individually extracted tokens are returned in input order, and whatever unsplit part remains, if any, is returned as the first token.
 
 
 ### Rename $IsOSX to $IsacOS [4700](https://github.com/PowerShell/PowerShell/issues/4700)
@@ -127,15 +124,15 @@ The naming in PowerShell should be consistent with our naming andd conform to Ap
 
 
 ### Prepare for BOM-less UTF-8 default character encoding with respect to $OutputEncoding and console code page  [4681](https://github.com/PowerShell/PowerShell/issues/4681)
-TODO
+Change `$OutputEncoding` to be utf8 without BOM rather than ASCII as BOM-less UTF-8 character encoding is the default for PowerShell Core.
 
 
 ### New-TemporaryFile should throw terminating error [4634](https://github.com/PowerShell/PowerShell/issues/4634)
-TODO
+TODO: still open
 
 
 ### S.M.A.PowerShell.HadErrors and $? return false positives when errors are suppressed [4613](https://github.com/PowerShell/PowerShell/issues/4613)
-TODO
+TODO: still open
 
 
 ### Make error message consistent when invalid script is passed to -File, better error when passed ambiguous arg [4573](https://github.com/PowerShell/PowerShell/issues/4573)
@@ -143,11 +140,11 @@ TODO (I believe the breaking change here is for "Enable -WindowStyle to work", c
 
 
 ### Fix Get-Date -UFormat '%V' week number output [4508](https://github.com/PowerShell/PowerShell/issues/4508)
-TODO
+TODO: still open
 
 
 ### Improper usage of $input as a function parameter is silently ignored [4391](https://github.com/PowerShell/PowerShell/issues/4391)
-TODO
+TODO: still open (6.1.0)
 
 
 ### Due to the use of unsupported APIs, we must remove the Counter CmdLets in the Diagnostics Module until a better solution is found. [4303](https://github.com/PowerShell/PowerShell/issues/4303)
@@ -159,15 +156,15 @@ TODO (Not sure how to document more than the title)
 
 
 ### Remove UTC and SQM telemetry code [4190](https://github.com/PowerShell/PowerShell/issues/4190)
-TODO
+TODO: Should this still be in the doc if the change is not visible to the user and is about telemetry collection?
 
 
 ### Unify file encoding when a cmdlet creates a file [4119](https://github.com/PowerShell/PowerShell/issues/4119)
-TODO
+TODO: Closed, not merged
 
 
 ### Executing powershell script with bool parameter doesnt work [4036](https://github.com/PowerShell/PowerShell/issues/4036)
-TODO
+Previously, using powershell.exe (now pwsh.exe) to execute a PowerShell script using `-File` provided no way to pass $true/$false as parameter values.  Support for $true/$false as parsed values to parameters was added. Switch values are also supported as currently documented syntax doesn't work.
 
 
 ### Remove ClrVersion property from $PSVersionTable [4027](https://github.com/PowerShell/PowerShell/issues/4027)
@@ -175,7 +172,7 @@ The ClrVersion property of `$PSVersionTable` is not useful with CoreCLR,  end us
 
 
 ### Command line arguments with a dollar sign [4024](https://github.com/PowerShell/PowerShell/issues/4024)
-TODO
+TODO: Closed, by design
 
 
 ### Change positional parameter for powershell.exe from -Command to -File [4019](https://github.com/PowerShell/PowerShell/issues/4019)
@@ -187,31 +184,27 @@ TODO
 
 
 ### Change New-ModuleManifest encoding to UTF8NoBOM on non-Windows platforms [3940](https://github.com/PowerShell/PowerShell/issues/3940)
-TODO
-
-
-### Fix 'Get-Content -Delimiter' to not include the delimiter in the returned lines [3808](https://github.com/PowerShell/PowerShell/issues/3808)
-TODO
+Previously, `New-ModuleManifest` creates psd1 manifests in UTF-16 with BOM, creating a problem for Linux tools.  This breaking change changes the encoding of `New-ModuleManifest` to be UTF (no BOM) in non-Windows platforms.
 
 
 ### Prevent Get-ChildItem from recursing into symlinks (#1875). [3780](https://github.com/PowerShell/PowerShell/issues/3780)
-TODO
+This change brings `Get-ChildItem` more in line with the Unix `ls -r` and the Windows `dir /s` native commands.  Like the mentioned commands, the cmdlet will display simbolic links to directories found during recursion, but will not recurse into them.
 
 
 ### COM objects are not enumerating properly [3775](https://github.com/PowerShell/PowerShell/issues/3775)
-TODO
+TODO: Closed, not merged
 
 
 ### System.IO.DirectoryInfo and System.IO.FileInfo instances output by Get-Item / Get-ChildItem bind to -Path rather than -LiteralPath and sometimes by filename only [3772](https://github.com/PowerShell/PowerShell/issues/3772)
-TODO
+TODO: still open
 
 
 ### Why do handled exceptions show in ErrorVariable? [3768](https://github.com/PowerShell/PowerShell/issues/3768)
-TODO
+TODO: committee reviewed, still open
 
 
 ### Align PowerShell's CLI / startup behavior with POSIX-like shells such as Bash - command-line arguments [3743](https://github.com/PowerShell/PowerShell/issues/3743)
-TODO
+TODO: still open
 
 
 ### Get-Content -Delimiter unexpectedly keeps the delimiter in the lines returned [3706](https://github.com/PowerShell/PowerShell/issues/3706)
@@ -219,27 +212,24 @@ TODO
 
 
 ### Should we detect/Deny using $_ as a user defined variable? [3695](https://github.com/PowerShell/PowerShell/issues/3695)
-TODO
-
-
-### Added -i swtich to powershell for interactive [3558](https://github.com/PowerShell/PowerShell/issues/3558)
-TODO
+TODO: closed, won't fix
 
 
 ### PowerShell use different logic, when converting passed value to parameter type, for compiled and script cmdlets [3348](https://github.com/PowerShell/PowerShell/issues/3348)
-TODO
+TODO: closed, wont fix
 
 
 ### Implement Format-Hex in C# [3320](https://github.com/PowerShell/PowerShell/issues/3320)
-TODO
+ The `-raw` parameter is now No-op. Going forward all of the output will be displayed with a true representation of numbers that includes all of the bytes for its type (what the Raw parameter was formally doing).
 
 
 ### PowerShell as a default shell doesn't work with script command [3319](https://github.com/PowerShell/PowerShell/issues/3319)
-TODO
+On Unix, it is a convention for shells to accept `-i` for an interactive shell and many tools expect this behavior (`script` for example, and when setting powershell as the default shell) and calls the shell with the `-i` switch. This change is breaking in that -i previously could be used as short hand to match `-inputformat` which now will need to be `-in`.
 
 
 ### Completions for environment variables differ between platforms [3227](https://github.com/PowerShell/PowerShell/issues/3227)
-TODO
+The casing of `$PSModulePath` has been corrected to be consistent with Windows PowerShell.
+TODO: not sure if this actually a breaking change.  If the change is to make something consistent with Windows, there would be no difference between 6.0 and 5.1
 
 
 ### Typo fix in Get-ComputerInfo property name [3167](https://github.com/PowerShell/PowerShell/issues/3167)
@@ -247,7 +237,7 @@ TODO
 
 
 ### -OutVariable doesn't unwrap single-object output and creates [System.Collections.ArrayList] values rather than [System.Object[]] [3154](https://github.com/PowerShell/PowerShell/issues/3154)
-TODO
+TODO: Still open
 
 
 ### Add Get-StringHash and Get-FileHash cmdlets [3024](https://github.com/PowerShell/PowerShell/issues/3024)
@@ -255,19 +245,11 @@ TODO
 
 
 ### Add validation on get-* cmdlets where passing $null returns all objects instead of error [2672](https://github.com/PowerShell/PowerShell/issues/2672)
-TODO
+Passing `$null` to any of the following will now throw an error: `Get-Credential -UserName`, `Get-Event -SourceIdentifier`, `Get-EventSubscriber -SourceIdentifier`, `Get-Help -Name`, `Get-PSBreakpoint -Script`, `Get-PSProvider -PSProvider`, `Get-PSSessionConfiguration -Name`, `Get-PSSnapin -Name`, `Get-Runspace -Name`, `Get-RunspaceDebug -RunspaceName`, `Get-Service -Name`, `Get-TraceSource -Name`, `Get-Variable -Name`, `Get-WmiObject -Class`, and `Get-WmiObject -Property`.
 
 
 ### Get-Alias Name parameter allows Null value [2544](https://github.com/PowerShell/PowerShell/issues/2544)
-TODO
-
-
-### Add ValidateNullOrEmpty to -Name parameter of Get-Service [2542](https://github.com/PowerShell/PowerShell/issues/2542)
-TODO
-
-
-### Get-Service Name parameter allows Null value [2540](https://github.com/PowerShell/PowerShell/issues/2540)
-TODO
+TODO: Closed, left as is
 
 
 ### Add support W3C Extended Log File Format in Import-Csv [2482](https://github.com/PowerShell/PowerShell/issues/2482)
@@ -275,11 +257,8 @@ TODO
 
 
 ### Platform specific behavior for Split-Path [2301](https://github.com/PowerShell/PowerShell/issues/2301)
-TODO
+TODO: still open
 
-
-### -Verbose Changes  (downgrades) the Error Behaviour [2247](https://github.com/PowerShell/PowerShell/issues/2247)
-TODO
 
 
 ### Parameter binding problem with ValueFromRemainingArguments in PS functions [2035](https://github.com/PowerShell/PowerShell/issues/2035)
@@ -287,7 +266,7 @@ TODO
 
 
 ### $input type in advanced functions [1563](https://github.com/PowerShell/PowerShell/issues/1563)
-TODO
+TODO: closed, not merged
 
 
 ### BuildVersion should be removed from $PSVersionTable [1415](https://github.com/PowerShell/PowerShell/issues/1415)
