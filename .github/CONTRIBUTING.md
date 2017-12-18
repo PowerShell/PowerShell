@@ -109,7 +109,7 @@ Additional references:
 
 **Always create a pull request to the `master` branch of this repository**.
 
-![Github-PR-dev.png](Images/Github-PR-dev.png)
+![GitHub-PR.png](Images/GitHub-PR.png)
 
 * It's recommended to avoid a PR with too many changes.
   A large PR not only stretches the review time, but also makes it much harder to spot issues.
