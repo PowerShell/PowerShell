@@ -166,17 +166,17 @@ function Get-ChangeLog
 
     foreach ($commit in $new_commits) {
         if ($commit.AuthorEmail.EndsWith("@microsoft.com")) {
-            $commit.ChangeLogMessage = $commit.Subject
+            $commit.ChangeLogMessage = "- {0}" -f $commit.Subject
         } else {
             $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
             $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header
             $content = ConvertFrom-Json -InputObject $response.Content
             $commit.AuthorGitHubLogin = $content.author.login
-            $commit.ChangeLogMessage = "{0} (Thanks @$($commit.AuthorGitHubLogin)!)" -f $commit.Subject
+            $commit.ChangeLogMessage = "- {0} (Thanks @{1}!)" -f $commit.Subject, $commit.AuthorGitHubLogin
         }
 
         if ($commit.IsBreakingChange) {
-            $commit.ChangeLogMessage = "[Breaking Change] {0}" -f $commit.ChangeLogMessage
+            $commit.ChangeLogMessage = "{0} [Breaking Change]" -f $commit.ChangeLogMessage
         }
     }
 
