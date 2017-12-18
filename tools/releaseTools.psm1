@@ -128,21 +128,39 @@ function Get-ChangeLog
     $header = @{"Authorization"="token $Token"}
 
     if ($HasCherryPick) {
+        ## Sometimes we need to cherry-pick some commits from the master branch to the release branch during the release,
+        ## and eventually merge the release branch back to the master branch. This will result in different commit nodes
+        ## in master branch that actually represent same set of changes.
+        ##
+        ## In this case, we cannot simply use the revision range "$tag_hash..HEAD" becuase it will include the original
+        ## commits in the master branch that were cherry-picked to the release branch -- they are reachable from 'HEAD'
+        ## but not reachable from the last release tag. Instead, we need to exclude the commits that were cherry-picked,
+        ## and only include the commits that are not in the last release into the change log.
+
+        # Find the merge commit that merged the release branch to master.
         $child_merge_commit = Get-ChildMergeCommit -CommitHash $tag_hash
         $commit_hash, $parent_hashes = $child_merge_commit.Split("|")
+        # Find the other parent of the merge commit, which represents the original head of master right before merging.
         $other_parent_hash = ($parent_hashes -replace $tag_hash).Trim()
 
+        # Find the commits that were only in the orginal master, excluding those that were cherry-picked to release branch.
         $new_commits_from_other_parent = git --no-pager log --no-merges --cherry-pick --right-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
+        # Find the commits that were only in the release branch, excluding those that were cherry-picked from master branch.
         $new_commits_from_last_release = git --no-pager log --no-merges --cherry-pick  --left-only "$tag_hash...$other_parent_hash" --format=$format | New-CommitNode
+        # Find the commits that are actually duplicate but having different patch-ids due to resolving conflicts during the cherry-pick.
         $duplicate_commits = Compare-Object $new_commits_from_last_release $new_commits_from_other_parent -Property PullRequest -ExcludeDifferent -IncludeEqual -PassThru
         if ($duplicate_commits) {
             $duplicate_pr_numbers = @($duplicate_commits | ForEach-Object -MemberName PullRequest)
             $new_commits_from_other_parent = $new_commits_from_other_parent | Where-Object PullRequest -NotIn $duplicate_pr_numbers
         }
 
+        # Find the commits that were made after the merge commit.
         $new_commits_after_merge_commit = git --no-pager log --no-merges "$commit_hash..HEAD" --format=$format | New-CommitNode
         $new_commits = $new_commits_after_merge_commit + $new_commits_from_other_parent
     } else {
+        ## No cherry-pick was involved in the last release branch.
+        ## We can get all new commits using the revision range "$tag_hash..HEAD", meaning the commits that are
+        ## reachable from 'HEAD' but not reachable from the last release tag.
         $new_commits = git --no-pager log --no-merges "$tag_hash..HEAD" --format=$format | New-CommitNode
     }
 
