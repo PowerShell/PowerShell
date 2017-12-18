@@ -30,7 +30,7 @@ class CommitNode {
 ##############################
 #.SYNOPSIS
 #In the release workflow, the release branch will be merged back to master after the release is done,
-#and a merge commit will be greated as the child of the release tag commit.
+#and a merge commit will be created as the child of the release tag commit.
 #This cmdlet takes a release tag or the corresponding commit hash, find its child merge commit, and
 #return its metadata in this format: <merge-commit-hash>|<parent-commit-hashes>
 #
@@ -164,14 +164,20 @@ function Get-ChangeLog
         $new_commits = git --no-pager log --no-merges "$tag_hash..HEAD" --format=$format | New-CommitNode
     }
 
+    $community_login_map = @{}
     foreach ($commit in $new_commits) {
         if ($commit.AuthorEmail.EndsWith("@microsoft.com")) {
             $commit.ChangeLogMessage = "- {0}" -f $commit.Subject
         } else {
-            $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
-            $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header
-            $content = ConvertFrom-Json -InputObject $response.Content
-            $commit.AuthorGitHubLogin = $content.author.login
+            if ($community_login_map.ContainsKey($commit.AuthorEmail)) {
+                $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
+            } else {
+                $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
+                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header
+                $content = ConvertFrom-Json -InputObject $response.Content
+                $commit.AuthorGitHubLogin = $content.author.login
+                $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+            }
             $commit.ChangeLogMessage = "- {0} (Thanks @{1}!)" -f $commit.Subject, $commit.AuthorGitHubLogin
         }
 
