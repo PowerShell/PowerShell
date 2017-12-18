@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.0.0-rc.2 - 2017-11-14
+## v6.0.0-rc.2 - 2017-12-14
 
 ### Breaking changes
 
