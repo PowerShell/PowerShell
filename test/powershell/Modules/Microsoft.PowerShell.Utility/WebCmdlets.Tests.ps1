@@ -722,18 +722,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-WebRequest StandardMethod and CustomMethod parameter sets" {
-
+        $uri = Get-WebListenerUrl -Test 'Get'
         #Validate that parameter sets are functioning correctly
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        { Invoke-WebRequest -Uri 'http://http.lee.io/method' -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+        { Invoke-WebRequest -Uri $uri -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
     }
 
     It "Validate Invoke-WebRequest CustomMethod method is used" {
-
-        $command = "Invoke-WebRequest -Uri 'http://http.lee.io/method' -CustomMethod TEST"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod TEST"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
-        ($result.Output.Content | ConvertFrom-Json).output.method | Should Be "TEST"
+        ($result.Output.Content | ConvertFrom-Json).method | Should Be "TEST"
     }
 
     It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
@@ -1747,17 +1747,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-RestMethod StandardMethod and CustomMethod parameter sets" {
-
+        $uri = Get-WebListenerUrl -Test 'Get'
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        { Invoke-RestMethod -Uri 'http://http.lee.io/method' -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+        { Invoke-RestMethod -Uri $uri -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
     }
 
     It "Validate CustomMethod method is used" {
-
-        $command = "Invoke-RestMethod -Uri 'http://http.lee.io/method' -CustomMethod TEST"
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod TEST"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
-        $result.Output.output.method | Should Be "TEST"
+        $result.Output.method | Should Be "TEST"
     }
 
     It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
