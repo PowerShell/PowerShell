@@ -1,4 +1,4 @@
-﻿Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
+Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
 
 
 # This module doesn't support Arm because of Add-Type cmdlet

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -195,7 +195,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateTypeEntry(string fileName)
             : base(fileName)
         {
-            if (String.IsNullOrEmpty(fileName) || fileName.Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw PSTraceSource.NewArgumentException("fileName");
             }
@@ -300,7 +300,7 @@ namespace System.Management.Automation.Runspaces
         public SessionStateFormatEntry(string fileName)
             : base("*")
         {
-            if (String.IsNullOrEmpty(fileName) || fileName.Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(fileName))
             {
                 throw PSTraceSource.NewArgumentException("fileName");
             }
@@ -832,102 +832,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string HelpFile { get; private set; }
     }
-
-#if !CORECLR // Workflow Not Supported On CSS
-    /// <summary>
-    ///
-    /// </summary>
-    public sealed class SessionStateWorkflowEntry : SessionStateCommandEntry
-    {
-        /// <summary>
-        /// Represents a workflow definition in an Initial session state object.
-        /// </summary>
-        /// <param name="name">The name of the workflow</param>
-        /// <param name="definition">The definition of the workflow</param>
-        /// <param name="options">Options controlling scope-related elements of this object</param>
-        /// <param name="helpFile">The name of the help file associated with the workflow</param>
-        public SessionStateWorkflowEntry(string name, string definition, ScopedItemOptions options, string helpFile)
-            : base(name, SessionStateEntryVisibility.Public)
-        {
-            Definition = definition;
-            CommandType = CommandTypes.Workflow;
-            Options = options;
-            HelpFile = helpFile;
-        }
-
-        /// <summary>
-        /// Represents a workflow definition in an Initial session state object.
-        /// </summary>
-        /// <param name="name">The name of the workflow</param>
-        /// <param name="definition">The definition of the workflow</param>
-        /// <param name="helpFile">The name of the help file associated with the workflow</param>
-        public SessionStateWorkflowEntry(string name, string definition, string helpFile)
-            : this(name, definition, ScopedItemOptions.None, helpFile)
-        {
-        }
-
-        /// <summary>
-        /// Represents a workflow definition in an Initial session state object.
-        /// </summary>
-        /// <param name="name">The name of the workflow</param>
-        /// <param name="definition">The definition of the workflow</param>
-        public SessionStateWorkflowEntry(string name, string definition)
-            : this(name, definition, ScopedItemOptions.None, null)
-        {
-        }
-
-        /// <summary>
-        /// This is an internal copy constructor.
-        /// </summary>
-        internal SessionStateWorkflowEntry(string name, string definition, ScopedItemOptions options, SessionStateEntryVisibility visibility, WorkflowInfo workflow, string helpFile)
-            : base(name, visibility)
-        {
-            Definition = definition;
-            Options = options;
-            WorkflowInfo = workflow;
-            HelpFile = helpFile;
-        }
-
-        /// <summary>
-        /// Shallow-clone this object...
-        /// </summary>
-        /// <returns>The cloned object</returns>
-        public override InitialSessionStateEntry Clone()
-        {
-            SessionStateWorkflowEntry entry = new SessionStateWorkflowEntry(Name, Definition, Options, Visibility, WorkflowInfo, HelpFile);
-            entry.SetModule(this.Module);
-            return entry;
-        }
-
-        /// <summary>
-        /// Sets the name of the help file associated with the function.
-        /// </summary>
-        internal void SetHelpFile(string help)
-        {
-            HelpFile = help;
-        }
-
-        /// <summary>
-        /// The string to use to define this function...
-        /// </summary>
-        public string Definition { get; }
-
-        /// <summary>
-        /// The script block for this function.
-        /// </summary>
-        internal WorkflowInfo WorkflowInfo { get; set; }
-
-        /// <summary>
-        /// Options controling scope visibility and setability for this entry.
-        /// </summary>
-        public ScopedItemOptions Options { get; } = ScopedItemOptions.None;
-
-        /// <summary>
-        /// The name of the help file associated with the function.
-        /// </summary>
-        public string HelpFile { get; private set; }
-    }
-#endif
 
     /// <summary>
     ///
@@ -1481,29 +1385,6 @@ namespace System.Management.Automation.Runspaces
                 return CreateRestrictedForRemoteServer();
             }
 
-#if CORECLR // Workflow Not Supported On CSS
-            if ((sessionCapabilities & SessionCapabilities.WorkflowServer) == SessionCapabilities.WorkflowServer)
-            {
-                throw PSTraceSource.NewNotSupportedException(ParserStrings.WorkflowNotSupportedInPowerShellCore);
-            }
-#else
-            // only workflow has been requested
-            if (SessionCapabilities.WorkflowServer == sessionCapabilities)
-            {
-                return CreateRestrictedForWorkflowServerMinimum();
-            }
-
-            // workflow server with remoting support has been requested
-            if (sessionCapabilities == (SessionCapabilities.WorkflowServer | SessionCapabilities.RemoteServer))
-            {
-                return CreateRestrictedForWorkflowServer();
-            }
-
-            if (sessionCapabilities == (SessionCapabilities.WorkflowServer | SessionCapabilities.RemoteServer | SessionCapabilities.Language))
-            {
-                return CreateRestrictedForWorkflowServerWithFullLanguage();
-            }
-#endif
             return Create();
         }
 
@@ -1609,296 +1490,6 @@ namespace System.Management.Automation.Runspaces
                 iss.Formats.Add(new SessionStateFormatEntry(Path.Combine(psHome, coreFormat)));
             }
         }
-
-#if !CORECLR // Workflow Not Supported On CSS
-        private static List<string> allowedAliases = new List<string>
-                                          {
-                                              "compare",
-                                              "diff",
-                                              "%",
-                                              "foreach",
-                                              "exsn",
-                                              "fc",
-                                              "fl",
-                                              "ft",
-                                              "fw",
-                                              "gcm",
-                                              "gjb",
-                                              "gmo",
-                                              "gv",
-                                              "group",
-                                              "ipmo",
-                                              "measure",
-                                              "rv",
-                                              "rcjb",
-                                              "rjb",
-                                              "rmo",
-                                              "rujb",
-                                              "select",
-                                              "set",
-                                              "sv",
-                                              "sort",
-                                              "spjb",
-                                              "sujb",
-                                              "wjb",
-                                              "?",
-                                              "where"
-                                          };
-
-        private static InitialSessionState CreateRestrictedForWorkflowServer()
-        {
-            InitialSessionState iss = CreateDefault();
-            iss.LanguageMode = PSLanguageMode.NoLanguage;
-            iss.ThrowOnRunspaceOpenError = true;
-            iss.UseFullLanguageModeInDebugger = false;
-
-            // WIN8:551312 M3P endpoint should have NO application exposed
-            //
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateApplicationEntry)
-                {
-                    iss.Commands.Remove(entry.Name, entry);
-                    break;
-                }
-            }
-
-            //
-            // restrict what gets exposed
-            //
-
-            List<string> allowedCommands = new List<string>();
-            allowedCommands.AddRange(JobCmdlets);
-            allowedCommands.AddRange(ImplicitRemotingCmdlets);
-            allowedCommands.AddRange(MiscCmdlets);
-            allowedCommands.AddRange(AutoDiscoveryCmdlets);
-
-            // make all other commands private
-            MakeDisallowedEntriesPrivate(
-                iss.Commands,
-                allowedCommands,
-                commandEntry => commandEntry.Name);
-
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateAliasEntry)
-                {
-                    if (allowedAliases.Contains(entry.Name, StringComparer.OrdinalIgnoreCase))
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Public;
-                    }
-                    else
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Private;
-                    }
-                }
-            }
-
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
-            RemoveDisallowedEntries(
-                iss.Formats,
-                allowedFormats,
-                formatEntry => IO.Path.GetFileName(formatEntry.FileName));
-
-            // Porting note: type files were deprecated
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.AddRange(DefaultTypeFiles);
-            RemoveDisallowedEntries(
-                iss.Types,
-                allowedTypes,
-                typeEntry => IO.Path.GetFileName(typeEntry.FileName));
-
-            iss.Variables.Clear(); // no variables are needed for workflow server - remove all of them
-
-            return iss;
-        }
-
-        private static InitialSessionState CreateRestrictedForWorkflowServerWithFullLanguage()
-        {
-            InitialSessionState iss = CreateDefault();
-
-            iss.LanguageMode = PSLanguageMode.FullLanguage;
-            iss.ThrowOnRunspaceOpenError = true;
-            iss.UseFullLanguageModeInDebugger = false;
-
-            // WIN8:551312 M3P endpoint should have NO application exposed
-            //
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateApplicationEntry)
-                {
-                    iss.Commands.Remove(entry.Name, entry);
-                    break;
-                }
-            }
-
-            //
-            // restrict what gets exposed
-            //
-
-            List<string> allowedCommands = new List<string>();
-            allowedCommands.AddRange(JobCmdlets);
-            allowedCommands.AddRange(ImplicitRemotingCmdlets);
-            allowedCommands.AddRange(MiscCmdlets);
-            allowedCommands.AddRange(MiscCommands);
-            allowedCommands.AddRange(AutoDiscoveryCmdlets);
-            allowedCommands.AddRange(LanguageHelperCmdlets);
-            // Exposing Debug cmdlets in only Full language WF server
-            // because for debugging one needs full language capabilities
-            allowedCommands.AddRange(DebugCmdlets);
-
-            // make all other commands private
-            MakeDisallowedEntriesPrivate(
-                iss.Commands,
-                allowedCommands,
-                commandEntry => commandEntry.Name);
-
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry is SessionStateAliasEntry)
-                {
-                    if (allowedAliases.Contains(entry.Name, StringComparer.OrdinalIgnoreCase))
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Public;
-                    }
-                    else
-                    {
-                        entry.Visibility = SessionStateEntryVisibility.Private;
-                    }
-                }
-            }
-
-            // Porting note: copy so it can be modified
-            List<string> allowedFormats = new List<string>(Platform.FormatFileNames);
-            RemoveDisallowedEntries(
-                iss.Formats,
-                allowedFormats,
-                formatEntry => IO.Path.GetFileName(formatEntry.FileName));
-
-            // Porting note: type files were deprecated
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.AddRange(DefaultTypeFiles);
-            RemoveDisallowedEntries(
-                iss.Types,
-                allowedTypes,
-                typeEntry => IO.Path.GetFileName(typeEntry.FileName));
-
-            iss.Variables.Clear(); // no variables are needed for workflow server - remove all of them
-            // set a preference variable to indicate Get-Command should show
-            // return only loaded public commands
-            Hashtable parameters = new Hashtable { { "Get-Command:ListImported", true } };
-            iss.Variables.Add(new SessionStateVariableEntry("PSDefaultParameterValues", parameters, "Default Get-Command Action"));
-            return iss;
-        }
-
-        private static InitialSessionState CreateRestrictedForWorkflowServerMinimum()
-        {
-            InitialSessionState iss = CreateDefault();
-            iss.LanguageMode = PSLanguageMode.NoLanguage;
-            iss.ThrowOnRunspaceOpenError = true;
-            iss.UseFullLanguageModeInDebugger = false;
-
-            // WIN8:551312 M3P endpoint should have NO application exposed
-            //
-            foreach (SessionStateCommandEntry entry in iss.Commands)
-            {
-                if (entry.GetType() == typeof(SessionStateApplicationEntry))
-                {
-                    iss.Commands.Remove(entry.Name, entry);
-                    break;
-                }
-            }
-
-            //
-            // restrict what gets exposed
-            //
-
-            // required by implicit remoting and interactive remoting
-            List<string> allowedCommands = new List<string>
-                                               {
-                                                   "Get-Command"
-                                               };
-            allowedCommands.AddRange(JobCmdlets);
-            allowedCommands.AddRange(MiscCmdlets);
-
-            // make all other commands private
-            MakeDisallowedEntriesPrivate(
-                iss.Commands,
-                allowedCommands,
-                commandEntry => commandEntry.Name);
-
-            iss.Formats.Clear();
-            List<string> allowedTypes = new List<string>();
-            allowedTypes.AddRange(DefaultTypeFiles);
-            RemoveDisallowedEntries(
-                iss.Types,
-                allowedTypes,
-                typeEntry => IO.Path.GetFileName(typeEntry.FileName));
-
-            iss.Variables.Clear(); // no variables are needed for workflow server - remove all of them
-
-            // Disable module autodiscovery
-            SessionStateVariableEntry ssve = new SessionStateVariableEntry("PSDisableModuleAutoDiscovery",
-                true, "True if we disable module autodiscovery", ScopedItemOptions.Constant);
-            iss.Variables.Add(ssve);
-
-            return iss;
-        }
-
-        private static readonly string[] JobCmdlets = {
-                                                          "Get-Job", "Stop-Job", "Wait-Job", "Suspend-Job", "Resume-Job",
-                                                          "Remove-Job", "Receive-Job"
-                                                      };
-
-        private static readonly string[] ImplicitRemotingCmdlets = {
-                                                                       "Get-Command", "Select-Object", "Measure-Object",
-                                                                       "Get-Help", "Get-FormatData", "Exit-PSSession",
-                                                                       "Out-Default"
-                                                                   };
-
-        private static readonly string[] AutoDiscoveryCmdlets = { "Get-Module" };
-
-        private static readonly string[] LanguageHelperCmdlets = {
-                                                                     "Compare-Object",
-                                                                     "ForEach-Object",
-                                                                     "Group-Object",
-                                                                     "Sort-Object",
-                                                                     "Where-Object",
-                                                                     "Out-File",
-                                                                     "Out-Null",
-                                                                     "Out-String",
-                                                                     "Format-Custom",
-                                                                     "Format-List",
-                                                                     "Format-Table",
-                                                                     "Format-Wide",
-                                                                     "Remove-Module",
-                                                                     "Get-Variable",
-                                                                     "Set-Variable",
-                                                                     "Remove-Variable",
-                                                                     "Get-Credential",
-                                                                     "Set-StrictMode"
-                                                                 };
-        /// <summary>
-        /// Following cmdlets are needed for debugging support starting WinBlue
-        /// </summary>
-        private static readonly string[] DebugCmdlets = {
-                                                            "Disable-PSBreakpoint",
-                                                            "Enable-PSBreakpoint",
-                                                            "Get-PSBreakpoint",
-                                                            "Remove-PSBreakpoint",
-                                                            "Set-PSBreakpoint"
-                                                        };
-
-        /// <summary>
-        /// this cmdlets are exposed due to some bugs. Need to figure out if
-        /// they are still required
-        /// </summary>
-        private static readonly string[] MiscCmdlets = { "Join-Path", "Import-Module" };
-        private static readonly string[] MiscCommands = { "TabExpansion2" };
-
-        private static readonly string[] DefaultTypeFiles = { "types.ps1xml", "typesv3.ps1xml" };
-#endif
 
         #endregion
 
@@ -2009,6 +1600,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
         /// The default cmdlets, provider, etc are loaded via Modules
+        /// For loading Microsoft.PowerShell.Core module only.
         /// </summary>
         /// <returns></returns>
         public static InitialSessionState CreateDefault2()
@@ -2705,10 +2297,6 @@ namespace System.Management.Automation.Runspaces
             bool etwEnabled = RunspaceEventSource.Log.IsEnabled();
             if (etwEnabled) RunspaceEventSource.Log.LoadCommandsStart();
 
-#if !CORECLR // Workflow Not Supported On CSS
-            InitialSessionState cloneForWorkflowDefinitions = null;
-#endif
-
             foreach (SessionStateCommandEntry cmd in Commands)
             {
                 if (etwEnabled) RunspaceEventSource.Log.LoadCommandStart(cmd.Name);
@@ -2760,25 +2348,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     continue;
                 }
-#if !CORECLR // Workflow Not Supported On CSS
-                SessionStateWorkflowEntry sswe = cmd as SessionStateWorkflowEntry;
-                if (sswe != null)
-                {
-                    if (cloneForWorkflowDefinitions == null)
-                    {
-                        cloneForWorkflowDefinitions = this.Clone();
-                        var commandsCopy =
-                            cloneForWorkflowDefinitions.Commands.Where(e => !(e is SessionStateWorkflowEntry))
-                                .ToList();
-                        cloneForWorkflowDefinitions.Commands.Clear();
-                        foreach (var c in commandsCopy)
-                        {
-                            cloneForWorkflowDefinitions.Commands.Add(c);
-                        }
-                    }
-                    ss.AddSessionStateEntry(cloneForWorkflowDefinitions, sswe);
-                }
-#endif
+
                 if (etwEnabled) RunspaceEventSource.Log.LoadCommandStop(cmd.Name);
             }
 
@@ -4135,7 +3705,6 @@ namespace System.Management.Automation.Runspaces
             return coreSnapin;
         }
 
-        // WARNING: THIS CODE IS COMPLETELY DUPLICATED IN RunspaceConfigForSingleShell
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
             // See if the snapin is already loaded. If has been then there will be an entry in the
@@ -4594,14 +4163,6 @@ End
         ";
 
         /// <summary>
-        /// This is the default function to use for 'Import System Modules'.
-        /// </summary>
-        /// <remarks>
-        /// Win8: 320909. Retaining the original definition to ensure backward compatability.
-        /// </remarks>
-        private static string s_importSystemModulesText = @"";
-
-        /// <summary>
         /// This is the default function to use for clear-host. On Windows it rewrites the
         /// host, and on Linux, it delegates to the native binary, 'clear'.
         /// </summary>
@@ -4692,10 +4253,25 @@ param(
     [switch]
     ${ShowWindow})
 
-    #Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
+    # Display the full help topic by default but only for the AllUsersView parameter set.
+    if (($psCmdlet.ParameterSetName -eq 'AllUsersView') -and !$Full) {
+        $PSBoundParameters['Full'] = $true
+    }
+
+    # Set the outputencoding to Console::OutputEncoding. More.com doesn't work well with Unicode.
     $outputEncoding=[System.Console]::OutputEncoding
 
-    Get-Help @PSBoundParameters | more
+    $help = Get-Help @PSBoundParameters
+
+    # If a list of help is returned, don't pipe to more
+    if (($help | Select-Object -First 1).PSTypeNames -Contains 'HelpInfoShort')
+    {
+        $help
+    }
+    else
+    {
+        $help | more
+    }
 ";
         }
 
@@ -4844,7 +4420,7 @@ end
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(
                 SpecialVariables.OutputEncoding,
-                System.Text.Encoding.ASCII,
+                Utils.utf8NoBom,
                 RunspaceInit.OutputEncodingDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))
@@ -4963,8 +4539,8 @@ end
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
             new SessionStateVariableEntry(
-                SpecialVariables.IsOSX,
-                Platform.IsOSX,
+                SpecialVariables.IsMacOS,
+                Platform.IsMacOS,
                 String.Empty,
                 ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
@@ -4991,330 +4567,181 @@ end
         {
             get
             {
+                // Too many AllScope entries hurts performance because an entry is
+                // created in each new scope, so we limit the use of AllScope to the
+                // most commonly used commands - primarily so command lookup is faster,
+                // though if we speed up command lookup significantly, then removing
+                // AllScope for all of these aliases makes sense.
+
+                const ScopedItemOptions AllScope = ScopedItemOptions.AllScope;
+                const ScopedItemOptions ReadOnly_AllScope = ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope;
+                const ScopedItemOptions ReadOnly = ScopedItemOptions.ReadOnly;
+
                 return new SessionStateAliasEntry[] {
-                    new SessionStateAliasEntry("foreach",
-                        "ForEach-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("%",
-                        "ForEach-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("where",
-                        "Where-Object",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("?",
-                        "Where-Object",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("clc",
-                        "Clear-Content",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cli",
-                        "Clear-Item",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("clp",
-                        "Clear-ItemProperty",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("clv",
-                        "Clear-Variable",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cpi",
-                        "Copy-Item",       "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cvpa",
-                        "Convert-Path",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("dbp",
-                        "Disable-PSBreakpoint", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ebp",
-                        "Enable-PSBreakpoint", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("epal",
-                        "Export-Alias",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("epcsv",
-                        "Export-Csv",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("fl",
-                        "Format-List",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ft",
-                        "Format-Table",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("fw",
-                        "Format-Wide",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gal",
-                        "Get-Alias",       "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gbp",
-                        "Get-PSBreakpoint",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gc",
-                        "Get-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gci",
-                        "Get-ChildItem",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gcm",
-                        "Get-Command",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gdr",
-                        "Get-PSDrive",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gcs",
-                        "Get-PSCallStack",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ghy",
-                        "Get-History",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gi",
-                        "Get-Item",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gl",
-                        "Get-Location",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gm",
-                        "Get-Member",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gmo",
-                        "Get-Module",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gp",
-                        "Get-ItemProperty",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gpv",
-                        "Get-ItemPropertyValue",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gps",
-                        "Get-Process",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("group",
-                        "Group-Object",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gu",
-                        "Get-Unique",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gv",
-                        "Get-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("iex",
-                        "Invoke-Expression",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ihy",
-                        "Invoke-History",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ii",
-                        "Invoke-Item",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ipmo",
-                        "Import-Module",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ipal",
-                        "Import-Alias",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ipcsv",
-                        "Import-Csv",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("measure",
-                        "Measure-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("mi",
-                        "Move-Item",       "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("mp",
-                        "Move-ItemProperty",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("nal",
-                        "New-Alias",       "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ndr",
-                        "New-PSDrive",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ni",
-                        "New-Item",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("nv",
-                        "New-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("nmo",
-                        "New-Module",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("oh",
-                        "Out-Host",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rbp",
-                        "Remove-PSBreakpoint", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rdr",
-                        "Remove-PSDrive", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ri",
-                        "Remove-Item",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rni",
-                        "Rename-Item",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rnp",
-                        "Rename-ItemProperty", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rp",
-                        "Remove-ItemProperty", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rmo",
-                        "Remove-Module", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rv",
-                        "Remove-Variable", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rvpa",
-                        "Resolve-Path",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sal",
-                        "Set-Alias",       "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sbp",
-                        "Set-PSBreakpoint",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sc",
-                        "Set-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    // this conflicts with sd.exe, and makes msh unusable by dev.
-                    // new SessionStateAliasEntry("sd",
-                    //     "Set-Date",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("select",
-                        "Select-Object",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("si",
-                        "Set-Item",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sl",
-                        "Set-Location",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sp",
-                        "Set-ItemProperty",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("saps",
-                        "Start-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("spps",
-                        "Stop-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sv",
-                        "Set-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("foreach", "ForEach-Object", "", ReadOnly_AllScope),
+                    new SessionStateAliasEntry("%", "ForEach-Object", "", ReadOnly_AllScope),
+                    new SessionStateAliasEntry("where", "Where-Object", "", ReadOnly_AllScope),
+                    new SessionStateAliasEntry("?", "Where-Object", "", ReadOnly_AllScope),
+                    new SessionStateAliasEntry("clc", "Clear-Content", "", ReadOnly),
+                    new SessionStateAliasEntry("cli", "Clear-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("clp", "Clear-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("clv", "Clear-Variable", "", ReadOnly),
+                    new SessionStateAliasEntry("cpi", "Copy-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("cvpa", "Convert-Path", "", ReadOnly),
+                    new SessionStateAliasEntry("dbp", "Disable-PSBreakpoint", "", ReadOnly),
+                    new SessionStateAliasEntry("ebp", "Enable-PSBreakpoint", "", ReadOnly),
+                    new SessionStateAliasEntry("epal", "Export-Alias", "", ReadOnly),
+                    new SessionStateAliasEntry("epcsv", "Export-Csv", "", ReadOnly),
+                    new SessionStateAliasEntry("fl", "Format-List", "", ReadOnly),
+                    new SessionStateAliasEntry("ft", "Format-Table", "", ReadOnly),
+                    new SessionStateAliasEntry("fw", "Format-Wide", "", ReadOnly),
+                    new SessionStateAliasEntry("gal", "Get-Alias", "", ReadOnly),
+                    new SessionStateAliasEntry("gbp", "Get-PSBreakpoint", "", ReadOnly),
+                    new SessionStateAliasEntry("gc", "Get-Content", "", ReadOnly),
+                    new SessionStateAliasEntry("gci", "Get-ChildItem", "", ReadOnly),
+                    new SessionStateAliasEntry("gcm", "Get-Command", "", ReadOnly),
+                    new SessionStateAliasEntry("gdr", "Get-PSDrive", "", ReadOnly),
+                    new SessionStateAliasEntry("gcs", "Get-PSCallStack", "", ReadOnly),
+                    new SessionStateAliasEntry("ghy", "Get-History", "", ReadOnly),
+                    new SessionStateAliasEntry("gi", "Get-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("gl", "Get-Location", "", ReadOnly),
+                    new SessionStateAliasEntry("gm", "Get-Member", "", ReadOnly),
+                    new SessionStateAliasEntry("gmo", "Get-Module", "", ReadOnly),
+                    new SessionStateAliasEntry("gp", "Get-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("gpv", "Get-ItemPropertyValue", "",ReadOnly),
+                    new SessionStateAliasEntry("gps", "Get-Process", "", ReadOnly),
+                    new SessionStateAliasEntry("group", "Group-Object", "", ReadOnly),
+                    new SessionStateAliasEntry("gu", "Get-Unique", "", ReadOnly),
+                    new SessionStateAliasEntry("gv", "Get-Variable", "", ReadOnly),
+                    new SessionStateAliasEntry("iex", "Invoke-Expression", "", ReadOnly),
+                    new SessionStateAliasEntry("ihy", "Invoke-History", "", ReadOnly),
+                    new SessionStateAliasEntry("ii", "Invoke-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("ipmo", "Import-Module", "", ReadOnly),
+                    new SessionStateAliasEntry("ipal", "Import-Alias", "", ReadOnly),
+                    new SessionStateAliasEntry("ipcsv", "Import-Csv", "", ReadOnly),
+                    new SessionStateAliasEntry("measure", "Measure-Object", "", ReadOnly),
+                    new SessionStateAliasEntry("mi", "Move-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("mp", "Move-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("nal", "New-Alias", "", ReadOnly),
+                    new SessionStateAliasEntry("ndr", "New-PSDrive", "", ReadOnly),
+                    new SessionStateAliasEntry("ni", "New-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("nv", "New-Variable", "", ReadOnly),
+                    new SessionStateAliasEntry("nmo", "New-Module", "", ReadOnly),
+                    new SessionStateAliasEntry("oh", "Out-Host", "", ReadOnly),
+                    new SessionStateAliasEntry("rbp", "Remove-PSBreakpoint", "", ReadOnly),
+                    new SessionStateAliasEntry("rdr", "Remove-PSDrive", "", ReadOnly),
+                    new SessionStateAliasEntry("ri", "Remove-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("rni", "Rename-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("rnp", "Rename-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("rp", "Remove-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("rmo", "Remove-Module", "", ReadOnly),
+                    new SessionStateAliasEntry("rv", "Remove-Variable", "", ReadOnly),
+                    new SessionStateAliasEntry("rvpa", "Resolve-Path", "", ReadOnly),
+                    new SessionStateAliasEntry("sal", "Set-Alias", "", ReadOnly),
+                    new SessionStateAliasEntry("sbp", "Set-PSBreakpoint", "", ReadOnly),
+                    new SessionStateAliasEntry("sc", "Set-Content", "", ReadOnly),
+                    new SessionStateAliasEntry("select", "Select-Object", "", ReadOnly_AllScope),
+                    new SessionStateAliasEntry("si", "Set-Item", "", ReadOnly),
+                    new SessionStateAliasEntry("sl", "Set-Location", "", ReadOnly),
+                    new SessionStateAliasEntry("sp", "Set-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("saps", "Start-Process", "", ReadOnly),
+                    new SessionStateAliasEntry("spps", "Stop-Process", "", ReadOnly),
+                    new SessionStateAliasEntry("sv", "Set-Variable", "", ReadOnly),
                     // Web cmdlets aliases
-                    new SessionStateAliasEntry("irm",
-                        "Invoke-RestMethod",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("iwr",
-                        "Invoke-WebRequest",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / OS X
+                    new SessionStateAliasEntry("irm", "Invoke-RestMethod", "", ReadOnly),
+                    new SessionStateAliasEntry("iwr", "Invoke-WebRequest", "", ReadOnly),
+// Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / macOS
 #if !UNIX
-                    // ac is a native command on OS X
-                    new SessionStateAliasEntry("ac",
-                        "Add-Content",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("compare",
-                        "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cpp",
-                        "Copy-ItemProperty",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("diff",
-                        "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gsv",
-                        "Get-Service",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sleep",
-                        "Start-Sleep",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sort",
-                        "Sort-Object",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("start",
-                        "Start-Process",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sasv",
-                        "Start-Service",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("spsv",
-                        "Stop-Service",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("tee",
-                        "Tee-Object",      "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("write",
-                        "Write-Output",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    // ac is a native command on macOS
+                    new SessionStateAliasEntry("ac", "Add-Content", "", ReadOnly),
+                    new SessionStateAliasEntry("compare", "Compare-Object", "", ReadOnly),
+                    new SessionStateAliasEntry("cpp", "Copy-ItemProperty", "", ReadOnly),
+                    new SessionStateAliasEntry("diff", "Compare-Object", "", ReadOnly),
+                    new SessionStateAliasEntry("gsv", "Get-Service", "", ReadOnly),
+                    new SessionStateAliasEntry("sleep", "Start-Sleep", "", ReadOnly),
+                    new SessionStateAliasEntry("sort", "Sort-Object", "", ReadOnly),
+                    new SessionStateAliasEntry("start", "Start-Process", "", ReadOnly),
+                    new SessionStateAliasEntry("sasv", "Start-Service", "", ReadOnly),
+                    new SessionStateAliasEntry("spsv", "Stop-Service", "", ReadOnly),
+                    new SessionStateAliasEntry("tee", "Tee-Object", "", ReadOnly),
+                    new SessionStateAliasEntry("write", "Write-Output", "", ReadOnly),
                     // These were transferred from the "transferred from the profile" section
-                    new SessionStateAliasEntry("cat",
-                        "Get-Content",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cp",
-                        "Copy-Item",       "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ls",
-                        "Get-ChildItem",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("man",
-                        "help",            "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("mount",
-                        "New-PSDrive",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("mv",
-                        "Move-Item",       "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ps",
-                        "Get-Process",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rm",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rmdir",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("cat", "Get-Content"),
+                    new SessionStateAliasEntry("cp", "Copy-Item", "", AllScope),
+                    new SessionStateAliasEntry("ls", "Get-ChildItem"),
+                    new SessionStateAliasEntry("man", "help"),
+                    new SessionStateAliasEntry("mount", "New-PSDrive"),
+                    new SessionStateAliasEntry("mv", "Move-Item"),
+                    new SessionStateAliasEntry("ps", "Get-Process"),
+                    new SessionStateAliasEntry("rm", "Remove-Item"),
+                    new SessionStateAliasEntry("rmdir", "Remove-Item"),
+                    new SessionStateAliasEntry("cnsn", "Connect-PSSession", "", ReadOnly),
+                    new SessionStateAliasEntry("dnsn", "Disconnect-PSSession", "", ReadOnly),
 #endif
                     // Bash built-ins we purposefully keep even if they override native commands
-                    new SessionStateAliasEntry("cd",
-                        "Set-Location",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("dir",
-                        "Get-ChildItem",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("echo",
-                        "Write-Output",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("fc",
-                        "Format-Custom",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("kill",
-                        "Stop-Process",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("pwd",
-                        "Get-Location",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("type",
-                        "Get-Content",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("cd", "Set-Location", "", AllScope),
+                    new SessionStateAliasEntry("dir", "Get-ChildItem", "", AllScope),
+                    new SessionStateAliasEntry("echo", "Write-Output", "", AllScope),
+                    new SessionStateAliasEntry("fc", "Format-Custom", "", ReadOnly),
+                    new SessionStateAliasEntry("kill", "Stop-Process"),
+                    new SessionStateAliasEntry("pwd", "Get-Location"),
+                    new SessionStateAliasEntry("type", "Get-Content"),
                     // Native commands we keep because the functions act correctly on Linux
-                    new SessionStateAliasEntry("clear",
-                        "Clear-Host",      "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("clear", "Clear-Host"),
 //#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore
 #if !CORECLR
-                    new SessionStateAliasEntry("asnp",
-                        "Add-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gsnp",
-                        "Get-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gwmi",
-                        "Get-WmiObject",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("iwmi",
-                        "Invoke-WMIMethod",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ogv",
-                        "Out-GridView",        "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ise",
-                        "powershell_ise.exe",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rsnp",
-                        "Remove-PSSnapin", "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rwmi",
-                        "Remove-WMIObject",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("swmi",
-                        "Set-WMIInstance",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("shcm",
-                        "Show-Command",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("trcm",
-                        "Trace-Command",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("wget",
-                        "Invoke-WebRequest",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("curl",
-                        "Invoke-WebRequest",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("lp",
-                        "Out-Printer",     "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("gwmi", "Get-WmiObject", "", ReadOnly),
+                    new SessionStateAliasEntry("iwmi", "Invoke-WMIMethod", "", ReadOnly),
+                    new SessionStateAliasEntry("ogv", "Out-GridView", "", ReadOnly),
+                    new SessionStateAliasEntry("ise", "powershell_ise.exe", "", ReadOnly),
+                    new SessionStateAliasEntry("rwmi", "Remove-WMIObject", "", ReadOnly),
+                    new SessionStateAliasEntry("swmi", "Set-WMIInstance", "", ReadOnly),
+                    new SessionStateAliasEntry("shcm", "Show-Command", "", ReadOnly),
+                    new SessionStateAliasEntry("trcm", "Trace-Command", "", ReadOnly),
+                    new SessionStateAliasEntry("lp", "Out-Printer"),
 #endif
                     // Aliases transferred from the profile
-                    new SessionStateAliasEntry("h",
-                        "Get-History",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("history",
-                        "Get-History",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("md",
-                        "mkdir",          "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("popd",
-                        "Pop-Location",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("pushd",
-                        "Push-Location",   "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("r",
-                        "Invoke-History",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("cls",
-                        "Clear-Host",      "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("chdir",
-                        "Set-Location",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("copy",
-                        "Copy-Item",       "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("del",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("erase",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("move",
-                        "Move-Item",       "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rd",
-                        "Remove-Item",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ren",
-                        "Rename-Item",     "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("set",
-                        "Set-Variable",    "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("icm",
-                        "Invoke-Command",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("clhy",
-                        "Clear-History",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("h", "Get-History"),
+                    new SessionStateAliasEntry("history", "Get-History"),
+                    new SessionStateAliasEntry("md", "mkdir", "", AllScope),
+                    new SessionStateAliasEntry("popd", "Pop-Location", "", AllScope),
+                    new SessionStateAliasEntry("pushd", "Push-Location", "", AllScope),
+                    new SessionStateAliasEntry("r", "Invoke-History"),
+                    new SessionStateAliasEntry("cls", "Clear-Host"),
+                    new SessionStateAliasEntry("chdir", "Set-Location"),
+                    new SessionStateAliasEntry("copy", "Copy-Item", "", AllScope),
+                    new SessionStateAliasEntry("del", "Remove-Item", "", AllScope),
+                    new SessionStateAliasEntry("erase", "Remove-Item"),
+                    new SessionStateAliasEntry("move", "Move-Item", "", AllScope),
+                    new SessionStateAliasEntry("rd", "Remove-Item"),
+                    new SessionStateAliasEntry("ren", "Rename-Item"),
+                    new SessionStateAliasEntry("set", "Set-Variable"),
+                    new SessionStateAliasEntry("icm", "Invoke-Command"),
+                    new SessionStateAliasEntry("clhy", "Clear-History", "", ReadOnly),
                     // Job Specific aliases
-                    new SessionStateAliasEntry("gjb",
-                        "Get-Job",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rcjb",
-                        "Receive-Job",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rjb",
-                        "Remove-Job",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("sajb",
-                        "Start-Job",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("spjb",
-                        "Stop-Job",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("wjb",
-                        "Wait-Job",  "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("gjb", "Get-Job"),
+                    new SessionStateAliasEntry("rcjb", "Receive-Job"),
+                    new SessionStateAliasEntry("rjb", "Remove-Job"),
+                    new SessionStateAliasEntry("sajb", "Start-Job"),
+                    new SessionStateAliasEntry("spjb", "Stop-Job"),
+                    new SessionStateAliasEntry("wjb", "Wait-Job"),
 #if !CORECLR
-                    new SessionStateAliasEntry("sujb",
-                        "Suspend-Job", "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rujb",
-                        "Resume-Job", "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("sujb", "Suspend-Job"),
+                    new SessionStateAliasEntry("rujb", "Resume-Job"),
                     // Remoting Cmdlets Specific aliases
-                    new SessionStateAliasEntry("npssc",
-                        "New-PSSessionConfigurationFile",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("ipsn",
-                        "Import-PSSession",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("epsn",
-                        "Export-PSSession",  "", ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("npssc", "New-PSSessionConfigurationFile", "", ReadOnly),
+                    new SessionStateAliasEntry("ipsn", "Import-PSSession"),
+                    new SessionStateAliasEntry("epsn", "Export-PSSession"),
 #endif
-                    new SessionStateAliasEntry("cnsn",
-                        "Connect-PSSession",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("dnsn",
-                        "Disconnect-PSSession","", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("nsn",
-                        "New-PSSession",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gsn",
-                        "Get-PSSession",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rsn",
-                        "Remove-PSSession",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("etsn",
-                        "Enter-PSSession",  "", ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("rcsn",
-                        "Receive-PSSession",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("exsn",
-                        "Exit-PSSession",  "", ScopedItemOptions.AllScope),
-                    // Win8: 121662/169179  Add "sls" alias for Select-String cmdlet
+                    new SessionStateAliasEntry("nsn", "New-PSSession"),
+                    new SessionStateAliasEntry("gsn", "Get-PSSession"),
+                    new SessionStateAliasEntry("rsn", "Remove-PSSession"),
+                    new SessionStateAliasEntry("etsn", "Enter-PSSession"),
+                    new SessionStateAliasEntry("rcsn", "Receive-PSSession", "", ReadOnly),
+                    new SessionStateAliasEntry("exsn", "Exit-PSSession"),
+                    // Win8: 121662/169179 Add "sls" alias for Select-String cmdlet
                     //   - do not use AllScope - this causes errors in profiles that set this somewhat commonly used alias.
-                    new SessionStateAliasEntry("sls",
-                        "Select-String", "", ScopedItemOptions.None),
+                    new SessionStateAliasEntry("sls", "Select-String"),
                 };
             }
         }
@@ -5402,8 +4829,6 @@ if($paths) {
 
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true),
-            // Win8: 320909. Retaining the original definition to ensure backward compatability.
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("ImportSystemModules", s_importSystemModulesText, isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString),"'"), isProductCode: true)
         };
@@ -5489,22 +4914,6 @@ if($paths) {
 
             return result;
         }
-
-        internal void SaveAsConsoleFile(string path)
-        {
-            if (null == path)
-            {
-                throw PSTraceSource.NewArgumentNullException("path");
-            }
-
-            if (!path.EndsWith(StringLiterals.PowerShellConsoleFileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                throw PSTraceSource.NewArgumentException("path", ConsoleInfoErrorStrings.BadConsoleExtension);
-            }
-
-            //ConsoleFileElement will write to file
-            PSConsoleFileElement.WriteToFile(path, PSVersionInfo.PSVersion, this.ImportedSnapins.Values);
-        }
     }
 
     /// <summary>
@@ -5524,7 +4933,6 @@ if($paths) {
 
             try
             {
-                // WARNING: DUPLICATE CODE see RunspaceConfigForSingleShell
                 assembly = Assembly.Load(new AssemblyName(psSnapInInfo.AssemblyName));
             }
             catch (BadImageFormatException e)
@@ -5959,18 +5367,28 @@ if($paths) {
             {
                 {"Add-History",                       new SessionStateCmdletEntry("Add-History", typeof(AddHistoryCommand), helpFile) },
                 {"Clear-History",                     new SessionStateCmdletEntry("Clear-History", typeof(ClearHistoryCommand), helpFile) },
-                {"Connect-PSSession",                 new SessionStateCmdletEntry("Connect-PSSession", typeof(ConnectPSSessionCommand), helpFile) },
                 {"Debug-Job",                         new SessionStateCmdletEntry("Debug-Job", typeof(DebugJobCommand), helpFile) },
-                {"Disable-PSSessionConfiguration",    new SessionStateCmdletEntry("Disable-PSSessionConfiguration", typeof(DisablePSSessionConfigurationCommand), helpFile) },
-                {"Disconnect-PSSession",              new SessionStateCmdletEntry("Disconnect-PSSession", typeof(DisconnectPSSessionCommand), helpFile) },
 #if !UNIX
                 {"Disable-PSRemoting",                new SessionStateCmdletEntry("Disable-PSRemoting", typeof(DisablePSRemotingCommand), helpFile) },
                 {"Enable-PSRemoting",                 new SessionStateCmdletEntry("Enable-PSRemoting", typeof(EnablePSRemotingCommand), helpFile) },
-#endif
-                {"Enable-PSSessionConfiguration",     new SessionStateCmdletEntry("Enable-PSSessionConfiguration", typeof(EnablePSSessionConfigurationCommand), helpFile) },
+                {"Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 {"Enter-PSHostProcess",               new SessionStateCmdletEntry("Enter-PSHostProcess", typeof(EnterPSHostProcessCommand), helpFile) },
-                {"Enter-PSSession",                   new SessionStateCmdletEntry("Enter-PSSession", typeof(EnterPSSessionCommand), helpFile) },
                 {"Exit-PSHostProcess",                new SessionStateCmdletEntry("Exit-PSHostProcess", typeof(ExitPSHostProcessCommand), helpFile) },
+                {"Disable-PSSessionConfiguration",    new SessionStateCmdletEntry("Disable-PSSessionConfiguration", typeof(DisablePSSessionConfigurationCommand), helpFile) },
+                {"Enable-PSSessionConfiguration",     new SessionStateCmdletEntry("Enable-PSSessionConfiguration", typeof(EnablePSSessionConfigurationCommand), helpFile) },
+                {"Get-PSSessionCapability",           new SessionStateCmdletEntry("Get-PSSessionCapability", typeof(GetPSSessionCapabilityCommand), helpFile) },
+                {"Get-PSSessionConfiguration",        new SessionStateCmdletEntry("Get-PSSessionConfiguration", typeof(GetPSSessionConfigurationCommand), helpFile) },
+                {"New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
+                {"New-PSSessionOption",               new SessionStateCmdletEntry("New-PSSessionOption", typeof(NewPSSessionOptionCommand), helpFile) },
+                {"Receive-PSSession",                 new SessionStateCmdletEntry("Receive-PSSession", typeof(ReceivePSSessionCommand), helpFile) },
+                {"Register-PSSessionConfiguration",   new SessionStateCmdletEntry("Register-PSSessionConfiguration", typeof(RegisterPSSessionConfigurationCommand), helpFile) },
+                {"Unregister-PSSessionConfiguration", new SessionStateCmdletEntry("Unregister-PSSessionConfiguration", typeof(UnregisterPSSessionConfigurationCommand), helpFile) },
+                {"Set-PSSessionConfiguration",        new SessionStateCmdletEntry("Set-PSSessionConfiguration", typeof(SetPSSessionConfigurationCommand), helpFile) },
+                {"Test-PSSessionConfigurationFile",   new SessionStateCmdletEntry("Test-PSSessionConfigurationFile", typeof(TestPSSessionConfigurationFileCommand), helpFile) },
+                {"Connect-PSSession",                 new SessionStateCmdletEntry("Connect-PSSession", typeof(ConnectPSSessionCommand), helpFile) },
+                {"Disconnect-PSSession",              new SessionStateCmdletEntry("Disconnect-PSSession", typeof(DisconnectPSSessionCommand), helpFile) },
+#endif
+                {"Enter-PSSession",                   new SessionStateCmdletEntry("Enter-PSSession", typeof(EnterPSSessionCommand), helpFile) },
                 {"Exit-PSSession",                    new SessionStateCmdletEntry("Exit-PSSession", typeof(ExitPSSessionCommand), helpFile) },
                 {"Export-ModuleMember",               new SessionStateCmdletEntry("Export-ModuleMember", typeof(ExportModuleMemberCommand), helpFile) },
                 {"ForEach-Object",                    new SessionStateCmdletEntry("ForEach-Object", typeof(ForEachObjectCommand), helpFile) },
@@ -5979,10 +5397,7 @@ if($paths) {
                 {"Get-History",                       new SessionStateCmdletEntry("Get-History", typeof(GetHistoryCommand), helpFile) },
                 {"Get-Job",                           new SessionStateCmdletEntry("Get-Job", typeof(GetJobCommand), helpFile) },
                 {"Get-Module",                        new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), helpFile) },
-                {"Get-PSHostProcessInfo",             new SessionStateCmdletEntry("Get-PSHostProcessInfo", typeof(GetPSHostProcessInfoCommand), helpFile) },
                 {"Get-PSSession",                     new SessionStateCmdletEntry("Get-PSSession", typeof(GetPSSessionCommand), helpFile) },
-                {"Get-PSSessionCapability",           new SessionStateCmdletEntry("Get-PSSessionCapability", typeof(GetPSSessionCapabilityCommand), helpFile) },
-                {"Get-PSSessionConfiguration",        new SessionStateCmdletEntry("Get-PSSessionConfiguration", typeof(GetPSSessionConfigurationCommand), helpFile) },
                 {"Import-Module",                     new SessionStateCmdletEntry("Import-Module", typeof(ImportModuleCommand), helpFile) },
                 {"Invoke-Command",                    new SessionStateCmdletEntry("Invoke-Command", typeof(InvokeCommandCommand), helpFile) },
                 {"Invoke-History",                    new SessionStateCmdletEntry("Invoke-History", typeof(InvokeHistoryCommand), helpFile) },
@@ -5990,28 +5405,21 @@ if($paths) {
                 {"New-ModuleManifest",                new SessionStateCmdletEntry("New-ModuleManifest", typeof(NewModuleManifestCommand), helpFile) },
                 {"New-PSRoleCapabilityFile",          new SessionStateCmdletEntry("New-PSRoleCapabilityFile", typeof(NewPSRoleCapabilityFileCommand), helpFile) },
                 {"New-PSSession",                     new SessionStateCmdletEntry("New-PSSession", typeof(NewPSSessionCommand), helpFile) },
-                {"New-PSSessionConfigurationFile",    new SessionStateCmdletEntry("New-PSSessionConfigurationFile", typeof(NewPSSessionConfigurationFileCommand), helpFile) },
-                {"New-PSSessionOption",               new SessionStateCmdletEntry("New-PSSessionOption", typeof(NewPSSessionOptionCommand), helpFile) },
                 {"New-PSTransportOption",             new SessionStateCmdletEntry("New-PSTransportOption", typeof(NewPSTransportOptionCommand), helpFile) },
                 {"Out-Default",                       new SessionStateCmdletEntry("Out-Default", typeof(OutDefaultCommand), helpFile) },
                 {"Out-Host",                          new SessionStateCmdletEntry("Out-Host", typeof(OutHostCommand), helpFile) },
                 {"Out-Null",                          new SessionStateCmdletEntry("Out-Null", typeof(OutNullCommand), helpFile) },
                 {"Receive-Job",                       new SessionStateCmdletEntry("Receive-Job", typeof(ReceiveJobCommand), helpFile) },
-                {"Receive-PSSession",                 new SessionStateCmdletEntry("Receive-PSSession", typeof(ReceivePSSessionCommand), helpFile) },
                 {"Register-ArgumentCompleter",        new SessionStateCmdletEntry("Register-ArgumentCompleter", typeof(RegisterArgumentCompleterCommand), helpFile) },
-                {"Register-PSSessionConfiguration",   new SessionStateCmdletEntry("Register-PSSessionConfiguration", typeof(RegisterPSSessionConfigurationCommand), helpFile) },
                 {"Remove-Job",                        new SessionStateCmdletEntry("Remove-Job", typeof(RemoveJobCommand), helpFile) },
                 {"Remove-Module",                     new SessionStateCmdletEntry("Remove-Module", typeof(RemoveModuleCommand), helpFile) },
                 {"Remove-PSSession",                  new SessionStateCmdletEntry("Remove-PSSession", typeof(RemovePSSessionCommand), helpFile) },
                 {"Save-Help",                         new SessionStateCmdletEntry("Save-Help", typeof(SaveHelpCommand), helpFile) },
                 {"Set-PSDebug",                       new SessionStateCmdletEntry("Set-PSDebug", typeof(SetPSDebugCommand), helpFile) },
-                {"Set-PSSessionConfiguration",        new SessionStateCmdletEntry("Set-PSSessionConfiguration", typeof(SetPSSessionConfigurationCommand), helpFile) },
                 {"Set-StrictMode",                    new SessionStateCmdletEntry("Set-StrictMode", typeof(SetStrictModeCommand), helpFile) },
                 {"Start-Job",                         new SessionStateCmdletEntry("Start-Job", typeof(StartJobCommand), helpFile) },
                 {"Stop-Job",                          new SessionStateCmdletEntry("Stop-Job", typeof(StopJobCommand), helpFile) },
                 {"Test-ModuleManifest",               new SessionStateCmdletEntry("Test-ModuleManifest", typeof(TestModuleManifestCommand), helpFile) },
-                {"Test-PSSessionConfigurationFile",   new SessionStateCmdletEntry("Test-PSSessionConfigurationFile", typeof(TestPSSessionConfigurationFileCommand), helpFile) },
-                {"Unregister-PSSessionConfiguration", new SessionStateCmdletEntry("Unregister-PSSessionConfiguration", typeof(UnregisterPSSessionConfigurationCommand), helpFile) },
                 {"Update-Help",                       new SessionStateCmdletEntry("Update-Help", typeof(UpdateHelpCommand), helpFile) },
                 {"Wait-Job",                          new SessionStateCmdletEntry("Wait-Job", typeof(WaitJobCommand), helpFile) },
                 {"Where-Object",                      new SessionStateCmdletEntry("Where-Object", typeof(WhereObjectCommand), helpFile) },

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
-// <copyright file="etwprovider.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// <copyright company="Microsoft">
+//     Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
 
@@ -209,10 +209,10 @@ namespace System.Diagnostics.Eventing
         /// IsEnabled, method used to test if event is enabled
         /// </summary>
         /// <param name="level">
-        /// Level  to test
+        /// Level to test
         /// </param>
         /// <param name="keywords">
-        /// Keyword  to test
+        /// Keyword to test
         /// </param>
         public bool IsEnabled(byte level, long keywords)
         {
@@ -433,13 +433,13 @@ namespace System.Diagnostics.Eventing
         /// The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
         /// </summary>
         /// <param name="eventMessage">
-        /// Message  to write
+        /// Message to write
         /// </param>
         /// <param name="eventLevel">
-        /// Level  to test
+        /// Level to test
         /// </param>
         /// <param name="eventKeywords">
-        /// Keyword  to test
+        /// Keyword to test
         /// </param>
         [System.Security.SecurityCritical]
         public bool WriteMessageEvent(string eventMessage, byte eventLevel, long eventKeywords)
@@ -569,7 +569,7 @@ namespace System.Diagnostics.Eventing
         /// number of event descriptors
         /// </param>
         /// <param name="data">
-        /// pointer  do the event data
+        /// pointer do the event data
         /// </param>
         [System.Security.SecurityCritical]
         protected bool WriteEvent(ref EventDescriptor eventDescriptor, int dataCount, IntPtr data)

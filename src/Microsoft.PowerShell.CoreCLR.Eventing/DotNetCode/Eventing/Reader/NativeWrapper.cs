@@ -816,7 +816,7 @@ namespace System.Diagnostics.Eventing.Reader
                     EventLogException.Throw(win32Error);
 
                 if (propCount != SYSTEM_PROPERTY_COUNT)
-                    throw new InvalidOperationException("We do not have " + SYSTEM_PROPERTY_COUNT + " variants given for the  UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues flag. (System Properties)");
+                    throw new InvalidOperationException("We do not have " + SYSTEM_PROPERTY_COUNT + " variants given for the UnsafeNativeMethods.EvtRenderFlags.EvtRenderEventValues flag. (System Properties)");
 
                 pointer = buffer;
                 //read each Variant structure
@@ -890,7 +890,7 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-        //EvtRenderContextFlags can be both: EvtRenderContextFlags.EvtRenderContextUser and  EvtRenderContextFlags.EvtRenderContextValues
+        //EvtRenderContextFlags can be both: EvtRenderContextFlags.EvtRenderContextUser and EvtRenderContextFlags.EvtRenderContextValues
         //Render with Context = ContextUser or ContextValues (with user defined Xpath query strings)
         [System.Security.SecuritySafeCritical]
         public static IList<object> EvtRenderBufferWithContextUserOrValues(EventLogHandle contextHandle, EventLogHandle eventHandle)

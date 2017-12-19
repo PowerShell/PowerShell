@@ -1,4 +1,4 @@
-#Copyright (c) 2008 Microsoft Corporation
+#Copyright (c) Microsoft Corporation. All rights reserved.
 
 Vendor=Microsoft
 Description=This Windows PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.

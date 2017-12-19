@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -265,13 +265,13 @@ namespace System.Management.Automation
 
             CommandProcessorBase helpCommandProcessor = context.CreateCommand("get-help", false);
             var cpi = CommandParameterInternal.CreateParameterWithArgument(
-                PositionUtilities.EmptyExtent, "Name", "-Name:",
-                PositionUtilities.EmptyExtent, helpTarget,
+                /*parameterAst*/null, "Name", "-Name:",
+                /*argumentAst*/null, helpTarget,
                 false);
             helpCommandProcessor.AddParameter(cpi);
             cpi = CommandParameterInternal.CreateParameterWithArgument(
-                PositionUtilities.EmptyExtent, "Category", "-Category:",
-                PositionUtilities.EmptyExtent, helpCategory.ToString(),
+                /*parameterAst*/null, "Category", "-Category:",
+                /*argumentAst*/null, helpCategory.ToString(),
                 false);
             helpCommandProcessor.AddParameter(cpi);
             return helpCommandProcessor;

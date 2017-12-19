@@ -10,33 +10,34 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         }
 
 
-        # If out-file -encoding happens to have a default, be sure to
+        # If Out-File -Encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
-        $oldDefaultParameterValues = $psDefaultParameterValues
+        $oldDefaultParameterValues = $psDefaultParameterValues.Clone()
         $psDefaultParameterValues = @{}
     }
     AfterAll {
         # be sure to tidy up afterwards
-        $psDefaultParameterValues = $oldDefaultParameterValues
+        $global:psDefaultParameterValues = $oldDefaultParameterValues
     }
     BeforeEach {
         # start each test with a clean plate!
-        $psdefaultParameterValues.Remove("out-file:encoding")
+        $psdefaultParameterValues.Remove("Out-File:Encoding")
     }
     AfterEach {
         # end each test with a clean plate!
-        $psdefaultParameterValues.Remove("out-file:encoding")
+        $psdefaultParameterValues.Remove("Out-File:Encoding")
     }
 
-    It "If encoding is unset, redirection should be Unicode" {
+    It "If encoding is unset, redirection should be UTF8 without bom" {
         $asciiString > TESTDRIVE:\file.txt
-        $bytes = get-content -encoding byte TESTDRIVE:\file.txt
-        # create the expected
-        $BOM = [text.encoding]::unicode.GetPreamble()
-        $TXT = [text.encoding]::unicode.GetBytes($asciiString)
-        $CR  = [text.encoding]::unicode.GetBytes($asciiCR)
-        $expectedBytes = .{ $BOM; $TXT; $CR }
+        $bytes = Get-Content -AsByteStream TESTDRIVE:\file.txt
+        # create the expected - utf8 encoding without a bom
+        $encoding = [Text.UTF8Encoding]::new($false)
+        # we know that there will be no preamble, so don't provide any bytes
+        $TXT = $encoding.GetBytes($asciiString)
+        $CR  = $encoding.GetBytes($asciiCR)
+        $expectedBytes = .{ $TXT; $CR }
         $bytes.Count | should be $expectedBytes.count
         for($i = 0; $i -lt $bytes.count; $i++) {
             $bytes[$i] | Should be $expectedBytes[$i]
@@ -44,7 +45,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     }
 
     # $availableEncodings = "unknown","string","unicode","bigendianunicode","utf8","utf7", "utf32","ascii","default","oem"
-    $availableEncodings = (get-command out-file).Parameters["Encoding"].Attributes.ValidValues
+    $availableEncodings = (Get-Command Out-File).Parameters["Encoding"].Attributes.ValidValues
 
     foreach($encoding in $availableEncodings) {
         $skipTest = $false
@@ -56,21 +57,21 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $skipTest = $true
         }
 
-        # some of the encodings accepted by out-file aren't real,
-        # and out-file has its own translation, so we'll
+        # some of the encodings accepted by Out-File aren't real,
+        # and Out-File has its own translation, so we'll
         # not do that logic here, but simply ignore those encodings
         # as they eventually are translated to "real" encoding
-        $enc = [system.text.encoding]::$encoding
+        $enc = [System.Text.Encoding]::$encoding
         if ( $enc )
         {
-            $msg = "Overriding encoding for out-file is respected for $encoding"
+            $msg = "Overriding encoding for Out-File is respected for $encoding"
             $BOM = $enc.GetPreamble()
             $TXT = $enc.GetBytes($asciiString)
             $CR  = $enc.GetBytes($asciiCR)
             $expectedBytes = .{ $BOM; $TXT; $CR }
-            $psdefaultparameterValues["out-file:encoding"] = "$encoding"
+            $psdefaultparameterValues["Out-File:Encoding"] = "$encoding"
             $asciiString > TESTDRIVE:/file.txt
-            $observedBytes = Get-Content -encoding Byte TESTDRIVE:/file.txt
+            $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
             # THE TEST
             It $msg -Skip:$skipTest {
                 $observedBytes.Count | Should be $expectedBytes.Count
@@ -90,5 +91,35 @@ Describe "File redirection mixed with Out-Null" -Tags CI {
 
         echo "some more text" > $TestDrive\out.txt | Out-Null
         Get-Content $TestDrive\out.txt | Should Be "some more text"
+    }
+}
+
+Describe "File redirection should have 'DoComplete' called on the underlying pipeline processor" -Tags CI {
+    It "File redirection should result in the same file as Out-File" {
+        $object = [pscustomobject] @{ one = 1 }
+        $redirectFile = Join-Path $TestDrive fileRedirect.txt
+        $outFile = Join-Path $TestDrive outFile.txt
+
+        $object > $redirectFile
+        $object | Out-File $outFile
+
+        $redirectFileContent = Get-Content $redirectFile -Raw
+        $outFileContent = Get-Content $outFile -Raw
+        $redirectFileContent | Should Be $outFileContent
+    }
+
+    It "File redirection should not mess up the original pipe" {
+        $outputFile = Join-Path $TestDrive output.txt
+        $otherStreamFile = Join-Path $TestDrive otherstream.txt
+
+        $result = & { $(Get-Command NonExist; 1234) > $outputFile *> $otherStreamFile; "Hello" }
+        $result | Should Be "Hello"
+
+        $outputContent = Get-Content $outputFile -Raw
+        $outputContent.Trim() | Should Be '1234'
+
+        $errorContent = Get-Content $otherStreamFile | ForEach-Object { $_.Trim() }
+        $errorContent = $errorContent -join ""
+        $errorContent | Should Match "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
     }
 }

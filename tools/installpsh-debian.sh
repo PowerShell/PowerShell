@@ -2,8 +2,8 @@
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
-#bash <(wget -O - https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/pshcoredevenv-debian.sh) ARGUMENTS
-#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
+#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-debian.sh) ARGUMENTS
+#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-debian.sh) <ARGUMENTS>
 
 #Usage - if you do not have the ability to run scripts directly from the web, 
 #        pull all files in this repo folder and execute, this script
@@ -14,9 +14,9 @@
 #Switches
 #  -includeide - the script is being run headless, do not perform actions that require response from the console
 #  -interactivetests - requires a human user in front of the machine - loads a script into the ide to test with F5 to ensure the IDE can run scripts
+#  -skip-sudo-check - skips the check that the user has permission to use sudo.  This is required to run in the VSTS Hosted Linux Preview.
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
-
 
 VERSION="1.1.2"
 gitreposubpath="PowerShell/PowerShell/master"
@@ -94,7 +94,7 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
+if [[ "$SUDO" -eq "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 
     $SUDO -v
     if [ $? -ne 0 ]; then
@@ -132,7 +132,9 @@ $SUDO apt-get update
 # Install PowerShell
 $SUDO apt-get install -y powershell
 
-powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'
+pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
+Run `"pwsh`" to start a PowerShell session."'
+
 success=$?
 
 if [[ "$success" != 0 ]]; then

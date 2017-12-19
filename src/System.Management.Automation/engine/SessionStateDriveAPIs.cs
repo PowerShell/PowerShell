@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -948,7 +948,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // A VHD mounted drive gets detected  with a DriveType of DriveType.Fixed
+            // A VHD mounted drive gets detected with a DriveType of DriveType.Fixed
             // when the VHD is mounted, however if the drive is unmounted, such a
             // stale drive is no longer valid and gets detected with DriveType.NoRootDirectory.
             // We would hit this situation in the following scenario:

@@ -83,7 +83,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $ps.Dispose()
         }
 
-       It "Write-Information outputs an information object" -Pending:($IsOSX) {
+       It "Write-Information outputs an information object" -Pending:($IsMacOS) {
             # redirect the streams is sufficient
             $result = Write-Information "Test Message" *>&1
             $result.NativeThreadId | Should Not Be 0

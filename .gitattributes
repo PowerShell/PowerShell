@@ -1,1 +1,4 @@
 CHANGELOG.md merge=union
+* text=auto
+*.png binary
+*.rtf binary

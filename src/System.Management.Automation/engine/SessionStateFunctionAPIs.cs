@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -31,22 +31,6 @@ namespace System.Management.Automation
             fn.Module = entry.Module;
             fn.ScriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
         }
-
-#if !CORECLR // Workflow Not Supported On CSS
-        internal void AddSessionStateEntry(InitialSessionState initialSessionState, SessionStateWorkflowEntry entry)
-        {
-            var converterInstance = Utils.GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(null);
-
-            var workflowInfo = entry.WorkflowInfo ??
-                               converterInstance.CompileWorkflow(entry.Name, entry.Definition, initialSessionState);
-
-            WorkflowInfo wf = new WorkflowInfo(workflowInfo);
-
-            wf = this.SetWorkflowRaw(wf, CommandOrigin.Internal);
-            wf.Visibility = entry.Visibility;
-            wf.Module = entry.Module;
-        }
-#endif
 
         /// <summary>
         /// Gets a flattened view of the functions that are visible using
@@ -300,60 +284,6 @@ namespace System.Management.Automation
             return functionInfo;
         } // SetFunctionRaw
 
-        internal WorkflowInfo SetWorkflowRaw(
-            WorkflowInfo workflowInfo,
-            CommandOrigin origin)
-        {
-            string originalName = workflowInfo.Name;
-            string name = originalName;
-
-            FunctionLookupPath path = new FunctionLookupPath(name);
-            name = path.UnqualifiedPath;
-
-            if (String.IsNullOrEmpty(name))
-            {
-                SessionStateException exception =
-                    new SessionStateException(
-                        originalName,
-                        SessionStateCategory.Function,
-                        "ScopedFunctionMustHaveName",
-                        SessionStateStrings.ScopedFunctionMustHaveName,
-                        ErrorCategory.InvalidArgument);
-
-                throw exception;
-            }
-
-            ScopedItemOptions options = ScopedItemOptions.None;
-            if (path.IsPrivate)
-            {
-                options |= ScopedItemOptions.Private;
-            }
-
-            FunctionScopeItemSearcher searcher =
-                new FunctionScopeItemSearcher(
-                    this,
-                    path,
-                    origin);
-
-            // The script that defines a workflowInfo wrapper is fully trusted
-            workflowInfo.ScriptBlock.LanguageMode = PSLanguageMode.FullLanguage;
-
-            if (workflowInfo.Module == null && this.Module != null)
-            {
-                workflowInfo.Module = this.Module;
-            }
-
-            var wfInfo = (WorkflowInfo)
-                searcher.InitialScope.SetFunction(name, workflowInfo.ScriptBlock, null, options, false, origin, ExecutionContext, null,
-                                                     (arg1, arg2, arg3, arg4, arg5, arg6) => workflowInfo);
-            foreach (var aliasName in GetFunctionAliases(workflowInfo.ScriptBlock.Ast as IParameterMetadataProvider))
-            {
-                searcher.InitialScope.SetAliasValue(aliasName, name, ExecutionContext, false, origin);
-            }
-
-            return wfInfo;
-        } // SetWorkflowRaw
-
         /// <summary>
         /// Set a function in the current scope of session state.
         /// </summary>
@@ -557,7 +487,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <param name="isPreValidated">
-        /// Set to true if it is a regular function (meaning, we do not need to check this is a workflow or if the script contains JobDefinition Attribute and then process it)
+        /// Set to true if it is a regular function (meaning, we do not need to check if the script contains JobDefinition Attribute and then process it)
         /// </param>
         ///
         /// <exception cref="ArgumentException">

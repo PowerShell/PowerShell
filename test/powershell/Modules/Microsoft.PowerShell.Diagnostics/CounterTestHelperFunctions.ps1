@@ -244,7 +244,7 @@ function DateTimesAreEqualish
     )
 
     $span = $dtA - $dtB
-    return ([math]::Floor([math]::Abs($span.TotalMilliseconds)) -eq  0)
+    return ([math]::Floor([math]::Abs($span.TotalMilliseconds)) -eq 0)
 }
 
 # Compare the content of counter sets
@@ -288,7 +288,7 @@ function CompareCounterSets
 function SkipCounterTests
 {
     if ([System.Management.Automation.Platform]::IsLinux -or
-        [System.Management.Automation.Platform]::IsOSX -or
+        [System.Management.Automation.Platform]::IsMacOS -or
         [System.Management.Automation.Platform]::IsIoT)
     {
         return $true

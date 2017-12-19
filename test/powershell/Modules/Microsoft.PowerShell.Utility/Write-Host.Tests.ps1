@@ -1,7 +1,7 @@
 ﻿Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
 
         $testData = @(
             @{ Name = '-Separator';       Command = "Write-Host a,b,c -Separator '+'";                 returnCount = 1; returnValue = @("a+b+c") }
@@ -10,7 +10,7 @@
         )
     }
 
-    It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsOSX {
+    It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsMacOS {
         param($Command, $returnCount, $returnValue)
 
         [array]$result = & $powershell -noprofile -c $Command

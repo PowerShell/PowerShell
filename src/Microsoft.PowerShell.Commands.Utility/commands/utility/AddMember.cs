@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
         private ErrorRecord NewError(string errorId, string resourceId, object targetObject, params object[] args)
         {
             ErrorDetails details = new ErrorDetails(this.GetType().GetTypeInfo().Assembly,
-                "AddMember", resourceId, args);
+                "Microsoft.PowerShell.Commands.Utility.resources.AddMember", resourceId, args);
             ErrorRecord errorRecord = new ErrorRecord(
                 new InvalidOperationException(details.Message),
                 errorId,

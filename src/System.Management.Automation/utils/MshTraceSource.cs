@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 #define TRACE
 
@@ -178,11 +178,6 @@ namespace System.Management.Automation
                     PSTraceSource.TraceCatalog[result.FullName] = result;
                 }
 
-#if !CORECLR    // System.AppDomain is not in ProjectK
-                // Trace the global header if this is the first
-                // trace object for the AppDomain and tracing flags
-                // are enabled.
-
                 if (result.Options != PSTraceSourceOptions.None &&
                     traceHeaders)
                 {
@@ -191,7 +186,6 @@ namespace System.Management.Automation
                     // Trace the object specific tracer information
                     result.TracerObjectHeader(Assembly.GetCallingAssembly());
                 }
-#endif
                 return result;
             }
         }
@@ -359,12 +353,8 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw</returns>
         internal static PSInvalidOperationException NewInvalidOperationException()
         {
-#if CORECLR //TODO:CORECLR StackTrace is not in CoreCLR
-            string message = string.Empty;
-#else
             string message = StringUtil.Format(AutomationExceptions.InvalidOperation,
                     new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name);
-#endif
             var e = new PSInvalidOperationException(message);
 
             return e;
@@ -434,12 +424,8 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw</returns>
         internal static PSNotSupportedException NewNotSupportedException()
         {
-#if CORECLR //TODO:CORECLR StackTrace is not in CoreCLR
-            string message = string.Empty;
-#else
             string message = StringUtil.Format(AutomationExceptions.NotSupported,
                 new System.Diagnostics.StackTrace().GetFrame(0).ToString());
-#endif
             var e = new PSNotSupportedException(message);
 
             return e;
@@ -483,12 +469,8 @@ namespace System.Management.Automation
         /// <returns>Exception instance ready to throw</returns>
         internal static PSNotImplementedException NewNotImplementedException()
         {
-#if CORECLR //TODO:CORECLR StackTrace is not in CoreCLR
-            string message = string.Empty;
-#else
             string message = StringUtil.Format(AutomationExceptions.NotImplemented,
                 new System.Diagnostics.StackTrace().GetFrame(0).ToString());
-#endif
             var e = new PSNotImplementedException(message);
 
             return e;

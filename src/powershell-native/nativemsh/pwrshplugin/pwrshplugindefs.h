@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2007.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
-//  Contents:  Headers used by pwrshplugin. 
+//  Contents:  Headers used by pwrshplugin.
 //  pwrshplugin is totally unmanaged.
 // ----------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ typedef void (WINAPI *WSManPluginReceiveFuncPtr)(
     __in PVOID shellContext,
     __in_opt PVOID commandContext,
     __in_opt WSMAN_STREAM_ID_SET* streamSet
-    ); 
+    );
 
 typedef void (WINAPI *WSManPluginSignalFuncPtr)(
     __in PVOID pluginContext,

@@ -1,6 +1,6 @@
 #if !UNIX
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -3258,7 +3258,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// constructor for  EnhancedKeyUsageProperty
+        /// constructor for EnhancedKeyUsageProperty
         /// </summary>
         public EnhancedKeyUsageProperty(X509Certificate2 cert)
         {

@@ -1,5 +1,5 @@
 //
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
 using System;
@@ -1291,8 +1291,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     // Console.WriteLine ("PdhAddCounter returned " + res + " for counter path " + unifiedPath);
                     continue;
                 }
-
-                //Console.WriteLine ("added  pdh query path:" + unifiedPath );
 
                 //now, add all actual paths to m_ReloggerPathToHandleAndInstanceMap
                 foreach (PerformanceCounterSample sample in prefixInstanceMap[prefix])

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.IO;
@@ -22,7 +22,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class CommandHelpProvider implement the help provider for commands.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// Command Help information are stored in 'help.xml' files. Location of these files
     /// can be found from through the engine execution context.
@@ -38,7 +38,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         static CommandHelpProvider()
         {
@@ -405,13 +405,13 @@ namespace System.Management.Automation
         /// <summary>
         /// ExactMatchHelp implementation for this help provider.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
-        /// ExactMatchHelp is overridden instead of DoExactMatchHelp to make sure 
-        /// all help item retrieval will go through command discovery. Because each 
+        /// ExactMatchHelp is overridden instead of DoExactMatchHelp to make sure
+        /// all help item retrieval will go through command discovery. Because each
         /// help file can contain multiple help items for different commands. Directly
         /// retrieve help cache can result in a invalid command to contain valid
-        /// help item. Forcing each ExactMatchHelp to go through command discovery 
+        /// help item. Forcing each ExactMatchHelp to go through command discovery
         /// will make sure helpInfo for invalid command will not be returned.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
@@ -477,10 +477,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
-        /// (Which should not happen unless some commandlet is pointing 
+        /// This is a hashtable to track which help files are loaded already.
+        ///
+        /// This will avoid one help file getting loaded again and again.
+        /// (Which should not happen unless some commandlet is pointing
         /// to a help file that actually doesn't contain the help for it).
         ///
         /// </summary>
@@ -585,7 +585,7 @@ namespace System.Management.Automation
                 // e.g., <AssemblyName>.ni.dll as supposed to <AssemblyName>.dll.
 
                 // When cmdlet metadata is generated for the 'HelpFile' field, we use the name assembly and we append '-Help.xml' to it.
-                // Because of this, if the cmdlet is part of an N’gen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
+                // Because of this, if the cmdlet is part of an Ngen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
                 // If this is the case, we remove '.ni' from the help file name and try again.
                 // For example:
                 // Ngen assembly name: Microsoft.PowerShell.Commands.Management.ni.dll
@@ -604,7 +604,7 @@ namespace System.Management.Automation
                     if (String.IsNullOrEmpty(location))
                     {
                         // If the help file could not be found, then it is possible that the actual assembly name is something like
-                        // <Name>.ni.dll, e.g., MyAssembly.ni.dll, so let’s try to find the original help file in the cmdlet metadata.
+                        // <Name>.ni.dll, e.g., MyAssembly.ni.dll, so let's try to find the original help file in the cmdlet metadata.
                         location = GetHelpFile(helpFile, cmdletInfo);
                     }
                 }
@@ -661,13 +661,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load help file for HelpInfo objects. The HelpInfo objects will be 
+        /// Load help file for HelpInfo objects. The HelpInfo objects will be
         /// put into help cache.
         /// </summary>
         /// <remarks>
-        /// 1. Needs to pay special attention about error handling in this function. 
+        /// 1. Needs to pay special attention about error handling in this function.
         /// Common errors include: file not found and invalid xml. None of these error
-        /// should cause help search to stop. 
+        /// should cause help search to stop.
         /// 2. a helpfile cache is used to avoid same file got loaded again and again.
         /// </remarks>
         private void LoadHelpFile(string helpFile, string helpFileIdentifier)
@@ -738,7 +738,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process user defined help data by finding the corresponding helpInfo and inserting 
+        /// Process user defined help data by finding the corresponding helpInfo and inserting
         /// necessary helpdata info to command help.
         /// </summary>
         /// <param name="mshSnapInId">PSSnapIn Name for the current help file.</param>
@@ -873,7 +873,7 @@ namespace System.Management.Automation
         /// Import-Module and Import-PSSession supports changing the name of a command
         /// by suppling a custom prefix. In those cases, the help content is stored by using the
         /// original command name (without prefix) as the key.
-        /// 
+        ///
         /// This method retrieves the help content by suppressing the prefix and then making a copy
         /// of the help content + change the name and then returns the copied help content.
         /// </summary>
@@ -956,15 +956,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check whether a HelpItems node indicates that the help content is 
-        /// authored using maml schema. 
-        /// 
-        /// This covers two cases: 
+        /// Check whether a HelpItems node indicates that the help content is
+        /// authored using maml schema.
+        ///
+        /// This covers two cases:
         ///     a. If the help file has an extension .maml.
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
         ///        schema
-        /// 
+        ///
         /// </summary>
         /// <param name="helpFile"></param>
         /// <param name="helpItemsNode"></param>
@@ -990,7 +990,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Search help for a specific target. 
+        /// Search help for a specific target.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
         /// <param name="searchOnlyContent">
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
             // this will be used only when searchOnlyContent == true
             WildcardPattern wildCardPattern = null;
             // Decorated Search means that original match target is a target without
-            // wildcard patterns. It come here to because exact match was not found 
+            // wildcard patterns. It come here to because exact match was not found
             // and search target will be decorated with wildcard character '*' to
             // search again.
             bool decoratedSearch = !WildcardPattern.ContainsWildcardCharacters(helpRequest.Target);
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation
         /// <param name="target">content to search in.</param>
         /// <param name="patterns">string patterns to look for.</param>
         /// <returns>
-        /// true if <paramref name="target"/> contains any of the patterns 
+        /// true if <paramref name="target"/> contains any of the patterns
         /// present in <paramref name="patterns"/>
         /// false otherwise.
         /// </returns>
@@ -1237,7 +1237,7 @@ namespace System.Management.Automation
         /// This can return more than 1 helpinfo object.
         /// </summary>
         /// <param name="helpInfo">HelpInfo that is forwarded over</param>
-        /// <param name="helpRequest">Help request object</param>        
+        /// <param name="helpRequest">Help request object</param>
         /// <returns>The result helpInfo objects after processing</returns>
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
@@ -1284,8 +1284,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {
@@ -1345,9 +1345,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This is the class to track the user-defined Help Data which is separate from the 
-    /// commandHelp itself. 
-    /// 
+    /// This is the class to track the user-defined Help Data which is separate from the
+    /// commandHelp itself.
+    ///
     /// Legally, user-defined Help Data should be within the same file as the corresponding
     /// commandHelp and it should appear after the commandHelp.
     /// </summary>

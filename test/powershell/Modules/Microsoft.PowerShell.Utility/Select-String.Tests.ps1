@@ -126,7 +126,7 @@ Describe "Select-String" -Tags "CI" {
 	    (Select-String in $testInputFile)[4].Line | Should BeNullOrEmpty
 	}
 
-	It "Should return empty because 'for' is not  found in testfile1 " {
+	It "Should return empty because 'for' is not found in testfile1 " {
 	    Select-String for $testInputFile | Should BeNullOrEmpty
 	}
 

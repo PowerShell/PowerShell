@@ -1,4 +1,4 @@
-# Copyright (c) 2008 Microsoft Corporation
+# Copyright (c) Microsoft Corporation. All rights reserved.
 
 # {0} = Delegate
 
@@ -11,8 +11,8 @@ NoResourceMatch=This command cannot be used because the parameter does not match
 MultipleResourceMatch=This command cannot be used because the parameter matches multiple properties on the ResourceURI.Check the input parameters and run your command.
 NoAttributeMatch=This command cannot be used because the parameter matches a non-text property on the ResourceURI.Check the input parameters and run your command.
 WinrmNotConfigured=This command cannot be used because the configuration is corrupted. Run WinRM invoke Restore WinRM/config to restore the default configuration
-DelegateFreshCred=The machine is configured to allow delegating fresh credentials to the following target(s): 
-NoDelegateFreshCred=The machine is not configured to allow delegating fresh credentials. 
+DelegateFreshCred=The machine is configured to allow delegating fresh credentials to the following target(s):
+NoDelegateFreshCred=The machine is not configured to allow delegating fresh credentials.
 LocalHost=This command cannot be used to remove the computer 'localhost' because it will always be connected. Give some other connected computer and run your command.
 ConnectFailure=This command cannot be used from the current path. Move to root path of the provider using cd\\ and run your command again.
 DisconnectFailure=This command cannot be used from the current path. Move to root path of the provider using cd\\ and run your command again.

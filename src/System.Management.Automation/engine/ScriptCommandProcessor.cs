@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -269,6 +269,12 @@ namespace System.Management.Automation
             _obsoleteAttribute = _scriptBlock.ObsoleteAttribute;
             _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
             _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
+
+            if (UseLocalScope)
+            {
+                Diagnostics.Assert(CommandScope.LocalsTuple == null, "a newly created scope shouldn't have it's tuple set.");
+                CommandScope.LocalsTuple = _localsTuple;
+            }
         }
 
         /// <summary>
@@ -282,12 +288,6 @@ namespace System.Management.Automation
 
         internal override void Prepare(IDictionary psDefaultParameterValues)
         {
-            if (UseLocalScope)
-            {
-                Diagnostics.Assert(CommandScope.LocalsTuple == null, "a newly created scope shouldn't have it's tuple set.");
-                CommandScope.LocalsTuple = _localsTuple;
-            }
-
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, this.Command.MyInvocation, _context);
             _scriptBlock.SetPSScriptRootAndPSCommandPath(_localsTuple, _context);
             _functionContext = new FunctionContext
@@ -585,6 +585,8 @@ namespace System.Management.Automation
 
         protected override void OnSetCurrentScope()
         {
+            // When dotting a script, push the locals of automatic variables to
+            // the 'DottedScopes' of the current scope.
             if (!UseLocalScope)
             {
                 CommandSessionState.CurrentScope.DottedScopes.Push(_localsTuple);
@@ -593,6 +595,8 @@ namespace System.Management.Automation
 
         protected override void OnRestorePreviousScope()
         {
+            // When dotting a script, pop the locals of automatic variables from
+            // the 'DottedScopes' of the current scope.
             if (!UseLocalScope)
             {
                 CommandSessionState.CurrentScope.DottedScopes.Pop();

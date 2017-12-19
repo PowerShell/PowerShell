@@ -1,5 +1,5 @@
 /********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * --********************************************************************/
 /*
  * Common file that contains interface definitions for generic server and client

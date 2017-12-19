@@ -776,7 +776,7 @@ Describe "Type inference Tests" -tags "CI" {
         }
     }
 
-    It 'Infers type of variable $_  in hashtable in command parameter' {
+    It 'Infers type of variable $_ in hashtable in command parameter' {
         $variableAst = {1..10 | Format-table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 
@@ -784,7 +784,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should be System.Int32
     }
 
-    It 'Infers type of variable $_  in hashtable from Array' {
+    It 'Infers type of variable $_ in hashtable from Array' {
         $variableAst = { [int[]]::new(10) | Format-table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 
@@ -792,7 +792,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should be System.Int32
     }
 
-    It 'Infers type of variable $_  in hashtable from generic IEnumerable ' {
+    It 'Infers type of variable $_ in hashtable from generic IEnumerable ' {
         $variableAst = { [System.Collections.Generic.List[int]]::new() | Format-table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 
@@ -800,7 +800,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should be System.Int32
     }
 
-    It 'Infers type of variable $_  command parameter' {
+    It 'Infers type of variable $_ command parameter' {
         $variableAst = { 1..10 | Group-Object {$_.Length}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -252,7 +252,7 @@ namespace System.Management.Automation
 
                 if (!allowNonexistingPaths &&
                     result.Count < 1 &&
-                    !WildcardPattern.ContainsWildcardCharacters(path) &&
+                    (!WildcardPattern.ContainsWildcardCharacters(path) || context.SuppressWildcardExpansion) &&
                     (context.Include == null || context.Include.Count == 0) &&
                     (context.Exclude == null || context.Exclude.Count == 0))
                 {
@@ -1665,9 +1665,18 @@ namespace System.Management.Automation
 
                 if (index > 0)
                 {
-                    // We must have a drive specified
-
-                    result = true;
+                    // see if there are any path separators before the colon which would mean the
+                    // colon is part of a file or folder name and not a drive: ./foo:bar vs foo:bar
+                    int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index-1);
+                    if (separator == -1)
+                    {
+                        separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index-1);
+                    }
+                    if (separator == -1 || index < separator)
+                    {
+                        // We must have a drive specified
+                        result = true;
+                    }
                 }
             } while (false);
 
@@ -1932,7 +1941,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <returns>
-        /// A  provider specific relative path to the root of the drive.
+        /// A provider specific relative path to the root of the drive.
         /// </returns>
         ///
         /// <remarks>
@@ -2172,7 +2181,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <param name="path">
-        /// The relative path to add to the absolute path in the  drive.
+        /// The relative path to add to the absolute path in the drive.
         /// </param>
         ///
         /// <param name="escapeCurrentLocation">
@@ -3404,21 +3413,27 @@ namespace System.Management.Automation
 
             string result = path;
 
-            // Find the drive separator
+            // Find the drive separator only if it's before a path separator
 
             int index = path.IndexOf(":", StringComparison.Ordinal);
-
             if (index != -1)
             {
-                // Remove the \ or / if it follows the drive indicator
-
-                if (path[index + 1] == '\\' ||
-                    path[index + 1] == '/')
+                int separator = path.IndexOf(StringLiterals.DefaultPathSeparator, 0, index);
+                if (separator == -1)
                 {
-                    ++index;
+                    separator = path.IndexOf(StringLiterals.AlternatePathSeparator, 0, index);
                 }
+                if (separator == -1 || index < separator)
+                {
+                    // Remove the \ or / if it follows the drive indicator
+                    if (path[index + 1] == '\\' ||
+                        path[index + 1] == '/')
+                    {
+                        ++index;
+                    }
 
-                result = path.Substring(index + 1);
+                    result = path.Substring(index + 1);
+                }
             }
 
             return result;

@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #if !UNIX
@@ -3264,7 +3264,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// If a HyperVisor is not present, indicates the state of the
-        /// requirement that the processor supports  Intel or AMD Virtual
+        /// requirement that the processor supports Intel or AMD Virtual
         /// Machine Monitor extensions
         /// </summary>
         public bool? HyperVRequirementVMMonitorModeExtensions { get; internal set; }

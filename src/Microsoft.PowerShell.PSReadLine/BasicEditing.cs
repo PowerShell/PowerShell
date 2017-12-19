@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -389,7 +389,7 @@ namespace Microsoft.PowerShell
             // This is a little hacky, but we check for a few things where part of the current
             // command defines/imports new commands that PowerShell might not yet know about.
             // There is little reason to go to great lengths at being correct here, validation
-            // is just a small usability  tweak to avoid cluttering up history - PowerShell
+            // is just a small usability tweak to avoid cluttering up history - PowerShell
             // will report errors for stuff we actually let through.
 
             // Do we define a function matching the command name?

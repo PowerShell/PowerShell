@@ -1,7 +1,7 @@
 #pragma warning disable 1634, 1691
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #pragma warning disable 1634, 1691
@@ -619,7 +619,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Diagnostics.Assert(((error == 0) && (signature != null)) || (error != 0), "GetSignatureFromWintrustData: general crypto failure");
+            Diagnostics.Assert(error != 0 || signature != null, "GetSignatureFromWintrustData: general crypto failure");
 
             if ((signature == null) && (error != 0))
             {

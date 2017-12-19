@@ -1,6 +1,6 @@
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -471,11 +471,11 @@ namespace System.Management.Automation
                         }
                         break;
                     case TokenKind.AtCurly:
-                        // Handle scenarios such as 'Sort-Object @{<tab>' and  'gci | Format-Table @{'                    
+                        // Handle scenarios such as 'Sort-Object @{<tab>' and  'gci | Format-Table @{'
                         result = GetResultForHashtable(completionContext);
                         replacementIndex += 2;
                         replacementLength = 0;
-                        break;                    
+                        break;
 
                     case TokenKind.Number:
                         // Handle scenarios such as Get-Process -Id 5<tab> || Get-Process -Id 5210, 3<tab> || Get-Process -Id: 5210, 3<tab>
@@ -1407,9 +1407,8 @@ namespace System.Management.Automation
                                     StringLiterals.PowerShellModuleFileExtension,
                                     StringLiterals.PowerShellDataFileExtension,
                                     StringLiterals.PowerShellNgenAssemblyExtension,
-                                    StringLiterals.DependentWorkflowAssemblyExtension,
-                                    StringLiterals.PowerShellCmdletizationFileExtension,
-                                    StringLiterals.WorkflowFileExtension
+                                    StringLiterals.PowerShellILAssemblyExtension,
+                                    StringLiterals.PowerShellCmdletizationFileExtension
                                 };
                                 result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
                                 if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)

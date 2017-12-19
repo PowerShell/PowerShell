@@ -1,24 +1,6 @@
 #
-# Copyright (c) Microsoft Corporation, 2015
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
-
-try {
-#
-# CrossGen'ed assemblies cause a hang to happen intermittently when running this test suite in Linux and OSX.
-# The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
-#  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
-#  2. For daily build, build with '-CrossGen' but don't run the parsing tests
-# In this way, we will continue to exercise these parsing tests for each CI build, and skip them for daily
-# build to avoid a hang.
-# Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue is tracked by
-#       https://github.com/dotnet/coreclr/issues/9745
-#
-$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
-$defaultParamValues = $PSdefaultParameterValues.Clone()
-$IsSkipped = (!$IsWindows -and $isDailyBuild)
-$PSDefaultParameterValues["it:skip"] = $IsSkipped
-$PSDefaultParameterValues["ShouldBeParseError:SkipInTravisFullBuild"] = $IsSkipped
-
 
 Describe 'Classes inheritance syntax' -Tags "CI" {
 
@@ -538,8 +520,4 @@ class Derived : Base
         $sb.Invoke() | Should Be 200
         $sb.Invoke() | Should Be 200
     }
-}
-
-} finally {
-    $global:PSdefaultParameterValues = $defaultParamValues
 }

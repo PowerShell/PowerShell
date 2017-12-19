@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2005.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  File:      CoreCLRHost.cpp
 //
@@ -9,8 +9,8 @@
 //
 // ----------------------------------------------------------------------
 
-#include <windows.h>  
-#include <string>  
+#include <windows.h>
+#include <string>
 #include <stdio.h>
 #if !CORECLR
   #include "mscoree.h"

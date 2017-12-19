@@ -37,7 +37,7 @@
 
     Context "Export-CliXml" {
         BeforeAll {
-            $gpsList = Get-Process powershell
+            $gpsList = Get-Process pwsh
             $gps = $gpsList | Select-Object -First 1
             $filePath = Join-Path $subFilePath 'gps.xml'
 
@@ -125,7 +125,7 @@
 
     Context "Import-CliXML" {
         BeforeAll {
-            $gpsList = Get-Process powershell
+            $gpsList = Get-Process pwsh
             $gps = $gpsList | Select-Object -First 1
             $filePath = Join-Path $subFilePath 'gps.xml'
 
@@ -161,7 +161,9 @@
             $fileContent | Should Not Be $null
 
             $importedProcess = Import-Clixml $filePath
+            $importedProcess.ProcessName | Should Not BeNullOrEmpty
             $gps.ProcessName | Should Be $importedProcess.ProcessName
+            $importedProcess.Id | Should Not BeNullOrEmpty
             $gps.Id | Should Be $importedProcess.Id
         }
 
@@ -173,7 +175,9 @@
             $fileContent | Should Not Be $null
 
             $importedProcess = Import-Clixml $filePath
+            $importedProcess.ProcessName | Should Not BeNullOrEmpty
             $gps.ProcessName | Should Be $importedProcess.ProcessName
+            $importedProcess.Id | Should Not BeNullOrEmpty
             $gps.Id | Should Be $importedProcess.Id
         }
 
@@ -213,7 +217,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
     It "Verifies that importing the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
-        
+
         # Wait up to 10 seconds for calc.exe to run
         $calcProc = $null
         $count = 0

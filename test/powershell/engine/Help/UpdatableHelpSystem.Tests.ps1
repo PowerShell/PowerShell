@@ -178,7 +178,7 @@ function RunUpdateHelpTests
             It "Validate Update-Help for module '$moduleName'" -Pending:$Pending {
 
                 # If the help file is already installed, delete it.
-                Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("about_*.txt","*help.xml") -Recurse -ea SilentlyContinue |
+                Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("*help.xml") -Recurse -ea SilentlyContinue |
                     Remove-Item -Force -ErrorAction SilentlyContinue
 
                 if ((Get-UICulture).Name -ne "en-Us")

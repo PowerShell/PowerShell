@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Runtime.InteropServices;
@@ -12,7 +12,7 @@ using COM = System.Runtime.InteropServices.ComTypes;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines a property in the  COM object.
+    /// Defines a property in the COM object.
     /// </summary>
     internal class ComProperty
     {

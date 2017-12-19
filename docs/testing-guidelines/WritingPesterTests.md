@@ -51,24 +51,29 @@ Describe "One is really one" {
 }
 ```
 
-If you are checking for proper errors, do that in a `try/catch`, and then check `FullyQualifiedErrorId`. Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
+If you are checking for proper errors, use the `ShouldBeErrorId` helper defined in HelpersCommon.psm1 module which is in your path if you import `build.psm1`.
+Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
 
 ```powershell
 ...
-it "Get-Item on a nonexisting file should have error PathNotFound" {
-    try
-    {
-        get-item "ThisFileCannotPossiblyExist" -ErrorAction Stop
-        throw "No Exception!"
-    }
-    catch
-    {
-        $_.FullyQualifiedErrorId | should be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
-    }
+It "Get-Item on a nonexisting file should have error PathNotFound" {
+    { Get-Item "ThisFileCannotPossiblyExist" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
 }
 ```
 
-Note that if get-item were to succeed, a different FullyQualifiedErrorId would be thrown and the test will fail because the FQErrorId is wrong. This is the suggested path because Pester wants to check the error message, which will likely not work here because of localized builds, but the FullyQualifiedErrorId is constant regardless of the locale.
+Note that if get-item were to succeed, a different FullyQualifiedErrorId would be thrown and the test will fail.
+This is the suggested path because Pester wants to check the error message, which will likely not work here because of localized builds, but the FullyQualifiedErrorId is constant regardless of the locale.
+
+However, if you need to check the `InnerException` or other members of the ErrorRecord, the recommended pattern to use is:
+
+```powershell
+	It "InnerException sample" {
+
+	$e = { Invoke-WebRequest https://expired.badssl.com/ } | ShouldBeErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+	$e.Exception.InnerException.NativeErrorCode | Should Be 12175
+    ...
+	}
+```
 
 ### Describe/Context/It
 For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.

@@ -21,7 +21,7 @@
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
-VERSION="1.1.0"
+VERSION="1.1.1"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 gitscriptname="install-powershell.psh"
@@ -75,10 +75,14 @@ else
             PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
             REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
         elif [ -f /etc/system-release ] ; then
-            DistroBasedOn='redhat'
             DIST=`cat /etc/system-release |sed s/\ release.*//`
             PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
             REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
             PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`
@@ -130,7 +134,7 @@ if [[ "'$*'" =~ appimage ]] ; then
       echo "Pulling it from \"$gitreposcriptroot/appimage.sh\""
       bash <(wget -qO- $gitreposcriptroot/appimage.sh) $@
    fi
-elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ]; then
+elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "$DistroBasedOn" == "osx" ] || [ "$DistroBasedOn" == "suse" ] || [ "$DistroBasedOn" == "amazonlinux" ]; then
     echo "Configuring PowerShell Core Enviornment for: $DistroBasedOn $DIST $REV"
     if [ -f $SCRIPTFOLDER/installpsh-$DistroBasedOn.sh ]; then
       #Script files were copied local - use them
@@ -139,7 +143,11 @@ elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "
       #Script files are not local - pull from remote
       echo "Could not find \"installpsh-$DistroBasedOn.sh\" next to this script..."
       echo "Pulling it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
-      bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+      if [ "$OS" == "osx" ]; then
+        bash <(curl -s $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+      else
+        bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+      fi
    fi
 else
     echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell Core or this installer at this time."

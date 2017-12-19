@@ -102,9 +102,9 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$deserialized_one.two.three.num | Should BeNullOrEmpty
 	}
 
-	It "Import-Clixml should work with XML serialization from powershell.exe" {
+	It "Import-Clixml should work with XML serialization from pwsh.exe" {
 		# need to create separate process so that current powershell doesn't interpret clixml output
-		Start-Process -FilePath $pshome\powershell -RedirectStandardOutput $testfile -Args "-noprofile -nologo -outputformat xml -command get-command import-clixml" -Wait
+		Start-Process -FilePath $pshome\pwsh -RedirectStandardOutput $testfile -Args "-noprofile -nologo -outputformat xml -command get-command import-clixml" -Wait
 		$out = Import-Clixml -Path $testfile
 		$out.Name | Should Be "Import-CliXml"
 		$out.CommandType.ToString() | Should Be "Cmdlet"

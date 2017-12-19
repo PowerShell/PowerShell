@@ -1,6 +1,6 @@
 ﻿# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
 #
-# Copyright (c) Microsoft Corporation, 2015
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 
 <#
@@ -38,7 +38,7 @@ Describe "FormatHex" -tags "CI" {
             $certProviderAvailable = $true
         }
 
-        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX -or (-not $certProviderAvailable))
+        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsMacOS -or (-not $certProviderAvailable))
     }
 
     Context "InputObject Paramater" {

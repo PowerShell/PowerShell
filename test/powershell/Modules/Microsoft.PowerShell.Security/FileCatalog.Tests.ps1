@@ -1,6 +1,6 @@
 ﻿# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
 #
-# Copyright (c) Microsoft Corporation, 2016
+# Copyright (c) Microsoft Corporation. All rights reserved.
 #
 
 try {
@@ -128,7 +128,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
         It "NewFileCatalogForFilesThatDoNotSupportEmbeddedSignatures" {
 
             $expectedPathsAndHashes = @{ "TestImage.gif" = "B0E4B9F0BB21284AA0AF0D525C913420AD73DA6A" ;
-                                        "TestFileCatalog.txt" = "925834D22A8AEB8E0A5EAFABC739F8AFAAD3E490" }
+                                        "TestFileCatalog.txt" = "BA6A26C5F19AB50B0D5BE2A9D445B259998B0DD9" }
 
             # use non existant Path for the directory when .cat file name is not specified
             $catalogPath = "$testDataPath\OutPutCatalog"
@@ -150,7 +150,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogWithMultipleFoldersAndFiles" -Skip:$true {
+        It "NewFileCatalogWithMultipleFoldersAndFiles" -Pending {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "748E5486814051DA3DFB79FE8964152727213248" ;
@@ -188,7 +188,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             CompareHashTables $result.CatalogItems $expectedPathsAndHashes
         }
 
-        It "NewFileCatalogVersion2WithMultipleFoldersAndFiles" -Skip:$true {
+        It "NewFileCatalogVersion2WithMultipleFoldersAndFiles" -Pending {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;
@@ -233,11 +233,14 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             try
             {
                 copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue
-                $null = New-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath -CatalogVersion 1.0
-                $result = Test-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath
+                Push-Location "$env:TEMP\UserConfigProv"
+                # When -Path is not specified, it should use current directory
+                $null = New-FileCatalog -CatalogFilePath $catalogPath -CatalogVersion 1.0
+                $result = Test-FileCatalog -CatalogFilePath $catalogPath
             }
             finally
             {
+                Pop-Location
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
                 Remove-Item "$env:temp\UserConfigProv\" -Force -ErrorAction SilentlyContinue -Recurse
             }
@@ -245,7 +248,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result | Should Be "Valid"
         }
 
-        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Skip:$true {
+        It "NewFileCatalogWithUnicodeCharactersInFileNames" -Pending {
 
             $expectedPathsAndHashes = @{
                 "UserConfigProv.psd1" = "9FFE4CA2873CD91CDC9D71362526446ECACDA64D26DEA768E6CE489B84D888E4" ;

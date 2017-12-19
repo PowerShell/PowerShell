@@ -154,7 +154,7 @@
     <value> {0}, {1,-16} Stop operation and exit the debugger</value>
   </data>
   <data name="GetStackTraceHelp" xml:space="preserve">
-    <value> {0}, Get-PSCallStack  Display call stack</value>
+    <value> {0}, Get-PSCallStack Display call stack</value>
   </data>
   <data name="ListHelp" xml:space="preserve">
     <value> {0}, {1,-16} List source code for the current script.  </value>

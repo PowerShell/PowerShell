@@ -1,4 +1,4 @@
-﻿/*
+/*
 @TargetNode='localhost'
 @GeneratedBy=Duser1
 @GenerationDate=09/22/2015 15:25:48
@@ -19,24 +19,24 @@ ResourceID = "[MyPSClassFileWithClass]myfile";
  FileData = $MyPSClassFileData1ref;
  ModuleName = "ClassPropertyResource1";
  Path = "C:\\Users\\Duser1\\AppData\\Local\\Temp\\testclassesObject.txt";
- ModuleVersion = "1.0";
- ConfigurationName = "RunAsUserMandatorywithPowershellClasses";
+ ModuleVersion = "1.0";
+ ConfigurationName = "RunAsUserMandatorywithPowershellClasses";
 };
 instance of OMI_ConfigurationDocument
-
+
                     {
  Version="2.0.0";
- 
+ 
                         MinimumCompatibleVersion = "2.0.0";
- 
+ 
                         CompatibleVersionAdditionalProperties= {"Omi_BaseResource:ConfigurationName"};
- 
+ 
                         Author="Duser1";
- 
+ 
                         GenerationDate="09/22/2015 15:25:48";
- 
+ 
                         GenerationHost="DEV-10545-246";
- 
+ 
                         Name="RunAsUserMandatorywithPowershellClasses";
-
+
                     };

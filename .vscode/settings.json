@@ -1,0 +1,37 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+
+  "files.insertFinalNewline": true,
+
+  // Based on current .markdownlist.json settings:
+  // https://github.com/PowerShell/PowerShell/blob/master/.markdownlint.json
+  "markdownlint.config": {
+    "MD004": false,
+    "MD024": false,
+    "MD033": false,
+    "MD034": false,
+    "MD038": false,
+    "MD042": false
+  },
+
+  "[powershell]": {
+    "files.trimTrailingWhitespace": true
+  },
+
+  // Sets the codeformatting options to follow the given indent style in a way that is compatible with PowerShell syntax. For more information about the brace styles please refer to https://github.com/PoshCode/PowerShellPracticeAndStyle/issues/81.
+  "powershell.codeFormatting.preset": "OTBS",
+  
+  // Adds a space between a keyword and its associated scriptblock expression.
+  "powershell.codeFormatting.whitespaceBeforeOpenBrace": true,
+  
+  // Adds a space between a keyword (if, elseif, while, switch, etc) and its associated conditional expression.
+  "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
+  
+  // Adds spaces before and after an operator ('=', '+', '-', etc.).
+  "powershell.codeFormatting.whitespaceAroundOperator": true,
+  
+  // Adds a space after a separator (',' and ';').
+  "powershell.codeFormatting.whitespaceAfterSeparator": true
+}

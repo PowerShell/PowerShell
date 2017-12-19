@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -369,7 +369,7 @@ namespace System.Management.Automation
             _cimClassIdToClass.Add(key, cimClass);
 
             /* PRINTF DEBUG
-            Console.WriteLine("Contents of deserialization cache (after  a call to AddCimClassToCache ({0})):", key);
+            Console.WriteLine("Contents of deserialization cache (after a call to AddCimClassToCache ({0})):", key);
             Console.WriteLine("  Count = {0}", this._cimClassIdToClass.Count);
             foreach (var t in this._cimClassIdToClass.Keys)
             {
@@ -2020,7 +2020,7 @@ namespace System.Management.Automation
                 }
                 catch (System.NotSupportedException)
                 {
-                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in  win8:948569
+                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in win8:948569
                 }
             }
             catch (Exception exception)
@@ -4737,7 +4737,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Skips an element and all its  child elements.
+        /// Skips an element and all its child elements.
         /// Moves cursor to next content Node.
         /// </summary>
         private void Skip()

@@ -185,7 +185,7 @@
     <value>The following export destination path is ambiguous: {0}.</value>
   </data>
   <data name="CounterPathIsInvalid" xml:space="preserve">
-    <value>The {0} performance counter path  is not valid.</value>
+    <value>The {0} performance counter path is not valid.</value>
   </data>
   <data name="CounterSampleDataInvalid" xml:space="preserve">
     <value>The data in one of the performance counter samples is not valid. View the Status property for each PerformanceCounterSample object to make sure it contains valid data.</value>
@@ -268,7 +268,7 @@ The defined template is following:
     <value>This cmdlet can be run only on Microsoft Windows 7 and above.</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>This Windows PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.</value>
+    <value>This PowerShell snap-in contains Windows Eventing and Performance Counter cmdlets.</value>
   </data>
   <data name="NoMatchingCounterSetsInFile" xml:space="preserve">
     <value>Cannot find any performance counter sets in the {0} files that match the following: {1}.</value>
@@ -280,7 +280,7 @@ The defined template is following:
     <value>Cooked Values</value>
   </data>
   <data name="Counter1FileLimit" xml:space="preserve">
-    <value>You cannot import more than one comma-separated (.csv) or tab-separated (.tsv) performance counter file  in each command.</value>
+    <value>You cannot import more than one comma-separated (.csv) or tab-separated (.tsv) performance counter file in each command.</value>
   </data>
 
 </root>

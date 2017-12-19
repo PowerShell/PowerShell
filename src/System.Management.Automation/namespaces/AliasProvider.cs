@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
     } // AliasProvider
 
     /// <summary>
-    /// The dynamic  parameter object for the AliasProvider SetItem and NewItem commands
+    /// The dynamic parameter object for the AliasProvider SetItem and NewItem commands
     /// </summary>
     public class AliasProviderDynamicParameters
     {

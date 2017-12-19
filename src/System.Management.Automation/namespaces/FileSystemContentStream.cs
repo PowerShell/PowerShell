@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -725,7 +725,19 @@ namespace Microsoft.PowerShell.Commands
 
             // We've reached the end of file or end of line.
             if (content.Length > 0)
-                blocks.Add(content.ToString());
+            {
+                // Add the block read to the ouptut array list, trimming a trailing delimiter, if present.
+                // Note: If -Tail was specified, we get here in the course of 2 distinct passes:
+                //  - Once while reading backward simply to determine the appropriate *start position* for later forward reading, ignoring the content of the blocks read (in reverse).
+                //  - Then again during forward reading, for regular output processing; it is only then that trimming the delimiter is necessary.
+                //    (Trimming it during backward reading would not only be unnecessary, but could interfere with determining the correct start position.)
+                string contentString = content.ToString();
+                blocks.Add(
+                    !readBackward && contentString.EndsWith(actualDelimiter, StringComparison.Ordinal) && !_isRawStream
+                        ? contentString.Substring(0, content.Length - actualDelimiter.Length)
+                        : contentString
+                );
+            }
 
             int peekResult = readBackward ? _backReader.Peek() : _reader.Peek();
             if (peekResult != -1)
@@ -841,22 +853,26 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+#if !UNIX
                 if (!String.IsNullOrEmpty(streamName))
                 {
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, fileAccess, fileShare);
                 }
                 else
+#endif
                 {
                     _stream = new FileStream(filePath, fileMode, fileAccess, fileShare);
                 }
             }
             catch (IOException)
             {
+#if !UNIX
                 if (!String.IsNullOrEmpty(streamName))
                 {
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, requestedAccess, fileShare);
                 }
                 else
+#endif
                 {
                     _stream = new FileStream(filePath, fileMode, requestedAccess, fileShare);
                 }

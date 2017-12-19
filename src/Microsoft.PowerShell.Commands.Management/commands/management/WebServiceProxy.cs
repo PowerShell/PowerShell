@@ -1,5 +1,5 @@
 /********************************************************************--
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_uri.ToString().Trim().Length == 0)
+            if (string.IsNullOrWhiteSpace(_uri.ToString()))
             {
                 Exception ex = new ArgumentException(WebServiceResources.InvalidUri);
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);

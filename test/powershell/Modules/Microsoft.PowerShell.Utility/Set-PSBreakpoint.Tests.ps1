@@ -1,4 +1,4 @@
-$ps = Join-Path -Path $PsHome -ChildPath "powershell"
+$ps = Join-Path -Path $PsHome -ChildPath "pwsh"
 
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
     #Set up

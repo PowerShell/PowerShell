@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Runtime.InteropServices;
@@ -275,24 +275,24 @@ namespace System.Management.Automation
         internal static extern bool DosDateTimeToFileTime(
             short wFatDate, // _In_   WORD
             short wFatTime, // _In_   WORD
-            FILETIME lpFileTime); // _Out_  LPFILETIME
+            FILETIME lpFileTime); // _Out_ LPFILETIME
 
         [DllImport(PinvokeDllNames.LocalFileTimeToFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern bool LocalFileTimeToFileTime(
             FILETIME lpLocalFileTime, // _In_   const FILETIME *
-            FILETIME lpFileTime); // _Out_  LPFILETIME
+            FILETIME lpFileTime); // _Out_ LPFILETIME
 
         [DllImport(PinvokeDllNames.SetFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern bool SetFileTime(
             IntPtr hFile, // _In_      HANDLE
-            FILETIME lpCreationTime, // _In_opt_  const FILETIME *
-            FILETIME lpLastAccessTime, // _In_opt_  const FILETIME *
-            FILETIME lpLastWriteTime); // _In_opt_  const FILETIME *
+            FILETIME lpCreationTime, // _In_opt_ const FILETIME *
+            FILETIME lpLastAccessTime, // _In_opt_ const FILETIME *
+            FILETIME lpLastWriteTime); // _In_opt_ const FILETIME *
 
         [DllImport(PinvokeDllNames.SetFileAttributesWDllName, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern bool SetFileAttributesW(
-            [MarshalAs(UnmanagedType.LPWStr)] string lpFileName, // _In_  LPCTSTR
-            FileAttributes dwFileAttributes); // _In_  DWORD
+            [MarshalAs(UnmanagedType.LPWStr)] string lpFileName, // _In_ LPCTSTR
+            FileAttributes dwFileAttributes); // _In_ DWORD
 
         /// <summary>
         /// Enable the privilege specified by the privilegeName. If the specified privilege is already enabled, return true

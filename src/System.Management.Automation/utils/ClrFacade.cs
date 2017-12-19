@@ -1,5 +1,5 @@
 //
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
 using System.Collections.Generic;
@@ -41,12 +41,6 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>
-        /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
-        /// We use this convention for names to archive it.
-        /// </summary>
-        internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
-
         #region Assembly
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)
@@ -65,7 +59,8 @@ namespace System.Management.Automation
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
             return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
-            AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
+                   AppDomain.CurrentDomain.GetAssemblies().Where(a =>
+                       !TypeDefiner.DynamicClassAssemblyName.Equals(a.GetName().Name, StringComparison.Ordinal));
         }
 
         /// <summary>
@@ -93,14 +88,9 @@ namespace System.Management.Automation
         {
             if (s_defaultEncoding == null)
             {
-#if UNIX        // PowerShell Core on Unix
-                s_defaultEncoding = new UTF8Encoding(false);
-#else           // PowerShell Core on Windows
+                // load all available encodings
                 EncodingRegisterProvider();
-
-                uint currentAnsiCp = NativeMethods.GetACP();
-                s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
-#endif
+                s_defaultEncoding = new UTF8Encoding(false);
             }
             return s_defaultEncoding;
         }
@@ -109,16 +99,17 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for getting OEM encoding
+        /// OEM encodings work on all platforms, or rather codepage 437 is available on both Windows and Non-Windows
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
             if (s_oemEncoding == null)
             {
-#if UNIX        // PowerShell Core on Unix
-                s_oemEncoding = GetDefaultEncoding();
-#else           // PowerShell Core on Windows
+                // load all available encodings
                 EncodingRegisterProvider();
-
+#if UNIX
+                s_oemEncoding = new UTF8Encoding(false);
+#else
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
@@ -138,6 +129,7 @@ namespace System.Management.Automation
 
         #endregion Encoding
 
+#if !UNIX
         #region Security
 
         /// <summary>
@@ -147,7 +139,6 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
             Diagnostics.Assert(Utils.NativeFileExists(filePath), "Caller makes sure the file exists.");
-#if CORECLR
             string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
             string urlmonPath = Path.Combine(sysRoot, @"System32\urlmon.dll");
             if (Utils.NativeFileExists(urlmonPath))
@@ -155,12 +146,8 @@ namespace System.Management.Automation
                 return MapSecurityZoneWithUrlmon(filePath);
             }
             return MapSecurityZoneWithoutUrlmon(filePath);
-#else
-            return MapSecurityZoneWithUrlmon(filePath);
-#endif
         }
 
-#if CORECLR
         #region WithoutUrlmon
 
         /// <summary>
@@ -204,7 +191,6 @@ namespace System.Management.Automation
         {
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
             if (reval != SecurityZone.NoZone) { return reval; }
-
             // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
             Uri uri = new Uri(filePath);
@@ -303,7 +289,6 @@ namespace System.Management.Automation
             return SecurityZone.NoZone;
         }
         #endregion WithoutUrlmon
-#endif
 
         /// <summary>
         /// Map the file to SecurityZone using urlmon.dll, depending on 'IInternetSecurityManager::MapUrlToZone'.
@@ -342,6 +327,7 @@ namespace System.Management.Automation
         }
 
         #endregion Security
+#endif
 
         #region Misc
 

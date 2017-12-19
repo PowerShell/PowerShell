@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 // for fxcop
@@ -95,7 +95,7 @@ namespace System.Management.Automation.Language
                     {
                         if (!reportAmbiguousException)
                         {
-                            // accelerator  for the common case, when we are not interested  in ambiguity exception.
+                            // accelerator for the common case, when we are not interested in ambiguity exception.
                             return targetType;
                         }
 
@@ -736,6 +736,7 @@ namespace System.Management.Automation
                     { typeof(AllowEmptyStringAttribute),                   new[] { "AllowEmptyString" } },
                     { typeof(AllowNullAttribute),                          new[] { "AllowNull" } },
                     { typeof(ArgumentCompleterAttribute),                  new[] { "ArgumentCompleter" } },
+                    { typeof(ArgumentCompletionsAttribute),                new[] { "ArgumentCompletions" } },
                     { typeof(Array),                                       new[] { "array" } },
                     { typeof(bool),                                        new[] { "bool" } },
                     { typeof(byte),                                        new[] { "byte" } },

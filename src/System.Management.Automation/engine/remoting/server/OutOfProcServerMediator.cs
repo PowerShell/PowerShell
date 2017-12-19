@@ -1,5 +1,5 @@
 /********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * --********************************************************************/
 
 using System.Management.Automation.Tracing;
@@ -206,7 +206,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
                 finally
                 {
-                    // Always send ack signal to avoid hang in client.
+                    // Always send ack signal to avoid not responding in client.
                     originalStdOut.WriteLine(OutOfProcessUtils.CreateSignalAckPacket(psGuid));
                 }
             }

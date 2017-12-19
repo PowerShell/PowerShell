@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -199,6 +199,7 @@ namespace Microsoft.PowerShell.Commands
         /// Unix format string
         /// </summary>
         [Parameter(ParameterSetName = "UFormat")]
+        [ValidateNotNullOrEmpty]
         public string UFormat { get; set; }
 
 
@@ -206,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// Unix format string
         /// </summary>
         [Parameter(ParameterSetName = "net")]
+        [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
         #endregion
@@ -330,7 +332,6 @@ namespace Microsoft.PowerShell.Commands
             DateTime epoch = DateTime.Parse("January 1, 1970", System.Globalization.CultureInfo.InvariantCulture);
             int offset = 0;
             StringBuilder sb = new StringBuilder();
-
 
             // folks may include the "+" as part of the format string
             if (UFormat[0] == '+')

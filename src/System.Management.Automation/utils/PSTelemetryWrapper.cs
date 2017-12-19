@@ -1,6 +1,6 @@
 #if LEGACYTELEMETRY
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Reflection;
@@ -86,7 +86,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// TRACEMESSAGE is the Generic method to use to log messages using UTC [Universal Telemetry Client] in Windows Threshold
-        /// TRACEMESSAGE calls into  EventSource.Write dynamically - https://msdn.microsoft.com/en-us/library/dn823293(v=vs.110).aspx
+        /// TRACEMESSAGE calls into EventSource.Write dynamically - https://msdn.microsoft.com/en-us/library/dn823293(v=vs.110).aspx
         /// </summary>
 
         // EventSource data gets raised on the Client containing OS Environment information and supplied arguments as "data"

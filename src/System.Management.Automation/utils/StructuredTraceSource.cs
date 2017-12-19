@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 #define TRACE
 
@@ -290,7 +290,7 @@ namespace System.Management.Automation
                 FullName = fullName;
                 _name = name;
 
-#if !CORECLR // TraceSource.Attributes is not in CoreCLR
+                // TODO: move this to startup json file instead of using env var
                 string tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
 
                 if (String.Equals(
@@ -304,7 +304,6 @@ namespace System.Management.Automation
                         _flags = (PSTraceSourceOptions)Enum.Parse(typeof(PSTraceSourceOptions), options, true);
                     }
                 }
-#endif
                 ShowHeaders = traceHeaders;
                 Description = description;
             }
@@ -326,7 +325,6 @@ namespace System.Management.Automation
 #endif
         }
 
-#if !CORECLR // System.AppDomain is not in ProjectK.
         private static bool globalTraceInitialized;
 
         /// <summary>
@@ -375,7 +373,6 @@ namespace System.Management.Automation
 
             globalTraceInitialized = true;
         }
-#endif
 
         /// <summary>
         /// Outputs a header when a new StructuredTraceSource object is created
@@ -1149,9 +1146,6 @@ namespace System.Management.Automation
         /// </returns>
         private static string GetCallingMethodNameAndParameters(int skipFrames)
         {
-#if CORECLR //TODO:CORECLR StackFrame is not in CoreCLR
-            return string.Empty;
-#else
             StringBuilder methodAndParameters = null;
 
             try
@@ -1189,7 +1183,6 @@ namespace System.Management.Automation
                 // normal operation.
             }
             return methodAndParameters.ToString();
-#endif
         }
 
         // The default formatter for TraceError
@@ -1482,7 +1475,6 @@ namespace System.Management.Automation
             get { return _flags != PSTraceSourceOptions.None; }
         }
 
-#if !CORECLR // TraceSource.Attributes is not in CoreCLR
         /// <summary>
         /// Gets the attributes of the TraceSource
         /// </summary>
@@ -1493,7 +1485,6 @@ namespace System.Management.Automation
                 return TraceSource.Attributes;
             }
         }
-#endif
 
         /// <summary>
         /// Gets the listeners for the TraceSource
@@ -1891,7 +1882,6 @@ namespace System.Management.Automation
         {
         }
 
-#if !CORECLR // TraceSource.GetSupportedAttributes is not in CoreCLR
         /// <summary>
         /// Tells the config infrastructure which attributes are supported
         /// for our TraceSource
@@ -1905,7 +1895,6 @@ namespace System.Management.Automation
         {
             return new string[] { "Options" };
         }
-#endif
     }
     #endregion MonadTraceSource
 }

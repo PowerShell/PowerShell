@@ -1,7 +1,7 @@
 #if !UNIX
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using Dbg = System.Management.Automation;
@@ -503,7 +503,7 @@ namespace System.Management.Automation
                     {
                         catAttrInfo = NativeMethods.CryptCATEnumerateCatAttr(resultCatalog, catAttrInfo);
 
-                        // If we found attribute it is a file information  retrieve its relative path
+                        // If we found attribute it is a file information retrieve its relative path
                         // and add it to catalog hash collection if its not in excluded files criteria
                         if (catAttrInfo != IntPtr.Zero)
                         {
@@ -549,7 +549,7 @@ namespace System.Management.Automation
                                 while (memberAttrInfo != IntPtr.Zero);
 
                                 // If we did not find any Relative Path for the item in catalog we should quit
-                                // This catalog must  not be valid for our use as catalogs generated using New-FileCatalog
+                                // This catalog must not be valid for our use as catalogs generated using New-FileCatalog
                                 // always contains relative file Paths
                                 if (String.IsNullOrEmpty(relativePath))
                                 {
@@ -793,7 +793,7 @@ namespace System.Management.Automation
             return false;
         }
         /// <summary>
-        /// Call back when error is  thrown by catalog API's
+        /// Call back when error is thrown by catalog API's
         /// </summary>
         private static void ParseErrorCallback(DWORD dwErrorArea, DWORD dwLocalError, string pwszLine)
         {

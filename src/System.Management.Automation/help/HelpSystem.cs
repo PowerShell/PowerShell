@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -253,24 +253,6 @@ namespace System.Management.Automation
                 return _searchPaths;
             }
             _searchPaths = new Collection<String>();
-
-            RunspaceConfigForSingleShell runspace = this.ExecutionContext.RunspaceConfiguration as RunspaceConfigForSingleShell;
-
-            if (null != runspace)
-            {
-                // SingleShell case. Check active snapins...
-                MshConsoleInfo currentConsole = runspace.ConsoleInfo;
-
-                if ((null == currentConsole) || (null == currentConsole.ExternalPSSnapIns))
-                {
-                    return _searchPaths;
-                }
-
-                foreach (PSSnapInInfo snapin in currentConsole.ExternalPSSnapIns)
-                {
-                    _searchPaths.Add(snapin.ApplicationBase);
-                }
-            }
 
             // add loaded modules paths to the search path
             if (null != ExecutionContext.Modules)

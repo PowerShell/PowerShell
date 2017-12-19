@@ -43,15 +43,15 @@ In addition you will need to enable password authentication and optionally key b
 1. Install the latest [Win32 Open SSH] build from GitHub using the [installation] instructions
 1. Edit the sshd_config file at the location where you installed Win32 Open SSH
     - Make sure password authentication is enabled
-    ```bash
+    ```none
     PasswordAuthentication yes
     ```
-    - Add a PowerShell subsystem entry, replace `c:/program files/powershell/6.0.0.17/powershell.exe` with the correct path to the version you want to use
-    ```bash
-    Subsystem    powershell c:/program files/powershell/6.0.0.17/powershell.exe -sshs -NoLogo -NoProfile
+    - Add a PowerShell subsystem entry, replace `c:/program files/powershell/6.0.0/pwsh.exe` with the correct path to the version you want to use
+    ```none
+    Subsystem    powershell c:/program files/powershell/6.0.0/pwsh.exe -sshs -NoLogo -NoProfile
     ```
     - Optionally enable key authentication
-    ```bash
+    ```none
     PubkeyAuthentication yes
     ```
 1. Restart the sshd service
@@ -65,23 +65,59 @@ In addition you will need to enable password authentication and optionally key b
 ## Setup on Linux (Ubuntu 14.04) Machine
 
 1. Install the latest [PowerShell for Linux] build from GitHub
-    - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
-    ```powershell
-    Get-Command New-PSSession -syntax
-    New-PSSession [-HostName] <string[]> [-Name <string[]>] [-UserName <string>] [-KeyFilePath <string>] [-SSHTransport] [<CommonParameters>]
-    ```
 1. Install [Ubuntu SSH] as needed
-    - sudo apt install openssh-client
-    - sudo apt install openssh-server
+    ```bash
+    sudo apt install openssh-client
+    sudo apt install openssh-server
+    ```
 1. Edit the sshd_config file at location /etc/ssh
     - Make sure password authentication is enabled
-      + PasswordAuthentication yes
+    ```none
+    PasswordAuthentication yes
+    ```
     - Add a PowerShell subsystem entry
-      + Subsystem powershell powershell -sshs -NoLogo -NoProfile
+    ```none
+    Subsystem powershell /usr/bin/pwsh -sshs -NoLogo -NoProfile
+    ```
     - Optionally enable key authentication
-      + PubkeyAuthentication yes
+    ```none
+    PubkeyAuthentication yes
+    ```
 1. Restart the sshd service
-    - sudo service sshd restart
+    ```bash
+    sudo service sshd restart
+    ```
+
+## Setup on MacOS Machine
+
+1. Install the latest [PowerShell for MacOS] build
+    - Make sure SSH Remoting is enabled by following these steps:
+      + Open `System Preferences`
+      + Click on `Sharing`
+      + Check `Remote Login` - Should say `Remote Login: On`
+      + Allow access to appropriate users
+1. Edit the `sshd_config` file at location `/private/etc/ssh/sshd_config`
+    - Use your favorite editor or
+    ```bash
+    sudo nano /private/etc/ssh/sshd_config
+    ```
+    - Make sure password authentication is enabled
+    ```none
+    PasswordAuthentication yes
+    ```
+    - Add a PowerShell subsystem entry
+    ```none
+    Subsystem powershell /usr/local/bin/powershell -sshs -NoLogo -NoProfile
+    ```
+    - Optionally enable key authentication
+    ```none
+    PubkeyAuthentication yes
+    ```
+1. Restart the sshd service
+    ```bash
+    sudo launchctl stop com.openssh.sshd
+    sudo launchctl start com.openssh.sshd
+    ```
 
 ## PowerShell Remoting Example
 
@@ -137,9 +173,9 @@ Microsoft Windows [Version 10.0.10586]
 #
 # Windows to Windows
 #
-C:\Users\PSUser\Documents>"C:\Program Files\PowerShell\6.0.0.17\powershell.exe"
+C:\Users\PSUser\Documents>pwsh.exe
 PowerShell
-Copyright (C) Microsoft Corporation. All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 
 PS C:\Users\PSUser\Documents> $session = New-PSSession -HostName WinVM2 -UserName PSRemoteUser
 The authenticity of host 'WinVM2 (10.13.37.3)' can't be established.
@@ -182,3 +218,4 @@ GitCommitId                    v6.0.0-alpha.17
 [installation]: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 [PowerShell for Linux]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#ubuntu-1404
 [Ubuntu SSH]: https://help.ubuntu.com/lts/serverguide/openssh-server.html
+[PowerShell for MacOS]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#macos-1012

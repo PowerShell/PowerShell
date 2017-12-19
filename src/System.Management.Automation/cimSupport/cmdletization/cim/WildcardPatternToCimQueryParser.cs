@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 // TODO/FIXME: move this to Microsoft.PowerShell.Cim namespace (and move in source depot folder as well)

@@ -4,14 +4,13 @@ using System.Management.Automation.Language;
 
 namespace PSTests
 {
-    [Collection("AssemblyLoadContext")]
     public static class PSEnumerableBinderTests
     {
         [Fact]
-        public static void TestIsComObject()
+        public static void TestIsStaticTypePossiblyEnumerable()
         {
-            // It just needs an arbitrary object
-            Assert.False(PSEnumerableBinder.IsComObject(42));
+            // It just needs an arbitrary type
+            Assert.False(PSEnumerableBinder.IsStaticTypePossiblyEnumerable(42.GetType()));
         }
     }
 }

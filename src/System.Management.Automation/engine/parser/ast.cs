@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 //
@@ -10056,36 +10056,4 @@ namespace System.Management.Automation.Language
     }
 
     #endregion Help
-}
-
-namespace System.Management.Automation.Internal
-{
-    using Runspaces;
-    using Language;
-
-    /// <summary>Internal interface used for workflow compilation.</summary>
-    [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
-    public interface IAstToWorkflowConverter
-    {
-        /// <summary/>
-        List<ParseError> ValidateAst(FunctionDefinitionAst ast);
-
-        /// <summary/>
-        List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule);
-
-        /// <summary/>
-        List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, out ParseException parsingErrors);
-
-        /// <summary/>
-        List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, PSLanguageMode? languageMode, out ParseException parsingErrors);
-
-        /// <summary/>
-        List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, string rootWorkflowName);
-
-        /// <summary/>
-        List<WorkflowInfo> CompileWorkflows(ScriptBlockAst ast, PSModuleInfo definingModule, InitialSessionState initialSessionState, out ParseException parsingErrors, string rootWorkflowName);
-
-        /// <summary/>
-        WorkflowInfo CompileWorkflow(string name, string definition, InitialSessionState initialSessionState);
-    }
 }

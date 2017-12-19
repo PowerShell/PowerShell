@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -1046,6 +1046,7 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
             path = EnsureDriveIsRooted(path);
 
+#if !UNIX
             // Remove alternate data stream references
             // See if they've used the inline stream syntax. They have more than one colon.
             int firstColon = path.IndexOf(':');
@@ -1054,6 +1055,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 path = path.Substring(0, secondColon);
             }
+#endif
 
             //Make sure the path is either drive rooted or UNC Path
             if (!IsAbsolutePath(path) && !IsUNCPath(path))
@@ -1117,6 +1119,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+#if !UNIX
                 bool retrieveStreams = false;
                 FileSystemProviderGetItemDynamicParameters dynamicParameters = null;
 
@@ -1146,10 +1149,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+#endif
 
                 FileSystemInfo result = GetFileSystemItem(path, ref isContainer, false);
                 if (result != null)
                 {
+#if !UNIX
                     // If we want to retrieve the file streams, retrieve them.
                     if (retrieveStreams)
                     {
@@ -1186,6 +1191,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     else
+#endif
                     {
                         // Otherwise, return the item itself.
                         WriteItemObject(result, result.FullName, isContainer);
@@ -1326,7 +1332,7 @@ namespace Microsoft.PowerShell.Commands
                 bool invokeDefaultProgram = false;
                 if (Directory.Exists(path))
                 {
-                    // Path points to a directory. We have to use xdg-open/open on Linux/OSX.
+                    // Path points to a directory. We have to use xdg-open/open on Linux/macOS.
                     invokeDefaultProgram = true;
                 }
                 else
@@ -1339,7 +1345,7 @@ namespace Microsoft.PowerShell.Commands
                     catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
                     {
                         // Error code 13 -- Permission denied
-                        // The file is possibly not an executable. We try xdg-open/open on Linux/OSX.
+                        // The file is possibly not an executable. We try xdg-open/open on Linux/macOS.
                         invokeDefaultProgram = true;
                     }
                 }
@@ -1347,7 +1353,7 @@ namespace Microsoft.PowerShell.Commands
                 if (invokeDefaultProgram)
                 {
                     const string quoteFormat = "\"{0}\"";
-                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
                     if (NativeCommandParameterBinder.NeedQuotes(path))
                     {
                         path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
@@ -2758,6 +2764,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 path = NormalizePath(path);
 
+#if !UNIX
                 bool removeStreams = false;
                 FileSystemProviderRemoveItemDynamicParameters dynamicParameters = null;
 
@@ -2787,6 +2794,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+#endif
 
                 bool iscontainer = false;
                 FileSystemInfo fsinfo = GetFileSystemInfo(path, ref iscontainer);
@@ -2798,6 +2806,16 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+#if UNIX
+                if (iscontainer)
+                {
+                    RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
+                }
+                else
+                {
+                    RemoveFileInfoItem((FileInfo)fsinfo, Force);
+                }
+#else
                 if ((!removeStreams) && iscontainer)
                 {
                     RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
@@ -2847,6 +2865,7 @@ namespace Microsoft.PowerShell.Commands
                         RemoveFileInfoItem((FileInfo)fsinfo, Force);
                     }
                 }
+#endif
             }
             catch (IOException exception)
             {
@@ -4233,12 +4252,13 @@ namespace Microsoft.PowerShell.Commands
                     wStream = new FileStream(destinationFile.FullName, FileMode.Create);
                 }
 
+#if !UNIX
                 // an alternate stream
                 else
                 {
                     wStream = AlternateDataStreamUtilities.CreateFileStream(destinationFile.FullName, streamName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                 }
-
+#endif
                 long fragmentSize = FILETRANSFERSIZE;
                 long copiedSoFar = 0;
                 long currentIndex = 0;
@@ -4254,11 +4274,13 @@ namespace Microsoft.PowerShell.Commands
                         ps.AddParameter("force", true);
                     }
 
+#if !UNIX
                     if (isAlternateDataStream)
                     {
                         ps.AddParameter("isAlternateStream", true);
                         ps.AddParameter("streamName", streamName);
                     }
+#endif
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
@@ -4498,11 +4520,12 @@ namespace Microsoft.PowerShell.Commands
                 {
                     fStream = File.OpenRead(file.FullName);
                 }
+#if !UNIX
                 else
                 {
                     fStream = AlternateDataStreamUtilities.CreateFileStream(file.FullName, streamName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 }
-
+#endif
                 long remainingFileSize = fStream.Length;
                 do
                 {
@@ -4665,6 +4688,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool result = CopyFileStreamToRemoteSession(file, remoteFilePath, ps, false, null);
 
+#if !UNIX
             bool targetSupportsAlternateStreams = RemoteTargetSupportsAlternateStreams(ps, remoteFilePath);
 
             // Once the file is copied successfully, check if the file has any alternate data streams
@@ -4682,7 +4706,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
+#endif
             if (result)
             {
                 SetRemoteFileMetadata(file, Path.Combine(destinationPath, file.Name), ps);
@@ -4793,6 +4817,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 parentPath = EnsureDriveIsRooted(parentPath);
             }
+#if !UNIX
+            else if (parentPath.Equals(StringLiterals.DefaultPathSeparatorString, StringComparison.Ordinal))
+            {
+                // make sure we return two backslashes so it still results in a UNC path
+                parentPath = "\\\\";
+            }
+#endif
             return parentPath;
         } // GetParentPath
 
@@ -5143,6 +5174,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
+#if !UNIX
             // Remove alternate data stream references
             // See if they've used the inline stream syntax. They have more than one colon.
             string alternateDataStream = String.Empty;
@@ -5154,6 +5186,7 @@ namespace Microsoft.PowerShell.Commands
                 alternateDataStream = path.Replace(newPath, "");
                 path = newPath;
             }
+#endif
 
             string result = path;
 
@@ -5277,10 +5310,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             } while (false);
 
+#if !UNIX
             if (!String.IsNullOrEmpty(alternateDataStream))
             {
                 result = result + alternateDataStream;
             }
+#endif
 
             return result;
         } // NormalizeRelativePathHelper
@@ -6579,22 +6614,30 @@ namespace Microsoft.PowerShell.Commands
                         delimiter = dynParams.Delimiter;
 
                     // Get the stream type
-                    usingByteEncoding = dynParams.UsingByteEncoding;
+                    usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
+
+                    if (usingByteEncoding && streamTypeSpecified)
+                    {
+                        WriteWarning(FileSystemProviderStrings.EncodingNotUsed);
+                    }
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = dynParams.Encoding;
                     }
 
                     // Get the wait value
                     waitForChanges = dynParams.Wait;
 
+#if !UNIX
                     // Get the stream name
                     streamName = dynParams.Stream;
+#endif
                 } // dynParams != null
             } // DynamicParameters != null
 
+#if !UNIX
             // See if they've used the inline stream syntax. They have more than one colon.
             int firstColon = path.IndexOf(':');
             int secondColon = path.IndexOf(':', firstColon + 1);
@@ -6603,6 +6646,7 @@ namespace Microsoft.PowerShell.Commands
                 streamName = path.Substring(secondColon + 1);
                 path = path.Remove(secondColon);
             }
+#endif
 
             FileSystemContentReaderWriter stream = null;
 
@@ -6726,19 +6770,27 @@ namespace Microsoft.PowerShell.Commands
 
                 if (dynParams != null)
                 {
-                    usingByteEncoding = dynParams.UsingByteEncoding;
+                    usingByteEncoding = dynParams.AsByteStream;
                     streamTypeSpecified = dynParams.WasStreamTypeSpecified;
+
+                    if (usingByteEncoding && streamTypeSpecified)
+                    {
+                        WriteWarning(FileSystemProviderStrings.EncodingNotUsed);
+                    }
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = dynParams.Encoding;
                     }
 
+#if !UNIX
                     streamName = dynParams.Stream;
+#endif
                     suppressNewline = dynParams.NoNewline.IsPresent;
                 } // dynParams != null
             }
 
+#if !UNIX
             // See if they've used the inline stream syntax. They have more than one colon.
             int firstColon = path.IndexOf(':');
             int secondColon = path.IndexOf(':', firstColon + 1);
@@ -6747,6 +6799,7 @@ namespace Microsoft.PowerShell.Commands
                 streamName = path.Substring(secondColon + 1);
                 path = path.Remove(secondColon);
             }
+#endif
 
             FileSystemContentReaderWriter stream = null;
 
@@ -6828,10 +6881,11 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+#if !UNIX
                 bool clearStream = false;
+                string streamName = null;
                 FileSystemClearContentDynamicParameters dynamicParameters = null;
                 FileSystemContentWriterDynamicParameters writerDynamicParameters = null;
-                string streamName = null;
 
                 // We get called during:
                 //     - Clear-Content
@@ -6900,6 +6954,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
                 else
+#endif
                 {
                     string action = FileSystemProviderStrings.ClearContentActionFile;
                     string resource = StringUtil.Format(FileSystemProviderStrings.ClearContentesourceTemplate, path);
@@ -7432,73 +7487,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    /// <summary>
-    /// Defines the values that can be supplied as the encoding parameter in the
-    /// FileSystemContentDynamicParametersBase class.
-    /// </summary>
-    public enum FileSystemCmdletProviderEncoding
-    {
-        /// <summary>
-        /// No encoding.
-        /// </summary>
-        Unknown,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        String,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        Unicode,
-
-        /// <summary>
-        /// Byte encoding.
-        /// </summary>
-        Byte,
-
-        /// <summary>
-        /// Big Endian Unicode encoding.
-        /// </summary>
-        BigEndianUnicode,
-
-        /// <summary>
-        /// UTF8 encoding.
-        /// </summary>
-        UTF8,
-
-        /// <summary>
-        /// UTF7 encoding.
-        /// </summary>
-        UTF7,
-
-        /// <summary>
-        /// UTF32 encoding.
-        /// </summary>
-        UTF32,
-
-        /// <summary>
-        /// ASCII encoding.
-        /// </summary>
-        Ascii,
-
-        /// <summary>
-        /// Default encoding.
-        /// </summary>
-        Default,
-
-        /// <summary>
-        /// OEM encoding.
-        /// </summary>
-        Oem,
-
-        /// <summary>
-        /// Big Endian UTF32 encoding.
-        /// </summary>
-        BigEndianUTF32,
-    } // FileSystemCmdletProviderEncoding
-
     #endregion
 
     #region Dynamic Parameters
@@ -7602,49 +7590,53 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+            set
+            {
+                _encoding = value;
+                // If an encoding was explicitly set, be sure to capture that.
+                WasStreamTypeSpecified = true;
+            }
+        }
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
+        /// <summary>
+        /// Return file contents as a byte stream or create file from a series of bytes
+        /// </summary>
+        [Parameter]
+        public SwitchParameter AsByteStream { get; set; }
+
+#if !UNIX
         /// <summary>
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
         public String Stream { get; set; }
-
-
-        /// <summary>
-        /// Gets the encoding from the specified StreamType parameter.
-        /// </summary>
-        public Encoding EncodingType
-        {
-            get
-            {
-                return Utils.GetEncodingFromEnum(Encoding);
-            }
-        } // EncodingType
-
-        /// <summary>
-        /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
-        /// if the stream was opened with "Byte" encoding, false otherwise.
-        /// </summary>
-        public bool UsingByteEncoding
-        {
-            get
-            {
-                return Encoding == FileSystemCmdletProviderEncoding.Byte;
-            } // get
-        } // UsingByteEncoding
+#endif
 
         /// <summary>
         /// Gets the status of the StreamType parameter.  Returns true
         /// if the stream was opened with a user-specified encoding, false otherwise.
         /// </summary>
-        public bool WasStreamTypeSpecified
-        {
-            get
-            {
-                return (Encoding != FileSystemCmdletProviderEncoding.String);
-            } // get
-        } // WasStreamTypeSpecified
+        public bool WasStreamTypeSpecified { get; private set; }
 
     } // class FileSystemContentDynamicParametersBase
 
@@ -7653,11 +7645,13 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemClearContentDynamicParameters
     {
+#if !UNIX
         /// <summary>
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
         public String Stream { get; set; }
+#endif
     } //FileSystemContentWriterDynamicParameters
 
     /// <summary>
@@ -7700,13 +7694,13 @@ namespace Microsoft.PowerShell.Commands
             get
             {
                 return _delimiter;
-            } // get
+            }
 
             set
             {
                 DelimiterSpecified = true;
                 _delimiter = value;
-            } // set
+            }
         }
         private string _delimiter = "\n";
 
@@ -7781,6 +7775,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemProviderGetItemDynamicParameters
     {
+#if !UNIX
         /// <summary>
         /// A parameter to return the streams of an item.
         /// </summary>
@@ -7788,6 +7783,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
+#endif
     } // class FileSystemItemProviderDynamicParameters
 
     /// <summary>
@@ -7795,6 +7791,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemProviderRemoveItemDynamicParameters
     {
+#if !UNIX
         /// <summary>
         /// A parameter to return the streams of an item.
         /// </summary>
@@ -7802,6 +7799,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
+#endif
     } // class FileSystemItemProviderDynamicParameters
 
     #endregion
@@ -8260,7 +8258,8 @@ namespace Microsoft.PowerShell.Commands
 #endif
         }
 
-        internal static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
+#if !UNIX
+        private static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
         {
             var access = FileAccess.Read;
             var share = FileShare.Read;
@@ -8272,8 +8271,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
-                    BY_HANDLE_FILE_INFORMATION  infoOne;
-                    BY_HANDLE_FILE_INFORMATION  infoTwo;
+                    BY_HANDLE_FILE_INFORMATION infoOne;
+                    BY_HANDLE_FILE_INFORMATION infoTwo;
                     if (   GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
                         && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out infoTwo))
                     {
@@ -8286,6 +8285,7 @@ namespace Microsoft.PowerShell.Commands
 
             return false;
         }
+#endif
 
         internal static bool GetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
@@ -8297,7 +8297,8 @@ namespace Microsoft.PowerShell.Commands
             return rv;
         }
 
-        internal static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+#if !UNIX
+        private static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
             var access = FileAccess.Read;
             var share = FileShare.Read;
@@ -8325,7 +8326,7 @@ namespace Microsoft.PowerShell.Commands
             inodeData = (0, 0);
             return false;
         }
-
+#endif
         internal static bool IsHardLink(ref IntPtr handle)
         {
 #if UNIX
@@ -8632,6 +8633,7 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation.Internal
 {
+#if !UNIX
     #region AlternateDataStreamUtilities
 
     /// <summary>
@@ -8847,6 +8849,7 @@ namespace System.Management.Automation.Internal
     }
 
     #endregion
+#endif
 
     #region CopyFileFromRemoteUtils
 

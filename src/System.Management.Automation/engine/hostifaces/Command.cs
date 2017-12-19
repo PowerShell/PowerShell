@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
@@ -427,7 +427,6 @@ namespace System.Management.Automation.Runspaces
         /// Create a CommandProcessorBase for this Command
         /// </summary>
         /// <param name="executionContext"></param>
-        /// <param name="commandFactory"></param>
         /// <param name="addToHistory"></param>
         /// <param name="origin"></param>
         /// <returns></returns>
@@ -436,14 +435,11 @@ namespace System.Management.Automation.Runspaces
         CreateCommandProcessor
         (
             ExecutionContext executionContext,
-            CommandFactory commandFactory,
             bool addToHistory,
             CommandOrigin origin
         )
         {
             Dbg.Assert(executionContext != null, "Caller should verify the parameters");
-            Dbg.Assert(commandFactory != null, "Caller should verify the parameters");
-
 
             CommandProcessorBase commandProcessorBase;
 
@@ -515,8 +511,7 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
 
-                commandProcessorBase =
-                    commandFactory.CreateCommand(CommandText, origin, _useLocalScope);
+                commandProcessorBase = executionContext.CommandDiscovery.LookupCommandProcessor(CommandText, origin, _useLocalScope);
             }
 
             CommandParameterCollection parameters = Parameters;

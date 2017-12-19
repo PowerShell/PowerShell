@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -65,6 +65,8 @@ namespace System.Management.Automation.Language
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIne =
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
+        internal static readonly MethodInfo CharOps_Range =
+            typeof(CharOps).GetMethod(nameof(CharOps.Range), staticFlags);
 
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
@@ -181,6 +183,8 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo FileRedirection_BindForExpression =
             typeof(FileRedirection).GetMethod(nameof(FileRedirection.BindForExpression), instanceFlags);
+        internal static readonly MethodInfo FileRedirection_CallDoCompleteForExpression =
+            typeof(FileRedirection).GetMethod(nameof(FileRedirection.CallDoCompleteForExpression), instanceFlags);
         internal static readonly ConstructorInfo FileRedirection_ctor =
             typeof(FileRedirection).GetConstructor(instanceFlags, null, CallingConventions.Standard,
                                                    new Type[] { typeof(RedirectionStream), typeof(bool), typeof(string) }, null);
@@ -206,8 +210,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo FunctionOps_DefineFunction =
             typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineFunction), staticFlags);
-        internal static readonly MethodInfo FunctionOps_DefineWorkflows =
-            typeof(FunctionOps).GetMethod(nameof(FunctionOps.DefineWorkflows), staticFlags);
 
         internal static readonly ConstructorInfo Hashtable_ctor =
             typeof(Hashtable).GetConstructor(BindingFlags.Instance | BindingFlags.Public, null,
@@ -503,6 +505,9 @@ namespace System.Management.Automation.Language
             typeof(VariableOps).GetMethod(nameof(VariableOps.GetAutomaticVariableValue), staticFlags);
         internal static readonly MethodInfo VariableOps_SetVariableValue =
             typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), staticFlags);
+
+        internal static readonly MethodInfo Utils_IsComObject =
+            typeof(Utils).GetMethod(nameof(Utils.IsComObject), staticFlags, binder: null, types: new Type[] {typeof(object)}, modifiers: null);
 
         internal static readonly MethodInfo ClassOps_ValidateSetProperty =
             typeof(ClassOps).GetMethod(nameof(ClassOps.ValidateSetProperty), staticPublicFlags);
@@ -2426,7 +2431,13 @@ namespace System.Management.Automation.Language
                 .AddParameter("Name", modulePath)
                 .AddParameter("PassThru");
             var moduleInfo = ps.Invoke<PSModuleInfo>();
-            if (ps.HadErrors)
+
+            // It's possible that 'ps.HadErrors == true' while the error stream is empty. That would happen if
+            // one or more non-terminating errors happen when running the module script and ErrorAction is set
+            // to 'SilentlyContinue'. In such case, the errors would not be written to the error stream.
+            // It's OK to treat the module loading as successful in this case because the non-terminating errors
+            // are explicitly handled with 'SilentlyContinue' action, which means they don't block the loading.
+            if (ps.HadErrors && ps.Streams.Error.Count > 0)
             {
                 var errorRecord = ps.Streams.Error[0];
                 throw InterpreterError.NewInterpreterException(modulePath, typeof(RuntimeException), null,
@@ -2884,26 +2895,8 @@ namespace System.Management.Automation.Language
             return this.VisitPipeline(dynamicKeywordAst.GenerateCommandCallPipelineAst());
         }
 
-        private bool _generatedCallToDefineWorkflows;
         public object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)
         {
-            if (functionDefinitionAst.IsWorkflow)
-            {
-                if (_generatedCallToDefineWorkflows)
-                    return ExpressionCache.Empty;
-
-                var topAst = functionDefinitionAst.Parent;
-                while (!(topAst is ScriptBlockAst))
-                {
-                    topAst = topAst.Parent;
-                }
-
-                _generatedCallToDefineWorkflows = true;
-                return Expression.Call(CachedReflectionInfo.FunctionOps_DefineWorkflows,
-                                       _executionContextParameter,
-                                       Expression.Constant(topAst, typeof(ScriptBlockAst)));
-            }
-
             return Expression.Call(CachedReflectionInfo.FunctionOps_DefineFunction,
                                    _executionContextParameter,
                                    Expression.Constant(functionDefinitionAst),
@@ -3197,6 +3190,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
             }
 
+            List<Expression> extraFileRedirectExprs = null;
             // We must generate the code for output redirection to a file before any merging redirections
             // because merging redirections will use funcContext._outputPipe as the value to merge to, so defer merging
             // redirections until file redirections are done.
@@ -3205,35 +3199,55 @@ namespace System.Management.Automation.Language
                 // This will simply return a Linq.Expression representing the redirection.
                 var compiledRedirection = VisitFileRedirection(fileRedirectionAst);
 
-                // For non-output streams (error, warning, etc.) we must save the old stream so it can be restored.
-                // The savedPipe variable is used only for setting funcContext._outputPipe for redirecting Output to file.
-                // The savedPipes variable is used for restoring non-output streams (error, warning, etc.).
-                var savedPipes = NewTemp(typeof(Pipe[]), "savedPipes");
-                temps.Add(savedPipes);
+                if (extraFileRedirectExprs == null)
+                {
+                    extraFileRedirectExprs = new List<Expression>(commandExpr.Redirections.Count);
+                }
 
+                // Hold the current 'FileRedirection' instance for later use
                 var redirectionExpr = NewTemp(typeof(FileRedirection), "fileRedirection");
                 temps.Add(redirectionExpr);
                 exprs.Add(Expression.Assign(redirectionExpr, (Expression)compiledRedirection));
-                /*
-                                if (fileRedirectionAst.FromStream != RedirectionStream.Output && !(redirectionExpr is ConstantExpression))
-                                {
-                                    // We'll be reusing redirectionExpr, it's not constant, so save it in a temp.
-                                    var temp = Expression.Variable(redirectionExpr.Type);
-                                    temps.Add(temp);
-                                    exprs.Add(Expression.Assign(temp, redirectionExpr));
-                                    redirectionExpr = temp;
-                                }
-                */
+
+                // We must save the old streams so they can be restored later.
+                var savedPipes = NewTemp(typeof(Pipe[]), "savedPipes");
+                temps.Add(savedPipes);
                 exprs.Add(Expression.Assign(
                     savedPipes,
                     Expression.Call(redirectionExpr, CachedReflectionInfo.FileRedirection_BindForExpression, _functionContext)));
-                finallyExprs.Add(Expression.Call(redirectionExpr.Cast(typeof(CommandRedirection)),
-                                                    CachedReflectionInfo.CommandRedirection_UnbindForExpression,
-                                                    _functionContext,
-                                                    savedPipes));
+
+                // We need to call 'DoComplete' on the file redirection pipeline processor after writing the stream output to redirection pipe,
+                // so that the 'EndProcessing' method of 'Out-File' would be called as expected.
+                // Expressions for this purpose are kept in 'extraFileRedirectExprs' and will be used later.
+                extraFileRedirectExprs.Add(Expression.Call(redirectionExpr, CachedReflectionInfo.FileRedirection_CallDoCompleteForExpression));
+
+                // The 'UnBind' and 'Dispose' operations on 'FileRedirection' objects must be done in the reverse order of 'Bind' operations.
+                // Namely, it should be done is this order:
+                //   try {
+                //       // The order is A, B
+                //       fileRedirectionA = new FileRedirection(..)
+                //       fileRedirectionA.BindForExpression()
+                //       fileRedirectionB = new FileRedirection(..)
+                //       fileRedirectionB.BindForExpression()
+                //       ...
+                //   } finally {
+                //       // The oder must be B, A
+                //       fileRedirectionB.UnBind()
+                //       fileRedirectionB.Dispose()
+                //       fileRedirectionA.UnBind()
+                //       fileRedirectionA.Dispose()
+                //   }
+                //
+                // Otherwise, the original pipe might not be correctly restored in the end. For example,
+                // '1 *> b.txt > a.txt; 123' would result in the following error when evaluating '123':
+                //   "Cannot perform operation because object "PipelineProcessor" has already been disposed"
+                finallyExprs.Insert(0, Expression.Call(redirectionExpr.Cast(typeof(CommandRedirection)),
+                                                       CachedReflectionInfo.CommandRedirection_UnbindForExpression,
+                                                       _functionContext,
+                                                       savedPipes));
                 // In either case, we must dispose of the redirection or file handles won't get released.
-                finallyExprs.Add(Expression.Call(redirectionExpr,
-                                                 CachedReflectionInfo.FileRedirection_Dispose));
+                finallyExprs.Insert(1, Expression.Call(redirectionExpr,
+                                                       CachedReflectionInfo.FileRedirection_Dispose));
             }
 
             Expression result = null;
@@ -3298,10 +3312,29 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            if (extraFileRedirectExprs != null)
+            {
+                // Now that the redirection is done, we need to call 'DoComplete' on the file redirection pipeline processors.
+                // Exception may be thrown when running 'DoComplete', but we don't want the exception to affect the cleanup
+                // work in 'finallyExprs'. We generate the following code to make sure it does what we want.
+                //   try {
+                //       try {
+                //           exprs
+                //       } finally {
+                //           extraFileRedirectExprs
+                //       }
+                //   finally {
+                //       finallyExprs
+                //   }
+                var wrapExpr = Expression.TryFinally(Expression.Block(exprs), Expression.Block(extraFileRedirectExprs));
+                exprs.Clear();
+                exprs.Add(wrapExpr);
+            }
+
             if (oldPipe != null)
             {
                 // If a temporary pipe was created at the beginning, we should restore the original pipe in the
-                // very end of the finally block. Otherwise, _getCurrentPipe may be messed up by the following
+                // very end of the finally block. Otherwise, s_getCurrentPipe may be messed up by the following
                 // file redirection unbind operation.
                 // For example:
                 //    function foo
@@ -3410,13 +3443,11 @@ namespace System.Management.Automation.Language
                         splatted = variableExpression.Splatted;
                     }
 
-                    bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(element);
                     elementExprs[i] =
                         Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateArgument,
-                                        Expression.Constant(element.Extent),
                                         Expression.Convert(GetCommandArgumentExpression(element), typeof(object)),
-                                        ExpressionCache.Constant(splatted),
-                                        ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
+                                        Expression.Constant(element),
+                                        ExpressionCache.Constant(splatted));
                 }
             }
 
@@ -3486,31 +3517,6 @@ namespace System.Management.Automation.Language
             return CallAddPipe(expr, s_getCurrentPipe);
         }
 
-        private bool ArgumentIsNotReallyArrayIfCommandIsNative(Ast arg)
-        {
-            var arrayLiteralAst = arg as ArrayLiteralAst;
-            if (arrayLiteralAst == null)
-            {
-                return false;
-            }
-
-            Diagnostics.Assert(arrayLiteralAst.Elements.Count > 1, "Single dimension array arguments are surrounded with parens if the value is an argument");
-            var previousElement = arrayLiteralAst.Elements[0];
-            for (int index = 1; index < arrayLiteralAst.Elements.Count; index++)
-            {
-                var element = arrayLiteralAst.Elements[index];
-                // EndOffset is 1 past the end which puts it on the comma, so if +1 is not the next element,
-                // there is whitespace between elements
-                if (previousElement.Extent.EndOffset + 1 != element.Extent.StartOffset)
-                {
-                    return false;
-                }
-                previousElement = element;
-            }
-
-            return true;
-        }
-
         public object VisitCommandParameter(CommandParameterAst commandParameterAst)
         {
             var arg = commandParameterAst.Argument;
@@ -3519,21 +3525,19 @@ namespace System.Management.Automation.Language
             {
                 bool spaceAfterParameter = (errorPos.EndLineNumber != arg.Extent.StartLineNumber ||
                                             errorPos.EndColumnNumber != arg.Extent.StartColumnNumber);
-                bool arrayIsSingleArgumentForNativeCommand = ArgumentIsNotReallyArrayIfCommandIsNative(arg);
                 return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameterWithArgument,
-                                       Expression.Constant(errorPos),
+                                       Expression.Constant(commandParameterAst),
                                        Expression.Constant(commandParameterAst.ParameterName),
                                        Expression.Constant(errorPos.Text),
-                                       Expression.Constant(arg.Extent),
+                                       Expression.Constant(arg),
                                        Expression.Convert(GetCommandArgumentExpression(arg), typeof(object)),
-                                       ExpressionCache.Constant(spaceAfterParameter),
-                                       ExpressionCache.Constant(arrayIsSingleArgumentForNativeCommand));
+                                       ExpressionCache.Constant(spaceAfterParameter));
             }
 
             return Expression.Call(CachedReflectionInfo.CommandParameterInternal_CreateParameter,
-                                   Expression.Constant(errorPos),
                                    Expression.Constant(commandParameterAst.ParameterName),
-                                   Expression.Constant(errorPos.Text));
+                                   Expression.Constant(errorPos.Text),
+                                   Expression.Constant(commandParameterAst));
         }
 
         internal static Expression ThrowRuntimeError(string errorID, string resourceString, params Expression[] exceptionArgs)
@@ -4870,6 +4874,11 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
+                    if(lhs.Type == typeof(string)){
+                        return Expression.Call(CachedReflectionInfo.CharOps_Range,
+                                               lhs.Convert(typeof(char)),
+                                               rhs.Convert(typeof(char)));
+                    }
                     return Expression.Call(CachedReflectionInfo.IntOps_Range,
                                            lhs.Convert(typeof(int)),
                                            rhs.Convert(typeof(int)));

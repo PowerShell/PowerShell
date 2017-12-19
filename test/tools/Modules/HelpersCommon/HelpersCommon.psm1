@@ -11,16 +11,26 @@ function Wait-UntilTrue
 
     # Loop until the script block evaluates to true
     while (-not ($sb.Invoke())) {
-        # Sleep for the specified interval
-        start-sleep -mil $intervalInMilliseconds
-
-        # If the timeout period has passed, throw an exception
-        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds)
-        {
+        # If the timeout period has passed, return false
+        if (([DateTime]::Now - $startTime).TotalMilliseconds -gt $timeoutInMilliseconds) {
             return $false
         }
+        # Sleep for the specified interval
+        Start-Sleep -Milliseconds $intervalInMilliseconds
     }
     return $true
+}
+
+function Wait-FileToBePresent
+{
+    [CmdletBinding()]
+    param (
+        [string]$File,
+        [int]$TimeoutInSeconds = 10,
+        [int]$IntervalInMilliseconds = 100
+    )
+
+    Wait-UntilTrue -sb { Test-Path $File } -TimeoutInMilliseconds ($TimeoutInSeconds*1000) -IntervalInMilliseconds $IntervalInMilliseconds > $null
 }
 
 function Test-IsElevated
@@ -68,3 +78,62 @@ function ShouldBeErrorId
         }
 }
 
+function Get-RandomFileName
+{
+    [System.IO.Path]::GetFileNameWithoutExtension([IO.Path]::GetRandomFileName())
+}
+
+#
+# Testhook setting functions
+# note these manipulate private data in the PowerShell engine which will
+# enable us to not actually alter the system or mock returned data
+#
+$SCRIPT:TesthookType = [system.management.automation.internal.internaltesthooks] 
+function Test-TesthookIsSet
+{
+    param (
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$true)]
+        $testhookName
+    )
+    try {
+        return ${Script:TesthookType}.GetField($testhookName, "NonPublic,Static").GetValue($null)
+    }
+    catch {
+        # fall through
+    }
+    return $false
+}
+
+function Enable-Testhook
+{
+    param (
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$true)]
+        $testhookName
+    )
+    ${Script:TesthookType}::SetTestHook($testhookName, $true)
+}
+
+function Disable-Testhook
+{
+    param (
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$true)]
+        $testhookName
+    )
+    ${Script:TesthookType}::SetTestHook($testhookName, $false)
+}
+
+function Set-TesthookResult
+{
+    param (
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$true)]
+        $testhookName, 
+        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory=$true)]
+        $value
+    )
+    ${Script:TesthookType}::SetTestHook($testhookName, $value)
+}

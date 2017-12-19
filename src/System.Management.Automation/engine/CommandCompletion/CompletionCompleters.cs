@@ -1,6 +1,6 @@
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -118,13 +118,6 @@ namespace System.Management.Automation
                 Exception exceptionThrown;
                 var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
 
-                // Complete against pseudo commands that work only in the script workflow.
-                // If RelatedAst is null then it's for argument completion, because we don't complete pseudo commands for arguments
-                if (lastAst != null)
-                {
-                    commandInfos = CompleteWorkflowCommand(commandName, lastAst, commandInfos);
-                }
-
                 if (commandInfos != null && commandInfos.Count > 1)
                 {
                     // OrderBy is using stable sorting
@@ -195,21 +188,6 @@ namespace System.Management.Automation
             }
 
             return commandResults;
-        }
-
-        /// <summary>
-        /// Construct a new instance of CompletionContext with RelatedAst = null.
-        /// For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
-        /// The way to avoid that is to pass in a CompletionContext with RelatedAst = null.
-        /// </summary>
-        private static CompletionContext NewContextToCompleteCommandAsArgument(CompletionContext context)
-        {
-            return new CompletionContext {
-                WordToComplete = context.WordToComplete,
-                Helper = context.Helper,
-                ExecutionContext = context.ExecutionContext,
-                Options = context.Options
-            };
         }
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
@@ -364,9 +342,7 @@ namespace System.Management.Automation
                     for (int index = 1; index < commandList.Count; index++)
                     {
                         var commandInfo = commandList[index] as CommandInfo;
-                        // If it's a pseudo command that only works in the script workflow, don't bother adding it to the result
-                        // list since it's a duplicate
-                        if (commandInfo == null) { continue; }
+                        Diagnostics.Assert(commandInfo != null, "Elements should always be CommandInfo");
 
                         if (commandInfo.CommandType == CommandTypes.Application)
                         {
@@ -407,30 +383,6 @@ namespace System.Management.Automation
             }
 
             return results;
-        }
-
-        /// <summary>
-        /// Contains the pseudo commands that only work in the script workflow.
-        /// </summary>
-        internal static readonly List<string> PseudoWorkflowCommands
-            = new List<string> { "Checkpoint-Workflow", "Suspend-Workflow", "InlineScript" };
-        private static Collection<PSObject> CompleteWorkflowCommand(string command, Ast lastAst, Collection<PSObject> commandInfos)
-        {
-            if (!lastAst.IsInWorkflow())
-                return commandInfos;
-
-            commandInfos = commandInfos ?? new Collection<PSObject>();
-            var commandPattern = WildcardPattern.Get(command, WildcardOptions.IgnoreCase);
-
-            foreach (string pseudoCommand in PseudoWorkflowCommands)
-            {
-                if (!commandPattern.IsMatch(pseudoCommand))
-                    continue;
-
-                commandInfos.Add(PSObject.AsPSObject(pseudoCommand));
-            }
-
-            return commandInfos;
         }
 
         private class FindFunctionsVisitor : AstVisitor
@@ -1339,10 +1291,7 @@ namespace System.Management.Automation
 
                 if (context.WordToComplete != string.Empty && context.WordToComplete.IndexOf('-') != -1)
                 {
-                    // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
-                    // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                    var newContext = NewContextToCompleteCommandAsArgument(context);
-                    var commandResults = CompleteCommand(newContext);
+                    var commandResults = CompleteCommand(context);
                     if (commandResults != null)
                         result.AddRange(commandResults);
                 }
@@ -2053,6 +2002,20 @@ namespace System.Management.Automation
                 {
                 }
             }
+
+            var argumentCompletionsAttribute = parameter.CompiledAttributes.OfType<ArgumentCompletionsAttribute>().FirstOrDefault();
+            if (argumentCompletionsAttribute != null)
+            {
+                var customResults = argumentCompletionsAttribute.CompleteArgument(commandName, parameterName,
+                        context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
+                if (customResults != null)
+                {
+                    result.AddRange(customResults);
+                    result.Add(CompletionResult.Null);
+                    return;
+                }
+            }
+
             switch (commandName)
             {
                 case "Get-Command":
@@ -2103,10 +2066,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Command", StringComparison.OrdinalIgnoreCase))
                         {
-                            // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
-                            // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                            var newContext = NewContextToCompleteCommandAsArgument(context);
-                            var commandResults = CompleteCommand(newContext);
+                            var commandResults = CompleteCommand(context);
                             if (commandResults != null)
                                 result.AddRange(commandResults);
                         }
@@ -2796,10 +2756,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 // Available commands
-                // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
-                // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                var newContext = NewContextToCompleteCommandAsArgument(context);
-                var commandResults = CompleteCommand(newContext, moduleName);
+                var commandResults = CompleteCommand(context, moduleName);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
@@ -2858,11 +2815,8 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 // Available commands
-                // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
-                // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Alias | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
-                var newContext = NewContextToCompleteCommandAsArgument(context);
-                var commandResults = CompleteCommand(newContext, /* moduleName: */ null, commandTypes);
+                const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Alias | CommandTypes.ExternalScript | CommandTypes.Configuration;
+                var commandResults = CompleteCommand(context, /* moduleName: */ null, commandTypes);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
@@ -3113,9 +3067,8 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellModuleFileExtension,
                                 StringLiterals.PowerShellDataFileExtension,
                                 StringLiterals.PowerShellNgenAssemblyExtension,
-                                StringLiterals.DependentWorkflowAssemblyExtension,
-                                StringLiterals.PowerShellCmdletizationFileExtension,
-                                StringLiterals.WorkflowFileExtension
+                                StringLiterals.PowerShellILAssemblyExtension,
+                                StringLiterals.PowerShellCmdletizationFileExtension
                             };
                     var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));
                     if (moduleFilesResults.Count > 0)
@@ -3514,11 +3467,8 @@ namespace System.Management.Automation
             {
                 // Complete for the parameter Definition
                 // Available commands
-                // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
-                // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
-                var newContext = NewContextToCompleteCommandAsArgument(context);
-                var commandResults = CompleteCommand(newContext, /* moduleName: */ null, commandTypes);
+                const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Configuration;
+                var commandResults = CompleteCommand(context, /* moduleName: */ null, commandTypes);
                 if (commandResults != null && commandResults.Count > 0)
                     result.AddRange(commandResults);
 

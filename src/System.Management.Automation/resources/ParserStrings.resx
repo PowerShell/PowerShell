@@ -420,10 +420,12 @@ Possible matches are</value>
     <value>Missing statement block in switch statement clause.</value>
   </data>
   <data name="MissingForeachExpression" xml:space="preserve">
-    <value>Missing expression in foreach loop.</value>
+    <value>Missing expression in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingForeachStatement" xml:space="preserve">
-    <value>Missing statement body in foreach loop.</value>
+    <value>Missing statement body in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="OnlyOneParameterListAllowed" xml:space="preserve">
     <value>The param statement cannot be used if arguments were specified in the function declaration.</value>
@@ -516,13 +518,16 @@ Possible matches are</value>
     <value>Missing '{' in switch statement.</value>
   </data>
   <data name="MissingVariableNameAfterForeach" xml:space="preserve">
-    <value>Missing variable name after foreach.</value>
+    <value>Missing variable name after foreach.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingInInForeach" xml:space="preserve">
-    <value>Missing 'in' after variable in foreach loop.</value>
+    <value>Missing 'in' after variable in foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingEndParenthesisAfterForeach" xml:space="preserve">
-    <value>Missing closing ')' after expression part of foreach loop.</value>
+    <value>Missing closing ')' after expression part of foreach loop.
+The correct form is: foreach ($a in $b) {...}</value>
   </data>
   <data name="MissingOpenParenthesisAfterKeyword" xml:space="preserve">
     <value>Missing opening '(' after keyword '{0}'.</value>
@@ -850,7 +855,7 @@ Possible matches are</value>
     <value>Flow of control cannot leave a Finally block.</value>
   </data>
   <data name="UnrecoverableParserError" xml:space="preserve">
-    <value>Unrecoverable error in Windows PowerShell.</value>
+    <value>Unrecoverable error in PowerShell.</value>
   </data>
   <data name="AstIsReused" xml:space="preserve">
     <value>An AST cannot be used as the child of more than one AST. To use this AST in another AST, call the Copy() method and use its result.</value>
@@ -925,7 +930,7 @@ Possible matches are</value>
     <value>The argument for the Module parameter is not valid. {0}</value>
   </data>
   <data name="RequiresVersionInvalid" xml:space="preserve">
-    <value>The argument for the Version parameter is not valid. Specify a valid Windows PowerShell version, in the format major.minor version.</value>
+    <value>The argument for the Version parameter is not valid. Specify a valid PowerShell version, in the format major.minor version.</value>
   </data>
   <data name="RequiresPSEditionInvalid" xml:space="preserve">
     <value>The argument for the {0} parameter is not valid. Specify a valid PowerShell edition.</value>

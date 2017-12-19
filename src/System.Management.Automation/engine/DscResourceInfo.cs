@@ -1,5 +1,6 @@
 //-----------------------------------------------------------------------
-//     Copyright (C) 2013 Microsoft Corporation
+// <copyright company="Microsoft">
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 

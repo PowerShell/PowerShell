@@ -1,5 +1,5 @@
 ﻿//
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
 using System.Collections.Generic;
@@ -116,16 +116,6 @@ namespace System.Management.Automation
         internal static bool IsInteger(this Type type)
         {
             return LanguagePrimitives.IsInteger(LanguagePrimitives.GetTypeCode(type));
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsComObject(this Type type)
-        {
-#if UNIX
-            return false;
-#else
-            return type.IsCOMObject;
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

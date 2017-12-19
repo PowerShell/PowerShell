@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell top-level project with .NET CLI host</Description>
-    <AssemblyName>powershell</AssemblyName>
+    <AssemblyName>pwsh</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>ubuntu.14.04-x64;ubuntu.16.04-x64;ubuntu.16.10-x64;debian.8-x64;centos.7-x64;fedora.24-x64;osx.10.12-x64;opensuse.13.2-x64;opensuse.42.1-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>linux-x64;osx.10.12-x64;</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
-    <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" Exclude="..\Modules\Shared\Pester\.git*;..\Modules\Shared\Pester\*.yml">
-      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link> 
+    <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" >
+      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="*.so;*.dylib;..\..\license_thirdparty_proprietary.txt;..\..\powershell.version;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
+    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
@@ -28,9 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="psrp" Version="1.1.0-*" />
-    <PackageReference Include="PSDesiredStateConfiguration" Version="1.0.0-alpha01" />
-    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
+    <PackageReference Include="libpsl" Version="6.0.0-*" />
+    <PackageReference Include="psrp" Version="1.4.1-*" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
+    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
   </ItemGroup>
 
   <PropertyGroup>

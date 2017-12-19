@@ -14,7 +14,7 @@ Describe "Build Linux Containers" -Tags 'Build', 'Linux' {
             [Parameter(Mandatory=$true)]
             [string]
             $name,
-            
+
             [Parameter(Mandatory=$true)]
             [string]
             $path
@@ -33,7 +33,7 @@ Describe "Build Windows Containers" -Tags 'Build', 'Windows' {
             [Parameter(Mandatory=$true)]
             [string]
             $name,
-            
+
             [Parameter(Mandatory=$true)]
             [string]
             $path
@@ -62,19 +62,19 @@ Describe "Linux Containers run PowerShell" -Tags 'Behavior', 'Linux' {
         Remove-Item $testContext.resolvedXmlPath -ErrorAction SilentlyContinue
         Remove-Item $testContext.resolvedLogPath -ErrorAction SilentlyContinue
     }
-    
+
     it "Get PSVersion table from $(Get-RepoName):<Name>" -TestCases $script:linuxContainerTests -Skip:$script:skipLinux {
         param(
             [Parameter(Mandatory=$true)]
             [string]
             $name,
-            
+
             [Parameter(Mandatory=$true)]
             [string]
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0-beta'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0-rc.2'
     }
 }
 
@@ -87,18 +87,18 @@ Describe "Windows Containers run PowerShell" -Tags 'Behavior', 'Windows' {
         Remove-Item $testContext.resolvedXmlPath -ErrorAction SilentlyContinue
         Remove-Item $testContext.resolvedLogPath -ErrorAction SilentlyContinue
     }
-    
+
     it "Get PSVersion table from $(Get-RepoName):<Name>" -TestCases $script:windowsContainerTests -skip:$script:skipWindows {
         param(
             [Parameter(Mandatory=$true)]
             [string]
             $name,
-            
+
             [Parameter(Mandatory=$true)]
             [string]
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0-beta'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0-rc.2'
     }
 }

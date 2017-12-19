@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -440,9 +440,23 @@ namespace System.Management.Automation
 
         internal static bool IsTypeEnumerable(Type type)
         {
+            if (type == null) { return false; }
             GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(type);
             return (getEnumerable != LanguagePrimitives.ReturnNullEnumerable);
         }
+
+        /// <summary>
+        /// Returns True if the language considers obj to be IEnumerable
+        /// </summary>
+        /// <param name="obj">
+        /// IEnumerable or IEnumerable-like object
+        /// </param>
+        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
+        public static bool IsObjectEnumerable(object obj)
+        {
+            return IsTypeEnumerable(PSObject.Base(obj)?.GetType());
+        }
+
 
         /// <summary>
         /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable
@@ -453,26 +467,9 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static IEnumerable GetEnumerable(object obj)
         {
-            if (obj == null)
-            {
-                return null;
-            }
-
-            Type objectType = obj.GetType();
-
-            // if the object passed is an PSObject,
-            // look at the base object. Notice that, if the
-            // object has been serialized, the base object
-            // will be there as an ArrayList if the original
-            // object was IEnumerable
-            if (objectType == typeof(PSObject))
-            {
-                PSObject mshObj = (PSObject)obj;
-                obj = mshObj.BaseObject;
-                objectType = obj.GetType();
-            }
-
-            GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(objectType);
+            obj = PSObject.Base(obj);
+            if (obj == null) { return null; }
+            GetEnumerableDelegate getEnumerable = GetOrCalculateEnumerable(obj.GetType());
             return getEnumerable(obj);
         }
 
@@ -1550,7 +1547,7 @@ namespace System.Management.Automation
         ///                                                 query is run using ManagementObjectSearcher Class.
         ///     - to WMIClass                           -   returns ManagementClass represented by the
         ///                                                 string representation of valueToConvert.
-        ///     - to ADSI                               -   returns DirectoryEntry  represented by the
+        ///     - to ADSI                               -   returns DirectoryEntry represented by the
         ///                                                 string representation of valueToConvert.
         ///     - to ADSISearcher                       -   return DirectorySearcher represented by the
         ///                                                 string representation of valueToConvert.
@@ -2314,7 +2311,7 @@ namespace System.Management.Automation
                                                     IFormatProvider formatProvider,
                                                     TypeTable backupTable)
         {
-            typeConversion.WriteLine("Standard type conversion to  DirectoryEntry.");
+            typeConversion.WriteLine("Standard type conversion to DirectoryEntry.");
 
             string valueToConvertString;
             try
@@ -3215,6 +3212,57 @@ namespace System.Management.Automation
                 valueToConvert.ToString(), resultType.ToString(), exception.Message);
         }
 
+
+        private static Delegate ConvertPSMethodInfoToDelegate(object valueToConvert,
+                                                      Type resultType,
+                                                      bool recurse,
+                                                      PSObject originalValueToConvert,
+                                                      IFormatProvider formatProvider,
+                                                      TypeTable backupTable)
+        {
+            PSMethod psMethod;
+            try
+            {
+                psMethod = (PSMethod) valueToConvert;
+
+                var maybeType = psMethod.instance as Type;
+                var methodInfoCandiates = maybeType != null
+                    ? maybeType.GetMethods(BindingFlags.Static | BindingFlags.Public)
+                    : psMethod.instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+                var targetMethodInfo = resultType.GetMethod("Invoke");
+
+                var comparator = new DelegateArgsComparator(targetMethodInfo);
+
+                foreach (var candidate in methodInfoCandiates)
+                {
+                    if (candidate.Name != psMethod.Name)
+                    {
+                        continue;
+                    }
+                    if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
+                    {
+                        return maybeType != null
+                            ? candidate.CreateDelegate(resultType)
+                            : candidate.CreateDelegate(resultType, psMethod.instance);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                typeConversion.WriteLine("PSMethod to Delegate exception: \"{0}\".", e.Message);
+                throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", e,
+                    ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                    valueToConvert.ToString(), resultType.ToString(), e.Message);
+            }
+
+            var msg = String.Format(ExtendedTypeSystem.PSMethodToDelegateNoMatchingOverLoad,  psMethod, resultType);
+            typeConversion.WriteLine($"PSMethod to Delegate exception: \"{msg}\".");
+            throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", null,
+                ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                valueToConvert.ToString(), resultType.ToString(), msg);
+    }
+
         private static object ConvertToNullable(object valueToConvert,
                                                 Type resultType,
                                                 bool recursion,
@@ -3340,7 +3388,7 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
             }
 
-            // Check if the result is a defined enum..otherwise throw  an error
+            // Check if the result is a defined enum..otherwise throw an error
             // valueToConvert is the user supplied value. Use that in the error message.
             EnumSingleTypeConverter.ThrowForUndefinedEnum("UndefinedIntegerToEnum", result, valueToConvert, resultType);
 
@@ -3691,7 +3739,7 @@ namespace System.Management.Automation
                     ExecutionContext ecFromTLS = LocalPipeline.GetExecutionContextFromTLS();
                     object result = null;
 
-                    if ((ecFromTLS == null) || (ecFromTLS != null && ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage))
+                    if (ecFromTLS == null || ecFromTLS.LanguageMode == PSLanguageMode.FullLanguage)
                     {
                         result = _constructor();
                         var psobject = valueToConvert as PSObject;
@@ -4007,6 +4055,7 @@ namespace System.Management.Automation
             return null;
         }
 
+        [System.Diagnostics.DebuggerDisplay("{from.Name}->{to.Name}")]
         private struct ConversionTypePair
         {
             internal Type from;
@@ -4060,6 +4109,7 @@ namespace System.Management.Automation
                           TypeTable backupTable);
         }
 
+        [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : ConversionData
         {
             private readonly PSConverter<T> _converter;
@@ -4742,7 +4792,68 @@ namespace System.Management.Automation
                 return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertIntegerToEnum, ConversionRank.Language);
             }
 
+            if (fromType.IsSubclassOf(typeof(PSMethod)) && toType.IsSubclassOf(typeof(Delegate)))
+            {
+                var mi = toType.GetMethod("Invoke");
+
+                var comparator = new DelegateArgsComparator(mi);
+                var signatureEnumerator = new PSMethodSignatureEnumerator(fromType);
+                while (signatureEnumerator.MoveNext())
+                {
+                    var candidate = signatureEnumerator.Current.GetMethod("Invoke");
+
+                    if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
+                    {
+                        return CacheConversion<Delegate>(fromType, toType, LanguagePrimitives.ConvertPSMethodInfoToDelegate, ConversionRank.Language);
+                    }
+                }
+            }
+
             return null;
+        }
+
+        struct DelegateArgsComparator
+        {
+            private readonly ParameterInfo[] _targetParametersInfos;
+            private readonly Type _returnType;
+
+            public DelegateArgsComparator(MethodInfo targetMethodInfo)
+            {
+                _returnType = targetMethodInfo.ReturnType;
+                _targetParametersInfos = targetMethodInfo.GetParameters();
+            }
+
+            public bool SignatureMatches(Type returnType, ParameterInfo[] arguments)
+            {
+                return ReturnTypeMatches(returnType) && ParameterTypesMatches(arguments);
+            }
+
+            private bool ReturnTypeMatches(Type returnType)
+            {
+                return PSMethod.MatchesPSMethodProjectedType(_returnType, returnType, testAssignment: true);
+            }
+
+            private bool ParameterTypesMatches(ParameterInfo[] arguments)
+            {
+                var argsCount = _targetParametersInfos.Length;
+                // void is encoded as typeof(Unit) in the PSMethod<MethodGroup<>> as the last parameter
+                if (arguments.Length != argsCount)
+                {
+                    return false;
+                }
+                for (int i = 0; i < arguments.Length; i++)
+                {
+                    var arg = arguments[i];
+                    var argType = arg.ParameterType;
+                    var targetParamType = _targetParametersInfos[i].ParameterType;
+                    var isOut = (arg.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out;
+                    if (!PSMethod.MatchesPSMethodProjectedType(targetParamType, argType, isOut: isOut))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
         }
 
         private static PSConverter<object> FigureStaticCreateMethodConversion(Type fromType, Type toType)

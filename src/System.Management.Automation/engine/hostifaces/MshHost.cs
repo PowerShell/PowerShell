@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Management.Automation.Runspaces;
@@ -43,7 +43,7 @@ namespace System.Management.Automation.Host
     public abstract class PSHost
     {
         /// <summary>
-        /// The powershell.exe spec states that 128 is the maximum nesting depth.
+        /// The powershell spec states that 128 is the maximum nesting depth.
         /// </summary>
         internal const int MaximumNestedPromptLevel = 128;
         internal static bool IsStdOutputRedirected;
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Host
         /// that process boundary in the same fashion as any object in a pipeline is serialized when crossing process boundaries.
         /// In this case, the BaseObject property of the value will be null.
         ///
-        /// If the host is using an in-process Runspace, then the BaseObject property can be a non-null value  a live object.
+        /// If the host is using an in-process Runspace, then the BaseObject property can be a non-null value a live object.
         /// No guarantees are made as to the app domain or thread that the BaseObject is accessed if it is accessed in the
         /// runspace. No guarantees of threadsafety or reentrancy are made.  The object set in the BaseObject property of
         /// the value returned by this method is responsible for ensuring its own threadsafety and re-entrance safety.

@@ -300,13 +300,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Generate HTML fragment data string with  header that is required for the clipboard.
+        /// Generate HTML fragment data string with header that is required for the clipboard.
         /// </summary>
-        /// <param name="html">the  html to generate for</param>
-        /// <returns>the resulted  string</returns>
+        /// <param name="html">the html to generate for</param>
+        /// <returns>the resulted string</returns>
         private static string GetHtmlDataString(string html)
         {
-            // The string contains index references to  other spots in the string, so we need placeholders so we can compute the  offsets.
+            // The string contains index references to other spots in the string, so we need placeholders so we can compute the offsets.
             // The  "<<<<<<<<1,<<<<<<<<2, etc" strings are just placeholders.  We'll back-patch them actual values within the header location afterwards.
             const string Header = @"Version:0.9
 StartHTML:<<<<<<<<1
@@ -323,7 +323,7 @@ EndSelection:<<<<<<<<4";
             sb.AppendLine(Header);
             sb.AppendLine(@"<!DOCTYPE HTML  PUBLIC ""-//W3C//DTD HTML 4.0  Transitional//EN"">");
 
-            // if given html already provided the  fragments we won't add them
+            // if given html already provided the fragments we won't add them
             int fragmentStart, fragmentEnd;
             int fragmentStartIdx = html.IndexOf(StartFragment, StringComparison.OrdinalIgnoreCase);
             int fragmentEndIdx = html.LastIndexOf(EndFragment, StringComparison.OrdinalIgnoreCase);
@@ -343,7 +343,7 @@ EndSelection:<<<<<<<<4";
 
                 if (htmlOpenEndIdx < 0 && bodyOpenEndIdx < 0)
                 {
-                    // the given html doesn't  contain html or body tags so we need to add them and place start/end fragments  around the given html only
+                    // the given html doesn't contain html or body tags so we need to add them and place start/end fragments around the given html only
                     sb.Append("<html><body>");
                     sb.Append(StartFragment);
                     fragmentStart = GetByteCount(sb);
@@ -354,7 +354,7 @@ EndSelection:<<<<<<<<4";
                 }
                 else
                 {
-                    // insert start/end fragments  in the proper place (related to html/body tags if exists) so the paste will  work correctly
+                    // insert start/end fragments in the proper place (related to html/body tags if exists) so the paste will work correctly
                     //find the index of "</body", ignore white space and case
                     int bodyCloseIdx = Regex.Match(html, @"<\s*/\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
 
@@ -398,12 +398,12 @@ EndSelection:<<<<<<<<4";
         }
 
         /// <summary>
-        /// Calculates the number of bytes produced  by encoding the string in the string builder in UTF-8 and not .NET default  string encoding.
+        /// Calculates the number of bytes produced by encoding the string in the string builder in UTF-8 and not .NET default string encoding.
         /// </summary>
-        /// <param name="sb">the  string builder to count its string</param>
-        /// <param  name="start">optional: the start index to calculate from (default  - start of string)</param>
-        /// <param  name="end">optional: the end index to calculate to (default - end  of string)</param>
-        /// <returns>the number of bytes  required to encode the string in UTF-8</returns>
+        /// <param name="sb">the string builder to count its string</param>
+        /// <param name="start">optional: the start index to calculate from (default  - start of string)</param>
+        /// <param name="end">optional: the end index to calculate to (default - end of string)</param>
+        /// <returns>the number of bytes required to encode the string in UTF-8</returns>
         private static int GetByteCount(StringBuilder sb, int start = 0, int end = -1)
         {
             char[] _byteCount = new char[1];

@@ -73,28 +73,28 @@ Describe "TabCompletion" -Tags CI {
         $completionText -join ' ' | Should Be 'Expression FormatString'
     }
 
-    It 'Should complete format-custom  hashtable' {
+    It 'Should complete format-custom hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Custom @{ ' -cursorColumn 'Get-ChildItem | Format-Custom @{ '.Length
         $res.CompletionMatches.Count | Should Be 2
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' ' | Should Be 'Depth Expression'
     }
 
-    It 'Should complete Select-Object  hashtable' {
+    It 'Should complete Select-Object hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Select-Object @{ ' -cursorColumn 'Get-ChildItem | Select-Object @{ '.Length
         $res.CompletionMatches.Count | Should Be 2
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' '| Should Be 'Expression Name'
     }
 
-    It 'Should complete Sort-Object  hashtable' {
+    It 'Should complete Sort-Object hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Sort-Object @{ ' -cursorColumn 'Get-ChildItem | Sort-Object @{ '.Length
         $res.CompletionMatches.Count | Should Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' '| Should Be 'Ascending Descending Expression'
     }
 
-    It 'Should complete New-Object  hashtable' {
+    It 'Should complete New-Object hashtable' {
         class X {
             $A
             $B
@@ -117,21 +117,6 @@ Describe "TabCompletion" -Tags CI {
     It 'Should complete keyword' -skip {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
-    }
-
-    It 'Should complete about help topic' {
-
-        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
-
-        ## If help content does not exist, tab completion will not work. So update it first.
-        if(-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
-        {
-            Update-Help -Force -ErrorAction SilentlyContinue
-        }
-
-        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-        $res.CompletionMatches.Count | Should Be 1
-        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
     }
 
     Context NativeCommand {
@@ -355,7 +340,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
                 @{ inputStr = '$MaximumHistoryCount.'; expected = 'CompareTo('; setup = $null }
                 @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
-                @{ inputStr = '$x= gps powershell;$x.*pm'; expected = 'NPM'; setup = $null }
+                @{ inputStr = '$x= gps pwsh;$x.*pm'; expected = 'NPM'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
                 @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
                 @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }
@@ -418,7 +403,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'gmo -list PackageM'; expected = 'PackageManagement'; setup = $null }
                 @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
                 @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }
-                @{ inputStr = 'Get-Process powersh'; expected = 'powershell'; setup = $null }
+                @{ inputStr = 'Get-Process pws'; expected = 'pwsh'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.ProcessN"; expected = 'ProcessName'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.LastAc"; expected = 'LastAccessTime'; setup = $null }
                 @{ inputStr = "& 'get-comm"; expected = "'Get-Command'"; setup = $null }
@@ -433,7 +418,8 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$global:max'; expected = '$global:MaximumHistoryCount'; setup = $null }
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
-                @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME 'Modules'; setup = $null }
+                ## if $PSHOME contains a space tabcompletion adds ' around the path
+                @{ inputStr = 'cd $pshome\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
                 @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
@@ -467,7 +453,7 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -496,7 +482,7 @@ Describe "TabCompletion" -Tags CI {
                 $afterTab = 'filesystem::/usr' -f $env:SystemDrive
             }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -914,13 +900,13 @@ dir -Recurse `
                 @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
                 @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
-                @{ inputStr = 'Get-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Int*ro'; expected = 'root/Interop' }
                 @{ inputStr = 'Get-CimInstance -Namespace root/Interop/'; expected = 'root/Interop/ms_409' }
-                @{ inputStr = 'New-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Invoke-CimMethod -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Get-CimClass -Namespace root/Int'; expected = 'root/Interop' }
-                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'New-CimInstance -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Invoke-CimMethod -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimClass -Namespace root/Inter'; expected = 'root/Interop' }
+                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Inter'; expected = 'root/Interop' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
                 @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
@@ -934,6 +920,38 @@ dir -Recurse `
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
         }
+    }
+
+    Context "Module cmdlet completion tests" {
+        It "ArugmentCompleter for PSEdition should work for '<cmd>'" -TestCases @(
+            @{cmd = "Get-Module -PSEdition "; expected = "Desktop", "Core"}
+        ) {
+            param($cmd, $expected)
+            $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+            $res.CompletionMatches.Count | Should Be $expected.Count
+            $completionOptions = ""
+            foreach ($completion in $res.CompletionMatches) {
+                $completionOptions += $completion.ListItemText
+            }
+            $completionOptions | Should Be ([string]::Join("", $expected))
+        }
+    }
+}
+
+Describe "Tab completion help test" -Tags @('RequireAdminOnWindows', 'CI') {
+    It 'Should complete about help topic' {
+
+        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+
+        ## If help content does not exist, tab completion will not work. So update it first.
+        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
+        {
+            Update-Help -Force -ErrorAction SilentlyContinue
+        }
+
+        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+        $res.CompletionMatches.Count | Should Be 1
+        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
     }
 }
 
@@ -989,5 +1007,67 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature {
         $res = [System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $elementAst.Extent.EndScriptPosition, $null, $powershell)
         $res.CompletionMatches.Count | Should BeGreaterThan 0
         $res.CompletionMatches[0].CompletionText | Should Be $expected
+    }
+}
+
+Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOnWindows {
+
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+    }
+
+    AfterAll {
+        $Global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "Tab completion works correctly for Listeners" {
+        $path = "wsman:\localhost\listener\listener"
+        $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
+        $listener = Get-ChildItem WSMan:\localhost\Listener
+        $res.CompletionMatches.Count | Should Be $listener.Count
+        for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
+            $res.CompletionMatches[$i].ListItemText | Should Be $listener[$i].Name
+        }
+    }
+
+    It "Tab completion gets dynamic parameters for '<path>' using '<parameter>'" -TestCases @(
+        @{path = ""; parameter = "-co"; expected = "ConnectionURI"},
+        @{path = ""; parameter = "-op"; expected = "OptionSet"},
+        @{path = ""; parameter = "-au"; expected = "Authentication"},
+        @{path = ""; parameter = "-ce"; expected = "CertificateThumbprint"},
+        @{path = ""; parameter = "-se"; expected = "SessionOption"},
+        @{path = ""; parameter = "-ap"; expected = "ApplicationName"},
+        @{path = ""; parameter = "-po"; expected = "Port"},
+        @{path = ""; parameter = "-u"; expected = "UseSSL"},
+        @{path = "localhost\plugin"; parameter = "-pl"; expected = "Plugin"},
+        @{path = "localhost\plugin"; parameter = "-sd"; expected = "SDKVersion"},
+        @{path = "localhost\plugin"; parameter = "-re"; expected = "Resource"},
+        @{path = "localhost\plugin"; parameter = "-ca"; expected = "Capability"},
+        @{path = "localhost\plugin"; parameter = "-xm"; expected = "XMLRenderingType"},
+        @{path = "localhost\plugin"; parameter = "-fi"; expected = @("FileName", "File")},
+        @{path = "localhost\plugin"; parameter = "-ru"; expected = "RunAsCredential"},
+        @{path = "localhost\plugin"; parameter = "-us"; expected = "UseSharedProcess"},
+        @{path = "localhost\plugin"; parameter = "-au"; expected = "AutoRestart"},
+        @{path = "localhost\plugin"; parameter = "-pr"; expected = "ProcessIdleTimeoutSec"},
+        @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-re"; expected = "ResourceUri"},
+        @{path = "localhost\Plugin\microsoft.powershell\Resources\"; parameter = "-ca"; expected = "Capability"}
+    ) {
+        param($path, $parameter, $expected)
+        $script = "new-item wsman:\$path $parameter"
+        $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $res.CompletionMatches.Count | Should Be $expected.Count
+        $completionOptions = ""
+        foreach ($completion in $res.CompletionMatches) {
+            $completionOptions += $completion.ListItemText
+        }
+        $completionOptions | Should Be ([string]::Join("", $expected))
+    }
+
+    It "Tab completion get dynamic parameters for initialization parameters" -Pending -TestCases @(
+        @{path = "localhost\Plugin\microsoft.powershell\InitializationParameters\"; parameter = "-pa"; expected = @("ParamName", "ParamValue")}
+    ) {
+        # https://github.com/PowerShell/PowerShell/issues/4744
+        # TODO: move to test cases above once working
     }
 }

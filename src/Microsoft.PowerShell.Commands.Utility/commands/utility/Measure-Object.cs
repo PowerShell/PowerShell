@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class output by Measure-Object.
     /// </summary>
     /// <remarks>
-    /// This class is created for fixing "Measure-Object -MAX -MIN  should work with ANYTHING that supports CompareTo"
+    /// This class is created for fixing "Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo"
     /// bug (Win8:343911).
     /// GenericMeasureInfo class is shipped with PowerShell V2. Fixing this bug requires, changing the type of
     /// Maximum and Minimum properties which would be a breaking change. Hence created a new class to not
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeNumber(numValue, stat);
             }
 
-            // Win8:343911 Measure-Object -MAX -MIN  should work with ANYTHING that supports CompareTo
+            // Win8:343911 Measure-Object -MAX -MIN should work with ANYTHING that supports CompareTo
             if (_measureMin)
             {
                 stat.min = Compare(objValue, stat.min, true);

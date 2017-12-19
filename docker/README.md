@@ -23,6 +23,10 @@ and about 120 megabytes of .NET Core and bootstrapping dependencies.
 
 [docker-release]: https://hub.docker.com/r/microsoft/powershell/
 
+## Community
+
+The docker files in the community folder were contributed by the community and are not yet officially supported.
+
 ## Examples
 
 To run PowerShell from using a container:
@@ -42,7 +46,7 @@ adf6ad28fa0e: Pull complete
 Digest: sha256:92c79c5fcdaf3027626643aef556344b8b4cbdaccf8443f543303319949c7f3a
 Status: Downloaded newer image for microsoft/powershell:latest
 PowerShell
-Copyright © 2016 Microsoft Corporation. All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 
 PS /> Write-Host "Hello, World!"
 Hello, World!

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Runtime.Serialization;
@@ -27,25 +27,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initiate an instance of PSConsoleLoadException.
         /// </summary>
-        /// <param name="consoleInfo">Console info object for the exception</param>
-        /// <param name="exceptions">A collection of PSSnapInExceptions.</param>
-        internal PSConsoleLoadException(MshConsoleInfo consoleInfo, Collection<PSSnapInException> exceptions)
-            : base()
-        {
-            if (!String.IsNullOrEmpty(consoleInfo.Filename))
-                _consoleFileName = consoleInfo.Filename;
-
-            if (exceptions != null)
-            {
-                _PSSnapInExceptions = exceptions;
-            }
-
-            CreateErrorRecord();
-        }
-
-        /// <summary>
-        /// Initiate an instance of PSConsoleLoadException.
-        /// </summary>
         public PSConsoleLoadException() : base()
         {
         }
@@ -69,6 +50,23 @@ namespace System.Management.Automation.Runspaces
         {
         }
 
+        private ErrorRecord _errorRecord;
+
+        /// <summary>
+        /// Gets error record embedded in this exception.
+        /// </summary>
+        /// <!--
+        /// This property is required as part of IErrorRecordContainer
+        /// interface.
+        /// -->
+        public ErrorRecord ErrorRecord
+        {
+            get
+            {
+                return _errorRecord;
+            }
+        }
+
         /// <summary>
         /// Create the internal error record.
         /// The ErrorRecord created will be stored in the _errorRecord member.
@@ -87,27 +85,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "ConsoleLoadFailure", ErrorCategory.ResourceUnavailable, null);
-            _errorRecord.ErrorDetails = new ErrorDetails(String.Format(ConsoleInfoErrorStrings.ConsoleLoadFailure, _consoleFileName, sb.ToString()));
         }
-
-        private ErrorRecord _errorRecord;
-
-        /// <summary>
-        /// Gets error record embedded in this exception.
-        /// </summary>
-        /// <!--
-        /// This property is required as part of IErrorRecordContainer
-        /// interface.
-        /// -->
-        public ErrorRecord ErrorRecord
-        {
-            get
-            {
-                return _errorRecord;
-            }
-        }
-
-        private string _consoleFileName = "";
 
         private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
         internal Collection<PSSnapInException> PSSnapInExceptions
@@ -135,42 +113,6 @@ namespace System.Management.Automation.Runspaces
                 }
             }
         }
-
-        #region Serialization
-
-        /// <summary>
-        /// Initiate a PSConsoleLoadException instance.
-        /// </summary>
-        /// <param name="info"> Serialization information </param>
-        /// <param name="context"> Streaming context </param>
-        protected PSConsoleLoadException(SerializationInfo info,
-                                        StreamingContext context)
-            : base(info, context)
-        {
-            _consoleFileName = info.GetString("ConsoleFileName");
-
-            CreateErrorRecord();
-        }
-
-        /// <summary>
-        /// Get object data from serialization information.
-        /// </summary>
-        /// <param name="info"> Serialization information </param>
-        /// <param name="context"> Streaming context </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("info");
-            }
-
-            base.GetObjectData(info, context);
-
-            info.AddValue("ConsoleFileName", _consoleFileName);
-        }
-
-        #endregion Serialization
     }
 }
 

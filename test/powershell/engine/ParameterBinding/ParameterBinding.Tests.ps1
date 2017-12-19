@@ -150,7 +150,7 @@
 
         try
         {
-            test-singleintparameter -Parameter1 'dookie'
+            test-singleintparameter -Parameter1 'exampleInvalidParam'
             throw "No Exception!"
         }
         catch
@@ -228,7 +228,7 @@
             [CmdletBinding()]
             param (
             [array]$Parameter1,
-            [int[]]$Parameter2 
+            [int[]]$Parameter2
             )
 
             Process {
@@ -278,6 +278,169 @@
             $_.CategoryInfo | Should match "MetadataException"
             $_.Exception.Message | should match "Parameter1"
             $_.Exception.Message | should match "Parameter2"
+        }
+    }
+
+    Context "Use automatic variables as default value for parameters" {
+        BeforeAll {
+            ## Explicit use of 'CmdletBinding' make it a script cmdlet
+            $test1 = @'
+                [CmdletBinding()]
+                param ($Root = $PSScriptRoot)
+                "[$Root]"
+'@
+            ## Use of 'Parameter' implicitly make it a script cmdlet
+            $test2 = @'
+                param (
+                    [Parameter()]
+                    $Root = $PSScriptRoot
+                )
+                "[$Root]"
+'@
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "DefaultValueTest"
+            $test1File = Join-Path -Path $tempDir -ChildPath "test1.ps1"
+            $test2File = Join-Path -Path $tempDir -ChildPath "test2.ps1"
+
+            $expected = "[$tempDir]"
+            $psPath = "$PSHOME\pwsh"
+
+            $null = New-Item -Path $tempDir -ItemType Directory -Force
+            Set-Content -Path $test1File -Value $test1 -Force
+            Set-Content -Path $test2File -Value $test2 -Force
+        }
+
+        AfterAll {
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Test dot-source should evaluate '`$PSScriptRoot' for parameter default value" {
+            $result = . $test1File
+            $result | Should Be $expected
+
+            $result = . $test2File
+            $result | Should Be $expected
+        }
+
+        It "Test 'powershell -File' should evaluate '`$PSScriptRoot' for parameter default value" {
+            $result = & $psPath -NoProfile -File $test1File
+            $result | Should Be $expected
+
+            $result = & $psPath -NoProfile -File $test2File
+            $result | Should Be $expected
+        }
+    }
+
+    Context "ValueFromRemainingArguments" {
+        BeforeAll {
+            function Test-BindingFunction {
+                param (
+                    [Parameter(ValueFromRemainingArguments)]
+                    [object[]] $Parameter
+                )
+
+                return [pscustomobject] @{
+                    ArgumentCount = $Parameter.Count
+                    Value = $Parameter
+                }
+            }
+
+            # Deliberately not using TestDrive:\ here because Pester will fail to clean it up due to the
+            # assembly being loaded in our process.
+
+            if ($IsWindows)
+            {
+                $tempDir = $env:temp
+            }
+            else
+            {
+                $tempDir = '/tmp'
+            }
+
+            $dllPath = Join-Path $tempDir TestBindingCmdlet.dll
+
+            Add-Type -OutputAssembly $dllPath -TypeDefinition '
+                using System;
+                using System.Management.Automation;
+
+                [Cmdlet("Test", "BindingCmdlet")]
+                public class TestBindingCommand : PSCmdlet
+                {
+                    [Parameter(Position = 0, ValueFromRemainingArguments = true)]
+                    public string[] Parameter { get; set; }
+
+                    protected override void ProcessRecord()
+                    {
+                        PSObject obj = new PSObject();
+
+                        obj.Properties.Add(new PSNoteProperty("ArgumentCount", Parameter.Length));
+                        obj.Properties.Add(new PSNoteProperty("Value", Parameter));
+
+                        WriteObject(obj);
+                    }
+                }
+            '
+
+            Import-Module $dllPath
+        }
+
+        AfterAll {
+            Get-Module TestBindingCmdlet | Remove-Module -Force
+        }
+
+        It "Binds properly when passing an explicit array to an advanced function" {
+            $result = Test-BindingFunction 1,2,3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when passing multiple arguments to an advanced function" {
+            $result = Test-BindingFunction 1 2 3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when passing an explicit array to a cmdlet" {
+            $result = Test-BindingCmdlet 1,2,3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when passing multiple arguments to a cmdlet" {
+            $result = Test-BindingCmdlet 1 2 3
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when collections of type other than object[] are used on an advanced function" {
+            $list = [Collections.Generic.List[int]](1..3)
+            $result = Test-BindingFunction $list
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
+        }
+
+        It "Binds properly when collections of type other than object[] are used on a cmdlet" {
+            $list = [Collections.Generic.List[int]](1..3)
+            $result = Test-BindingCmdlet $list
+
+            $result.ArgumentCount | Should Be 3
+            $result.Value[0] | Should Be 1
+            $result.Value[1] | Should Be 2
+            $result.Value[2] | Should Be 3
         }
     }
 }

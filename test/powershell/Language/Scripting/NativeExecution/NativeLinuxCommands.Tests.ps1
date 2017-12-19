@@ -1,38 +1,50 @@
-if ( $IsWindows ) {
-    $PesterSkipOrPending = @{ Skip = $true }
-}
-else {
-    $PesterSkipOrPending = @{}
-}
 Describe "NativeLinuxCommands" -tags "CI" {
-    It "Should return a type of 'string' for hostname cmdlet" {
-        $result = hostname
-        $result | Should Not BeNullOrEmpty
-        $result | Should BeOfType string
+    BeforeAll {
+        $originalDefaultParams = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues["It:Skip"] = $IsWindows
+        $originalPath = $env:PATH
+        $env:PATH += [IO.Path]::PathSeparator + $TestDrive
     }
 
-    It "Should find Application grep" @PesterSkipOrPending {
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParams
+        $env:PATH = $originalPath
+    }
+
+    It "Should find Application grep" {
         (get-command grep).CommandType | Should Be Application
     }
 
-    It "Should pipe to grep and get result" @PesterSkipOrPending {
+    It "Should pipe to grep and get result" {
         "hello world" | grep hello | Should Be "hello world"
     }
 
-    It "Should find Application touch" @PesterSkipOrPending {
+    It "Should find Application touch" {
         (get-command touch).CommandType | Should Be Application
     }
 
-    It "Should not redirect standard input if native command is the first command in pipeline (1)" @PesterSkipOrPending {
+    It "Should not redirect standard input if native command is the first command in pipeline (1)" {
         df | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
         $out.Length -gt 0 | Should Be $true
         $out[0] -like "Filesystem*Available*" | Should Be $true
     }
 
-    It "Should not redirect standard input if native command is the first command in pipeline (2)" @PesterSkipOrPending {
+    It "Should not redirect standard input if native command is the first command in pipeline (2)" {
         $out = df
         $out.Length -gt 0 | Should Be $true
         $out[0] -like "Filesystem*Available*" | Should Be $true
+    }
+
+    It "Should find command before script with same name" {
+        Set-Content "$TestDrive\foo" -Value @"
+#!/usr/bin/env bash
+echo 'command'
+"@ -Encoding Ascii
+        chmod +x "$TestDrive/foo"
+        Set-Content "$TestDrive\foo.ps1" -Value @"
+'script'
+"@ -Encoding Ascii
+        foo | Should BeExactly 'command'
     }
 }
 

@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 namespace System.Management.Automation
@@ -86,15 +86,6 @@ namespace System.Management.Automation
         /// </summary>
         internal const string SessionState = "SessionState";
 
-#if RELATIONSHIP_SUPPORTED
-        // 2004/11/24-JeffJon - Relationships have been removed from the Exchange release
-
-        /// <summary>
-        /// The file extension (including the dot) of the relationship provider description file
-        /// </summary>
-        internal const string RelationshipProviderFileExtension = ".relationshipprovider";
-#endif
-
         /// <summary>
         /// The file extension (including the dot) of an PowerShell script file
         /// </summary>
@@ -138,7 +129,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The file extension (including the dot) of an workflow dependent assembly
         /// </summary>
-        internal const string DependentWorkflowAssemblyExtension = ".dll";
+        internal const string PowerShellILAssemblyExtension = ".dll";
 
         /// <summary>
         /// The file extension (including the dot) of an workflow dependent Ngen assembly

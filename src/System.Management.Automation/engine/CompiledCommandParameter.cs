@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -698,7 +698,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The type of the elements in the collection
         /// </summary>
-        internal Type ElementType { get; set; }
+        internal Type ElementType { get; private set; }
     }
 }
 

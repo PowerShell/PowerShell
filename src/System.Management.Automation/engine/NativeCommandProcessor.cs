@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 #pragma warning disable 1634, 1691
 
@@ -185,6 +185,8 @@ namespace System.Management.Automation
 
             //Create input writer for providing input to the process.
             _inputWriter = new ProcessInputWriter(Command);
+
+            _isTranscribing = this.Command.Context.EngineHostInterface.UI.IsTranscribing;
         }
 
         /// <summary>
@@ -373,8 +375,8 @@ namespace System.Management.Automation
         /// </summary>
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
-        private bool _scrapeHostOutput;
-
+        private static bool? s_supportScreenScrape = null;
+        private bool _isTranscribing;
         private Host.Coordinates _startPosition;
 
         /// <summary>
@@ -398,10 +400,12 @@ namespace System.Management.Automation
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
 
-            //Calculate if input and output are redirected.
+            // Calculate if input and output are redirected.
             bool redirectOutput;
             bool redirectError;
             bool redirectInput;
+
+            _startPosition = new Host.Coordinates();
 
             CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
 
@@ -416,9 +420,6 @@ namespace System.Management.Automation
                 throw new PipelineStoppedException();
             }
 
-            _startPosition = new Host.Coordinates();
-            _scrapeHostOutput = false;
-
             Exception exceptionToRethrow = null;
             try
             {
@@ -432,19 +433,10 @@ namespace System.Management.Automation
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    try
+                    if (_isTranscribing && (true == s_supportScreenScrape))
                     {
-                        if (this.Command.Context.EngineHostInterface.UI.IsTranscribing)
-                        {
-                            _scrapeHostOutput = true;
-                            _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
-                            _startPosition.X = 0;
-                        }
-                    }
-                    catch (Host.HostException)
-                    {
-                        // The host doesn't support scraping via its RawUI interface
-                        _scrapeHostOutput = false;
+                        _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        _startPosition.X = 0;
                     }
                 }
 
@@ -465,7 +457,7 @@ namespace System.Management.Automation
                     {
                         // UseShellExecute is not properly supported on Unix. It runs the file with '/bin/sh'.
                         // Before the behavior is improved (tracked by dotnet/corefx#19956), we use xdg-open/open as the default programs
-                        string executable = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                        string executable = Platform.IsLinux ? "xdg-open" : /* macOS */ "open";
                         startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
                         startInfo.FileName = executable;
                         startInfo.UseShellExecute = false;
@@ -697,9 +689,8 @@ namespace System.Management.Automation
                     ConsumeAvailableNativeProcessOutput(blocking: true);
                     _nativeProcess.WaitForExit();
 
-                    // Capture screen output if we are transcribing
-                    if (this.Command.Context.EngineHostInterface.UI.IsTranscribing &&
-                        _scrapeHostOutput)
+                    // Capture screen output if we are transcribing and running stand alone
+                    if (_isTranscribing && (true == s_supportScreenScrape) && _runStandAlone)
                     {
                         Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
@@ -1287,6 +1278,33 @@ namespace System.Management.Automation
             }
 
             _runStandAlone = !redirectInput && !redirectOutput && !redirectError;
+
+            if (_runStandAlone)
+            {
+                if (null == s_supportScreenScrape)
+                {
+                    try
+                    {
+                        _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
+                        Host.BufferCell[,] bufferContents = this.Command.Context.EngineHostInterface.UI.RawUI.GetBufferContents(
+                            new Host.Rectangle(_startPosition, _startPosition));
+                        s_supportScreenScrape = true;
+                    }
+                    catch (Exception)
+                    {
+                        s_supportScreenScrape = false;
+                    }
+                }
+
+                // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
+                // as redirected output is always transcribed
+                if (_isTranscribing && (false == s_supportScreenScrape))
+                {
+                    redirectOutput = true;
+                    redirectError = true;
+                    _runStandAlone = false;
+                }
+            }
         }
 
         private bool ValidateExtension(string path)
@@ -1780,7 +1798,7 @@ namespace System.Management.Automation
             //from the current scope so a script or function can use a different encoding
             //than global value.
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Encoding.ASCII;
+                                    Utils.utf8NoBom;
 
             _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
             _streamWriter.AutoFlush = true;

@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -769,8 +769,7 @@ namespace System.Management.Automation
 
             using (PowerShell ps = PowerShell.Create())
             {
-                Dbg.Assert(runspacePool == null && runspace != null ||
-                    runspace == null && runspacePool != null, "Either a runspace or a runspacepool should be used, not both.");
+                Dbg.Assert(runspacePool == null ^ runspace == null, "Either a runspace or a runspacepool should be used, not both.");
 
                 if (runspacePool == null)
                 {
@@ -1214,7 +1213,7 @@ namespace System.Management.Automation
                         if (!(parameter.Value is bool) || !(bool)parameter.Value)
                         {
                             // If the AsJob Parameter has been passed and explicitly set to false, we should
-                            // not proceed  with the operation. This is an error.
+                            // not proceed with the operation. This is an error.
                             throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.JobProxyAsJobMustBeTrue);
                         }
                         found = true;
@@ -1493,9 +1492,7 @@ namespace System.Management.Automation
         /// happen</param>
         private void AssignRunspaceOrRunspacePool(PowerShell powershell)
         {
-            Dbg.Assert(_runspacePool == null && _runspace != null ||
-                       _runspace == null && _runspacePool != null,
-                       "Either a runspace or a runspacepool should be assigned to the proxy job");
+            Dbg.Assert(_runspacePool == null ^ _runspace == null, "Either a runspace or a runspacepool should be assigned to the proxy job");
 
             if (_runspacePool == null)
             {

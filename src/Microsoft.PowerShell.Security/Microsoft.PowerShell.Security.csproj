@@ -1,7 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="..\..\PowerShell.Common.props"/>  
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.Security project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
@@ -19,7 +17,7 @@
   <ItemGroup>
     <Compile Remove="singleshell\installer\MshSecurityMshSnapin.cs" />
     <Compile Remove="gen\SecurityMshSnapinResources.cs" />
-    
+
     <EmbeddedResource Remove="resources\SecurityMshSnapinResources.resx" />
   </ItemGroup>
 

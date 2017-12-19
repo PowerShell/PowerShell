@@ -18,6 +18,12 @@
               <CmdletParameterMetadata ValueFromPipelineByPropertyName="true" CmdletParameterSets="Id" />
             </RegularQuery>
           </Property>
+          <Property PropertyName="DateTime">
+            <Type PSType="System.DateTime" />
+            <RegularQuery>
+              <CmdletParameterMetadata PSName="DateTime" ValueFromPipelineByPropertyName="false" CmdletParameterSets="DateTime" />
+            </RegularQuery>
+          </Property>
         </QueryableProperties>
       </GetCmdletParameters>
 

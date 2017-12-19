@@ -1,7 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="..\..\PowerShell.Common.props"/>  
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.Commands.Management project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
@@ -45,7 +43,7 @@
     <Compile Remove="gen\ManagementMshSnapInResources.cs" />
     <Compile Remove="gen\ClearRecycleBinResources.cs" />
     <Compile Remove="gen\ClipboardResources.cs" />
-    
+
     <EmbeddedResource Remove="resources\EventlogResources.resx" />
     <EmbeddedResource Remove="resources\TransactionResources.resx" />
     <EmbeddedResource Remove="resources\WebServiceResources.resx" />

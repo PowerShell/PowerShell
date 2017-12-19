@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -338,32 +338,72 @@ namespace System.Management.Automation.Language
 
     internal static class DynamicMetaObjectBinderExtensions
     {
-        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder,
-                                                           params DynamicMetaObject[] args)
+        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject target, bool targetIsComObject = false)
         {
+            Diagnostics.Assert(target.Value is PSObject, "target must be a psobject");
+
+            BindingRestrictions restrictions = BindingRestrictions.Empty;
+            Expression expr = ProcessOnePSObject(target, ref restrictions, argIsComObject: targetIsComObject);
+            return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, expr), restrictions);
+        }
+
+        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject target, DynamicMetaObject arg, bool targetIsComObject = false)
+        {
+            Diagnostics.Assert(target.Value is PSObject || arg.Value is PSObject, "At least one arg must be a psobject");
+
+            BindingRestrictions restrictions = BindingRestrictions.Empty;
+            Expression expr1 = ProcessOnePSObject(target, ref restrictions, argIsComObject: targetIsComObject);
+            Expression expr2 = ProcessOnePSObject(arg, ref restrictions, argIsComObject: false);
+            return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, expr1, expr2), restrictions);
+        }
+
+        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject[] args, bool targetIsComObject = false)
+        {
+            Diagnostics.Assert(args != null && args.Length > 0, "args should not be null or empty");
             Diagnostics.Assert(args.Any(mo => mo.Value is PSObject), "At least one arg must be a psobject");
 
             Expression[] exprs = new Expression[args.Length];
             BindingRestrictions restrictions = BindingRestrictions.Empty;
-            for (int i = 0; i < args.Length; i++)
+
+            // Target maps to arg[0] of the binder.
+            exprs[0] = ProcessOnePSObject(args[0], ref restrictions, targetIsComObject);
+            for (int i = 1; i < args.Length; i++)
             {
-                var baseValue = PSObject.Base(args[i].Value);
-                if (baseValue != args[i].Value)
-                {
-                    exprs[i] = Expression.Call(CachedReflectionInfo.PSObject_Base,
-                                               args[i].Expression.Cast(typeof(object)));
-                    restrictions = restrictions
-                        .Merge(args[i].GetSimpleTypeRestriction())
-                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(exprs[i], args[i].Expression)));
-                }
-                else
-                {
-                    exprs[i] = args[i].Expression;
-                    restrictions = restrictions.Merge(args[i].PSGetTypeRestriction());
-                }
+                exprs[i] = ProcessOnePSObject(args[i], ref restrictions, argIsComObject: false);
             }
 
             return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, exprs), restrictions);
+        }
+
+        private static Expression ProcessOnePSObject(DynamicMetaObject arg, ref BindingRestrictions restrictions, bool argIsComObject = false)
+        {
+            Expression expr = null;
+            object baseValue = PSObject.Base(arg.Value);
+            if (baseValue != arg.Value)
+            {
+                expr = Expression.Call(CachedReflectionInfo.PSObject_Base, arg.Expression.Cast(typeof(object)));
+
+                if (argIsComObject)
+                {
+                    // The 'base' is a COM object, so bake that in the rule.
+                    restrictions = restrictions
+                        .Merge(arg.GetSimpleTypeRestriction())
+                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.Call(CachedReflectionInfo.Utils_IsComObject, expr)));
+                }
+                else
+                {
+                    // Use a more general condition for the rule: 'arg' is a PSObject and 'base != arg'.
+                    restrictions = restrictions
+                        .Merge(arg.GetSimpleTypeRestriction())
+                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(expr, arg.Expression)));
+                }
+            }
+            else
+            {
+                expr = arg.Expression;
+                restrictions = restrictions.Merge(arg.PSGetTypeRestriction());
+            }
+            return expr;
         }
 
         internal static DynamicMetaObject UpdateComRestrictionsForPsObject(this DynamicMetaObject binder, DynamicMetaObject[] args)
@@ -554,7 +594,6 @@ namespace System.Management.Automation.Language
                 return (errorSuggestion ?? NullResult(target)).WriteToDebugLog(this);
             }
 
-            // In CORECLR System.Data.DataTable does not have the DataRowCollection IEnumerable, so disabling code.
             if (targetValue is DataTable)
             {
                 // Generate:
@@ -582,7 +621,7 @@ namespace System.Management.Automation.Language
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
 
-            if (IsComObject(targetValue))
+            if (Utils.IsComObject(targetValue))
             {
                 // Pretend that all com objects are enumerable, even if they aren't.  We do this because it's technically impossible
                 // to know if a com object is enumerable without just trying to cast it to IEnumerable.  We could generate a rule like:
@@ -594,8 +633,8 @@ namespace System.Management.Automation.Language
                 // EnumerableOps.NonEnumerableObjectEnumerator for more comments on how this works.
 
                 var bindingRestrictions = BindingRestrictions.GetExpressionRestriction(
-                    Expression.Call(typeof(PSEnumerableBinder).GetMethod("IsComObject", BindingFlags.Static | BindingFlags.NonPublic),
-                                    target.Expression));
+                    Expression.Call(CachedReflectionInfo.Utils_IsComObject,
+                                    Expression.Call(CachedReflectionInfo.PSObject_Base, target.Expression)));
                 return new DynamicMetaObject(
                     Expression.Call(CachedReflectionInfo.EnumerableOps_GetCOMEnumerator, target.Expression), bindingRestrictions).WriteToDebugLog(this);
             }
@@ -669,25 +708,6 @@ namespace System.Management.Automation.Language
             return (result == DynamicMetaObjectExtensions.FakeError) ? null : result;
         }
 
-        // This is to reduce the runtime overhead of the feature query
-        private static readonly TypeInfo s_comObjectTypeInfo = GetComObjectType();
-
-        private static TypeInfo GetComObjectType()
-        {
-#if UNIX
-            return null;
-#else
-            return typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
-#endif
-        }
-
-        internal static bool IsComObject(object obj)
-        {
-            // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust
-            obj = PSObject.Base(obj);
-            return obj != null && s_comObjectTypeInfo != null && s_comObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
-        }
-
         private static IEnumerator AutomationNullRule(CallSite site, object obj)
         {
             return obj == AutomationNull.Value
@@ -697,7 +717,7 @@ namespace System.Management.Automation.Language
 
         private static IEnumerator NotEnumerableRule(CallSite site, object obj)
         {
-            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !IsComObject(obj))
+            if (!(obj is PSObject) && !(obj is IEnumerable) && !(obj is IEnumerator) && !(obj is DataTable) && !Utils.IsComObject(obj))
             {
                 return null;
             }
@@ -4975,9 +4995,13 @@ namespace System.Management.Automation.Language
             if (target.Value is PSObject && (PSObject.Base(target.Value) != target.Value))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
+                if (baseObject != null && Utils.IsComObject(baseObject))
                 {
-                    return this.DeferForPSObject(target).WriteToDebugLog(this);
+                    // We unwrap only if the 'base' is a COM object. It's unnecessary to unwrap in other cases,
+                    // especially in the case of strings, we would lose instance members on the PSObject.
+                    // Therefore, we need to use a stricter restriction to make sure PSObject 'target' with other
+                    // base types doesn't get unwrapped.
+                    return this.DeferForPSObject(target, targetIsComObject: true).WriteToDebugLog(this);
                 }
             }
 
@@ -5585,7 +5609,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
-                        memberInfo = new PSMethod(this.Name, PSObject.dotNetInstanceAdapter, null, method);
+                        memberInfo = PSMethod.Create(this.Name, PSObject.dotNetInstanceAdapter, null, method);
                     }
                 }
             }
@@ -5837,9 +5861,13 @@ namespace System.Management.Automation.Language
                 (value.Value is PSObject && (PSObject.Base(value.Value) != value.Value)))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
+                if (baseObject != null && Utils.IsComObject(baseObject))
                 {
-                    return this.DeferForPSObject(target, value).WriteToDebugLog(this);
+                    // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
+                    // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
+                    // Therefore, we need to use a stricter restriction to make sure PSObject 'target' with other base types
+                    // doesn't get unwrapped.
+                    return this.DeferForPSObject(target, value, targetIsComObject: true).WriteToDebugLog(this);
                 }
             }
 
@@ -6354,9 +6382,13 @@ namespace System.Management.Automation.Language
                 args.Any(mo => mo.Value is PSObject && (PSObject.Base(mo.Value) != mo.Value)))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
+                if (baseObject != null && Utils.IsComObject(baseObject))
                 {
-                    return this.DeferForPSObject(args.Prepend(target).ToArray()).WriteToDebugLog(this);
+                    // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
+                    // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
+                    // Therefore, we need to use a stricter restriction to make sure other type of PSObject 'target'
+                    // doesn't get unwrapped.
+                    return this.DeferForPSObject(args.Prepend(target).ToArray(), targetIsComObject: true).WriteToDebugLog(this);
                 }
             }
 
@@ -6535,9 +6567,16 @@ namespace System.Management.Automation.Language
             var codeMethod = methodInfo as PSCodeMethod;
             if (codeMethod != null)
             {
-                return new DynamicMetaObject(
-                    InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary)
-                    .Cast(typeof(object)), restrictions).WriteToDebugLog(this);
+                Expression expr = InvokeMethod(codeMethod.CodeReference, null, args.Prepend(target).ToArray(), false, MethodInvocationType.Ordinary);
+                if (codeMethod.CodeReference.ReturnType == typeof(void))
+                {
+                    expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
+                }
+                else
+                {
+                    expr = expr.Cast(typeof(object));
+                }
+                return new DynamicMetaObject(expr, restrictions).WriteToDebugLog(this);
             }
 
             var parameterizedProperty = methodInfo as PSParameterizedProperty;

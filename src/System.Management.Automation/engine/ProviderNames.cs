@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 namespace System.Management.Automation
@@ -47,89 +47,6 @@ namespace System.Management.Automation
         /// Gets the name of the RegistryProvider
         /// </summary>
         internal abstract string Registry { get; }
-    }
-
-    /// <summary>
-    /// The provider names for custom shells
-    /// </summary>
-    internal class CustomShellProviderNames : ProviderNames
-    {
-        /// <summary>
-        /// Gets the name of the EnvironmentProvider
-        /// </summary>
-        internal override string Environment
-        {
-            get
-            {
-                return "Environment";
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the Certificate
-        /// </summary>
-        internal override string Certificate
-        {
-            get
-            {
-                return "Certificate";
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the VariableProvider
-        /// </summary>
-        internal override string Variable
-        {
-            get
-            {
-                return "Variable";
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the AliasProvider
-        /// </summary>
-        internal override string Alias
-        {
-            get
-            {
-                return "Alias";
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the FunctionProvider
-        /// </summary>
-        internal override string Function
-        {
-            get
-            {
-                return "Function";
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the FileSystemProvider
-        /// </summary>
-        internal override string FileSystem
-        {
-            get
-            {
-                return "FileSystem";
-            }
-        }
-
-        /// <summary>
-        /// Gets the name of the RegistryProvider
-        /// </summary>
-        internal override string Registry
-        {
-            get
-            {
-                return "Registry";
-            }
-        }
     }
 
     /// <summary>

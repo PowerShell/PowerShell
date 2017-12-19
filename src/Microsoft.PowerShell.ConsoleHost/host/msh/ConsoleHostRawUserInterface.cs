@@ -1,6 +1,6 @@
 #if !UNIX
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell
 {
     /// <summary>
     ///
-    /// implementation of RawConsole for powershell.exe
+    /// implementation of RawConsole for powershell
     ///
     /// </summary>
 
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell
                 // Now we check if the bottom right coordinate of our window went over the coordinate of the bottom
                 // right of the buffer.  If it did then we need to adjust the window.
 
-                // bufferInfo.BufferSize.X - 1  will give us the rightmost coordinate of the buffer.
+                // bufferInfo.BufferSize.X - 1 will give us the rightmost coordinate of the buffer.
                 // r.Right - rightCoordinateOfBuffer will give us how much we need to adjust the window left and right coordinates.
                 // Then we can do the same for top and bottom.
                 short adjustLeft = (short)(r.Right - (bufferInfo.BufferSize.X - 1));
@@ -741,8 +741,7 @@ namespace Microsoft.PowerShell
                             if (((ConsoleControl.InputRecordEventTypes)inputRecords[0].EventType) ==
                                 ConsoleControl.InputRecordEventTypes.KEY_EVENT)
                             {
-                                Dbg.Assert((inputRecords[0].KeyEvent.KeyDown && inputRecords[0].KeyEvent.RepeatCount != 0) ||
-                                    !inputRecords[0].KeyEvent.KeyDown,
+                                Dbg.Assert(!inputRecords[0].KeyEvent.KeyDown || inputRecords[0].KeyEvent.RepeatCount != 0,
                                     string.Format(CultureInfo.InvariantCulture, "ReadConsoleInput returns a KeyEvent that is KeyDown and RepeatCount 0"));
                                 if (inputRecords[0].KeyEvent.RepeatCount == 0)
                                 {
@@ -867,8 +866,7 @@ namespace Microsoft.PowerShell
                     if (((ConsoleControl.InputRecordEventTypes)inputRecords[i].EventType) ==
                             ConsoleControl.InputRecordEventTypes.KEY_EVENT)
                     {
-                        Dbg.Assert((inputRecords[i].KeyEvent.KeyDown && inputRecords[i].KeyEvent.RepeatCount != 0) ||
-                            !inputRecords[i].KeyEvent.KeyDown,
+                        Dbg.Assert(!inputRecords[i].KeyEvent.KeyDown || inputRecords[i].KeyEvent.RepeatCount != 0,
                             string.Format(CultureInfo.InvariantCulture, "PeekConsoleInput returns a KeyEvent that is KeyDown and RepeatCount 0"));
 
                         if (inputRecords[i].KeyEvent.KeyDown && inputRecords[i].KeyEvent.RepeatCount == 0)

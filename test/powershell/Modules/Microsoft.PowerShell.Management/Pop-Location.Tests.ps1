@@ -8,7 +8,7 @@ Describe "Pop-Location" -Tags "CI" {
     }
 
     It "Should not take a parameter" {
-	{ Pop-Location .. } | Should  Throw
+	{ Pop-Location .. } | Should Throw
     }
 
     It "Should be able pop multiple times" {

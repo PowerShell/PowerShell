@@ -1,5 +1,5 @@
 ﻿##
-## Copyright (c) Microsoft Corporation
+## Copyright (c) Microsoft Corporation. All rights reserved.
 ##
 ## Debugging in Host tests
 ##

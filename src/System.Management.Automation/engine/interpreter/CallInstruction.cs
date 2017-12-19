@@ -4,7 +4,7 @@
  *
  * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
  * copy of the license can be found in the License.html file at the root of this distribution. If
- * you cannot locate the  Apache License, Version 2.0, please send an email to
+ * you cannot locate the Apache License, Version 2.0, please send an email to
  * ironpy@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
@@ -213,7 +213,7 @@ namespace System.Management.Automation.Interpreter
 
         private static bool IndexIsNotReturnType(int index, MethodInfo target, ParameterInfo[] pi)
         {
-            return pi.Length != index || (pi.Length == index && !target.IsStatic);
+            return pi.Length != index || !target.IsStatic;
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------
-// <copyright file="DscResourceInfo.cs" company="Microsoft Corporation">
-//     Copyright (C) 2013 Microsoft Corporation
+// <copyright company="Microsoft Corporation">
+//     Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 

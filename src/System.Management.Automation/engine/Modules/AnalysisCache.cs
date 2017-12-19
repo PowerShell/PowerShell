@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -634,14 +634,14 @@ namespace System.Management.Automation
                     // Wait a while before assuming we've finished the updates,
                     // writing the cache out in a timely matter isn't too important
                     // now anyway.
-                    await Task.Delay(10000);
+                    await Task.Delay(10000).ConfigureAwait(false);
                     int counter1, counter2;
                     do
                     {
                         // Check the counter a couple times with a delay,
                         // if it's stable, then proceed with writing.
                         counter1 = _saveCacheToDiskQueued;
-                        await Task.Delay(3000);
+                        await Task.Delay(3000).ConfigureAwait(false);
                         counter2 = _saveCacheToDiskQueued;
                     } while (counter1 != counter2);
                     Serialize(s_cacheStoreLocation);
@@ -1040,7 +1040,7 @@ namespace System.Management.Automation
 #if UNIX
                 Path.Combine(Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE), "ModuleAnalysisCache");
 #else
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Windows\PowerShell\ModuleAnalysisCache");
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\PowerShell\ModuleAnalysisCache");
 #endif
         }
     }

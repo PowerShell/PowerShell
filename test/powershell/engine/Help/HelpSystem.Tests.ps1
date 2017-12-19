@@ -181,17 +181,27 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
     }
 }
 
-Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI') {
+Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
         $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+
+        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+
+        ## If help content does not exist, update it first.
+        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Variables.help.txt")))
+        {
+            Update-Help -Force -ErrorAction SilentlyContinue
+        }
     }
 
     AfterAll {
         Remove-Item $modulePath -Recurse -Force
+        # Remove all the help content.
+        Get-ChildItem -Path $PSHOME -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
     It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
@@ -202,7 +212,6 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     It "Get-Help for about_Variable should return only one help object" {
-
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
@@ -219,7 +228,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
         {
             $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue
         }
-        
+
         try
         {
             $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
@@ -234,11 +243,11 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
 }
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
-    
-    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally. 
+
+    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
     # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
     # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
-  
+
   BeforeAll {
     $helpFile1 = "about_testCase1.help.txt"
     $helpFile2 = "about_testCase.2.help.txt"
@@ -249,7 +258,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue -Force
     # Create at least one help file matches "about*" pattern
     $null = New-Item -ItemType File -Path $helpFilePath1 -Value "about_test1" -ErrorAction SilentlyContinue
-    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue 
+    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue
   }
 
   # Remove the test files
@@ -272,5 +281,45 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
         )
         $command.Invoke() | Should Be $result
     }
+}
 
+Describe "Get-Help should find pattern alias" -Tags "CI" {
+    # Remove test alias
+    AfterAll {
+        Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
+    }
+
+    It "Get-Help should find alias as command" {
+       (Get-Help where).Name | Should BeExactly "Where-Object"
+    }
+
+    It "Get-Help should find alias with ? pattern" {
+       $help = Get-Help wher?
+       $help.Category | Should BeExactly "Alias"
+       $help.Synopsis | Should BeExactly "Where-Object"
+    }
+
+    It "Get-Help should find alias with * pattern" {
+       Set-Alias -Name testAlias1 -Value Where-Object
+       $help = Get-Help testAlias1*
+       $help.Category | Should BeExactly "Alias"
+       $help.Synopsis | Should BeExactly "Where-Object"
+    }
+}
+
+Describe "help function uses full view by default" -Tags "CI" {
+    It "help should return full view without -Full switch" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+    }
+
+    It "help should return full view even with -Full switch" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+    }
+
+    It "help should not append -Full when not using AllUsersView parameter set" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
+    }
 }

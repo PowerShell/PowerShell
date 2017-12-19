@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
 
         /// <summary>
-        /// Error message to indicate that requested algorithm  is not supported on the target platform.
+        /// Error message to indicate that requested algorithm is not supported on the target platform.
         /// </summary>
         public static string AlgorithmTypeNotSupported { get { return UtilityCommonStrings.AlgorithmTypeNotSupported; } }
 

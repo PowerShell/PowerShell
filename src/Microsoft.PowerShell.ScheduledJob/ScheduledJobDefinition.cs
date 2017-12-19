@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 using System;
 using System.Collections.ObjectModel;
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private bool _isDisposed;
 
         // Task Action strings.
-        private const string TaskExecutionPath = @"powershell.exe";
+        private const string TaskExecutionPath = @"pwsh.exe";
         private const string TaskArguments = @"-NoLogo -NonInteractive -WindowStyle Hidden -Command ""Import-Module PSScheduledJob; $jobDef = [Microsoft.PowerShell.ScheduledJob.ScheduledJobDefinition]::LoadFromStore('{0}', '{1}'); $jobDef.Run()""";
         private static object LockObject = new object();
         private static int CurrentId = 0;

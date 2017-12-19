@@ -1,5 +1,6 @@
+#if !UNIX
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #region Using directives
@@ -120,9 +121,17 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Win32Exception accessException)
                     {
-                        WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                        // NativeErrorCode=2 - File not found.
+                        // If the block stream not found the 'path' was not blocked and we successfully return.
+                        if (accessException.NativeErrorCode != 2)
+                        {
+                            WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                        }
+                        else
+                        {
+                            WriteVerbose(StringUtil.Format(UtilityCommonStrings.NoZoneIdentifierFileStream, path));
+                        }
                     }
-
                 }
             }
         }
@@ -162,3 +171,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
+#endif

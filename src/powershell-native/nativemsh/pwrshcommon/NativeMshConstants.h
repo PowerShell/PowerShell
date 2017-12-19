@@ -1,12 +1,12 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #pragma once
 
 #include <Windows.h>
 
-namespace NativeMsh 
+namespace NativeMsh
 {
     //
     // Begin nativemsh.mc codes
@@ -49,7 +49,7 @@ namespace NativeMsh
     const int g_NONSTANDARD_CLR_VERSION = 36;
     const int g_SHELLBANNER1 = 37;
     const int g_SHELLBANNER2 = 38;
-    // Win8: 622653 Creating a copy of g_MISSING_REG_KEY to address scenarios where pwszMonadVersion is NULL. 
+    // Win8: 622653 Creating a copy of g_MISSING_REG_KEY to address scenarios where pwszMonadVersion is NULL.
     const int g_MISSING_REG_KEY1 = 39;
     //
     // End nativemsh.mc codes

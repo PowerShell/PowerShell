@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 #pragma warning disable 1634, 1691
@@ -266,7 +266,7 @@ namespace System.Management.Automation.Internal
         /// Used to determine execution policy when group policies are in effect
         /// </summary>
         /// <remarks>
-        /// This is somewhat expensive to determine and does not change within the lifetime of the current process		
+        /// This is somewhat expensive to determine and does not change within the lifetime of the current process
         /// </remarks>
         private static bool HasGpScriptParent
         {
@@ -358,12 +358,12 @@ namespace System.Management.Automation.Internal
 
                         // Be sure we aren't being called by Group Policy
                         // itself. A group policy should never block a logon /
-                        // logoff script.     
+                        // logoff script.
                         if (String.IsNullOrEmpty(groupPolicyPreference) || HasGpScriptParent)
                         {
                             return ExecutionPolicy.Undefined;
-                        }                                                                                                                                               
-                        return ParseExecutionPolicy(groupPolicyPreference);                                                
+                        }
+                        return ParseExecutionPolicy(groupPolicyPreference);
                     }
             }
 

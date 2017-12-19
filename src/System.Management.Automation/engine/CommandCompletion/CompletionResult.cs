@@ -1,9 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// <copyright company="Microsoft">
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
 // <summary>
 // Implements CompletionResult.
-//</summary>
+// </summary>
 //-----------------------------------------------------------------------
 
 namespace System.Management.Automation
@@ -11,50 +12,50 @@ namespace System.Management.Automation
     using System;
 
     /// <summary>
-    /// Possible types of CompletionResults
+    /// Possible types of CompletionResults.
     /// </summary>
     public enum CompletionResultType
     {
-        /// <summary> An unknown result type, kept as text only</summary>
+        /// <summary> An unknown result type, kept as text only.</summary>
         Text = 0,
 
-        /// <summary>A history result type like the items out of get-history</summary>
+        /// <summary>A history result type like the items out of get-history.</summary>
         History = 1,
 
-        /// <summary>A command result type like the items out of get-command</summary>
+        /// <summary>A command result type like the items out of get-command.</summary>
         Command = 2,
 
-        /// <summary>A provider item</summary>
+        /// <summary>A provider item.</summary>
         ProviderItem = 3,
 
-        /// <summary>A provider container</summary>
+        /// <summary>A provider container.</summary>
         ProviderContainer = 4,
 
-        /// <summary>A property result type like the property items out of get-member</summary>
+        /// <summary>A property result type like the property items out of get-member.</summary>
         Property = 5,
 
-        /// <summary>A method result type like the method items out of get-member</summary>
+        /// <summary>A method result type like the method items out of get-member.</summary>
         Method = 6,
 
-        /// <summary>A parameter name result type like the Parameters property out of get-command items</summary>
+        /// <summary>A parameter name result type like the Parameters property out of get-command items.</summary>
         ParameterName = 7,
 
-        /// <summary>A parameter value result type</summary>
+        /// <summary>A parameter value result type.</summary>
         ParameterValue = 8,
 
-        /// <summary>A variable result type like the items out of get-childitem variable:</summary>
+        /// <summary>A variable result type like the items out of get-childitem variable.</summary>
         Variable = 9,
 
-        /// <summary>A namespace</summary>
+        /// <summary>A namespace.</summary>
         Namespace = 10,
 
-        /// <summary>A type name</summary>
+        /// <summary>A type name.</summary>
         Type = 11,
 
-        /// <summary>A keyword</summary>
+        /// <summary>A keyword.</summary>
         Keyword = 12,
 
-        /// <summary>A dynamic keyword</summary>
+        /// <summary>A dynamic keyword.</summary>
         DynamicKeyword = 13,
 
         // If a new enum is added, there is a range test that uses DynamicKeyword for parameter validation
@@ -63,37 +64,37 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class used to store a tab completion or Intellisense result
+    /// Class used to store a tab completion or Intellisense result.
     /// </summary>
     public class CompletionResult
     {
         /// <summary>
-        /// Text to be used as the auto completion result
+        /// Text to be used as the auto completion result.
         /// </summary>
         private string _completionText;
 
         /// <summary>
-        /// Text to be displayed in a list
+        /// Text to be displayed in a list.
         /// </summary>
         private string _listItemText;
 
         /// <summary>
-        /// The text for the tooltip with details to be displayed about the object
+        /// The text for the tooltip with details to be displayed about the object.
         /// </summary>
         private string _toolTip;
 
         /// <summary>
-        /// Type of completion result
+        /// Type of completion result.
         /// </summary>
         private CompletionResultType _resultType;
 
         /// <summary>
-        /// Private member for null instance
+        /// Private member for null instance.
         /// </summary>
         private static readonly CompletionResult s_nullInstance = new CompletionResult();
 
         /// <summary>
-        /// Gets the text to be used as the auto completion result
+        /// Gets the text to be used as the auto completion result.
         /// </summary>
         public string CompletionText
         {
@@ -108,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the text to be displayed in a list
+        /// Gets the text to be displayed in a list.
         /// </summary>
         public string ListItemText
         {
@@ -123,7 +124,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the type of completion result
+        /// Gets the type of completion result.
         /// </summary>
         public CompletionResultType ResultType
         {
@@ -138,7 +139,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the text for the tooltip with details to be displayed about the object
+        /// Gets the text for the tooltip with details to be displayed about the object.
         /// </summary>
         public string ToolTip
         {
@@ -153,7 +154,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the null instance of type CompletionResult
+        /// Gets the null instance of type CompletionResult.
         /// </summary>
         internal static CompletionResult Null
         {
@@ -161,12 +162,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the CompletionResult class
+        /// Initializes a new instance of the CompletionResult class.
         /// </summary>
-        /// <param name="completionText">the text to be used as the auto completion result</param>
-        /// <param name="listItemText">he text to be displayed in a list</param>
-        /// <param name="resultType">the type of completion result</param>
-        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="completionText">The text to be used as the auto completion result.</param>
+        /// <param name="listItemText">The text to be displayed in a list.</param>
+        /// <param name="resultType">The type of completion result.</param>
+        /// <param name="toolTip">The text for the tooltip with details to be displayed about the object.</param>
         public CompletionResult(string completionText, string listItemText, CompletionResultType resultType, string toolTip)
         {
             if (String.IsNullOrEmpty(completionText))
@@ -197,9 +198,9 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Initializes a new instance of this class internally if the result out of TabExpansion is a string
+        /// Initializes a new instance of this class internally if the result out of TabExpansion is a string.
         /// </summary>
-        /// <param name="completionText">completion text</param>
+        /// <param name="completionText">Completion text.</param>
         public CompletionResult(string completionText)
             : this(completionText, completionText, CompletionResultType.Text, completionText)
         {

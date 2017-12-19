@@ -1,5 +1,6 @@
 //-----------------------------------------------------------------------
-//     Copyright © Microsoft Corporation.  All rights reserved.
+// <copyright company="Microsoft">
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandModuleInfo class based on a CommandInfo object
         /// </summary>
-        /// 
+        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -33,7 +34,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object
         /// </summary>
-        /// 
+        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>

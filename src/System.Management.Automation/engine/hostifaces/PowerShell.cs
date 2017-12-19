@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -3283,7 +3283,7 @@ namespace System.Management.Automation
                     BatchInvocationContext context = new BatchInvocationContext(ExtraCommands[i], objs);
 
                     // Queue a batch work item here.
-                    // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to hang.
+                    // Calling CoreInvokeAsync / CoreInvoke here directly doesn't work and causes the thread to not respond.
                     ThreadPool.QueueUserWorkItem(new WaitCallback(BatchInvocationWorkItem), context);
                     context.Wait();
                 }
@@ -3662,7 +3662,6 @@ namespace System.Management.Automation
                             cmd.CreateCommandProcessor
                             (
                                 Runspace.DefaultRunspace.ExecutionContext,
-                                ((LocalRunspace)Runspace.DefaultRunspace).CommandFactory,
                                 false,
                                 IsNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
                             );
@@ -3924,7 +3923,7 @@ namespace System.Management.Automation
                     case PSInvocationState.Failed:
                     case PSInvocationState.Stopped:
                         // if the current state is already completed..then no need to process state
-                        // change requests. This will happen if another thread  calls BeginStop
+                        // change requests. This will happen if another thread calls BeginStop
                         return;
                     case PSInvocationState.Running:
                         if (stateInfo.State == PSInvocationState.Running)
@@ -4038,7 +4037,7 @@ namespace System.Management.Automation
 
                         // This object can be disconnected even if "BeginStop" was called if it is a remote object
                         // and robust connections is retrying a failed network connection.
-                        // In this case release the stop wait handle to prevent hangs.
+                        // In this case release the stop wait handle to prevent not responding.
                         if (tempStopAsyncResult != null)
                         {
                             tempStopAsyncResult.SetAsCompleted(null);
@@ -4432,11 +4431,7 @@ namespace System.Management.Automation
                 finally
                 {
                     RunningExtraCommands = false;
-
-                    if (_isBatching)
-                    {
-                        EndAsyncBatchExecution();
-                    }
+                    EndAsyncBatchExecution();
                 }
             }
             else

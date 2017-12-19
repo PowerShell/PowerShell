@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Security;
@@ -622,47 +622,6 @@ namespace System.Management.Automation
         /// </summary>
         internal const string ScheduledJobModuleName = "PSScheduledJob";
 
-        internal const string WorkflowType = "Microsoft.PowerShell.Workflow.AstToWorkflowConverter, Microsoft.PowerShell.Activities, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-        internal const string WorkflowModule = "PSWorkflow";
-
-        internal static IAstToWorkflowConverter GetAstToWorkflowConverterAndEnsureWorkflowModuleLoaded(ExecutionContext context)
-        {
-            IAstToWorkflowConverter converterInstance = null;
-            Type converterType = null;
-
-            if (Utils.IsRunningFromSysWOW64())
-            {
-                throw new NotSupportedException(AutomationExceptions.WorkflowDoesNotSupportWOW64);
-            }
-
-            // If the current language mode is ConstrainedLanguage but the system lockdown mode is not,
-            // then also block the conversion - since we can't validate the InlineScript, PowerShellValue,
-            // etc.
-            if ((context != null) &&
-                (context.LanguageMode == PSLanguageMode.ConstrainedLanguage) &&
-                (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.Enforce))
-            {
-                throw new NotSupportedException(Modules.CannotDefineWorkflowInconsistentLanguageMode);
-            }
-
-            EnsureModuleLoaded(WorkflowModule, context);
-
-            converterType = Type.GetType(WorkflowType);
-
-            if (converterType != null)
-            {
-                converterInstance = (IAstToWorkflowConverter)converterType.GetConstructor(PSTypeExtensions.EmptyTypes).Invoke(EmptyArray<object>());
-            }
-
-            if (converterInstance == null)
-            {
-                string error = StringUtil.Format(AutomationExceptions.CantLoadWorkflowType, Utils.WorkflowType, Utils.WorkflowModule);
-                throw new NotSupportedException(error);
-            }
-
-            return converterInstance;
-        }
-
         internal static void EnsureModuleLoaded(string module, ExecutionContext context)
         {
             if (context != null && !context.AutoLoadingModuleInProgress.Contains(module))
@@ -1107,24 +1066,12 @@ namespace System.Management.Automation
         internal static readonly HashSet<string> PowerShellAssemblies =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    "microsoft.powershell.activities",
                     "microsoft.powershell.commands.diagnostics",
                     "microsoft.powershell.commands.management",
                     "microsoft.powershell.commands.utility",
                     "microsoft.powershell.consolehost",
-                    "microsoft.powershell.core.activities",
-                    "microsoft.powershell.diagnostics.activities",
-                    "microsoft.powershell.editor",
-                    "microsoft.powershell.gpowershell",
-                    "microsoft.powershell.graphicalhost",
-                    "microsoft.powershell.isecommon",
-                    "microsoft.powershell.management.activities",
                     "microsoft.powershell.scheduledjob",
-                    "microsoft.powershell.security.activities",
                     "microsoft.powershell.security",
-                    "microsoft.powershell.utility.activities",
-                    "microsoft.powershell.workflow.servicecore",
-                    "microsoft.wsman.management.activities",
                     "microsoft.wsman.management",
                     "microsoft.wsman.runtime",
                     "system.management.automation"
@@ -1200,11 +1147,12 @@ namespace System.Management.Automation
             return hresult >= 0;
         }
 
-        internal static FileSystemCmdletProviderEncoding GetEncoding(string path)
+        // Attempt to determine the existing encoding
+        internal static Encoding GetEncoding(string path)
         {
             if (!File.Exists(path))
             {
-                return FileSystemCmdletProviderEncoding.Default;
+                return ClrFacade.GetDefaultEncoding();
             }
 
             byte[] initialBytes = new byte[100];
@@ -1222,12 +1170,12 @@ namespace System.Management.Automation
             }
             catch (IOException)
             {
-                return FileSystemCmdletProviderEncoding.Default;
+                return ClrFacade.GetDefaultEncoding();
             }
 
             // Test for four-byte preambles
             string preamble = null;
-            FileSystemCmdletProviderEncoding foundEncoding = FileSystemCmdletProviderEncoding.Default;
+            Encoding foundEncoding = ClrFacade.GetDefaultEncoding();
 
             if (bytesRead > 3)
             {
@@ -1263,77 +1211,26 @@ namespace System.Management.Automation
             string initialBytesAsAscii = System.Text.Encoding.ASCII.GetString(initialBytes, 0, bytesRead);
             if (initialBytesAsAscii.IndexOfAny(nonPrintableCharacters) >= 0)
             {
-                return FileSystemCmdletProviderEncoding.Byte;
+                return Encoding.Unicode;
             }
 
-            return FileSystemCmdletProviderEncoding.Ascii;
+            return Encoding.ASCII;
         }
 
-        internal static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding encoding)
-        {
-            // Default to unicode encoding
-            Encoding result = Encoding.Unicode;
 
-            switch (encoding)
-            {
-                case FileSystemCmdletProviderEncoding.String:
-                    result = Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Unicode:
-                    result = Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUnicode:
-                    result = Encoding.BigEndianUnicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF8:
-                    result = Encoding.UTF8;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF7:
-                    result = Encoding.UTF7;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF32:
-                    result = Encoding.UTF32;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUTF32:
-                    result = Encoding.BigEndianUnicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Ascii:
-                    result = Encoding.ASCII;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Default:
-                    result = ClrFacade.GetDefaultEncoding();
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Oem:
-                    result = ClrFacade.GetOEMEncoding();
-                    break;
-
-                default:
-                    break;
-            }
-
-            return result;
-        } // GetEncodingFromEnum
-
+        // BigEndianUTF32 encoding is possible, but requires creation
+        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<String, FileSystemCmdletProviderEncoding> encodingMap =
-            new Dictionary<string, FileSystemCmdletProviderEncoding>()
+        internal static Dictionary<String, Encoding> encodingMap =
+            new Dictionary<string, Encoding>()
             {
-                { "255-254", FileSystemCmdletProviderEncoding.Unicode },
-                { "254-255", FileSystemCmdletProviderEncoding.BigEndianUnicode },
-                { "255-254-0-0", FileSystemCmdletProviderEncoding.UTF32 },
-                { "0-0-254-255", FileSystemCmdletProviderEncoding.BigEndianUTF32 },
-                { "239-187-191", FileSystemCmdletProviderEncoding.UTF8 },
+                { "255-254", Encoding.Unicode },
+                { "254-255", Encoding.BigEndianUnicode },
+                { "255-254-0-0", Encoding.UTF32 },
+                { "0-0-254-255", BigEndianUTF32Encoding },
+                { "239-187-191", Encoding.UTF8 },
             };
 
         internal static char[] nonPrintableCharacters = {
@@ -1465,6 +1362,46 @@ namespace System.Management.Automation
             // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).
             internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
         }
+
+#if !UNIX
+        // This is to reduce the runtime overhead of the feature query
+        private static readonly Type ComObjectType = typeof(object).Assembly.GetType("System.__ComObject");
+#endif
+
+        internal static bool IsComObject(PSObject psObject)
+        {
+#if UNIX
+            return false;
+#else
+            if (psObject == null) { return false; }
+
+            object obj = PSObject.Base(psObject);
+            return IsComObject(obj);
+#endif
+        }
+
+        internal static bool IsComObject(object obj)
+        {
+#if UNIX
+            return false;
+#else
+            // We can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust.
+            //
+            // There could be strongly typed RWCs whose type is not 'System.__ComObject', but the more specific type should
+            // derive from 'System.__ComObject'. The strongly typed RWCs can be created with 'new' operation via the Primay
+            // Interop Assembly (PIA).
+            // For example, with the PIA 'Microsoft.Office.Interop.Excel', you can write the following code:
+            //    var excelApp = new Microsoft.Office.Interop.Excel.Application();
+            //    Type type = excelApp.GetType();
+            //    Type comObjectType = typeof(object).Assembly.GetType("System.__ComObject");
+            //    Console.WriteLine("excelApp type: {0}", type.FullName);
+            //    Console.WriteLine("Is __ComObject assignable from? {0}", comObjectType.IsAssignableFrom(type));
+            // and the results are:
+            //    excelApp type: Microsoft.Office.Interop.Excel.ApplicationClass
+            //    Is __ComObject assignable from? True
+            return obj != null && ComObjectType.IsAssignableFrom(obj.GetType());
+#endif
+        }
     }
 }
 
@@ -1479,13 +1416,22 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
+
+        // Stop/Restart/Rename Computer tests
+        internal static bool TestStopComputer;
+        internal static bool TestWaitStopComputer;
+        internal static bool TestRenameComputer;
+        internal static int  TestStopComputerResults;
+        internal static int  TestRenameComputerResults;
+
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
+        internal static bool DisableGACLoading;
 
         /// <summary>This member is used for internal test purposes.</summary>
-        public static void SetTestHook(string property, bool value)
+        public static void SetTestHook(string property, object value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             if (fieldInfo != null)

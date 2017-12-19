@@ -5,7 +5,7 @@
 PowerShell Core is refactored in v6.0.0-beta.3 to remove the dependency on a customized `AssemblyLoadContext`.
 With this change, hosting PowerShell Core in .NET Core will be the same as hosting Windows PowerShell in .NET.
 
-Please see the [.NET Core Sample Application](#.net-core-sample-application) section for an example that uses PowerShell Core `beta.3` NuGet packages.
+Please see the [.NET Core Sample Application](#net-core-sample-application) section for an example that uses PowerShell Core `beta.3` NuGet packages.
 
 ## PowerShell Core v6.0.0-beta.2 and Prior
 
@@ -126,9 +126,9 @@ namespace Application.Test
 }
 ```
 
-[CorePsAssemblyLoadContext.cs]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.17/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CoreCLR/CorePsAssemblyLoadContext.cs
+[CorePsAssemblyLoadContext.cs]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-beta.2/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CoreCLR/CorePsAssemblyLoadContext.cs
 [Resolving]: https://github.com/dotnet/corefx/blob/ec2a6190efa743ab600317f44d757433e44e859b/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L35
-[bootstrapping]: https://github.com/PowerShell/PowerShell/blob/master/src/powershell/Program.cs#L27
+[bootstrapping]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-beta.2/src/powershell/Program.cs#L27
 
 ## .NET Core Sample Application
 

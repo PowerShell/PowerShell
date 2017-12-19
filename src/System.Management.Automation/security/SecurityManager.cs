@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using Dbg = System.Management.Automation;
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
     /// Unrestricted - No files must be signed.  If a file originates from the
     ///    internet, Monad provides a warning prompt to alert the user.  To
     ///    suppress this warning message, right-click on the file in File Explorer,
-    ///    select "Properties," and then "Unblock."
+    ///    select "Properties," and then "Unblock."  Requires Shell.
     /// Bypass - No files must be signed, and internet origin is not verified
     ///
     /// </summary>
@@ -136,10 +136,6 @@ namespace Microsoft.PowerShell
             if (!IsSupportedExtension(fi.Extension))
                 return true;
 
-            // Product binaries are always trusted
-            if (SecuritySupport.IsProductBinary(path))
-                return true;
-
             // Get the execution policy
             _executionPolicy = SecuritySupport.GetExecutionPolicy(_shellId);
 
@@ -189,6 +185,11 @@ namespace Microsoft.PowerShell
 #endif
             if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
+                // Product binaries are always trusted
+                // This avoids signature and security zone checks
+                if (SecuritySupport.IsProductBinary(path))
+                    return true;
+
                 // We need to give the "Remote File" warning
                 // if the file originated from the internet
                 if (!IsLocalFile(fi.FullName))
@@ -402,6 +403,9 @@ namespace Microsoft.PowerShell
 
         private bool IsLocalFile(string filename)
         {
+#if UNIX
+            return true;
+#else
             SecurityZone zone = ClrFacade.GetFileSecurityZone(filename);
 
             if (zone == SecurityZone.MyComputer ||
@@ -412,6 +416,7 @@ namespace Microsoft.PowerShell
             }
 
             return false;
+#endif
         }
 
         // Checks that a publisher is trusted by the system or is one of

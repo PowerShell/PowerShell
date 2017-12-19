@@ -199,26 +199,58 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
+
+         It "Set-Location on Unix succeeds with folder with colon: <path>" -Skip:($IsWindows) -TestCases @(
+             @{path="\hello:world"},
+             @{path="\:world"},
+             @{path="/hello:"}
+         ) {
+            param($path)
+            try {
+                New-Item -Path "$testdrive$path" -ItemType Directory > $null
+                Set-Location "$testdrive"
+                Set-Location ".$path"
+                (Get-Location).Path | Should Be "$testdrive/$($path.Substring(1,$path.Length-1))"
+            }
+            finally {
+                Remove-Item -Path "$testdrive$path" -ErrorAction SilentlyContinue
+            }
+         }
+
+         It "Get-Content on Unix succeeds with folder and file with colon: <path>" -Skip:($IsWindows) -TestCases @(
+             @{path="\foo:bar.txt"},
+             @{path="/foo:"},
+             @{path="\:bar"}
+         ) {
+            param($path)
+            try {
+                $testPath = "$testdrive/hello:world"
+                New-Item -Path "$testPath" -ItemType Directory > $null
+                Set-Content -Path "$testPath$path" -Value "Hello"
+                $files = Get-ChildItem "$testPath"
+                $files.Count | Should Be 1
+                $files[0].Name | Should BeExactly $path.Substring(1,$path.Length-1)
+                $files[0] | Get-Content | Should BeExactly "Hello"
+            }
+            finally {
+                Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
+            }
+         }
     }
 
     Context "Validate behavior when access is denied" {
         BeforeAll {
-            $powershell = Join-Path $PSHOME "powershell"
+            $powershell = Join-Path $PSHOME "pwsh"
             if ($IsWindows)
             {
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
             }
-            $errFile = "$testdrive\error.txt"
-            $doneFile = "$testdrive\done.txt"
-        }
-        AfterEach {
-            Remove-Item -Force $errFile -ErrorAction SilentlyContinue
-            Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
         }
 
         It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+            # NOTE: ensure the fileNameBase parameter is unique for each test case; it is used to generate a unique error and done file name.
             @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
             @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
             @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
@@ -228,14 +260,18 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         ) {
             param ($cmdline, $expectedError)
 
-            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
-            $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and -not (Test-Path $doneFile))
-            {
-                Start-Sleep -Milliseconds 100
-            }
+            # generate a filename to use for the error and done text files to avoid test output collision
+            # when a timeout occurs waiting for powershell.
+            $fileNameBase = ([string] $cmdline).GetHashCode().ToString()
+            $errFile = Join-Path -Path $TestDrive -ChildPath "$fileNameBase.error.txt"
+            $doneFile = Join-Path -Path $TestDrive -Childpath "$fileNameBase.done.txt"
 
-            $errFile | Should Exist
+            # Seed the error file with text indicating a timeout waiting for the command.
+            "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
+
+            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 15 -IntervalInMilliseconds 100
+
             $err = Get-Content $errFile
             $err | Should Be $expectedError
         }
@@ -372,13 +408,32 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             Test-Path -LiteralPath $newPath | Should Be $true
         }
     }
+
+    Context "Handle asterisks in name" {
+        It "Remove-Item -LiteralPath should fail if it contains asterisk and file doesn't exist" {
+            { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+        }
+
+        It "Remove-Item -LiteralPath should succeed for file with asterisk in name" -Skip:($IsWindows) {
+            $testPath = "$testdrive\foo*"
+            $testPath2 = "$testdrive\foo*2"
+            New-Item -Path $testPath -ItemType File
+            New-Item -Path $testPath2 -ItemType File
+            Test-Path -LiteralPath $testPath | Should Be $true
+            Test-Path -LiteralPath $testPath2 | Should Be $true
+            { Remove-Item -LiteralPath $testPath } | Should Not Throw
+            Test-Path -LiteralPath $testPath | Should Be $false
+            # make sure wildcard wasn't applied so this file should still exist
+            Test-Path -LiteralPath $testPath2 | Should Be $true
+        }
+    }
 }
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         # on macOS, the /tmp directory is a symlink, so we'll resolve it here
         $TestPath = $TestDrive
-        if ($IsOSX)
+        if ($IsMacOS)
         {
             $item = Get-Item $TestPath
             $dirName = $item.BaseName
@@ -894,6 +949,16 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $result = Get-Item -Path "TestDrive:\*" -filter "*2.txt"
             $result.Name | Should Be $testFile2
         }
+
+        It "Verify -LiteralPath with wildcard fails for file that doesn't exist" {
+            { Get-Item -LiteralPath "a*b.txt" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+
+        It "Verify -LiteralPath with wildcard succeeds for file" -Skip:($IsWindows) {
+            New-Item -Path "$testdrive\a*b.txt" -ItemType File > $null
+            $file = Get-Item -LiteralPath "$testdrive\a*b.txt"
+            $file.Name | Should BeExactly "a*b.txt"
+        }
     }
 
     Context "Valdiate Move-Item parameters" {
@@ -902,15 +967,15 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         BeforeEach {
-            New-Item -Path $testFile -ItemType File > $null
-            New-Item -Path $testFile2 -ItemType File > $null
+            New-Item -Path $testFile -ItemType File -Force > $null
+            New-Item -Path $testFile2 -ItemType File -Force > $null
         }
 
         AfterEach {
             Remove-Item -Path * -Recurse -Force -ErrorAction SilentlyContinue
         }
 
-        It "Verify WhatIf" -Skip:$true { #Skipped until issue #2385 gets resolved
+        It "Verify WhatIf" {
             Move-Item -Path $testFile -Destination $altTestFile -WhatIf
             try {
                 Get-Item -Path $altTestFile -ErrorAction Stop
@@ -919,15 +984,16 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
         }
 
-        It "Verify Include and Exclude Intersection" -Skip:$true { #Skipped until issue #2385 gets resolved
-            Move-Item -Path "TestDrive:\*" -Destination $altTestFile -Include "*.txt" -Exclude "*2*"
-            $file1 = Get-Item $testFile2 -ErrorAction SilentlyContinue
-            $file2 = Get-Item $altTestFile -ErrorAction SilentlyContinue
+        It "Verify Include and Exclude Intersection" {
+            New-Item -Path "TestDrive:\dest" -ItemType Directory
+            Move-Item -Path "TestDrive:\*" -Destination "TestDrive:\dest" -Include "*.txt" -Exclude "*2*"
+            $file1 = Get-Item "TestDrive:\dest\$testFile2" -ErrorAction SilentlyContinue
+            $file2 = Get-Item "TestDrive:\dest\$testFile" -ErrorAction SilentlyContinue
             $file1 | Should BeNullOrEmpty
-            $file2.Name | Should Be $altTestFile
+            $file2.Name | Should Be $testFile
         }
 
-        It "Verify Filter" -Skip:$true { #Skipped until issue #2385 gets resolved
+        It "Verify Filter" {
             Move-Item -Path "TestDrive:\*" -Filter "*2.txt" -Destination $altTestFile
             $file1 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file2 = Get-Item $altTestFile -ErrorAction SilentlyContinue
@@ -986,7 +1052,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Filter" {
             Remove-Item "TestDrive:\*" -Filter "*.txt"
-            $result = Get-Item "*.txt"
+            $result = Get-Item "TestDrive:\*.txt"
             $result | Should BeNullOrEmpty
         }
 
@@ -1005,6 +1071,21 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file2 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file1 | Should BeNullOrEmpty
             $file2.Name | Should Be $testFile2
+        }
+
+        It "Verify Path can accept wildcard" {
+            Remove-Item "TestDrive:\*.txt" -Recurse -Force
+            $result = Get-ChildItem "TestDrive:\*.txt"
+            $result | Should BeNullOrEmpty
+        }
+
+        It "Verify no error if wildcard doesn't match: <path>" -TestCases @(
+            @{path="TestDrive:\*.foo"},
+            @{path="TestDrive:\[z]"},
+            @{path="TestDrive:\z.*"}
+        ) {
+            param($path)
+            { Remove-Item $path } | Should Not Throw
         }
     }
 
@@ -1295,6 +1376,27 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
                 throw "Expected exception not thrown"
             }
             catch { $_.FullyQualifiedErrorId | Should Be "Argument,Microsoft.PowerShell.Commands.PopLocationCommand" }
+        }
+    }
+}
+
+Describe "UNC paths" -Tags 'CI' {
+    It "Can Get-ChildItems from a UNC location using <cmdlet>" -Skip:(!$IsWindows) -TestCases @(
+        @{cmdlet="Push-Location"},
+        @{cmdlet="Set-Location"}
+    ) {
+        param($cmdlet)
+        $originalLocation = Get-Location
+        try {
+            $systemDrive = ($env:SystemDrive).Replace(":","$")
+            $testPath = Join-Path "\\localhost" $systemDrive
+            & $cmdlet $testPath
+            Get-Location | Should BeExactly "Microsoft.PowerShell.Core\FileSystem::$testPath"
+            $children = { Get-ChildItem -ErrorAction Stop } | Should Not Throw
+            $children.Count | Should BeGreaterThan 0
+        }
+        finally {
+            Set-Location $originalLocation
         }
     }
 }

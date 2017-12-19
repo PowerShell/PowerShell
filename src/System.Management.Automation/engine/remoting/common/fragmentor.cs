@@ -1,5 +1,5 @@
 /********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * --********************************************************************/
 
 using System.Collections.Generic;
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Remoting
         internal bool IsEndFragment { get; set; }
 
         /// <summary>
-        /// Blob length. This enables scenarios where entire  byte[] is
+        /// Blob length. This enables scenarios where entire byte[] is
         /// not filled for the fragment.
         /// </summary>
         internal int BlobLength

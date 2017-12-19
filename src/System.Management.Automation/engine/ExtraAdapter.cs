@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
@@ -200,7 +200,7 @@ namespace System.Management.Automation
                     if (e.ErrorCode != unchecked((int)0x80004005) || (setValue == null))
                         // When clear is called, DirectoryEntry calls PutEx on AD object with Clear option and Null Value
                         // WinNT provider throws E_FAIL when null value is specified though actually ADS_PROPERTY_CLEAR option is used,
-                        // we need to catch  this exception here.
+                        // we need to catch this exception here.
                         // But at the same time we don't want to catch the exception if user explicitly sets the value to null.
                         throw;
                 }

@@ -4,7 +4,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         if ($IsWindows)
         {
-            $powershell = "$PSHOME\powershell.exe"
+            $powershell = "$PSHOME\pwsh.exe"
             $ProductName = "WindowsPowerShell"
             if ($IsCoreCLR -and ($PSHOME -notlike "*Windows\System32\WindowsPowerShell\v1.0"))
             {
@@ -15,7 +15,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         }
         else
         {
-            $powershell = "$PSHOME/powershell"
+            $powershell = "$PSHOME/pwsh"
             $expectedUserPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("USER_MODULES")
             $expectedSharedPath = [System.Management.Automation.Platform]::SelectProductNameForDirectory("SHARED_MODULES")
         }
@@ -25,7 +25,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $fakePSHome = Join-Path -Path $TestDrive -ChildPath 'FakePSHome'
         $fakePSHomeModuleDir = Join-Path -Path $fakePSHome -ChildPath 'Modules'
         $fakePowerShell = Join-Path -Path $fakePSHome -ChildPath (Split-Path -Path $powershell -Leaf)
-        $fakePSDepsFile = Join-Path -Path $fakePSHome -ChildPath "powershell.deps.json"
+        $fakePSDepsFile = Join-Path -Path $fakePSHome -ChildPath "pwsh.deps.json"
 
         New-Item -Path $fakePSHome -ItemType Directory > $null
         New-Item -Path $fakePSHomeModuleDir -ItemType Directory > $null
@@ -56,7 +56,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR) {
 
-        ## Create 'powershell' and 'powershell.deps.json' in the fake PSHome folder,
+        ## Create 'powershell' and 'pwsh.deps.json' in the fake PSHome folder,
         ## so that the module path calculation logic would believe it's real.
         New-Item -Path $fakePowerShell -ItemType File -Force > $null
         New-Item -Path $fakePSDepsFile -ItemType File -Force > $null
@@ -75,7 +75,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         } finally {
 
-            ## Remove 'powershell' and 'powershell.deps.json' from the fake PSHome folder
+            ## Remove 'powershell' and 'pwsh.deps.json' from the fake PSHome folder
             Remove-Item -Path $fakePowerShell -Force -ErrorAction SilentlyContinue
             Remove-Item -Path $fakePSDepsFile -Force -ErrorAction SilentlyContinue
         }
@@ -94,18 +94,4 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths -contains $customeModules | Should Be $true
     }
 
-    It "Default PowerShell profile appends Windows PowerShell PSModulePath only on Windows" {
-
-        $psmodulepath = & $powershell -nologo -c '$env:PSModulePath'
-
-        if ($IsWindows)
-        {
-            $psmodulepath[0] | Should Match "Warning"  # for Windows, there is a warning that path being appended
-            $psmodulepath[1] | Should Match "WindowsPowerShell"
-        }
-        else
-        {
-            $psmodulepath[0] | Should Not Match "WindowsPowerShell"
-        }
-    }
 }

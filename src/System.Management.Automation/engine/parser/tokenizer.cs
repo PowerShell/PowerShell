@@ -1,5 +1,5 @@
 ﻿/********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using Microsoft.PowerShell.Commands;
@@ -119,7 +119,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Pop up previous  dynamicKeywords cache
+        /// Pop up previous dynamicKeywords cache
         /// </summary>
         public static void Pop()
         {

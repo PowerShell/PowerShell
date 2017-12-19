@@ -1,6 +1,5 @@
-#if !UNIX
 //
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 //
 using System.Globalization;
 using System.Management.Automation.Internal;
@@ -13,14 +12,22 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal static class PSEtwLog
     {
+#if UNIX
+        private static PSSysLogProvider provider;
+#else
         private static PSEtwLogProvider provider;
+#endif
 
         /// <summary>
         /// Class constructor
         /// </summary>
         static PSEtwLog()
         {
+#if UNIX
+            provider = new PSSysLogProvider();
+#else
             provider = new PSEtwLogProvider();
+#endif
         }
 
         /// <summary>
@@ -311,6 +318,3 @@ namespace System.Management.Automation.Tracing
         }
     }
 }
-
-
-#endif

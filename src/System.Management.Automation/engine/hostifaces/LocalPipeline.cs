@@ -1,5 +1,5 @@
 /********************************************************************++
- * Copyright (c) Microsoft Corporation.  All rights reserved.
+ * Copyright (c) Microsoft Corporation. All rights reserved.
  * --********************************************************************/
 
 using System.Diagnostics;
@@ -428,7 +428,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     catch (ExitException ee)
                     {
-                        // The 'exit' command  was run so tell the host to exit.
+                        // The 'exit' command was run so tell the host to exit.
                         // Use the finally clause to make sure that the call is actually made.
                         // We'll default the exit code to 1 instead or zero so that if, for some
                         // reason, we can't get the real error code, we'll indicate a failure.
@@ -912,7 +912,6 @@ namespace System.Management.Automation.Runspaces
                                 command.CreateCommandProcessor
                                     (
                                         LocalRunspace.ExecutionContext,
-                                        LocalRunspace.CommandFactory,
                                         AddToHistory,
                                         commandOrigin
                                     );

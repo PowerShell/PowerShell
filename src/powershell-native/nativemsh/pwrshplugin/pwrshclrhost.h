@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------
 //
 //  Microsoft Windows NT
-//  Copyright (C) Microsoft Corporation, 2007.
+//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
-//  Contents:  Headers used by pwrshplugin. 
+//  Contents:  Headers used by pwrshplugin.
 //  pwrshplugin is totally unmanaged.
 // ----------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ public:
     virtual ~IPowerShellClrHost() {}
 
     virtual unsigned int LaunchClr(
-        _In_ LPCWSTR wszMonadVersion, 
+        _In_ LPCWSTR wszMonadVersion,
         _In_ LPCWSTR wszRuntimeVersion,
         _In_ LPCSTR friendlyName) = 0;
 
@@ -83,7 +83,7 @@ private:
 public:
     PowerShellClrWorker();
     PowerShellClrWorker(NativeMsh::SystemCallFacade* sysCalls);
-      
+
     virtual ~PowerShellClrWorker();
 
     //
@@ -140,9 +140,9 @@ private:
 
 public:
     PowerShellCoreClrWorker();
-    
+
     PowerShellCoreClrWorker(
-        NativeMsh::SystemCallFacade* sysCalls, 
+        NativeMsh::SystemCallFacade* sysCalls,
         NativeMsh::ClrHostWrapper* hstWrp,
         NativeMsh::PwrshCommon* cmnLib);
 

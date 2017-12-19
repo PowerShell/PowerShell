@@ -43,17 +43,14 @@ Read [An Introduction To Error Handling in PowerShell][error] for more informati
 The SDK NuGet package `Microsoft.PowerShell.SDK` is provided for developers to write .NET Core C# code targeting PowerShell Core.
 PowerShell NuGet packages for releases starting from v6.0.0-alpha.9 will be published to the [powershell-core][] myget feed.
 
-To use the `Microsoft.PowerShell.SDK` NuGet package, declare the `frameworks` section in your `project.json` file as follows:
+To use the `Microsoft.PowerShell.SDK` NuGet package, declare `PackageReference` tags in your `.csproj` file as follows:
 
-```json
-"frameworks": {
-    "netstandard1.6": {
-        "imports": [ "dnxcore50", "portable-net45+win8" ],
-        "dependencies": {
-            "Microsoft.PowerShell.SDK": "6.0.0-alpha13"
-        }
-    }
-}
+```xml
+<ItemGroup>
+  <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.0-beta.9" />
+  <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="6.0.0-beta.9" />
+  <PackageReference Include="Microsoft.WSMan.Management" Version="6.0.0-beta.9"/>
+</ItemGroup>
 ```
 
 [powershell-core]: https://powershell.myget.org/gallery/powershell-core

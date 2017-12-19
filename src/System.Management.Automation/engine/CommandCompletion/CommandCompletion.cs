@@ -1,6 +1,6 @@
 
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.ObjectModel;
@@ -1182,10 +1182,7 @@ namespace System.Management.Automation
 
                 for (_sentenceIndex = 0; _sentenceIndex < _sentence.Length; ++_sentenceIndex)
                 {
-                    Diagnostics.Assert(
-                        (inSingleQuote && !inDoubleQuote)
-                        || (inDoubleQuote && !inSingleQuote)
-                        || (!inSingleQuote && !inDoubleQuote),
+                    Diagnostics.Assert(!(inSingleQuote && inDoubleQuote),
                         "Can't be in both single and double quotes");
 
                     char c = _sentence[_sentenceIndex];

@@ -1,5 +1,5 @@
 //
-//    Copyright (C) Microsoft.  All rights reserved.
+//    Copyright (c) Microsoft Corporation. All rights reserved.
 //
 #pragma warning disable 1634, 1691
 
@@ -991,7 +991,7 @@ namespace System.Management.Automation
                     // invocation to the current runspace, we took dependency on eventing infrastructure and
                     // this required ensuring the event and associated action be processed in the current thread
                     // synchronously. The below while loop was added for that (win8: 530495). However, fix for
-                    // 530495 resulted in hang for icm | % { icm } case and dynamic event/subscriptions scenarios.
+                    // 530495 resulted in not responding for icm | % { icm } case and dynamic event/subscriptions scenarios.
                     // To overcome that, changed "processSynchronously" parameter to "processInCurrentThread" and added
                     // a new parameter "waitForCompletionWhenInCurrentThread" to trigger blocking for ScriptBlock
                     // case.
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from  ProcessNewEvent to actually process the event.
+        /// Called from ProcessNewEvent to actually process the event.
         /// </summary>
         private void ProcessNewEventImplementation(PSEventArgs newEvent, bool processSynchronously)
         {
@@ -2129,7 +2129,7 @@ namespace System.Management.Automation
         internal bool AutoUnregister { get; private set; }
 
         /// <summary>
-        /// Indicate how many new  should be added to the action queue.
+        /// Indicate how many new should be added to the action queue.
         /// e.g. NumberOfTimesToBeInvoked = 3 means that this subscriber only responses to
         /// the first triggered event. So three new actions will be added to the action
         /// queue, and the following events will be ignored.

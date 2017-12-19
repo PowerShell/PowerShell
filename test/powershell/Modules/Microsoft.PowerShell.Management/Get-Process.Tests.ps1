@@ -1,6 +1,6 @@
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
-        (Get-Process powershell -IncludeUserName | Select-Object -First 1).UserName | Should Match $env:USERNAME
+        (Get-Process -Id $pid -IncludeUserName).UserName | Should Match $env:USERNAME
     }
 }
 
@@ -9,11 +9,11 @@ Describe "Get-Process" -Tags "CI" {
     BeforeAll {
         $ps = Get-Process
     }
-    It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsOSX {
+    It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
         ,$ps | Should BeOfType "System.Object[]"
     }
 
-    It "Should have not empty Name flags set for Get-Process object" -Pending:$IsOSX {
+    It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {
         $ps | foreach-object { $_.Name | Should Not BeNullOrEmpty }
     }
 }

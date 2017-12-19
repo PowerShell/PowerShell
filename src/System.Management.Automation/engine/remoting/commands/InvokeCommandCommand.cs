@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -785,13 +785,6 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(RemotingErrorIdStrings.AsJobAndDisconnectedError);
             }
 
-            if (this.InvokeAndDisconnect &&
-                (this.ComputerName == null || this.ComputerName.Length == 0) &&
-                (this.ConnectionUri == null || this.ConnectionUri.Length == 0))
-            {
-                throw new InvalidOperationException(RemotingErrorIdStrings.InvokeDisconnectedWithoutComputerName);
-            }
-
             if (MyInvocation.BoundParameters.ContainsKey("SessionName") && !this.InvokeAndDisconnect)
             {
                 throw new InvalidOperationException(RemotingErrorIdStrings.SessionNameWithoutInvokeDisconnected);
@@ -801,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
             var hostDebugger = GetHostDebugger();
             if (hostDebugger == null)
             {
-                // Do not allow RemoteDebug if there is no host debugger available.  Otherwise script will hang indefinitely.
+                // Do not allow RemoteDebug if there is no host debugger available.  Otherwise script will not respond indefinitely.
                 RemoteDebug = false;
             }
             else if (hostDebugger.IsDebuggerSteppingEnabled)
@@ -946,7 +939,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Use remote steppable pipeline only for non-input piping case.
                         // Win8 Bug:898011 - We are restricting remote steppable pipeline because
-                        // of this bug in Win8 where hangs can occur during data piping.
+                        // of this bug in Win8 where not responding can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
                         if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
@@ -1180,10 +1173,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteJobResults(false);
 
                         // finally dispose the job.
-                        if (!_asjob)
-                        {
-                            _job.Dispose();
-                        }
+                        _job.Dispose();
 
                         // We no longer need to call ClearInvokeCommandOnRunspaces() here because
                         // this command might finish before the foreach block finishes. previously,
@@ -1230,10 +1220,8 @@ namespace Microsoft.PowerShell.Commands
                             WriteJobResults(false);
 
                             // finally dispose the job.
-                            if (!_asjob)
-                            {
-                                _job.Dispose();
-                            }
+                            _job.Dispose();
+
                         } // if (needToCollect...
                     }// else - job == null
                 }
@@ -1631,7 +1619,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="nonblocking">Write in a non-blocking manner</param>
         private void WriteJobResults(bool nonblocking)
         {
-            if (_job != null)
+            if (_job == null)
+            {
+                return;
+            }
+
+            try
             {
                 PipelineStoppedException caughtPipelineStoppedException = null;
                 _job.PropagateThrows = _propagateErrors;
@@ -1763,7 +1756,12 @@ namespace Microsoft.PowerShell.Commands
                                     session.Name, session.InstanceId));
                         }
                     }
-
+                }
+            }
+            finally
+            {
+                if (_job.JobStateInfo.State == JobState.Disconnected)
+                {
                     // Allow Invoke-Command to end even though not all remote pipelines
                     // finished.
                     HandleThrottleComplete(null, null);

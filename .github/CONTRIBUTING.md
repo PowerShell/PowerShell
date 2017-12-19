@@ -12,8 +12,8 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 * Make sure you have a [GitHub account](https://github.com/signup/free).
 * Learning Git:
-  * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
-  * [Git Basics](../docs/git/basics.md): install and getting started
+    * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
+    * [Git Basics](../docs/git/basics.md): install and getting started
 * [GitHub Flow Guide](https://guides.github.com/introduction/flow/):
   step-by-step instructions of GitHub Flow
 
@@ -105,39 +105,34 @@ Additional references:
   Each commit should be a **single complete** change.
   This discipline is important when reviewing the changes as well as when using `git bisect` and `git revert`.
 
-#### Pull request submission
+#### Pull request - Submission
 
 **Always create a pull request to the `master` branch of this repository**.
 
-![Github-PR-dev.png](Images/Github-PR-dev.png)
+![GitHub-PR.png](Images/GitHub-PR.png)
 
+* It's recommended to avoid a PR with too many changes.
+  A large PR not only stretches the review time, but also makes it much harder to spot issues.
+  In such case, it's better to split the PR to multiple smaller ones.
+  For large features, try to approach it in an incremental way, so that each PR won't be too big.
 * If you're contributing in a way that changes the user or developer experience, you are expected to document those changes.
   See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell).
 * Add a meaningful title of the PR describing what change you want to check in.
-  Don't simply put: "Fixes issue #5".
-  A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fixes #5" in the PR's body.
+  Don't simply put: "Fix issue #5".
+  Also don't directly use the issue title as the PR title.
+  An issue title is to briefly describe what is wrong, while a PR title is to briefly describe what is changed.
+  A better example is: "Add Ensure parameter to New-Item cmdlet", with "Fix #5" in the PR's body.
 * When you create a pull request,
-  including a summary of what's included in your changes and
-  if the changes are related to an existing GitHub issue,
-  please reference the issue in pull request description (e.g. ```Closes #11```).
+  including a summary about your changes in the PR description.
+  The description is used to create change logs,
+  so try to have the first sentence explain the benefit to end users.
+  If the changes are related to an existing GitHub issue,
+  please reference the issue in PR description (e.g. ```Fix #11```).
   See [this][closing-via-message] for more details.
-* If the change warrants a note in the [changelog](../CHANGELOG.MD)
-  either update the changelog in your pull request or
-  add a comment in the PR description saying that the change may warrant a note in the changelog.
-  New changes always go into the **Unreleased** section.
-  Keeping the changelog up-to-date simplifies the release process for Maintainers.
-  An example (with an associated PR #):
-
-  ```markdown
-  Unreleased
-  ----------
-
-  * `Update-Item` now supports `-FriendlyName` (#1234).
-  ```
 
 * Please use the present tense and imperative mood when describing your changes:
-  * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
-  * Instead of "Fixed for server connection issue", write "Fix server connection issue".
+    * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
+    * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
   This form is akin to giving commands to the code base
   and is recommended by the Git SCM developers.
@@ -153,6 +148,10 @@ Additional references:
   Even better, all contributors are free to contribute the documentation themselves.
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 
+### Pull Request - Work in Progress
+
+* If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
+
 #### Pull Request - Automatic Checks
 
 * If this is your first contribution to PowerShell,
@@ -167,50 +166,55 @@ Additional references:
   [run the spellchecker command line tool in interactive mode](#spellchecking-documentation)
   to add words to the `.spelling` file.
 
-#### Pull Request - Code Review
+#### Pull Request - Workflow
 
-* Roles and Responsibilities of a PR: Author, Reviewer, and Assignee
-  * Reviewer and Assignee are two separate roles of a PR.
-    * A Reviewer can be anyone who wants to contribute.
-      A Reviewer reviews the change of a PR,
-      leaves comments for the Author to address,
-      and approves the PR when the change looks good.
-    * An Assignee must be a [Maintainer](../docs/maintainers), who monitors the progress of the PR,
-      coordinates the review process, and merges the PR after it's been approved.
-      The Assignee may or may not be a Reviewer of the PR at the same time.
-  * An Author is encouraged to choose Reviewer(s) and an Assignee for the PR.
-    If no Assignee is chosen, one of the Maintainers shall be assigned to it.
-    If no Reviewer is chosen, the Assignee shall choose Reviewer(s) as appropriate.
-    * If an Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
-      then the Author **is required** to choose Reviewer(s) and an Assignee for the PR.
-  * For a PR to be merged, it must be approved by at least one PowerShell Team member or Collaborator,
-    so additional Reviewer(s) may be added by the Assignee as appropriate.
-    The Assignee may also be re-assigned by Maintainers.
-* A Reviewer can postpone the code review if CI builds fail,
-  but also can start the code review early regardless of the CI builds.
-* The Author **is responsible** for driving the PR to the Approved state.
-  The Author addresses review comments, and pings Reviewer(s) to start the next iteration.
-  If the review is making no progress (or very slow),
-  the Author can always ask the Assignee to help coordinate the process and keep it moving.
-* Additional feedback is always welcome!
-  Even if you are not designated as a Reviewer,
-  feel free to review others' pull requests anyway.
-  Leave your comments even if everything looks good;
-  a simple "Looks good to me" or "LGTM" will suffice.
-  This way we know someone has already taken a look at it!
-* When updating your pull request, please **create new commits**
-  and **don't rewrite the commits history**. This way it's very easy for
-  the reviewers to see diff between iterations.
-  If you rewrite the history in the pull request, review could be much slower.
-  Once the review is done, you can rewrite the history to make it prettier,
-  if you like.
-  Otherwise it's likely would be squashed on merge to master.
-* Once the code review is done,
-  all merge conflicts are resolved,
-  and the CI system build status is passing,
-  the PR Assignee will merge your changes.
-* For more information on the PowerShell Maintainers' process,
-  see the [documentation](../docs/maintainers).
+1. The PR *author* creates a pull request from a fork.
+1. The *author* ensures that their pull request passes the [CI system][ci-system] build.
+   - If the build fails, a [Repository Maintainer][repository-maintainer] adds the `Review - waiting on author` label to the pull request.
+   The *author* can then continue to update the pull request until the build passes.
+1. If the *author* knows whom should participate in the review, they should add them otherwise they can add the recommended *reviewers*.
+1. Once the build passes, if there is not sufficient review, the *maintainer* adds the `Review - needed` label.
+1. An [Area Expert][area-expert] should also review the pull request.
+   - If the *author* does not meet the *reviewer*'s standards, the *reviewer* makes comments. A *maintainer* then removes the `Review - needed` label and adds
+   the `Review - waiting on author` label. The *author* must address the comments and repeat from step 2.
+   - If the *author* meets the *reviewer*'s standards, the *reviewer* approves the PR. A maintainer then removes the `need review` label.
+1. Once the code review is completed, a *maintainer* merges the pull request after one business day to allow for additional critical feedback.
+
+#### Pull Request - Roles and Responsibilities
+
+1. The PR *author* is responsible for moving the PR forward to get it Approved.
+   This includes addressing feedback within a timely period and indicating feedback has been addressed by adding a comment and mentioning the specific *reviewers*.
+   When updating your pull request, please **create new commits** and **don't rewrite the commits history**.
+   This way it's very easy for the reviewers to see diff between iterations.
+   If you rewrite the history in the pull request, review could be much slower.
+   The PR is likely to be squashed on merge to master by the *assignee*.
+1. *Reviewers* are anyone who wants to contribute.
+   They are responsible for ensuring the code: addresses the issue being fixed, does not create new issues (functional, performance, reliability, or security), and implements proper design.
+   *Reviewers* should use the `Review changes` drop down to indicate they are done with their review.
+   - `Request changes` if you believe the PR merge should be blocked if your feedback is not addressed,
+   - `Approve` if you believe your feedback has been addressed or the code is fine as-is, it is customary (although not required) to leave a simple "Looks good to me" (or "LGTM") as the comment for approval.
+   - `Comment` if you are making suggestions that the *author* does not have to accept.
+   Early in the review, it is acceptable to provide feedback on coding formatting based on the published [Coding Guidelines](../docs/dev-process/coding-guidelines.md), however,
+   after the PR has been approved, it is generally _not_ recommended to focus on formatting issues unless they go against the [Coding Guidelines](../docs/dev-process/coding-guidelines.md).
+   Non-critical late feedback (after PR has been approved) can be submitted as a new issue or new pull request from the *reviewer*.
+1. *Assignee* who are always *Maintainers* ensure that proper review has occurred and if they believe one approval is not sufficient, the *maintainer* is responsible to add more reviewers.
+   An *assignee* may also be a reviewer, but the roles are distinct.
+   Once the PR has been approved and the CI system is passing, the *assignee* will merge the PR after giving one business day for any critical feedback.
+   For more information on the PowerShell Maintainers' process, see the [documentation](../docs/maintainers).
+
+#### Pull Requests - Abandoned
+
+A pull request with the label `Review - waiting on author` for **more than two weeks** without a word from the author is considered abandoned.
+
+In these cases:
+
+1. *Assignee* will ping the author of PR to remind them of pending changes.
+   - If the *author* responds, it's no longer an abandoned; the pull request proceeds as normal.
+1. If the *author* does not respond **within a week**:
+   - If the *reviewer*'s comments are very minor, merge the change, fix the code immediately, and create a new PR with the fixes addressing the minor comments.
+   - If the changes required to merge the pull request are significant but needed, *assignee* creates a new branch with the changes and open an issue to merge the code into the dev branch.
+   Mention the original pull request ID in the description of the new issue and close the abandoned pull request.
+   - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the code base or a design change), *assignee* will simply close the pull request.
 
 ## Making Breaking Changes
 
@@ -235,7 +239,7 @@ we encourage contributors to follow these common engineering practices:
 
 * Format commit messages following these guidelines:
 
-```
+```text
 Summarize change in 50 characters or less
 
 Similar to email, this is the body of the commit message,
@@ -308,3 +312,6 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
 [use-vscode-editor]: ../docs/learning-powershell/using-vscode.md#editing-with-visual-studio-code
+[repository-maintainer]: ../docs/community/governance.md#repository-maintainers
+[area-expert]: ../docs/community/governance.md#area-experts
+[ci-system]: ../docs/testing-guidelines/testing-guidelines.md#ci-system

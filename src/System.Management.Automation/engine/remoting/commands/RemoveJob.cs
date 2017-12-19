@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match  the specified instanceid
+        /// Find the jobs in repository which match the specified instanceid
         /// </summary>
         ///
         /// <param name="writeobject">if true, method writes the object instead of returning it

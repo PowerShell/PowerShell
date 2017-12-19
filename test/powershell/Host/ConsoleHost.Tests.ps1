@@ -9,7 +9,7 @@ using namespace System.Diagnostics
 Describe 'minishell for native executables' -Tag 'CI' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
     }
 
     Context 'Streams from minishell' {
@@ -51,7 +51,7 @@ Describe 'minishell for native executables' -Tag 'CI' {
 Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
         $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
@@ -152,7 +152,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "PowerShell[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
             }
         }
 
@@ -165,17 +165,15 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $actual | Should Be $expected
         }
 
-        It "-Version should return the engine version" {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version
+        It "-Version should return the engine version using: -version <value>" -TestCases @(
+            @{value = ""},
+            @{value = "2"},
+            @{value = "-command 1-1"}
+        ) {
+            $currentVersion = "PowerShell " + $PSVersionTable.GitCommitId.ToString()
+            $observed = & $powershell -version $value 2>&1
             $observed | should be $currentVersion
-        }
-
-        It "-Version should ignore other parameters" {
-            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
-            $observed = & $powershell -version -command get-date
-            # no extraneous output
-            $observed | should be $currentVersion
+            $LASTEXITCODE | Should Be 0
         }
 
         It "-File should be default parameter" {
@@ -240,7 +238,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should Be $BoolValue
         }
 
-        It "-File should return exit code from script"  -TestCases @(
+        It "-File '<filename>' should return exit code from script"  -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
@@ -286,7 +284,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "Input redirected but not reading from stdin (not really interactive)" {
         # Tests under this context are testing that we do not read from StandardInput
-        # even though it is redirected - we want to make sure we don't hang.
+        # even though it is redirected - we want to make sure we don't stop responding.
         # So none of these tests should close StandardInput
 
         It "Redirected input w/ implicit -Command w/ -NonInteractive" {
@@ -489,8 +487,12 @@ foo
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME should be in front so that powershell.exe starts current running PowerShell" {
-            powershell -v | Should Match $psversiontable.GitCommitId
+        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
+            pwsh -v | Should Match $psversiontable.GitCommitId
+        }
+
+        It "powershell starts if PATH is not set" -Skip:($IsWindows) {
+            bash -c "unset PATH;$powershell -c '1+1'" | Should BeExactly 2
         }
     }
 
@@ -566,7 +568,7 @@ public enum ShowWindowCommands : int
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
         ) {
         param ($WindowStyle)
-        $ps = Start-Process powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+        $ps = Start-Process pwsh -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
         $startTime = Get-Date
         $showCmd = "Unknown"
         while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
@@ -579,7 +581,7 @@ public enum ShowWindowCommands : int
     }
 
     It "Invalid -WindowStyle returns error" {
-        powershell -WindowStyle invalid
+        pwsh -WindowStyle invalid
         $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
     }
 }

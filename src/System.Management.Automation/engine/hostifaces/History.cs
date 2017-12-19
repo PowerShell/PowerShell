@@ -1,5 +1,5 @@
 /********************************************************************++
-Copyright (c) Microsoft Corporation.  All rights reserved.
+Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
                             if (_buffer[GetIndexFromId(i)] == null) continue;
                             if (_buffer[GetIndexFromId(i)].Cleared == true)
                             {
-                                // we have to clear count entries before an id, so if an entry is null,increment  first id
+                                // we have to clear count entries before an id, so if an entry is null,increment first id
                                 firstId++;
                                 continue;
                             }
@@ -1698,7 +1698,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// id of a history  entry
+        /// id of a history entry
         /// </summary>
 
         private int[] _id;
@@ -2055,7 +2055,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return;
-        }//end  function
+        }//end function
 
 
         /// <summary>
