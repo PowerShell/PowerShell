@@ -202,7 +202,7 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.0-rc",
+        $PSVersion = "6.0.0-rc.2",
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
     )
@@ -243,6 +243,7 @@ function Test-PSPackage
         $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
         $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
         $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += "--no-cache"
         $buildArgs += $dir.FullName
 
         $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning

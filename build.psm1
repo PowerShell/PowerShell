@@ -97,19 +97,13 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # Use the .NET Core APIs to determine the current platform.
-    # If a runtime exception is thrown, we are on Windows PowerShell, not PowerShell Core,
-    # because System.Runtime.InteropServices.RuntimeInformation
-    # and System.Runtime.InteropServices.OSPlatform do not exist in Windows PowerShell.
-    try {
-        $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
-        $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
-
+    # PowerShell Core will likely not be built on pre-1709 nanoserver
+    if ($PSVersionTable.ContainsKey("PSEdition") -and "Core" -eq $PSVersionTable.PSEdition) {
         $environment += @{'IsCoreCLR' = $true}
-        $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
-        $environment += @{'IsMacOS' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
-        $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
-    } catch {
+        $environment += @{'IsLinux' = $IsLinux}
+        $environment += @{'IsMacOS' = $IsMacOS}
+        $environment += @{'IsWindows' = $IsWindows}
+    } else {
         $environment += @{'IsCoreCLR' = $false}
         $environment += @{'IsLinux' = $false}
         $environment += @{'IsMacOS' = $false}
@@ -178,8 +172,12 @@ function Start-BuildNativeWindowsBinaries {
         [ValidateSet('Debug', 'Release')]
         [string]$Configuration = 'Release',
 
-        [ValidateSet('x64', 'x86')]
-        [string]$Arch = 'x64'
+        # The `x64_arm` syntax is the build environment for VS2017, `x64` means the host is an x64 machine and will use
+        # the x64 built tool.  The `arm` refers to the target architecture when doing cross compilation.
+        [ValidateSet('x64', 'x86', 'x64_arm64', 'x64_arm')]
+        [string]$Arch = 'x64',
+
+        [switch]$Clean
     )
 
     if (-not $Environment.IsWindows) {
@@ -199,8 +197,16 @@ function Start-BuildNativeWindowsBinaries {
         throw 'Win 10 SDK not found. Run "Start-PSBootstrap -BuildWindowsNative" or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
     }
 
-    $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+    if ($env:VS140COMNTOOLS -ne $null) {
+        $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+    } else {
+        $vcPath = (Get-ChildItem "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2017" -Filter "VC" -Directory -Recurse | Select-Object -First 1).FullName
+    }
+
     $atlMfcIncludePath = Join-Path -Path $vcPath -ChildPath 'atlmfc/include'
+    if (!(Test-Path $atlMfcIncludePath)) { # for VS2017, need to search for it
+        $atlMfcIncludePath = (Get-ChildItem $vcPath -Filter AtlBase.h -Recurse -File | Select-Object -First 1).DirectoryName
+    }
 
     # atlbase.h is included in the pwrshplugin project
     if ((Test-Path -Path $atlMfcIncludePath\atlbase.h) -eq $false) {
@@ -208,42 +214,62 @@ function Start-BuildNativeWindowsBinaries {
     }
 
     # vcvarsall.bat is used to setup environment variables
-    if ((Test-Path -Path $vcPath\vcvarsall.bat) -eq $false) {
-        throw "Could not find Visual Studio vcvarsall.bat at $vcPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
+    $vcvarsallbatPath = "$vcPath\vcvarsall.bat"
+    if (!(Test-Path -Path $vcvarsallbatPath)) { # for VS2017, need to search for it
+        $vcvarsallbatPath = (Get-ChildItem $vcPath -Filter vcvarsall.bat -Recurse -File | Select-Object -First 1).FullName
+    }
+
+    if ((Test-Path -Path $vcvarsallbatPath) -eq $false) {
+        throw "Could not find Visual Studio vcvarsall.bat at $vcvarsallbatPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
     }
 
     log "Start building native Windows binaries"
+
+    if ($Clean) {
+        git clean -fdx
+        Remove-Item $HOME\source\cmakecache.txt -ErrorAction SilentlyContinue
+    }
 
     try {
         Push-Location "$PSScriptRoot\src\powershell-native"
 
         # setup cmakeGenerator
+        $cmakeGeneratorPlatform = ""
         if ($Arch -eq 'x86') {
-            $cmakeGenerator = 'Visual Studio 14 2015'
+            $cmakeGenerator = 'Visual Studio 15 2017'
+            $cmakeArch = 'x86'
+        } elseif ($Arch -eq 'x64_arm') {
+            $cmakeGenerator = 'Visual Studio 15 2017 ARM'
+            $cmakeArch = 'arm'
+        } elseif ($Arch -eq 'x64_arm64') {
+            $cmakeGenerator = 'Visual Studio 15 2017'
+            $cmakeArch = 'arm64'
+            $cmakeGeneratorPlatform = "-A ARM64"
         } else {
-            $cmakeGenerator = 'Visual Studio 14 2015 Win64'
+            $cmakeGenerator = 'Visual Studio 15 2017 Win64'
+            $cmakeArch = 'x64'
         }
 
         # Compile native resources
         $currentLocation = Get-Location
-        @("nativemsh/pwrshplugin") | ForEach-Object {
+        @("nativemsh\pwrshplugin") | ForEach-Object {
             $nativeResourcesFolder = $_
             Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | ForEach-Object {
                 $command = @"
-cmd.exe /C cd /d "$currentLocation" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$currentLocation\$nativeResourcesFolder" -r "$currentLocation\$nativeResourcesFolder"
 "@
                 log "  Executing mc.exe Command: $command"
-                Start-NativeExecution { Invoke-Expression -Command:$command 2>&1 }
+                Start-NativeExecution { Invoke-Expression -Command:$command }
             }
         }
 
+        # make sure we use version we installed and not from VS
+        $cmakePath = (Get-Command cmake).Source
         # Disabling until I figure out if it is necessary
         # $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
         $overrideFlags = ""
-        $location = Get-Location
-
         $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$currentLocation" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
         log "  Executing Build Command: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -264,15 +290,18 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
         $location = "$PSScriptRoot\src\PowerShell.Core.Instrumentation"
         Set-Location -Path $location
 
+        Remove-Item $HOME\source\cmakecache.txt -ErrorAction SilentlyContinue
+
         $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$Arch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
+cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$location" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
         log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
 
         # Copy the binary to the packaging directory
         # NOTE: No PDB file; it's a resource-only DLL.
-        $srcPath = [IO.Path]::Combine($location, $Configuration, 'PowerShell.Core.Instrumentation.dll')
+        # VS2017 puts this in $HOME\source
+        $srcPath = [IO.Path]::Combine($HOME, "source", $Configuration, 'PowerShell.Core.Instrumentation.dll')
         Copy-Item -Path $srcPath -Destination $dstPath
 
     } finally {
@@ -357,6 +386,7 @@ function Start-PSBuild {
         [switch]$TypeGen,
         [switch]$Clean,
         [switch]$PSModuleRestore,
+        [switch]$CI,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -369,7 +399,9 @@ function Start-PSBuild {
                      "win7-x86",
                      "osx.10.12-x64",
                      "linux-x64",
-                     "linux-arm")]
+                     "linux-arm",
+                     "win-arm",
+                     "win-arm64")]
         [string]$Runtime,
 
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
@@ -384,6 +416,10 @@ function Start-PSBuild {
 
     if ($Runtime -eq "linux-arm" -and -not $Environment.IsUbuntu) {
         throw "Cross compiling for linux-arm is only supported on Ubuntu environment"
+    }
+
+    if ("win-arm","win-arm64" -contains $Runtime -and -not $Environment.IsWindows) {
+        throw "Cross compiling for win-arm or win-arm64 is only supported on Windows environment"
     }
 
     function Stop-DevPowerShell {
@@ -596,7 +632,7 @@ Fix steps:
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
     {
-        Restore-PSModuleToBuild -PublishPath $publishPath
+        Restore-PSModuleToBuild -PublishPath $publishPath -CI:$CI.IsPresent
     }
 }
 
@@ -605,7 +641,9 @@ function Restore-PSModuleToBuild
     param(
         [Parameter(Mandatory)]
         [string]
-        $PublishPath
+        $PublishPath,
+        [Switch]
+        $CI
     )
 
     $ProgressPreference = "SilentlyContinue"
@@ -619,8 +657,24 @@ function Restore-PSModuleToBuild
         'PowerShellGet'
         'Microsoft.PowerShell.Archive'
     ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
+
+    if($CI.IsPresent)
+    {
+        Restore-PSPester -Destination $modulesDir
+    }
 }
 
+function Restore-PSPester
+{
+    param
+    (
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+    )
+
+    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
+}
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -651,7 +705,9 @@ function New-PSOptions {
                      "win7-x64",
                      "osx.10.12-x64",
                      "linux-x64",
-                     "linux-arm")]
+                     "linux-arm",
+                     "win-arm",
+                     "win-arm64")]
         [string]$Runtime,
 
         [switch]$CrossGen,
@@ -780,6 +836,17 @@ function New-PSOptions {
 
 # Get the Options of the last build
 function Get-PSOptions {
+    param(
+        [Parameter(HelpMessage='Defaults to New-PSOption if a build has not ocurred.')]
+        [switch]
+        $DefaultToNew
+    )
+
+    if(!$script:Options -and $DefaultToNew.IsPresent)
+    {
+        return New-PSOptions
+    }
+
     return $script:Options
 }
 
@@ -872,10 +939,8 @@ function Publish-PSTestTools {
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
         @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
     )
-    if ($null -eq $Options)
-    {
-        $Options = New-PSOptions
-    }
+
+    $Options = Get-PSOptions -DefaultToNew
 
     # Publish tools so it can be run by tests
     foreach ($tool in $tools)
@@ -903,7 +968,7 @@ function Start-PSPester {
         [string[]]$Tag = @("CI","Feature"),
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
-        [string]$binDir = (Split-Path (New-PSOptions).Output),
+        [string]$binDir = (Split-Path (Get-PSOptions -DefaultToNew).Output),
         [string]$powershell = (Join-Path $binDir 'pwsh'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
@@ -919,8 +984,8 @@ function Start-PSPester {
     {
         Write-Warning @"
 Pester module not found.
-Make sure that the proper git submodules are installed by running:
-    git submodule update --init
+Restore the module to '$Pester' by running:
+    Restore-PSPester
 "@
         return;
     }
@@ -1188,6 +1253,53 @@ function Show-PSPesterError
 
 }
 
+function Test-XUnitTestResults
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string] $TestResultsFile
+    )
+
+    if(-not (Test-Path $TestResultsFile))
+    {
+        throw "File not found $TestResultsFile"
+    }
+
+    try
+    {
+        $results = [xml] (Get-Content $TestResultsFile)
+    }
+    catch
+    {
+        throw "Cannot convert $TestResultsFile to xml : $($_.message)"
+    }
+
+    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -gt 0
+
+    if(-not $failedTests)
+    {
+        return $true
+    }
+
+    foreach($failure in $failedTests)
+    {
+        $description = $failure.test.type
+        $name = $failure.test.method
+        $message = $failure.test.failure.message.'#cdata-section'
+        $stackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
+
+        logerror ("Description: " + $description)
+        logerror ("Name:        " + $name)
+        logerror "message:"
+        logerror $message
+        logerror "stack-trace:"
+        logerror $stackTrace
+    }
+
+    throw "$($failedTests.failed) tests failed"
+}
+
 #
 # Read the test result file and
 # Throw if a test failed
@@ -1251,46 +1363,67 @@ function Test-PSPesterResults
 
 
 function Start-PSxUnit {
-    [CmdletBinding()]param()
-
-    log "xUnit tests are currently disabled pending fixes due to API and AssemblyLoadContext changes - @andschwa"
-    return
-
-    if ($Environment.IsWindows) {
-        throw "xUnit tests are only currently supported on Linux / OS X"
-    }
-
-    if ($Environment.IsMacOS) {
-        log "Not yet supported on OS X, pretending they passed..."
-        return
-    }
+    [CmdletBinding()]param(
+        [string] $TestResultsFile = "XUnitResults.xml"
+    )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
-
-    $Arguments = "--configuration", "Linux", "-parallel", "none"
-    if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-        $Arguments += "-verbose"
-    }
 
     $Content = Split-Path -Parent (Get-PSOutput)
     if (-not (Test-Path $Content)) {
         throw "PowerShell must be built before running tests!"
     }
 
+    if(Test-Path $TestResultsFile)
+    {
+        Remove-Item $TestResultsFile -Force -ErrorAction SilentlyContinue
+    }
+
     try {
         Push-Location $PSScriptRoot/test/csharp
+
         # Path manipulation to obtain test project output directory
-        $Output = Join-Path $pwd ((Split-Path -Parent (Get-PSOutput)) -replace (New-PSOptions).Top)
-        Write-Verbose "Output is $Output"
+        dotnet restore
 
-        Copy-Item -ErrorAction SilentlyContinue -Recurse -Path $Content/* -Include Modules,libpsl-native* -Destination $Output
-        Start-NativeExecution { dotnet test $Arguments }
-
-        if ($LASTEXITCODE -ne 0) {
-            throw "$LASTEXITCODE xUnit tests failed"
+        # --fx-version workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
+        if($Environment.IsWindows)
+        {
+            dotnet xunit --fx-version 2.0.0 -xml $TestResultsFile
         }
-    } finally {
+        else
+        {
+            if($Environment.IsMacOS)
+            {
+                $nativeLib = "$Content/libpsl-native.dylib"
+            }
+            else
+            {
+                $nativeLib = "$Content/libpsl-native.so"
+            }
+
+            $requiredDependencies = @(
+                $nativeLib,
+                "$Content/Microsoft.Management.Infrastructure.dll",
+                "$Content/System.Text.Encoding.CodePages.dll"
+            )
+
+            if((Test-Path $requiredDependencies) -notcontains $false)
+            {
+                $options = New-PSOptions
+                $Destination = "bin/$($options.configuration)/$($options.framework)"
+                New-Item $Destination -ItemType Directory -Force > $null
+                Copy-Item -Path $requiredDependencies -Destination $Destination -Force
+            }
+            else
+            {
+                throw "Dependencies $requiredDependencies not met."
+            }
+
+            dotnet xunit --fx-version 2.0.0 -configuration $Options.configuration -xml $TestResultsFile
+        }
+    }
+    finally {
         Pop-Location
     }
 }
@@ -1464,7 +1597,7 @@ function Start-PSBootstrap {
                 Start-NativeExecution { brew install $Deps } -IgnoreExitcode
 
                 # Install patched version of curl
-                Start-NativeExecution { brew install curl --with-openssl } -IgnoreExitcode
+                Start-NativeExecution { brew install curl --with-openssl --with-gssapi } -IgnoreExitcode
             }
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
@@ -1562,11 +1695,11 @@ function Start-PSBootstrap {
 
                 # Install cmake
                 $cmakePath = "${env:ProgramFiles}\CMake\bin"
-                if($cmakePresent) {
+                if($cmakePresent -and !($force.IsPresent)) {
                     log "Cmake is already installed. Skipping installation."
                 } else {
-                    log "Cmake not present. Installing cmake."
-                    Start-NativeExecution { choco install cmake -y --version 3.6.0 }
+                    log "Cmake not present or -Force used. Installing cmake."
+                    Start-NativeExecution { choco install cmake -y --version 3.10.0 }
                     if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
                         log "Adding $cmakePath to Path environment variable"
                         $env:Path += ";$cmakePath"
@@ -1931,7 +2064,9 @@ function Start-CrossGen {
                      "win7-x64",
                      "osx.10.12-x64",
                      "linux-x64",
-                     "linux-arm")]
+                     "linux-arm",
+                     "win-arm",
+                     "win-arm64")]
         [string]
         $Runtime
     )
@@ -1985,8 +2120,10 @@ function Start-CrossGen {
     $crossGenRuntime = if ($Environment.IsWindows) {
         if ($Runtime -match "-x86") {
             "win-x86"
-        } else {
+        } elseif ($Runtime -match "-x64") {
             "win-x64"
+        } elseif (!($env:PROCESSOR_ARCHITECTURE -match "arm")) {
+            throw "crossgen for 'win-arm' and 'win-arm64' must be run on that platform"
         }
     } elseif ($Runtime -eq "linux-arm") {
         throw "crossgen is not available for 'linux-arm'"
@@ -2123,6 +2260,54 @@ function Clear-PSRepo
     Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
         Write-Verbose "Cleaning $_ ..."
         git clean -fdX $_
+    }
+}
+
+
+# Install PowerShell modules from a git Repo such as PSL-Pester
+function Restore-GitModule
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Name,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Uri,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Destination,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$CommitSha
+    )
+
+    log 'Restoring module from git repo:'
+    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
+
+    $clonePath = Join-Path -Path $Destination -ChildPath $Name
+    if(Test-Path $clonePath)
+    {
+        remove-Item -Path $clonePath -recurse -force
+    }
+
+    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
+
+    Push-location $clonePath
+    try {
+        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
+
+        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
+        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
+        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
+    }
+    finally
+    {
+        pop-location
     }
 }
 

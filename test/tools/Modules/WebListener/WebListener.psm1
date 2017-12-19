@@ -1,4 +1,4 @@
-Class WebListener 
+Class WebListener
 {
     [int]$HttpPort
     [int]$HttpsPort
@@ -8,7 +8,7 @@ Class WebListener
 
     WebListener () { }
 
-    [String] GetStatus() 
+    [String] GetStatus()
     {
         return $This.Job.JobStateInfo.State
     }
@@ -16,23 +16,23 @@ Class WebListener
 
 [WebListener]$WebListener
 
-function Get-WebListener 
+function Get-WebListener
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([WebListener])]
     param()
 
-    process 
+    process
     {
         return [WebListener]$Script:WebListener
     }
 }
 
-function Start-WebListener 
+function Start-WebListener
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([WebListener])]
-    param 
+    param
     (
         [ValidateRange(1,65535)]
         [int]$HttpPort = 8083,
@@ -46,8 +46,8 @@ function Start-WebListener
         [ValidateRange(1,65535)]
         [int]$TlsPort = 8086
     )
-    
-    process 
+
+    process
     {
         $runningListener = Get-WebListener
         if ($null -ne $runningListener -and $runningListener.GetStatus() -eq 'Running')
@@ -60,7 +60,7 @@ function Start-WebListener
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = 'password'
         $initCompleteMessage = 'Now listening on'
-        
+
         $serverPfxPath = Join-Path $MyInvocation.MyCommand.Module.ModuleBase $serverPfx
         $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
         $Job = Start-Job {
@@ -69,7 +69,7 @@ function Start-WebListener
             dotnet $using:appDll $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
         }
         $Script:WebListener = [WebListener]@{
-            HttpPort  = $HttpPort 
+            HttpPort  = $HttpPort
             HttpsPort = $HttpsPort
             Tls11Port = $Tls11Port
             TlsPort   = $TlsPort
@@ -83,8 +83,8 @@ function Start-WebListener
             $isRunning = $initStatus -match $initCompleteMessage
         }
         while (-not $isRunning -and (get-date) -lt $timeOut)
-    
-        if (-not $isRunning) 
+
+        if (-not $isRunning)
         {
             $Job | Stop-Job -PassThru | Receive-Job
             $Job | Remove-Job
@@ -94,13 +94,13 @@ function Start-WebListener
     }
 }
 
-function Stop-WebListener 
+function Stop-WebListener
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([Void])]
     param()
-    
-    process 
+
+    process
     {
         $Script:WebListener.job | Stop-Job -PassThru | Remove-Job
         $Script:WebListener = $null
@@ -131,11 +131,16 @@ function Get-WebListenerUrl {
             'Cert',
             'Compression',
             'Delay',
+            'Delete',
             'Encoding',
             'Get',
             'Home',
             'Multipart',
+            'Patch',
+            'Post',
+            'Put',
             'Redirect',
+            'Response',
             'ResponseHeaders',
             '/'
         )]
@@ -172,7 +177,7 @@ function Get-WebListenerUrl {
         {
             $Uri.Path = '{0}/{1}' -f $Test, $TestValue
         }
-        else 
+        else
         {
             $Uri.Path = $Test
         }

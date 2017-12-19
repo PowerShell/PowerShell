@@ -24,7 +24,7 @@ function Start-PSPackage {
         [string[]]$Type,
 
         # Generate windows downlevel package
-        [ValidateSet("win7-x86", "win7-x64")]
+        [ValidateSet("win7-x86", "win7-x64", "win-arm", "win-arm64")]
         [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
@@ -34,8 +34,8 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ($Type -eq "zip") {
-            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip'.
+        if ("zip" -eq $Type) {
+            # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
             $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
@@ -65,9 +65,13 @@ function Start-PSPackage {
         }
 
         if($Environment.IsWindows) {
-            # Runtime will always be win7-x64 or win7-x86 on Windows.
+            # Runtime will be one of win7-x64, win7-x86, "win-arm" and "win-arm64" on Windows.
             # Build the name suffix for universal win-plat packages.
-            $NameSuffix = $Runtime -replace 'win\d+', 'win'
+            switch ($Runtime) {
+                "win-arm"   { $NameSuffix = "win-arm32" }
+                "win-arm64" { $NameSuffix = "win-arm64" }
+                default     { $NameSuffix = $_ -replace 'win\d+', 'win' }
+            }
         }
 
         log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
@@ -75,11 +79,11 @@ function Start-PSPackage {
         $Script:Options = Get-PSOptions
 
         $crossGenCorrect = $false
-        if ($Type -eq "tar-arm") {
-            # crossgen doesn't support arm32 yet
+        if ($Runtime -match "arm") {
+            # crossgen doesn't support arm32/64
             $crossGenCorrect = $true
         }
-        elseif($Script:Options.CrossGen) {
+        elseif ($Script:Options.CrossGen) {
             $crossGenCorrect = $true
         }
 
@@ -97,6 +101,7 @@ function Start-PSPackage {
         # Make sure the most recent build satisfies the package requirement
         if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
+            -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
             $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
@@ -169,13 +174,6 @@ function Start-PSPackage {
                     )
                 # Copy file which go into symbols.zip
                 Get-ChildItem -Path $buildSource | Where-Object {$toExclude -inotcontains $_.Name} | Copy-Item -Destination $symbolsSource -Recurse
-
-                # Exclude Pester until we move it to PSModuleRestore
-                $pesterPath = Join-Path -Path $symbolsSource -ChildPath 'Modules\Pester'
-                if(Test-Path -Path $pesterPath)
-                {
-                    Remove-Item -Path $pesterPath -Recurse -Force -ErrorAction SilentlyContinue
-                }
 
                 # Zip symbols.zip to the root package
                 $zipSource = Join-Path $symbolsSource -ChildPath '*'
@@ -426,6 +424,7 @@ function New-TempFolder
 
     return $tempFolder
 }
+
 function New-PSSignedBuildZip
 {
     param(
@@ -441,17 +440,17 @@ function New-PSSignedBuildZip
 
     # Replace unsigned binaries with signed
     $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
-    Get-ChildItem -path $signedFilesFilter -Recurse | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
+    Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
         $relativePath = $_.Replace($signedFilesPath,'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
         log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
     }
 
-    # Remove `signed` folder in buildpath now that signed binaries are copied
-    if (Test-Path $BuildPath\signed)
+    # Remove '$signedFilesPath' now that signed binaries are copied
+    if (Test-Path $signedFilesPath)
     {
-        Remove-Item -Recurse -Force -Path $BuildPath\signed
+        Remove-Item -Recurse -Force -Path $signedFilesPath
     }
 
     $name = split-path -Path $BuildPath -Leaf
@@ -477,10 +476,12 @@ function Expand-PSSignedBuild
     )
 
     $psModulePath = Split-Path -path $PSScriptRoot
-    # Expand unsigned build
+    # Expand signed build
     $buildPath = Join-Path -path $psModulePath -childpath 'ExpandedBuild'
     $null = New-Item -path $buildPath -itemtype Directory -force
     Expand-Archive -path $BuildZip -destinationpath $buildPath -Force
+    # Remove the zip file that contains only those files from the parent folder of 'publish'.
+    # That zip file is used for compliance scan.
     Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
     $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
@@ -586,28 +587,8 @@ function New-UnixPackage {
             }
         }
 
-        foreach ($Dependency in "fpm", "ronn") {
-            if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
-                # These tools are not added to the path automatically on OpenSUSE 13.2
-                # try adding them to the path and re-tesing first
-                [string] $gemsPath = $null
-                [string] $depenencyPath = $null
-                $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
-                if($gemsPath) {
-                    $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
-                    $originalPath = $env:PATH
-                    $env:PATH = $ENV:PATH +":" + $depenencyPath
-                    if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
-                        continue
-                    }
-                    else {
-                        $env:PATH = $originalPath
-                    }
-                }
-
-                throw "Dependency precheck failed!"
-            }
-        }
+        # Verify dependencies are installed and in the path
+        Test-Dependencies
 
         $Description = $packagingStrings.Description
 
@@ -637,31 +618,14 @@ function New-UnixPackage {
         } elseif ($Environment.IsMacOS) {
             "/usr/local/bin"
         }
+        $linkSource = "/tmp/pwsh"
 
         if($pscmdlet.ShouldProcess("Create package file system"))
         {
-            New-Item -Force -ItemType SymbolicLink -Path "/tmp/pwsh" -Target "$Destination/pwsh" >$null
+            New-Item -Force -ItemType SymbolicLink -Path $linkSource -Target "$Destination/pwsh" >$null
 
-            if ($Environment.IsRedHatFamily) {
-                # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-                # platform specific changes. This is the only set of platforms needed for this currently
-                # as Ubuntu has these specific library files in the platform and macOS builds for itself
-                # against the correct versions.
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
-
-                $AfterInstallScript = [io.path]::GetTempFileName()
-                $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-            }
-            elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
-                $AfterInstallScript = [io.path]::GetTempFileName()
-                $AfterRemoveScript = [io.path]::GetTempFileName()
-                $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-                $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-            }
-
+            # Generate After Install and After Remove scripts
+            $AfterScriptInfo = New-AfterScripts
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -676,30 +640,327 @@ function New-UnixPackage {
                 }
             }
 
-            # run ronn to convert man page to roff
-            $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
-            $RoffFile = $RonnFile -replace "\.ronn$"
-
-            # Run ronn on assets file
-            # Run does not play well with files named powershell6.0.1, so we generate and then rename
-            Start-NativeExecution { ronn --roff $RonnFile }
-
-            # gzip in assets directory
-            $GzipFile = "$RoffFile.gz"
-            Start-NativeExecution { gzip -f $RoffFile }
-
-            $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+            # Generate gzip of man file
+            $ManGzipInfo = New-ManGzip
 
             # Change permissions for packaging
             Start-NativeExecution {
                 find $Staging -type d | xargs chmod 755
                 find $Staging -type f | xargs chmod 644
-                chmod 644 $GzipFile
+                chmod 644 $ManGzipInfo.GzipFile
                 chmod 755 "$Staging/pwsh" # only the executable should be executable
             }
         }
 
+        # Add macOS powershell launcher
+        if($Type -eq "osxpkg")
+        {
+            if($pscmdlet.ShouldProcess("Add macOS launch application"))
+            {
+                # Generate launcher app folder
+                $AppsFolder = New-MacOSLauncher -Version $Version
+            }
+        }
+
+        $packageDependenciesParams = @{}
+        if($DebDistro)
+        {
+            $packageDependenciesParams['Distribution']=$DebDistro
+        }
+
         # Setup package dependencies
+        $Dependencies = @(Get-PackageDependencies @packageDependenciesParams)
+
+        $Arguments = Get-FpmArguments `
+            -Name $Name `
+            -Version $Version `
+            -Iteration $Iteration `
+            -Description $Description `
+            -Type $Type `
+            -Dependencies $Dependencies `
+            -AfterInstallScript $AfterScriptInfo.AfterInstallScript `
+            -AfterRemoveScript $AfterScriptInfo.AfterRemoveScript `
+            -Staging $Staging `
+            -Destination $Destination `
+            -ManGzipFile $ManGzipInfo.GzipFile `
+            -ManDestination $ManGzipInfo.ManFile `
+            -LinkSource $LinkSource `
+            -LinkDestination $Link `
+            -AppsFolder $AppsFolder `
+            -ErrorAction Stop
+
+        # Build package
+        try {
+            if($pscmdlet.ShouldProcess("Create $type package")) {
+                $Output = Start-NativeExecution { fpm $Arguments }
+            }
+        } finally {
+            if ($Environment.IsMacOS) {
+                if($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
+                {
+                    Clear-MacOSLauncher
+                }
+
+                # this is continuation of a fpm hack for a weird bug
+                if (Test-Path $hack_dest) {
+                    Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
+                    Move-Item $hack_dest $symlink_dest
+                }
+            }
+            if ($AfterScriptInfo.AfterInstallScript) {
+                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
+            }
+            if ($AfterScriptInfo.AfterRemoveScript) {
+                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript -Force
+            }
+            Remove-Item -Path $ManGzipInfo.GzipFile -Force -ErrorAction SilentlyContinue
+        }
+
+        # Magic to get path output
+        $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+
+        if ($Environment.IsMacOS) {
+            if ($pscmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
+            {
+                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage
+            }
+        }
+
+        if (Test-Path $createdPackage)
+        {
+            Write-Verbose "Created package: $createdPackage" -Verbose
+            return $createdPackage
+        }
+        else
+        {
+            throw "Failed to create $createdPackage"
+        }
+    }
+}
+
+function New-MacOsDistributionPackage
+{
+    param(
+        [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
+        [System.IO.FileInfo]$FpmPackage
+    )
+
+    if(!$Environment.IsMacOS)
+    {
+        throw 'New-MacOsDistributionPackage is only supported on macOS!'
+    }
+
+    $packageName = Split-Path -leaf -Path $FpmPackage
+
+    # Create a temp directory to store the needed files
+    $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Path $tempDir -Force > $null
+
+    $resourcesDir = Join-Path -path $tempDir -childPath 'resources'
+    New-Item -ItemType Directory -Path $resourcesDir -Force > $null
+    #Copy background file to temp directory
+    $backgroundFile = Join-Path $PSScriptRoot "/../../assets/macDialog.png"
+    Copy-Item -Path $backgroundFile -Destination $resourcesDir
+    # Move the current package to the temp directory
+    $tempPackagePath = Join-Path -path $tempDir -ChildPath $packageName
+    Move-Item -Path $FpmPackage -Destination $tempPackagePath -Force
+
+    # Add the OS information to the macOS package file name.
+    $packageExt = [System.IO.Path]::GetExtension($FpmPackage.Name)
+    $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($FpmPackage.Name)
+
+    $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
+    $newPackagePath = Join-Path $FpmPackage.DirectoryName $newPackageName
+
+    # -Force is not deleting the NewName if it exists, so delete it if it does
+    if ($Force -and (Test-Path -Path $newPackagePath))
+    {
+        Remove-Item -Force $newPackagePath
+    }
+
+    # Create the distribution xml
+    $distributionXmlPath = Join-Path -Path $tempDir -ChildPath 'powershellDistribution.xml'
+
+    # format distribution template with:
+    # 0 - title
+    # 1 - version
+    # 2 - package path
+    # 2 - minimum os version
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $Version", $Version, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+
+    log "Applying distribution.xml to package..."
+    Push-Location $tempDir
+    try
+    {
+        # productbuild is an xcode command line tool, and those tools are installed when you install brew
+        Start-NativeExecution -sb {productbuild --distribution $distributionXmlPath --resources $resourcesDir $newPackagePath}
+    }
+    finally
+    {
+        Pop-Location
+        Remove-item -Path $tempDir -Recurse -Force
+    }
+
+    return $newPackagePath
+}
+function Get-FpmArguments
+{
+    param(
+        [Parameter(Mandatory,HelpMessage='Package Name')]
+        [String]$Name,
+
+        [Parameter(Mandatory,HelpMessage='Package Version')]
+        [String]$Version,
+
+        [Parameter(Mandatory)]
+        [String]$Iteration,
+
+        [Parameter(Mandatory,HelpMessage='Package description')]
+        [String]$Description,
+
+        # From start-PSPackage without modification, already validated
+        # Values: deb, rpm, osxpkg
+        [Parameter(Mandatory,HelpMessage='Installer Type')]
+        [String]$Type,
+
+        [Parameter(Mandatory,HelpMessage='Staging folder for installation files')]
+        [String]$Staging,
+
+        [Parameter(Mandatory,HelpMessage='Install path on target machine')]
+        [String]$Destination,
+
+        [Parameter(Mandatory,HelpMessage='The built and gzipped man file.')]
+        [String]$ManGzipFile,
+
+        [Parameter(Mandatory,HelpMessage='The destination of the man file')]
+        [String]$ManDestination,
+
+        [Parameter(Mandatory,HelpMessage='Symlink to powershell executable')]
+        [String]$LinkSource,
+
+        [Parameter(Mandatory,HelpMessage='Destination for symlink to powershell executable')]
+        [String]$LinkDestination,
+
+        [Parameter(HelpMessage='Packages required to install this package.  Not applicable for MacOS.')]
+        [ValidateScript({
+            if (!$Environment.IsMacOS -and $_.Count -eq 0)
+            {
+                throw "Must not be null or empty on this environment."
+            }
+            return $true
+        })]
+        [String[]]$Dependencies,
+
+        [Parameter(HelpMessage='Script to run after the package installation.')]
+        [AllowNull()]
+        [ValidateScript({
+            if (!$Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
+        [String]$AfterInstallScript,
+
+        [Parameter(HelpMessage='Script to run after the package removal.')]
+        [AllowNull()]
+        [ValidateScript({
+            if (!$Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
+        [String]$AfterRemoveScript,
+
+        [Parameter(HelpMessage='AppsFolder used to add macOS launcher')]
+        [AllowNull()]
+        [ValidateScript({
+            if ($Environment.IsMacOS -and !$_)
+            {
+                throw "Must not be null on this environment."
+            }
+            return $true
+        })]
+        [String]$AppsFolder
+    )
+
+    $Arguments = @(
+        "--force", "--verbose",
+        "--name", $Name,
+        "--version", $Version,
+        "--iteration", $Iteration,
+        "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
+        "--vendor", "Microsoft Corporation",
+        "--url", "https://microsoft.com/powershell",
+        "--license", "MIT License",
+        "--description", $Description,
+        "--category", "shells",
+        "-t", $Type,
+        "-s", "dir"
+    )
+    if ($Environment.IsRedHatFamily) {
+        $Arguments += @("--rpm-dist", "rhel.7")
+        $Arguments += @("--rpm-os", "linux")
+    }
+
+    if ($Environment.IsMacOS) {
+        $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
+    }
+
+    foreach ($Dependency in $Dependencies) {
+        $Arguments += @("--depends", $Dependency)
+    }
+
+    if ($AfterInstallScript) {
+        $Arguments += @("--after-install", $AfterInstallScript)
+    }
+
+    if ($AfterRemoveScript) {
+        $Arguments += @("--after-remove", $AfterRemoveScript)
+    }
+
+    $Arguments += @(
+        "$Staging/=$Destination/",
+        "$ManGzipFile=$ManDestination",
+        "$LinkSource=$LinkDestination"
+    )
+
+    if($AppsFolder)
+    {
+        $Arguments += "$AppsFolder=/"
+    }
+
+    return $Arguments
+}
+
+function Test-Distribution
+{
+    param(
+        [String]
+        $Distribution
+    )
+
+    if ( ($Environment.IsUbuntu -or $Environment.IsDebian) -and !$Distribution )
+    {
+        throw "$Distribution is required for a Debian based distribution."
+    }
+
+    if($Script:DebianDistributions -notcontains $Distribution)
+    {
+        throw "$Distribution should be one of the following: $Script:DebianDistributions"
+    }
+    return $true
+}
+function Get-PackageDependencies
+{
+    param(
+        [String]
+        [ValidateScript({Test-Distribution -Distribution $_})]
+        $Distribution
+    )
+
+    End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
         if ($Environment.IsUbuntu -or $Environment.IsDebian) {
@@ -715,13 +976,13 @@ function New-UnixPackage {
                 "zlib1g"
             )
 
-            switch ($DebDistro) {
+            switch ($Distribution) {
                 "ubuntu.14.04" { $Dependencies += @("libssl1.0.0", "libicu52") }
                 "ubuntu.16.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
                 "ubuntu.17.04" { $Dependencies += @("libssl1.0.0", "libicu57") }
-                "debian.8"     { $Dependencies += @("libssl1.0.0", "libicu52") }
-                "debian.9"     { $Dependencies += @("libssl1.0.2", "libicu57") }
-                default        { throw "Debian distro '$DebDistro' is not supported." }
+                "debian.8" { $Dependencies += @("libssl1.0.0", "libicu52") }
+                "debian.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
+                default { throw "Debian distro '$Distribution' is not supported." }
             }
         } elseif ($Environment.IsRedHatFamily) {
             $Dependencies = @(
@@ -732,157 +993,154 @@ function New-UnixPackage {
             )
         }
 
-        $Arguments = @(
-            "--force", "--verbose",
-            "--name", $Name,
-            "--version", $Version,
-            "--iteration", $Iteration,
-            "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
-            "--vendor", "Microsoft Corporation",
-            "--url", "https://microsoft.com/powershell",
-            "--license", "MIT License",
-            "--description", $Description,
-            "--category", "shells",
-            "-t", $Type,
-            "-s", "dir"
-        )
-        if ($Environment.IsRedHatFamily) {
-            $Arguments += @("--rpm-dist", "rhel.7")
-            $Arguments += @("--rpm-os", "linux")
-        }
-        if ($Environment.IsMacOS) {
-            $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
-        }
-        foreach ($Dependency in $Dependencies) {
-            $Arguments += @("--depends", $Dependency)
-        }
-        if ($AfterInstallScript) {
-            $Arguments += @("--after-install", $AfterInstallScript)
-        }
-        if ($AfterRemoveScript) {
-            $Arguments += @("--after-remove", $AfterRemoveScript)
-        }
-        $Arguments += @(
-            "$Staging/=$Destination/",
-            "$GzipFile=$ManFile",
-            "/tmp/pwsh=$Link"
-        )
+        return $Dependencies
+    }
+}
 
-        # Add macOS powershell launcher
-        if($Type -eq "osxpkg")
-        {
-            if($pscmdlet.ShouldProcess("Add macOS launch application")) {
-                # Define folder for launch application.
-                $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
-
-                # Update icns file.
-                $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
-                $iconfilebase = (Get-Item -Path $iconfile).BaseName
-
-                # Create Resources folder, ignore error if exists.
-                New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
-                Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
-
-                # Set values in plist.
-                $plist = "$macosapp/Contents/Info.plist"
-                Start-NativeExecution {
-                    defaults write $plist CFBundleIdentifier com.microsoft.powershell
-                    defaults write $plist CFBundleVersion $Version
-                    defaults write $plist CFBundleShortVersionString $Version
-                    defaults write $plist CFBundleGetInfoString $Version
-                    defaults write $plist CFBundleIconFile $iconfilebase
+function Test-Dependencies
+{
+    foreach ($Dependency in "fpm", "ronn") {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+            # These tools are not added to the path automatically on OpenSUSE 13.2
+            # try adding them to the path and re-tesing first
+            [string] $gemsPath = $null
+            [string] $depenencyPath = $null
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+            if($gemsPath) {
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $originalPath = $env:PATH
+                $env:PATH = $ENV:PATH +":" + $depenencyPath
+                if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                    continue
                 }
-
-                # Convert to XML plist, needed because defaults native
-                # app auto converts it to binary format when it modify
-                # the plist file.
-                Start-NativeExecution {
-                    plutil -convert xml1 $plist
-                }
-
-                # Set permissions for plist and shell script. Note that
-                # defaults native app sets 700 when writing to the plist
-                # file from above. Both of these will be reset post fpm.
-                $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
-                Start-NativeExecution {
-                    chmod 644 $plist
-                    chmod 755 $shellscript
-                }
-
-                # Add app folder to fpm paths.
-                $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
-                $Arguments += "$appsfolder=/"
-            }
-        }
-
-        # Build package
-        try {
-            if($pscmdlet.ShouldProcess("Create $type package")) {
-                $Output = Start-NativeExecution { fpm $Arguments }
-            }
-        } finally {
-            if ($Environment.IsMacOS) {
-                if($pscmdlet.ShouldProcess("Cleanup macOS launcher"))
-                {
-                    # This is needed to prevent installer from picking up
-                    # the launcher app in the build structure and updating
-                    # it which locks out subsequent package builds due to
-                    # increase permissions.
-                    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
-                    $plist = "$macosapp/Contents/Info.plist"
-                    $tempguid = (New-Guid).Guid
-                    Start-NativeExecution {
-                        defaults write $plist CFBundleIdentifier $tempguid
-                        plutil -convert xml1 $plist
-                    }
-
-                    # Restore default permissions.
-                    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
-                    Start-NativeExecution {
-                        chmod 644 $shellscript
-                        chmod 644 $plist
-                    }
-                }
-
-                # this is continuation of a fpm hack for a weird bug
-                if (Test-Path $hack_dest) {
-                    Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
-                    Move-Item $hack_dest $symlink_dest
+                else {
+                    $env:PATH = $originalPath
                 }
             }
-            if ($AfterInstallScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
-            }
-            if ($AfterRemoveScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
-            }
-            Remove-Item -Path $GzipFile -Force -ErrorAction SilentlyContinue
-        }
 
-        # Magic to get path output
-        $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
-
-        if ($Environment.IsMacOS) {
-            if($pscmdlet.ShouldProcess("Fix package name"))
-            {
-                # Add the OS information to the macOS package file name.
-                $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
-                $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
-
-                $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
-                $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
-                $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
-            }
+            throw "Dependency precheck failed!"
         }
+    }
+}
 
-        if (Test-Path $createdPackage)
-        {
-            return $createdPackage
-        }
-        else
-        {
-            throw "Failed to create $createdPackage"
-        }
+function New-AfterScripts
+{
+    if ($Environment.IsRedHatFamily) {
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and macOS builds for itself
+        # against the correct versions.
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+
+    return [PSCustomObject] @{
+        AfterInstallScript = $AfterInstallScript
+        AfterRemoveScript = $AfterRemoveScript
+    }
+}
+
+function New-ManGzip
+{
+    # run ronn to convert man page to roff
+    $RonnFile = Join-Path $PSScriptRoot "/../../assets/pwsh.1.ronn"
+    $RoffFile = $RonnFile -replace "\.ronn$"
+
+    # Run ronn on assets file
+    # Run does not play well with files named powershell6.0.1, so we generate and then rename
+    Start-NativeExecution { ronn --roff $RonnFile }
+
+    # gzip in assets directory
+    $GzipFile = "$RoffFile.gz"
+    Start-NativeExecution { gzip -f $RoffFile }
+
+    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+
+    return [PSCustomObject ] @{
+        GZipFile = $GzipFile
+        ManFile = $ManFile
+    }
+}
+function New-MacOSLauncher
+{
+    param(
+        [Parameter(Mandatory)]
+        [String]$Version
+    )
+
+    # Define folder for launch application.
+    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+
+    # Update icns file.
+    $iconfile = "$PSScriptRoot/../../assets/Powershell.icns"
+    $iconfilebase = (Get-Item -Path $iconfile).BaseName
+
+    # Create Resources folder, ignore error if exists.
+    New-Item -Force -ItemType Directory -Path "$macosapp/Contents/Resources" | Out-Null
+    Copy-Item -Force -Path $iconfile -Destination "$macosapp/Contents/Resources"
+
+    # Set values in plist.
+    $plist = "$macosapp/Contents/Info.plist"
+    Start-NativeExecution {
+        defaults write $plist CFBundleIdentifier com.microsoft.powershell
+        defaults write $plist CFBundleVersion $Version
+        defaults write $plist CFBundleShortVersionString $Version
+        defaults write $plist CFBundleGetInfoString $Version
+        defaults write $plist CFBundleIconFile $iconfilebase
+    }
+
+    # Convert to XML plist, needed because defaults native
+    # app auto converts it to binary format when it modify
+    # the plist file.
+    Start-NativeExecution {
+        plutil -convert xml1 $plist
+    }
+
+    # Set permissions for plist and shell script. Note that
+    # defaults native app sets 700 when writing to the plist
+    # file from above. Both of these will be reset post fpm.
+    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+    Start-NativeExecution {
+        chmod 644 $plist
+        chmod 755 $shellscript
+    }
+
+    # Add app folder to fpm paths.
+    $appsfolder = (Resolve-Path -Path "$macosapp/..").Path
+
+    return $appsfolder
+}
+
+function Clear-MacOSLauncher
+{
+    # This is needed to prevent installer from picking up
+    # the launcher app in the build structure and updating
+    # it which locks out subsequent package builds due to
+    # increase permissions.
+    $macosapp = "$PSScriptRoot/macos/launcher/ROOT/Applications/Powershell.app"
+    $plist = "$macosapp/Contents/Info.plist"
+    $tempguid = (New-Guid).Guid
+    Start-NativeExecution {
+        defaults write $plist CFBundleIdentifier $tempguid
+        plutil -convert xml1 $plist
+    }
+
+    # Restore default permissions.
+    $shellscript = "$macosapp/Contents/MacOS/PowerShell.sh"
+    Start-NativeExecution {
+        chmod 644 $shellscript
+        chmod 644 $plist
     }
 }
 

@@ -594,7 +594,6 @@ namespace System.Management.Automation.Language
                 return (errorSuggestion ?? NullResult(target)).WriteToDebugLog(this);
             }
 
-            // In CORECLR System.Data.DataTable does not have the DataRowCollection IEnumerable, so disabling code.
             if (targetValue is DataTable)
             {
                 // Generate:
@@ -5610,7 +5609,7 @@ namespace System.Management.Automation.Language
                     else
                     {
                         DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
-                        memberInfo = new PSMethod(this.Name, PSObject.dotNetInstanceAdapter, null, method);
+                        memberInfo = PSMethod.Create(this.Name, PSObject.dotNetInstanceAdapter, null, method);
                     }
                 }
             }

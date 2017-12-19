@@ -35,4 +35,4 @@ RUN tar zxf powershell-$PSVERSIONSTUB-linux-x64.tar.gz -C /opt/microsoft/powersh
 RUN ln -s /opt/microsoft/powershell/$PSVERSIONSTUB/pwsh $POWERSHELL_LINKFILE
 
 RUN git clone --recursive https://github.com/PowerShell/PowerShell.git
-RUN pwsh -c "Import-Module /PowerShell/build.psm1;exit (Invoke-Pester $TESTLISTSTUB -PassThru).FailedCount"
+RUN pwsh -c "Import-Module /PowerShell/build.psm1;Restore-PSPester -Destination /usr/local/share/powershell/Modules;exit (Invoke-Pester $TESTLISTSTUB -PassThru).FailedCount"

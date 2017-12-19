@@ -12,12 +12,12 @@ using Microsoft.PowerShell;
 
 namespace PSTests
 {
-    [Collection("AssemblyLoadContext")]
     public class SessionStateTests
     {
-        [Fact]
+        [SkippableFact]
         public void TestDrives()
         {
+            Skip.IfNot(Platform.IsWindows);
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface =  new DefaultHost(currentCulture,currentCulture);
             InitialSessionState iss = InitialSessionState.CreateDefault2();

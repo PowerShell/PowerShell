@@ -1,8 +1,17 @@
-<!--
+## PR Summary
+<!-- summarize your PR between here and the checklist -->
 
-If you are a PowerShell Team member, please make sure you choose the Reviewer(s) and Assignee for your PR.
-If you are not from the PowerShell Team, you can leave the fields blank and the Maintainers will choose them for you. If you are familiar with the team, feel free to mention some Reviewers yourself.
+## PR Checklist
 
-For more information about the roles of Reviewer and Assignee, refer to [CONTRIBUTING.md](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md).
+Note: Please mark anything not applicable to this PR `NA`.
 
--->
+- [ ] [PR has a meaningful title](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
+    - [ ] Use the present tense and imperative mood when describing your changes
+- [ ] [Summarized changes](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
+- [ ] User facing [Documentation needed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---submission)
+    - [ ] Issue filed - Issue link:
+- [ ] [Change is not breaking](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#making-breaking-changes)
+- [ ] [Make sure you've added a new test if existing tests do not effectively test the code changed](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#before-submitting)
+    - [ ] [Add `[feature]` if the change is significant or affectes feature tests](https://github.com/PowerShell/PowerShell/blob/master/docs/testing-guidelines/testing-guidelines.md#requesting-additional-tests-for-a-pr)
+- [ ] This PR is ready to merge and is not [Work in Progress](https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#pull-request---work-in-progress).
+    - If the PR is work in progress, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.

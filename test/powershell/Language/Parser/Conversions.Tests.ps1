@@ -127,3 +127,273 @@ namespace TestTypeResolution {
         $location | Should Be $cmdletDllPath
     }
 }
+
+Describe 'method conversion' -Tags 'CI' {
+    class M {
+        [int] Twice([int] $value) { return 2 * $value }
+        [int] ThriceInstance([int] $value) { return 3 * $value }
+        static [int] Thrice([int] $value) { return 3 * $value }
+        static [int] Add([int] $i, [int16] $j) { return $i + $j }
+
+        static [int] Apply([int] $value, [Func[int, int]] $function) {
+            return $function.Invoke($value)
+        }
+
+        static [int] Apply([int] $v1, [Int16] $v2, [Func[int, int16, int]] $function) {
+            return $function.Invoke($v1, $v2)
+        }
+
+        # check that we can handle at least 72 overloads
+        static [char]     Foo([char] $i) {return $i}
+        static [char]     Foo([char] $i, [char] $j) {return $i}
+        static [char]     Foo([char] $i, [char] $j, [char] $k) {return $i}
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l) {return $i}
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m) {return $i}
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n) {return $i}
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n, [char] $o) {return $i}
+        static [char]     Foo([char] $i, [char] $j, [char] $k, [char] $l, [char] $m, [char] $n, [char] $o, [char] $p) {return $i}
+        static [int16]    Foo([int16] $i) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n, [int16] $o) {return $i}
+        static [int16]    Foo([int16] $i, [int16] $j, [int16] $k, [int16] $l, [int16] $m, [int16] $n, [int16] $o, [int16] $p) {return $i}
+        static [int]      Foo([int] $i) {return $i}
+        static [int]      Foo([int] $i, [int] $j) {return $i}
+        static [int]      Foo([int] $i, [int] $j, [int] $k) {return $i}
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l) {return $i}
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m) {return $i}
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n) {return $i}
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n, [int] $o) {return $i}
+        static [int]      Foo([int] $i, [int] $j, [int] $k, [int] $l, [int] $m, [int] $n, [int] $o, [int] $p) {return $i}
+        static [UInt32]   Foo([UInt32] $i) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n, [UInt32] $o) {return $i}
+        static [UInt32]   Foo([UInt32] $i, [UInt32] $j, [UInt32] $k, [UInt32] $l, [UInt32] $m, [UInt32] $n, [UInt32] $o, [UInt32] $p) {return $i}
+        static [UInt64]   Foo([UInt64] $i) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n, [UInt64] $o) {return $i}
+        static [UInt64]   Foo([UInt64] $i, [UInt64] $j, [UInt64] $k, [UInt64] $l, [UInt64] $m, [UInt64] $n, [UInt64] $o, [UInt64] $p) {return $i}
+        static [float]    Foo([float] $i) {return $i}
+        static [float]    Foo([float] $i, [float] $j) {return $i}
+        static [float]    Foo([float] $i, [float] $j, [float] $k) {return $i}
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l) {return $i}
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m) {return $i}
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n) {return $i}
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n, [float] $o) {return $i}
+        static [float]    Foo([float] $i, [float] $j, [float] $k, [float] $l, [float] $m, [float] $n, [float] $o, [float] $p) {return $i}
+        static [double]   Foo([double] $i) {return $i}
+        static [double]   Foo([double] $i, [double] $j) {return $i}
+        static [double]   Foo([double] $i, [double] $j, [double] $k) {return $i}
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l) {return $i}
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m) {return $i}
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n) {return $i}
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n, [double] $o) {return $i}
+        static [double]   Foo([double] $i, [double] $j, [double] $k, [double] $l, [double] $m, [double] $n, [double] $o, [double] $p) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n, [IntPtr] $o) {return $i}
+        static [IntPtr]   Foo([IntPtr] $i, [IntPtr] $j, [IntPtr] $k, [IntPtr] $l, [IntPtr] $m, [IntPtr] $n, [IntPtr] $o, [IntPtr] $p) {return $i}
+        static [timespan] Foo([timespan] $i) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o) {return $i}
+        static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o, [timespan] $p) {return $i}
+    }
+
+
+    It 'converts static method as Func does not throw' {
+        {[Func[int, int]] [M]::Thrice} | Should Not Throw
+    }
+
+    It 'converts static method as Func is non null' {
+        ([Func[int, int]] [M]::Thrice) | Should Not BeNullOrEmpty
+    }
+
+
+    It 'calls static method as Func' {
+        $f = [Func[int, int]] [M]::Thrice
+        [M]::Apply(1, $f) | Should be 3
+    }
+
+    It 'calls static method as Func' {
+        $f = [Func[int, int16, int]] [M]::Add
+        [M]::Apply(3, 4, $f) | Should be 7
+    }
+
+    It 'calls static method as Func no cast' {
+        [M]::Apply(3, 4, [M]::Add) | Should be 7
+    }
+
+    It 'converts instance psmethodinfo to Func' {
+        $m = [M]::new()
+        {[Func[int, int]] $m.Twice} | Should Not Throw
+
+        $f = [Func[int, int16, int]] [M]::Add
+        $f.Invoke(2, 6) | Should be 8
+    }
+    It "can call all overloads of M::Foo" {
+        [Func[char, char]] $f1 = [M]::Foo
+        $f1.Invoke(10) | Should BE 10
+        [Func[char, char, char]] $f2 = [M]::Foo
+        $f2.Invoke(10, 1) | Should BE 10
+        [Func[char, char, char, char]] $f3 = [M]::Foo
+        $f3.Invoke(10, 1, 2) | Should BE 10
+        [Func[char, char, char, char, char]] $f4 = [M]::Foo
+        $f4.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[char, char, char, char, char, char]] $f5 = [M]::Foo
+        $f5.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[char, char, char, char, char, char, char]] $f6 = [M]::Foo
+        $f6.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[char, char, char, char, char, char, char, char]] $f7 = [M]::Foo
+        $f7.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[char, char, char, char, char, char, char, char, char]] $f8 = [M]::Foo
+        $f8.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[int16, int16]] $f9 = [M]::Foo
+        $f9.Invoke(10) | Should BE 10
+        [Func[int16, int16, int16]] $f10 = [M]::Foo
+        $f10.Invoke(10, 1) | Should BE 10
+        [Func[int16, int16, int16, int16]] $f11 = [M]::Foo
+        $f11.Invoke(10, 1, 2) | Should BE 10
+        [Func[int16, int16, int16, int16, int16]] $f12 = [M]::Foo
+        $f12.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[int16, int16, int16, int16, int16, int16]] $f13 = [M]::Foo
+        $f13.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[int16, int16, int16, int16, int16, int16, int16]] $f14 = [M]::Foo
+        $f14.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[int16, int16, int16, int16, int16, int16, int16, int16]] $f15 = [M]::Foo
+        $f15.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[int16, int16, int16, int16, int16, int16, int16, int16, int16]] $f16 = [M]::Foo
+        $f16.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[int, int]] $f17 = [M]::Foo
+        $f17.Invoke(10) | Should BE 10
+        [Func[int, int, int]] $f18 = [M]::Foo
+        $f18.Invoke(10, 1) | Should BE 10
+        [Func[int, int, int, int]] $f19 = [M]::Foo
+        $f19.Invoke(10, 1, 2) | Should BE 10
+        [Func[int, int, int, int, int]] $f20 = [M]::Foo
+        $f20.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[int, int, int, int, int, int]] $f21 = [M]::Foo
+        $f21.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[int, int, int, int, int, int, int]] $f22 = [M]::Foo
+        $f22.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[int, int, int, int, int, int, int, int]] $f23 = [M]::Foo
+        $f23.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[int, int, int, int, int, int, int, int, int]] $f24 = [M]::Foo
+        $f24.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[UInt32, UInt32]] $f25 = [M]::Foo
+        $f25.Invoke(10) | Should BE 10
+        [Func[UInt32, UInt32, UInt32]] $f26 = [M]::Foo
+        $f26.Invoke(10, 1) | Should BE 10
+        [Func[UInt32, UInt32, UInt32, UInt32]] $f27 = [M]::Foo
+        $f27.Invoke(10, 1, 2) | Should BE 10
+        [Func[UInt32, UInt32, UInt32, UInt32, UInt32]] $f28 = [M]::Foo
+        $f28.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f29 = [M]::Foo
+        $f29.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f30 = [M]::Foo
+        $f30.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f31 = [M]::Foo
+        $f31.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f32 = [M]::Foo
+        $f32.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[UInt64, UInt64]] $f33 = [M]::Foo
+        $f33.Invoke(10) | Should BE 10
+        [Func[UInt64, UInt64, UInt64]] $f34 = [M]::Foo
+        $f34.Invoke(10, 1) | Should BE 10
+        [Func[UInt64, UInt64, UInt64, UInt64]] $f35 = [M]::Foo
+        $f35.Invoke(10, 1, 2) | Should BE 10
+        [Func[UInt64, UInt64, UInt64, UInt64, UInt64]] $f36 = [M]::Foo
+        $f36.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f37 = [M]::Foo
+        $f37.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f38 = [M]::Foo
+        $f38.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f39 = [M]::Foo
+        $f39.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f40 = [M]::Foo
+        $f40.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[float, float]] $f41 = [M]::Foo
+        $f41.Invoke(10) | Should BE 10
+        [Func[float, float, float]] $f42 = [M]::Foo
+        $f42.Invoke(10, 1) | Should BE 10
+        [Func[float, float, float, float]] $f43 = [M]::Foo
+        $f43.Invoke(10, 1, 2) | Should BE 10
+        [Func[float, float, float, float, float]] $f44 = [M]::Foo
+        $f44.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[float, float, float, float, float, float]] $f45 = [M]::Foo
+        $f45.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[float, float, float, float, float, float, float]] $f46 = [M]::Foo
+        $f46.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[float, float, float, float, float, float, float, float]] $f47 = [M]::Foo
+        $f47.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[float, float, float, float, float, float, float, float, float]] $f48 = [M]::Foo
+        $f48.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[double, double]] $f49 = [M]::Foo
+        $f49.Invoke(10) | Should BE 10
+        [Func[double, double, double]] $f50 = [M]::Foo
+        $f50.Invoke(10, 1) | Should BE 10
+        [Func[double, double, double, double]] $f51 = [M]::Foo
+        $f51.Invoke(10, 1, 2) | Should BE 10
+        [Func[double, double, double, double, double]] $f52 = [M]::Foo
+        $f52.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[double, double, double, double, double, double]] $f53 = [M]::Foo
+        $f53.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[double, double, double, double, double, double, double]] $f54 = [M]::Foo
+        $f54.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[double, double, double, double, double, double, double, double]] $f55 = [M]::Foo
+        $f55.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[double, double, double, double, double, double, double, double, double]] $f56 = [M]::Foo
+        $f56.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        [Func[IntPtr, IntPtr]] $f57 = [M]::Foo
+        $f57.Invoke(10) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr]] $f58 = [M]::Foo
+        $f58.Invoke(10, 1) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr, IntPtr]] $f59 = [M]::Foo
+        $f59.Invoke(10, 1, 2) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f60 = [M]::Foo
+        $f60.Invoke(10, 1, 2, 3) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f61 = [M]::Foo
+        $f61.Invoke(10, 1, 2, 3, 4) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f62 = [M]::Foo
+        $f62.Invoke(10, 1, 2, 3, 4, 5) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f63 = [M]::Foo
+        $f63.Invoke(10, 1, 2, 3, 4, 5, 6) | Should BE 10
+        [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f64 = [M]::Foo
+        $f64.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should BE 10
+        $timespan = [timespan]::FromMinutes(62)
+        [Func[timespan, timespan]] $f65 = [M]::Foo
+        $f65.Invoke($timeSpan) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan]] $f66 = [M]::Foo
+        $f66.Invoke($timeSpan, [Timespan]::Zero) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan, timespan]] $f67 = [M]::Foo
+        $f67.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan, timespan, timespan]] $f68 = [M]::Foo
+        $f68.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan, timespan, timespan, timespan]] $f69 = [M]::Foo
+        $f69.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f70 = [M]::Foo
+        $f70.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f71 = [M]::Foo
+        $f71.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
+        [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f72 = [M]::Foo
+        $f72.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should BE $timeSpan
+    }
+}

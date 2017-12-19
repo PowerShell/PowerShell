@@ -241,8 +241,11 @@ try
     }
 
     # grab the commitID, we need this to grab the right sources
-    $gitCommitId = & "$psBinPath\pwsh.exe" -noprofile -command { $PSVersiontable.GitCommitId }
-    $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
+    $assemblyLocation = & "$psBinPath\pwsh.exe" -noprofile -command { Get-Item ([psobject].Assembly.Location) }
+    $productVersion = $assemblyLocation.VersionInfo.productVersion
+    $commitId = $productVersion.split(" ")[-1]
+
+    Write-LogPassThru -Message "Using GitCommitId: $commitId"
 
     # download the src directory
     try

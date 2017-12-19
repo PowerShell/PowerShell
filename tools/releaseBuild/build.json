@@ -9,7 +9,7 @@
             "3968m"
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
-        "AdditionalContextFiles" :[ 
+        "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
@@ -26,7 +26,7 @@
             "3968m"
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
-        "AdditionalContextFiles" :[ 
+        "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
@@ -35,7 +35,7 @@
         "BinaryBucket": "release"
     },
     {
-        "Name": "win7-x64-symbols",
+        "Name": "win-x64-symbols",
         "RepoDestinationPath": "C:\\PowerShell",
         "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x64 -ReleaseTag _ReleaseTag_ -Symbols",
         "BuildDockerOptions": [
@@ -43,18 +43,18 @@
             "3968m"
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
-        "AdditionalContextFiles" :[ 
+        "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols",
-        "BinariesExpected": 1,
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
         "VariableForExtractedBinariesPath": "Symbols_x64"
     },
     {
-        "Name": "win7-x86-symbols",
+        "Name": "win-x86-symbols",
         "RepoDestinationPath": "C:\\PowerShell",
         "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x86 -ReleaseTag _ReleaseTag_ -Symbols",
         "BuildDockerOptions": [
@@ -62,18 +62,56 @@
             "3968m"
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
-        "AdditionalContextFiles" :[ 
+        "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
-        "BinaryBucket": "symbols",
-        "BinariesExpected": 1,
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
         "VariableForExtractedBinariesPath": "Symbols_x86"
     },
     {
-        "Name": "win7-x64-package",
+        "Name": "win-arm-symbols",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win-arm -ReleaseTag _ReleaseTag_ -Symbols",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
+        "VariableForExtractedBinariesPath": "Symbols_arm"
+    },
+    {
+        "Name": "win-arm64-symbols",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win-arm64 -ReleaseTag _ReleaseTag_ -Symbols",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "results",
+        "ArtifactsExpected": 1,
+        "VariableForExtractedBinariesPath": "Symbols_arm64"
+    },
+    {
+        "Name": "win-x64-package",
         "RepoDestinationPath": "C:\\PowerShell",
         "BuildCommand": "C:\\PowerShellPackage.ps1 -BuildZip _RepoDestinationPath_\\_BuildPackageName_ -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x64 -ReleaseTag _ReleaseTag_",
         "BuildDockerOptions": [
@@ -81,17 +119,17 @@
             "3968m"
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
-        "AdditionalContextFiles" :[ 
+        "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "BinariesExpected": 2
+        "ArtifactsExpected": 2
     },
     {
-        "Name": "win7-x86-package",
+        "Name": "win-x86-package",
         "RepoDestinationPath": "C:\\PowerShell",
         "BuildCommand": "C:\\PowerShellPackage.ps1 -BuildZip _RepoDestinationPath_\\_BuildPackageName_ -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win7-x86 -ReleaseTag _ReleaseTag_",
         "BuildDockerOptions": [
@@ -99,21 +137,57 @@
             "3968m"
         ],
         "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
-        "AdditionalContextFiles" :[ 
+        "AdditionalContextFiles" :[
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
             ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "BinariesExpected": 2
+        "ArtifactsExpected": 2
+    },
+    {
+        "Name": "win-arm-package",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -BuildZip _RepoDestinationPath_\\_BuildPackageName_ -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win-arm -ReleaseTag _ReleaseTag_",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "signed",
+        "ArtifactsExpected": 1
+    },
+    {
+        "Name": "win-arm64-package",
+        "RepoDestinationPath": "C:\\PowerShell",
+        "BuildCommand": "C:\\PowerShellPackage.ps1 -BuildZip _RepoDestinationPath_\\_BuildPackageName_ -location _RepoDestinationPath_ -destination _DockerVolume_ -Runtime win-arm64 -ReleaseTag _ReleaseTag_",
+        "BuildDockerOptions": [
+            "-m",
+            "3968m"
+        ],
+        "DockerFile": ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\DockerFile",
+        "AdditionalContextFiles" :[
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\PowerShellPackage.ps1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\wix.psm1",
+            ".\\tools\\releaseBuild\\Images\\microsoft_powershell_windowsservercore\\dockerInstall.psm1"
+        ],
+        "DockerImageName": "ps-winsrvcore",
+        "BinaryBucket": "signed",
+        "ArtifactsExpected": 1
     }
   ],
   "Linux": [
     {
         "Name": "ubuntu.14.04",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage AppImage",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -AppImage -TarX64 -TarArm",
         "BuildDockerOptions": [
             "--cap-add",
             "SYS_ADMIN",
@@ -140,7 +214,7 @@
     {
         "Name": "centos.7",
         "RepoDestinationPath": "/PowerShell",
-        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -ExtraPackage tar",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
         "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
         "DockerImageName": "ps-centos-7",
