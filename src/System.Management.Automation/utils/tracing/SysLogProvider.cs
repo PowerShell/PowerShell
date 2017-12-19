@@ -88,7 +88,7 @@ namespace System.Management.Automation.Tracing
         /// Initializes a new instance of this class.
         /// </summary>
         /// <param name="applicationId">The log identity name used to identify the application in syslog.</param>
-        /// <param name="level">The trace lavel to enable.</param>
+        /// <param name="level">The trace level to enable.</param>
         /// <param name="keywords">The keywords to enable.</param>
         /// <param name="channels">The output channels to enable.</param>
         public SysLogProvider(string applicationId, PSLevel level, PSKeyword keywords, PSChannel channels)
