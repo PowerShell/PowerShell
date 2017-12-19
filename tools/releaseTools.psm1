@@ -188,3 +188,5 @@ function Get-ChangeLog
 
     $new_commits | Sort-Object -Descending -Property IsBreakingChange | ForEach-Object -MemberName ChangeLogMessage
 }
+
+Export-ModuleMember -Function Get-ChangeLog
