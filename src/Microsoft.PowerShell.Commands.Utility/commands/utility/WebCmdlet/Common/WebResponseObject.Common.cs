@@ -3,11 +3,11 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Text;
 using System.Net.Http;
-using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -16,6 +16,30 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public partial class WebResponseObject
     {
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for WebResponseObject
+        /// </summary>
+        /// <param name="response"></param>
+        public WebResponseObject(HttpResponseMessage response)
+            : this(response, null)
+        { }
+
+        /// <summary>
+        /// Constructor for WebResponseObject with contentStream
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="contentStream"></param>
+        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
+        {
+            SetResponse(response, contentStream);
+            InitializeContent();
+            InitializeRawContent(response);
+        }
+
+        #endregion Constructors
+
         #region Properties
 
         /// <summary>
@@ -62,53 +86,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string RawContent { get; protected set; }
 
-        #endregion Properties
-
-        #region Methods
-
-        /// <summary>
-        /// Reads the response content from the web response.
-        /// </summary>
-        private void InitializeContent()
-        {
-            this.Content = this.RawContentStream.ToArray();
-        }
-
-        private bool IsPrintable(char c)
-        {
-            return (Char.IsLetterOrDigit(c) || Char.IsPunctuation(c) || Char.IsSeparator(c) || Char.IsSymbol(c) || Char.IsWhiteSpace(c));
-        }
-
-        /// <summary>
-        /// Returns the string representation of this web response.
-        /// </summary>
-        /// <returns>The string representation of this web response.</returns>
-        public sealed override string ToString()
-        {
-            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
-            for (int counter = 0; counter < stringContent.Length; counter++)
-            {
-                if (!IsPrintable(stringContent[counter]))
-                {
-                    stringContent[counter] = '.';
-                }
-            }
-
-            return new string(stringContent);
-        }
-
-        #endregion Methods
-    }
-
-    // TODO: Merge Partials
-
-    /// <summary>
-    /// WebResponseObject
-    /// </summary>
-    public partial class WebResponseObject
-    {
-        #region Properties
-
         /// <summary>
         /// gets or sets the BaseResponse property
         /// </summary>
@@ -137,33 +114,35 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public Dictionary<string, string> RelationLink { get; internal set; }
 
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Constructor for WebResponseObject
-        /// </summary>
-        /// <param name="response"></param>
-        public WebResponseObject(HttpResponseMessage response)
-            : this(response, null)
-        { }
-
-        /// <summary>
-        /// Constructor for WebResponseObject with contentStream
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="contentStream"></param>
-        public WebResponseObject(HttpResponseMessage response, Stream contentStream)
-        {
-            SetResponse(response, contentStream);
-            InitializeContent();
-            InitializeRawContent(response);
-        }
-
-        #endregion Constructors
+        #endregion Properties
 
         #region Methods
+
+        /// <summary>
+        /// Returns the string representation of this web response.
+        /// </summary>
+        /// <returns>The string representation of this web response.</returns>
+        public sealed override string ToString()
+        {
+            char[] stringContent = System.Text.Encoding.ASCII.GetChars(Content);
+            for (int counter = 0; counter < stringContent.Length; counter++)
+            {
+                if (!IsPrintable(stringContent[counter]))
+                {
+                    stringContent[counter] = '.';
+                }
+            }
+
+            return new string(stringContent);
+        }
+
+        /// <summary>
+        /// Reads the response content from the web response.
+        /// </summary>
+        private void InitializeContent()
+        {
+            this.Content = this.RawContentStream.ToArray();
+        }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
         {
@@ -176,6 +155,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             this.RawContent = raw.ToString();
+        }
+
+        private bool IsPrintable(char c)
+        {
+            return (Char.IsLetterOrDigit(c) || Char.IsPunctuation(c) || Char.IsSeparator(c) || Char.IsSymbol(c) || Char.IsWhiteSpace(c));
         }
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
@@ -209,6 +193,6 @@ namespace Microsoft.PowerShell.Commands
             _rawContentStream.Position = 0;
         }
 
-        #endregion
+        #endregion Methods
     }
 }
