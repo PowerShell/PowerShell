@@ -243,4 +243,7 @@
   <data name="RunspaceNotLocal" xml:space="preserve">
     <value>DefaultRunspace must be a LocalRunspace</value>
   </data>
+  <data name="PrimaryRunspaceAlreadySet" xml:space="preserve">
+    <value>The static PrimaryRunspace property can only be set once, and has already been set.</value>
+  </data>
 </root>

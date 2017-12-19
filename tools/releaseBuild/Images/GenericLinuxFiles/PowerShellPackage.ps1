@@ -8,12 +8,13 @@ param (
     # Destination location of the package on docker host
     [string] $destination = '/mnt',
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
-    [ValidateSet("AppImage", "tar")]
-    [string[]]$ExtraPackage
+    [switch]$AppImage,
+    [switch]$TarX64,
+    [switch]$TarArm
 )
 
 $releaseTagParam = @{}
@@ -27,15 +28,19 @@ try {
     Set-Location $location
     Import-Module "$location/build.psm1"
     Import-Module "$location/tools/packaging"
-    
+
     Start-PSBootstrap -Package -NoSudo
     Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
 
     Start-PSPackage @releaseTagParam
-    switch ($ExtraPackage)
-    {
-        "AppImage" { Start-PSPackage -Type AppImage @releaseTagParam }
-        "tar"      { Start-PSPackage -Type tar @releaseTagParam }
+    if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
+    if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
+
+    if ($TarArm) {
+        ## Build 'linux-arm' and create 'tar.gz' package for it.
+        ## Note that 'linux-arm' can only be built on Ubuntu environment.
+        Start-PSBuild -Runtime linux-arm -PSModuleRestore @releaseTagParam
+        Start-PSPackage -Type tar-arm @releaseTagParam
     }
 }
 finally

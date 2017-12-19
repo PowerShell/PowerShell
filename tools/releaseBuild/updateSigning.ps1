@@ -1,7 +1,9 @@
+param(
+    [string] $SigningXmlPath = (Join-Path -Path $PSScriptRoot  -ChildPath 'signing.xml')
+)
 # Script for use in VSTS to update signing.xml
 
 # Parse the signing xml
-$signingXmlPath = Join-Path -Path $PSScriptRoot  -ChildPath 'signing.xml'
 $signingXml = [xml](Get-Content $signingXmlPath)
 
 # Get any variables to updating 'signType' in the XML
@@ -25,7 +27,7 @@ $signingXml.SignConfigXML.job | ForEach-Object -Process {
         {
             $newSignType = $signTypes[$signType]
             Write-Host "Updating $($_.src) to $newSignType"
-            $_.signType = $signTypes[$signType]
+            $_.signType = $newSignType
         }
     }
 }

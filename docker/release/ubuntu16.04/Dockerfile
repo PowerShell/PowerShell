@@ -2,7 +2,7 @@
 
 FROM ubuntu:xenial
 
-ARG POWERSHELL_VERSION=6.0.0-beta.9
+ARG POWERSHELL_VERSION=6.0.0-rc.2
 ARG IMAGE_NAME=microsoft/powershell:ubuntu16.04
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

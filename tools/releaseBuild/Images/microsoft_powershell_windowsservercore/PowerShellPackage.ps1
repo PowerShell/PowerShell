@@ -9,12 +9,12 @@ param (
 
     [string] $destination = "$env:WORKSPACE",
 
-    [ValidateSet("win7-x64", "win7-x86")]
-    [string]$Runtime = 'win10-x64',
+    [ValidateSet("win7-x64", "win7-x86", "win-arm", "win-arm64")]
+    [string]$Runtime = 'win7-x64',
 
     [switch] $Wait,
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
@@ -80,8 +80,7 @@ try{
     else
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
-        $buildParams = @{}
-        $buildParams['CrossGen'] = $true
+        $buildParams = @{'CrossGen'= $Runtime -notmatch "arm"}
         if(!$Symbols.IsPresent)
         {
             $buildParams['PSModuleRestore'] = $true
@@ -90,30 +89,22 @@ try{
         Start-PSBuild -Clean -Runtime $Runtime -Configuration Release @releaseTagParam @buildParams
     }
 
-    $pspackageParams = @{'Type'='msi'}
-    if ($Runtime -ne 'win10-x64')
-    {
-        $pspackageParams += @{'WindowsRuntime'=$Runtime}
-    }
-
-    if(!$Symbols.IsPresent)
+    $pspackageParams = @{'Type'='msi'; 'WindowsRuntime'=$Runtime}
+    if(!$Symbols.IsPresent -and $Runtime -notmatch "arm")
     {
         Write-Verbose "Starting powershell packaging(msi)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
-    else
-    {
-        $pspackageParams += @{'IncludeSymbols' = $true}
-    }
 
     $pspackageParams['Type']='zip'
+    $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
     Write-Verbose "Starting powershell packaging(zip)..." -verbose
     Start-PSPackage @pspackageParams @releaseTagParam
 
     Write-Verbose "Exporting packages ..." -verbose
 
-    Get-ChildItem $location\*.msi,$location\*.zip | Select-Object -ExpandProperty FullName | ForEach-Object {
-        $file = $_
+    Get-ChildItem $location\*.msi,$location\*.zip | ForEach-Object {
+        $file = $_.FullName
         Write-Verbose "Copying $file to $destination" -verbose
         Copy-Item -Path $file -Destination "$destination\" -Force
     }

@@ -1336,10 +1336,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         type = null;
                     }
-                    else
-                    {
-                        type = ImportExportCSVHelper.CSVTypePrefix + type;
-                    }
                 }
             }
             return type;
@@ -1606,11 +1602,6 @@ namespace Microsoft.PowerShell.Commands
             PSObject result = new PSObject();
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
-            if (type != null && type.Length > 0)
-            {
-                result.TypeNames.Clear();
-                result.TypeNames.Add(type);
-            }
             for (int i = 0; i <= names.Count - 1; i++)
             {
                 string name = names[i];
@@ -1636,6 +1627,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 _cmdlet.WriteWarning(CsvCommandStrings.UseDefaultNameForUnspecifiedHeader);
                 _alreadyWarnedUnspecifiedName = true;
+            }
+
+            if (type != null && type.Length > 0)
+            {
+                result.TypeNames.Clear();
+                result.TypeNames.Add(type);
+                result.TypeNames.Add(ImportExportCSVHelper.CSVTypePrefix + type);
             }
 
             return result;

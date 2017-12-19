@@ -14,7 +14,7 @@
       <Link>PowerShellProperties.json</Link>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*" Exclude="..\Modules\Shared\Pester\.git*;..\Modules\Shared\Pester\*.yml">
+    <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*">
       <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -35,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="PSDesiredStateConfiguration" Version="6.0.0-beta.8" />
-    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
+    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-*" />
     <PackageReference Include="psrp.windows" Version="6.0.0-*" />
   </ItemGroup>
 

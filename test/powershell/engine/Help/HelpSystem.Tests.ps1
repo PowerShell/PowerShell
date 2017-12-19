@@ -181,15 +181,21 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
     }
 }
 
-Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI') {
+Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
         $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
-        ## This is needed for getting about topics. We use -Force, so we always update.
-        Update-Help -Force
+
+        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+
+        ## If help content does not exist, update it first.
+        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Variables.help.txt")))
+        {
+            Update-Help -Force -ErrorAction SilentlyContinue
+        }
     }
 
     AfterAll {
@@ -206,7 +212,6 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     It "Get-Help for about_Variable should return only one help object" {
-
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }

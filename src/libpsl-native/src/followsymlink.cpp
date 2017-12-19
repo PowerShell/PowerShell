@@ -39,7 +39,7 @@ char* FollowSymLink(const char* fileName)
 
     if (realPath)
     {
-        return strndup(realPath, strlen(realPath) + 1);
+        return strndup(realPath, strnlen(realPath, PATH_MAX));
     }
 
     // if the path wasn't resolved, use readlink

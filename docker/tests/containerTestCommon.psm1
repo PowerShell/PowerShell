@@ -5,7 +5,7 @@ function Get-DockerEngineOs
     docker info --format '{{ .OperatingSystem }}'
 }
 
-# Call Docker with appropriate result checksfunction Invoke-Docker 
+# Call Docker with appropriate result checksfunction Invoke-Docker
 function Invoke-Docker
 {
     param(
@@ -33,7 +33,7 @@ function Invoke-Docker
     {
         $result = docker $command $params 2>&1
     }
-    else 
+    else
     {
         &'docker' $command $params 2>&1 | Tee-Object -Variable result -ErrorAction SilentlyContinue | Out-String -Stream -ErrorAction SilentlyContinue | Write-Host -ErrorAction SilentlyContinue
     }
@@ -58,21 +58,21 @@ function Invoke-Docker
     {
         return $false
     }
-    
+
     return $true
 }
 
 # Return a list of Linux Container Test Cases
 function Get-LinuxContainer
 {
-    foreach($os in 'amazonlinux','centos7','opensuse42.2','ubuntu14.04','ubuntu16.04')
+    foreach($os in 'centos7','ubuntu14.04','ubuntu16.04')
     {
         Write-Output @{
             Name = $os
             Path = "$psscriptroot/../release/$os"
         }
     }
-    
+
 }
 
 # Return a list of Windows Container Test Cases
@@ -117,7 +117,7 @@ function Get-TestContext
 {
     param(
         [ValidateSet('Linux','Windows','macOS')]
-        [string]$Type 
+        [string]$Type
     )
 
     $resultFileName = 'results.xml'
@@ -151,7 +151,7 @@ function Get-ContainerPowerShellVersion
         [string] $RepoName,
         [string] $Name
     )
-    
+
     $imageTag = "${script:repoName}:${Name}"
 
     if($TestContext.ForcePull)
@@ -202,7 +202,7 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.0-beta.9",
+        $PSVersion = "6.0.0-rc.2",
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
     )
@@ -243,6 +243,7 @@ function Test-PSPackage
         $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
         $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
         $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += "--no-cache"
         $buildArgs += $dir.FullName
 
         $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning
@@ -253,6 +254,6 @@ function Test-PSPackage
     # in the end print results for all configurations
     Write-Verbose "Package validation results:" -Verbose
     $results
-    
+
     return $returnValue
 }

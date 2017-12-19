@@ -4,7 +4,6 @@ using System.Management.Automation;
 
 namespace PSTests
 {
-    [Collection("AssemblyLoadContext")]
     public static class PSVersionInfoTests
     {
         [Fact]

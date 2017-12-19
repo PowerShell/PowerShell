@@ -168,19 +168,20 @@ function Invoke-AppVeyorFull
 # Implements the AppVeyor 'build_script' step
 function Invoke-AppVeyorBuild
 {
-      # check to be sure our test tags are correct
-      $result = Get-PesterTag
-      if ( $result.Result -ne "Pass" ) {
+    $releaseTag = Get-ReleaseTag
+    # check to be sure our test tags are correct
+    $result = Get-PesterTag
+    if ( $result.Result -ne "Pass" ) {
         $result.Warnings
         throw "Tags must be CI, Feature, Scenario, or Slow"
-      }
+    }
 
-      if(Test-DailyBuild)
-      {
-          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
-      }
+    if(Test-DailyBuild)
+    {
+        Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
+    }
 
-      Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
+    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
 }
 
 # Implements the AppVeyor 'install' step
@@ -188,9 +189,10 @@ function Invoke-AppVeyorInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
+    $releaseTag = Get-ReleaseTag
     if($env:APPVEYOR_BUILD_NUMBER)
     {
-        Update-AppveyorBuild -Version "$(Get-PSVersion -OmitCommitId)-$env:APPVEYOR_BUILD_NUMBER"
+        Update-AppveyorBuild -Version $releaseTag
     }
 
     if(Test-DailyBuild){
@@ -323,6 +325,7 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
+    $testResultsXUnitFile = "$pwd\TestResultsXUnit.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -356,6 +359,10 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
+    Start-PSxUnit -TestResultsFile $testResultsXUnitFile
+    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
+    Update-AppVeyorTestResults -resultsFile $testResultsXUnitFile
+
     #
     # Fail the build, if tests failed
     @(
@@ -364,6 +371,8 @@ function Invoke-AppVeyorTest
     ) | ForEach-Object {
         Test-PSPesterResults -TestResultsFile $_
     }
+
+    $testPassResult = Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
 
     Set-BuildVariable -Name TestPassed -Value True
 }
@@ -411,42 +420,34 @@ function Compress-CoverageArtifacts
     return $artifacts
 }
 
-function Get-PackageName
+function Get-ReleaseTag
 {
-    $name = git describe
-    # Remove 'v' from version, prepend 'PowerShell' - to be consistent with other package names
-    $name = $name -replace 'v',''
-    $name = 'PowerShell_' + $name
-    return $name
+    $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
+    $metaData = Get-Content $metaDataPath | ConvertFrom-Json
+
+    $releaseTag = $metadata.NextReleaseTag
+    if($env:APPVEYOR_BUILD_NUMBER)
+    {
+        $releaseTag = $releaseTag.split('.')[0..2] -join '.'
+        $releaseTag = $releaseTag+'.'+$env:APPVEYOR_BUILD_NUMBER
+    }
+
+    return $releaseTag
 }
 
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
     try {
-        $packageParams = @{}
-        if($env:APPVEYOR_BUILD_VERSION)
-        {
-            $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
-        }
+        $releaseTag = Get-ReleaseTag
 
         # Build packages
-        $packages = Start-PSPackage @packageParams -SkipReleaseChecks
-
-        $name = Get-PackageName
-
-        $zipFilePath = Join-Path $pwd "$name.zip"
-
-        Add-Type -assemblyname System.IO.Compression.FileSystem
-        Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
             $null = $artifacts.Add($package)
         }
-
-        $null = $artifacts.Add($zipFilePath)
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
@@ -454,7 +455,7 @@ function Invoke-AppveyorFinish
         }
         else
         {
-            $previewVersion = (git describe --abbrev=0).Split('-')
+            $previewVersion = $releaseTag.Split('-')
             $previewPrefix = $previewVersion[0]
             $previewLabel = $previewVersion[1].replace('.','')
 
@@ -466,17 +467,27 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
-        # only publish to nuget feed if it is a daily build and tests passed
+        # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
             Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
+            $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+            if($nugetArtifacts)
+            {
+                $artifacts.AddRange($nugetArtifacts)
+            }
         }
 
-        $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-
-        if($nugetArtifacts)
+        if (Test-DailyBuild)
         {
-            $artifacts.AddRange($nugetArtifacts)
+            # produce win-arm and win-arm64 packages if it is a daily build
+            Start-PSBuild -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
+            $artifacts.Add($arm32Package)
+
+            Start-PSBuild -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
+            $artifacts.Add($arm64Package)
         }
 
         $pushedAllArtifacts = $true
