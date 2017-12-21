@@ -400,6 +400,9 @@ namespace System.Management.Automation.Language
         internal static readonly ConstructorInfo RangeEnumerator_ctor =
             typeof(RangeEnumerator).GetConstructor(new Type[] { typeof(int), typeof(int) });
 
+        internal static readonly ConstructorInfo CharRangeEnumerator_ctor =
+            typeof(CharRangeEnumerator).GetConstructor(new Type[] { typeof(char), typeof(char) });
+
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSAdaptedMemberSet =
             typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSBaseMemberSet =
@@ -4295,9 +4298,18 @@ namespace System.Management.Automation.Language
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
 
-                    result = Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
-                                            lhs.Convert(typeof(int)),
-                                            rhs.Convert(typeof(int)));
+                    if (lhs.Type == typeof(string) || lhs.Type == typeof(Char))
+                    {
+                        result = Expression.New(CachedReflectionInfo.CharRangeEnumerator_ctor,
+                                                lhs.Convert(typeof(char)),
+                                                rhs.Convert(typeof(char)));
+                    }
+                    else
+                    {
+                        result = Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
+                                                lhs.Convert(typeof(int)),
+                                                rhs.Convert(typeof(int)));
+                    }
                 }
             }
             return result;
@@ -4874,7 +4886,8 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
-                    if(lhs.Type == typeof(string)){
+                    if (lhs.Type == typeof(string) || lhs.Type == typeof(char))
+                    {
                         return Expression.Call(CachedReflectionInfo.CharOps_Range,
                                                lhs.Convert(typeof(char)),
                                                rhs.Convert(typeof(char)));

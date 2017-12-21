@@ -1478,7 +1478,13 @@ namespace System.Management.Automation
         }
 
         private int _current;
-        public object Current
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public virtual int Current
         {
             get { return _current; }
         }
@@ -1521,6 +1527,81 @@ namespace System.Management.Automation
             return true;
         }
     }
+
+    /// <summary>
+    /// The simple enumerator class is used for the range operator '..'
+    /// in expressions like 'A'..'B' | ForEach-Object { $_ }
+    /// </summary>
+    internal class CharRangeEnumerator : IEnumerator
+    {
+        private int _lowerBound;
+
+        internal int LowerBound
+        {
+            get { return _lowerBound; }
+        }
+
+        private int _upperBound;
+
+        internal int UpperBound
+        {
+            get { return _upperBound; }
+        }
+
+        private int _current;
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public string Current
+        {
+            get { return new String((char)_current, 1); }
+        }
+
+        internal int CurrentValue
+        {
+            get { return _current; }
+        }
+
+        private int _increment = 1;
+
+        private bool _firstElement = true;
+
+        public CharRangeEnumerator(char lowerBound, char upperBound)
+        {
+            _lowerBound = lowerBound;
+            _current = _lowerBound;
+            _upperBound = upperBound;
+            if (lowerBound > upperBound)
+                _increment = -1;
+        }
+
+        public void Reset()
+        {
+            _current = _lowerBound;
+            _firstElement = true;
+        }
+
+        public bool MoveNext()
+        {
+            if (_firstElement)
+            {
+                _firstElement = false;
+                return true;
+            }
+
+            if (_current == _upperBound)
+            {
+                return false;
+            }
+
+            _current += _increment;
+            return true;
+        }
+    }
+
     #endregion RangeEnumerator
 
     #region InterpreterError

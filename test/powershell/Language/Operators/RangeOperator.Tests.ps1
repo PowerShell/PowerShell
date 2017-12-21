@@ -46,10 +46,20 @@ Describe "Range Operator" -Tags CI {
             $Range[3] | Should Be 1
             $Range[4] | Should Be 2
         }
+
+        It "Range operator enumerator works" {
+            $Range = -2..2 | ForEach-Object { $_ }
+            $Range.count | Should Be 5
+            $Range[0] | Should Be -2
+            $Range[1] | Should Be -1
+            $Range[2] | Should Be 0
+            $Range[3] | Should Be 1
+            $Range[4] | Should Be 2
+        }
     }
 
     Context "Character expansion" {
-        It "Range operator generates an array of [char] from single-character string operands" {
+        It "Range operator generates an array of [char] from single-character operands" {
             $CharRange = 'A'..'E'
             $CharRange.count | Should Be 5
             $CharRange[0] | Should BeOfType [char]
@@ -59,16 +69,62 @@ Describe "Range Operator" -Tags CI {
             $CharRange[4] | Should BeOfType [char]
         }
 
+        It "Range operator enumerator generates an array of [string] from single-character operands" {
+            $CharRange = 'A'..'E' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 5
+            $CharRange[0] | Should BeOfType [string]
+            $CharRange[1] | Should BeOfType [string]
+            $CharRange[2] | Should BeOfType [string]
+            $CharRange[3] | Should BeOfType [string]
+            $CharRange[4] | Should BeOfType [string]
+        }
+
         It "Range operator works in ascending and descending order" {
             $CharRange = 'a'..'b'
             $CharRange.count | Should Be 2
-            $CharRange[0] | Should Be ([char]'a')
-            $CharRange[1] | Should Be ([char]'b')
+            $CharRange[0] | Should BeExactly ([char]'a')
+            $CharRange[1] | Should BeExactly ([char]'b')
 
-            $CharRange = 'b'..'a'
+            $CharRange = 'B'..'A'
             $CharRange.count | Should Be 2
-            $CharRange[0] | Should Be ([char]'b')
-            $CharRange[1] | Should Be ([char]'a')
+            $CharRange[0] | Should BeExactly ([char]'B')
+            $CharRange[1] | Should BeExactly ([char]'A')
+        }
+
+        It "Range operator works in ascending and descending order with [char] cast" {
+            $CharRange = [char]'a'..[char]'b'
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly ([char]'a')
+            $CharRange[1] | Should BeExactly ([char]'b')
+
+            $CharRange = [char]'B'..[char]'A'
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly ([char]'B')
+            $CharRange[1] | Should BeExactly ([char]'A')
+        }
+
+        It "Range operator enumerator works in ascending and descending order" {
+            $CharRange = 'a'..'b' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "a"
+            $CharRange[1] | Should BeExactly "b"
+
+            $CharRange = 'B'..'A' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "B"
+            $CharRange[1] | Should BeExactly "A"
+        }
+
+        It "Range operator enumerator works in ascending and descending order with [char] cast" {
+            $CharRange = [char]'a'..[char]'b' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "a"
+            $CharRange[1] | Should BeExactly "b"
+
+            $CharRange = [char]'B'..[char]'A' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "B"
+            $CharRange[1] | Should BeExactly "A"
         }
 
         It "Range operator works with 16-bit unicode characters" {
