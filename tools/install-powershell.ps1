@@ -153,7 +153,7 @@ try {
             Copy-Item $_.fullname -Destination $DestinationFilePath
         }
     } else {
-        $null = New-Item -Path (Split-Path -Path $Destination -Parent -ErrorAction SilentlyContinue) -ItemType Directory -ErrorAction SilentlyContinue
+        $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
         Move-Item -Path $contentPath -Destination $Destination
     }
 
