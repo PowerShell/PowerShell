@@ -1,46 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Xml;
 using System.IO;
 using System.Text;
-using System.Reflection;
-using System.Globalization;
 using System.Threading;
-
-using System.Management.Automation;
-using System.Management.Automation.Internal;
-using Microsoft.Win32;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-
-namespace System.Management.Automation
+namespace System.Management.Automation.Configuration
 {
-
     /// <summary>
-    /// Leverages the strategy pattern to abstract away the details of gathering properties from outside sources.
-    /// Note: This is a class so that it can be internal.
+    /// JSON configuration file accessor.
+    /// Reads from and writes to configuration files. The config values were originally stored in the Windows registry.
     /// </summary>
-    internal abstract class ConfigPropertyAccessor
+    internal sealed class PowerShellConfig
     {
-        #region Statics
-        /// <summary>
-        /// Static constructor to instantiate an instance
-        /// </summary>
-        static ConfigPropertyAccessor()
-        {
-            Instance = new JsonConfigFileAccessor();
-        }
-        /// <summary>
-        /// The instance of the ConfigPropertyAccessor to use to interact with properties.
-        /// Derived classes should not be directly instantiated.
-        /// </summary>
-        internal static readonly ConfigPropertyAccessor Instance;
-
-        #endregion // Statics
-
         #region Enums
 
         /// <summary>
@@ -56,142 +28,41 @@ namespace System.Management.Automation
 
         #endregion // Enums
 
-        #region Interface Methods
+        // Provide a singleton
+        private static readonly PowerShellConfig s_instance = new PowerShellConfig();
+        internal static PowerShellConfig Instance => s_instance;
 
-        /// <summary>
-        /// Existing Key = HKLM:\System\CurrentControlSet\Control\Session Manager\Environment
-        /// Proposed value = %ProgramFiles%\PowerShell\Modules by default
-        ///
-        /// Note: There is no setter because this value is immutable.
-        /// </summary>
-        /// <returns>Module path values from the config file.</returns>
-        internal abstract string GetModulePath(PropertyScope scope);
-
-        /// <summary>
-        /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
-        /// Proposed value = Existing default execution policy if not already specified
-        /// </summary>
-        /// <param name="scope">Where it should check for the value.</param>
-        /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
-        /// <returns></returns>
-        internal abstract string GetExecutionPolicy(PropertyScope scope, string shellId);
-        internal abstract void RemoveExecutionPolicy(PropertyScope scope, string shellId);
-        internal abstract void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy);
-
-        /// <summary>
-        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
-        /// Proposed value = existing default. Probably "1"
-        /// </summary>
-        /// <returns>Whether console prompting should happen.</returns>
-        internal abstract bool GetConsolePrompting();
-        internal abstract void SetConsolePrompting(bool shouldPrompt);
-
-        /// <summary>
-        /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
-        /// Proposed value = Existing default. Probably "0"
-        /// </summary>
-        /// <returns>Boolean indicating whether Update-Help should prompt</returns>
-        internal abstract bool GetDisablePromptToUpdateHelp();
-        internal abstract void SetDisablePromptToUpdateHelp(bool prompt);
-
-        /// <summary>
-        /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
-        /// Proposed value = blank.This should be supported though
-        /// </summary>
-        /// <returns></returns>
-        internal abstract string GetDefaultSourcePath();
-        internal abstract void SetDefaultSourcePath(string defaultPath);
-
-#if UNIX
-        /// <summary>
-        /// Gets the application identity (name) to use for writing to syslog.
-        /// </summary>
-        /// <returns>
-        /// The string identity to use for writing to syslog.
-        /// <para>
-        /// The default value is 'powershell'
-        /// </para>
-        /// </returns>
-        internal abstract string GetSysLogIdentity();
-
-        /// <summary>
-        /// Gets the log level filter.
-        /// </summary>
-        /// <returns>One of the PSLevel values indicating the level to log.
-        /// <para>
-        /// The default value is PSLevel.Informational
-        /// </para>
-        /// </returns>
-        internal abstract PSLevel GetLogLevel();
-
-        /// <summary>
-        /// Gets the bitmask of the PSChannel values to log.
-        /// </summary>
-        /// <returns>
-        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic
-        /// <para>
-        /// The default value is PSChannel.Operational
-        /// </para>
-        /// </returns>
-        internal abstract PSChannel GetLogChannels();
-
-        /// <summary>
-        /// Gets the bitmask of keywords to log.
-        /// </summary>
-        /// <returns>
-        /// A bitmask of PSKeyword values.
-        /// <para>
-        /// The default value is all keywords other than UseAlwaysAnalytic
-        /// </para>
-        /// </returns>
-        internal abstract PSKeyword GetLogKeywords();
-
-#endif // UNIX
-        #endregion // Interface Methods
-    }
-
-    /// <summary>
-    /// JSON configuration file accessor
-    ///
-    /// Reads from and writes to configuration files. The values stored were
-    /// originally stored in the Windows registry.
-    /// </summary>
-    internal class JsonConfigFileAccessor : ConfigPropertyAccessor
-    {
         private string psHomeConfigDirectory;
         private string appDataConfigDirectory;
         private const string configFileName = "PowerShellProperties.json";
 
         /// <summary>
-        /// Lock used to enable multiple concurrent readers and singular write locks within a
-        /// single process.
-        /// TODO: This solution only works for IO from a single process. A more robust solution is needed to enable ReaderWriterLockSlim behavior between processes.
+        /// Lock used to enable multiple concurrent readers and singular write locks within a single process.
+        /// TODO: This solution only works for IO from a single process.
+        ///       A more robust solution is needed to enable ReaderWriterLockSlim behavior between processes.
         /// </summary>
         private ReaderWriterLockSlim fileLock = new ReaderWriterLockSlim();
 
-        internal JsonConfigFileAccessor()
+        private PowerShellConfig()
         {
-            //
             // Sets the system-wide configuration directory
-            //
-            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
-            psHomeConfigDirectory = Path.GetDirectoryName(assembly.Location);
+            psHomeConfigDirectory = Utils.DefaultPowerShellAppBase;
 
-            //
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
-            //
             appDataConfigDirectory = Utils.GetUserConfigurationDirectory();
         }
 
         /// <summary>
-        /// This value is not writable via the API and must be set using a text editor.
+        /// Existing Key = HKLM:\System\CurrentControlSet\Control\Session Manager\Environment
+        /// Proposed value = %ProgramFiles%\PowerShell\Modules by default
+        /// Note: There is no setter because this value is immutable.
         /// </summary>
-        /// <param name="scope"></param>
+        /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
-        internal override string GetModulePath(PropertyScope scope)
+        internal string GetModulePath(PropertyScope scope)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
@@ -217,7 +88,7 @@ namespace System.Management.Automation
         ///
         /// Schema:
         /// {
-        ///     "shell ID string","ExecutionPolicy" : "execution policy string"
+        ///     "shell-ID-string:ExecutionPolicy" : "execution policy string"
         /// }
         ///
         /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
@@ -225,7 +96,7 @@ namespace System.Management.Automation
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
-        internal override string GetExecutionPolicy(PropertyScope scope, string shellId)
+        internal string GetExecutionPolicy(PropertyScope scope, string shellId)
         {
             string execPolicy = null;
             string scopeDirectory = psHomeConfigDirectory;
@@ -247,7 +118,7 @@ namespace System.Management.Automation
             return execPolicy;
         }
 
-        internal override void RemoveExecutionPolicy(PropertyScope scope, string shellId)
+        internal void RemoveExecutionPolicy(PropertyScope scope, string shellId)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
@@ -262,7 +133,7 @@ namespace System.Management.Automation
             RemoveValueFromFile<string>(fileName, valueName);
         }
 
-        internal override void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
+        internal void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
@@ -292,13 +163,13 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
-        internal override bool GetConsolePrompting()
+        internal bool GetConsolePrompting()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             return ReadValueFromFile<bool>(fileName, "ConsolePrompting");
         }
 
-        internal override void SetConsolePrompting(bool shouldPrompt)
+        internal void SetConsolePrompting(bool shouldPrompt)
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             WriteValueToFile<bool>(fileName, "ConsolePrompting", shouldPrompt);
@@ -314,13 +185,13 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
-        internal override bool GetDisablePromptToUpdateHelp()
+        internal bool GetDisablePromptToUpdateHelp()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             return ReadValueFromFile<bool>(fileName, "DisablePromptToUpdateHelp");
         }
 
-        internal override void SetDisablePromptToUpdateHelp(bool prompt)
+        internal void SetDisablePromptToUpdateHelp(bool prompt)
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             WriteValueToFile<bool>(fileName, "DisablePromptToUpdateHelp", prompt);
@@ -336,7 +207,7 @@ namespace System.Management.Automation
         /// }
         /// </summary>
         /// <returns>The source path if found, null otherwise.</returns>
-        internal override string GetDefaultSourcePath()
+        internal string GetDefaultSourcePath()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
 
@@ -349,7 +220,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        internal override void SetDefaultSourcePath(string defaultPath)
+        internal void SetDefaultSourcePath(string defaultPath)
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
 
@@ -361,12 +232,9 @@ namespace System.Management.Automation
         /// Gets the identity name to use for writing to syslog.
         /// </summary>
         /// <returns>
-        /// The string identity to use for writing to syslog.
-        /// <para>
-        /// The default value is 'powershell'.
-        /// </para>
+        /// The string identity to use for writing to syslog. The default value is 'powershell'.
         /// </returns>
-        internal override string GetSysLogIdentity()
+        internal string GetSysLogIdentity()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string identity = ReadValueFromFile<string>(fileName, "LogIdentity");
@@ -382,12 +250,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the log level filter.
         /// </summary>
-        /// <returns>One of the PSLevel values indicating the level to log.
-        /// <para>
-        /// The default value is PSLevel.Informational.
-        /// </para>
+        /// <returns>
+        /// One of the PSLevel values indicating the level to log. The default value is PSLevel.Informational.
         /// </returns>
-        internal override PSLevel GetLogLevel()
+        internal PSLevel GetLogLevel()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string levelName = ReadValueFromFile<string>(fileName, "LogLevel");
@@ -418,12 +284,9 @@ namespace System.Management.Automation
         /// Gets the bitmask of the PSChannel values to log.
         /// </summary>
         /// <returns>
-        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic.
-        /// <para>
-        /// The default value is PSChannel.Operational.
-        /// </para>
+        /// A bitmask of PSChannel.Operational and/or PSChannel.Analytic. The default value is PSChannel.Operational.
         /// </returns>
-        internal override PSChannel GetLogChannels()
+        internal PSChannel GetLogChannels()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string values = ReadValueFromFile<string>(fileName, "LogChannels");
@@ -464,12 +327,9 @@ namespace System.Management.Automation
         /// Gets the bitmask of keywords to log.
         /// </summary>
         /// <returns>
-        /// A bitmask of PSKeyword values.
-        /// <para>
-        /// The default value is all keywords other than UseAlwaysAnalytic.
-        /// </para>
+        /// A bitmask of PSKeyword values. The default value is all keywords other than UseAlwaysAnalytic.
         /// </returns>
-        internal override PSKeyword GetLogKeywords()
+        internal PSKeyword GetLogKeywords()
         {
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
             string values = ReadValueFromFile<string>(fileName, "LogKeywords");
@@ -502,7 +362,6 @@ namespace System.Management.Automation
 
             return result;
         }
-
 #endif // UNIX
 
         private T ReadValueFromFile<T>(string fileName, string key)

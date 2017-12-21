@@ -11,6 +11,7 @@ using System.IO;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -174,12 +175,12 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.PropertyScope.CurrentUser, shellId);
                         CleanKeyParents(Registry.CurrentUser, preferenceKey);
                     }
                     else
                     {
-                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.PropertyScope.CurrentUser, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -189,12 +190,12 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        ConfigPropertyAccessor.Instance.RemoveExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.PropertyScope.SystemWide, shellId);
                         CleanKeyParents(Registry.LocalMachine, preferenceKey);
                     }
                     else
                     {
-                        ConfigPropertyAccessor.Instance.SetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.PropertyScope.SystemWide, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -608,11 +609,11 @@ namespace System.Management.Automation.Internal
             {
                 // 1: Look up the current-user preference
                 case ExecutionPolicyScope.CurrentUser:
-                    return ConfigPropertyAccessor.Instance.GetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.CurrentUser, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.PropertyScope.CurrentUser, shellId);
 
                 // 2: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                    return ConfigPropertyAccessor.Instance.GetExecutionPolicy(ConfigPropertyAccessor.PropertyScope.SystemWide, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.PropertyScope.SystemWide, shellId);
             }
 
             return null;

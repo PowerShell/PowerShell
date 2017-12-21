@@ -238,7 +238,7 @@ namespace System.Management.Automation
         internal static string GetApplicationBase(string shellId)
         {
             // Use the location of SMA.dll as the application base.
-            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
+            Assembly assembly = typeof(PSObject).Assembly;
             return Path.GetDirectoryName(assembly.Location);
         }
 
