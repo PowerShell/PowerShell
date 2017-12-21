@@ -978,8 +978,8 @@ namespace System.Management.Automation
         internal static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
-            string systemWideModulePath = PowerShellConfig.Instance.GetModulePath(PowerShellConfig.PropertyScope.SystemWide);
-            string personalModulePath = PowerShellConfig.Instance.GetModulePath(PowerShellConfig.PropertyScope.CurrentUser);
+            string systemWideModulePath = PowerShellConfig.Instance.GetModulePath(PowerShellConfig.ConfigScope.SystemWide);
+            string personalModulePath = PowerShellConfig.Instance.GetModulePath(PowerShellConfig.ConfigScope.CurrentUser);
 
             string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
 

@@ -175,12 +175,12 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.PropertyScope.CurrentUser, shellId);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.ConfigScope.CurrentUser, shellId);
                         CleanKeyParents(Registry.CurrentUser, preferenceKey);
                     }
                     else
                     {
-                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.PropertyScope.CurrentUser, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.ConfigScope.CurrentUser, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -190,12 +190,12 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.PropertyScope.SystemWide, shellId);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.ConfigScope.SystemWide, shellId);
                         CleanKeyParents(Registry.LocalMachine, preferenceKey);
                     }
                     else
                     {
-                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.PropertyScope.SystemWide, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.ConfigScope.SystemWide, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -609,11 +609,11 @@ namespace System.Management.Automation.Internal
             {
                 // 1: Look up the current-user preference
                 case ExecutionPolicyScope.CurrentUser:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.PropertyScope.CurrentUser, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.ConfigScope.CurrentUser, shellId);
 
                 // 2: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.PropertyScope.SystemWide, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.ConfigScope.SystemWide, shellId);
             }
 
             return null;

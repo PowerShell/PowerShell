@@ -16,11 +16,10 @@ namespace System.Management.Automation.Configuration
         #region Enums
 
         /// <summary>
-        /// Describes the scope of the property query.
-        /// SystemWide properties apply to all users.
-        /// CurrentUser properties apply to the current user that is impersonated.
+        /// SystemWide configuration applies to all users.
+        /// CurrentUser configuration applies to the current user.
         /// </summary>
-        internal enum PropertyScope
+        internal enum ConfigScope
         {
             SystemWide = 0,
             CurrentUser = 1
@@ -62,12 +61,12 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
-        internal string GetModulePath(PropertyScope scope)
+        internal string GetModulePath(ConfigScope scope)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
             // Defaults to system wide.
-            if (PropertyScope.CurrentUser == scope)
+            if (ConfigScope.CurrentUser == scope)
             {
                 scopeDirectory = appDataConfigDirectory;
             }
@@ -96,13 +95,13 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell"</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
-        internal string GetExecutionPolicy(PropertyScope scope, string shellId)
+        internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
             string execPolicy = null;
             string scopeDirectory = psHomeConfigDirectory;
 
             // Defaults to system wide.
-            if(PropertyScope.CurrentUser == scope)
+            if(ConfigScope.CurrentUser == scope)
             {
                 scopeDirectory = appDataConfigDirectory;
             }
@@ -118,12 +117,12 @@ namespace System.Management.Automation.Configuration
             return execPolicy;
         }
 
-        internal void RemoveExecutionPolicy(PropertyScope scope, string shellId)
+        internal void RemoveExecutionPolicy(ConfigScope scope, string shellId)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
             // Defaults to system wide.
-            if (PropertyScope.CurrentUser == scope)
+            if (ConfigScope.CurrentUser == scope)
             {
                 scopeDirectory = appDataConfigDirectory;
             }
@@ -133,12 +132,12 @@ namespace System.Management.Automation.Configuration
             RemoveValueFromFile<string>(fileName, valueName);
         }
 
-        internal void SetExecutionPolicy(PropertyScope scope, string shellId, string executionPolicy)
+        internal void SetExecutionPolicy(ConfigScope scope, string shellId, string executionPolicy)
         {
             string scopeDirectory = psHomeConfigDirectory;
 
             // Defaults to system wide.
-            if (PropertyScope.CurrentUser == scope)
+            if (ConfigScope.CurrentUser == scope)
             {
                 // Exceptions are not caught so that they will propagate to the
                 // host for display to the user.
