@@ -6190,6 +6190,11 @@ namespace System.Management.Automation
             if (commandAst != null)
             {
                 var binding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, bindingType: PseudoParameterBinder.BindingType.ArgumentCompletion);
+                if (binding == null)
+                {
+                    return null;
+                }
+
                 string parameterName = null;
                 foreach (var boundArg in binding.BoundArguments)
                 {

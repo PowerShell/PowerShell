@@ -1075,15 +1075,15 @@ namespace System.Management.Automation.Language
         /// <param name="executionContext">ExecutionContext</param>
         private void SetTemporaryDefaultHost(ExecutionContext executionContext)
         {
-            if (executionContext.EngineHostInterface.IsHostRefSet)
+            if (_restoreHost == null && executionContext.EngineHostInterface.IsHostRefSet)
             {
                 // A temporary host is already set so we need to track and restore here, because
                 // setting the host again will overwrite the current one.
                 _restoreHost = executionContext.EngineHostInterface.ExternalHost;
-
-                // Revert host back to its original state.
-                executionContext.EngineHostInterface.RevertHostRef();
             }
+
+            // Revert host back to its original state.
+            executionContext.EngineHostInterface.RevertHostRef();
 
             // Temporarily set host to default.
             executionContext.EngineHostInterface.SetHostRef(new Microsoft.PowerShell.DefaultHost(
