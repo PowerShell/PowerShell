@@ -4262,7 +4262,7 @@ namespace System.Management.Automation
                             {
                                 var sessionStateInternal = executionContext.EngineSessionState;
                                 completionText = sessionStateInternal.NormalizeRelativePath(path, sessionStateInternal.CurrentLocation.ProviderPath);
-                                string parentDirectory = ".." + Path.DirectorySeparatorChar;
+                                string parentDirectory = ".." + StringLiterals.DefaultPathSeparator;
                                 if (!completionText.StartsWith(parentDirectory, StringComparison.Ordinal))
                                     completionText = Path.Combine(".", completionText);
                             }
@@ -4477,13 +4477,9 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete;
             var colon = wordToComplete.IndexOf(':');
 
-            var prefix = "$";
             var lastAst = context.RelatedAsts.Last();
             var variableAst = lastAst as VariableExpressionAst;
-            if (variableAst != null && variableAst.Splatted)
-            {
-                prefix = "@";
-            }
+            var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -5929,7 +5925,7 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + Path.DirectorySeparatorChar + CultureInfo.CurrentCulture.Name;
+            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + StringLiterals.DefaultPathSeparator + CultureInfo.CurrentCulture.Name;
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
             List<string> files = new List<string>();
