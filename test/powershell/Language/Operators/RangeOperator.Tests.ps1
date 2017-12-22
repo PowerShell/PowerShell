@@ -56,6 +56,34 @@ Describe "Range Operator" -Tags CI {
             $Range[3] | Should Be 1
             $Range[4] | Should Be 2
         }
+
+        It "Range operator works with variables" {
+            $var1 = -1
+            $var2 = 1
+            $Range = $var1..$var2
+            $Range.count | Should Be 3
+            $Range[0] | Should Be -1
+            $Range[1] | Should Be 0
+            $Range[2] | Should Be 1
+
+            $Range = [int]$var2..[int]$var1
+            $Range.count | Should Be 3
+            $Range[0] | Should Be 1
+            $Range[1] | Should Be 0
+            $Range[2] | Should Be -1
+
+            $Range = $var1..$var2 | ForEach-Object { $_ }
+            $Range.count | Should Be 3
+            $Range[0] | Should Be -1
+            $Range[1] | Should Be 0
+            $Range[2] | Should Be 1
+
+            $Range = [int]$var2..[int]$var1 | ForEach-Object { $_ }
+            $Range.count | Should Be 3
+            $Range[0] | Should Be 1
+            $Range[1] | Should Be 0
+            $Range[2] | Should Be -1
+        }
     }
 
     Context "Character expansion" {
@@ -125,6 +153,30 @@ Describe "Range Operator" -Tags CI {
             $CharRange.count | Should Be 2
             $CharRange[0] | Should BeExactly "B"
             $CharRange[1] | Should BeExactly "A"
+        }
+
+        It "Range operator works with variables" {
+            $var1 = 'a'
+            $var2 = 'b'
+            $CharRange = $var1..$var2
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "a"
+            $CharRange[1] | Should BeExactly "b"
+
+            $CharRange = [char]$var2..[char]$var1
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "b"
+            $CharRange[1] | Should BeExactly "a"
+
+            $CharRange = $var1..$var2 | ForEach-Object { $_ }
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "a"
+            $CharRange[1] | Should BeExactly "b"
+
+            $CharRange = [char]$var2..[char]$var1 | ForEach-Object { $_ }
+            $CharRange.count | Should Be 2
+            $CharRange[0] | Should BeExactly "b"
+            $CharRange[1] | Should BeExactly "a"
         }
 
         It "Range operator works with 16-bit unicode characters" {

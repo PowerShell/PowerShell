@@ -292,6 +292,8 @@ namespace System.Management.Automation.Language
             typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_MatchOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_RangeOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_SplitOperator =
@@ -4289,7 +4291,6 @@ namespace System.Management.Automation.Language
 
         private Expression GetRangeEnumerator(ExpressionAst condExpr)
         {
-            Expression result = null;
             if (condExpr != null)
             {
                 var binaryExpr = condExpr as BinaryExpressionAst;
@@ -4298,21 +4299,24 @@ namespace System.Management.Automation.Language
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
 
-                    if (lhs.Type == typeof(string) || lhs.Type == typeof(Char))
+                    if ((lhs.Type == typeof(string) || lhs.Type == typeof(char))
+                        && (rhs.Type == typeof(string) || rhs.Type == typeof(char)))
                     {
-                        result = Expression.New(CachedReflectionInfo.CharRangeEnumerator_ctor,
+                        return Expression.New(CachedReflectionInfo.CharRangeEnumerator_ctor,
                                                 lhs.Convert(typeof(char)),
                                                 rhs.Convert(typeof(char)));
                     }
-                    else
+
+                    if (lhs.Type == typeof(int) || lhs.Type == typeof(int))
                     {
-                        result = Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
+                        return Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
                                                 lhs.Convert(typeof(int)),
                                                 rhs.Convert(typeof(int)));
                     }
                 }
             }
-            return result;
+
+            return null;
         }
 
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst)
@@ -4886,15 +4890,24 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
-                    if (lhs.Type == typeof(string) || lhs.Type == typeof(char))
+                    if ((lhs.Type == typeof(string) || lhs.Type == typeof(char))
+                        && (rhs.Type == typeof(string) || rhs.Type == typeof(char)))
                     {
                         return Expression.Call(CachedReflectionInfo.CharOps_Range,
                                                lhs.Convert(typeof(char)),
                                                rhs.Convert(typeof(char)));
                     }
-                    return Expression.Call(CachedReflectionInfo.IntOps_Range,
-                                           lhs.Convert(typeof(int)),
-                                           rhs.Convert(typeof(int)));
+                    if (lhs.Type == typeof(int) && rhs.Type == typeof(int))
+                    {
+                        return Expression.Call(CachedReflectionInfo.IntOps_Range,
+                                            lhs.Convert(typeof(int)),
+                                            rhs.Convert(typeof(int)));
+                    }
+                    // TODO: replace this with faster code
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_RangeOperator,
+                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
+
                 case TokenKind.Multiply:
                     if (lhs.Type == typeof(double) && rhs.Type == typeof(double))
                     {

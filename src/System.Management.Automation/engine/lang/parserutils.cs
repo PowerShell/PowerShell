@@ -786,6 +786,35 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The implementation of the PowerShell range operator.
+        /// </summary>
+        /// <param name="context">The execution context in which to evaluate the expression</param>
+        /// <param name="errorPosition">The position to use for error reporting.</param>
+        /// <param name="lval">The object on which to replace the values</param>
+        /// <param name="rval">The replacement description.</param>
+        /// <returns>The result of the operator</returns>
+        internal static object RangeOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval)
+        {
+            var lbase = PSObject.Base(lval);
+            var rbase = PSObject.Base(rval);
+
+            try
+            {
+                var l = Convert.ToChar(lbase);
+                var r = Convert.ToChar(rbase);
+
+                return CharOps.Range(l, r);
+            }
+            catch
+            {
+                var l = Convert.ToInt32(lbase);
+                var r = Convert.ToInt32(rbase);
+
+                return IntOps.Range(l, r);
+            }
+        }
+
+        /// <summary>
         /// The implementation of the PowerShell -replace operator....
         /// </summary>
         /// <param name="context">The execution context in which to evaluate the expression</param>
