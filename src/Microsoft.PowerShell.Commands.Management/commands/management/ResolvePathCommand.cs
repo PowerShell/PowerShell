@@ -109,7 +109,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
-                            if (!adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                            if (currentPath.Drive == SessionState.Path.CurrentLocation.Drive &&
+                                !adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
