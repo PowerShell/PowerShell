@@ -1563,37 +1563,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class CharRangeEnumerator : IEnumerator
     {
-        private int _lowerBound;
-
-        internal int LowerBound
-        {
-            get { return _lowerBound; }
-        }
-
-        private int _upperBound;
-
-        internal int UpperBound
-        {
-            get { return _upperBound; }
-        }
-
-        private int _current;
-
-        Object IEnumerator.Current
-        {
-            get { return Current; }
-        }
-
-        public string Current
-        {
-            get { return new String((char)_current, 1); }
-        }
-
-        internal int CurrentValue
-        {
-            get { return _current; }
-        }
-
         private int _increment = 1;
 
         private bool _firstElement = true;
@@ -1607,11 +1576,36 @@ namespace System.Management.Automation
                 _increment = -1;
         }
 
-        public void Reset()
+        public string Current
         {
-            _current = _lowerBound;
-            _firstElement = true;
+            get { return new String((char)_current, 1); }
         }
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        internal int LowerBound
+        {
+            get { return _lowerBound; }
+        }
+
+        private int _lowerBound;
+
+        internal int UpperBound
+        {
+            get { return _upperBound; }
+        }
+
+        private int _upperBound;
+
+        internal int CurrentValue
+        {
+            get { return _current; }
+        }
+
+        private int _current;
 
         public bool MoveNext()
         {
@@ -1628,6 +1622,12 @@ namespace System.Management.Automation
 
             _current += _increment;
             return true;
+        }
+
+        public void Reset()
+        {
+            _current = _lowerBound;
+            _firstElement = true;
         }
     }
 
