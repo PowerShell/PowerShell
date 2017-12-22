@@ -311,7 +311,21 @@ namespace Microsoft.PowerShell.Internal
 
     public struct BufferChar
     {
-        public char UnicodeChar;
+        public char UnicodeChar
+        {
+            get
+            {
+                return _unicodeChar;
+            }
+            set
+            {
+                _unicodeChar = value;
+#if !UNIX
+                IsLeadByte = IsTrailByte = false;
+#endif
+            }
+        }
+        private char _unicodeChar;
         public ConsoleColor ForegroundColor;
         public ConsoleColor BackgroundColor;
 #if !UNIX
@@ -771,7 +785,8 @@ namespace Microsoft.PowerShell.Internal
             return _codePage == 932 || // Japanese
                    _codePage == 936 || // Simplified Chinese
                    _codePage == 949 || // Korean
-                   _codePage == 950;  // Traditional Chinese
+                   _codePage == 950 || // Traditional Chinese
+                   _codePage == 65001; // UTF-8
         }
 
         internal bool IsAvailableFarEastCodePage()
@@ -787,12 +802,19 @@ namespace Microsoft.PowerShell.Internal
                 /* ASCII */
                 return 1;
             }
-            else if (0x3041 <= c && c <= 0x3094)
+            else if ((0x3000 <= c && c <= 0x301c) ||
+                     (0x2026 == c || 0x203b == c))
+            {
+                /* CJK symbol */
+                return 2;
+            }
+            else if ((0x3041 <= c && c <= 0x3093) ||
+                     (0x309d <= c && c <= 0x309e))
             {
                 /* Hiragana */
                 return 2;
             }
-            else if (0x30a1 <= c && c <= 0x30f6)
+            else if (0x30a0 <= c && c <= 0x30fe)
             {
                 /* Katakana */
                 return 2;

@@ -2796,9 +2796,10 @@ namespace Microsoft.PowerShell
         {
             codePage = NativeMethods.GetConsoleOutputCP();
             return codePage == 932 || // Japanese
-                codePage == 936 || // Simplified Chinese
-                codePage == 949 || // Korean
-                codePage == 950;  // Traditional Chinese
+                   codePage == 936 || // Simplified Chinese
+                   codePage == 949 || // Korean
+                   codePage == 950 || // Traditional Chinese
+                   codePage == 65001; // UTF-8
         }
 
 #endif

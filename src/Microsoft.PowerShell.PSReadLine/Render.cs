@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell
         private int LengthInBufferCells(char c)
         {
             int length = Char.IsControl(c) ? 1 : 0;
-            if (c < 256)
+            if (c <= 0xff)
             {
                 return length + 1;
             }
