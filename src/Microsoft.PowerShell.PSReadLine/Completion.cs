@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell
             {
                 completions.CurrentMatchIndex = completions.CompletionMatches.Count - 1;
             }
-            else if (completions.CurrentMatchIndex >= completions.CompletionMatches.Count)
+            else if (completions.CurrentMatchIndex == completions.CompletionMatches.Count)
             {
                 completions.CurrentMatchIndex = 0;
             }
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell
         {
             if (!replacementText.EndsWith(DirectorySeparatorString , StringComparison.Ordinal))
             {
-                if (replacementText.EndsWith(String.Format("{0}'", DirectorySeparatorString), StringComparison.Ordinal) ||
+                if (replacementText.EndsWith(String.Format("{0}\'", DirectorySeparatorString), StringComparison.Ordinal) ||
                     replacementText.EndsWith(String.Format("{0}\"", DirectorySeparatorString), StringComparison.Ordinal))
                 {
                     cursorAdjustment = -1;
@@ -287,12 +287,12 @@ namespace Microsoft.PowerShell
                          replacementText.EndsWith("\"", StringComparison.Ordinal))
                 {
                     var len = replacementText.Length;
-                    replacementText = replacementText.Substring(0, len - 1) + DirectorySeparatorString + replacementText[len - 1];
+                    replacementText = replacementText.Substring(0, len - 1) + System.IO.Path.DirectorySeparatorChar + replacementText[len - 1];
                     cursorAdjustment = -1;
                 }
                 else
                 {
-                    replacementText = replacementText + DirectorySeparatorString;
+                    replacementText = replacementText + System.IO.Path.DirectorySeparatorChar;
                 }
             }
             return replacementText;
