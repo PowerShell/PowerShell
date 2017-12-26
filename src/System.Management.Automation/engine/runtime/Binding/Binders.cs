@@ -5690,6 +5690,11 @@ namespace System.Management.Automation.Language
                 return memberInfo.Value;
             }
 
+            if (string.Equals(member, "Length", StringComparison.OrdinalIgnoreCase) || string.Equals(member, "Count", StringComparison.OrdinalIgnoreCase))
+            {
+                return 1;
+            }
+
             if (context != null && context.IsStrictVersion(2))
             {
                 // If the member is undefined and we're in strict mode, throw an exception...
