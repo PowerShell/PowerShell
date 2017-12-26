@@ -788,30 +788,89 @@ namespace System.Management.Automation
         /// <summary>
         /// The implementation of the PowerShell range operator.
         /// </summary>
-        /// <param name="context">The execution context in which to evaluate the expression</param>
+        /// <param name="context">The execution context in which to evaluate the expression.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
-        /// <param name="lval">The object on which to replace the values</param>
-        /// <param name="rval">The replacement description.</param>
-        /// <returns>The result of the operator</returns>
+        /// <param name="lval">The object on which to start.</param>
+        /// <param name="rval">The object on which to stop.</param>
+        /// <returns>The array of objects.</returns>
         internal static object RangeOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval)
         {
             var lbase = PSObject.Base(lval);
             var rbase = PSObject.Base(rval);
 
-            try
-            {
-                var l = Convert.ToChar(lbase);
-                var r = Convert.ToChar(rbase);
+            var lType = lbase.GetType();
+            var rType = rbase.GetType();
 
-                return CharOps.Range(l, r);
-            }
-            catch
+            // Return objects of [char] type for explicit [char] cast.
+            // Common case:
+            //     [char]'A'..[char]'Z'
+            // Special case:
+            //     [char]'0'..[char]'9'
+            if (lType == typeof(char) && rType == typeof(char))
             {
-                var l = Convert.ToInt32(lbase);
-                var r = Convert.ToInt32(rbase);
-
-                return IntOps.Range(l, r);
+                return CharOps.Range((char)lbase, (char)rbase);
             }
+
+            // For arguments of string type and length == 1
+            // in the common case:
+            //     "A".."Z" - return objects of [char] type.
+            //
+            // For arguments of string type and length == 1
+            // in the special case:
+            //     "0".."9" - return objects of [int] type
+            if (lType == typeof(string) && rType == typeof(string))
+            {
+                var lstr = (string)lbase;
+                var rstr = (string)rbase;
+                if (lstr.Length == 1 && lstr.Length == 1 && !Char.IsDigit(lstr, 0) && !Char.IsDigit(rstr, 0))
+                {
+                    return CharOps.Range(lstr[0], rstr[0]);
+                }
+            }
+
+            // As a last resort, the range operator tries to return objects of [int] type.
+            //    1..10
+            //    "1".."10"
+            //    [int]"1"..[int]"10"
+            var l = Convert.ToInt32(lbase);
+            var r = Convert.ToInt32(rbase);
+
+            return IntOps.Range(l, r);
+        }
+
+        /// <summary>
+        /// The implementation of an enumerator for the PowerShell range operator.
+        /// </summary>
+        /// <param name="lval">The object on which to start.</param>
+        /// <param name="rval">The object on which to stop.</param>
+        /// <returns>The enumerator.</returns>
+        internal static IEnumerator GetRangeEnumerator(object lval, object rval)
+        {
+            var lbase = PSObject.Base(lval);
+            var rbase = PSObject.Base(rval);
+
+            var lType = lbase.GetType();
+            var rType = rbase.GetType();
+
+            if (lType == typeof(char) && rType == typeof(char))
+            {
+                return new CharRangeEnumerator((char)lval, (char)rval);
+            }
+
+            if (lType == typeof(string) && rType == typeof(string))
+            {
+                var lstr = (string)lbase;
+                var rstr = (string)rbase;
+                if (lstr.Length == 1 && lstr.Length == 1 && !Char.IsDigit(lstr, 0) && !Char.IsDigit(rstr, 0))
+                {
+                    return new CharRangeEnumerator(lstr[0], rstr[0]);
+                }
+            }
+
+            var l = Convert.ToInt32(lbase);
+            var r = Convert.ToInt32(rbase);
+
+            return new RangeEnumerator(l, r);
         }
 
         /// <summary>

@@ -65,9 +65,6 @@ namespace System.Management.Automation.Language
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIne =
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
-        internal static readonly MethodInfo CharOps_Range =
-            typeof(CharOps).GetMethod(nameof(CharOps.Range), staticFlags);
-
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateParameter =
@@ -248,9 +245,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo InterpreterError_NewInterpreterExceptionWithInnerException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), staticFlags);
 
-        internal static readonly MethodInfo IntOps_Range =
-            typeof(IntOps).GetMethod(nameof(IntOps.Range), staticFlags);
-
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
@@ -294,6 +288,8 @@ namespace System.Management.Automation.Language
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_RangeOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_RangeEnumerator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_SplitOperator =
@@ -398,12 +394,6 @@ namespace System.Management.Automation.Language
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.IsTargetTypeNonPublic), staticFlags);
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
-
-        internal static readonly ConstructorInfo RangeEnumerator_ctor =
-            typeof(RangeEnumerator).GetConstructor(new Type[] { typeof(int), typeof(int) });
-
-        internal static readonly ConstructorInfo CharRangeEnumerator_ctor =
-            typeof(CharRangeEnumerator).GetConstructor(new Type[] { typeof(char), typeof(char) });
 
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSAdaptedMemberSet =
             typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags);
@@ -4298,21 +4288,12 @@ namespace System.Management.Automation.Language
                 {
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
+                    var l = lhs.Cast(typeof(object));
+                    var r = rhs.Cast(typeof(object));
 
-                    if ((lhs.Type == typeof(string) || lhs.Type == typeof(char))
-                        && (rhs.Type == typeof(string) || rhs.Type == typeof(char)))
-                    {
-                        return Expression.New(CachedReflectionInfo.CharRangeEnumerator_ctor,
-                                                lhs.Convert(typeof(char)),
-                                                rhs.Convert(typeof(char)));
-                    }
-
-                    if (lhs.Type == typeof(int) || lhs.Type == typeof(int))
-                    {
-                        return Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
-                                                lhs.Convert(typeof(int)),
-                                                rhs.Convert(typeof(int)));
-                    }
+                    return Expression.Call(CachedReflectionInfo.ParserOps_RangeEnumerator,
+                                           lhs.Cast(typeof(object)),
+                                           rhs.Cast(typeof(object)));
                 }
             }
 
@@ -4890,19 +4871,6 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
-                    if ((lhs.Type == typeof(string) || lhs.Type == typeof(char))
-                        && (rhs.Type == typeof(string) || rhs.Type == typeof(char)))
-                    {
-                        return Expression.Call(CachedReflectionInfo.CharOps_Range,
-                                               lhs.Convert(typeof(char)),
-                                               rhs.Convert(typeof(char)));
-                    }
-                    if (lhs.Type == typeof(int) && rhs.Type == typeof(int))
-                    {
-                        return Expression.Call(CachedReflectionInfo.IntOps_Range,
-                                            lhs.Convert(typeof(int)),
-                                            rhs.Convert(typeof(int)));
-                    }
                     // TODO: replace this with faster code
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_RangeOperator,

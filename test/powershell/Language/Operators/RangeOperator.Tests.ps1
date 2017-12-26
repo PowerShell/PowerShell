@@ -189,6 +189,20 @@ Describe "Range Operator" -Tags CI {
             $UnicodeRange[4] | Should Be "`u{0114}"[0]
             $UnicodeRange.Where({$_ -is [char]}).count | Should Be 5
         }
+
+        It "Range operator with special ranges" {
+            $SpecRange = "0".."9"
+            $SpecRange.count | Should Be 10
+            $SpecRange.Where({$_ -is [int]}).count | Should Be 10
+
+            $SpecRange = '0'..'9'
+            $SpecRange.count | Should Be 10
+            $SpecRange.Where({$_ -is [int]}).count | Should Be 10
+
+            $SpecRange = [char]'0'..[char]'9'
+            $SpecRange.count | Should Be 10
+            $SpecRange.Where({$_ -is [char]}).count | Should Be 10
+        }
     }
 
     Context "Range operator operand types" {
