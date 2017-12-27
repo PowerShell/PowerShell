@@ -2781,7 +2781,7 @@ namespace Microsoft.PowerShell
                     escapeSequenceAdjustment += ControlSequenceLength(str, ref i);
                 }
             }
-
+#if !UNIX
             var totalWidthInCells = 0;
             for (int i = offset; i < str.Length; i++)
             {
@@ -2789,6 +2789,9 @@ namespace Microsoft.PowerShell
             }
 
             return totalWidthInCells - escapeSequenceAdjustment;
+#else
+            return str.Length - offset - escapeSequenceAdjustment;
+#endif
         }
 
 #if !UNIX
