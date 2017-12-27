@@ -114,6 +114,7 @@ Describe "Adapter Tests" -tags "CI" {
     }
 
     It "Count and length property works for singletons" {
+        # Return magic Count and Length property if it absent.
         $x = 5
         $x.Count | Should Be 1
         $x.Length | Should Be 1
@@ -125,13 +126,18 @@ Describe "Adapter Tests" -tags "CI" {
         (10).Length | Should Be 1
 
         ("a").Count | Should Be 1
-        ("a").Length | Should Be 1
+        # The Length property exists for strings, so we skip the test in the context.
+        # ("a").Length | Should Be 1
 
         ([psobject] @{ foo = 'bar' }).Count | Should Be 1
         ([psobject] @{ foo = 'bar' }).Length | Should Be 1
 
         ([pscustomobject] @{ foo = 'bar' }).Count | Should Be 1
         ([pscustomobject] @{ foo = 'bar' }).Length | Should Be 1
+
+        # Return real Count and Length property if it present.
+        ([pscustomobject] @{ foo = 'bar'; count = 5 }).Count | Should Be 5
+        ([pscustomobject] @{ foo = 'bar'; length = 5 }).Length | Should Be 5
     }
 }
 
