@@ -111,7 +111,7 @@
                     <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
                 </RegistryKey>
             </Component>
-            <!-- add ourselvs to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
+            <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}">
               <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductVersionWithName)]"/>
             </Component>
