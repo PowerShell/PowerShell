@@ -1804,6 +1804,24 @@ namespace System.Management.Automation.Interpreter
         private void CompileListInitExpression(Expression expr)
         {
             var node = (ListInitExpression) expr;
+#if !DEBUG
+            // Optimize the most common use -- create and initialize an object list
+            //   - Use the default constructor of List<object>
+            //   - Initializer collection is not empty and the AddMethod is 'Add(object)'
+            if (node.NewExpression == System.Management.Automation.Language.ExpressionCache.NewEmptyObjectList &&
+                node.Initializers.Count > 0 &&
+                node.Initializers.TrueForAll(e => e.AddMethod == System.Management.Automation.Language.CachedReflectionInfo.ObjectList_Add))
+            {
+                for (int index = 0; index < node.Initializers.Count; index++)
+                {
+                    var arg = node.Initializers[index].Arguments[0];
+                    Compile(arg);
+                }
+
+                _instructions.EmitNewListInit(typeof(object), node.Initializers.Count);
+                return;
+            }
+#endif
             CompileNewExpression(node.NewExpression);
             if (node.Initializers.Count > 0)
             {

@@ -13,6 +13,8 @@
  *
  * ***************************************************************************/
 
+using System.Collections.Generic;
+
 namespace System.Management.Automation.Interpreter
 {
     internal sealed class NewArrayInitInstruction<TElement> : Instruction
@@ -35,6 +37,40 @@ namespace System.Management.Automation.Interpreter
                 array[i] = (TElement)frame.Pop();
             }
             frame.Push(array);
+            return +1;
+        }
+    }
+
+    internal sealed class NewListInitInstruction<TElement> : Instruction
+    {
+        private readonly int _elementCount;
+
+        internal NewListInitInstruction(int elementCount)
+        {
+            _elementCount = elementCount;
+        }
+
+        public override int ConsumedStack { get { return _elementCount; } }
+        public override int ProducedStack { get { return 1; } }
+
+        public override int Run(InterpretedFrame frame)
+        {
+            List<TElement> list;
+            if (_elementCount == 1)
+            {
+                list = new List<TElement>() { (TElement)frame.Pop() };
+            }
+            else
+            {
+                TElement[] array = new TElement[_elementCount];
+                for (int i = _elementCount - 1; i >= 0; i--)
+                {
+                    array[i] = (TElement)frame.Pop();
+                }
+                list = new List<TElement>(array);
+            }
+
+            frame.Push(list);
             return +1;
         }
     }

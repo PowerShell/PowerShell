@@ -33,8 +33,10 @@ namespace System.Management.Automation.Language
         internal const BindingFlags staticPublicFlags = BindingFlags.Static | BindingFlags.Public;
         internal const BindingFlags instancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
-        internal static readonly ConstructorInfo ObjectList_ctor =
+        internal static readonly ConstructorInfo ObjectList_Default_ctor =
             typeof(List<object>).GetConstructor(PSTypeExtensions.EmptyTypes);
+        internal static readonly ConstructorInfo ObjectList_IEnumerable_ctor =
+            typeof(List<object>).GetConstructor(new Type[] { typeof(IEnumerable<object>) });
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
         internal static readonly MethodInfo ObjectList_Add =
@@ -126,6 +128,8 @@ namespace System.Management.Automation.Language
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.SlicingIndex), staticFlags);
         internal static readonly MethodInfo EnumerableOps_ToArray =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags);
+        internal static readonly MethodInfo EnumerableOps_ToList =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToList), staticFlags);
         internal static readonly MethodInfo EnumerableOps_WriteEnumerableToPipe =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags);
 
@@ -550,7 +554,7 @@ namespace System.Management.Automation.Language
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         internal static readonly Expression Empty = Expression.Empty();
         internal static readonly Expression GetExecutionContextFromTLS = Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
-        internal static readonly NewExpression NewEmptyObjectList = Expression.New(CachedReflectionInfo.ObjectList_ctor);
+        internal static readonly NewExpression NewEmptyObjectList = Expression.New(CachedReflectionInfo.ObjectList_Default_ctor);
 
         internal static readonly Expression BoxedTrue = Expression.Field(null,
             typeof(Boxed).GetField("True", BindingFlags.Static | BindingFlags.NonPublic));
@@ -5541,8 +5545,42 @@ namespace System.Management.Automation.Language
 
         public object VisitListLiteral(ListLiteralAst listLiteralAst)
         {
-            return Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add,
-                                       listLiteralAst.Elements.Select(e => Compile(e).Cast(typeof(object))));
+            if (listLiteralAst.Elements.Count == 0)
+            {
+                return ExpressionCache.NewEmptyObjectList;
+            }
+
+            if (listLiteralAst.Elements.Count == 1)
+            {
+                Expression values = Compile(listLiteralAst.Elements[0]);
+
+                if (values.Type == typeof(List<object>)) { return values; }
+                if (values.Type.IsPrimitive || values.Type == typeof(string))
+                {
+                    // Slight optimization - no need for a dynamic site.  We could special case other
+                    // types as well, but it's probably not worth it.
+                    return Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add, values.Cast(typeof(object)));
+                }
+                if (values.Type == typeof(void))
+                {
+                    // A dynamic site can't take void - but a void value is just an empty list.
+                    return ExpressionCache.NewEmptyObjectList;
+                }
+                return DynamicExpression.Dynamic(PSToObjectListBinder.Get(), typeof(List<object>), values);
+            }
+
+            List<Expression> elementValues = new List<Expression>(listLiteralAst.Elements.Count);
+            foreach (var element in listLiteralAst.Elements)
+            {
+                var eValue = Compile(element);
+                if (eValue.Type != typeof(void)) { elementValues.Add(eValue.Cast(typeof(object))); }
+            }
+
+            if (elementValues.Count == 0)
+            {
+                return ExpressionCache.NewEmptyObjectList;
+            }
+            return Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add, elementValues);
         }
 
         private IEnumerable<Expression> BuildHashtable(ReadOnlyCollection<KeyValuePair> keyValuePairs, ParameterExpression temp, bool ordered)
