@@ -1,143 +1,228 @@
 Describe "Adapter Tests" -tags "CI" {
-    BeforeAll {
-        $pso  = [System.Diagnostics.Process]::GetCurrentProcess()
-        $processName = $pso.Name
+    Context "Property Adapter Tests" {
+        BeforeAll {
+            $pso  = [System.Diagnostics.Process]::GetCurrentProcess()
+            $processName = $pso.Name
 
-        if(-not ('TestCodeMethodClass' -as "type"))
-        {
-            class TestCodeMethodClass {
-                static [int] TestCodeMethod([PSObject] $target, [int] $i)
-                {
-                    return 1;
+            if(-not ('TestCodeMethodClass' -as "type"))
+            {
+                class TestCodeMethodClass {
+                    static [int] TestCodeMethod([PSObject] $target, [int] $i)
+                    {
+                        return 1;
+                    }
                 }
             }
+
+            $psmemberset = new-object System.Management.Automation.PSMemberSet 'setname1'
+            $psmemberset | Add-Member -MemberType NoteProperty -Name NoteName -Value 1
+            $testmethod = [TestCodeMethodClass].GetMethod("TestCodeMethod")
+            $psmemberset | Add-Member -MemberType CodeMethod -Name TestCodeMethod -Value $testmethod
+
+            $document = new-object System.Xml.XmlDocument
+            $document.LoadXml("<book ISBN='12345'><title>Pride And Prejudice</title><price>19.95</price></book>")
+            $doc = $document.DocumentElement
+        }
+        It "can get a Dotnet parameterized property" {
+            $col  = $pso.psobject.Properties.Match("*")
+            $prop = $col.psobject.Members["Item"]
+            $prop | Should Not BeNullOrEmpty
+            $prop.IsGettable | Should be $true
+            $prop.IsSettable | Should be $false
+            $prop.TypeNameOfValue | Should be "System.Management.Automation.PSPropertyInfo"
+            $prop.Invoke("ProcessName").Value | Should be $processName
         }
 
-        $psmemberset = new-object System.Management.Automation.PSMemberSet 'setname1'
-        $psmemberset | Add-Member -MemberType NoteProperty -Name NoteName -Value 1
-        $testmethod = [TestCodeMethodClass].GetMethod("TestCodeMethod")
-        $psmemberset | Add-Member -MemberType CodeMethod -Name TestCodeMethod -Value $testmethod
+        It "can get a property" {
+            $pso.psobject.Properties["ProcessName"] | should Not BeNullOrEmpty
+        }
 
-        $document = new-object System.Xml.XmlDocument
-        $document.LoadXml("<book ISBN='12345'><title>Pride And Prejudice</title><price>19.95</price></book>")
-        $doc = $document.DocumentElement
-    }
-    It "can get a Dotnet parameterized property" {
-        $col  = $pso.psobject.Properties.Match("*")
-        $prop = $col.psobject.Members["Item"]
-        $prop | Should Not BeNullOrEmpty
-        $prop.IsGettable | Should be $true
-        $prop.IsSettable | Should be $false
-        $prop.TypeNameOfValue | Should be "System.Management.Automation.PSPropertyInfo"
-        $prop.Invoke("ProcessName").Value | Should be $processName
-    }
+        It "Can access all properties" {
+            $props = $pso.psobject.Properties.Match("*")
+            $props | should Not BeNullOrEmpty
+            $props["ProcessName"].Value |Should be $processName
+        }
 
-    It "can get a property" {
-        $pso.psobject.Properties["ProcessName"] | should Not BeNullOrEmpty
-    }
+        It "Can invoke a method" {
+            $method = $pso.psobject.Methods["ToString"]
+            $method.Invoke()  | should be ($pso.ToString())
+        }
 
-    It "Can access all properties" {
-        $props = $pso.psobject.Properties.Match("*")
-        $props | should Not BeNullOrEmpty
-        $props["ProcessName"].Value |Should be $processName
-    }
+        It "Access a Method via MemberSet adapter" {
+            $prop = $psmemberset.psobject.Members["TestCodeMethod"]
+            $prop.Invoke(2) | Should be 1
+        }
 
-    It "Can invoke a method" {
-        $method = $pso.psobject.Methods["ToString"]
-        $method.Invoke()  | should be ($pso.ToString())
-    }
+        It "Access misc properties via MemberSet adapter" {
+            $prop  = $psmemberset.psobject.Properties["NoteName"]
+            $prop | Should Not BeNullOrEmpty
+            $prop.IsGettable | Should be $true
+            $prop.IsSettable | Should be $true
+            $prop.TypeNameOfValue | Should be "System.Int32"
+        }
 
-    It "Access a Method via MemberSet adapter" {
-        $prop = $psmemberset.psobject.Members["TestCodeMethod"]
-        $prop.Invoke(2) | Should be 1
-    }
+        It "Access all the properties via XmlAdapter" {
+            $col  = $doc.psobject.Properties.Match("*")
+            $col.Count | Should Not Be 0
+            $prop = $col["price"]
+            $prop | Should Not BeNullOrEmpty
+        }
 
-    It "Access misc properties via MemberSet adapter" {
-        $prop  = $psmemberset.psobject.Properties["NoteName"]
-        $prop | Should Not BeNullOrEmpty
-        $prop.IsGettable | Should be $true
-        $prop.IsSettable | Should be $true
-        $prop.TypeNameOfValue | Should be "System.Int32"
-    }
+        It "Access all the properties via XmlAdapter" {
+            $prop  = $doc.psobject.Properties["price"]
+            $prop.Value | Should Be "19.95"
+            $prop.IsGettable | Should Not BeNullOrEmpty
+            $prop.IsSettable | Should Not BeNullOrEmpty
+            $prop.TypeNameOfValue | Should be "System.String"
+        }
 
-    It "Access all the properties via XmlAdapter" {
-        $col  = $doc.psobject.Properties.Match("*")
-        $col.Count | Should Not Be 0
-        $prop = $col["price"]
-        $prop | Should Not BeNullOrEmpty
-    }
+        It "Call to string on a XmlNode object" {
+            $val  = $doc.ToString()
+            $val | Should Be "book"
+        }
 
-    It "Access all the properties via XmlAdapter" {
-        $prop  = $doc.psobject.Properties["price"]
-        $prop.Value | Should Be "19.95"
-        $prop.IsGettable | Should Not BeNullOrEmpty
-        $prop.IsSettable | Should Not BeNullOrEmpty
-        $prop.TypeNameOfValue | Should be "System.String"
-    }
+        It "Calls CodeMethod with void result" {
 
-    It "Call to string on a XmlNode object" {
-        $val  = $doc.ToString()
-        $val | Should Be "book"
-    }
+            class TestCodeMethodInvokationWithVoidReturn {
+                [int] $CallCounter
 
-    It "Calls CodeMethod with void result" {
+                static [int] IntMethodCM([PSObject] $self) {
+                    return $self.CallCounter
+                }
 
-        class TestCodeMethodInvokationWithVoidReturn {
-            [int] $CallCounter
+                static [void] VoidMethodCM([PSObject] $self) {
+                    $self.CallCounter++
+                }
 
-            static [int] IntMethodCM([PSObject] $self) {
-                return $self.CallCounter
+                static [Reflection.MethodInfo] GetMethodInfo([string] $name) {
+                    return [TestCodeMethodInvokationWithVoidReturn].GetMethod($name)
+                }
             }
 
-            static [void] VoidMethodCM([PSObject] $self) {
-                $self.CallCounter++
-            }
+            Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName IntMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('IntMethodCM'))
+            Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName VoidMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('VoidMethodCM'))
+            try {
+                $o = [TestCodeMethodInvokationWithVoidReturn]::new()
+                $o.CallCounter | Should Be 0
+                $o.VoidMethod()
+                $o.CallCounter | Should be 1
 
-            static [Reflection.MethodInfo] GetMethodInfo([string] $name) {
-                return [TestCodeMethodInvokationWithVoidReturn].GetMethod($name)
+                $o.IntMethod() | Should be 1
+            }
+            finally {
+                Remove-TypeData TestCodeMethodInvokationWithVoidReturn
             }
         }
 
-        Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName IntMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('IntMethodCM'))
-        Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName VoidMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('VoidMethodCM'))
-        try {
-            $o = [TestCodeMethodInvokationWithVoidReturn]::new()
-            $o.CallCounter | Should Be 0
-            $o.VoidMethod()
-            $o.CallCounter | Should be 1
+        It "Count and length property works for singletons" {
+            # Return magic Count and Length property if it absent.
+            $x = 5
+            $x.Count | Should Be 1
+            $x.Length | Should Be 1
 
-            $o.IntMethod() | Should be 1
-        }
-        finally {
-            Remove-TypeData TestCodeMethodInvokationWithVoidReturn
+            $null.Count | Should Be 0
+            $null.Length | Should Be 0
+
+            (10).Count | Should Be 1
+            (10).Length | Should Be 1
+
+            ("a").Count | Should Be 1
+            # The Length property exists for strings, so we skip the test in the context.
+            # ("a").Length | Should Be 1
+
+            ([psobject] @{ foo = 'bar' }).Count | Should Be 1
+            ([psobject] @{ foo = 'bar' }).Length | Should Be 1
+
+            ([pscustomobject] @{ foo = 'bar' }).Count | Should Be 1
+            ([pscustomobject] @{ foo = 'bar' }).Length | Should Be 1
+
+            # Return real Count and Length property if it present.
+            ([pscustomobject] @{ foo = 'bar'; count = 5 }).Count | Should Be 5
+            ([pscustomobject] @{ foo = 'bar'; length = 5 }).Length | Should Be 5
         }
     }
 
-    It "Count and length property works for singletons" {
-        # Return magic Count and Length property if it absent.
-        $x = 5
-        $x.Count | Should Be 1
-        $x.Length | Should Be 1
+    Context "Null Magic Method Adapter Tests" {
+        It "ForEach and Where works for Null" {
+            $res = $null.ForEach({1})
+            $res.Count | Should Be 0
+            $res.GetType().Name | Should BeExactly "Collection``1"
 
-        $null.Count | Should Be 0
-        $null.Length | Should Be 0
+            $null.Where({$true})
+            $res.Count | Should Be 0
+            $res.GetType().Name | Should BeExactly "Collection``1"
+        }
+    }
 
-        (10).Count | Should Be 1
-        (10).Length | Should Be 1
+    Context "ForEach Magic Method Adapter Tests" {
+        It "Common ForEach magic method tests" -Pending:$true {
+        }
 
-        ("a").Count | Should Be 1
-        # The Length property exists for strings, so we skip the test in the context.
-        # ("a").Length | Should Be 1
+        It "ForEach magic method works for singletions" {
+            $x = 5
+            $x.ForEach({$_}) | Should Be 5
+            (5).ForEach({$_}) | Should Be 5
+            ("a").ForEach({$_}) | Should Be "a"
 
-        ([psobject] @{ foo = 'bar' }).Count | Should Be 1
-        ([psobject] @{ foo = 'bar' }).Length | Should Be 1
+            ([pscustomobject]@{ foo = 'bar' }).ForEach({1}) | Should Be 1
 
-        ([pscustomobject] @{ foo = 'bar' }).Count | Should Be 1
-        ([pscustomobject] @{ foo = 'bar' }).Length | Should Be 1
+            $x = ([pscustomobject]@{ foo = 'bar' }).ForEach({$_})
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
 
-        # Return real Count and Length property if it present.
-        ([pscustomobject] @{ foo = 'bar'; count = 5 }).Count | Should Be 5
-        ([pscustomobject] @{ foo = 'bar'; length = 5 }).Length | Should Be 5
+            $x = ([pscustomobject]@{ foo = 'bar' }).Foreach({$_ | Add-Member -NotePropertyName "foo2" -NotePropertyValue "bar2" -PassThru})
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
+            $x[0].foo2 | Should BeExactly "bar2"
+
+            # We call ForEach method defined in an object if it is present (not magic ForEach method).
+            $x = [pscustomobject]@{ foo = 'bar' }
+            $x | Add-Member -MemberType ScriptMethod -Name ForEach -Value {
+                param ( [int]$param1 )
+                   $param1*2
+                } -PassThru -Force
+            $x.ForEach(5) | Should Be 10
+        }
+    }
+
+    Context "Where Magic Method Adapter Tests" {
+        It "Common Where magic method tests" -Pending:$true {
+        }
+
+        It "Where magic method works for singletions" {
+            $x = 5
+            $x.Where({$true}) | Should Be 5
+            (5).Where({$true}) | Should Be 5
+            ("a").Where({$true}) | Should Be "a"
+
+            $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true})
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
+
+            $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, 0)
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
+
+            $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, "Default")
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
+
+            $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, "Default", 0)
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
+
+            $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, "Default", "0")
+            $x.Count | Should Be 1
+            $x[0].foo | Should BeExactly "bar"
+
+            # We call Where method defined in an object if it is present (not magic Where method).
+            $x = [pscustomobject]@{ foo = 'bar' }
+            $x | Add-Member -MemberType ScriptMethod -Name Where -Value {
+                param ( [int]$param1 )
+                   $param1*2
+                } -PassThru -Force
+            $x.Where(5) | Should Be 10
+        }
     }
 }
 

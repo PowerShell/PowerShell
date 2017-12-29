@@ -7095,6 +7095,32 @@ namespace System.Management.Automation.Language
                 return methodInfo.Invoke(args);
             }
 
+            // The object haven't Where and ForEach methods.
+            // As last resort, we invoking Where and ForEach operators on singletions like
+            //    ([pscustomobject]@{ foo = 'bar' }).Foreach({$_})
+            //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
+            if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
+            {
+                var enumerator = (new object[] {obj}).GetEnumerator();
+                switch (args.Length)
+                {
+                    case 1:
+                        return EnumerableOps.Where(enumerator, args[0] as ScriptBlock, WhereOperatorSelectionMode.Default, 0);
+                    case 2:
+                        return EnumerableOps.Where(enumerator, args[0] as ScriptBlock,
+                                                   (WhereOperatorSelectionMode)Enum.Parse(typeof(WhereOperatorSelectionMode), args[1].ToString()), 0);
+                    case 3:
+                        return EnumerableOps.Where(enumerator, args[0] as ScriptBlock,
+                                                   (WhereOperatorSelectionMode)Enum.Parse(typeof(WhereOperatorSelectionMode), args[1].ToString()), int.Parse(args[2].ToString()));
+                }
+            }
+
+            if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
+            {
+                var enumerator = (new object[] {obj}).GetEnumerator();
+                return EnumerableOps.ForEach(enumerator, args[0], Utils.EmptyArray<object>());
+            }
+
             throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), null,
                 "MethodNotFound", ParserStrings.MethodNotFound, ParserOps.GetTypeFullName(obj), methodName);
         }
