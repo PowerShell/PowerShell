@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual int RetryCount { get; set; } = 0;
 
         /// <summary>
-        /// gets or sets the TimeOut property
+        /// gets or sets the RetryIntervalSec property
         /// </summary>
         [Parameter]
         [ValidateRange(1, Int32.MaxValue)]
