@@ -741,8 +741,7 @@ namespace Microsoft.PowerShell
                             if (((ConsoleControl.InputRecordEventTypes)inputRecords[0].EventType) ==
                                 ConsoleControl.InputRecordEventTypes.KEY_EVENT)
                             {
-                                Dbg.Assert((inputRecords[0].KeyEvent.KeyDown && inputRecords[0].KeyEvent.RepeatCount != 0) ||
-                                    !inputRecords[0].KeyEvent.KeyDown,
+                                Dbg.Assert(!inputRecords[0].KeyEvent.KeyDown || inputRecords[0].KeyEvent.RepeatCount != 0,
                                     string.Format(CultureInfo.InvariantCulture, "ReadConsoleInput returns a KeyEvent that is KeyDown and RepeatCount 0"));
                                 if (inputRecords[0].KeyEvent.RepeatCount == 0)
                                 {
@@ -867,8 +866,7 @@ namespace Microsoft.PowerShell
                     if (((ConsoleControl.InputRecordEventTypes)inputRecords[i].EventType) ==
                             ConsoleControl.InputRecordEventTypes.KEY_EVENT)
                     {
-                        Dbg.Assert((inputRecords[i].KeyEvent.KeyDown && inputRecords[i].KeyEvent.RepeatCount != 0) ||
-                            !inputRecords[i].KeyEvent.KeyDown,
+                        Dbg.Assert(!inputRecords[i].KeyEvent.KeyDown || inputRecords[i].KeyEvent.RepeatCount != 0,
                             string.Format(CultureInfo.InvariantCulture, "PeekConsoleInput returns a KeyEvent that is KeyDown and RepeatCount 0"));
 
                         if (inputRecords[i].KeyEvent.KeyDown && inputRecords[i].KeyEvent.RepeatCount == 0)

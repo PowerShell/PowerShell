@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             Dictionary<PSModuleInfo, List<PSModuleInfo>> actualModulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
             // We want to remove the modules starting from the nested modules
-            // If we start from the parent module, the nested modules do not get removed and are left hanging in the parent modules's sessionstate.
+            // If we start from the parent module, the nested modules do not get removed and are left orphaned in the parent modules's sessionstate.
             foreach (var entry in modulesToRemove)
             {
                 List<PSModuleInfo> moduleList = new List<PSModuleInfo>();

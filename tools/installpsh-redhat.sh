@@ -2,8 +2,8 @@
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
-#bash <(wget -O - https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/pshcoredevenv-debian.sh) ARGUMENTS
-#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
+#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-redhat.sh) ARGUMENTS
+#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-redhat.sh) <ARGUMENTS>
 
 #Usage - if you do not have the ability to run scripts directly from the web, 
 #        pull all files in this repo folder and execute, this script
@@ -144,7 +144,7 @@ if [[ "'$*'" =~ includeide ]] ; then
     echo "*** Installing VS Code PowerShell IDE..."
     echo "*** Setting up VS Code repo..."
     $SUDO rpm --import https://packages.microsoft.com/keys/microsoft.asc
-    $SUDO sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'    
+    $SUDO sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
     yum check-update
     $SUDO yum install -y code
 

@@ -105,28 +105,27 @@ namespace System.Management.Automation
 
                     if (argValue != AutomationNull.Value && argValue != UnboundParameter.Value)
                     {
-                        // ArrayIsSingleArgumentForNativeCommand is true when a comma is used in the
-                        // command line, e.g.
+                        // ArrayLiteralAst is used to reconstruct the correct argument, e.g.
                         //    windbg  -k com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect
                         // The parser produced an array of strings but marked the parameter so we
                         // can properly reconstruct the correct command line.
                         bool usedQuotes = false;
-                        var pAst = parameter.ArgumentAst;
-                        if (pAst != null)
+                        ArrayLiteralAst arrayLiteralAst = null;
+                        switch (parameter?.ArgumentAst)
                         {
-                            if (pAst is StringConstantExpressionAst sce)
-                            {
-                                usedQuotes = sce.StringConstantType != StringConstantType.BareWord;
-                            }
-                            else if (pAst is ExpandableStringExpressionAst ese)
-                            {
-                                usedQuotes = ese.StringConstantType != StringConstantType.BareWord;
-                            }
+                        case StringConstantExpressionAst sce:
+                            usedQuotes = sce.StringConstantType != StringConstantType.BareWord;
+                            break;
+                        case ExpandableStringExpressionAst ese:
+                            usedQuotes = ese.StringConstantType != StringConstantType.BareWord;
+                            break;
+                        case ArrayLiteralAst ala:
+                            arrayLiteralAst = ala;
+                            break;
                         }
+
                         appendOneNativeArgument(Context, argValue,
-                            parameter.ArrayIsSingleArgumentForNativeCommand ? ',' : ' ',
-                            sawVerbatimArgumentMarker,
-                            usedQuotes);
+                            arrayLiteralAst, sawVerbatimArgumentMarker, usedQuotes);
                     }
                 }
             }
@@ -158,14 +157,19 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="context">Execution context instance</param>
         /// <param name="obj">The object to append</param>
-        /// <param name="separator">A space or comma used when obj is enumerable</param>
+        /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null</param>
         /// <param name="sawVerbatimArgumentMarker">true if the argument occurs after --%</param>
         /// <param name="usedQuotes">True if the argument was a quoted string (single or double)</param>
-        private void appendOneNativeArgument(ExecutionContext context, object obj, char separator, bool sawVerbatimArgumentMarker, bool usedQuotes)
+        private void appendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, bool usedQuotes)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
-            bool needSeparator = false;
 
+            Diagnostics.Assert(argArrayAst == null
+                || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count,
+                "array argument and ArrayLiteralAst differ in number of elements");
+
+            int currentElement = -1;
+            string separator = "";
             do
             {
                 string arg;
@@ -180,18 +184,17 @@ namespace System.Management.Automation
                         break;
                     }
                     arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
+
+                    currentElement += 1;
+                    if (currentElement != 0)
+                    {
+                        separator = GetEnumerableArgSeparator(argArrayAst, currentElement);
+                    }
                 }
 
                 if (!String.IsNullOrEmpty(arg))
                 {
-                    if (needSeparator)
-                    {
-                        _arguments.Append(separator);
-                    }
-                    else
-                    {
-                        needSeparator = true;
-                    }
+                    _arguments.Append(separator);
 
                     if (sawVerbatimArgumentMarker)
                     {
@@ -349,6 +352,30 @@ namespace System.Management.Automation
             return needQuotes;
         }
 
+        static private string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
+        {
+            if (arrayLiteralAst == null) return " ";
+
+            // index points to the *next* element, so we're looking for space between
+            // it and the previous element.
+
+            var next = arrayLiteralAst.Elements[index];
+            var prev = arrayLiteralAst.Elements[index - 1];
+
+            var arrayExtent = arrayLiteralAst.Extent;
+            var afterPrev = prev.Extent.EndOffset;
+            var beforeNext = next.Extent.StartOffset - 1;
+
+            if (afterPrev == beforeNext) return ",";
+
+            var arrayText = arrayExtent.Text;
+            afterPrev -= arrayExtent.StartOffset;
+            beforeNext -= arrayExtent.StartOffset;
+
+            if (arrayText[afterPrev] == ',') return ", ";
+            if (arrayText[beforeNext] == ',') return " ,";
+            return " , ";
+        }
 
         /// <summary>
         /// The native command to bind to

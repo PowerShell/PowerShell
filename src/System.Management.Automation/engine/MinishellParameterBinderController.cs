@@ -214,7 +214,7 @@ namespace System.Management.Automation
                         parameters[i] = CommandParameterInternal.CreateParameterWithArgument(
                             parameter.ArgumentAst, EncodedCommandParameter, "-" + EncodedCommandParameter,
                             parameter.ArgumentAst, encodedScript,
-                            spaceAfterParameter: true, arrayIsSingleArgumentForNativeCommand: false);
+                            spaceAfterParameter: true);
                     }
                 }
             }

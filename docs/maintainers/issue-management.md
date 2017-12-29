@@ -90,3 +90,6 @@ The following labels are used on PRs:
 * `Changelog Needed`: The PR requires an addition to the changelog,
   and should be removed when it has been added.
 * `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
+* `Compliance` : Issues with the compliance label are required to be fixed either in the long term or short term for
+  Microsoft to continue to sign and release packages from the project as official Microsoft packages.
+  The time frame in which it needs to be fixed should be identified in the issue.

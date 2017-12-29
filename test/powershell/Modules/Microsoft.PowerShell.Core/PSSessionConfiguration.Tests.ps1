@@ -115,6 +115,8 @@ try
                     }
 
                     $LocalConfigFilePath = CreateTestConfigFile
+
+                    $expectedPSVersion = "$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
                 }
             }
 
@@ -125,7 +127,7 @@ try
                     $Result = Get-PSSessionConfiguration
 
                     $Result.Name -contains $endpointName | Should Be $true
-                    $Result.PSVersion -ge 5.1 | Should be $true
+                    $Result.PSVersion | Should BeExactly $expectedPSVersion
                 }
 
                 It "Get-PSSessionConfiguration with Name parameter" {
@@ -133,7 +135,7 @@ try
                     $Result = Get-PSSessionConfiguration -Name $endpointName
 
                     $Result.Name | Should Be $endpointName
-                    $Result.PSVersion -ge 5.1 | Should be $true
+                    $Result.PSVersion | Should BeExactly $expectedPSVersion
                 }
 
                 It "Get-PSSessionConfiguration -Name with wildcard character" {
@@ -143,7 +145,7 @@ try
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
                     $Result.Name -contains $endpointName | Should Be $true
-                    $Result.PSVersion -ge 5.1 | Should be $true
+                    $Result.PSVersion | Should BeExactly $expectedPSVersion
                 }
 
                 It "Get-PSSessionConfiguration -Name with Non-Existent session configuration" {
@@ -324,6 +326,8 @@ try
             BeforeAll {
                 if ($IsNotSkipped)
                 {
+                    $expectedPSVersion = "$($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor)"
+
                     function ValidateRemoteEndpoint {
                         param ($TestSessionConfigName, $ScriptToExecute, $ExpectedOutput)
 
@@ -488,13 +492,22 @@ namespace PowershellTestConfigNamespace
 
                     $Result.Session.Name | Should be $TestSessionConfigName
                     $Result.Session.SessionType | Should be "Default"
-                    $Result.Session.PSVersion | Should be 6.0
+                    $Result.Session.PSVersion | Should BeExactly $expectedPSVersion
                     $Result.Session.Enabled | Should be $true
                     $Result.Session.lang | Should be $Result.Culture
                     $Result.Session.pssessionthreadoptions | Should be $pssessionthreadoptions
                     $Result.Session.psmaximumreceivedobjectsizemb | Should be $psmaximumreceivedobjectsizemb
                     $Result.Session.psmaximumreceiveddatasizepercommandmb | Should be $psmaximumreceiveddatasizepercommandmb
                     $Result.Session.UseSharedProcess | Should be $UseSharedProcess
+                }
+
+                It "Validate Register-PSSessionConfiguration -PSVersion" {
+
+                    Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
+                    $Session = Get-PSSessionConfiguration -Name $TestSessionConfigName
+
+                    $Session.Name | Should be $TestSessionConfigName
+                    $Session.PSVersion | Should BeExactly 5.1
                 }
 
                 It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
@@ -557,13 +570,22 @@ namespace PowershellTestConfigNamespace
                     $Result = [PSObject]@{Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName) ; Culture = (Get-Item WSMan:\localhost\Plugin\microsoft.powershell\lang -ea SilentlyContinue).value}
 
                     $Result.Session.Name | Should be $TestSessionConfigName
-                    $Result.Session.PSVersion | Should be 6.0
+                    $Result.Session.PSVersion | Should BeExactly $expectedPSVersion
                     $Result.Session.Enabled | Should be $true
                     $Result.Session.lang | Should be $result.Culture
                     $Result.Session.pssessionthreadoptions | Should be $pssessionthreadoptions
                     $Result.Session.psmaximumreceivedobjectsizemb | Should be $psmaximumreceivedobjectsizemb
                     $Result.Session.psmaximumreceiveddatasizepercommandmb | Should be $psmaximumreceiveddatasizepercommandmb
                     $Result.Session.UseSharedProcess | Should be $UseSharedProcess
+                }
+
+                It "Validate Set-PSSessionConfiguration -PSVersion" {
+
+                    Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
+                    $Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName)
+
+                    $Session.Name | Should be $TestSessionConfigName
+                    $Session.PSVersion | Should BeExactly 5.1
                 }
 
                 It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {

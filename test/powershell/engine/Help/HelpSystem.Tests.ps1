@@ -181,15 +181,21 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
     }
 }
 
-Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI') {
+Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
         $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
-        ## This is needed for getting about topics. We use -Force, so we always update.
-        Update-Help -Force
+
+        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+
+        ## If help content does not exist, update it first.
+        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Variables.help.txt")))
+        {
+            Update-Help -Force -ErrorAction SilentlyContinue
+        }
     }
 
     AfterAll {
@@ -206,7 +212,6 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     It "Get-Help for about_Variable should return only one help object" {
-
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
@@ -239,7 +244,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
 
 Describe "Get-Help should find pattern help files" -Tags "CI" {
 
-    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally.
+    # There is a bug specific to Travis CI that suspends the test if "get-help" is used to search pattern string. This doesn't repro locally.
     # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
     # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
 
@@ -278,7 +283,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
     }
 }
 
-  Describe "Get-Help should find pattern alias" -Tags "CI" {
+Describe "Get-Help should find pattern alias" -Tags "CI" {
     # Remove test alias
     AfterAll {
         Remove-Item alias:\testAlias1 -ErrorAction SilentlyContinue
@@ -300,5 +305,21 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
        $help.Category | Should BeExactly "Alias"
        $help.Synopsis | Should BeExactly "Where-Object"
     }
+}
 
+Describe "help function uses full view by default" -Tags "CI" {
+    It "help should return full view without -Full switch" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+    }
+
+    It "help should return full view even with -Full switch" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+    }
+
+    It "help should not append -Full when not using AllUsersView parameter set" {
+        $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
+    }
 }

@@ -44,6 +44,14 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Version());
 
             yield return new ExtendedTypeDefinition(
+                "System.Version#IncludeLabel",
+                ViewsOf_System_Version_With_Label());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.SemanticVersion",
+                ViewsOf_Semantic_Version_With_Label());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Drawing.Printing.PrintDocument",
                 ViewsOf_System_Drawing_Printing_PrintDocument());
 
@@ -474,6 +482,46 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Minor")
                         .AddPropertyColumn("Build")
                         .AddPropertyColumn("Revision")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Version_With_Label()
+        {
+            yield return new FormatViewDefinition("System.Version",
+                TableControl.Create()
+                    .AddHeader(width: 6)
+                    .AddHeader(width: 6)
+                    .AddHeader(width: 6)
+                    .AddHeader(width: 8)
+                    .AddHeader(width: 26)
+                    .AddHeader(width: 27)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Major")
+                        .AddPropertyColumn("Minor")
+                        .AddPropertyColumn("Build")
+                        .AddPropertyColumn("Revision")
+                        .AddPropertyColumn("PSSemVerPreReleaseLabel")
+                        .AddPropertyColumn("PSSemVerBuildLabel")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Semantic_Version_With_Label()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.SemanticVersion",
+                TableControl.Create()
+                    .AddHeader(width: 6)
+                    .AddHeader(width: 6)
+                    .AddHeader(width: 6)
+                    .AddHeader(width: 9)
+                    .AddHeader(width: 11)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Major")
+                        .AddPropertyColumn("Minor")
+                        .AddPropertyColumn("Patch")
+                        .AddPropertyColumn("PreReleaseLabel")
+                        .AddPropertyColumn("BuildLabel")
                     .EndRowDefinition()
                 .EndTable());
         }

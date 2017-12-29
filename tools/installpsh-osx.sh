@@ -2,8 +2,8 @@
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
-#bash <(wget -O - https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/pshcoredevenv-debian.sh) ARGUMENTS
-#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
+#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-osx.sh) ARGUMENTS
+#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-osx.sh) <ARGUMENTS>
 
 #Usage - if you do not have the ability to run scripts directly from the web, 
 #        pull all files in this repo folder and execute, this script
@@ -127,10 +127,23 @@ fi
 
 # Suppress output, it's very noisy on travis-ci
 echo "Refreshing Homebrew cache..."
-if ! brew update > /dev/null; then
-    echo "ERROR: Refreshing Homebrew cache failed..." >&2
-    exit 2
-fi
+for count in {1..2}; do
+    # Try the update twice if the first time fails
+    brew update > /dev/null && break
+
+    # If the update fails again after increasing the Git buffer size, exit with error.
+    if [[ $count == 2 ]]; then
+        echo "ERROR: Refreshing Homebrew cache failed..." >&2
+        exit 2
+    fi
+
+    # The update failed for the first try. An error we see a lot in our CI is "RPC failed; curl 56 SSLRead() return error -36".
+    # What 'brew update' does is to fetch the newest version of Homebrew from GitHub using git, and the error comes from git.
+    # A potential solution is to increase the Git buffer size to a larger number, say 150 mb. The default buffer size is 1 mb.
+    echo "First attempt of update failed. Increase Git buffer size and try again ..."
+    git config --global http.postBuffer 157286400
+    sleep 5
+done
 
 # Suppress output, it's very noisy on travis-ci
 if [[ ! -d $(brew --prefix cask) ]]; then

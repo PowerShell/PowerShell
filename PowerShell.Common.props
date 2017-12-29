@@ -94,7 +94,7 @@
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <RuntimeFrameworkVersion>2.0.4-servicing-25831-01</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.0.4</RuntimeFrameworkVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -104,6 +104,7 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+    <HighEntropyVA>true</HighEntropyVA>
   </PropertyGroup>
 
 </Project>

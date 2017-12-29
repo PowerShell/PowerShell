@@ -2,8 +2,8 @@
 
 #Companion code for the blog https://cloudywindows.com
 #call this code direction from the web with:
-#bash <(wget -O - https://raw.githubusercontent.com/DarwinJS/CloudyWindowsAutomationCode/master/pshcoredevenv/pshcoredevenv-debian.sh) ARGUMENTS
-#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) <ARGUMENTS>
+#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-suse.sh) ARGUMENTS
+#bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-suse.sh) <ARGUMENTS>
 
 #Usage - if you do not have the ability to run scripts directly from the web, 
 #        pull all files in this repo folder and execute, this script
@@ -161,6 +161,7 @@ if [[ ! -r "$package" ]]; then
     exit 1
 fi
 
+echo "Installing PowerShell to /opt/microsoft/powershell/$release in overwrite mode"
 ## Create the target folder where powershell will be placed
 $SUDO mkdir -p /opt/microsoft/powershell/$release
 ## Expand powershell to the target folder
@@ -169,7 +170,7 @@ $SUDO tar zxf $package -C /opt/microsoft/powershell/$release
 ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
 $SUDO chmod 755 /opt/microsoft/powershell/$release/pwsh
 ## Create the symbolic link that points to powershell
-$SUDO ln -s /opt/microsoft/powershell/$release/pwsh $pwshlink
+$SUDO ln -sfn /opt/microsoft/powershell/$release/pwsh $pwshlink
 
 ## Add the symbolic link path to /etc/shells
 if [ ! -f /etc/shells ] ; then
@@ -213,5 +214,7 @@ fi
 
 if [[ "$repobased" == true ]] ; then
   echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+else
+  echo "*** NOTE: Re-run this script to update PowerShell Core"
 fi
 echo "*** Install Complete"

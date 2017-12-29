@@ -767,7 +767,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Entering method", null);
             s_structuredTracer.BeginContainerParentJobExecution(InstanceId);
 
-            // If parent contains no child jobs then this method will hang.  Throw error in this case.
+            // If parent contains no child jobs then this method will not respond.  Throw error in this case.
             if (ChildJobs.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNoChildJobs);
@@ -951,7 +951,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             _tracer.WriteMessage(TraceClassName, "ResumeJob", Guid.Empty, this, "Entering method", null);
 
-            // If parent contains no child jobs then this method will hang.  Throw error in this case.
+            // If parent contains no child jobs then this method will not respond.  Throw error in this case.
             if (ChildJobs.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNoChildJobs);
@@ -1188,7 +1188,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             _tracer.WriteMessage(TraceClassName, "UnblockJob", Guid.Empty, this, "Entering method", null);
 
-            // If parent contains no child jobs then this method will hang.  Throw error in this case.
+            // If parent contains no child jobs then this method will not respond.  Throw error in this case.
             if (ChildJobs.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNoChildJobs);
@@ -1353,7 +1353,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             _tracer.WriteMessage(TraceClassName, "SuspendJob", Guid.Empty, this, "Entering method", null);
 
-            // If parent contains no child jobs then this method will hang.  Throw error in this case.
+            // If parent contains no child jobs then this method will not respond.  Throw error in this case.
             if (ChildJobs.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNoChildJobs);
@@ -1526,7 +1526,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             _tracer.WriteMessage(TraceClassName, "StopJob", Guid.Empty, this, "Entering method", null);
 
-            // If parent contains no child jobs then this method will hang.  Throw error in this case.
+            // If parent contains no child jobs then this method will not respond.  Throw error in this case.
             if (ChildJobs.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.JobActionInvalidWithNoChildJobs);

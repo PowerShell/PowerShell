@@ -21,6 +21,11 @@ This guide assumes that you have recursively cloned the PowerShell repository an
 You will need to install an edition of Visual Studio 2015 (Community, Enterprise, or Professional) with the optional feature 'Common Tools for Visual C++' installed.
 The free Community edition of Visual Studio 2015 can be downloaded [here](https://www.visualstudio.com/visual-studio-community-vs/).
 
+### Visual Studio Code
+
+Building PowerShell using [Visual Studio Code](https://code.visualstudio.com/) depends on the PowerShell executable to be called `pwsh` which means
+that you must have PowerShell Core 6 Beta.9 (or newer) installed to successfully build this project (typically for the purpose of debugging).
+
 ### .NET CLI
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to build PowerShell.

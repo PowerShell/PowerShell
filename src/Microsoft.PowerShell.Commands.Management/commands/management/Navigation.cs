@@ -2362,8 +2362,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Path == null ||
-                (Path != null && Path.Length == 0))
+            if (Path == null || Path.Length == 0)
             {
                 Path = new string[] { String.Empty };
             }
@@ -4533,9 +4532,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (PSProvider == null ||
-                (PSProvider != null &&
-                 PSProvider.Length == 0))
+            if (PSProvider == null || PSProvider.Length == 0)
             {
                 // Get all the providers
 

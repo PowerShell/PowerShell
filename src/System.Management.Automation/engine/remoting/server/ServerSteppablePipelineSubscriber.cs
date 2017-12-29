@@ -98,7 +98,7 @@ namespace System.Management.Automation
                 // We need to catch this so that we can set the pipeline execution;
                 // state to "failed" and send the exception as an error to the user.
                 // Otherwise, the event manager will swallow this exception and
-                // cause the client to hang.
+                // cause the client to not respond.
                 exceptionOccurred = e;
             }
 

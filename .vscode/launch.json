@@ -8,7 +8,7 @@
             "justMyCode": false,
             "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/pwsh",
-            "preLaunchTask": "build",
+            "preLaunchTask": "Build",
             "externalConsole": true,
             "cwd": "${workspaceRoot}"
         },
@@ -18,6 +18,24 @@
             "request": "attach",
             "justMyCode": false,
             "processId": "${command:pickProcess}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File",
+            "script": "${file}",
+            "args": [],
+            "cwd": "${file}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File w/Args Prompt",
+            "script": "${file}",
+            "args": [
+                "${command:SpecifyScriptArgs}"
+            ],
+            "cwd": "${file}"
         }
     ]
 }

@@ -208,9 +208,7 @@ namespace System.Management.Automation
                 CommandInfo cinfo = valueToCheck as CommandInfo;
                 if (cinfo != null)
                 {
-                    string commandName = null;
-                    if (cinfo != null)
-                        commandName = cinfo.Name;
+                    string commandName = cinfo.Name;
                     if (commandName != null)
                     {
                         // If we have a name, use it in the error message

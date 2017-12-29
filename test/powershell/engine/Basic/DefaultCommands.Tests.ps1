@@ -25,7 +25,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",  "clp",                                "Clear-ItemProperty",                 $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
 "Alias",  "cls",                                "Clear-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 ""
 "Alias",  "clv",                                "Clear-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
-"Alias",  "cnsn",                               "Connect-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
+"Alias",  "cnsn",                               "Connect-PSSession",                  $($FullCLR -or $CoreWindows              ),   "ReadOnly",         ""
 "Alias",  "compare",                            "Compare-Object",                     $($FullCLR -or $CoreWindows              ),   "ReadOnly",         ""
 "Alias",  "copy",                               "Copy-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
 "Alias",  "cp",                                 "Copy-Item",                          $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
@@ -37,7 +37,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",  "del",                                "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
 "Alias",  "diff",                               "Compare-Object",                     $($FullCLR -or $CoreWindows              ),   "ReadOnly",         ""
 "Alias",  "dir",                                "Get-ChildItem",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
-"Alias",  "dnsn",                               "Disconnect-PSSession",               $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
+"Alias",  "dnsn",                               "Disconnect-PSSession",               $($FullCLR -or $CoreWindows              ),   "ReadOnly",         ""
 "Alias",  "ebp",                                "Enable-PSBreakpoint",                $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
 "Alias",  "echo",                               "Write-Output",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
 "Alias",  "epal",                               "Export-Alias",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
@@ -185,7 +185,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Clear-Variable",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Compare-Object",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Complete-Transaction",                               ,                     $($FullCLR                               )
-"Cmdlet", "Connect-PSSession",                                  ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Connect-PSSession",                                  ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Connect-WSMan",                                      ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "ConvertFrom-Csv",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "ConvertFrom-Json",                                   ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
@@ -207,15 +207,15 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Disable-ComputerRestore",                            ,                     $($FullCLR                               )
 "Cmdlet", "Disable-PSBreakpoint",                               ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Disable-PSRemoting",                                 ,                     $($FullCLR -or $CoreWindows              )
-"Cmdlet", "Disable-PSSessionConfiguration",                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Disable-PSSessionConfiguration",                     ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Disable-RunspaceDebug",                              ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Disable-WSManCredSSP",                               ,                     $($FullCLR -or $CoreWindows              )
-"Cmdlet", "Disconnect-PSSession",                               ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Disconnect-PSSession",                               ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Disconnect-WSMan",                                   ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Enable-ComputerRestore",                             ,                     $($FullCLR                               )
 "Cmdlet", "Enable-PSBreakpoint",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Enable-PSRemoting",                                  ,                     $($FullCLR -or $CoreWindows              )
-"Cmdlet", "Enable-PSSessionConfiguration",                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Enable-PSSessionConfiguration",                      ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Enable-RunspaceDebug",                               ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Enable-WSManCredSSP",                                ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Enter-PSHostProcess",                                ,                     $($FullCLR -or $CoreWindows              )
@@ -277,8 +277,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Get-PSHostProcessInfo",                              ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Get-PSProvider",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-PSSession",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Get-PSSessionCapability",                            ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Get-PSSessionConfiguration",                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Get-PSSessionCapability",                            ,                     $($FullCLR -or $CoreWindows              )
+"Cmdlet", "Get-PSSessionConfiguration",                         ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Get-PSSnapin",                                       ,                     $($FullCLR                               )
 "Cmdlet", "Get-Random",                                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-Runspace",                                       ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
@@ -333,8 +333,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "New-PSDrive",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-PSRoleCapabilityFile",                           ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-PSSession",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "New-PSSessionConfigurationFile",                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "New-PSSessionOption",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "New-PSSessionConfigurationFile",                     ,                     $($FullCLR -or $CoreWindows              )
+"Cmdlet", "New-PSSessionOption",                                ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "New-PSTransportOption",                              ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "New-Service",                                        ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "New-TemporaryFile",                                  ,                     $(             $CoreWindows -or $CoreUnix)
@@ -357,11 +357,11 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Push-Location",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Read-Host",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Receive-Job",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Receive-PSSession",                                  ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Receive-PSSession",                                  ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Register-ArgumentCompleter",                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Register-EngineEvent",                               ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Register-ObjectEvent",                               ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Register-PSSessionConfiguration",                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Register-PSSessionConfiguration",                    ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Register-WmiEvent",                                  ,                     $($FullCLR                               )
 "Cmdlet", "Remove-Alias",                                       ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Remove-Computer",                                    ,                     $($FullCLR                               )
@@ -407,7 +407,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Set-Location",                                       ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-PSBreakpoint",                                   ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-PSDebug",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Set-PSSessionConfiguration",                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Set-PSSessionConfiguration",                         ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Set-Service",                                        ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Set-StrictMode",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-TimeZone",                                       ,                     $($FullCLR -or $CoreWindows              )
@@ -439,14 +439,14 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Test-FileCatalog",                                   ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-ModuleManifest",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-Path",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Test-PSSessionConfigurationFile",                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Test-PSSessionConfigurationFile",                    ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-WSMan",                                         ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Trace-Command",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Unblock-File",                                       ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Undo-Transaction",                                   ,                     $($FullCLR                               )
 "Cmdlet", "Unprotect-CmsMessage",                               ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Unregister-Event",                                   ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Unregister-PSSessionConfiguration",                  ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Unregister-PSSessionConfiguration",                  ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Update-FormatData",                                  ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Update-Help",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Update-List",                                        ,                     $($FullCLR                               )

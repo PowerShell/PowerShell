@@ -113,24 +113,41 @@ and then reuse the produced binaries for many builds subsequently.
 The NuGet package for `pwrshplugin.dll` is `psrp.windows`,
 and the NuGet package for `libpsl-native` is `libpsl`.
 
-### psrp.windows
+### Windows packages: PSRP.Windows and PowerShell.Core.Instrumentation
 
-To build `pwrshplugin.dll`, you need to install Visual Studio 2015 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisites.
+To build `pwrshplugin.dll` and `PowerShell.Core.Instrumentation.dll`, you need to install Visual Studio 2017 and run `Start-PSBootstrap -BuildWindowsNative` to install the prerequisites.
+
+Ensure the following individual components are selected:
+
+- [ ] VC++ 2017 v141 toolset (x86, x64)
+- [ ] Visual C++ compilers and libraries for ARM
+- [ ] Visual C++ compilers and libraries for ARM64
+- [ ] Visual C++ tools for CMake
+- [ ] Visual C++ ATL Support
+- [ ] Windows 10 SDK (10.0.16299.0) for Desktop C++ (ARM and ARM64)
+- [ ] Windows 10 SDK (10.0.16299.0) for Desktop C++ (x86 and x64)
+
+Ensure [CMake](https://cmake.org/download/) 3.10.0 or newer is installed which supports VS2017 and ARM64 generator.
+
 Then run `Start-BuildNativeWindowsBinaries` to build the binary.
-For example, the following builds the release flavor of the binary targeting x64 architecture.
+For example, the following builds the release flavor of the binary targeting arm64 architecture.
 
 ```powershell
-Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64
+Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64_arm64
 ```
 
-After that, the binary `pwrshplugin.dll` and its PDB file will be placed under 'src/powershell-win-core'.
+Be sure to build and test for all supported architectures: x86, x64, x64_arm, and x64_arm64.
+
+The `x64_arm` and `x64_arm64` architectures mean that the host system needs to be x64 to cross-compile to ARM.
+When building for multiple architectures, be sure to use the `-clean` switch as cmake will cache the previous run and the wrong compiler will be used to generate the subsequent architectures.
+
+After that, the binary `pwrshplugin.dll`, its PDB file, and `powershell.core.instrumentation.dll` will be placed under 'src\powershell-win-core'.
 
 To create a new NuGet package for `pwrshplugin.dll`, first you need to get the `psrp.windows.nuspec` from an existing `psrp.windows` package.
 You can find it at `~/.nuget/packages/psrp.windows` on your windows machine if you have recently built PowerShell on it.
 Or you can download the existing package from [powershell-core feed](https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows).
-Once you get `psrp.windows.nuspec`, copy it to an empty folder.
+Once you get `psrp.windows.nuspec`, copy it to an empty folder and update the `<version>` element.
 
-Then you need to build `pwrshplugin.dll` targeting both `win-x64` and `win-x86` on Windows 10.
 After building successfully, copy the produced files to the same folder,
 and create the same layout of files as in the existing package.
 The layout of files should look like this:
@@ -142,13 +159,29 @@ The layout of files should look like this:
     |           pwrshplugin.dll
     |           pwrshplugin.pdb
     |
-    \---win-x86
+    +---win-x86
+    |   \---native
+    |           pwrshplugin.dll
+    |           pwrshplugin.pdb
+    +---win-arm
+    |   \---native
+    |           pwrshplugin.dll
+    |           pwrshplugin.pdb
+    \---win-arm64
         \---native
                 pwrshplugin.dll
                 pwrshplugin.pdb
 ```
 
-Lastly, run `nuget pack .` from within the folder. Note that you may need the latest `nuget.exe`.
+Have the DLLs signed with `authenticode dual` certificate and run `nuget pack` from the parent of the `runtimes` folder where `psrp.windows.nuspec` resides.
+Be sure to use the latest recommended version of [nuget.exe](https://www.nuget.org/downloads).
+
+Publish latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows.
+
+`PowerShell.Core.Instrumentation.dll` NuGet package is created the same way, but in a separate directory following the same layout above.
+To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under `src\PowerShell.Core.Instrumentation`.
+
+Publish latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/PowerShell.Core.Instrumentation.
 
 ### libpsl
 

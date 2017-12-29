@@ -80,15 +80,37 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         Remove-Item -Path $testfile -Force -ErrorAction SilentlyContinue
         $processlist = (Get-Process)[0..1]
         $processlist | Export-Csv -Path $testfile -Force -IncludeTypeInformation
-        # Import-Csv add "CSV:" before actual type
-        $expectedProcessType = "CSV:System.Diagnostics.Process"
+        $expectedProcessTypes = "System.Diagnostics.Process","CSV:System.Diagnostics.Process"
     }
 
     It "Test import-csv import Object" {
         $importObjectList = Import-Csv -Path $testfile
         $processlist.Count | Should Be $importObjectList.Count
 
-        $importType = $importObjectList[0].psobject.TypeNames[0]
-        $importType | Should Be $expectedProcessType
+        $importTypes = $importObjectList[0].psobject.TypeNames
+        $importTypes.Count | Should Be $expectedProcessTypes.Count
+        $importTypes[0] | Should Be $expectedProcessTypes[0]
+        $importTypes[1] | Should Be $expectedProcessTypes[1]
+    }
+}
+
+Describe "Import-Csv with different newlines" -Tags "CI" {
+    It "Test import-csv with '<name>' newline" -TestCases @(
+        @{ name = "CR"; newline = "`r" }
+        @{ name = "LF"; newline = "`n" }
+        @{ name = "CRLF"; newline = "`r`n" }
+        ) {
+        param($newline)
+        $csvFile = Join-Path $TestDrive -ChildPath $((New-Guid).Guid)
+        $delimiter = ','
+        "h1,h2,h3$($newline)11,12,13$($newline)21,22,23$($newline)" | Out-File -FilePath $csvFile
+        $returnObject = Import-Csv -Path $csvFile -Delimiter $delimiter
+        $returnObject.Count | Should Be 2
+        $returnObject[0].h1 | Should Be 11
+        $returnObject[0].h2 | Should Be 12
+        $returnObject[0].h3 | Should Be 13
+        $returnObject[1].h1 | Should Be 21
+        $returnObject[1].h2 | Should Be 22
+        $returnObject[1].h3 | Should Be 23
     }
 }

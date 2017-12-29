@@ -862,10 +862,7 @@ namespace System.Management.Automation
                         return 0;
                     }
                 }
-            }
 
-            if (betterCount == 0)
-            {
                 // Apply tie breaking rules, related to expanded parameters
                 if (candidate1.expandedParameters != null && candidate2.expandedParameters != null)
                 {
@@ -880,10 +877,8 @@ namespace System.Management.Automation
                 {
                     return 1;
                 }
-            }
 
-            if (betterCount == 0)
-            {
+
                 // Apply tie breaking rules, related to specificity of parameters
                 betterCount = CompareTypeSpecificity(candidate1, candidate2);
             }
@@ -2353,6 +2348,10 @@ namespace System.Management.Automation
         internal class MethodCacheEntry
         {
             internal MethodInformation[] methodInformationStructures;
+            /// <summary>
+            /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationStructures.
+            /// </summary>
+            internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> psmethodCtor;
 
             internal MethodCacheEntry(MethodBase[] methods)
             {
@@ -3392,7 +3391,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
-            return new PSMethod(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
+            return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
         }
 
         internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
@@ -3468,7 +3467,7 @@ namespace System.Management.Automation
                             break;
                         }
                     }
-                    members.Add(new PSMethod(name, this, obj, method, isSpecial, isHidden) as T);
+                    members.Add(PSMethod.Create(name, this, obj, method, isSpecial, isHidden) as T);
                 }
             }
         }

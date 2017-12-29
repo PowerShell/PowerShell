@@ -125,7 +125,7 @@
 
     Context "Import-CliXML" {
         BeforeAll {
-            $gpsList = Get-Process powershell
+            $gpsList = Get-Process pwsh
             $gps = $gpsList | Select-Object -First 1
             $filePath = Join-Path $subFilePath 'gps.xml'
 
@@ -161,7 +161,9 @@
             $fileContent | Should Not Be $null
 
             $importedProcess = Import-Clixml $filePath
+            $importedProcess.ProcessName | Should Not BeNullOrEmpty
             $gps.ProcessName | Should Be $importedProcess.ProcessName
+            $importedProcess.Id | Should Not BeNullOrEmpty
             $gps.Id | Should Be $importedProcess.Id
         }
 
@@ -173,7 +175,9 @@
             $fileContent | Should Not Be $null
 
             $importedProcess = Import-Clixml $filePath
+            $importedProcess.ProcessName | Should Not BeNullOrEmpty
             $gps.ProcessName | Should Be $importedProcess.ProcessName
+            $importedProcess.Id | Should Not BeNullOrEmpty
             $gps.Id | Should Be $importedProcess.Id
         }
 

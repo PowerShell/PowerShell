@@ -2581,7 +2581,7 @@ namespace Microsoft.WSMan.Management
                     nsmgr.AddNamespace("cfg", uri_schema);
                     string xpath = SetXPathString(ResourceURI);
                     XmlNodeList nodelist = inputxml.SelectNodes(xpath, nsmgr);
-                    if (nodelist.Count == 1 && nodelist != null)
+                    if (nodelist != null && nodelist.Count == 1)
                     {
                         XmlNode node = (XmlNode)nodelist.Item(0);
                         if (node.HasChildNodes)

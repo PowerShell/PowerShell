@@ -57,9 +57,6 @@ gen
 # Per repo profile
 .profile.ps1
 
-#VS Code files
-.vscode
-
 # macOS
 .DS_Store
 
@@ -68,4 +65,3 @@ TestsResults*.xml
 
 # Resharper settings
 PowerShell.sln.DotSettings.user
-

@@ -1336,10 +1336,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         type = null;
                     }
-                    else
-                    {
-                        type = ImportExportCSVHelper.CSVTypePrefix + type;
-                    }
                 }
             }
             return type;
@@ -1483,21 +1479,12 @@ namespace Microsoft.PowerShell.Commands
                             break;
                     }
                 }
-                else if (IsNewLine(ch))
+                else if (IsNewLine(ch, out string newLine))
                 {
-                    if (ch == '\r')
-                    {
-                        ReadChar();
-                    }
-
                     if (seenBeginQuote)
                     {
                         //newline inside quote are valid
-                        current.Append(ch);
-                        if (ch == '\r')
-                        {
-                            current.Append('\n');
-                        }
+                        current.Append(newLine);
                     }
                     else
                     {
@@ -1520,23 +1507,30 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
+        // If we detect a newline we return it as a string "\r", "\n" or "\r\n"
         private
         bool
-        IsNewLine(char ch)
+        IsNewLine(char ch, out string newLine)
         {
-            bool newLine = false;
-            if (ch == '\n')
-            {
-                newLine = true;
-            }
-            else if (ch == '\r')
+            newLine = "";
+            if (ch == '\r')
             {
                 if (PeekNextChar('\n'))
                 {
-                    newLine = true;
+                    ReadChar();
+                    newLine = "\r\n";
+                }
+                else
+                {
+                    newLine = "\r";
                 }
             }
-            return newLine;
+            else if (ch == '\n')
+            {
+                newLine = "\n";
+            }
+
+            return newLine != "";
         }
 
         /// <summary>
@@ -1574,13 +1568,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     break;
                 }
-                else if (IsNewLine(ch))
+                else if (IsNewLine(ch, out string newLine))
                 {
                     endOfRecord = true;
-                    if (ch == '\r')
-                    {
-                        ReadChar();
-                    }
                     break;
                 }
                 else
@@ -1612,11 +1602,6 @@ namespace Microsoft.PowerShell.Commands
             PSObject result = new PSObject();
             char delimiterlocal = delimiter;
             int unspecifiedNameIndex = 1;
-            if (type != null && type.Length > 0)
-            {
-                result.TypeNames.Clear();
-                result.TypeNames.Add(type);
-            }
             for (int i = 0; i <= names.Count - 1; i++)
             {
                 string name = names[i];
@@ -1642,6 +1627,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 _cmdlet.WriteWarning(CsvCommandStrings.UseDefaultNameForUnspecifiedHeader);
                 _alreadyWarnedUnspecifiedName = true;
+            }
+
+            if (type != null && type.Length > 0)
+            {
+                result.TypeNames.Clear();
+                result.TypeNames.Add(type);
+                result.TypeNames.Add(ImportExportCSVHelper.CSVTypePrefix + type);
             }
 
             return result;

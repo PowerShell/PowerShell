@@ -5,7 +5,7 @@ CompanyName="Microsoft Corporation"
 Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
 ModuleVersion="1.0.0"
 PowerShellVersion="5.0"
-CmdletsToExport="Start-PSPackage"
+CmdletsToExport=@("Start-PSPackage",'New-PSSignedBuildZip')
 RootModule="packaging.psm1"
 RequiredModules = @("build")
 }
