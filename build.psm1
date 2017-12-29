@@ -2148,9 +2148,9 @@ function New-MSIPackage
     }
     [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
 
-    $wixFragmentPath = Join-path $env:Temp "Fragment.wxs"
-    $wixObjProductPath = Join-path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-path $env:Temp "Fragment.wixobj"
+    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
+    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
+    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
 
     $packageName = $productSemanticVersionWithName
     if ($ProductNameSuffix) {
