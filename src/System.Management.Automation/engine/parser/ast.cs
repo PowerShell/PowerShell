@@ -9271,6 +9271,87 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// The ast that represents a list literal expression, e.g. <c>[1,2,3]</c>.
+    /// </summary>
+    public class ListLiteralAst : ExpressionAst
+    {
+        /// <summary>
+        /// Construct a list literal expression.
+        /// </summary>
+        /// <param name="extent">The extent of all of the elements.</param>
+        /// <param name="elements">The collection of asts that represent the list literal.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="elements"/> is null or is an empty collection.
+        /// </exception>
+        public ListLiteralAst(IScriptExtent extent, IList<ExpressionAst> elements)
+            : base(extent)
+        {
+            if (elements == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("elements");
+            }
+
+            this.Elements = elements.Any() ? new ReadOnlyCollection<ExpressionAst>(elements) : Utils.EmptyReadOnlyCollection<ExpressionAst>();
+            SetParents(Elements);
+        }
+
+        /// <summary>
+        /// The collection of asts of the elements of the list.
+        /// </summary>
+        public ReadOnlyCollection<ExpressionAst> Elements { get; private set; }
+
+        /// <summary>
+        /// Copy the ArrayLiteralAst instance
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newElements = CopyElements(this.Elements);
+            return new ArrayLiteralAst(this.Extent, newElements);
+        }
+
+        /// <summary>
+        /// The result of an <see cref="ListLiteralAst"/> is always <c>typeof(List[object])</c>.
+        /// </summary>
+        public override Type StaticType { get { return typeof(List<object>); } }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            var visitor3 = visitor as ICustomAstVisitor3;
+            return visitor3 != null ? visitor3.VisitListLiteral(this) : null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            var visitor3 = visitor as AstVisitor3;
+            if (visitor3 != null)
+            {
+                action = visitor3.VisitListLiteral(this);
+                if (action == AstVisitAction.SkipChildren)
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+            }
+
+            if (action == AstVisitAction.Continue)
+            {
+                for (int index = 0; index < Elements.Count; index++)
+                {
+                    var element = Elements[index];
+                    action = element.InternalVisit(visitor);
+                    if (action != AstVisitAction.Continue) break;
+                }
+            }
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
+    /// <summary>
     /// The ast that represents an array literal expression, e.g. <c>1,2,3</c>.  An array expression, e.g. <c>@(dir)</c>,
     /// is represented by <see cref="ArrayExpressionAst"/>.  An array literal expression can be constructed from a single
     /// element, as happens with the unary comma operator, e.g. <c>,4</c>.

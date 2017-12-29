@@ -37,6 +37,8 @@ namespace System.Management.Automation.Language
             typeof(List<object>).GetConstructor(PSTypeExtensions.EmptyTypes);
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
+        internal static readonly MethodInfo ObjectList_Add =
+            typeof(List<object>).GetMethod(nameof(List<object>.Add));
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
@@ -547,8 +549,8 @@ namespace System.Management.Automation.Language
         internal static readonly Expression CurrentCultureIgnoreCaseComparer = Expression.Constant(StringComparer.CurrentCultureIgnoreCase, typeof(StringComparer));
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         internal static readonly Expression Empty = Expression.Empty();
-        internal static Expression GetExecutionContextFromTLS =
-            Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
+        internal static readonly Expression GetExecutionContextFromTLS = Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
+        internal static readonly NewExpression NewEmptyObjectList = Expression.New(CachedReflectionInfo.ObjectList_ctor);
 
         internal static readonly Expression BoxedTrue = Expression.Field(null,
             typeof(Boxed).GetField("True", BindingFlags.Static | BindingFlags.NonPublic));
@@ -678,7 +680,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class Compiler : ICustomAstVisitor2
+    internal class Compiler : ICustomAstVisitor3
     {
         internal static readonly ParameterExpression _executionContextParameter;
         internal static readonly ParameterExpression _functionContext;
@@ -1880,7 +1882,7 @@ namespace System.Management.Automation.Language
             temps.Add(resultList);
             temps.Add(oldPipe);
             exprs.Add(Expression.Assign(oldPipe, s_getCurrentPipe));
-            exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
+            exprs.Add(Expression.Assign(resultList, ExpressionCache.NewEmptyObjectList));
             exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
             if (generateRedirectExprs != null)
@@ -3185,7 +3187,7 @@ namespace System.Management.Automation.Language
                 temps.Add(resultList);
                 temps.Add(oldPipe);
                 exprs.Add(Expression.Assign(oldPipe, s_getCurrentPipe));
-                exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
+                exprs.Add(Expression.Assign(resultList, ExpressionCache.NewEmptyObjectList));
                 exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
                 exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
             }
@@ -5535,6 +5537,12 @@ namespace System.Management.Automation.Language
         {
             return Expression.NewArrayInit(typeof(object),
                                            arrayLiteralAst.Elements.Select(elem => Compile(elem).Cast(typeof(object))));
+        }
+
+        public object VisitListLiteral(ListLiteralAst listLiteralAst)
+        {
+            return Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add,
+                                       listLiteralAst.Elements.Select(e => Compile(e).Cast(typeof(object))));
         }
 
         private IEnumerable<Expression> BuildHashtable(ReadOnlyCollection<KeyValuePair> keyValuePairs, ParameterExpression temp, bool ordered)

@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
@@ -37,7 +38,7 @@ using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class IsSafeValueVisitor : ICustomAstVisitor
+    internal class IsSafeValueVisitor : ICustomAstVisitor3
     {
         public static bool IsAstSafe(Ast ast, GetSafeValueVisitor.SafeValueContext safeValueContext)
         {
@@ -99,6 +100,13 @@ namespace System.Management.Automation.Language
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return false; }
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { return false; }
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return false; }
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return false; }
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return false; }
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return false; }
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return false; }
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return false; }
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return false; }
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return false; }
 
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
         {
@@ -258,6 +266,11 @@ namespace System.Management.Automation.Language
             return isSafe;
         }
 
+        public object VisitListLiteral(ListLiteralAst listLiteralAst)
+        {
+            return listLiteralAst.Elements.All(e => (bool)e.Accept(this));
+        }
+
         public object VisitHashtable(HashtableAst hashtableAst)
         {
             if (hashtableAst.KeyValuePairs.Count > MaxHashtableKeyCount)
@@ -285,7 +298,7 @@ namespace System.Management.Automation.Language
      * except in the case of handling the unary operator
      * ExecutionContext is provided to ensure we can resolve variables
      */
-    internal class GetSafeValueVisitor : ICustomAstVisitor
+    internal class GetSafeValueVisitor : ICustomAstVisitor3
     {
         internal enum SafeValueContext
         {
@@ -349,6 +362,13 @@ namespace System.Management.Automation.Language
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { throw PSTraceSource.NewArgumentException("ast"); }
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { throw PSTraceSource.NewArgumentException("ast"); }
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { throw PSTraceSource.NewArgumentException("ast"); }
 
         //
         // This is similar to logic used deep in the engine for slicing something that can be sliced
@@ -635,6 +655,17 @@ namespace System.Management.Automation.Language
                 arrayElements.Add(element.Accept(this));
             }
             return arrayElements.ToArray();
+        }
+
+        public object VisitListLiteral(ListLiteralAst listLiteralAst)
+        {
+            // A list literal is safe
+            List<object> listElements = new List<object>();
+            foreach (var element in listLiteralAst.Elements)
+            {
+                listElements.Add(element.Accept(this));
+            }
+            return listElements;
         }
 
         public object VisitHashtable(HashtableAst hashtableAst)

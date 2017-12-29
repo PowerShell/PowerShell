@@ -1803,7 +1803,22 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]
         private void CompileListInitExpression(Expression expr)
         {
-            throw new System.NotImplementedException();
+            var node = (ListInitExpression) expr;
+            CompileNewExpression(node.NewExpression);
+            if (node.Initializers.Count > 0)
+            {
+                LocalDefinition local = _locals.DefineLocal(Expression.Parameter(node.Type), _instructions.Count);
+                _instructions.EmitAssignLocal(local.Index);
+
+                foreach (ElementInit eInit in node.Initializers)
+                {
+                    foreach (Expression arg in eInit.Arguments) { Compile(arg); }
+                    _instructions.EmitCall(eInit.AddMethod);
+                    _instructions.EmitLoadLocal(local.Index);
+                }
+
+                _locals.UndefineLocal(local, _instructions.Count);
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]

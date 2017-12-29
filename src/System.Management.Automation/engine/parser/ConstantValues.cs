@@ -16,7 +16,7 @@ namespace System.Management.Automation.Language
      * There is a number of similarities between these two classes, and changes (fixes) in this code
      * may need to be reflected in that class and vice versa
      */
-    internal class IsConstantValueVisitor : ICustomAstVisitor
+    internal class IsConstantValueVisitor : ICustomAstVisitor3
     {
         public static bool IsConstant(Ast ast, out object constantValue, bool forAttribute = false, bool forRequires = false)
         {
@@ -93,6 +93,17 @@ namespace System.Management.Automation.Language
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return false; }
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { return false; }
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return false; }
+        public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) { return false; }
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return false; }
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return false; }
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return false; }
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return false; }
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return false; }
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return false; }
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return false; }
+
+        public object VisitConstantExpression(ConstantExpressionAst constantExpressionAst) { return true; }
+        public object VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) { return true; }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
@@ -165,16 +176,6 @@ namespace System.Management.Automation.Language
             return (bool)convertExpressionAst.Child.Accept(this);
         }
 
-        public object VisitConstantExpression(ConstantExpressionAst constantExpressionAst)
-        {
-            return true;
-        }
-
-        public object VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst)
-        {
-            return true;
-        }
-
         public object VisitSubExpression(SubExpressionAst subExpressionAst)
         {
             return subExpressionAst.SubExpression.Accept(this);
@@ -229,9 +230,11 @@ namespace System.Management.Automation.Language
             return (((FieldInfo)memberInfo[0]).Attributes & FieldAttributes.Literal) != 0;
         }
 
-        public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
+        public object VisitListLiteral(ListLiteralAst listLiteralAst)
         {
-            return false;
+            // A list literal is a constant when we're generating metadata, but when
+            // we're generating code, we need to create new arrays or we'd have an aliasing problem.
+            return (CheckingAttributeArgument || CheckingRequiresArgument) && listLiteralAst.Elements.All(e => (bool)e.Accept(this));
         }
 
         public object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
@@ -262,7 +265,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class ConstantValueVisitor : ICustomAstVisitor
+    internal class ConstantValueVisitor : ICustomAstVisitor3
     {
         internal bool AttributeArgument { get; set; }
         internal bool RequiresArgument { get; set; }
@@ -325,6 +328,14 @@ namespace System.Management.Automation.Language
         public object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) { return AutomationNull.Value; }
         public object VisitBlockStatement(BlockStatementAst blockStatementAst) { return AutomationNull.Value; }
         public object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) { return AutomationNull.Value; }
+        public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) { return AutomationNull.Value; }
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return AutomationNull.Value; }
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return AutomationNull.Value; }
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return AutomationNull.Value; }
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return AutomationNull.Value; }
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return AutomationNull.Value; }
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return AutomationNull.Value; }
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return AutomationNull.Value; }
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
@@ -411,10 +422,10 @@ namespace System.Management.Automation.Language
             return ((FieldInfo)memberInfo[0]).GetValue(null);
         }
 
-        public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
+        public object VisitListLiteral(ListLiteralAst listLiteralAst)
         {
-            CheckIsConstant(arrayExpressionAst, "Caller to verify ast is constant");
-            return arrayExpressionAst.SubExpression.Accept(this);
+            CheckIsConstant(listLiteralAst, "Caller to verify ast is constant");
+            return listLiteralAst.Elements.Select(e => e.Accept(this)).ToList();
         }
 
         public object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)

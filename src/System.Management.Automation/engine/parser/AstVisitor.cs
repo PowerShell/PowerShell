@@ -175,8 +175,15 @@ namespace System.Management.Automation.Language
         object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst);
     }
 
+    /// <summary/>
+    public interface ICustomAstVisitor3 : ICustomAstVisitor2
+    {
+        /// <summary/>
+        object VisitListLiteral(ListLiteralAst listLiteralAst);
+    }
+
 #if DEBUG
-    class CheckAllParentsSet : AstVisitor2
+    class CheckAllParentsSet : AstVisitor3
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -239,6 +246,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst ast) { return CheckParent(ast); }
         public override AstVisitAction VisitArrayExpression(ArrayExpressionAst ast) { return CheckParent(ast); }
         public override AstVisitAction VisitArrayLiteral(ArrayLiteralAst ast) { return CheckParent(ast); }
+        public override AstVisitAction VisitListLiteral(ListLiteralAst ast) { return CheckParent(ast); }
         public override AstVisitAction VisitHashtable(HashtableAst ast) { return CheckParent(ast); }
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst ast) { return CheckParent(ast); }
         public override AstVisitAction VisitParenExpression(ParenExpressionAst ast) { return CheckParent(ast); }
@@ -258,7 +266,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type
     /// </summary>
-    class CheckTypeBuilder : AstVisitor2
+    class CheckTypeBuilder : AstVisitor3
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
@@ -275,7 +283,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Searches an AST, using the evaluation function provided by either of the constructors
     /// </summary>
-    internal class AstSearcher : AstVisitor2
+    internal class AstSearcher : AstVisitor3
     {
         #region External interface
 
@@ -408,6 +416,7 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst ast) { return Check(ast); }
         public override AstVisitAction VisitArrayExpression(ArrayExpressionAst ast) { return Check(ast); }
         public override AstVisitAction VisitArrayLiteral(ArrayLiteralAst ast) { return Check(ast); }
+        public override AstVisitAction VisitListLiteral(ListLiteralAst ast) { return Check(ast); }
         public override AstVisitAction VisitHashtable(HashtableAst ast) { return Check(ast); }
         public override AstVisitAction VisitScriptBlockExpression(ScriptBlockExpressionAst ast) { return CheckScriptBlock(ast); }
         public override AstVisitAction VisitParenExpression(ParenExpressionAst ast) { return Check(ast); }
@@ -558,5 +567,14 @@ namespace System.Management.Automation.Language
         public virtual object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return null; }
         /// <summary/>
         public virtual object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
+    }
+
+    /// <summary>
+    /// Default implementation of <see cref="ICustomAstVisitor3"/> interface
+    /// </summary>
+    public abstract class DefaultCustomAstVisitor3 : DefaultCustomAstVisitor2, ICustomAstVisitor3
+    {
+        /// <summary/>
+        public virtual object VisitListLiteral(ListLiteralAst listExpressionAst) { return null; }
     }
 }
