@@ -110,7 +110,7 @@
             <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
                 <RegistryKey Root="HKCU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="[$(var.WixShellExecTarget)]"/>
+                    <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
                 </RegistryKey>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
@@ -125,7 +125,7 @@
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico" Name="Icon"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(env.ProductSemanticVersion)\command">
-                <RegistryValue Type="string" Value="$(var.WixShellExecTarget) -NoExit -Command Set-Location -LiteralPath '%V'"/>
+                <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\shell\$(var.ProductName)$(env.ProductSemanticVersion)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
@@ -133,7 +133,7 @@
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico" Name="Icon"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\shell\$(var.ProductName)$(env.ProductSemanticVersion)\command">
-                <RegistryValue Type="string" Value="$(var.WixShellExecTarget) -NoExit -Command Set-Location -LiteralPath '%V'"/>
+                <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
               </RegistryKey>
             </Component>
           </Directory>
@@ -142,7 +142,7 @@
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductSemanticVersionWithName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="$(var.WixShellExecTarget)" WorkingDirectory="$(var.ProductVersionWithName)"
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
             <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
