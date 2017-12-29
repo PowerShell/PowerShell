@@ -120,16 +120,16 @@
             <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}">
               <Condition>EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
               <!-- When clicking on background in Explorer -->
-              <RegistryKey Root="HKCR" Key="Directory\Background\shell\PowerShellCore"  ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                <RegistryValue Type="string" Value="$(var.ExplorerContextMenuDialogText)" Name="(Default)"/>
+              <RegistryKey Root="HKCR" Key="Directory\Background\shell\PowerShellCore" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                <RegistryValue Type="string" Value="$(var.ExplorerContextMenuDialogText)"/>
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico" Name="Icon"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\PowerShellCore\command">
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
-              <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore"  ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                <RegistryValue Type="string" Value="$(var.ExplorerContextMenuDialogText)" Name="(Default)"/>
+              <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                <RegistryValue Type="string" Value="$(var.ExplorerContextMenuDialogText)"/>
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico" Name="Icon"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore\command">
