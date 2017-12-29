@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
-    <ProjectReference Include="..\Microsoft.PowerShell.PSReadLine\Microsoft.PowerShell.PSReadLine.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj" />
     <ProjectReference Include="..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />

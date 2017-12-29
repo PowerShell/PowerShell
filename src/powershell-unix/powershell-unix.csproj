@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
-    <ProjectReference Include="..\Microsoft.PowerShell.PSReadLine\Microsoft.PowerShell.PSReadLine.csproj" />
   </ItemGroup>
 
   <ItemGroup>

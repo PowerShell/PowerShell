@@ -21,7 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Management.Infras
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.PowerShell.Commands.Diagnostics", "src\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj", "{439A24FC-8E0A-48B6-8227-44C297311F49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.PowerShell.PSReadLine", "src\Microsoft.PowerShell.PSReadLine\Microsoft.PowerShell.PSReadLine.csproj", "{07BFD271-8992-4F34-9091-6CFC3E224A24}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.WSMan.Management", "src\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj", "{8F63D134-E413-4181-936D-D82F3F5F1D85}"
 EndProject
