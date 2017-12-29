@@ -12,6 +12,7 @@
   <?define ProductSemanticVersionWithName = "$(var.ProductName)-$(env.ProductSemanticVersion)"?>
   <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
   <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
+  <?define ExplorerContextMenuDialogText = "Open $(env.ProductName) $(env.ProductSemanticVersion) here" ?>
   <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
   <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
   <!-- Otherwise, updates won't occur -->
@@ -74,8 +75,8 @@
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
       <ComponentRef Id="RegistryEntries"/>
-      <ComponentRef Id="ContextMenu"/>
       <ComponentRef Id="SetPath"/>
+      <ComponentRef Id="ExplorerContextMenu"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -116,18 +117,18 @@
             <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}">
               <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductVersionWithName)]"/>
             </Component>
-            <Component Id="ContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}">
-              <Condition>CONTEXT_MENU_OPENPOWERSHELL</Condition>
+            <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}">
+              <Condition>EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\PowerShellCore"  ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                <RegistryValue Type="string" Value="Open $(env.ProductName) $(env.ProductSemanticVersion) here"/>
+                <RegistryValue Type="string" Value="$(env.ExplorerContextMenuDialogText)"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\PowerShellCore\command">
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore"  ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                <RegistryValue Type="string" Value="Open $(env.ProductName) $(env.ProductSemanticVersion) here"/>
+                <RegistryValue Type="string" Value="$(env.ExplorerContextMenuDialogText)"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore\command">
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
@@ -152,7 +153,7 @@
 <!-- Explorer Context Menu Dialog -->
 <Fragment>
  <UI>
-    <Dialog Id="ContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+    <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUINext)" />
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
@@ -163,7 +164,7 @@
       <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Open $(var.ProductName) via right-click in Explorer." />
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add 'Open $(var.ProductName) $(var.ProductSemanticVersion) here' context menu to Explorer" />
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(env.ExplorerContextMenuDialogText)' context menu to Explorer" />
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />        
     </Dialog>
   </UI>
@@ -177,7 +178,7 @@
       - WixUI_WelcomeDlg
       - WixUI_LicenseAgreementDlg
       - WixUI_InstallDirDlg
-      - ContextMenuDialog
+      - ExplorerContextMenuDialog
       - WixUI_VerifyReadyDlg
       - WixUI_DiskCostDlg
       Maintenance dialog sequence:
@@ -207,7 +208,7 @@
       <DialogRef Id="ProgressDlg" />
       <DialogRef Id="ResumeDlg" />
       <DialogRef Id="UserExit" />
-      <DialogRef Id="ContextMenuDialog" />
+      <DialogRef Id="ExplorerContextMenuDialog" />
       
       
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
@@ -221,19 +222,19 @@
       <Publish Dialog="LicenseAgreementDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="InstallDirDlg">LicenseAccepted = "1"</Publish>
 
-      <Publish Dialog="ContextMenuDialog" Control="Back" Event="NewDialog" Value="InstallDirDlg">1</Publish>
-      <Publish Dialog="ContextMenuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="InstallDirDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ContextMenuDialog" Order="5">1</Publish>
+      <Publish Dialog="InstallDirDlg" Control="Next" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="5">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
       
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ContextMenuDialog" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
 
