@@ -61,6 +61,7 @@ namespace System.Management.Automation.Interpreter
         protected internal abstract Instruction DefaultValue();
         protected internal abstract Instruction NewArray();
         protected internal abstract Instruction NewArrayInit(int elementCount);
+        protected internal abstract Instruction NewListInit(int elementCount);
     }
 
     internal sealed class InstructionFactory<T> : InstructionFactory
@@ -75,6 +76,7 @@ namespace System.Management.Automation.Interpreter
         private Instruction _newArray;
         private Instruction _typeAs;
         private Instruction[] _newArrayInit;
+        private Instruction[] _newListInit;
         // This number is somewhat arbitrary - trying to avoid some gc without keeping
         // objects (instructions) around that aren't used that often.
         private const int MaxArrayInitElementCountCache = 32;
@@ -123,6 +125,20 @@ namespace System.Management.Automation.Interpreter
                 return _newArrayInit[elementCount] ?? (_newArrayInit[elementCount] = new NewArrayInitInstruction<T>(elementCount));
             }
             return new NewArrayInitInstruction<T>(elementCount);
+        }
+
+        protected internal override Instruction NewListInit(int elementCount)
+        {
+            if (elementCount < MaxArrayInitElementCountCache)
+            {
+                if (_newListInit == null)
+                {
+                    _newListInit = new Instruction[MaxArrayInitElementCountCache];
+                }
+
+                return _newListInit[elementCount] ?? (_newListInit[elementCount] = new NewListInitInstruction<T>(elementCount));
+            }
+            return new NewListInitInstruction<T>(elementCount);
         }
     }
 }
