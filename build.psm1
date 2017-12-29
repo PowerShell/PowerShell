@@ -2179,6 +2179,7 @@ function New-MSIPackage
         $WiXHeatLog   | Out-String | Write-Verbose -Verbose
         $WiXCandleLog | Out-String | Write-Verbose -Verbose
         $WiXLightLog  | Out-String | Write-Verbose -Verbose
+        $host.SetShouldExit(-1)
         throw "Failed to create $msiLocationPath"
     }
 }
