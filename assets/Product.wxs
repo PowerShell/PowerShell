@@ -12,7 +12,7 @@
   <?define ProductSemanticVersionWithName = "$(var.ProductName)-$(env.ProductSemanticVersion)"?>
   <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
   <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
-  <?define ExplorerContextMenuDialogText = "Open $(env.ProductName) $(env.ProductSemanticVersion) here" ?>
+  <?define ExplorerContextMenuDialogText = "Open $(env.ProductName) $(env.ProductSemanticVersion) here"?>
   <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
   <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
   <!-- Otherwise, updates won't occur -->
@@ -129,7 +129,7 @@
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore"  ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                <RegistryValue Type="string" Value="$(var.ExplorerContextMenuDialogText)" Name="(Default)"//>
+                <RegistryValue Type="string" Value="$(var.ExplorerContextMenuDialogText)" Name="(Default)"/>
                 <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico" Name="Icon"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\shell\PowerShellCore\command">
