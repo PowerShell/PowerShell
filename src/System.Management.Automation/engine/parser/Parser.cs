@@ -5998,12 +5998,18 @@ namespace System.Management.Automation.Language
             var lBracket = NextLBracket();
             if (lBracket == null) { return null; }
 
+            IScriptExtent endExtent = lBracket.Extent;
             var listValues = new List<ExpressionAst>();
             Token commaToken = null;
 
             do {
-                if (commaToken != null) { SkipToken(); }
-                V3SkipNewlines();
+                if (commaToken != null)
+                {
+                    SkipToken();
+                    endExtent = commaToken.Extent;
+                }
+
+                SkipNewlines();
 
                 var expr = UnaryExpressionRule();
                 if (expr == null)
@@ -6017,12 +6023,14 @@ namespace System.Management.Automation.Language
                     listValues.Add(expr);
                     break;
                 }
+
+                endExtent = expr.Extent;
                 listValues.Add(expr);
 
                 commaToken = PeekToken();
             } while (commaToken.Kind == TokenKind.Comma);
 
-            V3SkipNewlines();
+            SkipNewlines();
             var rBracket = NextToken();
 
             if (rBracket.Kind != TokenKind.RBracket)
@@ -6031,22 +6039,12 @@ namespace System.Management.Automation.Language
                 UngetToken(rBracket);
                 ReportIncompleteInput(rBracket.Extent, () => ParserStrings.MissingEndBracketInListExpression);
             }
-
-            IScriptExtent extent;
-            if (rBracket.Kind == TokenKind.RBracket)
-            {
-                extent = ExtentOf(lBracket, rBracket.Extent);
-            }
-            else if (listValues.Count > 0)
-            {
-                extent = ExtentOf(lBracket, listValues[listValues.Count-1].Extent);
-            }
             else
             {
-                extent = ExtentOf(lBracket, lBracket.Extent);
+                endExtent = rBracket.Extent;
             }
 
-            return new ListLiteralAst(extent, listValues);;
+            return new ListLiteralAst(ExtentOf(lBracket, endExtent), listValues);;
         }
 
         private ExpressionAst ArrayLiteralRule()
