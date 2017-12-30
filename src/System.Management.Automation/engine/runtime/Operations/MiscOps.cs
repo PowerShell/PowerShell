@@ -3381,19 +3381,13 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<object> ToList(IEnumerator enumerator)
+        internal static object[] ToArray(IEnumerator enumerator)
         {
             var result = new List<object>();
             while (MoveNext(null, enumerator))
             {
                 result.Add(Current(enumerator));
             }
-            return result;
-        }
-
-        internal static object[] ToArray(IEnumerator enumerator)
-        {
-            var result = ToList(enumerator);
             return result.ToArray();
         }
 
