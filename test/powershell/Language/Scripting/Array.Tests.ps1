@@ -72,4 +72,36 @@ Describe "ArrayExpression Tests" -Tags "CI" {
         $result.Length | Should Be 1
         $result[0] | Should Be $null
     }
+
+    It "@([void](New-Item)) should create file" {
+        try {
+            $testFile = "$TestDrive\test.txt"
+            $result = @([void](New-Item $testFile -ItemType File))
+            ## file should be created
+            $testFile | Should Exist
+            ## the array should be empty
+            $result.Count | Should Be 0
+        } finally {
+            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+Describe "ArrayLiteral Tests" -Tags "CI" {
+    It "'[void](New-Item),2,3' should return a 3-element array and first element is AutomationNull" {
+        try {
+            $testFile = "$TestDrive\test.txt"
+            $result = [void](New-Item $testFile -ItemType File), 2, 3
+            ## file should be created
+            $testFile | Should Exist
+            ## the array should contain 3 items
+            $result.Count | Should Be 3
+
+            ## the first item should be AutomationNull
+            $result[0] | ForEach-Object { "YES" } | Should Be $null
+            $result | Measure-Object | ForEach-Object -MemberName Count | Should Be 2
+        } finally{
+            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+        }
+    }
 }
