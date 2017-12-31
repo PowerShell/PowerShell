@@ -1427,3 +1427,146 @@ function Get-NugetSemanticVersion
 
     $packageSemanticVersion
 }
+
+<#
+.Synopsis
+    Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
+    This only works on a Windows machine due to the usage of WiX.
+.EXAMPLE
+    # This example shows how to produce a Debug-x64 installer for WiX development purposes only.
+    cd $RootPathOfPowerShellCheckout
+    Import-Module .\build.psm1; Start-PSBuild # only needs to be exected once to initialize
+    New-MSIPackage -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3' -Force
+#>
+function New-MSIPackage
+{
+    [CmdletBinding()]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # Product Guid needs to change for every version to support SxS install
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductGuid = 'a5249933-73a1-4b10-8a4c-13c98bdc16fe',
+
+        # Source Path to the Product Files - required to package the contents into an MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $ProductWxsPath = "$PSScriptRoot\..\..\assets\Product.wxs",
+
+        # Path to Assets folder containing artifacts such as icons, images
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $AssetsPath = "$PSScriptRoot\..\..\assets",
+
+        # Path to license.rtf file - for the EULA
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf",
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        # Force overwrite of package
+        [Switch] $Force
+    )
+
+    ## AppVeyor base image might update the version for Wix. Hence, we should
+    ## not hard code version numbers.
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+
+    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
+        throw "Wix Toolset is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311.exe"
+    }
+
+    ## Get the latest if multiple versions exist.
+    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
+
+    Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
+    $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
+    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
+    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
+
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
+    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
+
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
+
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    # These variables are used by Product.wxs in assets directory
+    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductTargetArchitecture", $ProductTargetArchitecture, "Process")
+    $ProductProgFilesDir = "ProgramFiles64Folder"
+    if ($ProductTargetArchitecture -eq "x86")
+    {
+        $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
+
+    $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
+    $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
+    $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"
+
+    if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
+    {
+        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
+    }
+
+    $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
+    $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v
+    $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
+
+    Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
+
+    if (Test-Path $msiLocationPath)
+    {
+        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+        $msiLocationPath
+    }
+    else
+    {
+        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
+        $WiXCandleLog | Out-String | Write-Verbose -Verbose
+        $WiXLightLog  | Out-String | Write-Verbose -Verbose
+        throw "Failed to create $msiLocationPath"
+    }
+}
