@@ -7108,10 +7108,10 @@ namespace System.Management.Automation.Language
                         return EnumerableOps.Where(enumerator, args[0] as ScriptBlock, WhereOperatorSelectionMode.Default, 0);
                     case 2:
                         return EnumerableOps.Where(enumerator, args[0] as ScriptBlock,
-                                                   (WhereOperatorSelectionMode)Enum.Parse(typeof(WhereOperatorSelectionMode), args[1].ToString()), 0);
+                                                   LanguagePrimitives.ConvertTo<WhereOperatorSelectionMode>(args[1]), 0);
                     case 3:
                         return EnumerableOps.Where(enumerator, args[0] as ScriptBlock,
-                                                   (WhereOperatorSelectionMode)Enum.Parse(typeof(WhereOperatorSelectionMode), args[1].ToString()), int.Parse(args[2].ToString()));
+                                                   LanguagePrimitives.ConvertTo<WhereOperatorSelectionMode>(args[1]), LanguagePrimitives.ConvertTo<int>(args[2]));
                 }
             }
 
