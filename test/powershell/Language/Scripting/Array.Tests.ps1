@@ -75,7 +75,7 @@ Describe "ArrayExpression Tests" -Tags "CI" {
 
     It "@([void](New-Item)) should create file" {
         try {
-            $testFile = "$TestDrive\test.txt"
+            $testFile = Join-Path $TestDrive (New-Guid)
             $result = @([void](New-Item $testFile -ItemType File))
             ## file should be created
             $testFile | Should Exist
@@ -90,7 +90,7 @@ Describe "ArrayExpression Tests" -Tags "CI" {
 Describe "ArrayLiteral Tests" -Tags "CI" {
     It "'[void](New-Item),2,3' should return a 3-element array and first element is AutomationNull" {
         try {
-            $testFile = "$TestDrive\test.txt"
+            $testFile = Join-Path $TestDrive (New-Guid)
             $result = [void](New-Item $testFile -ItemType File), 2, 3
             ## file should be created
             $testFile | Should Exist
@@ -103,5 +103,40 @@ Describe "ArrayLiteral Tests" -Tags "CI" {
         } finally{
             Remove-Item $testFile -Force -ErrorAction SilentlyContinue
         }
+    }
+
+    It "'[void]1, [void](New-Item), [void]2' should return a 3-AutomationNull-element array" {
+        try {
+            $testFile = Join-Path $TestDrive (New-Guid)
+            $result = [void]1, [void](New-Item $testFile -ItemType File), [void]2
+            ## file should be created
+            $testFile | Should Exist
+            ## the array should contain 3 items
+            $result.Count | Should Be 3
+
+            ## all items should be AutomationNull
+            $result | ForEach-Object { "YES" } | Should Be $null
+        } finally {
+            Remove-Item $testFile -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "'[void]`$arraylist1.Add(1), `$arraylist2.Clear()' should return a 2-AutomationNull-element array" {
+        $arraylist1 = [System.Collections.ArrayList]::new()
+        $arraylist2 = [System.Collections.ArrayList]::new()
+
+        $arraylist2.Add(2) > $null
+        $arraylist2.Count | Should Be 1
+
+        ## first item is a non-void method call
+        ## second item is a void method call
+        $result = [void]$arraylist1.Add(1), $arraylist2.Clear()
+        $result.Count | Should Be 2
+        $result | ForEach-Object { "YES" } | Should Be $null
+
+        $arraylist1.Count | Should Be 1
+        $arraylist1[0] | Should Be 1
+
+        $arraylist2.Count | Should Be 0
     }
 }
