@@ -124,7 +124,7 @@
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-            <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"//>
+            <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
         </Directory>
       </Directory>
