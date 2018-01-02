@@ -7096,7 +7096,7 @@ namespace System.Management.Automation.Language
             }
 
             // The object haven't Where and ForEach methods.
-            // As last resort, we invoking Where and ForEach operators on singletions like
+            // As last resort, we invoking Where and ForEach operators on singletons like
             //    ([pscustomobject]@{ foo = 'bar' }).Foreach({$_})
             //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
             if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
