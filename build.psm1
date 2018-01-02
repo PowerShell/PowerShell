@@ -2182,7 +2182,12 @@ function New-MSIPackage
         $WiXHeatLog   | Out-String | Write-Verbose -Verbose
         $WiXCandleLog | Out-String | Write-Verbose -Verbose
         $WiXLightLog  | Out-String | Write-Verbose -Verbose
-        throw "Failed to create $msiLocationPath"
+        $errorMessage = "Failed to create $msiLocationPath"
+        if ($null -ne $env:CI)
+        {
+           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
+        }
+        throw $errorMessage
     }
 }
 
