@@ -674,8 +674,8 @@ dpkg -r powershell_6.0.0-rc-1.ubuntu.16.04_amd64.deb
 
 ## Raspbian
 
-Currently, PowerShell is only supported on Raspbian Stretch;
-Also CoreCLR (and thus PowerShell Core) will only work on Pi 2 and Pi 3 devices as other devices like [Pi Zero](https://github.com/dotnet/coreclr/issues/10605) have an unsupported processor.
+Currently, PowerShell is only supported on Raspbian Stretch; also CoreCLR (and thus PowerShell Core) will only work on Pi 2 and Pi 3 devices as other devices like [Pi Zero](https://github.com/dotnet/coreclr/issues/10605) have an unsupported processor.
+
 Download [Raspbian Stretch](https://www.raspberrypi.org/downloads/raspbian/) and follow the [installation instructions](https://www.raspberrypi.org/documentation/installation/installing-images/README.md) to get it onto your Pi.
 
 ### Installation
