@@ -3039,6 +3039,12 @@ namespace System.Management.Automation.Language
                             input = GetRangeEnumerator(firstCommandExpr.Expression) ??
                                     Compile(firstCommandExpr.Expression);
                         }
+
+                        if (input.Type == typeof(void))
+                        {
+                            input = Expression.Block(input, ExpressionCache.AutomationNullConstant);
+                        }
+
                         i = 1;
                         commandsInPipe = pipeElements.Count - 1;
                     }
@@ -5525,7 +5531,7 @@ namespace System.Management.Automation.Language
             if (values.Type == typeof(void))
             {
                 // A dynamic site can't take void - but a void value is just an empty array.
-                return Expression.NewArrayInit(typeof(object));
+                return Expression.Block(values, Expression.NewArrayInit(typeof(object)));
             }
 
             return DynamicExpression.Dynamic(PSToObjectArrayBinder.Get(), typeof(object[]), values);
@@ -5533,8 +5539,13 @@ namespace System.Management.Automation.Language
 
         public object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst)
         {
-            return Expression.NewArrayInit(typeof(object),
-                                           arrayLiteralAst.Elements.Select(elem => Compile(elem).Cast(typeof(object))));
+            List<Expression> elementValues = new List<Expression>(arrayLiteralAst.Elements.Count);
+            foreach (var element in arrayLiteralAst.Elements)
+            {
+                var eValue = Compile(element);
+                elementValues.Add(eValue.Type != typeof(void) ? eValue.Cast(typeof(object)) : Expression.Block(eValue, ExpressionCache.AutomationNullConstant));
+            }
+            return Expression.NewArrayInit(typeof(object), elementValues);
         }
 
         private IEnumerable<Expression> BuildHashtable(ReadOnlyCollection<KeyValuePair> keyValuePairs, ParameterExpression temp, bool ordered)

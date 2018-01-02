@@ -9301,7 +9301,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// The non-empty collection of asts of the elements of the array, or null if no elements were specified (e.g. <c>@()</c>).
+        /// The non-empty collection of asts of the elements of the array.
         /// </summary>
         public ReadOnlyCollection<ExpressionAst> Elements { get; private set; }
 
