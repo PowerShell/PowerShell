@@ -2179,11 +2179,12 @@ function New-MSIPackage
         $WiXHeatLog   | Out-String | Write-Verbose -Verbose
         $WiXCandleLog | Out-String | Write-Verbose -Verbose
         $WiXLightLog  | Out-String | Write-Verbose -Verbose
+        $errorMessage = "Failed to create $msiLocationPath"
         if ($null -ne $env:CI)
         {
-           $host.SetShouldExit(-1)
+           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
         }
-        throw "Failed to create $msiLocationPath"
+        throw $errorMessage
     }
 }
 
