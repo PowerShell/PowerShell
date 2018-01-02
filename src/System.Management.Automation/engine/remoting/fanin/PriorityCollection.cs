@@ -49,12 +49,6 @@ namespace System.Management.Automation.Remoting
         // array of sync objects, one for each element in _dataToBeSent
         private object[] _dataSyncObjects;
 
-        // synchronize access to _dataSyncObjects and _dataToBeSent as a set.
-        // while the elements in _dataSyncObjects are used to synchronize
-        // access to a specific element in _dataToBeSent, _syncObject is used
-        // to syncronize access to the set.
-        private object _syncObject = new Object();
-
         // fragmentor used to serialize & fragment objects added to this collection.
         private Fragmentor _fragmentor;
 
@@ -162,28 +156,32 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Clear()
         {
-            /* Lock _dataSyncObjects and _dataToBeSent as a set to ensure atomic cleanup. */
-            lock (_syncObject)
+            /*
+                NOTE: Error paths during initialization can cause _dataSyncObjects to be null
+                causing an unhandled exception in finalize and a process crash.
+                Verify arrays and dataToBeSent objects before referencing.
+            */
+            if (null != _dataSyncObjects && null != _dataToBeSent)
             {
-                /*
-                    NOTE: Error paths during initialization can cause _dataSyncObjects to be null
-                    causing an unhandled exception in finalize and a process crash.
-                */
-                if (null != _dataSyncObjects)
+                int promptResponseIndex = (int)DataPriorityType.PromptResponse;
+                int defaultIndex = (int)DataPriorityType.Default;
+
+                lock (_dataSyncObjects[promptResponseIndex])
                 {
-                    Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
-                    lock (_dataSyncObjects[(int)DataPriorityType.PromptResponse])
+                    if (null != _dataToBeSent[promptResponseIndex])
                     {
-                        _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
+                        _dataToBeSent[promptResponseIndex].Dispose();
+                        _dataToBeSent[promptResponseIndex] = null;
                     }
+                }
 
-                    lock (_dataSyncObjects[(int)DataPriorityType.Default])
+                lock (_dataSyncObjects[defaultIndex])
+                {
+                    if (null != _dataToBeSent[defaultIndex])
                     {
-                        _dataToBeSent[(int)DataPriorityType.Default].Dispose();
+                        _dataToBeSent[defaultIndex].Dispose();
+                        _dataToBeSent[defaultIndex] = null;
                     }
-
-                    _dataToBeSent = null;
-                    _dataSyncObjects = null;
                 }
             }
         }
