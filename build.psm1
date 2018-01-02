@@ -673,7 +673,7 @@ function Restore-PSPester
         $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
 
-    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha 'aa243108e7da50a8cf82513b6dd649b653c70b0e'
+    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '87f531db89a91db86736ac11b4e565ad10c3e334'
 }
 function Compress-TestContent {
     [CmdletBinding()]
