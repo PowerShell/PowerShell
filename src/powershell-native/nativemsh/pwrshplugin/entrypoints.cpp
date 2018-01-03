@@ -35,6 +35,7 @@ _Success_(return > 0)
 DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId, va_list* arguments)
 {
     DWORD dwLength = 0;
+    LPWSTR wszSystemErrorMessage = NULL;
 
     do
     {
@@ -53,8 +54,6 @@ DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId
 #endif
         }
 
-        LPWSTR wszSystemErrorMessage = NULL;
-        //string function
         dwLength = FormatMessageW(
             FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
             g_hResourceInstance,
@@ -64,23 +63,31 @@ DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId
             0,
             arguments);
 
-        if (dwLength > 0)
+        if (dwLength == 0)
         {
-            *pwszErrorMessage = new WCHAR[dwLength + 1];
-            if (NULL != *pwszErrorMessage)
-            {
-                //string function
-                if (FAILED(StringCchCopyW(*pwszErrorMessage, dwLength + 1, wszSystemErrorMessage)))
-                {
-                    dwLength = 0;
-                    delete [] (*pwszErrorMessage);
-                    *pwszErrorMessage = NULL;
-                }
-            }
-            LocalFree(wszSystemErrorMessage);
+            break;
+        }
+
+        *pwszErrorMessage = new WCHAR[dwLength + 1];
+        if (*pwszErrorMessage == NULL)
+        {
+            dwLength = 0;
+            break;
+        }
+
+        if (FAILED(StringCchCopyW(*pwszErrorMessage, dwLength + 1, wszSystemErrorMessage)))
+        {
+            dwLength = 0;
+            delete [] (*pwszErrorMessage);
+            *pwszErrorMessage = NULL;
         }
 
     }while(false);
+
+    if (NULL != wszSystemErrorMessage)
+    {
+        LocalFree(wszSystemErrorMessage);
+    }
 
     return dwLength;
 }
@@ -301,7 +308,6 @@ unsigned int GetCLRVersionForPSVersion(int iPSMajorVersion,
 
 DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorCode)
 {
-    WCHAR szMessage[256] = L"\0";
     if (NULL == requestDetails)
     {
         // cannot report if requestDetails is NULL.
@@ -312,14 +318,17 @@ DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorC
     PWSTR pwszErrorMessage = NULL;
     if (GetFormattedErrorMessage(&pwszErrorMessage, errorCode) == 0)
     {
-        swprintf_s(szMessage,_countof(szMessage), L"ReportOperationComplete: %d", errorCode);
-        pwszErrorMessage = szMessage;
+        /* if an error message could not be loaded, generate a fallback
+           message to provide a level of diagnosability.
+        */
+        WCHAR szFallbackMessageMessage[64] = L"\0";
+        swprintf_s(szFallbackMessageMessage, _countof(szFallbackMessageMessage), L"ReportOperationComplete: %d", errorCode);
+
+        result = WSManPluginOperationComplete(requestDetails, 0, errorCode, szFallbackMessageMessage);
     }
-
-    result = WSManPluginOperationComplete(requestDetails, 0, errorCode, pwszErrorMessage);
-
-    if (NULL != pwszErrorMessage && pwszErrorMessage != szMessage)
+    else
     {
+        result = WSManPluginOperationComplete(requestDetails, 0, errorCode, pwszErrorMessage);
         delete[] pwszErrorMessage;
     }
 
