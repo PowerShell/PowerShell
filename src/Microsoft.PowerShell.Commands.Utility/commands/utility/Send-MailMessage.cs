@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the subject of the email message.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 1)]
+        [Parameter(Mandatory = false, Position = 1)]
         [Alias("sub")]
         [ValidateNotNullOrEmpty]
         public String Subject
