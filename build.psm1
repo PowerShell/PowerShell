@@ -1364,7 +1364,8 @@ function Test-PSPesterResults
 
 function Start-PSxUnit {
     [CmdletBinding()]param(
-        [string] $TestResultsFile = "XUnitResults.xml"
+        [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
+        [string] $ParallelTestResultsFile = "ParallelXUnitResults.xml"
     )
 
     # Add .NET CLI tools to PATH
@@ -1375,9 +1376,11 @@ function Start-PSxUnit {
         throw "PowerShell must be built before running tests!"
     }
 
-    if(Test-Path $TestResultsFile)
-    {
-        Remove-Item $TestResultsFile -Force -ErrorAction SilentlyContinue
+    if (Test-Path $SequentialTestResultsFile) {
+        Remove-Item $SequentialTestResultsFile -Force -ErrorAction SilentlyContinue
+    }
+    if (Test-Path $ParallelTestResultsFile) {
+        Remove-Item $ParallelTestResultsFile -Force -ErrorAction SilentlyContinue
     }
 
     try {
@@ -1386,12 +1389,7 @@ function Start-PSxUnit {
         # Path manipulation to obtain test project output directory
         dotnet restore
 
-        # --fx-version workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
-        if($Environment.IsWindows)
-        {
-            dotnet xunit --fx-version 2.0.0 -xml $TestResultsFile
-        }
-        else
+        if(-not $Environment.IsWindows)
         {
             if($Environment.IsMacOS)
             {
@@ -1419,9 +1417,12 @@ function Start-PSxUnit {
             {
                 throw "Dependencies $requiredDependencies not met."
             }
-
-            dotnet xunit --fx-version 2.0.0 -configuration $Options.configuration -xml $TestResultsFile
         }
+
+        # '-fxversion' workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
+        # Run sequential tests first, and then run the tests that can execute in parallel
+        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
+        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
     }
     finally {
         Pop-Location

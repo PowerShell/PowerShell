@@ -2,7 +2,7 @@ using Xunit;
 using System;
 using System.Management.Automation.Language;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public static class PSEnumerableBinderTests
     {

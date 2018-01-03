@@ -4,7 +4,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public static class PlatformTests
     {
