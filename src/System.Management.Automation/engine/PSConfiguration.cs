@@ -4,29 +4,25 @@ using System.Text;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation.Configuration
 {
+    internal enum ConfigScope
+    {
+        // SystemWide configuration applies to all users.
+        SystemWide = 0,
+
+        // CurrentUser configuration applies to the current user.
+        CurrentUser = 1
+    }
+
     /// <summary>
-    /// JSON configuration file accessor.
-    /// Reads from and writes to configuration files. The config values were originally stored in the Windows registry.
+    /// Reads from and writes to the JSON configuration files.
+    /// The config values were originally stored in the Windows registry.
     /// </summary>
     internal sealed class PowerShellConfig
     {
-        #region Enums
-
-        /// <summary>
-        /// SystemWide configuration applies to all users.
-        /// CurrentUser configuration applies to the current user.
-        /// </summary>
-        internal enum ConfigScope
-        {
-            SystemWide = 0,
-            CurrentUser = 1
-        }
-
-        #endregion // Enums
-
         // Provide a singleton
         private static readonly PowerShellConfig s_instance = new PowerShellConfig();
         internal static PowerShellConfig Instance => s_instance;
@@ -63,14 +59,7 @@ namespace System.Management.Automation.Configuration
         /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
         internal string GetModulePath(ConfigScope scope)
         {
-            string scopeDirectory = psHomeConfigDirectory;
-
-            // Defaults to system wide.
-            if (ConfigScope.CurrentUser == scope)
-            {
-                scopeDirectory = appDataConfigDirectory;
-            }
-
+            string scopeDirectory = scope == ConfigScope.SystemWide ? psHomeConfigDirectory : appDataConfigDirectory;
             string fileName = Path.Combine(scopeDirectory, configFileName);
 
             string modulePath = ReadValueFromFile<string>(fileName, Constants.PSModulePathEnvVar);
@@ -197,33 +186,13 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
-        /// Proposed value = blank.This should be supported though
-        ///
-        /// Schema:
-        /// {
-        ///     "DefaultSourcePath" : "path to local updatable help location"
-        /// }
+        /// Corresponding settings of the original Group Policies
         /// </summary>
-        /// <returns>The source path if found, null otherwise.</returns>
-        internal string GetDefaultSourcePath()
+        internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-
-            string rawExecPolicy = ReadValueFromFile<string>(fileName, "DefaultSourcePath");
-
-            if (!String.IsNullOrEmpty(rawExecPolicy))
-            {
-                return rawExecPolicy;
-            }
-            return null;
-        }
-
-        internal void SetDefaultSourcePath(string defaultPath)
-        {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-
-            WriteValueToFile<string>(fileName, "DefaultSourcePath", defaultPath);
+            string scopeDirectory = (scope == ConfigScope.SystemWide) ? psHomeConfigDirectory : appDataConfigDirectory;
+            string fileName = Path.Combine(scopeDirectory, configFileName);
+            return ReadValueFromFile<PowerShellPolicies>(fileName, nameof(PowerShellPolicies));
         }
 
 #if UNIX
@@ -362,46 +331,35 @@ namespace System.Management.Automation.Configuration
             return result;
         }
 #endif // UNIX
-
-        private T ReadValueFromFile<T>(string fileName, string key)
+ 
+        private T ReadValueFromFile<T>(string fileName, string key, T defaultValue = default(T),
+                                       Func<JToken, JsonSerializer, T, T> readImpl = null)
         {
+            if (!File.Exists(fileName)) { return defaultValue; }
+
+            // Open file for reading, but allow multiple readers
             fileLock.EnterReadLock();
             try
             {
-                // Open file for reading, but allow multiple readers
-                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (StreamReader streamRdr = new StreamReader(fs))
-                using (JsonTextReader jsonReader = new JsonTextReader(streamRdr))
+                using (var streamReader = new StreamReader(fileName))
+                using (var jsonReader = new JsonTextReader(streamReader))
                 {
-                    // Safely determines whether there is content to read from the file
-                    bool isReadSuccess = jsonReader.Read();
-                    if (isReadSuccess)
+                    var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 10 };
+                    var serializer = JsonSerializer.Create(settings);
+
+                    var configData = serializer.Deserialize<JObject>(jsonReader);
+                    if (configData != null && configData.TryGetValue(key, StringComparison.OrdinalIgnoreCase, out JToken jToken))
                     {
-                        JObject jsonObject = (JObject) JToken.ReadFrom(jsonReader);
-                        JToken value = jsonObject.GetValue(key);
-                        if (null != value)
-                        {
-                            return value.ToObject<T>();
-                        }
+                        return readImpl != null ? readImpl(jToken, serializer, defaultValue) : jToken.ToObject<T>(serializer);
                     }
                 }
-            }
-            catch (FileNotFoundException)
-            {
-                // The file doesn't exist. Treat this the same way as if the
-                // key was not present in the file.
-            }
-            catch (DirectoryNotFoundException)
-            {
-                // A directory in the path does not exist. Treat this as if the
-                // key is not present in the file.
             }
             finally
             {
                 fileLock.ExitReadLock();
             }
 
-            return default(T);
+            return defaultValue;
         }
 
         /// <summary>
@@ -535,5 +493,128 @@ namespace System.Management.Automation.Configuration
             }
         }
     }
-} // Namespace System.Management.Automation
 
+    #region GroupPolicy Configs
+
+    /// <summary>
+    /// The GroupPolicy related settings used in PowerShell are as follows in Registry:
+    ///  - Software\Policies\Microsoft\Windows\PowerShell -- { EnableScripts (0 or 1); ExecutionPolicy (string) }
+    ///      SubKeys                  Name-Value-Pairs
+    ///      - ScriptBlockLogging     { EnableScriptBlockLogging (0 or 1); EnableScriptBlockInvocationLogging (0 or 1) }
+    ///      - ModuleLogging          { EnableModuleLogging (0 or 1); ModuleNames (string[]) }
+    ///      - Transcription          { EnableTranscripting (0 or 1); OutputDirectory (string); EnableInvocationHeader (0 or 1) }
+    ///      - UpdatableHelp          { DefaultSourcePath (string) }
+    ///      - ConsoleSessionConfiguration { EnableConsoleSessionConfiguration (0 or 1); ConsoleSessionConfigurationName (string) }
+    ///  - Software\Policies\Microsoft\Windows\EventLog
+    ///     SubKeys                   Name-Value-Pairs
+    ///      - ProtectedEventLogging  { EnableProtectedEventLogging (0 or 1); EncryptionCertificate (string[]) }
+    ///
+    /// The JSON representation is in sync with the 'PowerShellPolicies' type. Here is an example:
+    /// {
+    ///   "PowerShellPolicies": {
+    ///     "ScriptExecution": {
+    ///       "ExecutionPolicy": "RemoteSigned"
+    ///     },
+    ///     "ScriptBlockLogging": {
+    ///       "EnableScriptBlockInvocationLogging": true,
+    ///       "EnableScriptBlockLogging": false
+    ///     },
+    ///     "ProtectedEventLogging": {
+    ///       "EnableProtectedEventLogging": false,
+    ///       "EncryptionCertificate": [
+    ///         "Joe"
+    ///       ]
+    ///     },
+    ///     "Transcription": {
+    ///       "EnableTranscripting": true,
+    ///       "EnableInvocationHeader": true,
+    ///       "OutputDirectory": "c:\tmp"
+    ///     },
+    ///     "UpdatableHelp": {
+    ///       "DefaultSourcePath": "f:\temp"
+    ///     },
+    ///     "ConsoleSessionConfiguration": {
+    ///       "EnableConsoleSessionConfiguration": true,
+    ///       "ConsoleSessionConfigurationName": "name"
+    ///     }
+    ///   }
+    /// }
+    /// </summary>
+    internal sealed class PowerShellPolicies
+    {
+        public ScriptExecution ScriptExecution { get; set; }
+        public ScriptBlockLogging ScriptBlockLogging { get; set; }
+        public ModuleLogging ModuleLogging { get; set; }
+        public ProtectedEventLogging ProtectedEventLogging { get; set; }
+        public Transcription Transcription { get; set; }
+        public UpdatableHelp UpdatableHelp { get; set; }
+        public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
+    }
+
+    internal abstract class PolicyBase { }
+
+    /// <summary>
+    /// Setting about ScriptExecution
+    /// </summary>
+    internal sealed class ScriptExecution : PolicyBase
+    {
+        public string ExecutionPolicy { get; set; }
+        public bool? EnableScripts { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about ScriptBlockLogging
+    /// </summary>
+    internal sealed class ScriptBlockLogging : PolicyBase
+    {
+        public bool? EnableScriptBlockInvocationLogging { get; set; }
+        public bool? EnableScriptBlockLogging { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about ModuleLogging
+    /// </summary>
+    internal sealed class ModuleLogging : PolicyBase
+    {
+        public bool? EnableModuleLogging { get; set; }
+        public string[] ModuleNames { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about Transcription
+    /// </summary>
+    internal sealed class Transcription : PolicyBase
+    {
+        public bool? EnableTranscripting { get; set; }
+        public bool? EnableInvocationHeader { get; set; }
+        public string OutputDirectory { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about UpdatableHelp
+    /// </summary>
+    internal sealed class UpdatableHelp : PolicyBase
+    {
+        public string DefaultSourcePath { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about ConsoleSessionConfiguration
+    /// </summary>
+    internal sealed class ConsoleSessionConfiguration : PolicyBase
+    {
+        public bool? EnableConsoleSessionConfiguration { get; set; }
+        public string ConsoleSessionConfigurationName { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about ProtectedEventLogging
+    /// </summary>
+    internal sealed class ProtectedEventLogging : PolicyBase
+    {
+        public bool? EnableProtectedEventLogging { get; set; }
+        public string[] EncryptionCertificate { get; set; }
+    }
+
+    #endregion
+}

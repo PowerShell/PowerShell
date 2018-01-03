@@ -142,7 +142,6 @@ namespace System.Management.Automation.Internal
             throw new PlatformNotSupportedException();
 #else
             string executionPolicy = "Restricted";
-            string preferenceKey = Utils.GetRegistryConfigurationPath(shellId);
 
             switch (policy)
             {
@@ -175,12 +174,11 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.ConfigScope.CurrentUser, shellId);
-                        CleanKeyParents(Registry.CurrentUser, preferenceKey);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.CurrentUser, shellId);
                     }
                     else
                     {
-                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.ConfigScope.CurrentUser, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.CurrentUser, shellId, executionPolicy);
                     }
                     break;
                 }
@@ -190,61 +188,16 @@ namespace System.Management.Automation.Internal
                     // They want to remove it
                     if (policy == ExecutionPolicy.Undefined)
                     {
-                        PowerShellConfig.Instance.RemoveExecutionPolicy(PowerShellConfig.ConfigScope.SystemWide, shellId);
-                        CleanKeyParents(Registry.LocalMachine, preferenceKey);
+                        PowerShellConfig.Instance.RemoveExecutionPolicy(ConfigScope.SystemWide, shellId);
                     }
                     else
                     {
-                        PowerShellConfig.Instance.SetExecutionPolicy(PowerShellConfig.ConfigScope.SystemWide, shellId, executionPolicy);
+                        PowerShellConfig.Instance.SetExecutionPolicy(ConfigScope.SystemWide, shellId, executionPolicy);
                     }
                     break;
                 }
             }
 #endif
-        }
-
-        // Clean up the parents of a registry key as long as they
-        // contain at most a single child
-        private static void CleanKeyParents(RegistryKey baseKey, string keyPath)
-        {
-#if CORECLR
-            if (!Platform.IsInbox)
-                return;
-#endif
-            using (RegistryKey key = baseKey.OpenSubKey(keyPath, true))
-            {
-                // Verify the child key has no children
-                if ((key == null) || ((key.ValueCount == 0) && (key.SubKeyCount == 0)))
-                {
-                    // If so, split the key into its path elements
-                    string[] parentKeys = keyPath.Split(Utils.Separators.Backslash);
-
-                    // Verify we aren't traveling into SOFTWARE\Microsoft
-                    if (parentKeys.Length <= 2)
-                        return;
-
-                    string currentItem = parentKeys[parentKeys.Length - 1];
-
-                    // Figure out the parent key name
-                    string parentKeyPath = keyPath.Remove(keyPath.Length - currentItem.Length - 1);
-
-                    // Open the parent, and clear the child key
-                    if (key != null)
-                    {
-                        using (RegistryKey parentKey = baseKey.OpenSubKey(parentKeyPath, true))
-                        {
-                            parentKey.DeleteSubKey(currentItem, true);
-                        }
-                    }
-
-                    // Now, process the parent key
-                    CleanKeyParents(baseKey, parentKeyPath);
-                }
-                else
-                {
-                    return;
-                }
-            }
         }
 
         internal static ExecutionPolicy GetExecutionPolicy(string shellId)
@@ -557,41 +510,31 @@ namespace System.Management.Automation.Internal
         /// <returns>NULL if it is not defined at this level</returns>
         private static string GetGroupPolicyValue(string shellId, ExecutionPolicyScope scope)
         {
-            RegistryKey[] scopeKey = null;
+            ConfigScope[] scopeKey = null;
 
             switch (scope)
             {
                 case ExecutionPolicyScope.MachinePolicy:
-                    {
-                        scopeKey = Utils.RegLocalMachine;
-                    }; break;
+                    scopeKey = Utils.SystemWideOnlyConfig;
+                    break;
 
                 case ExecutionPolicyScope.UserPolicy:
-                    {
-                        scopeKey = Utils.RegCurrentUser;
-                    }; break;
+                    scopeKey = Utils.CurrentUserOnlyConfig;
+                    break;
             }
 
-            Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting(".", scopeKey);
-            if (groupPolicySettings == null)
+            var scriptExecutionSetting = Utils.GetPolicySetting<ScriptExecution>(scopeKey);
+            if (scriptExecutionSetting != null)
             {
-                return null;
-            }
-
-            Object enableScriptsValue = null;
-            if (groupPolicySettings.TryGetValue("EnableScripts", out enableScriptsValue))
-            {
-                if (String.Equals(enableScriptsValue.ToString(), "0", StringComparison.OrdinalIgnoreCase))
+                if (scriptExecutionSetting.EnableScripts == false)
                 {
+                    // Script execution is explicitly disabled
                     return "Restricted";
                 }
-                else if (String.Equals(enableScriptsValue.ToString(), "1", StringComparison.OrdinalIgnoreCase))
+                else if (scriptExecutionSetting.EnableScripts == true)
                 {
-                    Object executionPolicyValue = null;
-                    if (groupPolicySettings.TryGetValue("ExecutionPolicy", out executionPolicyValue))
-                    {
-                        return executionPolicyValue.ToString();
-                    }
+                    // Script execution is explicitly enabled
+                    return scriptExecutionSetting.ExecutionPolicy;
                 }
             }
 
@@ -609,11 +552,11 @@ namespace System.Management.Automation.Internal
             {
                 // 1: Look up the current-user preference
                 case ExecutionPolicyScope.CurrentUser:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.ConfigScope.CurrentUser, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.CurrentUser, shellId);
 
                 // 2: Look up the system-wide preference
                 case ExecutionPolicyScope.LocalMachine:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(PowerShellConfig.ConfigScope.SystemWide, shellId);
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.SystemWide, shellId);
             }
 
             return null;

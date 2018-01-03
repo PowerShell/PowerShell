@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using System.Security;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Reflection;
@@ -233,8 +234,7 @@ namespace System.Management.Automation
         }
 #endif
 
-        internal static string DefaultPowerShellAppBase { get; } = GetApplicationBase(DefaultPowerShellShellID);
-
+        internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
         internal static string GetApplicationBase(string shellId)
         {
             // Use the location of SMA.dll as the application base.
@@ -497,125 +497,49 @@ namespace System.Management.Automation
         /// </summary>
         internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
-        internal static string GetRegistryConfigurationPrefix()
+        internal readonly static ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.SystemWide };
+        internal readonly static ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
+        internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.SystemWide, ConfigScope.CurrentUser };
+        internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.SystemWide };
+
+        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPolicies = new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
+        internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase
         {
-            // For 3.0 PowerShell, we still use "1" as the registry version key for
-            // Snapin and Custom shell lookup/discovery.
-            // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
-            // related data like ApplicationBase etc.
-            return "SOFTWARE\\Microsoft\\PowerShell\\" + PSVersionInfo.RegistryVersion1Key + "\\ShellIds";
-        }
-
-        internal static string GetRegistryConfigurationPath(string shellID)
-        {
-            return GetRegistryConfigurationPrefix() + "\\" + shellID;
-        }
-
-        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException'
-#if UNIX
-        internal static RegistryKey[] RegLocalMachine = null;
-        internal static RegistryKey[] RegCurrentUser = null;
-        internal static RegistryKey[] RegLocalMachineThenCurrentUser = null;
-        internal static RegistryKey[] RegCurrentUserThenLocalMachine = null;
-#else
-        internal static RegistryKey[] RegLocalMachine = new[] { Registry.LocalMachine };
-        internal static RegistryKey[] RegCurrentUser = new[] { Registry.CurrentUser };
-        internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] { Registry.LocalMachine, Registry.CurrentUser };
-        internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] { Registry.CurrentUser, Registry.LocalMachine };
-#endif
-
-        internal static Dictionary<string, object> GetGroupPolicySetting(string settingName, RegistryKey[] preferenceOrder)
-        {
-            string groupPolicyBase = "Software\\Policies\\Microsoft\\Windows\\PowerShell";
-            return GetGroupPolicySetting(groupPolicyBase, settingName, preferenceOrder);
-        }
-
-        // We use a static to avoid creating "extra garbage."
-        private static Dictionary<string, object> s_emptyDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
-        internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
-        {
-#if UNIX
-            return s_emptyDictionary;
-#else
-            lock (s_cachedGroupPolicySettings)
+            foreach (ConfigScope scope in preferenceOrder)
             {
-                // Return cached information, if we have it
-                Dictionary<string, object> settings;
-                if ((s_cachedGroupPolicySettings.TryGetValue(settingName, out settings)) &&
-                    !InternalTestHooks.BypassGroupPolicyCaching)
+                PowerShellPolicies policies;
+                if (InternalTestHooks.BypassGroupPolicyCaching)
                 {
-                    return settings;
+                    policies = PowerShellConfig.Instance.GetPowerShellPolicies(scope);
                 }
-
-                if (!String.Equals(".", settingName, StringComparison.OrdinalIgnoreCase))
+                else if (!s_cachedPolicies.TryGetValue(scope, out policies))
                 {
-                    groupPolicyBase += "\\" + settingName;
-                }
-
-                settings = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (RegistryKey searchKey in preferenceOrder)
-                {
-                    try
+                    // Use lock here to reduce the contention on accessing the configuration file
+                    lock (s_cachedPolicies)
                     {
-                        // Look up the machine-wide group policy
-                        using (RegistryKey key = searchKey.OpenSubKey(groupPolicyBase))
-                        {
-                            if (key != null)
-                            {
-                                foreach (string subkeyName in key.GetValueNames())
-                                {
-                                    // A null or empty subkey name string corresponds to a (Default) key.
-                                    // If it is null, make it an empty string which the Dictionary can handle.
-                                    string keyName = subkeyName ?? string.Empty;
-
-                                    settings[keyName] = key.GetValue(keyName);
-                                }
-
-                                foreach (string subkeyName in key.GetSubKeyNames())
-                                {
-                                    // A null or empty subkey name string corresponds to a (Default) key.
-                                    // If it is null, make it an empty string which the Dictionary can handle.
-                                    string keyName = subkeyName ?? string.Empty;
-
-                                    using (RegistryKey subkey = key.OpenSubKey(keyName))
-                                    {
-                                        if (subkey != null)
-                                        {
-                                            settings[keyName] = subkey.GetValueNames();
-                                        }
-                                    }
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-                    catch (System.Security.SecurityException)
-                    {
-                        // User doesn't have access to open group policy key
+                        policies = s_cachedPolicies.GetOrAdd(scope, PowerShellConfig.Instance.GetPowerShellPolicies);
                     }
                 }
 
-                // No group policy settings, then return null
-                if (settings.Count == 0)
+                if (policies != null)
                 {
-                    settings = null;
+                    PolicyBase result = null;
+                    switch (typeof(T).Name)
+                    {
+                        case nameof(ScriptExecution):             result = policies.ScriptExecution; break;
+                        case nameof(ScriptBlockLogging):          result = policies.ScriptBlockLogging; break;
+                        case nameof(ModuleLogging):               result = policies.ModuleLogging; break;
+                        case nameof(ProtectedEventLogging):       result = policies.ProtectedEventLogging; break;
+                        case nameof(Transcription):               result = policies.Transcription; break;
+                        case nameof(UpdatableHelp):               result = policies.UpdatableHelp; break;
+                        case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
+                        default: Diagnostics.Assert(false, "Unreachable code"); break;
+                    }
+                    if (result != null) { return (T) result; }
                 }
-
-                // Cache the data
-                if (!InternalTestHooks.BypassGroupPolicyCaching)
-                {
-                    s_cachedGroupPolicySettings[settingName] = settings;
-                }
-
-                return settings;
             }
-#endif
+            return null;
         }
-        private static ConcurrentDictionary<string, Dictionary<string, object>> s_cachedGroupPolicySettings =
-            new ConcurrentDictionary<string, Dictionary<string, object>>();
 
         /// <summary>
         /// Scheduled job module name.

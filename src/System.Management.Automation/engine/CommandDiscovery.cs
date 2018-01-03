@@ -1643,59 +1643,6 @@ namespace System.Management.Automation
 
         internal ExecutionContext Context { get; }
 
-        /// <summary>
-        /// Reads the path for the appropriate shellID from the registry.
-        /// </summary>
-        ///
-        /// <param name="shellID">
-        /// The ID of the shell to retrieve the path for.
-        /// </param>
-        ///
-        /// <returns>
-        /// The path to the shell represented by the shellID.
-        /// </returns>
-        ///
-        /// <remarks>
-        /// The shellID must be registered in the Windows Registry in either
-        /// the HKEY_CURRENT_USER or HKEY_LOCAL_MACHINE hive under
-        /// Software/Microsoft/MSH/&lt;ShellID&gt; and are searched in that order.
-        /// </remarks>
-        ///
-        internal static string GetShellPathFromRegistry(string shellID)
-        {
-            string result = null;
-
-#if !UNIX
-            try
-            {
-                RegistryKey shellKey = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPath(shellID));
-                if (shellKey != null)
-                {
-                    // verify the value kind as a string
-                    RegistryValueKind kind = shellKey.GetValueKind("path");
-
-                    if (kind == RegistryValueKind.ExpandString ||
-                        kind == RegistryValueKind.String)
-                    {
-                        result = shellKey.GetValue("path") as string;
-                    }
-                }
-            }
-            // Ignore these exceptions and return an empty or null result
-            catch (SecurityException)
-            {
-            }
-            catch (IOException)
-            {
-            }
-            catch (ArgumentException)
-            {
-            }
-#endif
-
-            return result;
-        }
-
         internal static PSModuleAutoLoadingPreference GetCommandDiscoveryPreference(ExecutionContext context, VariablePath variablePath, string environmentVariable)
         {
             Dbg.Assert(context != null, "context cannot be Null");

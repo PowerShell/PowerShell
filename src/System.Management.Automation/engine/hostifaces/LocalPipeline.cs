@@ -269,7 +269,7 @@ namespace System.Management.Automation.Runspaces
             RegistryKey key;
             try
             {
-                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());
+                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\PowerShell\\1\\ShellIds");
             }
             catch (System.Security.SecurityException)
             {

@@ -1666,14 +1666,9 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
-            try
-            {
-                return PowerShellConfig.Instance.GetDefaultSourcePath();
-            }
-            catch (SecurityException)
-            {
-                return null;
-            }
+            var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
+            string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;
+            return String.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
         }
 
         /// <summary>
