@@ -14,7 +14,7 @@ Describe "Adapter Tests" -tags "CI" {
                 }
             }
 
-            $psmemberset = new-object System.Management.Automation.PSMemberSet 'setname1'
+            $psmemberset = New-Object System.Management.Automation.PSMemberSet 'setname1'
             $psmemberset | Add-Member -MemberType NoteProperty -Name NoteName -Value 1
             $testmethod = [TestCodeMethodClass].GetMethod("TestCodeMethod")
             $psmemberset | Add-Member -MemberType CodeMethod -Name TestCodeMethod -Value $testmethod
@@ -23,42 +23,43 @@ Describe "Adapter Tests" -tags "CI" {
             $document.LoadXml("<book ISBN='12345'><title>Pride And Prejudice</title><price>19.95</price></book>")
             $doc = $document.DocumentElement
         }
-        It "can get a Dotnet parameterized property" {
+
+        It "Can get a Dotnet parameterized property" {
             $col  = $pso.psobject.Properties.Match("*")
             $prop = $col.psobject.Members["Item"]
             $prop | Should Not BeNullOrEmpty
-            $prop.IsGettable | Should be $true
-            $prop.IsSettable | Should be $false
-            $prop.TypeNameOfValue | Should be "System.Management.Automation.PSPropertyInfo"
-            $prop.Invoke("ProcessName").Value | Should be $processName
+            $prop.IsGettable | Should Be $true
+            $prop.IsSettable | Should Be $false
+            $prop.TypeNameOfValue | Should Be "System.Management.Automation.PSPropertyInfo"
+            $prop.Invoke("ProcessName").Value | Should Be $processName
         }
 
-        It "can get a property" {
-            $pso.psobject.Properties["ProcessName"] | should Not BeNullOrEmpty
+        It "Can get a property" {
+            $pso.psobject.Properties["ProcessName"] | Should Not BeNullOrEmpty
         }
 
         It "Can access all properties" {
             $props = $pso.psobject.Properties.Match("*")
-            $props | should Not BeNullOrEmpty
-            $props["ProcessName"].Value |Should be $processName
+            $props | Should Not BeNullOrEmpty
+            $props["ProcessName"].Value | Should Be $processName
         }
 
         It "Can invoke a method" {
             $method = $pso.psobject.Methods["ToString"]
-            $method.Invoke()  | should be ($pso.ToString())
+            $method.Invoke() | Should Be ($pso.ToString())
         }
 
         It "Access a Method via MemberSet adapter" {
             $prop = $psmemberset.psobject.Members["TestCodeMethod"]
-            $prop.Invoke(2) | Should be 1
+            $prop.Invoke(2) | Should Be 1
         }
 
         It "Access misc properties via MemberSet adapter" {
             $prop  = $psmemberset.psobject.Properties["NoteName"]
             $prop | Should Not BeNullOrEmpty
-            $prop.IsGettable | Should be $true
-            $prop.IsSettable | Should be $true
-            $prop.TypeNameOfValue | Should be "System.Int32"
+            $prop.IsGettable | Should Be $true
+            $prop.IsSettable | Should Be $true
+            $prop.TypeNameOfValue | Should Be "System.Int32"
         }
 
         It "Access all the properties via XmlAdapter" {
@@ -73,7 +74,7 @@ Describe "Adapter Tests" -tags "CI" {
             $prop.Value | Should Be "19.95"
             $prop.IsGettable | Should Not BeNullOrEmpty
             $prop.IsSettable | Should Not BeNullOrEmpty
-            $prop.TypeNameOfValue | Should be "System.String"
+            $prop.TypeNameOfValue | Should Be "System.String"
         }
 
         It "Call to string on a XmlNode object" {
@@ -105,9 +106,9 @@ Describe "Adapter Tests" -tags "CI" {
                 $o = [TestCodeMethodInvokationWithVoidReturn]::new()
                 $o.CallCounter | Should Be 0
                 $o.VoidMethod()
-                $o.CallCounter | Should be 1
+                $o.CallCounter | Should Be 1
 
-                $o.IntMethod() | Should be 1
+                $o.IntMethod() | Should Be 1
             }
             finally {
                 Remove-TypeData TestCodeMethodInvokationWithVoidReturn
@@ -127,8 +128,9 @@ Describe "Adapter Tests" -tags "CI" {
             (10).Length | Should Be 1
 
             ("a").Count | Should Be 1
-            # The Length property exists for strings, so we skip the test in the context.
-            # ("a").Length | Should Be 1
+            # The Length property exists in String type, so here we check that we don't break strings.
+            ("a").Length | Should Be 1
+            ("aa").Length | Should Be 2
 
             ([psobject] @{ foo = 'bar' }).Count | Should Be 1
             ([psobject] @{ foo = 'bar' }).Length | Should Be 1
@@ -162,7 +164,7 @@ Describe "Adapter Tests" -tags "CI" {
             $x = 5
             $x.ForEach({$_}) | Should Be 5
             (5).ForEach({$_}) | Should Be 5
-            ("a").ForEach({$_}) | Should Be "a"
+            ("a").ForEach({$_}) | Should BeExactly "a"
 
             ([pscustomobject]@{ foo = 'bar' }).ForEach({1}) | Should Be 1
 
