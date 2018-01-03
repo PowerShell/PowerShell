@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell
                 var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     formattedBanner,
-                    ManagedEntranceStrings.ShellHelp,
+                    ManagedEntranceStrings.ShortShellHelp,
                     args);
             }
             catch (System.Management.Automation.Host.HostException e)
