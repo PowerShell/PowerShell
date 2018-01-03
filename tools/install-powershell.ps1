@@ -153,6 +153,7 @@ try {
             Copy-Item $_.fullname -Destination $DestinationFilePath
         }
     } else {
+        $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
         Move-Item -Path $contentPath -Destination $Destination
     }
 
@@ -173,11 +174,11 @@ try {
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
     if ($AddToPath) {
-        if ($IsWinEnv -and (-not $env:Path.Contains($Destination))) {
-            ## Add to the User scope 'Path' environment variable
-            $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
-            $userPath = $Destination + [System.IO.Path]::PathSeparator + $userPath
-            [System.Environment]::SetEnvironmentVariable("Path", $userPath, "User")
+        if ($IsWinEnv -and (-not [System.Environment]::GetEnvironmentVariable("Path", "Machine").Contains($Destination))) {
+            ## Add to the Machine scope 'Path' environment variable
+            $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+            $machinePath = $Destination + [System.IO.Path]::PathSeparator + $machinePath
+            [System.Environment]::SetEnvironmentVariable("Path", $machinePath, "Machine")
             Write-Verbose "'$Destination' is added to the Path" -Verbose
         }
 

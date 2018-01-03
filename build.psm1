@@ -2148,9 +2148,9 @@ function New-MSIPackage
     }
     [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
 
-    $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
-    $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
-    $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
+    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
+    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
+    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
 
     $packageName = $productSemanticVersionWithName
     if ($ProductNameSuffix) {
@@ -2168,6 +2168,9 @@ function New-MSIPackage
     $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
     if (Test-Path $msiLocationPath)
     {
@@ -2179,7 +2182,12 @@ function New-MSIPackage
         $WiXHeatLog   | Out-String | Write-Verbose -Verbose
         $WiXCandleLog | Out-String | Write-Verbose -Verbose
         $WiXLightLog  | Out-String | Write-Verbose -Verbose
-        throw "Failed to create $msiLocationPath"
+        $errorMessage = "Failed to create $msiLocationPath"
+        if ($null -ne $env:CI)
+        {
+           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
+        }
+        throw $errorMessage
     }
 }
 
