@@ -12,7 +12,7 @@
   <?define ProductSemanticVersionWithName = "$(var.ProductName)-$(env.ProductSemanticVersion)"?>
   <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
   <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
-  <!-- Explorer Context submenu entries. The ampersand denotes the keyboard shortcut -->
+  <!-- Explorer context submenu entries. The ampersand denotes the keyboard shortcut. -->
   <?define ExplorerContextMenuDialogText = "Open &here"?>
   <?define ExplorerContextMenuElevatedDialogText = "Open here as &Administrator"?>
   <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
@@ -125,25 +125,25 @@
               <Condition>EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(env.ProductSemanticVersion)">
-                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ProductName) $(env.ProductSemanticVersion)"/>
+                <RegistryValue Type="string" Name="MUIVerb" Value="&amp;$(var.ProductName) $(env.ProductSemanticVersion)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)"/>
               </RegistryKey>
               <!-- When clicking on Drive in Explorer -->
               <RegistryKey Root="HKCR" Key="Drive\shell\$(var.ProductName)$(env.ProductSemanticVersion)">
-                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ProductName) $(env.ProductSemanticVersion)"/>
+                <RegistryValue Type="string" Name="MUIVerb" Value="&amp;$(var.ProductName) $(env.ProductSemanticVersion)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)"/>
               </RegistryKey>
               <!-- When clicking on Desktop background in Explorer -->
               <RegistryKey Root="HKCR" Key="DesktopBackground\shell\$(var.ProductName)$(env.ProductSemanticVersion)">
-                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ProductName) $(env.ProductSemanticVersion)"/>
+                <RegistryValue Type="string" Name="MUIVerb" Value="&amp;$(var.ProductName) $(env.ProductSemanticVersion)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)"/>
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\shell\$(var.ProductName)$(env.ProductSemanticVersion)">
-                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ProductName) $(env.ProductSemanticVersion)"/>
+                <RegistryValue Type="string" Name="MUIVerb" Value="&amp;$(var.ProductName) $(env.ProductSemanticVersion)"/>
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)"/>
               </RegistryKey>
