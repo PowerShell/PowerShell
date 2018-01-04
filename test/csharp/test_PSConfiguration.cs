@@ -33,6 +33,12 @@ namespace PSTests.Sequential
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
             currentUserConfigDirectory = Utils.GetUserConfigurationDirectory();
 
+            if (!Directory.Exists(currentUserConfigDirectory))
+            {
+                // Create the CurrentUser config directory if it doesn't exist
+                Directory.CreateDirectory(currentUserConfigDirectory);
+            }
+
             systemWideConfigFile = Path.Combine(systemWideConfigDirectory, "PowerShellProperties.json");
             currentUserConfigFile = Path.Combine(currentUserConfigDirectory, "PowerShellProperties.json");
 
