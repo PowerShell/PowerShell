@@ -2602,9 +2602,19 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     ErrorCode = WSManNativeApi.WSManInitialize(WSManNativeApi.WSMAN_FLAG_REQUESTED_API_VERSION_1_1, ref _handle);
                 }
-                catch (DllNotFoundException)
+                catch (DllNotFoundException ex)
                 {
-                    throw new PSRemotingTransportException(RemotingErrorIdStrings.WSManClientDllNotAvailable);
+                    PSEtwLog.LogOperationalError(
+                        PSEventId.TransportError,
+                        PSOpcode.Open,
+                        PSTask.None,
+                        PSKeyword.UseAlwaysOperational,
+                        "WSManAPIDataCommon.ctor",
+                        "WSManInitialize",
+                        ex.HResult.ToString(CultureInfo.InvariantCulture),
+                        ex.Message,
+                        ex.StackTrace);
+                    throw new PSRemotingTransportException(RemotingErrorIdStrings.WSManClientDllNotAvailable, ex);
                 }
 
                 // input / output streams common to all connections
