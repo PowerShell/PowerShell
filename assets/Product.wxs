@@ -122,7 +122,7 @@
             <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
             <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}">
-              <Condition>EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
+              <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(env.ProductSemanticVersion)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="&amp;$(var.ProductName) $(env.ProductSemanticVersion)"/>
@@ -185,7 +185,7 @@
  <UI>
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
     <!-- If the checkbox is defined first, then the checkbox can be ticked and unticked using the spacebar -->
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextMenuDialogText)' context menus to Explorer"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
