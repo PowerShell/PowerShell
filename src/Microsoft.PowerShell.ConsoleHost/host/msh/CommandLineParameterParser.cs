@@ -394,6 +394,10 @@ namespace Microsoft.PowerShell
             Dbg.Assert(_helpText != null, "_helpText should not be null");
             _hostUI.WriteLine("");
             _hostUI.Write(_helpText);
+            if (_showExtendedHelp)
+            {
+                _hostUI.Write(ManagedEntranceStrings.ExtendedHelp);
+            }
             _hostUI.WriteLine("");
         }
 
@@ -536,6 +540,7 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
+                    _showExtendedHelp = true;
                     _abortStartup = true;
                 }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
@@ -955,7 +960,7 @@ namespace Microsoft.PowerShell
                     }
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
-                        showBanner: false);
+                        showHelp: true);
                     return false;
                 }
 
@@ -1164,6 +1169,7 @@ namespace Microsoft.PowerShell
         private string _configurationName;
         private PSHostUserInterface _hostUI;
         private bool _showHelp;
+        private bool _showExtendedHelp;
         private bool _showBanner = true;
         private bool _noInteractive;
         private string _bannerText;
