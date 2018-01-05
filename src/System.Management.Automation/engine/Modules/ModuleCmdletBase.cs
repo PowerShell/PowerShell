@@ -4756,10 +4756,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (moduleLogging.EnableModuleLogging == false)
                 {
-                    return ModuleLoggingGroupPolicyStatus.Disabled;
+                    status = ModuleLoggingGroupPolicyStatus.Disabled;
                 }
-
-                if (moduleLogging.EnableModuleLogging == true)
+                else if (moduleLogging.EnableModuleLogging == true)
                 {
                     status = ModuleLoggingGroupPolicyStatus.Enabled;
                     moduleNames = moduleLogging.ModuleNames;
