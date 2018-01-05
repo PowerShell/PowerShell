@@ -502,8 +502,26 @@ namespace System.Management.Automation
         internal readonly static ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.SystemWide, ConfigScope.CurrentUser };
         internal readonly static ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.SystemWide };
 
-        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPolicies = new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
-        internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase
+        internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
+        {
+            T policy = null;
+#if !UNIX
+            // On Windows, group policy settings from registry take precedence.
+            // If the requested policy is not defined in registry, we query the configuration file. 
+            policy = GetPolicySettingFromGPO<T>(preferenceOrder);
+            if (policy != null) { return policy; }
+#endif
+            policy = GetPolicySettingFromConfigFile<T>(preferenceOrder);
+            return policy;
+        }
+
+        private readonly static ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
+            new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
+
+        /// <summary>
+        /// Get a specific kind of policy setting from the configuration file.
+        /// </summary>
+        internal static T GetPolicySettingFromConfigFile<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             foreach (ConfigScope scope in preferenceOrder)
             {
@@ -512,12 +530,12 @@ namespace System.Management.Automation
                 {
                     policies = PowerShellConfig.Instance.GetPowerShellPolicies(scope);
                 }
-                else if (!s_cachedPolicies.TryGetValue(scope, out policies))
+                else if (!s_cachedPoliciesFromConfigFile.TryGetValue(scope, out policies))
                 {
                     // Use lock here to reduce the contention on accessing the configuration file
-                    lock (s_cachedPolicies)
+                    lock (s_cachedPoliciesFromConfigFile)
                     {
-                        policies = s_cachedPolicies.GetOrAdd(scope, PowerShellConfig.Instance.GetPowerShellPolicies);
+                        policies = s_cachedPoliciesFromConfigFile.GetOrAdd(scope, PowerShellConfig.Instance.GetPowerShellPolicies);
                     }
                 }
 
@@ -538,8 +556,148 @@ namespace System.Management.Automation
                     if (result != null) { return (T) result; }
                 }
             }
+
             return null;
         }
+
+#if !UNIX
+        private static readonly Dictionary<string, string> GroupPolicyKeys = new Dictionary<string, string>
+        {
+            {nameof(ScriptExecution), @"Software\Policies\Microsoft\PowerShellCore"},
+            {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging"},
+            {nameof(ModuleLogging), @"Software\Policies\Microsoft\PowerShellCore\ModuleLogging"},
+            {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
+            {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
+            {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
+            {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
+        };
+        private readonly static ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
+            new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
+
+        /// <summary>
+        /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
+        /// </summary>
+        private static T GetPolicySettingFromGPOImpl<T>(ConfigScope scope) where T : PolicyBase, new()
+        {
+            Type tType = typeof(T);
+            // SystemWide scope means 'LocalMachine' root key when query from registry
+            RegistryKey rootKey = (scope == ConfigScope.SystemWide) ? Registry.LocalMachine : Registry.CurrentUser;
+
+            GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
+            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+
+            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            {
+                // If the corresponding GPO key doesn't exist, return null
+                if (gpoKey == null) { return null; }
+
+                // The corresponding GPO key exists, then create an instance of T
+                // and populate its properties with the settings
+                object tInstance = Activator.CreateInstance(tType, nonPublic: true);
+                var properties = tType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+                string[] valueNames = gpoKey.GetValueNames();
+                string[] subKeyNames = gpoKey.GetSubKeyNames();
+                var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
+                var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
+
+                foreach (var property in properties)
+                {
+                    string settingName = property.Name;
+                    object rawRegistryValue = null;
+
+                    // Get the raw value from registry.
+                    if (valueNameSet != null && valueNameSet.Contains(settingName))
+                    {
+                        rawRegistryValue = gpoKey.GetValue(settingName);
+                    }
+                    else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
+                    {
+                        using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
+                        {
+                            if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
+                        }
+                    }
+
+                    // Get the actual property value based on the property type.
+                    // If the final property value is not null, then set the property.
+                    if (rawRegistryValue != null)
+                    {
+                        Type propertyType = property.PropertyType;
+                        object propertyValue = null;
+
+                        switch (propertyType)
+                        {
+                            case var _ when propertyType == typeof(bool?):
+                                if (rawRegistryValue is int rawIntValue)
+                                {
+                                    if (rawIntValue == 1) { propertyValue = true; }
+                                    else if (rawIntValue == 0) { propertyValue = false; }
+                                }
+                                break;
+                            case var _ when propertyType == typeof(string):
+                                if (rawRegistryValue is string rawStringValue)
+                                {
+                                    propertyValue = rawStringValue;
+                                }
+                                break;
+                            case var _ when propertyType == typeof(string[]):
+                                if (rawRegistryValue is string[] rawStringArrayValue)
+                                {
+                                    propertyValue = rawStringArrayValue;
+                                }
+                                else if (rawRegistryValue is string stringValue)
+                                {
+                                    propertyValue = new string[] { stringValue };
+                                }
+                                break;
+                            default:
+                                Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
+                                break;
+                        }
+
+                        // Set the property if the value is not null
+                        if (propertyValue != null)
+                        {
+                            property.SetValue(tInstance, propertyValue);
+                        }
+                    }
+                }
+
+                return (T) tInstance;
+            }
+        }
+
+        /// <summary>
+        /// Get a specific kind of policy setting from the group policy registry key.
+        /// </summary>
+        internal static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
+        {
+            PolicyBase policy = null;
+            foreach (ConfigScope scope in preferenceOrder)
+            {
+                if (InternalTestHooks.BypassGroupPolicyCaching)
+                {
+                    policy = GetPolicySettingFromGPOImpl<T>(scope);
+                }
+                else
+                {
+                    var key = Tuple.Create(scope, typeof(T).Name);
+                    if (!s_cachedPoliciesFromRegistry.TryGetValue(key, out policy))
+                    {
+                        lock (s_cachedPoliciesFromRegistry)
+                        {
+                            policy = s_cachedPoliciesFromRegistry.GetOrAdd(key, tuple => GetPolicySettingFromGPOImpl<T>(tuple.Item1));
+                        }
+                    }
+                }
+
+                if (policy != null) { return (T) policy; }
+            }
+
+            return null;
+        }
+#endif
 
         /// <summary>
         /// Scheduled job module name.

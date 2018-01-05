@@ -595,6 +595,7 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class UpdatableHelp : PolicyBase
     {
+        public bool? EnableUpdateHelpDefaultSourcePath { get; set; }
         public string DefaultSourcePath { get; set; }
     }
 
