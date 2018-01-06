@@ -521,7 +521,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a specific kind of policy setting from the configuration file.
         /// </summary>
-        internal static T GetPolicySettingFromConfigFile<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
+        private static T GetPolicySettingFromConfigFile<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             foreach (ConfigScope scope in preferenceOrder)
             {
@@ -671,7 +671,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a specific kind of policy setting from the group policy registry key.
         /// </summary>
-        internal static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
+        private static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             PolicyBase policy = null;
             foreach (ConfigScope scope in preferenceOrder)
