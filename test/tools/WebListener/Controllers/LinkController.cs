@@ -15,24 +15,19 @@ namespace mvc.Controllers
     {
         public JsonResult Index()
         {
-            StringValues maxLinksSV;
-            int maxLinks;
-            if(!Request.Query.TryGetValue("maxlinks", out maxLinksSV) || !Int32.TryParse(maxLinksSV.FirstOrDefault(), out maxLinks) || maxLinks < 1)
+            if (!Request.Query.TryGetValue("maxlinks", out StringValues maxLinksSV) || !Int32.TryParse(maxLinksSV.FirstOrDefault(), out int maxLinks) || maxLinks < 1)
             {
                 maxLinks = 3;
             }
 
-            StringValues linkNumberSV;
-            int linkNumber;
-            if(!Request.Query.TryGetValue("linknumber", out linkNumberSV) || !Int32.TryParse(linkNumberSV.FirstOrDefault(), out linkNumber) || linkNumber < 1)
+            if (!Request.Query.TryGetValue("linknumber", out StringValues linkNumberSV) || !Int32.TryParse(linkNumberSV.FirstOrDefault(), out int linkNumber) || linkNumber < 1)
             {
                 linkNumber = 1;
             }
 
             string baseUri = Regex.Replace(UriHelper.GetDisplayUrl(Request), "\\?.*", String.Empty);
 
-            StringValues typeSV;
-            string type = Request.Query.TryGetValue("type",out typeSV) ? typeSV.FirstOrDefault() : "default";
+            string type = Request.Query.TryGetValue("type", out StringValues typeSV) ? typeSV.FirstOrDefault() : "default";
 
             var linkList = new List<String>();
             if (maxLinks > 1 && linkNumber > 1)
@@ -40,7 +35,7 @@ namespace mvc.Controllers
                 linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber - 1, type: type, rel: "prev"));
             }
             linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: maxLinks, type: type, rel: "last"));
-            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: 1, type: type, rel:"first"));
+            linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: 1, type: type, rel: "first"));
             linkList.Add(GetLink(baseUri: baseUri, maxLinks: maxLinks, linkNumber: linkNumber, type: type, rel: "self"));
 
             bool sendMultipleHeaders = false;
@@ -87,9 +82,9 @@ namespace mvc.Controllers
             getController.ControllerContext = this.ControllerContext;
             var result = getController.Index();
             var output = result.Value as Hashtable;
-            output.Add("linknumber",linkNumber);
-            output.Add("maxlinks",maxLinks);
-            output.Add("type",type.FirstOrDefault());
+            output.Add("linknumber", linkNumber);
+            output.Add("maxlinks", maxLinks);
+            output.Add("type", type.FirstOrDefault());
 
             return result;
         }
