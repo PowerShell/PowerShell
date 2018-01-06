@@ -29,7 +29,7 @@ namespace System.Management.Automation.Configuration
 
         private string psHomeConfigDirectory;
         private string appDataConfigDirectory;
-        private const string configFileName = "PowerShellProperties.json";
+        private const string configFileName = "powershell.config.json";
 
         /// <summary>
         /// Lock used to enable multiple concurrent readers and singular write locks within a single process.

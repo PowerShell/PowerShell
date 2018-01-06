@@ -12,6 +12,7 @@ namespace PSTests.Sequential
 {
     public class PowerShellPolicyFixture : IDisposable
     {
+        private const string configFileName = "powershell.config.json";
         private readonly string systemWideConfigFile;
         private readonly string currentUserConfigFile;
 
@@ -39,8 +40,8 @@ namespace PSTests.Sequential
                 Directory.CreateDirectory(currentUserConfigDirectory);
             }
 
-            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, "PowerShellProperties.json");
-            currentUserConfigFile = Path.Combine(currentUserConfigDirectory, "PowerShellProperties.json");
+            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, configFileName);
+            currentUserConfigFile = Path.Combine(currentUserConfigDirectory, configFileName);
 
             if (File.Exists(systemWideConfigFile))
             {
