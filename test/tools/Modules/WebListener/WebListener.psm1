@@ -135,6 +135,7 @@ function Get-WebListenerUrl {
             'Encoding',
             'Get',
             'Home',
+            'Link',
             'Multipart',
             'Patch',
             'Post',

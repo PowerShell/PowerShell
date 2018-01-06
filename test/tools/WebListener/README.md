@@ -265,6 +265,67 @@ Invoke-RestMethod -Uri $uri -Body @{TestField = 'TestValue'}
 }
 ```
 
+### /Link/
+
+Returns Link response headers to test paginated results. The endpoint accepts 3 query items:
+
+* `linknumber` - The current link number. This determines the current page. If not supplied or less than 1, this will be set to 1.
+* `maxlinks` - The maximum number of links. This determines the last page. If not supplied or less than 1, this will be set to 3.
+* `type` - The type of link to return. When not supplied or not in the list below, `default` will be used.
+  * `default` - Does not return any special test links and returns `next` link if one is available.
+  * `norel` - Returns a Link header that does not include the `rel=` portion. Suppresses `next` link.
+  * `nourl` - Returns a Link header that does not include the URI portion. Suppresses `next` link.
+  * `malformed` - Returns a malformed Link header. Suppresses `next` link.
+  * `multiple` - Returns multiple Link headers instead of a single Link header and returns `next` link if one is available.
+
+The body will contain the same results as `/Get/` with the addition of the `type`, `linknumber`, and `maxlinks` for the current page.
+
+```powershell
+$Query = @{
+    linknumber = 1
+    maxlinks = 3
+    type = 'default'
+}
+$Uri =  Get-WebListenerUrl -Test 'Link' -Query $Query
+Invoke-RestMethod -Uri $uri -FollowRelLink -MaximumFollowRelLink 1
+```
+
+Headers:
+
+```none
+HTTP/1.1 200 OK
+Date: Sat, 06 Jan 2018 14:27:36 GMT
+Content-Type: application/json; charset=utf-8
+Server: Kestrel
+Transfer-Encoding: chunked
+Link: <http://localhost:8083/Link/?maxlinks=3&linknumber=3>; rel="last",<http://localhost:8083/Link/?maxlinks=3&linknumber=1>; rel="first",<http://localhost:8083/Link/?maxlinks=3&linknumber=1>; rel="self",<http://localhost:8083/Link/?maxlinks=3&linknumber=2>; rel="next"
+```
+
+Body:
+
+```json
+{
+    "type": "default",
+    "url": "http://localhost:8083/Link/?maxlinks=3&linknumber=1&type=default",
+    "maxlinks": 3,
+    "linknumber": 1,
+    "headers": {
+        "User-Agent": "insomnia/5.12.4",
+        "Accept": "*/*",
+        "Content-Length": "0",
+        "Host": "localhost:8083",
+        "Content-Type": "application/json"
+    },
+    "args": {
+        "linknumber": "1",
+        "maxlinks": "3",
+        "type": "default"
+    },
+    "origin": "127.0.0.1",
+    "method": "GET"
+}
+```
+
 ### /Multipart/
 
 #### GET
