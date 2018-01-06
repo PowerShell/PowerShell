@@ -78,25 +78,27 @@ namespace NativeMsh
         // Note: During successful calls the following values must be freed by the caller:
         //      pwszMonadVersion
         //      pwszRuntimeVersion
-        //      pwzsRegKeyValue
+        //      pwszRegKeyValue
         //
         // The caller must take care to check to see if they must be freed during error scenarios
         // because the function may fail after allocating one or more strings.
         //
+        _Success_(return == 0)
         unsigned int GetRegistryInfo(
-            __deref_out_opt PWSTR * pwszMonadVersion,
+            __out PWSTR * pwszMonadVersion,
             __inout_ecount(1) int * lpMonadMajorVersion,
             int monadMinorVersion,
-            __deref_out_opt PWSTR * pwszRuntimeVersion,
+            __out PWSTR * pwszRuntimeVersion,
             LPCWSTR lpszRegKeyNameToRead,
-            __deref_out_opt PWSTR * pwzsRegKeyValue);
+            __out PWSTR * pwszRegKeyValue);
 
+        _Success_(return == 0)
         unsigned int GetRegistryInfo(
-            __deref_out_opt PWSTR * pwszMonadVersion,
+            __out PWSTR * pwszMonadVersion,
             __inout_ecount(1) int * lpMonadMajorVersion,
             int monadMinorVersion,
-            __deref_out_opt PWSTR * pwszRuntimeVersion,
-            __deref_out_opt PWSTR * pwszConsoleHostAssemblyName);
+            __out PWSTR * pwszRuntimeVersion,
+            __out PWSTR * pwszConsoleHostAssemblyName);
 
         unsigned int LaunchCoreCLR(
             ClrHostWrapper* hostWrapper,

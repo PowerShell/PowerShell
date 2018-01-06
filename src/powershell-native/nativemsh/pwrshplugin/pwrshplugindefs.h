@@ -140,7 +140,7 @@ public:
     // the memory.
     PWSTR extendedErrorInformation;
 
-    PlugInException(DWORD msgId, __in PWSTR msg)
+    PlugInException(DWORD msgId, __in_opt PWSTR msg)
     {
         dwMessageId = msgId;
         extendedErrorInformation = msg;

@@ -217,7 +217,7 @@ int __cdecl wmain(const int argc, const wchar_t* argv[])
     if (debug)
     {
         ::wprintf(L"  Attach the debugger to powershell.exe and press any key to continue\n");
-        ::getchar();
+        (void) ::getchar();
     }
 
     if (helpRequested)
