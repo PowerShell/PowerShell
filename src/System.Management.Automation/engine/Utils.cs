@@ -595,6 +595,7 @@ namespace System.Management.Automation
                 // and populate its properties with the settings
                 object tInstance = Activator.CreateInstance(tType, nonPublic: true);
                 var properties = tType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                bool isAnyPropertySet = false;
 
                 string[] valueNames = gpoKey.GetValueNames();
                 string[] subKeyNames = gpoKey.GetSubKeyNames();
@@ -660,11 +661,13 @@ namespace System.Management.Automation
                         if (propertyValue != null)
                         {
                             property.SetValue(tInstance, propertyValue);
+                            isAnyPropertySet = true;
                         }
                     }
                 }
 
-                return (T) tInstance;
+                // If no property is set, then we consider this policy as undefined
+                return isAnyPropertySet ? (T) tInstance : null;
             }
         }
 
