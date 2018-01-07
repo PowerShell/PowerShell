@@ -26,10 +26,19 @@ The previous encoding, ASCII (7-bit), would result in incorrect alteration of th
 To speed up scope creation, `AllScope` was removed from most default aliases.
 `AllScope` was left for a few frequently used aliases where the lookup was faster.
 
+### Don't wrap `stderr` as `ErrorRecord` [#5190](https://github.com/PowerShell/PowerShell/issues/5190)
+
+Keep stderr as string and don't wrap as an `ErrorRecord`.
+This means that errors from running `pwsh.exe` within PowerShell Core are now just `stderr` strings even though they visually look like ErrorRecords
+This change my require you to change how your tests handle native commmand errors.
+
 ### `-Verbose` and `-Debug` no longer overrides `$ErrorActionPreference` [#5113](https://github.com/PowerShell/PowerShell/issues/5113)
 
 Previously, if `-Verbose` or `-Debug` were specified, it overrode the behavior of `$ErrorActionPreference`.
 With this change, `-Verbose` and `-Debug` no longer affect the behavior of `$ErrorActionPreference`.
+
+### Passing a `ScriptBlock` (in syntax only) to native commands produces surprising results [#5187](https://github.com/PowerShell/PowerShell/issues/5187)
+TODO: still open
 
 
 ## Cmdlet changes
@@ -87,8 +96,7 @@ TODO
 
 
 
-### Passing a `ScriptBlock` (in syntax only) to native commands produces surprising results [#5187](https://github.com/PowerShell/PowerShell/issues/5187)
-TODO: still open
+
 
 
 
@@ -107,13 +115,20 @@ TODO: Closed, not merged
 
 
 
+### Unify cmdlets with parameter `Encoding` to be of type `System.Text.Encoding` [#5080](https://github.com/PowerShell/PowerShell/issues/5080)
 
+<<<<<<< HEAD
 
 
 ### Unify cmdlets with parameter `-Encoding` to be of type System.Text.Encoding [#5080](https://github.com/PowerShell/PowerShell/issues/5080)
 Previously, an enum value of `Byte` was used with `-Encoding` to indicate a byte stream.
 However, `Byte` is not an actual encoding.  The change is remove that enum value and replace
 it with a `-AsByteStream` switch to indicate input or output should be a byte stream.
+=======
+The `-Encoding` value `Byte` has been removed from the filesystem provider cmdlets.
+A new parameter `-Byte` is now used to specify that a byte stream is required as input or that output will be a stream of bytes.
+
+>>>>>>> reformatting to BREAKINGCHANGES
 
 ### Add better error message for empty and null -UFormat arg [#5055](https://github.com/PowerShell/PowerShell/issues/5055)
 Previously, when passing an empty format string to `-UFormat`, a somewhat unhelpful error message would appear.  A more descriptive error has been added.
