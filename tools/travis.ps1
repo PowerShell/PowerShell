@@ -224,10 +224,12 @@ elseif($Stage -eq 'Build')
     }
 
     try {
-        $testResultsXUnitFile = "$pwd/TestResultsXUnit.xml"
-        Start-PSxUnit -TestResultsFile $testResultsXUnitFile
+        $SequentialXUnitTestResultsFile = "$pwd/SequentialXUnitTestResults.xml"
+        $ParallelXUnitTestResultsFile = "$pwd/ParallelXUnitTestResults.xml"
+
+        Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
         # If there are failures, Test-XUnitTestResults throws
-        $testPassResult = Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
+        $SequentialXUnitTestResultsFile, $ParallelXUnitTestResultsFile | ForEach-Object { Test-XUnitTestResults -TestResultsFile $_ }
     }
     catch {
         $result = "FAIL"

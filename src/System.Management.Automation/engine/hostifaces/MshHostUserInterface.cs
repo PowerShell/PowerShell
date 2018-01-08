@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Security;
 using System.Globalization;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
 using System.Threading;
@@ -909,9 +910,8 @@ namespace System.Management.Automation.Host
         /// </summary>
         internal static TranscriptionOption GetSystemTranscriptOption(TranscriptionOption currentTranscript)
         {
-            Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting("Transcription", Utils.RegLocalMachineThenCurrentUser);
-
-            if (groupPolicySettings != null)
+            var transcription = Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig);
+            if (transcription != null)
             {
                 // If we have an existing system transcript for this process, use that.
                 // Otherwise, populate the static variable with the result of the group policy setting.
@@ -921,7 +921,7 @@ namespace System.Management.Automation.Host
                 {
                     if (systemTranscript == null)
                     {
-                        systemTranscript = PSHostUserInterface.GetTranscriptOptionFromSettings(groupPolicySettings, currentTranscript);
+                        systemTranscript = PSHostUserInterface.GetTranscriptOptionFromSettings(transcription, currentTranscript);
                     }
                 }
             }
@@ -931,44 +931,31 @@ namespace System.Management.Automation.Host
         internal static TranscriptionOption systemTranscript = null;
         private static Object s_systemTranscriptLock = new Object();
 
-        private static TranscriptionOption GetTranscriptOptionFromSettings(Dictionary<string, object> settings, TranscriptionOption currentTranscript)
+        private static TranscriptionOption GetTranscriptOptionFromSettings(Transcription transcriptConfig, TranscriptionOption currentTranscript)
         {
             TranscriptionOption transcript = null;
 
-            object keyValue = null;
-            if (settings.TryGetValue("EnableTranscripting", out keyValue))
+            if (transcriptConfig.EnableTranscripting == true)
             {
-                if (String.Equals(keyValue.ToString(), "1", StringComparison.OrdinalIgnoreCase))
+                if (currentTranscript != null)
                 {
-                    if (currentTranscript != null)
-                    {
-                        return currentTranscript;
-                    }
-
-                    transcript = new TranscriptionOption();
-
-                    // Pull out the transcript path
-                    object outputDirectoryValue = null;
-                    if (settings.TryGetValue("OutputDirectory", out outputDirectoryValue))
-                    {
-                        string outputDirectoryString = outputDirectoryValue as string;
-                        transcript.Path = GetTranscriptPath(outputDirectoryString, true);
-                    }
-                    else
-                    {
-                        transcript.Path = GetTranscriptPath();
-                    }
-
-                    // Pull out the "enable invocation header"
-                    object enableInvocationHeaderValue = null;
-                    if (settings.TryGetValue("EnableInvocationHeader", out enableInvocationHeaderValue))
-                    {
-                        if (String.Equals("1", enableInvocationHeaderValue.ToString(), StringComparison.OrdinalIgnoreCase))
-                        {
-                            transcript.IncludeInvocationHeader = true;
-                        }
-                    }
+                    return currentTranscript;
                 }
+
+                transcript = new TranscriptionOption();
+
+                // Pull out the transcript path
+                if (transcriptConfig.OutputDirectory != null)
+                {
+                    transcript.Path = GetTranscriptPath(transcriptConfig.OutputDirectory, true);
+                }
+                else
+                {
+                    transcript.Path = GetTranscriptPath();
+                }
+
+                // Pull out the "enable invocation header"
+                transcript.IncludeInvocationHeader = transcriptConfig.EnableInvocationHeader == true;
             }
 
             return transcript;

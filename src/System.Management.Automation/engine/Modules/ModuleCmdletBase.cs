@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
@@ -4749,28 +4750,18 @@ namespace Microsoft.PowerShell.Commands
         {
             moduleNames = null;
             ModuleLoggingGroupPolicyStatus status = ModuleLoggingGroupPolicyStatus.Undefined;
-            Dictionary<string, object> groupPolicySettings = Utils.GetGroupPolicySetting("ModuleLogging", Utils.RegLocalMachineThenCurrentUser);
 
-            if (groupPolicySettings != null)
+            var moduleLogging = Utils.GetPolicySetting<ModuleLogging>(Utils.SystemWideThenCurrentUserConfig);
+            if (moduleLogging != null)
             {
-                object enableModuleLoggingValue = null;
-                if (groupPolicySettings.TryGetValue("EnableModuleLogging", out enableModuleLoggingValue))
+                if (moduleLogging.EnableModuleLogging == false)
                 {
-                    if (String.Equals(enableModuleLoggingValue.ToString(), "0", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return ModuleLoggingGroupPolicyStatus.Disabled;
-                    }
-
-                    if (String.Equals(enableModuleLoggingValue.ToString(), "1", StringComparison.OrdinalIgnoreCase))
-                    {
-                        status = ModuleLoggingGroupPolicyStatus.Enabled;
-
-                        object moduleNamesValue = null;
-                        if (groupPolicySettings.TryGetValue("ModuleNames", out moduleNamesValue))
-                        {
-                            moduleNames = new List<String>((string[])moduleNamesValue);
-                        }
-                    }
+                    status = ModuleLoggingGroupPolicyStatus.Disabled;
+                }
+                else if (moduleLogging.EnableModuleLogging == true)
+                {
+                    status = ModuleLoggingGroupPolicyStatus.Enabled;
+                    moduleNames = moduleLogging.ModuleNames;
                 }
             }
 
