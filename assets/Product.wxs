@@ -6,18 +6,21 @@
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
   <?define ProductName = "$(env.ProductName)" ?>
   <?define ProductGuid = "$(env.ProductGuid)" ?>
+  <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
+  <?if $(sys.BUILDARCH)=x64?>
+    <?define UpgradeCode = "31ab5147-9a97-4452-8443-d9709f0516e1" ?>
+  <?else?>
+    <?define UpgradeCode = "1d00683b-0f84-4db8-a64f-2f98ad42fe06" ?>
+  <?endif?>
   <?define ProductVersion = "$(env.ProductVersion)" ?>
   <?define ProductSemanticVersion = "$(env.ProductSemanticVersion)" ?>
   <?define ProductVersionWithName = "$(var.ProductName)_$(var.ProductVersion)"?>
   <?define ProductSemanticVersionWithName = "$(var.ProductName)-$(env.ProductSemanticVersion)"?>
-  <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
   <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
-  <!-- Generate Your Own GUID for both ID and UpgradeCode attributes. -->
-  <!-- Note:  UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS -->
-  <!-- Otherwise, updates won't occur -->
-  <Product Id="$(var.ProductGuid)" Name="$(var.ProductSemanticVersionWithName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="{f7ba3e58-0be8-443b-ac91-f99dd1e7bd3b}">
+  <!-- The ProductCode is Product Id: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
+  <Product Id="$(var.ProductGuid)" Name="$(var.ProductSemanticVersionWithName)-$(sys.BUILDARCH)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
     <!-- Properties About The Package -->
-    <Package Id="*" Keywords="Installer" Platform="$(var.ProductTargetArchitecture)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
+    <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
     <!-- Add PowerShell icon for executable -->
     <Icon Id="PowerShellExe.ico" SourceFile="assets\Powershell_black.ico" />
     <!-- Add PowerShell icon in Add/Remove Programs -->
