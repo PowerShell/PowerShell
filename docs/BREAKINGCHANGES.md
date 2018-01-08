@@ -37,9 +37,6 @@ This change my require you to change how your tests handle native commmand error
 Previously, if `-Verbose` or `-Debug` were specified, it overrode the behavior of `$ErrorActionPreference`.
 With this change, `-Verbose` and `-Debug` no longer affect the behavior of `$ErrorActionPreference`.
 
-### Passing a `ScriptBlock` (in syntax only) to native commands produces surprising results [#5187](https://github.com/PowerShell/PowerShell/issues/5187)
-TODO: still open
-
 
 ## Cmdlet changes
 
@@ -53,10 +50,6 @@ DCOM is not supported in CoreFX, so the `*-Computer` cmdlets removed the `-Compu
 ### Remove `-ComputerName` from `*-Service` cmdlets [#5090](https://github.com/PowerShell/PowerShell/issues/5094)
 
 In order to encourage the consistent use of PSRP, the `-ComputerName` parameter was removed from `*-Service` cmdlets.
-
-### ConvertFrom-Json silently throws away duplicated keys with identical casing [#5199](https://github.com/PowerShell/PowerShell/issues/5199)
-
-TODO: Still open
 
 ### Fix `Get-Item -LiteralPath a*b` if `a*b` doesn't actually exist to return error [#5197](https://github.com/PowerShell/PowerShell/issues/5197)
 
@@ -91,44 +84,11 @@ Users can bypass this by using the `-AllowUnencryptedAuthethentication` switch.
 ### Remove `AddTypeCommandBase` class [#5407](https://github.com/PowerShell/PowerShell/issues/5407)
 TODO
 
+### Unify cmdlets with parameter `-Encoding` to be of type `System.Text.Encoding` [#5080](https://github.com/PowerShell/PowerShell/issues/5080)
 
-
-
-
-
-
-
-
-
-### Allow `PSCustomObject` to have properties with empty string names [#5129](https://github.com/PowerShell/PowerShell/issues/5129)
-TODO: Not taking the change, dup of [#2820](https://github.com/PowerShell/PowerShell/pull/2820)
-
-
-### `StdErr`/`ErrorRecord` should not be modified on output [#5127](https://github.com/PowerShell/PowerShell/issues/5127)
-TODO: Closed, not merged
-
-
-
-### Use `InvariantCulture` for implicit argument conversion [#5106](https://github.com/PowerShell/PowerShell/issues/5106)
-TODO: Closed, not merged
-
-
-
-
-### Unify cmdlets with parameter `Encoding` to be of type `System.Text.Encoding` [#5080](https://github.com/PowerShell/PowerShell/issues/5080)
-
-<<<<<<< HEAD
-
-
-### Unify cmdlets with parameter `-Encoding` to be of type System.Text.Encoding [#5080](https://github.com/PowerShell/PowerShell/issues/5080)
-Previously, an enum value of `Byte` was used with `-Encoding` to indicate a byte stream.
-However, `Byte` is not an actual encoding.  The change is remove that enum value and replace
-it with a `-AsByteStream` switch to indicate input or output should be a byte stream.
-=======
 The `-Encoding` value `Byte` has been removed from the filesystem provider cmdlets.
-A new parameter `-Byte` is now used to specify that a byte stream is required as input or that output will be a stream of bytes.
+A new parameter `-AsByteStream` is now used to specify that a byte stream is required as input or that output will be a stream of bytes.
 
->>>>>>> reformatting to BREAKINGCHANGES
 
 ### Add better error message for empty and null -UFormat arg [#5055](https://github.com/PowerShell/PowerShell/issues/5055)
 Previously, when passing an empty format string to `-UFormat`, a somewhat unhelpful error message would appear.  A more descriptive error has been added.
@@ -174,24 +134,8 @@ The naming in PowerShell should be consistent with our naming andd conform to Ap
 Change `$OutputEncoding` to be utf8 without BOM rather than ASCII as BOM-less UTF-8 character encoding is the default for PowerShell Core.
 
 
-### New-TemporaryFile should throw terminating error [#4634](https://github.com/PowerShell/PowerShell/issues/4634)
-TODO: still open
-
-
-### S.M.A.PowerShell.HadErrors and $? return false positives when errors are suppressed [#4613](https://github.com/PowerShell/PowerShell/issues/4613)
-TODO: still open
-
-
 ### Make error message consistent when invalid script is passed to -File, better error when passed ambiguous arg [#4573](https://github.com/PowerShell/PowerShell/issues/4573)
 Change the exit codes of pwsh.exe to align with Unix conventions
-
-
-### Fix Get-Date -UFormat '%V' week number output [#4508](https://github.com/PowerShell/PowerShell/issues/4508)
-TODO: still open
-
-
-### Improper usage of $input as a function parameter is silently ignored [#4391](https://github.com/PowerShell/PowerShell/issues/4391)
-TODO: still open (6.1.0)
 
 
 ### Due to the use of unsupported APIs, we must remove the Counter CmdLets in the Diagnostics Module until a better solution is found. [#4303](https://github.com/PowerShell/PowerShell/issues/4303)
@@ -206,20 +150,12 @@ TODO (Not sure how to document more than the title)
 TODO: Should this still be in the doc if the change is not visible to the user and is about telemetry collection?
 
 
-### Unify file encoding when a cmdlet creates a file [#4119](https://github.com/PowerShell/PowerShell/issues/4119)
-TODO: Closed, not merged
-
-
 ### Executing powershell script with bool parameter doesnt work [#4036](https://github.com/PowerShell/PowerShell/issues/4036)
 Previously, using powershell.exe (now pwsh.exe) to execute a PowerShell script using `-File` provided no way to pass $true/$false as parameter values.  Support for $true/$false as parsed values to parameters was added. Switch values are also supported as currently documented syntax doesn't work.
 
 
 ### Remove ClrVersion property from $PSVersionTable [#4027](https://github.com/PowerShell/PowerShell/issues/4027)
 The ClrVersion property of `$PSVersionTable` is not useful with CoreCLR,  end users should not be using that value to determine compatibility.
-
-
-### Command line arguments with a dollar sign [#4024](https://github.com/PowerShell/PowerShell/issues/4024)
-TODO: Closed, by design
 
 
 ### Change positional parameter for powershell.exe from -Command to -File [#4019](https://github.com/PowerShell/PowerShell/issues/4019)
@@ -240,32 +176,8 @@ Previously, `New-ModuleManifest` creates psd1 manifests in UTF-16 with BOM, crea
 This change brings `Get-ChildItem` more in line with the Unix `ls -r` and the Windows `dir /s` native commands.  Like the mentioned commands, the cmdlet will display simbolic links to directories found during recursion, but will not recurse into them.
 
 
-### COM objects are not enumerating properly [#3775](https://github.com/PowerShell/PowerShell/issues/3775)
-TODO: Closed, not merged
-
-
-### System.IO.DirectoryInfo and System.IO.FileInfo instances output by Get-Item / Get-ChildItem bind to -Path rather than -LiteralPath and sometimes by filename only [#3772](https://github.com/PowerShell/PowerShell/issues/3772)
-TODO: still open
-
-
-### Why do handled exceptions show in ErrorVariable? [#3768](https://github.com/PowerShell/PowerShell/issues/3768)
-TODO: committee reviewed, still open
-
-
-### Align PowerShell's CLI / startup behavior with POSIX-like shells such as Bash - command-line arguments [#3743](https://github.com/PowerShell/PowerShell/issues/3743)
-TODO: still open
-
-
 ### Get-Content -Delimiter unexpectedly keeps the delimiter in the lines returned [#3706](https://github.com/PowerShell/PowerShell/issues/3706)
 TODO
-
-
-### Should we detect/Deny using $_ as a user defined variable? [#3695](https://github.com/PowerShell/PowerShell/issues/3695)
-TODO: closed, won't fix
-
-
-### PowerShell use different logic, when converting passed value to parameter type, for compiled and script cmdlets [#3348](https://github.com/PowerShell/PowerShell/issues/3348)
-TODO: closed, wont fix
 
 
 ### Implement Format-Hex in C# [#3320](https://github.com/PowerShell/PowerShell/issues/3320)
@@ -285,10 +197,6 @@ TODO: not sure if this actually a breaking change.  If the change is to make som
 `BiosSerialNumber` was misspelled as "BiosSeralNumber".
 
 
-### -OutVariable doesn't unwrap single-object output and creates [#System.Collections.ArrayList] values rather than [#System.Object[]] [#3154](https://github.com/PowerShell/PowerShell/issues/3154)
-TODO: Still open
-
-
 ### Add Get-StringHash and Get-FileHash cmdlets [#3024](https://github.com/PowerShell/PowerShell/issues/3024)
 TODO
 
@@ -297,25 +205,12 @@ TODO
 Passing `$null` to any of the following will now throw an error: `Get-Credential -UserName`, `Get-Event -SourceIdentifier`, `Get-EventSubscriber -SourceIdentifier`, `Get-Help -Name`, `Get-PSBreakpoint -Script`, `Get-PSProvider -PSProvider`, `Get-PSSessionConfiguration -Name`, `Get-PSSnapin -Name`, `Get-Runspace -Name`, `Get-RunspaceDebug -RunspaceName`, `Get-Service -Name`, `Get-TraceSource -Name`, `Get-Variable -Name`, `Get-WmiObject -Class`, and `Get-WmiObject -Property`.
 
 
-### Get-Alias Name parameter allows Null value [#2544](https://github.com/PowerShell/PowerShell/issues/2544)
-TODO: Closed, left as is
-
-
 ### Add support W3C Extended Log File Format in Import-Csv [#2482](https://github.com/PowerShell/PowerShell/issues/2482)
 TODO
 
 
-### Platform specific behavior for Split-Path [#2301](https://github.com/PowerShell/PowerShell/issues/2301)
-TODO: still open
-
-
-
 ### Parameter binding problem with ValueFromRemainingArguments in PS functions [#2035](https://github.com/PowerShell/PowerShell/issues/2035)
 TODO
-
-
-### $input type in advanced functions [#1563](https://github.com/PowerShell/PowerShell/issues/1563)
-TODO: closed, not merged
 
 
 ### BuildVersion should be removed from $PSVersionTable [#1415](https://github.com/PowerShell/PowerShell/issues/1415)
