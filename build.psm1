@@ -2501,7 +2501,8 @@ function Copy-PSGalleryModules
             $version
         }
 
-        $src = "$nugetCache/$name/$srcVer"
+        # Nuget seems to always use lowercase in the cache
+        $src = "$nugetCache/$($name.ToLower())/$srcVer"
         $dest = "$Destination/$name/$destVer"
 
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
