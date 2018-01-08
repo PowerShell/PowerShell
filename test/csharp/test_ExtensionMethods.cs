@@ -2,7 +2,7 @@ using Xunit;
 using System;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public static class PSTypeExtensionsTests
     {

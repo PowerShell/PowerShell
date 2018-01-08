@@ -323,7 +323,8 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $testResultsXUnitFile = "$pwd\TestResultsXUnit.xml"
+    $SequentialXUnitTestResultsFile = "$pwd\SequentialXUnitTestResults.xml"
+    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -357,9 +358,10 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-    Start-PSxUnit -TestResultsFile $testResultsXUnitFile
+    Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
     Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsXUnitFile
+    Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
+    Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
 
     #
     # Fail the build, if tests failed
@@ -370,7 +372,12 @@ function Invoke-AppVeyorTest
         Test-PSPesterResults -TestResultsFile $_
     }
 
-    $testPassResult = Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
+    @(
+        $SequentialXUnitTestResultsFile,
+        $ParallelXUnitTestResultsFile
+    ) | ForEach-Object {
+        Test-XUnitTestResults -TestResultsFile $_
+    }
 
     Set-BuildVariable -Name TestPassed -Value True
 }

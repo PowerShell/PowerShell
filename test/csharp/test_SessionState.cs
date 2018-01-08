@@ -10,7 +10,7 @@ using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public class SessionStateTests
     {
