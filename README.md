@@ -92,7 +92,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-fedora26]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-26
 [in-archlinux]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#arch-linux
 [in-appimage]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#linux-appimage
-[in-macos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#macos-1012
+[in-macos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/macos.md
 [in-docker]: https://github.com/PowerShell/PowerShell/tree/master/docker
 [in-kali]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#kali
 [in-windows-zip]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#zip
