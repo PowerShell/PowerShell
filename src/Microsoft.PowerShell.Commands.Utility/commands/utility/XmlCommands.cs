@@ -469,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertFrom-Clixml command
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Clixml")]
+    [Cmdlet(VerbsData.ConvertFrom, "Clixml", SupportsPaging = true)]
     public sealed class ConvertFromClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
