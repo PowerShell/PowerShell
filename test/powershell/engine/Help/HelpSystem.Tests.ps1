@@ -38,7 +38,8 @@ function RunTestCase
         "Out-Default",
         "Register-ArgumentCompleter",
         "New-PSRoleCapabilityFile",
-        "Get-PSSessionCapability"
+        "Get-PSSessionCapability",
+        "Disable-PSRemoting" # Content not available: Issue # https://github.com/PowerShell/PowerShell-Docs/issues/1790
     )
 
     foreach ($cmdletName in $cmdlets)
