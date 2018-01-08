@@ -508,6 +508,9 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="MissingEndParenthesisInSubexpression" xml:space="preserve">
     <value>Missing closing ')' in subexpression.</value>
   </data>
+  <data name="MissingEndBracketInListExpression" xml:space="preserve">
+    <value>Missing closing ']' in list expression.</value>
+  </data>
   <data name="MissingOpenParenthesisInIfStatement" xml:space="preserve">
     <value>Missing '(' after '{0}' in if statement.</value>
   </data>

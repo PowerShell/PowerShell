@@ -1803,7 +1803,40 @@ namespace System.Management.Automation.Interpreter
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]
         private void CompileListInitExpression(Expression expr)
         {
-            throw new System.NotImplementedException();
+            var node = (ListInitExpression) expr;
+#if !DEBUG
+            // Optimize the most common use -- create and initialize an object list
+            //   - Use the default constructor of List<object>
+            //   - Initializer collection is not empty and the AddMethod is 'Add(object)'
+            if (node.NewExpression == System.Management.Automation.Language.ExpressionCache.NewEmptyObjectList &&
+                node.Initializers.Count > 0 &&
+                node.Initializers.TrueForAll(e => e.AddMethod == System.Management.Automation.Language.CachedReflectionInfo.ObjectList_Add))
+            {
+                for (int index = 0; index < node.Initializers.Count; index++)
+                {
+                    var arg = node.Initializers[index].Arguments[0];
+                    Compile(arg);
+                }
+
+                _instructions.EmitNewListInit(typeof(object), node.Initializers.Count);
+                return;
+            }
+#endif
+            CompileNewExpression(node.NewExpression);
+            if (node.Initializers.Count > 0)
+            {
+                LocalDefinition local = _locals.DefineLocal(Expression.Parameter(node.Type), _instructions.Count);
+                _instructions.EmitAssignLocal(local.Index);
+
+                foreach (ElementInit eInit in node.Initializers)
+                {
+                    foreach (Expression arg in eInit.Arguments) { Compile(arg); }
+                    _instructions.EmitCall(eInit.AddMethod);
+                    _instructions.EmitLoadLocal(local.Index);
+                }
+
+                _locals.UndefineLocal(local, _instructions.Count);
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "expr")]

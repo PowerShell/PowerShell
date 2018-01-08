@@ -1041,9 +1041,9 @@ namespace System.Management.Automation.Language
             if (typeName == null)
             {
                 // ErrorRecovery: Return null so we stop looking for attributes.
+                //                Do not report error because it could be a list literal.
 
                 Resync(lBracket);  // TypeNameRule might have consumed some tokens
-                ReportIncompleteInput(After(lBracket), () => ParserStrings.MissingTypename);
                 return null;
             }
 
@@ -5987,6 +5987,66 @@ namespace System.Management.Automation.Language
                     new CommandParameterAst(paramToken.Extent, paramToken.ParameterName, null, paramToken.Extent)});
         }
 
+        private ExpressionAst ListLiteralRule()
+        {
+            //G  list-literal-expression
+            //G      '['   new-lines:opt   list-entries   new-lines:opt  ']'
+            //G  list-entries
+            //G      unary-expression
+            //G      list-entries   ','   new-lines:opt   unary-expression
+
+            var lBracket = NextLBracket();
+            if (lBracket == null) { return null; }
+
+            IScriptExtent endExtent = lBracket.Extent;
+            var listValues = new List<ExpressionAst>();
+            Token commaToken = null;
+
+            do {
+                if (commaToken != null)
+                {
+                    SkipToken();
+                    endExtent = commaToken.Extent;
+                }
+
+                SkipNewlines();
+
+                var expr = UnaryExpressionRule();
+                if (expr == null)
+                {
+                    // It's OK to have an empty list '[]'
+                    if (commaToken == null) { break; }
+
+                    // ErrorRecovery: create an error expression for the ast and break.
+                    ReportIncompleteInput(After(commaToken), () => ParserStrings.MissingExpressionAfterToken, commaToken.Text);
+                    expr = new ErrorExpressionAst(commaToken.Extent);
+                    listValues.Add(expr);
+                    break;
+                }
+
+                endExtent = expr.Extent;
+                listValues.Add(expr);
+
+                commaToken = PeekToken();
+            } while (commaToken.Kind == TokenKind.Comma);
+
+            SkipNewlines();
+            var rBracket = NextToken();
+
+            if (rBracket.Kind != TokenKind.RBracket)
+            {
+                // ErrorRecovery: Assume only the closing bracket is missing, continue as though it was present.
+                UngetToken(rBracket);
+                ReportIncompleteInput(rBracket.Extent, () => ParserStrings.MissingEndBracketInListExpression);
+            }
+            else
+            {
+                endExtent = rBracket.Extent;
+            }
+
+            return new ListLiteralAst(ExtentOf(lBracket, endExtent), listValues);;
+        }
+
         private ExpressionAst ArrayLiteralRule()
         {
             //G  array-literal-expression:
@@ -6112,7 +6172,8 @@ namespace System.Management.Automation.Language
                 var attributes = AttributeListRule(true);
                 if (attributes == null)
                 {
-                    return null;
+                    var listExpr = ListLiteralRule();
+                    return listExpr;
                 }
 
                 AttributeBaseAst lastAttribute = attributes.Last();

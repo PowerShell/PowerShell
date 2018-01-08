@@ -162,7 +162,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// AstVisitor for new Ast node types
+    /// AstVisitor for new Ast node types added in PSv5.0
     /// </summary>
     public abstract class AstVisitor2 : AstVisitor
     {
@@ -189,7 +189,16 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// Implement this interface when you implement <see cref="AstVisitor"/> or <see cref="AstVisitor2"/> when
+    /// AstVisitor for new Ast node types added in PSv6.1
+    /// </summary>
+    public abstract class AstVisitor3 : AstVisitor2
+    {
+        /// <summary/>
+        public virtual AstVisitAction VisitListLiteral(ListLiteralAst listLiteralAst) { return AstVisitAction.Continue; }
+    }
+
+    /// <summary>
+    /// Implement this interface when you implement <see cref="AstVisitor"/>, <see cref="AstVisitor2"/> or <see cref="AstVisitor3"/> when
     /// you want to do something after possibly visiting the children of the ast.
     /// </summary>
     public interface IAstPostVisitHandler
