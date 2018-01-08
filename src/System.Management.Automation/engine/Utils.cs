@@ -551,7 +551,7 @@ namespace System.Management.Automation
                         case nameof(Transcription):               result = policies.Transcription; break;
                         case nameof(UpdatableHelp):               result = policies.UpdatableHelp; break;
                         case nameof(ConsoleSessionConfiguration): result = policies.ConsoleSessionConfiguration; break;
-                        default: Diagnostics.Assert(false, "Unreachable code"); break;
+                        default: Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added."); break;
                     }
                     if (result != null) { return (T) result; }
                 }

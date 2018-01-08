@@ -498,7 +498,7 @@ namespace System.Management.Automation.Configuration
 
     /// <summary>
     /// The GroupPolicy related settings used in PowerShell are as follows in Registry:
-    ///  - Software\Policies\Microsoft\Windows\PowerShell -- { EnableScripts (0 or 1); ExecutionPolicy (string) }
+    ///  - Software\Policies\Microsoft\PowerShellCore -- { EnableScripts (0 or 1); ExecutionPolicy (string) }
     ///      SubKeys                  Name-Value-Pairs
     ///      - ScriptBlockLogging     { EnableScriptBlockLogging (0 or 1); EnableScriptBlockInvocationLogging (0 or 1) }
     ///      - ModuleLogging          { EnableModuleLogging (0 or 1); ModuleNames (string[]) }
@@ -528,10 +528,10 @@ namespace System.Management.Automation.Configuration
     ///     "Transcription": {
     ///       "EnableTranscripting": true,
     ///       "EnableInvocationHeader": true,
-    ///       "OutputDirectory": "c:\tmp"
+    ///       "OutputDirectory": "c:\\tmp"
     ///     },
     ///     "UpdatableHelp": {
-    ///       "DefaultSourcePath": "f:\temp"
+    ///       "DefaultSourcePath": "f:\\temp"
     ///     },
     ///     "ConsoleSessionConfiguration": {
     ///       "EnableConsoleSessionConfiguration": true,
