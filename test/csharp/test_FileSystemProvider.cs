@@ -15,7 +15,7 @@ using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using System.Reflection;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public class FileSystemProviderTests: IDisposable
     {

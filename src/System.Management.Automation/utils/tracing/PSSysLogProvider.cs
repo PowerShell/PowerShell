@@ -3,6 +3,7 @@
 //    Copyright (C) Microsoft.  All rights reserved.
 //
 using System.Diagnostics.Eventing;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Text;
 using System.Collections.Generic;
@@ -24,10 +25,10 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         static PSSysLogProvider()
         {
-            s_provider = new SysLogProvider(ConfigPropertyAccessor.Instance.GetSysLogIdentity(),
-                                            ConfigPropertyAccessor.Instance.GetLogLevel(),
-                                            ConfigPropertyAccessor.Instance.GetLogKeywords(),
-                                            ConfigPropertyAccessor.Instance.GetLogChannels());
+            s_provider = new SysLogProvider(PowerShellConfig.Instance.GetSysLogIdentity(),
+                                            PowerShellConfig.Instance.GetLogLevel(),
+                                            PowerShellConfig.Instance.GetLogKeywords(),
+                                            PowerShellConfig.Instance.GetLogChannels());
         }
 
         /// <summary>

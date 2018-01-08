@@ -3,7 +3,7 @@ using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects

@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Net;
 using System.ComponentModel;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Diagnostics;
 using System.Threading;
@@ -1665,14 +1666,9 @@ namespace System.Management.Automation.Help
         /// <returns></returns>
         internal string GetDefaultSourcePath()
         {
-            try
-            {
-                return ConfigPropertyAccessor.Instance.GetDefaultSourcePath();
-            }
-            catch (SecurityException)
-            {
-                return null;
-            }
+            var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
+            string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;
+            return String.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
         }
 
         /// <summary>
@@ -1682,7 +1678,7 @@ namespace System.Management.Automation.Help
         {
             try
             {
-                ConfigPropertyAccessor.Instance.SetDisablePromptToUpdateHelp(true);
+                PowerShellConfig.Instance.SetDisablePromptToUpdateHelp(true);
             }
             catch (UnauthorizedAccessException)
             {
@@ -1712,7 +1708,7 @@ namespace System.Management.Automation.Help
                     return false;
                 }
 
-                return ConfigPropertyAccessor.Instance.GetDisablePromptToUpdateHelp();
+                return PowerShellConfig.Instance.GetDisablePromptToUpdateHelp();
             }
             catch (SecurityException)
             {
