@@ -123,6 +123,58 @@
         }
     }
 
+    Context "ConvertTo-CliXml" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+            $filePath = Join-Path $subFilePath 'gps.xml'
+        }
+
+        AfterEach {
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "converts an object to string as expected" {
+            $objClixml = ConvertTo-Clixml -Depth 1 -InputObject ($gpsList | Select-Object -First 1)
+
+            foreach($item in $objClixml)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should Be $true
+        }
+
+
+
+        It "converts an object from the pipeline to string as expected" {
+            $objClixml = ($gpsList | Select-Object -First 1) | ConvertTo-Clixml -Depth 1
+
+            foreach($item in $objClixml)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should Be $true
+        }
+    }
+
     Context "Import-CliXML" {
         BeforeAll {
             $gpsList = Get-Process pwsh
@@ -188,6 +240,45 @@
             $testPath | Should Not Exist
         }
     }
+
+    Context "ConvertFrom-CliXml" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+            $filePath = Join-Path $subFilePath 'gps.xml'
+        }
+
+        AfterEach {
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "deserializes an object as expected" {
+            Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
+            $filePath | Should Exist
+
+            $fileContent = Get-Content $filePath -raw
+            $fileContent | Should Not Be $null
+
+            $importedProcess = ConvertFrom-Clixml -InputObject $fileContent
+
+            $importedProcess.ProcessName | Should Be $gps.ProcessName
+            $importedProcess.Id | Should Be $gps.Id
+        }
+
+        It "deserializes an object from the pipeline as expected" {
+            Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
+            $filePath | Should Exist
+
+            $fileContent = Get-Content $filePath
+            $fileContent | Should Not Be $null
+
+            $importedProcess = $fileContent | ConvertFrom-Clixml
+
+            $importedProcess.ProcessName | Should Be $gps.ProcessName
+            $importedProcess.Id | Should Be $gps.Id
+        }
+    }
+
 }
 
 ##
@@ -217,6 +308,22 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
     It "Verifies that importing the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
+
+        # Wait up to 10 seconds for calc.exe to run
+        $calcProc = $null
+        $count = 0
+        while (!$calcProc -and ($count++ -lt 20)) {
+            $calcProc = Get-Process -Name 'win32calc', 'calculator' 2>$null
+            Start-Sleep -Milliseconds 500
+        }
+
+        $calcProc | Should BeNullOrEmpty
+    }
+
+    It "Verifies that converting from the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
+
+        $cliXmlContent = Get-Content -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml") -Raw
+        ConvertFrom-CliXml -InputObject $cliXmlContent
 
         # Wait up to 10 seconds for calc.exe to run
         $calcProc = $null
