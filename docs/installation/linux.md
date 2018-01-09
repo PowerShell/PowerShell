@@ -1,8 +1,8 @@
-# Package installation instructions
+# Package Installation Instructions
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Ubuntu 17.04][u17], [Debian 8][deb8], [Debian 9][deb9],
 [CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [OpenSUSE 42.2][opensuse], [Fedora 25][fed25],
-[Fedora 26][fed26], [Arch Linux][arch], and [macOS 10.12][mac].
+[Fedora 26][fed26], and [Arch Linux][arch].
 
 For Linux distributions that are not officially supported,
 you can try using the [PowerShell AppImage][lai].
@@ -567,75 +567,6 @@ and is a single binary.
 
 [appimage]: http://appimage.org/
 
-## macOS 10.12
-
-### Installation via Homebrew (preferred) - macOS 10.12
-
-[Homebrew][brew] is the missing package manager for macOS.
-If the `brew` command is not found,
-you need to install Homebrew following [their instructions][brew].
-
-Once you've installed Homebrew, installing PowerShell is easy.
-First, install [Homebrew-Cask][cask], so you can install more packages:
-
-```sh
-brew tap caskroom/cask
-```
-
-Now, you can install PowerShell:
-
-```sh
-brew cask install powershell
-```
-
-When new versions of PowerShell are released,
-simply update Homebrew's formulae and upgrade PowerShell:
-
-```sh
-brew update
-brew cask reinstall powershell
-```
-
-> Note: because of [this issue in Cask](https://github.com/caskroom/homebrew-cask/issues/29301), you currently have to do a reinstall to upgrade.
-
-[brew]: http://brew.sh/
-[cask]: https://caskroom.github.io/
-
-### Installation via Direct Download - macOS 10.12
-
-Using macOS 10.12, download the PKG package
-`powershell-6.0.0-rc.2-osx.10.12-x64.pkg`
-from the [releases][] page onto the macOS machine.
-
-Either double-click the file and follow the prompts,
-or install it from the terminal:
-
-```sh
-sudo installer -pkg powershell-6.0.0-rc.2-osx.10.12-x64.pkg -target /
-```
-
-### Uninstallation - macOS 10.12
-
-If you installed PowerShell with Homebrew, uninstallation is easy:
-
-```sh
-brew cask uninstall powershell
-```
-
-If you installed PowerShell via direct download,
-PowerShell must be removed manually:
-
-```sh
-sudo rm -rf /usr/local/bin/pwsh /usr/local/microsoft/powershell
-```
-
-To uninstall the additional PowerShell paths (such as the user profile path)
-please see the [paths][paths] section below in this document
-and remove the desired the paths with `sudo rm`.
-(Note: this is not necessary if you installed with Homebrew.)
-
-[paths]:#paths
-
 ## Kali
 
 ### Installation
@@ -755,37 +686,10 @@ sudo chmod +x /usr/local/microsoft/powershell/6.0.0-rc.2/pwsh
 sudo ln -s /opt/microsoft/powershell/6.0.0-rc.2/pwsh /usr/bin/pwsh
 ```
 
-#### macOS
-
-```sh
-# Download the powershell '.tar.gz' archive
-curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-rc.2/powershell-6.0.0-rc.2-osx-x64.tar.gz
-
-# Create the target folder where powershell will be placed
-sudo mkdir -p /usr/local/microsoft/powershell/6.0.0-rc.2
-
-# Expand powershell to the target folder
-sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell/6.0.0-rc.2
-
-# Set execute permissions
-sudo chmod +x /usr/local/microsoft/powershell/6.0.0-rc.2/pwsh
-
-# Create the symbolic link that points to pwsh
-sudo ln -s /usr/local/microsoft/powershell/6.0.0-rc.2/pwsh /usr/local/bin/pwsh
-```
-
 ### Uninstallation - Binary Archives
-
-#### Linux
 
 ```sh
 sudo rm -rf /usr/bin/pwsh /opt/microsoft/powershell
-```
-
-#### macOS
-
-```sh
-sudo rm -rf /usr/local/bin/pwsh /usr/local/microsoft/powershell
 ```
 
 ## Paths
