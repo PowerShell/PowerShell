@@ -137,41 +137,13 @@
         It "converts an object to string as expected" {
             $objClixml = ConvertTo-Clixml -Depth 1 -InputObject ($gpsList | Select-Object -First 1)
 
-            foreach($item in $objClixml)
-            {
-                foreach($gpsItem in $gpsList)
-                {
-                    $checkId = $gpsItem.Id
-                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
-                    {
-                        $isExisted = $true
-                        break;
-                    }
-                }
-            }
-
-            $isExisted | Should Be $true
+            $objClixml | Should Match "<I32 N=`"Id`">$($gps.Id)</I32>"
         }
-
-
 
         It "converts an object from the pipeline to string as expected" {
             $objClixml = ($gpsList | Select-Object -First 1) | ConvertTo-Clixml -Depth 1
 
-            foreach($item in $objClixml)
-            {
-                foreach($gpsItem in $gpsList)
-                {
-                    $checkId = $gpsItem.Id
-                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
-                    {
-                        $isExisted = $true
-                        break;
-                    }
-                }
-            }
-
-            $isExisted | Should Be $true
+            $objClixml | Should Match "<I32 N=`"Id`">$($gps.Id)</I32>"
         }
     }
 
@@ -210,7 +182,7 @@
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should Not BeNullOrEmpty
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should Not BeNullOrEmpty
@@ -224,7 +196,7 @@
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should Not BeNullOrEmpty
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should Not BeNullOrEmpty
@@ -257,7 +229,7 @@
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath -raw
-            $fileContent | Should Not Be $null
+            $fileContent | Should Not BeNullOrEmpty
 
             $importedProcess = ConvertFrom-Clixml -InputObject $fileContent
 
@@ -270,7 +242,7 @@
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should Not BeNullOrEmpty
 
             $importedProcess = $fileContent | ConvertFrom-Clixml
 
