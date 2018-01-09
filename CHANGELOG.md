@@ -9,7 +9,7 @@
 
 ### Engine updates and fixes
 
-- remoting: Handle `DLLImport` failure of `libpsrpclient` (#5622)
+- Handle `DLLImport` failure of `libpsrpclient` in PowerShell Remoting on Unix platforms (#5622)
 
 ### Test
 
