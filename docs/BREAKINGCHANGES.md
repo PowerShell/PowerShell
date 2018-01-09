@@ -120,10 +120,11 @@ An incorrect position of a parameter resulted in the args passed as input instea
 `-showwindow` relies on WPF, which is not supported on CoreCLR.
 
 
-### Allow * to be used in registry path for remove-item [#4866](https://github.com/PowerShell/PowerShell/issues/4866)
-Using `-literalpath` with an asterisk and the filesystem provider will now return an error rather than returning quietly.
+### Allow * to be used in registry path for `Remove-Item` [#4866](https://github.com/PowerShell/PowerShell/issues/4866)
 
-TODO: Combine with 5197?
+Previously, `-LiteralPath` given a wildcard would treat it the same as `-Path` and if the wildcard found no files, it would silently exit.
+Correct behavior should be that `-LiteralPath` is literal so if the file doesn't exist, it should error.
+Change is to treat wildcards used with `-Literal` as literal.
 
 
 ### Fix `Set-Service` failing test [#4802](https://github.com/PowerShell/PowerShell/issues/4802)
