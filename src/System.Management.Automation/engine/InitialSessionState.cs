@@ -4687,13 +4687,14 @@ end
                     new SessionStateAliasEntry("type", "Get-Content"),
                     // Native commands we keep because the functions act correctly on Linux
                     new SessionStateAliasEntry("clear", "Clear-Host"),
-//#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore
+//#if !CORECLR is used to disable aliases for cmdlets which are not available on OneCore or not appropriate for PSCore6 due to conflicts
 #if !CORECLR
                     new SessionStateAliasEntry("gwmi", "Get-WmiObject", "", ReadOnly),
                     new SessionStateAliasEntry("iwmi", "Invoke-WMIMethod", "", ReadOnly),
                     new SessionStateAliasEntry("ogv", "Out-GridView", "", ReadOnly),
                     new SessionStateAliasEntry("ise", "powershell_ise.exe", "", ReadOnly),
                     new SessionStateAliasEntry("rwmi", "Remove-WMIObject", "", ReadOnly),
+                    new SessionStateAliasEntry("sc", "Set-Content", "", ReadOnly),
                     new SessionStateAliasEntry("swmi", "Set-WMIInstance", "", ReadOnly),
                     new SessionStateAliasEntry("shcm", "Show-Command", "", ReadOnly),
                     new SessionStateAliasEntry("trcm", "Trace-Command", "", ReadOnly),
