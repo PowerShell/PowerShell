@@ -17,7 +17,7 @@ Previously, output was aligned to the width of the console and linebreak were ad
 This change was not applied to tables, as the linebreaks are necessary to keep the columns aligned.
 
 ### Skip null-element check for collections with a value-type element type [#5432](https://github.com/PowerShell/PowerShell/issues/5432)
-TODO
+For the `Mandatory` parameter and `ValidateNotNull` and `ValidateNotNullOrEmpty` attributes, skip the null-element check if the collection's element type is value type.  
 
 ### Change `$OutputEncoding` to use `iso-8859-1` encoding rather than ASCII [#5369](https://github.com/PowerShell/PowerShell/issues/5369)
 The previous encoding, ASCII (7-bit), would result in incorrect alteration of the output in some cases.  This change is to make UTF-8 NoBOM default, which preserves unicode output with an encoding supported by most tools and operating systems.
@@ -82,7 +82,9 @@ Users can bypass this by using the `-AllowUnencryptedAuthethentication` switch.
 ## API changes
 
 ### Remove `AddTypeCommandBase` class [#5407](https://github.com/PowerShell/PowerShell/issues/5407)
-TODO
+The `AddTypeCommandBase` class was removed from `Add-Type` to improve performance.
+TODO: Note sure what else, to add here.
+
 
 ### Unify cmdlets with parameter `-Encoding` to be of type `System.Text.Encoding` [#5080](https://github.com/PowerShell/PowerShell/issues/5080)
 
@@ -138,12 +140,8 @@ Change `$OutputEncoding` to be utf8 without BOM rather than ASCII as BOM-less UT
 Change the exit codes of pwsh.exe to align with Unix conventions
 
 
-### Due to the use of unsupported APIs, we must remove the Counter CmdLets in the Diagnostics Module until a better solution is found. [#4303](https://github.com/PowerShell/PowerShell/issues/4303)
-TODO (Not sure how to document more than the title)
-
-
-###  Due to the use of unsupported APIs, we must remove the LocalAccounts module until a better solution is found. [#4302](https://github.com/PowerShell/PowerShell/issues/4302)
-TODO (Not sure how to document more than the title)
+### Removal of `LocalAccount` and cmdlets from  `Diagnostics` modules. [#4302](https://github.com/PowerShell/PowerShell/issues/4302) [#4303](https://github.com/PowerShell/PowerShell/issues/4303)
+Due to unsupported APIs, the `LocalAccounts` module and the `Counter` cmdlets in the `Diagnostics` module were removed until a better solution is found. 
 
 
 ### Remove UTC and SQM telemetry code [#4190](https://github.com/PowerShell/PowerShell/issues/4190)
@@ -176,8 +174,9 @@ Previously, `New-ModuleManifest` creates psd1 manifests in UTF-16 with BOM, crea
 This change brings `Get-ChildItem` more in line with the Unix `ls -r` and the Windows `dir /s` native commands.  Like the mentioned commands, the cmdlet will display simbolic links to directories found during recursion, but will not recurse into them.
 
 
-### Get-Content -Delimiter unexpectedly keeps the delimiter in the lines returned [#3706](https://github.com/PowerShell/PowerShell/issues/3706)
-TODO
+### Fix `Get-Content -Delimiter` to not include the delimiter in the returned lines [#3706](https://github.com/PowerShell/PowerShell/issues/3706)
+Previously, the output while using `Get-Content -Delimiter` was inconsistent and inconvient as it required further processing of the data to remove the delimiter.
+This change removes the delimiter in returned lines.
 
 
 ### Implement Format-Hex in C# [#3320](https://github.com/PowerShell/PowerShell/issues/3320)
@@ -198,7 +197,7 @@ TODO: not sure if this actually a breaking change.  If the change is to make som
 
 
 ### Add Get-StringHash and Get-FileHash cmdlets [#3024](https://github.com/PowerShell/PowerShell/issues/3024)
-TODO
+TODO: Labeled with breaking change so the difference between windows and core can be described
 
 
 ### Add validation on get-* cmdlets where passing $null returns all objects instead of error [#2672](https://github.com/PowerShell/PowerShell/issues/2672)
@@ -206,7 +205,8 @@ Passing `$null` to any of the following will now throw an error: `Get-Credential
 
 
 ### Add support W3C Extended Log File Format in Import-Csv [#2482](https://github.com/PowerShell/PowerShell/issues/2482)
-TODO
+Previously, the `Iport-Csv` cmdlet cannot be used to directly import the log files in W3C extended log format and additional action would be required.
+With this change, W3C extended log format is supported.
 
 
 ### Parameter binding problem with ValueFromRemainingArguments in PS functions [#2035](https://github.com/PowerShell/PowerShell/issues/2035)
