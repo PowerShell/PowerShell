@@ -5,7 +5,7 @@
 ### Breaking changes
 
 - Remove `sc` alias which conflicts with `sc.exe` (#5827)
-- Move group policy settings and enable policy controlled logging in PowerShell Core (#5791)
+- Separate group policy settings and enable policy controlled logging in PowerShell Core (#5791)
 
 ### Engine updates and fixes
 
