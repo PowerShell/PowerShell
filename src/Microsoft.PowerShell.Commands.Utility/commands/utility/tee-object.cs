@@ -29,6 +29,7 @@ namespace Microsoft.PowerShell.Commands
         /// FilePath parameter
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "File")]
+        [Alias("Path")]
         public string FilePath
         {
             get { return _fileName; }

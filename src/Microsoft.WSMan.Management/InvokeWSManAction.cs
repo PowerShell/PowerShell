@@ -103,6 +103,7 @@ namespace Microsoft.WSMan.Management
         /// via this input file
         /// </summary>
         [Parameter]
+        [Alias("Path")]
         [ValidateNotNullOrEmpty]
         public String FilePath
         {

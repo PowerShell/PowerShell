@@ -1902,6 +1902,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(Position = 1, Mandatory = true)]
+        [Alias("Path")]
         public string BinaryPathName
         {
             get { return binaryPathName; }

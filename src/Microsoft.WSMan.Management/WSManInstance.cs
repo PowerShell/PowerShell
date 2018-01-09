@@ -677,6 +677,7 @@ namespace Microsoft.WSMan.Management
         /// via this input file
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
+        [Alias("Path")]
         [ValidateNotNullOrEmpty]
         public string FilePath
         {
@@ -1274,6 +1275,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
+        [Alias("Path")]
         public String FilePath
         {
             get { return filepath; }
