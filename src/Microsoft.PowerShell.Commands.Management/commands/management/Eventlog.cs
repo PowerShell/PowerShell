@@ -743,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
         /// The message goes here.
         /// </summary>
         [Parameter(Position = 4, Mandatory = true)]
-        [Alias("MSG")]
+        [Alias("Msg","InputObject")]
         [ValidateNotNullOrEmpty]
         [ValidateLength(0, 32766)]
         public string Message { get; set; }
