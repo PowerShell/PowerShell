@@ -368,7 +368,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
 
             if (!File.Exists(fullFilePath))
             {
-                throw PSTraceSource.NewArgumentException("fullFilePath");
+                var errorMessage = string.Format(CultureInfo.CurrentCulture, ParserStrings.FileNotFound, fullFilePath);
+                throw PSTraceSource.NewArgumentException("fullFilePath", errorMessage);
             }
 
             using (FileStream fs = File.OpenRead(fullFilePath))
