@@ -1619,11 +1619,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     # Validate all available user agents for Invoke-RestMethod
-    $agents = @{InternetExplorer = "MSIE 9.0"
-        Chrome                   = "Chrome"
-        Opera                    = "Opera"
-        Safari                   = "Safari"
-        FireFox                  = "Firefox"
+    $agents = @{
+        InternetExplorer = "MSIE 9.0"
+        Chrome           = "Chrome"
+        Opera            = "Opera"
+        Safari           = "Safari"
+        FireFox          = "Firefox"
     }
 
     foreach ($agentName in $agents.Keys) {
