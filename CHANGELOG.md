@@ -1,5 +1,38 @@
 # Changelog
 
+## v6.0.0 - 2018-01-09
+
+### Breaking changes
+
+- Remove `sc` alias which conflicts with `sc.exe` (#5827)
+- Move group policy settings and enable policy controlled logging in PowerShell Core (#5791)
+
+### Engine updates and fixes
+
+- remoting: Handle `DLLImport` failure of `libpsrpclient` (#5622)
+
+### Test
+
+- Replace `lee.io` Tests with `WebListener` (#5709) (Thanks @markekraus!)
+- Update the docker based release package tests (#5692)
+- Replace Remaining `HttpBin.org` Tests with `WebListener` (#5665) (Thanks @markekraus!)
+
+### Build and Packaging Improvements
+
+- Update `MSI` packages to not install the x86 package as an x64 component and to use different `UpgradeCode` between x86 and x64 packages (#5812) (Thanks @bergmeister!)
+- Update `Restore-PSPester` to include the fix for nested describe errors (#5771)
+- Automate the generation of release change log draft (#5712)
+
+### Documentation and Help Content
+
+- Updated help Uri to point to latest help content for `Microsoft.PowerShell.Core` module (#5820)
+- Update the installation doc for `Raspberry-Pi` about supported devices (#5773)
+- Fix a typo and a Markdown linting error in the Pull Request Template (#5807) (Thanks @markekraus!)
+- Update submodule documentation for pester removal (#5786) (Thanks @bergmeister!)
+- Change `Github` to `GitHub` in `CONTRIBUTING.md` (#5697) (Thanks @stuntguy3000!)
+- Fix incorrect release date on the changelog (#5698) (Thanks @SwarfegaGit!)
+- Add instructions to deploy `win-arm` build on Windows IoT (#5682)
+
 ## v6.0.0-rc.2 - 2017-12-14
 
 ### Breaking changes
