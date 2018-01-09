@@ -4639,7 +4639,6 @@ end
                     new SessionStateAliasEntry("rvpa", "Resolve-Path", "", ReadOnly),
                     new SessionStateAliasEntry("sal", "Set-Alias", "", ReadOnly),
                     new SessionStateAliasEntry("sbp", "Set-PSBreakpoint", "", ReadOnly),
-                    new SessionStateAliasEntry("sc", "Set-Content", "", ReadOnly),
                     new SessionStateAliasEntry("select", "Select-Object", "", ReadOnly_AllScope),
                     new SessionStateAliasEntry("si", "Set-Item", "", ReadOnly),
                     new SessionStateAliasEntry("sl", "Set-Location", "", ReadOnly),
