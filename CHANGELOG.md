@@ -1,6 +1,6 @@
 # Changelog
 
-## v6.0.0 - 2018-01-09
+## v6.0.0 - 2018-01-10
 
 ### Breaking changes
 
@@ -14,12 +14,12 @@
 ### Test
 
 - Replace `lee.io` Tests with `WebListener` (#5709) (Thanks @markekraus!)
-- Update the docker based release package tests (#5692)
+- Update the docker based release package tests due to the removal of `Pester` module and other issues (#5692)
 - Replace Remaining `HttpBin.org` Tests with `WebListener` (#5665) (Thanks @markekraus!)
 
 ### Build and Packaging Improvements
 
-- Update `MSI` packages to not install the x86 package as an x64 component and to use different `UpgradeCode` between x86 and x64 packages (#5812) (Thanks @bergmeister!)
+- Update x86 and x64 'MSI' packages to not overwrite each other (#5812) (Thanks @bergmeister!)
 - Update `Restore-PSPester` to include the fix for nested describe errors (#5771)
 - Automate the generation of release change log draft (#5712)
 
