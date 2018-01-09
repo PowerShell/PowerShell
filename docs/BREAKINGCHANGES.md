@@ -1,5 +1,16 @@
 # Breaking Changes for PowerShell 6.0
 
+## Explict Removal of Support
+
+### Workflow
+
+### Custom Snap-Ins
+
+### WMI v1 cmdlets
+(Get-WmiObject, invoke-WmiMethod, etc.)
+
+### RunspaceConfiguration
+
 ## Engine/language changes
 
 ### Rename `powershell.exe` to `pwsh.exe` [#5101](https://github.com/PowerShell/PowerShell/issues/5101)
