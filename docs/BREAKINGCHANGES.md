@@ -55,7 +55,7 @@ Instead, we recommend that you the use the CIM (aka WMI v2) cmdlets which provid
 Due to the use of unsupported APIs,
 `Microsoft.PowerShell.LocalAccounts` has been removed from PowerShell Core until a better solution is found.
 
-### *-Counter cmdlets
+### `*-Counter` cmdlets
 
 Due to the use of unsupported APIs,
 the `*-Counter` has been removed from PowerShell Core until a better solution is found.
@@ -216,8 +216,9 @@ However, this change now requires that you explicitly specify `-c` or `-Command`
 
 ### Implement Unicode escape parsing [#3958](https://github.com/PowerShell/PowerShell/issues/3958)
 
-\`u#### or \`u{####} is converted to the corresponding Unicode character.
-To output a literal `u, escape the backtick: ``u.
+`` `u#### `` or `` `u{####} `` is converted to the corresponding Unicode character.
+To output a literal `` `u ``,
+escape the backtick: ``` ``u ```.
 
 ### Change `New-ModuleManifest` encoding to `UTF8NoBOM` on non-Windows platforms [#3940](https://github.com/PowerShell/PowerShell/issues/3940)
 
