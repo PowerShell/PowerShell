@@ -487,6 +487,19 @@ NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
 
+#region docs/BREAKINGCHANGES.md Overrides
+- docs/BREAKINGCHANGES.md
+7-bit
+CoreFX
+non-Windows
+psd1
+runbooks
+runspace
+v1
+v2
+WMI-based
+#endregion
+
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
 _arm

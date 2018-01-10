@@ -468,7 +468,7 @@ work is required for Microsoft to continue to sign and release packages from the
 
 ### Breaking change
 
-* Make invalid argument error messages for -File and -Command consistent and make exit codes consistent with Unix standards (#4573)
+* Make invalid argument error messages for `-File` and `-Command` consistent and make exit codes consistent with Unix standards (#4573)
 
 ### Engine updates and fixes
 
