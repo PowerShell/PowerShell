@@ -110,7 +110,20 @@ function Test-SkipWindows
 
 function Test-SkipLinux
 {
-    return !((Get-DockerEngineOs) -like 'Alpine Linux*')
+    $os = Get-DockerEngineOs
+
+    switch -wildcard ($os)
+    {
+        '*Linux*' {
+            return $false
+        }
+        '*Mac' {
+            return $false
+        }
+        default {
+            return $true
+        }
+    }
 }
 
 function Get-TestContext
