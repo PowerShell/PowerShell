@@ -30,25 +30,25 @@ Today, this breaks the `ActiveDirectory` and `DnsClient` modules in Windows and 
 Due to the complexity of supporting two sets of WMI-based modules,
 we removed the WMI v1 cmdlets from PowerShell Core:
 
-* Get-WmiObject
-* Invoke-WmiMethod
-* Register-WmiEvent
-* Set-WmiInstance
+* `Get-WmiObject`
+* `Invoke-WmiMethod`
+* `Register-WmiEvent`
+* `Set-WmiInstance`
 
 Instead, we recommend that you the use the CIM (aka WMI v2) cmdlets which provide the same functionality with new functionality and a redesigned syntax:
 
-* Get-CimAssociatedInstance
-* Get-CimClass
-* Get-CimInstance
-* Get-CimSession
-* Invoke-CimMethod
-* New-CimInstance
-* New-CimSession
-* New-CimSessionOption
-* Register-CimIndicationEvent
-* Remove-CimInstance
-* Remove-CimSession
-* Set-CimInstance
+* `Get-CimAssociatedInstance`
+* `Get-CimClass`
+* `Get-CimInstance`
+* `Get-CimSession`
+* `Invoke-CimMethod`
+* `New-CimInstance`
+* `New-CimSession`
+* `New-CimSessionOption`
+* `Register-CimIndicationEvent`
+* `Remove-CimInstance`
+* `Remove-CimSession`
+* `Set-CimInstance`
 
 ### Microsoft.PowerShell.LocalAccounts
 
@@ -101,7 +101,7 @@ When an API returns just `null`, Invoke-RestMethod was serializing this as the s
 
 ### Remove `-ComputerName` from `\*-Computer` cmdlets [#5277](https://github.com/PowerShell/PowerShell/issues/5277)
 
-Due to issues with RPC remoting in CoreFx (particularly on non-Windows platforms) and ensuring a consistent remoting experience in PowerShell,
+Due to issues with RPC remoting in CoreFX (particularly on non-Windows platforms) and ensuring a consistent remoting experience in PowerShell,
 the `-ComputerName` parameter was removed from the `\*-Computer` cmdlets.
 Use `Invoke-Command` instead as the way to execute cmdlets remotely.
 
@@ -199,7 +199,7 @@ Due to unsupported APIs, the `LocalAccounts` module and the `Counter` cmdlets in
 
 ### Executing powershell script with bool parameter does not work [#4036](https://github.com/PowerShell/PowerShell/issues/4036)
 
-Previously, using powershell.exe (now pwsh.exe) to execute a PowerShell script using `-File` provided no way to pass $true/$false as parameter values.
+Previously, using powershell.exe (now `pwsh.exe`) to execute a PowerShell script using `-File` provided no way to pass $true/$false as parameter values.
 Support for $true/$false as parsed values to parameters was added.
 Switch values are also supported as currently documented syntax doesn't work.
 
@@ -243,7 +243,11 @@ Going forward all of the output will be displayed with a true representation of 
 
 ### PowerShell as a default shell doesn't work with script command [#3319](https://github.com/PowerShell/PowerShell/issues/3319)
 
-On Unix, it is a convention for shells to accept `-i` for an interactive shell and many tools expect this behavior (`script` for example, and when setting PowerShell as the default shell) and calls the shell with the `-i` switch. This change is breaking in that `-i` previously could be used as short hand to match `-inputformat`, which now needs to be `-in`.
+On Unix, it is a convention for shells to accept `-i` for an interactive shell and many tools expect this behavior
+(`script` for example, and when setting PowerShell as the default shell)
+and calls the shell with the `-i` switch.
+This change is breaking in that `-i` previously could be used as short hand to match `-inputformat`,
+which now needs to be `-in`.
 
 ### Typo fix in Get-ComputerInfo property name [#3167](https://github.com/PowerShell/PowerShell/issues/3167)
 
