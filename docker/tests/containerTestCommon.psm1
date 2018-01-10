@@ -120,8 +120,15 @@ function Test-SkipLinux
         '*Mac' {
             return $false
         }
-        default {
+        # Docker for Windows means we are running the linux kernel
+        'Docker for Windows' {
+            return $false
+        }
+        'Windows*' {
             return $true
+        }
+        default {
+            throw "Unknow docker os '$os'"
         }
     }
 }
