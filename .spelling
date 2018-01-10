@@ -482,6 +482,14 @@ NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
 
+#region docs/BREAKINGCHANGES.md Overrides
+- docs/BREAKINGCHANGES.md
+7-bit
+CoreFX
+runspace
+v1
+#endregion
+
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
 Catalog
