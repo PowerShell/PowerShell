@@ -115,3 +115,19 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         }
     }
 }
+
+Describe "Working directory on startup" -Tag "CI" {
+    BeforeAll {
+        $testPath = New-Item -ItemType Directory -Path "$TestDrive\test[dir]"
+        $currentDirectory = Get-Location
+    }
+
+    AfterAll {
+        Set-Location $currentDirectory
+    }
+
+    It "Can start in directory where name contains wildcard characters" {
+        Set-Location -LiteralPath $testPath.FullName
+        & $powershell -noprofile -c get-location | Should BeExactly $testPath.FullName
+    }
+}
