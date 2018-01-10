@@ -118,6 +118,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
 
 Describe "Working directory on startup" -Tag "CI" {
     BeforeAll {
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $testPath = New-Item -ItemType Directory -Path "$TestDrive\test[dir]"
         $currentDirectory = Get-Location
     }
@@ -128,6 +129,12 @@ Describe "Working directory on startup" -Tag "CI" {
 
     It "Can start in directory where name contains wildcard characters" {
         Set-Location -LiteralPath $testPath.FullName
-        & $powershell -noprofile -c get-location | Should BeExactly $testPath.FullName
+        if ($IsMacOS) {
+            # on macOS, /tmp is a symlink to /private so the real path is under /private/tmp
+            $expectedPath = "/private" + $testPath.FullName
+        } else {
+            $expectedPath = $testPath.FullName
+        }
+        & $powershell -noprofile -c { $PWD.Path } | Should BeExactly $expectedPath
     }
 }
