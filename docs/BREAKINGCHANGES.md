@@ -294,3 +294,19 @@ With this change, W3C extended log format is supported.
 
 Remove the `BuildVersion` property from `$PSVersionTable`. This property was tied to the Windows build version.
 Instead, we recommend that you use `GitCommitId` to retrieve the exact build version of PowerShell Core.
+
+### Changes to Web Cmdlets
+
+The underlying .NET API of the Web Cmdlets has been changed to `System.Net.Http.HttpClient`. This change provides many benefits.
+However, this change along with a lack of interoperability with Internet Explorer have resulted in several breaking changes within `Invoke-WebRequest` and `Invoke-RestMethod`.
+
+* `Invoke-WebRequest` now supports basic HTML Parsing only. `Invoke-WebRequest` always returns a `BasicHtmlWebResponseObject` object.
+  The `ParsedHtml` and `Forms` properties have been removed.
+* `BasicHtmlWebResponseObject.Headers` values are now `String[]` instead of `String`.
+* `BasicHtmlWebResponseObject.BaseResponse` is now a `System.Net.Http.HttpResponseMessage` object.
+* The `Response` property on Web Cmdlet exceptions is now a `System.Net.Http.HttpResponseMessage` object.
+* Strict RFC header parsing is now default for the `-Headers` and `-UserAgent` parameter. This can be bypassed with `-SkipHeaderValidation`.
+* `file://` and `ftp://` URI schemes are no longer supported.
+* `System.Net.ServicePointManager` settings are no longer honored.
+* There is currently no certificate based authentication available on macOS.
+* Use of `-Credential` over an `http://` URI will result in an error. Use an `https://` URI or supply the `-AllowUnencryptedAuthentication` parameter to suppress the error.
