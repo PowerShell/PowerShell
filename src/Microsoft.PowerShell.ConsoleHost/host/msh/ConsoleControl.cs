@@ -2971,6 +2971,8 @@ namespace Microsoft.PowerShell
 
 #endregion helper
 
+#endif
+
 #region
 
         internal static int LengthInBufferCells(char c)
@@ -2997,6 +2999,8 @@ namespace Microsoft.PowerShell
         }
 
 #endregion
+
+#if !UNIX
 
 #region SendInput
 
