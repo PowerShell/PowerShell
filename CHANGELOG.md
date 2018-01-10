@@ -19,7 +19,7 @@
 
 ### Build and Packaging Improvements
 
-- Update x86 and x64 'MSI' packages to not overwrite each other (#5812) (Thanks @bergmeister!)
+- Update x86 and x64 `MSI` packages to not overwrite each other (#5812) (Thanks @bergmeister!)
 - Update `Restore-PSPester` to include the fix for nested describe errors (#5771)
 - Automate the generation of release change log draft (#5712)
 
