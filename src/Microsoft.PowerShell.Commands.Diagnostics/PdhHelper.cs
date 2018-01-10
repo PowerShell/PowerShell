@@ -3,6 +3,7 @@
 //
 
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -485,7 +486,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(strSize >= 2);
             int offset = 0;
-            string allSubstringsWithNulls = "";
+            StringBuilder sb = new StringBuilder(strSize);
             while (offset <= ((strSize * sizeof(char)) - 4))
             {
                 Int32 next4 = Marshal.ReadInt32(strNative, offset);
@@ -494,14 +495,19 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     break;
                 }
 
-                allSubstringsWithNulls += (char)next4;
+                char nextChar = (char)next4;
+                if (nextChar == '\0')
+                {
+                    strColl.Add(sb.ToString());
+                    sb.Clear();
+                }
+                else
+                {
+                    sb.Append(nextChar);
+                }
 
                 offset += 2;
             }
-
-            allSubstringsWithNulls = allSubstringsWithNulls.TrimEnd('\0');
-
-            strColl.AddRange(allSubstringsWithNulls.Split('\0'));
         }
 
 
