@@ -254,14 +254,14 @@ which now needs to be `-in`.
 
 `BiosSerialNumber` was misspelled as `BiosSeralNumber` and has been changed to the correct spelling.
 
-### Add Get-StringHash and Get-FileHash cmdlets [#3024](https://github.com/PowerShell/PowerShell/issues/3024)
+### Add `Get-StringHash` and `Get-FileHash` cmdlets [#3024](https://github.com/PowerShell/PowerShell/issues/3024)
 
 This change is that some hash algorithms are not supported by CoreFX, therefore they are no longer available:
 
 * `MACTripleDES`
 * `RIPEMD160`
 
-### Add validation on get-* cmdlets where passing $null returns all objects instead of error [#2672](https://github.com/PowerShell/PowerShell/issues/2672)
+### Add validation on `Get-*` cmdlets where passing $null returns all objects instead of error [#2672](https://github.com/PowerShell/PowerShell/issues/2672)
 
 Passing `$null` to any of the following now throws an error:
 
