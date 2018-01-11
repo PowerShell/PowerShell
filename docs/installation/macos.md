@@ -47,6 +47,8 @@ or install it from the terminal:
 sudo installer -pkg powershell-6.0.0-osx.10.12-x64.pkg -target /
 ```
 
+[releases]: https://github.com/PowerShell/PowerShell/releases
+
 ### Installation via Binary Archive
 
 ```sh
