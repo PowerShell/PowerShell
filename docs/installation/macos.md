@@ -37,8 +37,6 @@ brew cask reinstall powershell
 
 > Note: because of [this issue in Cask](https://github.com/caskroom/homebrew-cask/issues/29301), you currently have to do a reinstall to upgrade.
 
-
-
 [brew]: http://brew.sh/
 [cask]: https://caskroom.github.io/
 
