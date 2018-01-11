@@ -491,6 +491,7 @@ nanoserver-insider-powershell
 - docs/BREAKINGCHANGES.md
 7-bit
 CoreFX
+honored
 non-Windows
 psd1
 runbooks
