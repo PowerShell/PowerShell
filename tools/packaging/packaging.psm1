@@ -243,7 +243,7 @@ function Start-PSPackage {
                     AssetsPath = "$PSScriptRoot\..\..\assets"
                     LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
                     # Product Guid needs to be unique for every PowerShell version to allow SxS install
-                    ProductGuid = New-Guid
+                    ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                 }
