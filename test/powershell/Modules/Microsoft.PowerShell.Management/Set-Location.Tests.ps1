@@ -41,6 +41,16 @@ Describe "Set-Location" -Tags "CI" {
         $result | Should BeOfType System.Management.Automation.PathInfo
     }
 
+    It "Should accept path containing wildcard characters" {
+        $null = New-Item -ItemType Directory -Path "$TestDrive\aa"
+        $null = New-Item -ItemType Directory -Path "$TestDrive\ba"
+        $testPath = New-Item -ItemType Directory -Path "$TestDrive\[ab]a"
+
+        Set-Location $TestDrive
+        Set-Location -Path "[ab]a"
+        $(Get-Location).Path | Should BeExactly $testPath.FullName
+    }
+
     Context 'Set-Location with no arguments' {
 
         It 'Should go to $env:HOME when Set-Location run with no arguments from FileSystem provider' {

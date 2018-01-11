@@ -287,12 +287,6 @@ namespace System.Management.Automation
 
             Collection<PathInfo> workingPath = null;
 
-            // if the directory exists, it might contain wildcard characters, so suppress wildcard expansion
-            if (Utils.NativeDirectoryExists(path))
-            {
-                context.SuppressWildcardExpansion = true;
-            }
-
             try
             {
                 workingPath =
