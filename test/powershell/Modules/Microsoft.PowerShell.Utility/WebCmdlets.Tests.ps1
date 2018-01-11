@@ -757,51 +757,49 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
-
-        $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType" -PreserveAuthorizationOnRedirect
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
 
         $response.Error | Should BeNullOrEmpty
-        # ensure Authorization header has been preserved.
-        $response.Content.Headers -contains "Authorization" | Should Be $true
+        $response.Content.Headers."Authorization" | Should BeExactly "test"
     }
 
 
     It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
-
-        $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType&multiredirect=true" -PreserveAuthorizationOnRedirect
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
 
         $response.Error | Should BeNullOrEmpty
-        # ensure Authorization header was stripped
-        $response.Content.Headers -contains "Authorization" | Should Be $true
+        $response.Content.Headers."Authorization" | Should BeExactly "test"
     }
 
     It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
-
-        $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType"
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -Uri $uri
 
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
-        $response.Content.Headers -contains "User-Agent" | Should Be $true
+        $response.Content.Headers."User-Agent" | Should Not BeNullOrEmpty
         # ensure Authorization header has been removed.
-        $response.Content.Headers -contains "Authorization" | Should Be $false
+        $response.Content.Headers."Authorization" | Should BeNullOrEmpty
     }
 
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
     It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
-
-        $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType" -Method 'POST'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest -Uri $uri -Method 'POST'
 
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
-        $response.Content.Headers -contains "User-Agent" | Should Be $true
+        $response.Content.Headers."User-Agent" | Should Not BeNullOrEmpty
         # ensure Authorization header has been removed.
-        $response.Content.Headers -contains "Authorization" | Should Be $false
+        $response.Content.Headers."Authorization" | Should BeNullOrEmpty
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
-        $response.Content.HttpMethod | Should Be $redirectedMethod
+        $response.Content.Method | Should Be $redirectedMethod
     }
 
     #endregion Redirect tests
@@ -1753,50 +1751,50 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validates Invoke-RestMethod with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
-
-        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType" -PreserveAuthorizationOnRedirect
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri -PreserveAuthorizationOnRedirect
 
         $response.Error | Should BeNullOrEmpty
         # ensure Authorization header has been preserved.
-        $response.Content.Headers -contains "Authorization" | Should Be $true
+        $response.Content.Headers."Authorization" | Should BeExactly "test"
     }
 
     It "Validates Invoke-RestMethod preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
-
-        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType&multiredirect=true" -PreserveAuthorizationOnRedirect
+        $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri -PreserveAuthorizationOnRedirect
 
         $response.Error | Should BeNullOrEmpty
         # ensure Authorization header was stripped
-        $response.Content.Headers -contains "Authorization" | Should Be $true
+        $response.Content.Headers."Authorization" | Should BeExactly "test"
     }
 
     It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
-
-        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType"
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri
 
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
-        $response.Output.Headers -contains "User-Agent" | Should Be $true
+        $response.Content.Headers."User-Agent" | Should Not BeNullOrEmpty
         # ensure Authorization header has been removed.
-        $response.Content.Headers -contains "Authorization" | Should Be $false
+        $response.Content.Headers."Authorization" | Should BeNullOrEmpty
     }
 
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
     It "Validates Invoke-RestMethod strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
-
-        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType" -Method 'POST'
+        $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
+        $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
 
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
-        $response.Content.Headers -contains "User-Agent" | Should Be $true
+        $response.Content.Headers."User-Agent" | Should Not BeNullOrEmpty
         # ensure Authorization header has been removed.
-        $response.Content.Headers -contains "Authorization" | Should Be $false
+        $response.Content."Authorization" | Should BeNullOrEmpty
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
-        $response.Content.HttpMethod | Should Be $redirectedMethod
+        $response.Content.Method | Should Be $redirectedMethod
     }
 
     #endregion Redirect tests
