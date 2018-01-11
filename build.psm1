@@ -521,7 +521,7 @@ Fix steps:
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
         $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
@@ -651,16 +651,6 @@ function Restore-PSModuleToBuild
     log "Restore PowerShell modules to $publishPath"
 
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-
-    # These modules are restored to the global nuget package cache at the
-    # same time we restore nuget packages to build PowerShell, we just
-    # copy them from the cache to the final layout location now.
-    $modules = @(
-        'PackageManagement'
-        'PowerShellGet'
-        'PSReadLine'
-        'Microsoft.PowerShell.Archive'
-    )
 
     Copy-PSGalleryModules -Destination $modulesDir
 
@@ -2476,9 +2466,8 @@ function Copy-PSGalleryModules
         $nugetCache = $matches[1]
     }
     else {
-        throw "Can't fine nuget global cache"
+        throw "Can't find nuget global cache"
     }
-
 
     $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
 
