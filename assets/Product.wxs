@@ -9,9 +9,11 @@
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
   <?if $(sys.BUILDARCH)=x64?>
     <?define UpgradeCode = "31ab5147-9a97-4452-8443-d9709f0516e1" ?>
+    <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion)"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.ProductSemanticVersion)"?>
   <?else?>
     <?define UpgradeCode = "1d00683b-0f84-4db8-a64f-2f98ad42fe06" ?>
+    <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
   <?endif?>
   <?define ProductVersion = "$(env.ProductVersion)" ?>
@@ -175,10 +177,10 @@
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductSemanticVersionWithName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithName)" Description="$(var.ProductSemanticVersionWithName)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Description="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-            <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithName)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
         </Directory>
       </Directory>
