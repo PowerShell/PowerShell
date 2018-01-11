@@ -79,7 +79,7 @@ foreach ($file in $files)
     }
 }
 
-[string] $command = "wevtutil um {0}" -f $manifest.FullName
+[string] $command = 'wevtutil um "{0}"' -f $manifest.FullName
 
 # Unregister if present. Avoids warnings when registering the manifest
 # and it is already registered.
@@ -88,7 +88,7 @@ Start-NativeExecution {Invoke-Expression $command} $true
 
 if (-not $Unregister)
 {
-    $command = "wevtutil.exe im {0} /rf:{1} /mf:{1}" -f $manifest.FullName, $binary.FullName
+    $command = 'wevtutil.exe im "{0}" /rf:"{1}" /mf:"{1}"' -f $manifest.FullName, $binary.FullName
     Write-Verbose -Message "Register the manifest: $command"
     Start-NativeExecution { Invoke-Expression $command }
 }
