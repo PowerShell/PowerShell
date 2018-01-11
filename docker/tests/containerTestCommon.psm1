@@ -110,7 +110,27 @@ function Test-SkipWindows
 
 function Test-SkipLinux
 {
-    return !((Get-DockerEngineOs) -like 'Alpine Linux*')
+    $os = Get-DockerEngineOs
+
+    switch -wildcard ($os)
+    {
+        '*Linux*' {
+            return $false
+        }
+        '*Mac' {
+            return $false
+        }
+        # Docker for Windows means we are running the linux kernel
+        'Docker for Windows' {
+            return $false
+        }
+        'Windows*' {
+            return $true
+        }
+        default {
+            throw "Unknow docker os '$os'"
+        }
+    }
 }
 
 function Get-TestContext
