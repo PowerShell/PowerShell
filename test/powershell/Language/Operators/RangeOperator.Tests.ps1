@@ -108,75 +108,87 @@ Describe "Range Operator" -Tags CI {
         }
 
         It "Range operator works in ascending and descending order" {
-            $CharRange = 'a'..'b'
-            $CharRange.count | Should Be 2
+            $CharRange = 'a'..'c'
+            $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly ([char]'a')
             $CharRange[1] | Should BeExactly ([char]'b')
+            $CharRange[2] | Should BeExactly ([char]'c')
 
-            $CharRange = 'B'..'A'
-            $CharRange.count | Should Be 2
-            $CharRange[0] | Should BeExactly ([char]'B')
-            $CharRange[1] | Should BeExactly ([char]'A')
+            $CharRange = 'C'..'A'
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly ([char]'C')
+            $CharRange[1] | Should BeExactly ([char]'B')
+            $CharRange[2] | Should BeExactly ([char]'A')
         }
 
         It "Range operator works in ascending and descending order with [char] cast" {
-            $CharRange = [char]'a'..[char]'b'
-            $CharRange.count | Should Be 2
+            $CharRange = [char]'a'..[char]'c'
+            $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly ([char]'a')
             $CharRange[1] | Should BeExactly ([char]'b')
+            $CharRange[2] | Should BeExactly ([char]'c')
 
-            $CharRange = [char]'B'..[char]'A'
-            $CharRange.count | Should Be 2
-            $CharRange[0] | Should BeExactly ([char]'B')
-            $CharRange[1] | Should BeExactly ([char]'A')
+            $CharRange = [char]'C'..[char]'A'
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly ([char]'C')
+            $CharRange[1] | Should BeExactly ([char]'B')
+            $CharRange[2] | Should BeExactly ([char]'A')
         }
 
         It "Range operator enumerator works in ascending and descending order" {
-            $CharRange = 'a'..'b' | ForEach-Object { $_ }
-            $CharRange.count | Should Be 2
+            $CharRange = 'a'..'c' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly "a"
             $CharRange[1] | Should BeExactly "b"
+            $CharRange[2] | Should BeExactly "c"
 
-            $CharRange = 'B'..'A' | ForEach-Object { $_ }
-            $CharRange.count | Should Be 2
-            $CharRange[0] | Should BeExactly "B"
-            $CharRange[1] | Should BeExactly "A"
+            $CharRange = 'C'..'A' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly "C"
+            $CharRange[1] | Should BeExactly "B"
+            $CharRange[2] | Should BeExactly "A"
         }
 
         It "Range operator enumerator works in ascending and descending order with [char] cast" {
-            $CharRange = [char]'a'..[char]'b' | ForEach-Object { $_ }
-            $CharRange.count | Should Be 2
+            $CharRange = [char]'a'..[char]'c' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly "a"
             $CharRange[1] | Should BeExactly "b"
+            $CharRange[2] | Should BeExactly "c"
 
-            $CharRange = [char]'B'..[char]'A' | ForEach-Object { $_ }
-            $CharRange.count | Should Be 2
-            $CharRange[0] | Should BeExactly "B"
-            $CharRange[1] | Should BeExactly "A"
+            $CharRange = [char]'C'..[char]'A' | ForEach-Object { $_ }
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly "C"
+            $CharRange[1] | Should BeExactly "B"
+            $CharRange[2] | Should BeExactly "A"
         }
 
         It "Range operator works with variables" {
             $var1 = 'a'
-            $var2 = 'b'
+            $var2 = 'c'
             $CharRange = $var1..$var2
-            $CharRange.count | Should Be 2
+            $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly "a"
             $CharRange[1] | Should BeExactly "b"
+            $CharRange[2] | Should BeExactly "c"
 
             $CharRange = [char]$var2..[char]$var1
-            $CharRange.count | Should Be 2
-            $CharRange[0] | Should BeExactly "b"
-            $CharRange[1] | Should BeExactly "a"
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly "c"
+            $CharRange[1] | Should BeExactly "b"
+            $CharRange[2] | Should BeExactly "a"
 
             $CharRange = $var1..$var2 | ForEach-Object { $_ }
-            $CharRange.count | Should Be 2
+            $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly "a"
             $CharRange[1] | Should BeExactly "b"
+            $CharRange[2] | Should BeExactly "c"
 
             $CharRange = [char]$var2..[char]$var1 | ForEach-Object { $_ }
-            $CharRange.count | Should Be 2
-            $CharRange[0] | Should BeExactly "b"
-            $CharRange[1] | Should BeExactly "a"
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly "c"
+            $CharRange[1] | Should BeExactly "b"
+            $CharRange[2] | Should BeExactly "a"
         }
 
         It "Range operator works with 16-bit unicode characters" {
