@@ -21,6 +21,12 @@ Now, you can install PowerShell:
 brew cask install powershell
 ```
 
+Finally, verify that your install is working properly:
+
+```sh
+pwsh
+```
+
 When new versions of PowerShell are released,
 simply update Homebrew's formulae and upgrade PowerShell:
 
