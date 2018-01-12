@@ -217,40 +217,25 @@
         BeforeAll {
             $gpsList = Get-Process pwsh
             $gps = $gpsList | Select-Object -First 1
-            $filePath = Join-Path $subFilePath 'gps.xml'
-        }
 
-        AfterEach {
-            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+            $clixml = ConvertTo-CliXml -InputObject $gps
+            $clixml | Should Not BeNullOrEmpty
         }
 
         It "deserializes an object as expected" {
-            Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
-            $filePath | Should Exist
-
-            $fileContent = Get-Content $filePath -raw
-            $fileContent | Should Not BeNullOrEmpty
-
-            $importedProcess = ConvertFrom-Clixml -InputObject $fileContent
+            $importedProcess = ConvertFrom-Clixml -InputObject $clixml
 
             $importedProcess.ProcessName | Should Be $gps.ProcessName
             $importedProcess.Id | Should Be $gps.Id
         }
 
         It "deserializes an object from the pipeline as expected" {
-            Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
-            $filePath | Should Exist
-
-            $fileContent = Get-Content $filePath
-            $fileContent | Should Not BeNullOrEmpty
-
-            $importedProcess = $fileContent | ConvertFrom-Clixml
+            $importedProcess = $clixml | ConvertFrom-Clixml
 
             $importedProcess.ProcessName | Should Be $gps.ProcessName
             $importedProcess.Id | Should Be $gps.Id
         }
     }
-
 }
 
 ##

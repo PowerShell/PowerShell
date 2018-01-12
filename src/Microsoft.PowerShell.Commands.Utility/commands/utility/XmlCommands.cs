@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                _serializer = new Serializer(_xmlWriter, Depth, true);
+                _serializer = new Serializer(_xmlWriter, Depth, useDepthFromTypes: true);
             }
 
         }
@@ -336,7 +336,6 @@ namespace Microsoft.PowerShell.Commands
         protected override TextWriter GetTextWriter()
         {
             _stringWriter = new StringWriter();
-
             return _stringWriter;
         }
 
@@ -435,7 +434,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///
+        /// StopProcessing overload
         /// </summary>
         protected override void StopProcessing()
         {
@@ -497,8 +496,6 @@ namespace Microsoft.PowerShell.Commands
         {
             _inputObjectBuffer.Add(InputObject);
         }
-
-
 
         /// <summary>
         /// the main execution method for the convertfrom-clixml command
