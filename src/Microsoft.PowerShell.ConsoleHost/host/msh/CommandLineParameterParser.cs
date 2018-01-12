@@ -709,7 +709,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 
-                else if (MatchSwitch(switchKey, "settingsFile", "settings") )
+                else if (MatchSwitch(switchKey, "settingsfile", "settings") )
                 {
                     ++i;
                     if (i >= args.Length)
