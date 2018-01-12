@@ -197,7 +197,9 @@ namespace System.Management.Automation
                         var argsArg = parameters[i];
                         var encodedArgs = ConvertArgsValueToEncodedString(argsArg.ArgumentValue);
                         parameters[i - 1] = CommandParameterInternal.CreateParameter(EncodedArgsParameter, "-" + EncodedArgsParameter, parameter.ParameterAst);
-                        parameters[i] = CommandParameterInternal.CreateArgument(encodedArgs, argsArg.ArgumentAst);
+                        // NOTE: do not pass the ArgumentAst; it will fail validation in BindParameters if there
+                        // are multiple arguments (array) but encodedArgs is an encoded string.
+                        parameters[i] = CommandParameterInternal.CreateArgument(encodedArgs);
                     }
                 }
                 else
