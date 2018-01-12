@@ -502,8 +502,21 @@ namespace System.Management.Automation
 
             Collection<string> stringResult = new Collection<string>();
 
-            // if the directory contains wildcard characters, but exists, just return it
-            if (!context.SuppressWildcardExpansion && !Utils.NativeDirectoryExists(userPath))
+            // if the directory exists, just return it
+            try
+            {
+                if (Utils.NativeDirectoryExists(userPath))
+                {
+                    result.Add(new PathInfo(drive, provider, userPath, _sessionState));
+                    return result;
+                }
+            }
+            catch
+            {
+                // in cases of Access Denied or other errors, fallback to previous behavior and let provider handle it
+            }
+
+            if (!context.SuppressWildcardExpansion)
             {
                 // See if the provider will expand the wildcard
                 if (CmdletProviderManagementIntrinsics.CheckProviderCapabilities(
