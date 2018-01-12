@@ -249,6 +249,33 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
+    Context "-SettingsFile Commandline switch" {
+        BeforeAll {
+            $CustomSettingsFile = Join-Path -Path $TestDrive -ChildPath 'Powershell.test.json'
+            $DefaultExecutionPolicy = 'Unrestricted'
+        }
+        BeforeEach {
+            # reset the content of the settings file to a known state.
+            Set-Content -Path $CustomSettingsfile -Value "{`"Microsoft.PowerShell:ExecutionPolicy`":`"$DefaultExecutionPolicy`"}" -ErrorAction Stop
+        }
+
+        It "PowerShell reads from the custom -settingsFile" {
+            $actualValue = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {(Get-ExecutionPolicy).ToString()}
+            $actualValue  | Should Be $DefaultExecutionPolicy
+        }
+
+        It "PowerShell writes to the custom -settingsFile" {
+            $expectedValue = 'AllSigned'
+            & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {Set-ExecutionPolicy AllSigned}
+            # ensure the setting was written to the settings file.
+            $content = (Get-Content -Path $CustomSettingsFile | ConvertFrom-Json)
+            $content.'Microsoft.PowerShell:ExecutionPolicy' | Should Be $expectedValue
+            # ensure the setting is applied on next run
+            $actualValue = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {(Get-ExecutionPolicy).ToString()}
+            $actualValue  | Should Be $expectedValue
+        }
+    }
+
     Context "Pipe to/from powershell" {
         $p = [PSCustomObject]@{X=10;Y=20}
 
