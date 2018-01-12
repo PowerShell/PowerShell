@@ -2058,7 +2058,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
         # This example shows how to produce a Debug-x64 installer for development purposes.
-        cd $RootPathOfPowerShellCheckout
+        cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
         New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
@@ -2079,7 +2079,7 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductVersion,
 
-        # Product Guid needs to change for every version to support SxS install
+        # Product Code needs to change for every version to support SxS install
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $ProductCode,
