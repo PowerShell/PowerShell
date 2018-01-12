@@ -28,6 +28,10 @@ namespace System.Management.Automation.Configuration
         internal static PowerShellConfig Instance => s_instance;
 
         private string psHomeConfigDirectory;
+        // When passed as a pwsh command-line option,
+        // overrides the system wide configuration file.
+        private string psCustomHomeConfigFilePath;
+
         private string appDataConfigDirectory;
         private const string configFileName = "powershell.config.json";
 
@@ -50,6 +54,65 @@ namespace System.Management.Automation.Configuration
             appDataConfigDirectory = Utils.GetUserConfigurationDirectory();
         }
 
+        private string GetConfigFilePath(ConfigScope scope)
+        {
+            string result = string.Empty;
+
+            if (scope == ConfigScope.CurrentUser)
+            {
+                result = Path.Combine(appDataConfigDirectory, configFileName);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(psCustomHomeConfigFilePath))
+                {
+                    // system wide configuration file overridden at the pwsh command-line.
+                    result = psCustomHomeConfigFilePath;
+                }
+                else
+                {
+                    result = Path.Combine(psHomeConfigDirectory, configFileName);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Gets or sets the system wide configuration file path
+        /// </summary>
+        /// <returns>A fully qualified path to the system wide configuration file.</returns>
+        internal string SystemConfigFilePath
+        {
+            get
+            {
+                fileLock.EnterReadLock();
+                try
+                {
+                    return GetConfigFilePath(ConfigScope.SystemWide);
+                }
+                finally
+                {
+                    fileLock.ExitReadLock();
+                }
+            }
+            set
+            {
+                if (!string.IsNullOrEmpty(value) && !File.Exists(value))
+                {
+                    throw new FileNotFoundException(value);
+                }
+                fileLock.EnterWriteLock();
+                try
+                {
+                    psCustomHomeConfigFilePath = value;
+                }
+                finally
+                {
+                    fileLock.ExitWriteLock();
+                }
+            }
+        }
+
         /// <summary>
         /// Existing Key = HKLM:\System\CurrentControlSet\Control\Session Manager\Environment
         /// Proposed value = %ProgramFiles%\PowerShell\Modules by default
@@ -59,10 +122,7 @@ namespace System.Management.Automation.Configuration
         /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
         internal string GetModulePath(ConfigScope scope)
         {
-            string scopeDirectory = scope == ConfigScope.SystemWide ? psHomeConfigDirectory : appDataConfigDirectory;
-            string fileName = Path.Combine(scopeDirectory, configFileName);
-
-            string modulePath = ReadValueFromFile<string>(fileName, Constants.PSModulePathEnvVar);
+            string modulePath = ReadValueFromFile<string>(scope, Constants.PSModulePathEnvVar);
             if (!string.IsNullOrEmpty(modulePath))
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
@@ -87,17 +147,9 @@ namespace System.Management.Automation.Configuration
         internal string GetExecutionPolicy(ConfigScope scope, string shellId)
         {
             string execPolicy = null;
-            string scopeDirectory = psHomeConfigDirectory;
 
-            // Defaults to system wide.
-            if(ConfigScope.CurrentUser == scope)
-            {
-                scopeDirectory = appDataConfigDirectory;
-            }
-
-            string fileName = Path.Combine(scopeDirectory, configFileName);
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
-            string rawExecPolicy = ReadValueFromFile<string>(fileName, valueName);
+            string rawExecPolicy = ReadValueFromFile<string>(scope, valueName);
 
             if (!String.IsNullOrEmpty(rawExecPolicy))
             {
@@ -108,23 +160,12 @@ namespace System.Management.Automation.Configuration
 
         internal void RemoveExecutionPolicy(ConfigScope scope, string shellId)
         {
-            string scopeDirectory = psHomeConfigDirectory;
-
-            // Defaults to system wide.
-            if (ConfigScope.CurrentUser == scope)
-            {
-                scopeDirectory = appDataConfigDirectory;
-            }
-
-            string fileName = Path.Combine(scopeDirectory, configFileName);
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
-            RemoveValueFromFile<string>(fileName, valueName);
+            RemoveValueFromFile<string>(scope, valueName);
         }
 
         internal void SetExecutionPolicy(ConfigScope scope, string shellId, string executionPolicy)
         {
-            string scopeDirectory = psHomeConfigDirectory;
-
             // Defaults to system wide.
             if (ConfigScope.CurrentUser == scope)
             {
@@ -133,12 +174,10 @@ namespace System.Management.Automation.Configuration
                 // CreateDirectory will succeed if the directory already exists
                 // so there is no reason to check Directory.Exists().
                 Directory.CreateDirectory(appDataConfigDirectory);
-                scopeDirectory = appDataConfigDirectory;
             }
 
-            string fileName = Path.Combine(scopeDirectory, configFileName);
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
-            WriteValueToFile<string>(fileName, valueName, executionPolicy);
+            WriteValueToFile<string>(scope, valueName, executionPolicy);
         }
 
         /// <summary>
@@ -153,14 +192,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>Whether console prompting should happen. If the value cannot be read it defaults to false.</returns>
         internal bool GetConsolePrompting()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            return ReadValueFromFile<bool>(fileName, "ConsolePrompting");
+            return ReadValueFromFile<bool>(ConfigScope.SystemWide, "ConsolePrompting");
         }
 
         internal void SetConsolePrompting(bool shouldPrompt)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            WriteValueToFile<bool>(fileName, "ConsolePrompting", shouldPrompt);
+            WriteValueToFile<bool>(ConfigScope.SystemWide, "ConsolePrompting", shouldPrompt);
         }
 
         /// <summary>
@@ -175,14 +212,12 @@ namespace System.Management.Automation.Configuration
         /// <returns>Boolean indicating whether Update-Help should prompt. If the value cannot be read, it defaults to false.</returns>
         internal bool GetDisablePromptToUpdateHelp()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            return ReadValueFromFile<bool>(fileName, "DisablePromptToUpdateHelp");
+            return ReadValueFromFile<bool>(ConfigScope.SystemWide, "DisablePromptToUpdateHelp");
         }
 
         internal void SetDisablePromptToUpdateHelp(bool prompt)
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            WriteValueToFile<bool>(fileName, "DisablePromptToUpdateHelp", prompt);
+            WriteValueToFile<bool>(ConfigScope.SystemWide, "DisablePromptToUpdateHelp", prompt);
         }
 
         /// <summary>
@@ -190,9 +225,7 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
         {
-            string scopeDirectory = (scope == ConfigScope.SystemWide) ? psHomeConfigDirectory : appDataConfigDirectory;
-            string fileName = Path.Combine(scopeDirectory, configFileName);
-            return ReadValueFromFile<PowerShellPolicies>(fileName, nameof(PowerShellPolicies));
+            return ReadValueFromFile<PowerShellPolicies>(scope, nameof(PowerShellPolicies));
         }
 
 #if UNIX
@@ -204,8 +237,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal string GetSysLogIdentity()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            string identity = ReadValueFromFile<string>(fileName, "LogIdentity");
+            string identity = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogIdentity");
 
             if (string.IsNullOrEmpty(identity) ||
                 identity.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
@@ -223,8 +255,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSLevel GetLogLevel()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            string levelName = ReadValueFromFile<string>(fileName, "LogLevel");
+            string levelName = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogLevel");
             PSLevel level;
 
             if (string.IsNullOrEmpty(levelName) ||
@@ -256,8 +287,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSChannel GetLogChannels()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            string values = ReadValueFromFile<string>(fileName, "LogChannels");
+            string values = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogChannels");
 
             PSChannel result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -299,8 +329,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSKeyword GetLogKeywords()
         {
-            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
-            string values = ReadValueFromFile<string>(fileName, "LogKeywords");
+            string values = ReadValueFromFile<string>(ConfigScope.SystemWide, "LogKeywords");
 
             PSKeyword result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -331,7 +360,23 @@ namespace System.Management.Automation.Configuration
             return result;
         }
 #endif // UNIX
- 
+
+        /// <summary>
+        /// Read a value from the configuration file.
+        /// </summary>
+        /// <typeparam name="T">The type of the value</typeparam>
+        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
+        /// <param name="key">The string key of the value.</param>
+        /// <param name="defaultValue">The default value to return if the key is not present.</param>
+        /// <param name="readImpl"></param>
+        private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default(T),
+                                       Func<JToken, JsonSerializer, T, T> readImpl = null)
+        {
+
+            string fileName = GetConfigFilePath(scope);
+            return ReadValueFromFile<T>(fileName, key, defaultValue, readImpl);
+        }
+
         private T ReadValueFromFile<T>(string fileName, string key, T defaultValue = default(T),
                                        Func<JToken, JsonSerializer, T, T> readImpl = null)
         {
@@ -360,6 +405,21 @@ namespace System.Management.Automation.Configuration
             }
 
             return defaultValue;
+        }
+
+        /// <summary>
+        /// Update a value in the configuration file.
+        /// </summary>
+        /// <typeparam name="T">The type of the value</typeparam>
+        /// <param name="scope">The ConfigScope of the configuration file to update.</param>
+        /// <param name="key">The string key of the value.</param>
+        /// <param name="value">The value to set.</param>
+        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
+        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
+        {
+
+            string fileName = GetConfigFilePath(scope);
+            UpdateValueInFile<T>(fileName, key, value, addValue);
         }
 
         /// <summary>
@@ -466,6 +526,20 @@ namespace System.Management.Automation.Configuration
             }
         }
 
+
+       /// <summary>
+        /// TODO: Should this return success, fail, or throw?
+        /// </summary>
+        /// <typeparam name="T">The type of value to write.</typeparam>
+        /// <param name="scope">The ConfigScope of the file to update.</param>
+        /// <param name="key">The string key of the value.</param>
+        /// <param name="value">The value to write.</param>
+        private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
+        {
+            string fileName = GetConfigFilePath(scope);
+            WriteValueToFile<T>(fileName, key, value);
+        }
+
         /// <summary>
         /// TODO: Should this return success, fail, or throw?
         /// </summary>
@@ -476,6 +550,18 @@ namespace System.Management.Automation.Configuration
         private void WriteValueToFile<T>(string fileName, string key, T value)
         {
             UpdateValueInFile<T>(fileName, key, value, true);
+        }
+
+        /// <summary>
+        /// TODO: Should this return success, fail, or throw?
+        /// </summary>
+        /// <typeparam name="T">The type of value to remove.</typeparam>
+        /// <param name="scope">The ConfigScope of the file to update.</param>
+        /// <param name="key">The string key of the value.</param>
+        private void RemoveValueFromFile<T>(ConfigScope scope, string key)
+        {
+            string fileName = GetConfigFilePath(scope);
+            RemoveValueFromFile<T>(fileName, key);
         }
 
         /// <summary>

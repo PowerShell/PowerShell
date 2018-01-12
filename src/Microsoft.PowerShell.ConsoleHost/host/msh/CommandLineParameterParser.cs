@@ -190,6 +190,7 @@ namespace Microsoft.PowerShell
             "file",
             "executionpolicy",
             "command",
+            "settingsFile",
             "help"
         };
 
@@ -706,6 +707,25 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+                }
+
+                else if (MatchSwitch(switchKey, "settingsFile", "settings") )
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingSettingsFileArgument);
+                        break;
+                    }
+                    string configFile = args[i];
+                    if (!System.IO.File.Exists(configFile))
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.SettingsFileNotExists);
+                        break;
+                    }
+                    PowerShellConfig.Instance.SystemConfigFilePath = configFile;
                 }
 #if STAMODE
                 // explicit setting of the ApartmentState Not supported on NanoServer
