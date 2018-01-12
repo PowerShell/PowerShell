@@ -297,7 +297,8 @@ Instead, we recommend that you use `GitCommitId` to retrieve the exact build ver
 
 ### Changes to Web Cmdlets
 
-The underlying .NET API of the Web Cmdlets has been changed to `System.Net.Http.HttpClient`. This change provides many benefits.
+The underlying .NET API of the Web Cmdlets has been changed to `System.Net.Http.HttpClient`.
+This change provides many benefits.
 However, this change along with a lack of interoperability with Internet Explorer have resulted in several breaking changes within `Invoke-WebRequest` and `Invoke-RestMethod`.
 
 * `Invoke-WebRequest` now supports basic HTML Parsing only. `Invoke-WebRequest` always returns a `BasicHtmlWebResponseObject` object.
