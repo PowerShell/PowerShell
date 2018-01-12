@@ -2,6 +2,12 @@
 
 ## v6.0.0 - 2018-01-10
 
+### Build and Packaging Improvements
+
+- Re-release of `v6.0.0` as `v6.0.1` due to issues upgrading from pre-release versions.
+
+## v6.0.0 - 2018-01-10
+
 ### Breaking changes
 
 - Remove `sc` alias which conflicts with `sc.exe` (#5827)
