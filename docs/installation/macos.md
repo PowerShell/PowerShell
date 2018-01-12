@@ -21,15 +21,19 @@ Now, you can install PowerShell:
 brew cask install powershell
 ```
 
+Finally, verify that your install is working properly:
+
+```sh
+pwsh
+```
+
 When new versions of PowerShell are released,
 simply update Homebrew's formulae and upgrade PowerShell:
 
 ```sh
 brew update
-brew cask reinstall powershell
+brew cask upgrade powershell
 ```
-
-> Note: because of [this issue in Cask](https://github.com/caskroom/homebrew-cask/issues/29301), you currently have to do a reinstall to upgrade.
 
 [brew]: http://brew.sh/
 [cask]: https://caskroom.github.io/
