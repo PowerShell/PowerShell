@@ -2079,7 +2079,7 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductVersion,
 
-        # Product Code needs to change for every version to support SxS install
+        # The ProductCode property is a unique identifier for the particular product release
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $ProductCode,
