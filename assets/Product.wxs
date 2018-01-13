@@ -175,7 +175,7 @@
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Description="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
