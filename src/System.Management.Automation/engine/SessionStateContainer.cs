@@ -1642,7 +1642,7 @@ namespace System.Management.Automation
                 string originalPath = path;
                 path =
                     Globber.GetProviderPath(
-                        path,
+                        context.SuppressWildcardExpansion ? path : WildcardPattern.Unescape(path),
                         context,
                         out provider,
                         out drive);
@@ -2689,7 +2689,7 @@ namespace System.Management.Automation
 
                 string providerPath =
                     Globber.GetProviderPath(
-                        path,
+                        context.SuppressWildcardExpansion ? path : WildcardPattern.Unescape(path),
                         context,
                         out provider,
                         out drive);
@@ -3798,7 +3798,7 @@ namespace System.Management.Automation
                 if (String.IsNullOrEmpty(name))
                 {
                     string providerPath =
-                        Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
+                        Globber.GetProviderPath(WildcardPattern.Unescape(resolvePath), context, out provider, out driveInfo);
 
                     providerInstance = GetProviderInstance(provider);
                     providerPaths.Add(providerPath);
