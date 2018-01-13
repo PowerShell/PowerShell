@@ -447,11 +447,15 @@ function Start-PSBuild {
     }
 
     function Stop-DevPowerShell {
+        if (-not (Test-Path $script:Options.Output)) {
+            return
+        }
+        $pwshDev = Resolve-Path $script:Options.Output
         Get-Process pwsh* |
             Where-Object {
                 $_.Modules |
                 Where-Object {
-                    $_.FileName -eq (Resolve-Path $script:Options.Output).Path
+                    $_.FileName -eq $pwshDev.Path
                 }
             } |
         Stop-Process -Verbose
