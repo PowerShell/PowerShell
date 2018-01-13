@@ -5,7 +5,7 @@ Describe "PSVersionTable" -Tags "CI" {
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
         $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
-        $fullVersionPattern = "v(\d+\.\d+\.\d+)(-(.+))?-(\d+)-g(.+)$"
+        $fullVersionPattern = "^v(\d+\.\d+\.\d+)(-.+)?-(\d+)-g(.+)$"
 
         $expectedPSVersion = ($formattedVersion -split " ")[0]
         $expectedVersionPattern = "^$mainVersionPattern$"
