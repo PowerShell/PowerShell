@@ -9,8 +9,8 @@ building on macOS is almost identical.
 
 You will want [Homebrew](http://brew.sh/), the missing package manager for macOS.
 Once installed, follow the same instructions to download and
-install a self-hosted copy of PowerShell on your macOS machine,
-and use `Start-PSBootstrap` to install the dependencies.
+install a self-hosted copy of PowerShell on your macOS machine.
+From pwsh.exe, `Import-Module ./build.psm1` and use `Start-PSBootstrap`  to install the dependencies.
 
 The `Start-PSBootstrap` function does the following:
 
