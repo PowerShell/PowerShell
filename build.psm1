@@ -602,7 +602,11 @@ Fix steps:
 
     if ($Environment.IsWindows) {
         ## need RCEdit to modify the binaries embedded resources
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+        $rcedit = "~/.rcedit/rcedit-x64.exe"
+        if (-not (Test-Path -Type Leaf $rcedit)) {
+            $rcedit = Get-Command rcedit-x64 -ErrorAction SilentlyContinue | Select-Object -First 1 | % Name
+        }
+        if (-not $rcedit) {
             throw "RCEdit is required to modify pwsh.exe resources, please run 'Start-PSBootStrap' to install"
         }
 
@@ -632,7 +636,7 @@ Fix steps:
             $iconPath = "$PSScriptRoot\assets\Powershell_black.ico"
         }
 
-        Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon $iconPath `
+        Start-NativeExecution { & $rcedit $pwshPath --set-icon $iconPath `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
             --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
             --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
