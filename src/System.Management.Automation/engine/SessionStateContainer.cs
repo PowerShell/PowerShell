@@ -1646,6 +1646,11 @@ namespace System.Management.Automation
                     context.Drive = drive;
                 }
 
+                if (!context.SuppressWildcardExpansion)
+                {
+                    path = String.IsNullOrEmpty(path) ? path : WildcardPattern.Unescape(path);
+                }
+
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
 
                 if (path != null && this.ItemExists(providerInstance, path, context))
@@ -3778,7 +3783,7 @@ namespace System.Management.Automation
                 if (String.IsNullOrEmpty(name))
                 {
                     string providerPath =
-                        Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
+                        Globber.GetProviderPath(WildcardPattern.Unescape(resolvePath), context, out provider, out driveInfo);
 
                     providerInstance = GetProviderInstance(provider);
                     providerPaths.Add(providerPath);
