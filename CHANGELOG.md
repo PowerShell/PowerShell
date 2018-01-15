@@ -5,6 +5,7 @@
 ### Build and Packaging Improvements
 
 - Re-release of `v6.0.0` as `v6.0.1` due to issues upgrading from pre-release versions.
+  No product code changes were taken.
 
 ## v6.0.0 - 2018-01-10
 
