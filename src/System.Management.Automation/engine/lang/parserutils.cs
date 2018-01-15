@@ -798,34 +798,12 @@ namespace System.Management.Automation
             var lbase = PSObject.Base(lval);
             var rbase = PSObject.Base(rval);
 
-            var lType = lbase.GetType();
-            var rType = rbase.GetType();
-
-            // Return objects of [char] type for explicit [char] cast.
-            // Common case:
-            //     [char]'A'..[char]'Z'
-            // Special case:
-            //     [char]'0'..[char]'9'
-            if (lType == typeof(char) && rType == typeof(char))
+            // If both arguments is [char] type or [string] type with length==1
+            // return objects of [char] type.
+            // In special case "0".."9" return objects of [int] type.
+            if (AsChar(lbase) is char lc && AsChar(rbase) is char rc)
             {
-                return CharOps.Range((char)lbase, (char)rbase);
-            }
-
-            // For arguments of string type and length == 1
-            // in the common case:
-            //     "A".."Z" - return objects of [char] type.
-            //
-            // For arguments of string type and length == 1
-            // in the special case:
-            //     "0".."9" - return objects of [int] type
-            if (lType == typeof(string) && rType == typeof(string))
-            {
-                var lstr = (string)lbase;
-                var rstr = (string)rbase;
-                if (lstr.Length == 1 && lstr.Length == 1 && !Char.IsDigit(lstr, 0) && !Char.IsDigit(rstr, 0))
-                {
-                    return CharOps.Range(lstr[0], rstr[0]);
-                }
+                return CharOps.Range(lc, rc);
             }
 
             // As a last resort, the range operator tries to return objects of [int] type.
@@ -849,29 +827,52 @@ namespace System.Management.Automation
             var lbase = PSObject.Base(lval);
             var rbase = PSObject.Base(rval);
 
-            var lType = lbase.GetType();
-            var rType = rbase.GetType();
-
-            if (lType == typeof(char) && rType == typeof(char))
+            // If both arguments is [char] type or [string] type with length==1
+            // return objects of [char] type.
+            // In special case "0".."9" return objects of [int] type.
+            if (AsChar(lbase) is char lc && AsChar(rbase) is char rc)
             {
-                return new CharRangeEnumerator((char)lval, (char)rval);
+                return new CharRangeEnumerator(lc, rc);
             }
 
-            if (lType == typeof(string) && rType == typeof(string))
-            {
-                var lstr = (string)lbase;
-                var rstr = (string)rbase;
-                if (lstr.Length == 1 && lstr.Length == 1 && !Char.IsDigit(lstr, 0) && !Char.IsDigit(rstr, 0))
-                {
-                    return new CharRangeEnumerator(lstr[0], rstr[0]);
-                }
-            }
-
+            // As a last resort, the range operator tries to return objects of [int] type.
+            //    1..10
+            //    "1".."10"
+            //    [int]"1"..[int]"10"
             var l = Convert.ToInt32(lbase);
             var r = Convert.ToInt32(rbase);
 
             return new RangeEnumerator(l, r);
         }
+
+        // Help function for Range operator.
+        //
+        // In common case:
+        //      for [char] type
+        //      for [string] type and length == 1
+        // return objects of [char] type:
+        //     [char]'A'..[char]'Z'
+        //     [char]'A'..'Z'
+        //     [char]'A'.."Z"
+        //     'A'..[char]'Z'
+        //     "A"..[char]'Z'
+        //     "A".."Z"
+        //     [char]"A"..[string]"Z"
+        //     "A"..[char]"Z"
+        //     [string]"A".."Z"
+        // and so on.
+        //
+        // In special case:
+        //     [char]'0'..[char]'9'
+        //     "0".."9"
+        // return objects of [int] type.
+        private static object AsChar(object obj)
+        {
+            if (obj is char) return obj;
+            if (obj is string str && str.Length == 1 && !Char.IsDigit(str, 0)) return str[0];
+            return null;
+        }
+
 
         /// <summary>
         /// The implementation of the PowerShell -replace operator....

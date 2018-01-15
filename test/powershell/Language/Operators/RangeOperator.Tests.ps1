@@ -128,7 +128,32 @@ Describe "Range Operator" -Tags CI {
             $CharRange[1] | Should BeExactly ([char]'b')
             $CharRange[2] | Should BeExactly ([char]'c')
 
+            $CharRange = [char]"a".."c"
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly ([char]'a')
+            $CharRange[1] | Should BeExactly ([char]'b')
+            $CharRange[2] | Should BeExactly ([char]'c')
+
+            $CharRange = "a"..[char]"c"
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly ([char]'a')
+            $CharRange[1] | Should BeExactly ([char]'b')
+            $CharRange[2] | Should BeExactly ([char]'c')
+
+            # The same works in reverse order.
             $CharRange = [char]'C'..[char]'A'
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly ([char]'C')
+            $CharRange[1] | Should BeExactly ([char]'B')
+            $CharRange[2] | Should BeExactly ([char]'A')
+
+            $CharRange = [char]"C".."A"
+            $CharRange.count | Should Be 3
+            $CharRange[0] | Should BeExactly ([char]'C')
+            $CharRange[1] | Should BeExactly ([char]'B')
+            $CharRange[2] | Should BeExactly ([char]'A')
+
+            $CharRange = "C"..[char]"A"
             $CharRange.count | Should Be 3
             $CharRange[0] | Should BeExactly ([char]'C')
             $CharRange[1] | Should BeExactly ([char]'B')
