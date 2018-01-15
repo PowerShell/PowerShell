@@ -4,8 +4,12 @@
 
 ### Build and Packaging Improvements
 
-- Re-release of `v6.0.0` as `v6.0.1` due to issues upgrading from pre-release versions.
+- Re-release of `v6.0.0` as `v6.0.1` due to issues upgrading from pre-release versions
   No product code changes were taken.
+
+### Test
+
+- Update regex to validate `GitCommitId` in `$PSVersionTable` to not require a pre-release tag (#5893)
 
 ## v6.0.0 - 2018-01-10
 
