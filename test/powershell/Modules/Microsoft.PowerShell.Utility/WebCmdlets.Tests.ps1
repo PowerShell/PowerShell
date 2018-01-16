@@ -373,13 +373,7 @@ if ( test-path /etc/centos-release ) { $PendingCertificateTest = $true }
 
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
     BeforeAll {
-        $response = Start-HttpListener -Port 8080
         $WebListener = Start-WebListener
-    }
-
-    AfterAll {
-        $null = Stop-HttpListener -Port 8080
-        $response.PowerShell.Dispose()
     }
 
     # Validate the output of Invoke-WebRequest
@@ -1419,13 +1413,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
     BeforeAll {
-        $response = Start-HttpListener -Port 8081
         $WebListener = Start-WebListener
-    }
-
-    AfterAll {
-        $null = Stop-HttpListener -Port 8081
-        $response.PowerShell.Dispose()
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
