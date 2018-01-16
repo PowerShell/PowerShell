@@ -712,33 +712,31 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present" {
-        $command = "Invoke-WebRequest -Uri 'http://localhost:8080/PowerShell?test=linkheader&maxlinks=5'"
-        $result = ExecuteWebCommand -command $command
-        $result.Output.RelationLink.Count | Should BeExactly 2
-        $result.Output.RelationLink["next"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2"
-        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
-    }
-
-    # Test pending support for multiple header capable server on Linux/macOS see issue #4639
-    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Multiple Link Headers are present" -Pending:$(!$IsWindows) {
-        $Query = @{
-            body        = "ok"
-            contenttype = 'text/plain'
-            headers     = @{
-                Link = @(
-                    '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1>; rel="self"'
-                    '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2>; rel="next"'
-                    '<http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5>; rel="last"'
-                )
-            } | ConvertTo-Json -Compress
-        }
-        $Uri = Get-WebListenerUrl -Test 'Response' -Query $Query
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2}
         $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
-        $result.Output.RelationLink.Count | Should BeExactly 3
-        $result.Output.RelationLink["self"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=1"
-        $result.Output.RelationLink["next"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2"
-        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
+
+        $result.Output.RelationLink.Count | Should BeExactly 5
+        $baseUri = Get-WebListenerUrl -Test 'Link'
+        $result.Output.RelationLink["next"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=3&type=default"
+        $result.Output.RelationLink["last"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=5&type=default"
+        $result.Output.RelationLink["prev"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=1&type=default"
+        $result.Output.RelationLink["first"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=1&type=default"
+        $result.Output.RelationLink["self"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=2&type=default"
+    }
+
+    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Multiple Link Headers are present" {
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2; type = 'multiple'}
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.RelationLink.Count | Should BeExactly 5
+        $baseUri = Get-WebListenerUrl -Test 'Link'
+        $result.Output.RelationLink["next"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=3&type=multiple"
+        $result.Output.RelationLink["last"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=5&type=multiple"
+        $result.Output.RelationLink["prev"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=1&type=multiple"
+        $result.Output.RelationLink["first"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=1&type=multiple"
+        $result.Output.RelationLink["self"] | Should BeExactly "${baseUri}?maxlinks=5&linknumber=2&type=multiple"
     }
 
     It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property: <type>" -TestCases @(
@@ -747,10 +745,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         @{ type = "noRel" }
     ) {
         param($type)
-        $command = "Invoke-WebRequest -Uri 'http://localhost:8080/PowerShell?test=linkheader&type=$type'"
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{type = $type}
+        $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
-        $result.Output.RelationLink.Count | Should BeExactly 1
-        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=3&linknumber=3"
+
+        $result.Output.RelationLink.Count | Should BeExactly 3
+        $baseUri = Get-WebListenerUrl -Test 'Link'
+        $result.Output.RelationLink["last"] | Should BeExactly "${baseUri}?maxlinks=3&linknumber=3&type=${type}"
+        $result.Output.RelationLink["first"] | Should BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
+        $result.Output.RelationLink["self"] | Should BeExactly "${baseUri}?maxlinks=3&linknumber=1&type=${type}"
     }
 
     #region Redirect tests
@@ -1030,9 +1033,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RawContent | Should Match ([regex]::Escape('Content-Length: 2'))
     }
 
-    # Test pending due to limitation on Linux/macOS
-    # https://github.com/PowerShell/PowerShell/pull/4640
-    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" -Pending:$(!$IsWindows) {
+    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {
         $query = @{
             contenttype = 'text/plain'
             body        = 'OK'
@@ -1723,23 +1724,23 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links" {
         $maxLinks = 5
-
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink"
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
-        $result.Output.output.Count | Should BeExactly $maxLinks
-        1..$maxLinks | ForEach-Object { $result.Output.output[$_ - 1] | Should BeExactly $_ }
+        $result.Output.Count | Should BeExactly $maxLinks
+        1..$maxLinks | ForEach-Object { $result.Output[$_ - 1].linknumber | Should BeExactly $_ }
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink correctly limits to -MaximumRelLink" {
         $maxLinks = 10
         $maxLinksToFollow = 6
-
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink -MaximumFollowRelLink $maxLinksToFollow"
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = $maxLinks}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink -MaximumFollowRelLink $maxLinksToFollow"
         $result = ExecuteWebCommand -command $command
 
-        $result.Output.output.Count | Should BeExactly $maxLinksToFollow
-        1..$maxLinksToFollow | ForEach-Object { $result.Output.output[$_ - 1] | Should BeExactly $_ }
+        $result.Output.Count | Should BeExactly $maxLinksToFollow
+        1..$maxLinksToFollow | ForEach-Object { $result.Output[$_ - 1].linknumber | Should BeExactly $_ }
     }
 
     It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified: <type>" -TestCases @(
@@ -1748,9 +1749,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         @{ type = "noRel" }
     ) {
         param($type)
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&type=$type' -FollowRelLink"
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{type = $type}
+        $command = "Invoke-RestMethod -Uri '$uri' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
-        $result.Output.output | Should BeExactly 1
+        $result.Output.linknumber | Should BeExactly 1
     }
 
     #region Redirect tests
