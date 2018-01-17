@@ -2061,6 +2061,16 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersion
 }
 
+<#
+    .Synopsis
+        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of WiX.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
 function New-MSIPackage
 {
     [CmdletBinding()]
@@ -2078,9 +2088,10 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductVersion,
 
-        # Product Guid needs to change for every version to support SxS install
+        # The ProductCode property is a unique identifier for the particular product release
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $ProductGuid = 'a5249933-73a1-4b10-8a4c-13c98bdc16fe',
+        [string] $ProductCode,
 
         # Source Path to the Product Files - required to package the contents into an MSI
         [Parameter(Mandatory = $true)]
@@ -2089,17 +2100,18 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
         [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath,
+        [ValidateScript( {Test-Path $_})]
+        [string] $AssetsPath = "$PSScriptRoot\assets",
 
         # Path to license.rtf file - for the EULA
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $LicenseFilePath,
+        [ValidateScript( {Test-Path $_})]
+        [string] $LicenseFilePath = "$PSScriptRoot\assets\license.rtf",
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
@@ -2146,7 +2158,7 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
     # These variables are used by Product.wxs in assets directory
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
+    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
