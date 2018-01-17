@@ -9,7 +9,7 @@
 
 ### Test
 
-- Update regex to validate `GitCommitId` in `$PSVersionTable` to not require a pre-release tag (#5893)
+- Update regular expression to validate `GitCommitId` in `$PSVersionTable` to not require a pre-release tag (#5893)
 
 ## v6.0.0 - 2018-01-10
 
