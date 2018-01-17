@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using Microsoft.Win32;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Tracing;
@@ -247,54 +248,35 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR
         /// <summary>
-        /// Stack Reserve setting for pipeline threads
+        /// Set stack size for local pipeline threads.
+        /// Default is 10MB.
+        /// Default 10MB may be too large if we use many local pipelines for paralleling.PipelineMaxStackSizeMB
         /// </summary>
-        internal static int MaxStack
-        {
-            get
-            {
-                int i = ReadRegistryInt("PipelineMaxStackSizeMB", 10);
-                if (i < 10)
-                    i = 10; // minimum 10MB
-                else if (i > 100)
-                    i = 100; // maximum 100MB
-                return i * 1000000;
-            }
-        }
+        internal static int StackSize => GetPipelineMaxStackSizeOption(10);
 
-        internal static int ReadRegistryInt(string policyValueName, int defaultValue)
+        private static int GetPipelineMaxStackSizeOption(int defaultValue)
         {
-            RegistryKey key;
-            try
-            {
-                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\PowerShell\\1\\ShellIds");
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (null == key)
-                return defaultValue;
+            int stackSize = defaultValue;
 
-            object temp;
-            try
+            var pipelineMaxStackSizeOption = Utils.GetPolicySetting<PipelineMaxStackSize>(Utils.SystemWideThenCurrentUserConfig);
+
+            if (pipelineMaxStackSizeOption != null)
             {
-                temp = key.GetValue(policyValueName);
+                stackSize = pipelineMaxStackSizeOption.PipelineMaxStackSizeMB;
             }
-            catch (System.Security.SecurityException)
+
+            if (stackSize < defaultValue)
             {
-                return defaultValue;
+                stackSize = defaultValue; // minimum 10MB
             }
-            if (!(temp is int))
+            else if (stackSize > 100)
             {
-                return defaultValue;
+                stackSize = 100; // maximum 100MB
             }
-            int i = (int)temp;
-            return i;
+
+            return stackSize * 1_000_000;
         }
-#endif
 
         ///<summary>
         /// Helper method for asynchronous invoke
@@ -1225,17 +1207,17 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Helper class that holds the thread used to execute pipelines when CreateThreadOptions.ReuseThread is used
+    /// Helper class that holds the thread used to execute pipelines when CreateThreadOptions.ReuseThread is used.
     /// </summary>
     internal class PipelineThread : IDisposable
     {
         /// <summary>
-        /// Creates the worker thread and waits for it to be ready
+        /// Creates the worker thread and waits for it to be ready.
         /// </summary>
 #if CORECLR
         internal PipelineThread()
         {
-            _worker = new Thread(WorkerProc);
+            _worker = new Thread(WorkerProc, LocalPipeline.StackSize);
             _workItem = null;
             _workItemReady = new AutoResetEvent(false);
             _closed = false;

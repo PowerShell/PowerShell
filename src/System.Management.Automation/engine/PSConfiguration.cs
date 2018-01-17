@@ -331,7 +331,7 @@ namespace System.Management.Automation.Configuration
             return result;
         }
 #endif // UNIX
- 
+
         private T ReadValueFromFile<T>(string fileName, string key, T defaultValue = default(T),
                                        Func<JToken, JsonSerializer, T, T> readImpl = null)
         {
@@ -548,6 +548,7 @@ namespace System.Management.Automation.Configuration
         public ProtectedEventLogging ProtectedEventLogging { get; set; }
         public Transcription Transcription { get; set; }
         public UpdatableHelp UpdatableHelp { get; set; }
+        public UpdatableHelp PipelineMaxStackSizeMB { get; set; }
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
@@ -606,6 +607,14 @@ namespace System.Management.Automation.Configuration
     {
         public bool? EnableConsoleSessionConfiguration { get; set; }
         public string ConsoleSessionConfigurationName { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about PipelineMaxStackSize
+    /// </summary>
+    internal sealed class PipelineMaxStackSize : PolicyBase
+    {
+        public int PipelineMaxStackSizeMB { get; set; }
     }
 
     /// <summary>

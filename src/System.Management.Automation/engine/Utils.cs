@@ -507,7 +507,7 @@ namespace System.Management.Automation
             T policy = null;
 #if !UNIX
             // On Windows, group policy settings from registry take precedence.
-            // If the requested policy is not defined in registry, we query the configuration file. 
+            // If the requested policy is not defined in registry, we query the configuration file.
             policy = GetPolicySettingFromGPO<T>(preferenceOrder);
             if (policy != null) { return policy; }
 #endif
@@ -547,6 +547,7 @@ namespace System.Management.Automation
                         case nameof(ScriptExecution):             result = policies.ScriptExecution; break;
                         case nameof(ScriptBlockLogging):          result = policies.ScriptBlockLogging; break;
                         case nameof(ModuleLogging):               result = policies.ModuleLogging; break;
+                        case nameof(PipelineMaxStackSize):        result = policies.PipelineMaxStackSizeMB; break;
                         case nameof(ProtectedEventLogging):       result = policies.ProtectedEventLogging; break;
                         case nameof(Transcription):               result = policies.Transcription; break;
                         case nameof(UpdatableHelp):               result = policies.UpdatableHelp; break;
@@ -566,6 +567,7 @@ namespace System.Management.Automation
             {nameof(ScriptExecution), @"Software\Policies\Microsoft\PowerShellCore"},
             {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging"},
             {nameof(ModuleLogging), @"Software\Policies\Microsoft\PowerShellCore\ModuleLogging"},
+            {nameof(PipelineMaxStackSize), @"Software\Policies\Microsoft\PowerShellCore\PipelineMaxStackSize"},
             {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
             {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
@@ -586,8 +588,11 @@ namespace System.Management.Automation
             GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
             Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
 
-            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            RegistryKey gpoKey = null;
+            try
             {
+                gpoKey = rootKey.OpenSubKey(gpoKeyPath, writable: false);
+
                 // If the corresponding GPO key doesn't exist, return null
                 if (gpoKey == null) { return null; }
 
@@ -614,7 +619,7 @@ namespace System.Management.Automation
                     }
                     else if (subKeyNameSet != null && subKeyNameSet.Contains(settingName))
                     {
-                        using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
+                        using (RegistryKey subKey = gpoKey.OpenSubKey(settingName, writable: false))
                         {
                             if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
                         }
@@ -669,6 +674,20 @@ namespace System.Management.Automation
                 // If no property is set, then we consider this policy as undefined
                 return isAnyPropertySet ? (T) tInstance : null;
             }
+            catch
+            {
+                // In any case, if the registry key or value does not exist or we do not have permissions to read it,
+                // we continue silently to use a default value.
+            }
+            finally
+            {
+                if (gpoKey != null)
+                {
+                    gpoKey.Dispose();
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
