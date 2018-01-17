@@ -99,7 +99,7 @@ With this change, `-Verbose` and `-Debug` no longer affect the behavior of `$Err
 
 When an API returns just `null`, Invoke-RestMethod was serializing this as the string `"null"` instead of `$null`.  This change fixes the logic in `Invoke-RestMethod` to properly serialize a valid single value JSON `null` literal as `$null`.
 
-### Remove `-ComputerName` from `\*-Computer` cmdlets [#5277](https://github.com/PowerShell/PowerShell/issues/5277)
+### Remove `-ComputerName` from `*-Computer` cmdlets [#5277](https://github.com/PowerShell/PowerShell/issues/5277)
 
 Due to issues with RPC remoting in CoreFX (particularly on non-Windows platforms) and ensuring a consistent remoting experience in PowerShell,
 the `-ComputerName` parameter was removed from the `\*-Computer` cmdlets.
@@ -132,7 +132,7 @@ Use `-IncludeTypeInformation` to retain the previous behavior.
 
 When using HTTP, content including passwords are sent as clear-text.
 This change is to not allow this by default and return an error if credentials are being passed in an insecure manner.
-Users can bypass this by using the `-AllowUnencryptedAuthethentication` switch.
+Users can bypass this by using the `-AllowUnencryptedAuthentication` switch.
 
 ## API changes
 
