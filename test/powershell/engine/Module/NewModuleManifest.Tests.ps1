@@ -1,6 +1,6 @@
 Describe "New-ModuleManifest tests" -tags "CI" {
     BeforeEach {
-        New-Item -ItemType Directory -Path testdrive:/module
+        $null = New-Item -ItemType Directory -Path testdrive:/module
         $testModulePath = "testdrive:/module/test.psd1"
     }
 
