@@ -9,7 +9,11 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     }
 
     BeforeAll {
-        $ExpectedManifestBytes = @(35,10)
+        if ($IsWindows) {
+            $ExpectedManifestBytes = @(35,13) # CR
+        } else {
+            $ExpectedManifestBytes = @(35,10) # LF
+        }
     }
 
     It "Uris with spaces are allowed and escaped correctly" {
