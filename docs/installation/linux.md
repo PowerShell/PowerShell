@@ -574,8 +574,11 @@ and is a single binary.
 ```sh
 # Install prerequisites
 apt-get install libunwind8 libicu55
-wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
-dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
+```
+(If you get an error in the next step when installing libicu55 using apt-get, download it from [here](http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu55_55.1-7_amd64.deb) instead and install using “dpkg -i”.)
+```sh
+wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u7_amd64.deb
+dpkg -i libssl1.0.0_1.0.1t-1+deb8u7_amd64.deb
 
 # Install PowerShell
 dpkg -i powershell_6.0.0-1.ubuntu.16.04_amd64.deb
