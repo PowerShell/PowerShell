@@ -288,7 +288,7 @@ namespace System.Management.Automation.Language
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_RangeOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
-        internal static readonly MethodInfo ParserOps_RangeEnumerator =
+        internal static readonly MethodInfo ParserOps_GetRangeEnumerator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
@@ -4291,7 +4291,7 @@ namespace System.Management.Automation.Language
                     var l = lhs.Cast(typeof(object));
                     var r = rhs.Cast(typeof(object));
 
-                    return Expression.Call(CachedReflectionInfo.ParserOps_RangeEnumerator,
+                    return Expression.Call(CachedReflectionInfo.ParserOps_GetRangeEnumerator,
                                            lhs.Cast(typeof(object)),
                                            rhs.Cast(typeof(object)));
                 }
