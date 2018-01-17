@@ -943,11 +943,6 @@ namespace System.Management.Automation
                 [string] $PSEditFunction
             )
 
-            if ($PSVersionTable.PSVersion -lt ([version] '3.0'))
-            {
-                throw (new-object System.NotSupportedException)
-            }
-
             Register-EngineEvent -SourceIdentifier PSISERemoteSessionOpenFile -Forward
 
             if ((Test-Path -Path 'function:\global:PSEdit') -eq $false)
@@ -960,11 +955,6 @@ namespace System.Management.Automation
         /// RemovePSEditFunction script string.
         /// </summary>
         public const string RemovePSEditFunction = @"
-            if ($PSVersionTable.PSVersion -lt ([version] '3.0'))
-            {
-                throw (new-object System.NotSupportedException)
-            }
-
             if ((Test-Path -Path 'function:\global:PSEdit') -eq $true)
             {
                 Remove-Item -Path 'function:\global:PSEdit' -Force

@@ -1089,30 +1089,7 @@ namespace System.Management.Automation.Runspaces
           $ProgressPreference = 'SilentlyContinue'
           try
           {
-          if ($psversiontable.psversion.Major -lt 3)
-          {
-          # ok to cast CommandTypes enum to HelpCategory because string/identifier for
-          # cmdlet,function,filter,alias,externalscript is identical.
-          # it is ok to fail for other enum values (i.e. for Application)
-          $commandName = $this.Name
-          if ($this.ModuleName)
-          {
-          $commandName = ""{0}\{1}"" -f $this.ModuleName,$commandName
-          }
-
-          $helpObject = get-help -Name $commandName -Category ([string]($this.CommandType)) -ErrorAction SilentlyContinue
-
-          # return first non-null uri (and try not to hit any strict mode things)
-          if ($null -eq $helpObject) { return $null }
-          if ($null -eq $helpObject.psobject.properties['relatedLinks']) { return $null }
-          if ($null -eq $helpObject.relatedLinks.psobject.properties['navigationLink']) { return $null }
-          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | ForEach-Object { if ($null -ne $_.psobject.properties['uri']) { $_.uri } } | Where-Object { $_ } | Select-Object -first 1 )
-          return $helpUri
-          }
-          else
-          {
           [Microsoft.PowerShell.Commands.GetHelpCodeMethods]::GetHelpUri($this)
-          }
           }
           catch {}
           finally
