@@ -2109,7 +2109,7 @@ function New-MSIPackage
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
-        throw "Wix Toolset is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311.exe"
+        throw "Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
     }
 
     ## Get the latest if multiple versions exist.
