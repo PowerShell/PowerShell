@@ -1491,8 +1491,6 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($Environment.IsFedora) {
         "dnf install -y -q"
-    } elseif ($Environment.IsOpenSUSE) {
-        "zypper --non-interactive install"
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -1574,6 +1572,26 @@ function Start-PSBootstrap {
 
                 $PackageManager = Get-RedHatPackageManager
 
+                $baseCommand = "$sudo $PackageManager"
+
+                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+
+                # Install dependencies
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
+                }
+            } elseif ($Environment.IsSUSEFamily) {
+                # Build tools
+                $Deps += "gcc", "cmake", "make"
+
+                # Packaging tools
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff" }
+
+                $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
 
                 # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
