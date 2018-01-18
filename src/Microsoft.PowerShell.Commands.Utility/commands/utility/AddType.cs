@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     break;
                 default:
-                        Diagnostics.Assert(false, "GetUsingSet: Unsupported language family.");
+                    Diagnostics.Assert(false, "GetUsingSet: Unsupported language family.");
                     break;
             }
 
