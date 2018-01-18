@@ -1,10 +1,10 @@
 # Changelog
 
-## v6.0.1 - 2018-01-10
+## v6.0.1 - 2018-01-19
 
 ### Engine updates and fixes
 
-- Update PowerShell to use `2.0.5` dotnet core runtime. (#5903)
+- Update PowerShell to use `2.0.5` dotnet core runtime. (#5903) (Thanks @ iSazonov!)
 
 ### Build and Packaging Improvements
 
