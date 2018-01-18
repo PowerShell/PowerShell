@@ -939,21 +939,17 @@ namespace Microsoft.PowerShell.Commands
 
                 // Now open the output file...
                 PathUtils.MasterStreamOpen(
-                    this,
-                    filePath,
-#if UNIX
-                    new UTF8Encoding(false), // UTF-8, no BOM
-#else
-                    EncodingConversion.Unicode, // UTF-16 with BOM
-#endif
-                    /* defaultEncoding */ false,
-                    /* Append */ false,
-                    /* Force */ false,
-                    /* NoClobber */ false,
-                    out fileStream,
-                    out streamWriter,
-                    out readOnlyFileInfo,
-                    false
+                    cmdlet : this,
+                    filePath : filePath,
+                    resolvedEncoding : new UTF8Encoding(encoderShouldEmitUTF8Identifier : false),
+                    defaultEncoding : false,
+                    Append : false,
+                    Force : false,
+                    NoClobber : false,
+                    fileStream : out fileStream,
+                    streamWriter : out streamWriter,
+                    readOnlyFileInfo : out readOnlyFileInfo,
+                    isLiteralPath : false
                 );
 
                 try
