@@ -202,7 +202,7 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.0",
+        $PSVersion = "6.0.1",
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
     )
