@@ -602,9 +602,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     break;
                 default:
-                    {
                         Diagnostics.Assert(false, "GetUsingSet: Unsupported language family.");
-                    }
                     break;
             }
 
@@ -1025,15 +1023,7 @@ namespace Microsoft.PowerShell.Commands
             CSharpParseOptions parseOptions;
             if (Language == Language.CSharp)
             {
-                switch (Language)
-                {
-                    case Language.CSharp:
-                        parseOptions = new CSharpParseOptions();
-                        break;
-                    default:
-                        parseOptions = null;
-                        break;
-                }
+                parseOptions = new CSharpParseOptions();
             }
             else
             {
