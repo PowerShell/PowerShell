@@ -253,11 +253,12 @@ namespace System.Management.Automation.Runspaces
         /// Default is 10MB.
         /// Default 10MB may be too large if we use many local pipelines for paralleling.PipelineMaxStackSizeMB
         /// </summary>
-        internal static int StackSize => GetPipelineMaxStackSizeOption(10);
+        private const int DefaultPipelineStackSize = 10;
+        private const int MaxPipelineStackSize = 100;
 
-        private static int GetPipelineMaxStackSizeOption(int defaultValue)
+        internal static int GetPipelineStackSizeOption()
         {
-            int stackSize = defaultValue;
+            int stackSize = DefaultPipelineStackSize;
 
             var pipelineMaxStackSizeOption = Utils.GetPolicySetting<PipelineMaxStackSize>(Utils.SystemWideThenCurrentUserConfig);
 
@@ -266,13 +267,13 @@ namespace System.Management.Automation.Runspaces
                 stackSize = pipelineMaxStackSizeOption.PipelineMaxStackSizeMB;
             }
 
-            if (stackSize < defaultValue)
+            if (stackSize < DefaultPipelineStackSize)
             {
-                stackSize = defaultValue; // minimum 10MB
+                stackSize = DefaultPipelineStackSize;
             }
-            else if (stackSize > 100)
+            else if (stackSize > MaxPipelineStackSize)
             {
-                stackSize = 100; // maximum 100MB
+                stackSize = MaxPipelineStackSize;
             }
 
             return stackSize * 1_000_000;
@@ -1217,7 +1218,7 @@ namespace System.Management.Automation.Runspaces
 #if CORECLR
         internal PipelineThread()
         {
-            _worker = new Thread(WorkerProc, LocalPipeline.StackSize);
+            _worker = new Thread(WorkerProc, LocalPipeline.GetPipelineStackSizeOption());
             _workItem = null;
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
@@ -1225,7 +1226,7 @@ namespace System.Management.Automation.Runspaces
 #else
         internal PipelineThread(ApartmentState apartmentState)
         {
-            _worker = new Thread(WorkerProc, LocalPipeline.MaxStack);
+            _worker = new Thread(WorkerProc, LocalPipeline.GetPipelineStackSizeOption());
             _workItem = null;
             _workItemReady = new AutoResetEvent(false);
             _closed = false;

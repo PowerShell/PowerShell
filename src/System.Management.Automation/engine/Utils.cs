@@ -567,7 +567,7 @@ namespace System.Management.Automation
             {nameof(ScriptExecution), @"Software\Policies\Microsoft\PowerShellCore"},
             {nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\PowerShellCore\ScriptBlockLogging"},
             {nameof(ModuleLogging), @"Software\Policies\Microsoft\PowerShellCore\ModuleLogging"},
-            {nameof(PipelineMaxStackSize), @"Software\Policies\Microsoft\PowerShellCore\PipelineMaxStackSize"},
+            {nameof(PipelineMaxStackSize), @"Software\Policies\Microsoft\PowerShellCore"},
             {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
             {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},

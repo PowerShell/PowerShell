@@ -548,7 +548,7 @@ namespace System.Management.Automation.Configuration
         public ProtectedEventLogging ProtectedEventLogging { get; set; }
         public Transcription Transcription { get; set; }
         public UpdatableHelp UpdatableHelp { get; set; }
-        public UpdatableHelp PipelineMaxStackSizeMB { get; set; }
+        public PipelineMaxStackSize PipelineMaxStackSizeMB { get; set; }
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
