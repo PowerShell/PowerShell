@@ -4,7 +4,7 @@
 
 ### Engine updates and fixes
 
-- Update PowerShell to use `2.0.5` dotnet core runtime. (#5903) (Thanks @ iSazonov!)
+- Update PowerShell to use `2.0.5` dotnet core runtime. (#5903) (Thanks @iSazonov!)
 
 ### Build and Packaging Improvements
 
