@@ -1,5 +1,19 @@
 # Changelog
 
+## v6.0.1 - 2018-01-10
+
+### Engine updates and fixes
+
+- Update PowerShell to use `2.0.5` dotnet core runtime. (#5903)
+
+### Build and Packaging Improvements
+
+- Re-release of `v6.0.0` as `v6.0.1` due to issues upgrading from pre-release versions
+
+### Test
+
+- Update regular expression to validate `GitCommitId` in `$PSVersionTable` to not require a pre-release tag (#5893)
+
 ## v6.0.0 - 2018-01-10
 
 ### Breaking changes
