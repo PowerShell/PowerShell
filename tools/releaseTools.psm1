@@ -206,8 +206,7 @@ function Get-NewPackage
         $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
     )
     # Calculate the filter to find the CSProj files
-    $path = Join-path -Path $PSScriptRoot -ChildPath '..'
-    $filter = Join-Path -Path $path -ChildPath '*.csproj'
+    $filter = Join-Path -Path $Path -ChildPath '*.csproj'
     $csproj = Get-ChildItem $filter -Recurse
 
     $csproj | ForEach-Object{
