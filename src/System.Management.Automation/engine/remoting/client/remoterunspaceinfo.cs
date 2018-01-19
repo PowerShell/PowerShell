@@ -370,13 +370,24 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Generates a unique runspace id and name.
         /// </summary>
+        /// <param name="transport">Transport being used</param>
+        /// <param name="rtnId">Returned Id</param>
+        /// <returns>Returned name</returns>
+        internal static String GenerateRunspaceName(string transport, out int rtnId)
+        {
+            int id = System.Threading.Interlocked.Increment(ref s_seed);
+            rtnId = id;
+            return ComposeRunspaceName(transport, id);
+        }
+
+        /// <summary>
+        /// Generates a unique runspace id and name. Assumes WSMan transport.
+        /// </summary>
         /// <param name="rtnId">Returned Id</param>
         /// <returns>Returned name</returns>
         internal static String GenerateRunspaceName(out int rtnId)
         {
-            int id = System.Threading.Interlocked.Increment(ref s_seed);
-            rtnId = id;
-            return ComposeRunspaceName(id);
+            return GenerateRunspaceName("WSMan", out rtnId);
         }
 
         /// <summary>
@@ -391,11 +402,23 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a runspace name based on a given Id value.
         /// </summary>
+        /// <param name="transport">Transport being used</param>
+        /// <param name="id">Integer Id</param>
+        /// <returns>Runspace name</returns>
+        internal static string ComposeRunspaceName(string transport, int id)
+        {
+            Dbg.Assert(transport != null, "Transport is null");
+            return transport + id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+        }
+
+        /// <summary>
+        /// Creates a runspace name based on a given Id value.
+        /// </summary>
         /// <param name="id">Integer Id</param>
         /// <returns>Runspace name</returns>
         internal static string ComposeRunspaceName(int id)
         {
-            return "WinRM" + id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
+            return ComposeRunspaceName("WSMan", id);
         }
 
         #endregion
