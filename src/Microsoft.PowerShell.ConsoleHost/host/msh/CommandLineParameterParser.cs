@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell
             "file",
             "executionpolicy",
             "command",
-            "settingsFile",
+            "settingsfile",
             "help"
         };
 
@@ -718,14 +718,25 @@ namespace Microsoft.PowerShell
                             CommandLineParameterParserStrings.MissingSettingsFileArgument);
                         break;
                     }
-                    string configFile = args[i];
-                    if (!System.IO.File.Exists(configFile))
+                    string configFile = null;
+                    try
                     {
-                        WriteCommandLineError(
-                            CommandLineParameterParserStrings.SettingsFileNotExists);
+                        configFile = NormalizeFilePath(args[i]);
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[i], ex.Message);
+                        WriteCommandLineError(error);
                         break;
                     }
-                    PowerShellConfig.Instance.SystemConfigFilePath = configFile;
+
+                    if (!System.IO.File.Exists(configFile))
+                    {
+                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
+                        WriteCommandLineError(error);
+                        break;
+                    }
+                    PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
                 }
 #if STAMODE
                 // explicit setting of the ApartmentState Not supported on NanoServer
@@ -867,6 +878,15 @@ namespace Microsoft.PowerShell
             executionPolicy = args[i];
         }
 
+        private static string NormalizeFilePath(string path)
+        {
+            // Normalize slashes
+            path = path.Replace(StringLiterals.AlternatePathSeparator,
+                                    StringLiterals.DefaultPathSeparator);
+
+            return Path.GetFullPath(path);
+        }
+
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
             // Process file execution. We don't need to worry about checking -command
@@ -924,10 +944,7 @@ namespace Microsoft.PowerShell
                 string exceptionMessage = null;
                 try
                 {
-                    // Normalize slashes
-                    _file = args[i].Replace(StringLiterals.AlternatePathSeparator,
-                                            StringLiterals.DefaultPathSeparator);
-                    _file = Path.GetFullPath(_file);
+                    _file = NormalizeFilePath (args[i]);
                 }
                 catch (Exception e)
                 {
@@ -1004,11 +1021,11 @@ namespace Microsoft.PowerShell
                                 string argName = arg.Substring(0, offset);
                                 if (TryGetBoolValue(argValue, out bool boolValue))
                                 {
-                                        _collectedArgs.Add(new CommandParameter(argName, boolValue));
+                                    _collectedArgs.Add(new CommandParameter(argName, boolValue));
                                 }
                                 else
                                 {
-                                        _collectedArgs.Add(new CommandParameter(argName, argValue));
+                                    _collectedArgs.Add(new CommandParameter(argName, argValue));
                                 }
                             }
                         }

@@ -27,12 +27,14 @@ namespace System.Management.Automation.Configuration
         private static readonly PowerShellConfig s_instance = new PowerShellConfig();
         internal static PowerShellConfig Instance => s_instance;
 
-        private string psHomeConfigDirectory;
+        // The json file containing system-wide configuration settings.
         // When passed as a pwsh command-line option,
         // overrides the system wide configuration file.
-        private string psCustomHomeConfigFilePath;
+        private FileInfo systemWideConfigFile;
 
-        private string appDataConfigDirectory;
+        // The json file containing the per-user configuration settings.
+        private FileInfo perUserConfigFile;
+
         private const string configFileName = "powershell.config.json";
 
         /// <summary>
@@ -44,72 +46,48 @@ namespace System.Management.Automation.Configuration
 
         private PowerShellConfig()
         {
-            // Sets the system-wide configuration directory
-            psHomeConfigDirectory = Utils.DefaultPowerShellAppBase;
+            // Sets the system-wide configuration file.
+            systemWideConfigFile = new FileInfo(Path.Combine(Utils.DefaultPowerShellAppBase, configFileName));
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
-            appDataConfigDirectory = Utils.GetUserConfigurationDirectory();
+            perUserConfigFile = new FileInfo(Path.Combine(Utils.GetUserConfigurationDirectory(), configFileName));
         }
 
         private string GetConfigFilePath(ConfigScope scope)
         {
-            string result = string.Empty;
-
-            if (scope == ConfigScope.CurrentUser)
+            fileLock.EnterReadLock();
+            try
             {
-                result = Path.Combine(appDataConfigDirectory, configFileName);
+                return (scope == ConfigScope.CurrentUser) ? perUserConfigFile.FullName : systemWideConfigFile.FullName;
             }
-            else
+            finally
             {
-                if (!string.IsNullOrEmpty(psCustomHomeConfigFilePath))
-                {
-                    // system wide configuration file overridden at the pwsh command-line.
-                    result = psCustomHomeConfigFilePath;
-                }
-                else
-                {
-                    result = Path.Combine(psHomeConfigDirectory, configFileName);
-                }
+                fileLock.ExitReadLock();
             }
-            return result;
         }
 
         /// <summary>
-        /// Gets or sets the system wide configuration file path
+        /// Sets the system wide configuration file path
         /// </summary>
-        /// <returns>A fully qualified path to the system wide configuration file.</returns>
-        internal string SystemConfigFilePath
+        /// <param name="value">A fully qualified path to the system wide configuration file.</param>
+        /// <exception cref="FileNotFoundException"><paramref name="value"/> is a null reference or the associated file does not exist.</exception>
+        internal void SetSystemConfigFilePath(string value)
         {
-            get
+            if (!string.IsNullOrEmpty(value) && !File.Exists(value))
             {
-                fileLock.EnterReadLock();
-                try
-                {
-                    return GetConfigFilePath(ConfigScope.SystemWide);
-                }
-                finally
-                {
-                    fileLock.ExitReadLock();
-                }
+                throw new FileNotFoundException(value);
             }
-            set
+            fileLock.EnterWriteLock();
+            try
             {
-                if (!string.IsNullOrEmpty(value) && !File.Exists(value))
-                {
-                    throw new FileNotFoundException(value);
-                }
-                fileLock.EnterWriteLock();
-                try
-                {
-                    psCustomHomeConfigFilePath = value;
-                }
-                finally
-                {
-                    fileLock.ExitWriteLock();
-                }
+                systemWideConfigFile = new FileInfo(value);
+            }
+            finally
+            {
+                fileLock.ExitWriteLock();
             }
         }
 
@@ -173,7 +151,7 @@ namespace System.Management.Automation.Configuration
                 // host for display to the user.
                 // CreateDirectory will succeed if the directory already exists
                 // so there is no reason to check Directory.Exists().
-                Directory.CreateDirectory(appDataConfigDirectory);
+                Directory.CreateDirectory(perUserConfigFile.Directory.FullName);
             }
 
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
@@ -372,14 +350,7 @@ namespace System.Management.Automation.Configuration
         private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default(T),
                                        Func<JToken, JsonSerializer, T, T> readImpl = null)
         {
-
             string fileName = GetConfigFilePath(scope);
-            return ReadValueFromFile<T>(fileName, key, defaultValue, readImpl);
-        }
-
-        private T ReadValueFromFile<T>(string fileName, string key, T defaultValue = default(T),
-                                       Func<JToken, JsonSerializer, T, T> readImpl = null)
-        {
             if (!File.Exists(fileName)) { return defaultValue; }
 
             // Open file for reading, but allow multiple readers
@@ -417,21 +388,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
         private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
         {
-
             string fileName = GetConfigFilePath(scope);
-            UpdateValueInFile<T>(fileName, key, value, addValue);
-        }
-
-        /// <summary>
-        /// TODO: Should this return success fail or throw?
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fileName"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        /// <param name="addValue">Whether the key-value pair should be added to or removed from the file</param>
-        private void UpdateValueInFile<T>(string fileName, string key, T value, bool addValue)
-        {
             fileLock.EnterWriteLock();
             try
             {
@@ -526,8 +483,7 @@ namespace System.Management.Automation.Configuration
             }
         }
 
-
-       /// <summary>
+        /// <summary>
         /// TODO: Should this return success, fail, or throw?
         /// </summary>
         /// <typeparam name="T">The type of value to write.</typeparam>
@@ -536,20 +492,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="value">The value to write.</param>
         private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
         {
-            string fileName = GetConfigFilePath(scope);
-            WriteValueToFile<T>(fileName, key, value);
-        }
-
-        /// <summary>
-        /// TODO: Should this return success, fail, or throw?
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fileName"></param>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
-        private void WriteValueToFile<T>(string fileName, string key, T value)
-        {
-            UpdateValueInFile<T>(fileName, key, value, true);
+            UpdateValueInFile<T>(scope, key, value, true);
         }
 
         /// <summary>
@@ -561,21 +504,10 @@ namespace System.Management.Automation.Configuration
         private void RemoveValueFromFile<T>(ConfigScope scope, string key)
         {
             string fileName = GetConfigFilePath(scope);
-            RemoveValueFromFile<T>(fileName, key);
-        }
-
-        /// <summary>
-        /// TODO: Should this return success, fail, or throw?
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fileName"></param>
-        /// <param name="key"></param>
-        private void RemoveValueFromFile<T>(string fileName, string key)
-        {
             // Optimization: If the file doesn't exist, there is nothing to remove
             if (File.Exists(fileName))
             {
-                UpdateValueInFile<T>(fileName, key, default(T), false);
+                UpdateValueInFile<T>(scope, key, default(T), false);
             }
         }
     }
