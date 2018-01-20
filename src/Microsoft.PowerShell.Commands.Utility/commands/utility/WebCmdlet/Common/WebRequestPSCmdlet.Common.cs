@@ -307,6 +307,14 @@ namespace Microsoft.PowerShell.Commands
         public virtual object Body { get; set; }
 
         /// <summary>
+        /// Dictionary for use with RFC-7578 multipart\form-data submissions. 
+        /// Keys are form fields and their respective values are form values.
+        /// A value may be a collection of form values or single form value.
+        /// </summary>
+        [Parameter]
+        public virtual IDictionary Form {get; set;}
+
+        /// <summary>
         /// gets or sets the ContentType property
         /// </summary>
         [Parameter]
@@ -428,6 +436,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.BodyConflict,
                                                        "WebCmdletBodyConflictException");
+                ThrowTerminatingError(error);
+            }
+            if ((null != Body) && (null != Form))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict,
+                                                       "WebCmdletBodyFormConflictException");
+                ThrowTerminatingError(error);
+            }
+            if ((null != InFile) && (null != Form))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict,
+                                                       "WebCmdletFormInFileConflictException");
                 ThrowTerminatingError(error);
             }
 
@@ -1075,8 +1095,21 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            if (Form != null)
+            {
+                // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
+                WebSession.ContentHeaders.Clear();
+
+                var formData = new MultipartFormDataContent();
+                foreach (DictionaryEntry formEntry in Form)
+                {
+                    // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
+                    AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
+                }
+                SetRequestContent(request, formData);
+            }
             // coerce body into a usable form
-            if (Body != null)
+            else if (Body != null)
             {
                 object content = Body;
 
@@ -1395,6 +1428,109 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         #region Helper Methods
+
+        
+        /// <summary>
+        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is String, File, or Collection.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use.</param>
+        /// <param name="fieldValue">The Field Value to use.</param>
+        /// <param name="formData">The <see cref="MultipartFormDataContent" />> to update.</param>
+        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" /> will be enumerated. If false, collections will be treated as single value.</param>
+        internal void AddMultipartContent (object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        {
+            if (null == formData)
+            {
+                formData = new MultipartFormDataContent();
+            }
+
+            // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.
+            // Before processing the field name and value we need to ensure we are working with the base objects and not the PSObject wrappers.
+
+            // Unwrap fieldName PSObjects
+            if (fieldName is PSObject namePSObject)
+            {
+                fieldName = namePSObject.BaseObject;
+            }
+
+            // Unwrap fieldValue PSObjects
+            if (fieldValue is PSObject valuePSObject)
+            {
+                fieldValue = valuePSObject.BaseObject;
+            }
+
+            // Treat a single FileInfo as a FileContent
+            if (fieldValue is FileInfo file)
+            {
+                formData.Add(GetMultipartFileContent(fieldName: fieldName, file: file));
+                return;
+            }
+
+            // Treat Strings and other single values as a StringContent. 
+            // If enumeration is false, also treat IEnumerables as StringContents.
+            // String implements IEnumerable so the explicit check is required.
+            if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))
+            {
+                formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
+                return;
+            }
+
+            // Treat the value as a collection and enumerate it if enumeration is true
+            if(enumerate == true && fieldValue is IEnumerable items)
+            {
+                foreach (var item in items)
+                {
+                    // Recruse, but do not enumerate the next level. IEnumerables will be treated as single values.
+                    AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(Object)" /> to convert the objects to strings.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
+        internal StringContent GetMultipartStringContent (Object fieldName, Object fieldValue)
+        {
+            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
+
+            var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
+            result.Headers.ContentDisposition = contentDisposition;
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
+        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" />.</param>
+        internal StreamContent GetMultipartStreamContent (Object fieldName, Stream stream)
+        {
+            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
+
+            var result = new StreamContent(stream);
+            result.Headers.ContentDisposition = contentDisposition;
+            result.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(Object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
+        /// <param name="file">The file to use for the <see cref="StreamContent" />.</param>
+        internal StreamContent GetMultipartFileContent (Object fieldName, FileInfo file)
+        {
+            var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            result.Headers.ContentDisposition.FileName = file.Name;
+
+            return result;
+        }
 
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
