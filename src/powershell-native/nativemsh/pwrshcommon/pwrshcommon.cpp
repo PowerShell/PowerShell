@@ -682,7 +682,6 @@ namespace NativeMsh
         "Microsoft.PowerShell.ConsoleHost",
         "Microsoft.PowerShell.CoreCLR.Eventing",
         "Microsoft.PowerShell.LocalAccounts",
-        "Microsoft.PowerShell.PSReadLine",
         "Microsoft.PowerShell.SDK",
         "Microsoft.PowerShell.Security",
         "Microsoft.VisualBasic",
