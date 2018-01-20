@@ -6702,7 +6702,7 @@ namespace System.Management.Automation
     /// use is for intellisense where you don't want to run arbitrary code, but you do want to know the values
     /// of various expressions so you can get the members.
     /// </summary>
-    internal class SafeExprEvaluator : ICustomAstVisitor2
+    internal class SafeExprEvaluator : ICustomAstVisitor3
     {
         internal static bool TrySafeEval(ExpressionAst ast, ExecutionContext executionContext, out object value)
         {
@@ -6850,6 +6850,11 @@ namespace System.Management.Automation
         public object VisitIndexExpression(IndexExpressionAst indexExpressionAst)
         {
             return (bool)indexExpressionAst.Target.Accept(this) && (bool)indexExpressionAst.Index.Accept(this);
+        }
+
+        public object VisitListExpression(ListExpressionAst listExpressionAst)
+        {
+            return listExpressionAst.SubExpression.Accept(this);
         }
 
         public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)

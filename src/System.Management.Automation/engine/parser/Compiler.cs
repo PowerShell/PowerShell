@@ -33,10 +33,14 @@ namespace System.Management.Automation.Language
         internal const BindingFlags staticPublicFlags = BindingFlags.Static | BindingFlags.Public;
         internal const BindingFlags instancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
-        internal static readonly ConstructorInfo ObjectList_ctor =
+        internal static readonly ConstructorInfo ObjectList_Default_ctor =
             typeof(List<object>).GetConstructor(PSTypeExtensions.EmptyTypes);
+        internal static readonly ConstructorInfo ObjectList_IEnumerable_ctor =
+            typeof(List<object>).GetConstructor(new Type[] { typeof(IEnumerable<object>) });
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
+        internal static readonly MethodInfo ObjectList_Add =
+            typeof(List<object>).GetMethod(nameof(List<object>.Add));
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
@@ -124,6 +128,8 @@ namespace System.Management.Automation.Language
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.SlicingIndex), staticFlags);
         internal static readonly MethodInfo EnumerableOps_ToArray =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToArray), staticFlags);
+        internal static readonly MethodInfo EnumerableOps_ToList =
+            typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.ToList), staticFlags);
         internal static readonly MethodInfo EnumerableOps_WriteEnumerableToPipe =
             typeof(EnumerableOps).GetMethod(nameof(EnumerableOps.WriteEnumerableToPipe), staticFlags);
 
@@ -547,8 +553,8 @@ namespace System.Management.Automation.Language
         internal static readonly Expression CurrentCultureIgnoreCaseComparer = Expression.Constant(StringComparer.CurrentCultureIgnoreCase, typeof(StringComparer));
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         internal static readonly Expression Empty = Expression.Empty();
-        internal static Expression GetExecutionContextFromTLS =
-            Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
+        internal static readonly Expression GetExecutionContextFromTLS = Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
+        internal static readonly NewExpression NewEmptyObjectList = Expression.New(CachedReflectionInfo.ObjectList_Default_ctor);
 
         internal static readonly Expression BoxedTrue = Expression.Field(null,
             typeof(Boxed).GetField("True", BindingFlags.Static | BindingFlags.NonPublic));
@@ -678,7 +684,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class Compiler : ICustomAstVisitor2
+    internal class Compiler : ICustomAstVisitor3
     {
         internal static readonly ParameterExpression _executionContextParameter;
         internal static readonly ParameterExpression _functionContext;
@@ -1882,7 +1888,7 @@ namespace System.Management.Automation.Language
             temps.Add(resultList);
             temps.Add(oldPipe);
             exprs.Add(Expression.Assign(oldPipe, s_getCurrentPipe));
-            exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
+            exprs.Add(Expression.Assign(resultList, ExpressionCache.NewEmptyObjectList));
             exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
             exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
             if (generateRedirectExprs != null)
@@ -3193,7 +3199,7 @@ namespace System.Management.Automation.Language
                 temps.Add(resultList);
                 temps.Add(oldPipe);
                 exprs.Add(Expression.Assign(oldPipe, s_getCurrentPipe));
-                exprs.Add(Expression.Assign(resultList, Expression.New(CachedReflectionInfo.ObjectList_ctor)));
+                exprs.Add(Expression.Assign(resultList, ExpressionCache.NewEmptyObjectList));
                 exprs.Add(Expression.Assign(s_getCurrentPipe, Expression.New(CachedReflectionInfo.Pipe_ctor, resultList)));
                 exprs.Add(Expression.Call(oldPipe, CachedReflectionInfo.Pipe_SetVariableListForTemporaryPipe, s_getCurrentPipe));
             }
@@ -5489,6 +5495,51 @@ namespace System.Management.Automation.Language
             var memberNameExpr = Compile(invokeMemberExpressionAst.Member);
             return InvokeDynamicMember(memberNameExpr, constraints, target,
                                        args, invokeMemberExpressionAst.Static, false);
+        }
+
+        public object VisitListExpression(ListExpressionAst listExpressionAst)
+        {
+            ExpressionAst pureExprAst = null;
+
+            var subExpr = listExpressionAst.SubExpression;
+            if (subExpr.Traps == null)
+            {
+                if (subExpr.Statements.Count == 1)
+                {
+                    var pipelineBase = subExpr.Statements[0] as PipelineBaseAst;
+                    if (pipelineBase != null)
+                    {
+                        pureExprAst = pipelineBase.GetPureExpression();
+                    }
+                }
+                else if (subExpr.Statements.Count == 0)
+                {
+                    return ExpressionCache.NewEmptyObjectList;
+                }
+            }
+
+            if (pureExprAst is ArrayLiteralAst arrayLiteral)
+            {
+                // Avoid generating an object array
+                return Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add,
+                                           arrayLiteral.Elements.Select(e => Compile(e).Cast(typeof(object))));
+            }
+
+            Expression values = pureExprAst != null ? Compile(pureExprAst) : CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
+
+            if (values.Type == typeof(List<object>)) { return values; }
+            if (values.Type.IsPrimitive || values.Type == typeof(string))
+            {
+                // Slight optimization - no need for a dynamic site.  We could special case other
+                // types as well, but it's probably not worth it.
+                return Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add, values.Cast(typeof(object)));
+            }
+            if (values.Type == typeof(void))
+            {
+                // A dynamic site can't take void - but a void value is just an empty list.
+                return ExpressionCache.NewEmptyObjectList;
+            }
+            return DynamicExpression.Dynamic(PSToObjectListBinder.Get(), typeof(List<object>), values);
         }
 
         public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)

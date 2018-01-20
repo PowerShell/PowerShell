@@ -1776,7 +1776,8 @@ namespace System.Management.Automation.Language
                 SkipNewlinesAndSemicolons();
 
                 Token token = PeekToken();
-                if (token.Kind == TokenKind.RParen || token.Kind == TokenKind.RCurly)
+                if (token.Kind == TokenKind.RParen || token.Kind == TokenKind.RCurly || 
+                    (token.Kind == TokenKind.RBracket && _tokenizer.InListSubExpression))
                 {
                     break;
                 }
@@ -4758,6 +4759,7 @@ namespace System.Management.Automation.Language
                 case TokenKind.LCurly:
                 case TokenKind.AtParen:
                 case TokenKind.AtCurly:
+                case TokenKind.AtBracket:
                 case TokenKind.RCurly:
                 case TokenKind.RParen:
                 case TokenKind.EndOfInput:
@@ -5291,6 +5293,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.NewLine:
                     case TokenKind.RParen:
                     case TokenKind.RCurly:
+                    case TokenKind.RBracket when (_tokenizer.InListSubExpression):
                     case TokenKind.EndOfInput:
                         scanning = false;
                         continue;
@@ -5506,6 +5509,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.DollarParen:
                     case TokenKind.AtParen:
                     case TokenKind.AtCurly:
+                    case TokenKind.AtBracket:
                     case TokenKind.LCurly:
                         UngetToken(token);
                         exprAst = PrimaryExpressionRule(withMemberAccess: true);
@@ -5673,6 +5677,7 @@ namespace System.Management.Automation.Language
                         case TokenKind.Pipe:
                         case TokenKind.RCurly:
                         case TokenKind.RParen:
+                        case TokenKind.RBracket when (_tokenizer.InListSubExpression):
                         case TokenKind.EndOfInput:
                         case TokenKind.NewLine:
                         case TokenKind.Semi:
@@ -6244,6 +6249,7 @@ namespace System.Management.Automation.Language
                     break;
 
                 case TokenKind.AtParen:
+                case TokenKind.AtBracket:
                 case TokenKind.DollarParen:
                     expr = SubExpressionRule(token);
                     break;
@@ -6460,11 +6466,16 @@ namespace System.Management.Automation.Language
             //G      '@('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
             //G  sub-expression:
             //G      '$('   new-lines:opt   statement-list:opt   new-lines:opt   ')'
+            //G  list-expression:
+            //G      '@['   new-lines:opt   statement-list:opt   new-lines:opt   ']'
 
             IScriptExtent statementListExtent;
             List<TrapStatementAst> traps = new List<TrapStatementAst>();
             List<StatementAst> statements = new List<StatementAst>();
-            Token rParen;
+
+            bool isListExpr = firstToken.Kind == TokenKind.AtBracket;
+            TokenKind expectedEndTokenKind = isListExpr ? TokenKind.RBracket : TokenKind.RParen;
+            Token endToken;
 
             bool oldDisableCommaOperator = _disableCommaOperator;
             var oldTokenizerMode = _tokenizer.Mode;
@@ -6472,38 +6483,45 @@ namespace System.Management.Automation.Language
             {
                 _disableCommaOperator = false;
                 SetTokenizerMode(TokenizerMode.Command);
+                if (isListExpr) { _tokenizer.InListSubExpression = true; }
 
                 SkipNewlines();
                 statementListExtent = StatementListRule(statements, traps);
                 SkipNewlines();
-                rParen = NextToken();
-                if (rParen.Kind != TokenKind.RParen)
+                endToken = NextToken();
+                if (endToken.Kind != expectedEndTokenKind)
                 {
-                    // ErrorRecovery: Assume only the closing paren is missing, continue as though it was present.
+                    // ErrorRecovery: Assume only the closing paren or bracket is missing, continue as though it was present.
 
-                    UngetToken(rParen);
-                    ReportIncompleteInput(rParen.Extent, () => ParserStrings.MissingEndParenthesisInSubexpression);
+                    UngetToken(endToken);
+                    string errorString = isListExpr
+                        ? ParserStrings.MissingEndBracketInSubexpression
+                        : ParserStrings.MissingEndParenthesisInSubexpression;
+                    ReportIncompleteInput(endToken.Extent, () => errorString);
                 }
             }
             finally
             {
                 _disableCommaOperator = oldDisableCommaOperator;
                 SetTokenizerMode(oldTokenizerMode);
+                if (isListExpr) { _tokenizer.InListSubExpression = false; }
             }
 
             // End extent is rparen, end of the statement list (if no rparen), or the first token (if no statements).
             IScriptExtent extent = ExtentOf(firstToken,
-                                            rParen.Kind == TokenKind.RParen ? rParen.Extent : statementListExtent ?? firstToken.Extent);
-            if (firstToken.Kind == TokenKind.DollarParen)
+                                            endToken.Kind == expectedEndTokenKind ? endToken.Extent : statementListExtent ?? firstToken.Extent);
+            var statementBlock = new StatementBlockAst(statementListExtent ?? PositionUtilities.EmptyExtent, statements, traps);
+            if (isListExpr)
             {
-                return new SubExpressionAst(extent,
-                                            new StatementBlockAst(statementListExtent ?? PositionUtilities.EmptyExtent,
-                                                                  statements, traps));
+                return new ListExpressionAst(extent, statementBlock);
+            }
+            else if (firstToken.Kind == TokenKind.DollarParen)
+            {
+                return new SubExpressionAst(extent, statementBlock);
             }
 
-            Diagnostics.Assert(firstToken.Kind == TokenKind.AtParen, "only support $() and @() here.");
-            return new ArrayExpressionAst(extent,
-                                          new StatementBlockAst(statementListExtent ?? PositionUtilities.EmptyExtent, statements, traps));
+            Diagnostics.Assert(firstToken.Kind == TokenKind.AtParen, "only support @[], $() and @() here.");
+            return new ArrayExpressionAst(extent, statementBlock);
         }
 
         private ExpressionAst ParenthesizedExpressionRule(Token lParen)

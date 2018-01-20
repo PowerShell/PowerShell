@@ -311,7 +311,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class VariableAnalysis : ICustomAstVisitor
+    internal class VariableAnalysis : ICustomAstVisitor3
     {
         // Tuple slots start at index 0.  >= 0 means a variable is allocated in the tuple.  -1 means we haven't
         // analyzed a specific use of a variable and don't know what slot it might be assigned to yet.
@@ -1732,6 +1732,12 @@ namespace System.Management.Automation.Language
             return null;
         }
 
+        public object VisitListExpression(ListExpressionAst listExpressionAst)
+        {
+            listExpressionAst.SubExpression.Accept(this);
+            return null;
+        }
+
         public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
         {
             arrayExpressionAst.SubExpression.Accept(this);
@@ -1798,5 +1804,13 @@ namespace System.Management.Automation.Language
             blockStatementAst.Body.Accept(this);
             return null;
         }
+
+        public object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return null; }
+        public object VisitPropertyMember(PropertyMemberAst propertyMemberAst) { return null; }
+        public object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
+        public object VisitBaseCtorInvokeMemberExpression(BaseCtorInvokeMemberExpressionAst baseCtorInvokeMemberExpressionAst) { return null; }
+        public object VisitUsingStatement(UsingStatementAst usingStatement) { return null; }
+        public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return null; }
+        public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return null; }
     }
 }

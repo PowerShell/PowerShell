@@ -812,6 +812,65 @@ namespace System.Management.Automation.Language
         }
     }
 
+    /// <summary>
+    /// This binder is used for the @[] operator.
+    /// </summary>
+    internal class PSToObjectListBinder : DynamicMetaObjectBinder
+    {
+        private static readonly PSToObjectListBinder s_binder = new PSToObjectListBinder();
+
+        internal static PSToObjectListBinder Get()
+        {
+            return s_binder;
+        }
+
+        private PSToObjectListBinder()
+        {
+        }
+
+        public override string ToString()
+        {
+            return "ToObjectList";
+        }
+
+        public override Type ReturnType { get { return typeof(List<object>); } }
+
+        public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
+        {
+            if (!target.HasValue)
+            {
+                return Defer(target, args);
+            }
+
+            if (target.Value == AutomationNull.Value)
+            {
+                return new DynamicMetaObject(ExpressionCache.NewEmptyObjectList,
+                    BindingRestrictions.GetInstanceRestriction(target.Expression, AutomationNull.Value)).WriteToDebugLog(this);
+            }
+
+            var enumerable = PSEnumerableBinder.IsEnumerable(target);
+            if (enumerable == null)
+            {
+                return new DynamicMetaObject(
+                    Expression.ListInit(ExpressionCache.NewEmptyObjectList, CachedReflectionInfo.ObjectList_Add, target.Expression.Cast(typeof(object))),
+                    target.PSGetTypeRestriction()).WriteToDebugLog(this);
+            }
+
+            var value = PSObject.Base(target.Value);
+            if (value is IEnumerable<object>)
+            {
+                return new DynamicMetaObject(
+                    Expression.New(CachedReflectionInfo.ObjectList_IEnumerable_ctor, PSEnumerableBinder.MaybeDebase(this, e => e.Cast(typeof(IEnumerable<object>)), target)),
+                    PSEnumerableBinder.GetRestrictions(target)).WriteToDebugLog(this);
+            }
+
+            // It's enumerable, but not an IEnumerable<object>. Call EnumerableOps.ToArray
+            return new DynamicMetaObject(
+                Expression.Call(CachedReflectionInfo.EnumerableOps_ToList, enumerable.Expression),
+                target.PSGetTypeRestriction()).WriteToDebugLog(this);
+        }
+    }
+
     internal class PSPipeWriterBinder : DynamicMetaObjectBinder
     {
         private static readonly PSPipeWriterBinder s_binder = new PSPipeWriterBinder();

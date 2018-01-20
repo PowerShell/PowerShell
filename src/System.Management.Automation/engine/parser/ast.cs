@@ -9447,6 +9447,76 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// The ast that represents a list expression, e.g. <c>@[1]</c>.
+    /// </summary>
+    public class ListExpressionAst : ExpressionAst
+    {
+        /// <summary>
+        /// Construct an expression that forces the result to be a list.
+        /// </summary>
+        /// <param name="extent">The extent of the expression, including the opening '@[' and closing ']'.</param>
+        /// <param name="statementBlock">The statements executed as part of the expression.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> or <paramref name="statementBlock"/> is null.
+        /// </exception>
+        public ListExpressionAst(IScriptExtent extent, StatementBlockAst statementBlock)
+            : base(extent)
+        {
+            if (statementBlock == null)
+            {
+                throw PSTraceSource.NewArgumentNullException("statementBlock");
+            }
+
+            this.SubExpression = statementBlock;
+            SetParent(statementBlock);
+        }
+
+        /// <summary>
+        /// The expression/statements represented by this sub-expression.
+        /// </summary>
+        public StatementBlockAst SubExpression { get; private set; }
+
+        /// <summary>
+        /// Copy the ListExpressionAst instance
+        /// </summary>
+        public override Ast Copy()
+        {
+            var newStatementBlock = CopyElement(this.SubExpression);
+            return new ListExpressionAst(this.Extent, newStatementBlock);
+        }
+
+        /// <summary>
+        /// The result of an ListExpressionAst is always <c>typeof(List[object])</c>.
+        /// </summary>
+        public override Type StaticType { get { return typeof(List<object>); } }
+
+        #region Visitors
+
+        internal override object Accept(ICustomAstVisitor visitor)
+        {
+            var visitor3 = visitor as ICustomAstVisitor3;
+            return visitor3 != null ? visitor3.VisitListExpression(this) : null;
+        }
+
+        internal override AstVisitAction InternalVisit(AstVisitor visitor)
+        {
+            var action = AstVisitAction.Continue;
+            var visitor3 = visitor as AstVisitor3;
+            if (visitor3 != null)
+            {
+                action = visitor3.VisitListExpression(this);
+                if (action == AstVisitAction.SkipChildren)
+                    return visitor.CheckForPostAction(this, AstVisitAction.Continue);
+            }
+            if (action == AstVisitAction.Continue)
+                action = SubExpression.InternalVisit(visitor);
+            return visitor.CheckForPostAction(this, action);
+        }
+
+        #endregion Visitors
+    }
+
+    /// <summary>
     /// The ast that represents an array expression, e.g. <c>@(1)</c>.  The array literal (e.g. <c>1,2,3</c>) is
     /// represented by <see cref="ArrayLiteralAst"/>.
     /// </summary>

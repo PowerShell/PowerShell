@@ -773,6 +773,20 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
+        public void EmitNewListInit(Type elementType, int elementCount)
+        {
+            // To avoid lock contention in InstructionFactory.GetFactory, we special case the most common
+            // types of lists that the compiler creates.
+            if (elementType == typeof(object))
+            {
+                Emit(InstructionFactory<object>.Factory.NewListInit(elementCount));
+            }
+            else
+            {
+                Emit(InstructionFactory.GetFactory(elementType).NewListInit(elementCount));
+            }
+        }
+
         #endregion
 
         #region Arithmetic Operations

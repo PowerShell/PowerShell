@@ -637,6 +637,7 @@ namespace System.Management.Automation.Language
         internal bool AllowSignedNumbers { get; set; }
         internal bool WantSimpleName { get; set; }
         internal bool InWorkflowContext { get; set; }
+        internal bool InListSubExpression { get; set; }
         internal List<Token> TokenList { get; set; }
         internal Token FirstToken { get; private set; }
         internal Token LastToken { get; private set; }
@@ -3003,7 +3004,8 @@ namespace System.Management.Automation.Language
             formatSb.Append(sb);
 
             char c = GetChar();
-            for (; !c.ForceStartNewToken(); c = GetChar())
+            // In a list expression @[], don't take a closing bracket in a generic token
+            for (; !c.ForceStartNewToken() && !(c == ']' && InListSubExpression); c = GetChar())
             {
                 if (c == '`')
                 {
@@ -3885,6 +3887,10 @@ namespace System.Management.Automation.Language
                     if (c1 == '(')
                     {
                         return NewToken(TokenKind.AtParen);
+                    }
+                    if (c1 == '[')
+                    {
+                        return NewToken(TokenKind.AtBracket);
                     }
                     if (c1.IsSingleQuote())
                     {

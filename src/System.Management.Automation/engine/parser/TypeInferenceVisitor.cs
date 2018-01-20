@@ -418,7 +418,7 @@ namespace System.Management.Automation
         }
     }
 
-    internal class TypeInferenceVisitor : ICustomAstVisitor2
+    internal class TypeInferenceVisitor : ICustomAstVisitor3
     {
         private readonly TypeInferenceContext _context;
 
@@ -1573,6 +1573,11 @@ namespace System.Management.Automation
         {
             // TODO: What is the right InferredType for the AST
             return dynamicKeywordAst.CommandElements[0].Accept(this);
+        }
+
+        object ICustomAstVisitor3.VisitListExpression(ListExpressionAst listExpressionAst)
+        {
+            return new[] { new PSTypeName(listExpressionAst.StaticType) };
         }
 
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)
