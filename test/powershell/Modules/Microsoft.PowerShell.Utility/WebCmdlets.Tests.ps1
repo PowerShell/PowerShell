@@ -1151,7 +1151,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.'Content-Type' | Should BeExactly 'multipart/form-data'
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
             $result.Items.TestString.Count | Should Be 1
             $result.Items.TestString[0] | Should BeExactly 'TestValue'
         }
@@ -1162,7 +1162,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.'Content-Type' | Should BeExactly 'multipart/form-data'
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
             $result.Items.TestStrings.Count | Should Be 2
             $result.Items.TestStrings[0] | Should BeExactly 'TestValue'
             $result.Items.TestStrings[1] | Should BeExactly 'TestValue2'
@@ -1189,7 +1189,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.'Content-Type' | Should BeExactly 'multipart/form-data'
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
             $result.Files.Count | Should Be 2
 
             $result.Files[0].Name | Should BeExactly "TestFiles"
