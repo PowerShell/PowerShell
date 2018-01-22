@@ -199,7 +199,7 @@ function Get-ChangeLog
 #.OUTPUTS
 #Objects which represet the csproj package ref, with the current and new version
 ##############################
-function Get-NewPackage
+function Get-NewOfficalPackage
 {
     param(
         [String]
@@ -246,4 +246,4 @@ function Get-NewPackage
 }
 
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewPackage
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage
