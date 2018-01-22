@@ -614,7 +614,6 @@ namespace Microsoft.PowerShell
                         break;
                     }
 #endif
-
                 }
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
