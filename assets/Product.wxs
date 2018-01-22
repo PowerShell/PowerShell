@@ -43,6 +43,22 @@
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+
+    <SetProperty Id="RegisterManifest"
+                Before="RegisterManifest"
+                Sequence="execute"
+                Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; '[$(var.ProductVersionWithName)]RegisterManifest.ps1'; exit $$($Error.Count)&quot;" />
+    <CustomAction Id="RegisterManifest"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="check"
+                  Impersonate="yes" />
+    <InstallExecuteSequence>
+      <Custom Action="RegisterManifest" After="InstallFiles">
+        <![CDATA[NOT Installed]]>
+      </Custom>
+    </InstallExecuteSequence>
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
         <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)">
@@ -108,6 +124,16 @@
     </Property>
     <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
+    </Condition>
+    <Property Id="POWERSHELLEXE">
+      <RegistrySearch Id="POWERSHELLEXE"
+                      Type="raw"
+                      Root="HKLM"
+                      Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
+                      Name="Path" />
+    </Property>
+    <Condition Message="This application requires Windows PowerShell.">
+      <![CDATA[Installed OR POWERSHELLEXE]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
@@ -185,6 +211,11 @@
         </Directory>
       </Directory>
     </Directory>
+              <!-- <DirectoryRef Id="TARGETDIR">
+              <Component Id="RegisterManifest" Guid="5ff32000-603d-40f1-8f14-7a9eb4d999a1">
+                <File Id="RegisterManifestFile" Source="RegisterManifest.ps1" />
+              </Component>
+            </DirectoryRef> -->
   </Product>
 
 <!-- Explorer Context Menu Dialog -->
@@ -192,15 +223,17 @@
  <UI>
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
     <!-- If the checkbox is defined first, then the checkbox can be ticked and unticked using the spacebar -->
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenu1" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="CONTEXT_MENU_1" CheckBoxValue="1" Text="Register Manifest"/>
+      <Control Id="ContextMenu2" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="CONTEXT_MENU_2" CheckBoxValue="1" Text="Enable PSRemoting"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
 
-      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Explorer Context Menu"/>
-      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Open $(var.ProductName) via right-click in Explorer."/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Features"/>
+      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization"/>
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)"/>
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0"/>
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0"/>        
