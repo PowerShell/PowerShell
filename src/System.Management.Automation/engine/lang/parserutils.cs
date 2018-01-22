@@ -1630,15 +1630,10 @@ namespace System.Management.Automation
         public CharRangeEnumerator(char lowerBound, char upperBound)
         {
             LowerBound = lowerBound;
-            CurrentValue = LowerBound;
+            Current = lowerBound;
             UpperBound = upperBound;
             if (lowerBound > upperBound)
                 _increment = -1;
-        }
-
-        public string Current
-        {
-            get { return new String((char)CurrentValue, 1); }
         }
 
         Object IEnumerator.Current
@@ -1646,17 +1641,17 @@ namespace System.Management.Automation
             get { return Current; }
         }
 
-        internal int LowerBound
+        internal char LowerBound
         {
             get; private set;
         }
 
-        internal int UpperBound
+        internal char UpperBound
         {
             get; private set;
         }
 
-        internal int CurrentValue
+        public char Current
         {
             get; private set;
         }
@@ -1669,18 +1664,18 @@ namespace System.Management.Automation
                 return true;
             }
 
-            if (CurrentValue == UpperBound)
+            if (Current == UpperBound)
             {
                 return false;
             }
 
-            CurrentValue += _increment;
+            Current = (char)(Current + _increment);
             return true;
         }
 
         public void Reset()
         {
-            CurrentValue = LowerBound;
+            Current = LowerBound;
             _firstElement = true;
         }
     }

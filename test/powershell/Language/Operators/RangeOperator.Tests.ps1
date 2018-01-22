@@ -100,11 +100,11 @@ Describe "Range Operator" -Tags CI {
         It "Range operator enumerator generates an array of [string] from single-character operands" {
             $CharRange = 'A'..'E' | ForEach-Object { $_ }
             $CharRange.count | Should Be 5
-            $CharRange[0] | Should BeOfType [string]
-            $CharRange[1] | Should BeOfType [string]
-            $CharRange[2] | Should BeOfType [string]
-            $CharRange[3] | Should BeOfType [string]
-            $CharRange[4] | Should BeOfType [string]
+            $CharRange[0] | Should BeOfType [char]
+            $CharRange[1] | Should BeOfType [char]
+            $CharRange[2] | Should BeOfType [char]
+            $CharRange[3] | Should BeOfType [char]
+            $CharRange[4] | Should BeOfType [char]
         }
 
         It "Range operator works in ascending and descending order" {
