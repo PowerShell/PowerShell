@@ -1095,7 +1095,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (Form != null)
+            if (null != Form)
             {
                 // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
                 WebSession.ContentHeaders.Clear();
@@ -1437,11 +1437,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use.</param>
         /// <param name="formData">The <see cref="MultipartFormDataContent" />> to update.</param>
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" /> will be enumerated. If false, collections will be treated as single value.</param>
-        internal void AddMultipartContent (object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        private void AddMultipartContent (object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             if (null == formData)
             {
-                formData = new MultipartFormDataContent();
+                throw new ArgumentNullException("formDate");
             }
 
             // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.
@@ -1491,7 +1491,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
-        internal StringContent GetMultipartStringContent (Object fieldName, Object fieldValue)
+        private StringContent GetMultipartStringContent (Object fieldName, Object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
@@ -1507,7 +1507,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
         /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" />.</param>
-        internal StreamContent GetMultipartStreamContent (Object fieldName, Stream stream)
+        private StreamContent GetMultipartStreamContent (Object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
@@ -1524,7 +1524,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
         /// <param name="file">The file to use for the <see cref="StreamContent" />.</param>
-        internal StreamContent GetMultipartFileContent (Object fieldName, FileInfo file)
+        private StreamContent GetMultipartFileContent (Object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
             result.Headers.ContentDisposition.FileName = file.Name;
