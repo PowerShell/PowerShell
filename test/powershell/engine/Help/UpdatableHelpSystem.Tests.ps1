@@ -125,7 +125,7 @@ $testCases = @{
         HelpFiles            = "Microsoft.PowerShell.PSReadline.dll-help.xml"
         HelpInfoFiles        = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_HelpInfo.xml"
         CompressedFiles      = "PSReadline_5714753b-2afd-4492-a5fd-01d9e2cff8b5_en-US_helpcontent$extension"
-        HelpInstallationPath = "$pshome\Modules\PSReadLine\en-US"
+        HelpInstallationPath = "$pshome\Modules\PSReadLine\*\en-US"
     }
 }
 
