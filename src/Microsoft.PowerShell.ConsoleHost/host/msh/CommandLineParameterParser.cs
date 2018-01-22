@@ -882,7 +882,7 @@ namespace Microsoft.PowerShell
         {
             // Normalize slashes
             path = path.Replace(StringLiterals.AlternatePathSeparator,
-                                    StringLiterals.DefaultPathSeparator);
+                                StringLiterals.DefaultPathSeparator);
 
             return Path.GetFullPath(path);
         }
@@ -944,7 +944,7 @@ namespace Microsoft.PowerShell
                 string exceptionMessage = null;
                 try
                 {
-                    _file = NormalizeFilePath (args[i]);
+                    _file = NormalizeFilePath(args[i]);
                 }
                 catch (Exception e)
                 {
