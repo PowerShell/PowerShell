@@ -189,4 +189,7 @@
   <data name="InvalidArgument" xml:space="preserve">
     <value>Invalid argument '{0}', did you mean:</value>
   </data>
+  <data name="WindowStyleArgumentNotImplemented" xml:space="preserve">
+    <value>WindowStyle is not implemented on this platform.</value>
+  </data>
 </root>

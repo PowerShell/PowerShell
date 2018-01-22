@@ -182,9 +182,7 @@ namespace Microsoft.PowerShell
             "noninteractive",
             "inputformat",
             "outputformat",
-#if !UNIX
             "windowstyle",
-#endif
             "encodedcommand",
             "configurationname",
             "file",
@@ -588,9 +586,13 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !UNIX
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
+#if UNIX
+                    WriteCommandLineError(
+                        CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented);
+                    break;
+#else
                     ++i;
                     if (i >= args.Length)
                     {
@@ -611,8 +613,9 @@ namespace Microsoft.PowerShell
                             string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidWindowStyleArgument, args[i], e.Message));
                         break;
                     }
-                }
 #endif
+
+                }
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
                     if (!ParseFile(args, ref i, noexitSeen))
