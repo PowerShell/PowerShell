@@ -2022,12 +2022,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $file1Name = "testfile1.txt"
             $file1Path = Join-Path $testdrive $file1Name
             $file1Contents = "Test123"
-            $file1Contents | Set-Content $file1Path
+            $file1Contents | Set-Content $file1Path -Force
 
             $file2Name = "testfile2.txt"
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
-            $file2Contents | Set-Content $file2Path
+            $file2Contents | Set-Content $file2Path -Force
         }
 
         It "Verifies Invoke-RestMethod Supports Multipart String Values" {
