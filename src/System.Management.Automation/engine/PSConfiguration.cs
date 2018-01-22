@@ -30,10 +30,12 @@ namespace System.Management.Automation.Configuration
         // The json file containing system-wide configuration settings.
         // When passed as a pwsh command-line option,
         // overrides the system wide configuration file.
-        private FileInfo systemWideConfigFile;
+        private string systemWideConfigFile;
+        private string systemWideConfigDirectory;
 
         // The json file containing the per-user configuration settings.
-        private FileInfo perUserConfigFile;
+        private string perUserConfigFile;
+        private string perUserConfigDirectory;
 
         private const string configFileName = "powershell.config.json";
 
@@ -47,13 +49,15 @@ namespace System.Management.Automation.Configuration
         private PowerShellConfig()
         {
             // Sets the system-wide configuration file.
-            systemWideConfigFile = new FileInfo(Path.Combine(Utils.DefaultPowerShellAppBase, configFileName));
+            systemWideConfigFile = Path.Combine(Utils.DefaultPowerShellAppBase, configFileName);
+            systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
-            perUserConfigFile = new FileInfo(Path.Combine(Utils.GetUserConfigurationDirectory(), configFileName));
+            perUserConfigDirectory = Utils.GetUserConfigurationDirectory();
+            perUserConfigFile = Path.Combine(Utils.GetUserConfigurationDirectory(), configFileName);
         }
 
         private string GetConfigFilePath(ConfigScope scope)
@@ -61,7 +65,7 @@ namespace System.Management.Automation.Configuration
             fileLock.EnterReadLock();
             try
             {
-                return (scope == ConfigScope.CurrentUser) ? perUserConfigFile.FullName : systemWideConfigFile.FullName;
+                return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
             }
             finally
             {
@@ -70,10 +74,13 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// Sets the system wide configuration file path
+        /// Sets the system wide configuration file path.
         /// </summary>
         /// <param name="value">A fully qualified path to the system wide configuration file.</param>
         /// <exception cref="FileNotFoundException"><paramref name="value"/> is a null reference or the associated file does not exist.</exception>
+        /// <remarks>
+        /// This method is for use when processing the -SettingsFile configuration setting and should not be used for any other purpose.
+        /// </remarks>
         internal void SetSystemConfigFilePath(string value)
         {
             if (!string.IsNullOrEmpty(value) && !File.Exists(value))
@@ -83,7 +90,9 @@ namespace System.Management.Automation.Configuration
             fileLock.EnterWriteLock();
             try
             {
-                systemWideConfigFile = new FileInfo(value);
+                FileInfo info = new FileInfo(value);
+                systemWideConfigFile = info.FullName;
+                systemWideConfigDirectory = info.Directory.FullName;
             }
             finally
             {
@@ -151,9 +160,8 @@ namespace System.Management.Automation.Configuration
                 // host for display to the user.
                 // CreateDirectory will succeed if the directory already exists
                 // so there is no reason to check Directory.Exists().
-                Directory.CreateDirectory(perUserConfigFile.Directory.FullName);
+                Directory.CreateDirectory(perUserConfigDirectory);
             }
-
             string valueName = string.Concat(shellId, ":", "ExecutionPolicy");
             WriteValueToFile<string>(scope, valueName, executionPolicy);
         }
