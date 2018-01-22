@@ -62,15 +62,7 @@ namespace System.Management.Automation.Configuration
 
         private string GetConfigFilePath(ConfigScope scope)
         {
-            fileLock.EnterReadLock();
-            try
-            {
-                return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
-            }
-            finally
-            {
-                fileLock.ExitReadLock();
-            }
+            return (scope == ConfigScope.CurrentUser) ? perUserConfigFile : systemWideConfigFile;
         }
 
         /// <summary>
@@ -87,17 +79,9 @@ namespace System.Management.Automation.Configuration
             {
                 throw new FileNotFoundException(value);
             }
-            fileLock.EnterWriteLock();
-            try
-            {
-                FileInfo info = new FileInfo(value);
-                systemWideConfigFile = info.FullName;
-                systemWideConfigDirectory = info.Directory.FullName;
-            }
-            finally
-            {
-                fileLock.ExitWriteLock();
-            }
+            FileInfo info = new FileInfo(value);
+            systemWideConfigFile = info.FullName;
+            systemWideConfigDirectory = info.Directory.FullName;
         }
 
         /// <summary>
