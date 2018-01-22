@@ -1630,7 +1630,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fieldValue">The Field Value to use.</param>
         /// <param name="formData">The <see cref="MultipartFormDataContent" />> to update.</param>
         /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" /> will be enumerated. If false, collections will be treated as single value.</param>
-        private void AddMultipartContent (object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
         {
             if (null == formData)
             {
@@ -1669,7 +1669,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Treat the value as a collection and enumerate it if enumeration is true
-            if(enumerate == true && fieldValue is IEnumerable items)
+            if (enumerate == true && fieldValue is IEnumerable items)
             {
                 foreach (var item in items)
                 {
@@ -1684,14 +1684,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
-        private StringContent GetMultipartStringContent (Object fieldName, Object fieldValue)
+        private StringContent GetMultipartStringContent(Object fieldName, Object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
 
             var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
             result.Headers.ContentDisposition = contentDisposition;
-            
+
             return result;
         }
 
@@ -1700,7 +1700,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
         /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" />.</param>
-        private StreamContent GetMultipartStreamContent (Object fieldName, Stream stream)
+        private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
@@ -1708,7 +1708,7 @@ namespace Microsoft.PowerShell.Commands
             var result = new StreamContent(stream);
             result.Headers.ContentDisposition = contentDisposition;
             result.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-            
+
             return result;
         }
 
@@ -1717,7 +1717,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
         /// <param name="file">The file to use for the <see cref="StreamContent" />.</param>
-        private StreamContent GetMultipartFileContent (Object fieldName, FileInfo file)
+        private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
             result.Headers.ContentDisposition.FileName = file.Name;
