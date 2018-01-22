@@ -1102,12 +1102,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $file1Name = "testfile1.txt"
             $file1Path = Join-Path $testdrive $file1Name
             $file1Contents = "Test123"
-            $file1Contents | Set-Content $file1Path
+            $file1Contents | Set-Content $file1Path -Force
 
             $file2Name = "testfile2.txt"
             $file2Path = Join-Path $testdrive $file2Name
             $file2Contents = "Test456"
-            $file2Contents | Set-Content $file2Path
+            $file2Contents | Set-Content $file2Path -Force
         }
 
         It "Verifies Invoke-WebRequest Supports Multipart String Values" {
@@ -1151,9 +1151,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Headers.'Content-Type' | Should BeExactly 'multipart/form-data'
             $result.Items.TestString.Count | Should Be 1
-            $result.Items.TestString[0] | Should Be 'TestValue'
+            $result.Items.TestString[0] | Should BeExactly 'TestValue'
         }
 
         It "Verifies Invoke-WebRequest -Form supports a collection of string values" {
@@ -1162,10 +1162,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Headers.'Content-Type' | Should BeExactly 'multipart/form-data'
             $result.Items.TestStrings.Count | Should Be 2
-            $result.Items.TestStrings[0] | Should Be 'TestValue'
-            $result.Items.TestStrings[1] | Should Be 'TestValue2'
+            $result.Items.TestStrings[0] | Should BeExactly 'TestValue'
+            $result.Items.TestStrings[1] | Should BeExactly 'TestValue2'
         }
 
         It "Verifies Invoke-WebRequest -Form supports file values" {
@@ -1177,9 +1177,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
             $result.Files.Count | Should Be 1
 
-            $result.Files[0].Name | Should Be "TestFile"
-            $result.Files[0].FileName | Should Be $file1Name
-            $result.Files[0].ContentType | Should Be 'application/octet-stream'
+            $result.Files[0].Name | Should BeExactly "TestFile"
+            $result.Files[0].FileName | Should BeExactly $file1Name
+            $result.Files[0].ContentType | Should BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should Match $file1Contents
         }
 
@@ -1189,17 +1189,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
             $result = $response.Content | ConvertFrom-Json
 
-            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Headers.'Content-Type' | Should BeExactly 'multipart/form-data'
             $result.Files.Count | Should Be 2
 
-            $result.Files[0].Name | Should Be "TestFiles"
-            $result.Files[0].FileName | Should Be $file1Name
-            $result.Files[0].ContentType | Should Be 'application/octet-stream'
+            $result.Files[0].Name | Should BeExactly "TestFiles"
+            $result.Files[0].FileName | Should BeExactly $file1Name
+            $result.Files[0].ContentType | Should BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should Match $file1Contents
 
-            $result.Files[1].Name | Should Be "TestFiles"
-            $result.Files[1].FileName | Should Be $file2Name
-            $result.Files[1].ContentType | Should Be 'application/octet-stream'
+            $result.Files[1].Name | Should BeExactly "TestFiles"
+            $result.Files[1].FileName | Should BeExactly $file2Name
+            $result.Files[1].ContentType | Should BeExactly 'application/octet-stream'
             $result.Files[1].Content | Should Match $file2Contents
         }
 
@@ -1216,17 +1216,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Items.TestStrings.Count | Should Be 2
             $result.Files.Count | Should Be 2
 
-            $result.Items.TestStrings[0] | Should Be 'TestValue'
-            $result.Items.TestStrings[1] | Should Be 'TestValue2'
+            $result.Items.TestStrings[0] | Should BeExactly 'TestValue'
+            $result.Items.TestStrings[1] | Should BeExactly 'TestValue2'
 
             $result.Files[0].Name | Should Be "TestFiles"
-            $result.Files[0].FileName | Should Be $file1Name
-            $result.Files[0].ContentType | Should Be 'application/octet-stream'
+            $result.Files[0].FileName | Should BeExactly $file1Name
+            $result.Files[0].ContentType | Should BeExactly 'application/octet-stream'
             $result.Files[0].Content | Should Match $file1Contents
 
-            $result.Files[1].Name | Should Be "TestFiles"
-            $result.Files[1].FileName | Should Be $file2Name
-            $result.Files[1].ContentType | Should Be 'application/octet-stream'
+            $result.Files[1].Name | Should BeExactly "TestFiles"
+            $result.Files[1].FileName | Should BeExactly $file2Name
+            $result.Files[1].ContentType | Should BeExactly 'application/octet-stream'
             $result.Files[1].Content | Should Match $file2Contents
         }
 
