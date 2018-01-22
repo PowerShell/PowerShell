@@ -49,15 +49,15 @@ namespace System.Management.Automation.Configuration
         private PowerShellConfig()
         {
             // Sets the system-wide configuration file.
-            systemWideConfigFile = Path.Combine(Utils.DefaultPowerShellAppBase, configFileName);
             systemWideConfigDirectory = Utils.DefaultPowerShellAppBase;
+            systemWideConfigFile = Path.Combine(systemWideConfigDirectory, configFileName);
 
             // Sets the per-user configuration directory
             // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
             perUserConfigDirectory = Utils.GetUserConfigurationDirectory();
-            perUserConfigFile = Path.Combine(Utils.GetUserConfigurationDirectory(), configFileName);
+            perUserConfigFile = Path.Combine(perUserConfigDirectory, configFileName);
         }
 
         private string GetConfigFilePath(ConfigScope scope)
