@@ -516,11 +516,10 @@ foo
 Describe "WindowStyle argument" -Tag Feature {
     BeforeAll {
         $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+        $ExitCodeBadCommandLineParameter = 64
 
         if ($IsWindows)
         {
-            $ExitCodeBadCommandLineParameter = 64
             Add-Type -Name User32 -Namespace Test -MemberDefinition @"
 public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
 {
@@ -562,7 +561,7 @@ public enum ShowWindowCommands : int
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+    It "-WindowStyle <WindowStyle> should work on Windows" -Skip:(!$IsWindows) -TestCases @(
             @{WindowStyle="Normal"},
             @{WindowStyle="Minimized"},
             @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
@@ -580,8 +579,13 @@ public enum ShowWindowCommands : int
         $ps | Stop-Process -Force
     }
 
-    It "Invalid -WindowStyle returns error" {
+    It "Invalid -WindowStyle returns error on Windows" -Skip:(!$IsWindows) {
         pwsh -WindowStyle invalid
+        $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
+    }
+
+    It "-WindowStyle returns error on Linux and macOS" -Skip:$IsWindows {
+        pwsh -WindowStyle
         $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
     }
 }
