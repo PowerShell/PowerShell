@@ -10,7 +10,7 @@ Describe "PSReadLine" -tags "CI" {
         Import-Module PSReadLine
         $module = Get-Module PSReadLine
         $module.Name | Should Be "PSReadLine"
-        $module.Version | Should Be "2.0.0"
+        $module.Version | Should Be "1.2"
     }
 
     It "Should use Emacs Bindings on Linux and macOS" -skip:$IsWindows {

@@ -16,7 +16,7 @@ We are calling `dotnet` tool build for `$Top` directory
 ### Dummy dependencies
 
 We use dummy dependencies between projects to leverage `dotnet` build functionality.
-For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.Commands.Diagnostics.csproj`,
+For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.PSReadLine`,
 but in reality, there is no build dependency.
 
 Dummy dependencies allows us to build just `$Top` folder, instead of building several folders.
