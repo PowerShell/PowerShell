@@ -44,17 +44,17 @@
     <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
-    <SetProperty Id="RegisterManifest" Before="RegisterManifest_CustomAction" Sequence="execute"
+    <SetProperty Id="RegisterManifest" Before="RegisterManifest" Sequence="execute"
                  Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]test.ps1&quot;" />
-    <CustomAction Id="RegisterManifest_CustomAction"
+    <CustomAction Id="RegisterManifest"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
                   Execute="deferred"
                   Return="check"
                   Impersonate="no" />
     <InstallExecuteSequence>
-      <Custom Action="RegisterManifest_CustomAction" After="InstallFiles">
-        <![CDATA[NOT Installed AND (REGISTER_MANIFEST)]]>
+      <Custom Action="RegisterManifest" After="InstallFiles">
+        <![CDATA[NOT Installed AND REGISTER_MANIFEST]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
