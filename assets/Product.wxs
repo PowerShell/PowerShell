@@ -47,13 +47,13 @@
     <SetProperty Id="RegisterManifest"
                 Before="RegisterManifest"
                 Sequence="execute"
-                Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; '[$(var.ProductVersionWithName)]RegisterManifest.ps1'; exit $$($Error.Count)&quot;" />
+                Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; '[$(var.ProductVersionWithName)]test.ps1'; exit $$($Error.Count)&quot;" />
     <CustomAction Id="RegisterManifest"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
                   Execute="deferred"
                   Return="check"
-                  Impersonate="yes" />
+                  Impersonate="no" />
     <InstallExecuteSequence>
       <Custom Action="RegisterManifest" After="InstallFiles">
         <![CDATA[NOT Installed]]>
@@ -211,20 +211,16 @@
         </Directory>
       </Directory>
     </Directory>
-              <!-- <DirectoryRef Id="TARGETDIR">
-              <Component Id="RegisterManifest" Guid="5ff32000-603d-40f1-8f14-7a9eb4d999a1">
-                <File Id="RegisterManifestFile" Source="RegisterManifest.ps1" />
-              </Component>
-            </DirectoryRef> -->
   </Product>
 
 <!-- Explorer Context Menu Dialog -->
 <Fragment>
  <UI>
+    <Property Id="REGISTER_MANIFEST" Value="1" /> <!-- TODO: Check if this works via quiet install as well or should it not?? -->
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
-    <!-- If the checkbox is defined first, then the checkbox can be ticked and unticked using the spacebar -->
-      <Control Id="ContextMenu1" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="CONTEXT_MENU_1" CheckBoxValue="1" Text="Register Manifest"/>
-      <Control Id="ContextMenu2" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="CONTEXT_MENU_2" CheckBoxValue="1" Text="Enable PSRemoting"/>
+      <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
+      <Control Id="ContextMenu1" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Manifest"/>
+      <Control Id="ContextMenu2" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="CONTEXT_MENU_2" CheckBoxValue="0" Text="Enable PSRemoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
