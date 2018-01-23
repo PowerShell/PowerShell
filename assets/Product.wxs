@@ -45,7 +45,7 @@
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
 
     <SetProperty Id="RegisterManifest" Before="RegisterManifest" Sequence="execute"
-                 Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]test.ps1&quot;" />
+                 Value ="&quot;[$(var.ProductVersionWithName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]RegisterManifest.ps1&quot;" />
     <CustomAction Id="RegisterManifest"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
@@ -53,7 +53,7 @@
                   Return="check"
                   Impersonate="no" />
     <SetProperty Id="EnablePSRemoting" Before="EnablePSRemoting" Sequence="execute"
-                 Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]test2.ps1&quot;" />
+                 Value ="&quot;[$(var.ProductVersionWithName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;Enable-PSRemoting&quot;" />
     <CustomAction Id="EnablePSRemoting"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
@@ -62,10 +62,10 @@
                   Impersonate="no" />
     <InstallExecuteSequence>
       <Custom Action="RegisterManifest" After="InstallFiles">
-        <![CDATA[NOT Installed AND REGISTER_MANIFEST]]>
+        <![CDATA[NOT Installed AND (REGISTER_MANIFEST=1)]]>
       </Custom>
       <Custom Action="EnablePSRemoting" After="InstallFiles">
-        <![CDATA[NOT Installed AND ENABLE_PSREMOTING]]>
+        <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -91,7 +91,7 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
     </UI>
     <UI>
-      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
+      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT=1</Publish>
     </UI>
     <!-- Prerequisites -->
     <Condition Message="Supported only on Windows 7 and above">
@@ -133,16 +133,6 @@
     </Property>
     <Condition Message="$(env.ProductName) requires the Windows Management Framework 4.0 or newer to be installed to enable remoting over WinRM. You can find download links here: https://aka.ms/pscore6-prereq">
       <![CDATA[Installed OR PWRSHPLUGIN_VERSION ]]>
-    </Condition>
-    <Property Id="POWERSHELLEXE">
-      <RegistrySearch Id="POWERSHELLEXE"
-                      Type="raw"
-                      Root="HKLM"
-                      Key="SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell"
-                      Name="Path" />
-    </Property>
-    <Condition Message="This application requires Windows PowerShell.">
-      <![CDATA[Installed OR POWERSHELLEXE]]>
     </Condition>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
@@ -228,8 +218,8 @@
     <Property Id="REGISTER_MANIFEST" Value="1" /> <!-- TODO: Check if this works via quiet install as well or should it not?? -->
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
-      <Control Id="ContextMenu1" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
-      <Control Id="ContextMenu2" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
+      <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
+      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
