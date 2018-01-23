@@ -1098,6 +1098,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     Context "Multipart/form-data Tests" {
+        <#
+            Content-Type request headers for multipart/form-data appear as:
+                multipart/form-data; boundary="0ab0cb90-f01b-4c15-bd4d-53d073efcc1d"
+            MultipartFormDataContent sets a random GUID for the boundary before submitting the request
+            to the remote endpoint. Tests in this context for Content-Type match 'multipart/form-data'
+            as we do not have access to the random GUID.
+        #>
         BeforeAll {
             $file1Name = "testfile1.txt"
             $file1Path = Join-Path $testdrive $file1Name
@@ -2018,6 +2025,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Multipart/form-data Tests" {
+        <#
+            Content-Type request headers for multipart/form-data appear as:
+                multipart/form-data; boundary="0ab0cb90-f01b-4c15-bd4d-53d073efcc1d"
+            MultipartFormDataContent sets a random GUID for the boundary before submitting the request
+            to the remote endpoint. Tests in this context for Content-Type match 'multipart/form-data'
+            as we do not have access to the random GUID.
+        #>
         BeforeAll {
             $file1Name = "testfile1.txt"
             $file1Path = Join-Path $testdrive $file1Name
