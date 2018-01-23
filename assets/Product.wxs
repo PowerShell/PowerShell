@@ -215,7 +215,7 @@
 <!-- Explorer Context Menu Dialog -->
 <Fragment>
  <UI>
-    <Property Id="REGISTER_MANIFEST" Value="1" /> <!-- TODO: Check if this works via quiet install as well or should it not?? -->
+    <Property Id="REGISTER_MANIFEST" Value="1" />
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
