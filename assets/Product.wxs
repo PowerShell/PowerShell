@@ -52,9 +52,20 @@
                   Execute="deferred"
                   Return="check"
                   Impersonate="no" />
+    <SetProperty Id="EnablePSRemoting" Before="EnablePSRemoting" Sequence="execute"
+                 Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]test2.ps1&quot;" />
+    <CustomAction Id="EnablePSRemoting"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="check"
+                  Impersonate="no" />
     <InstallExecuteSequence>
       <Custom Action="RegisterManifest" After="InstallFiles">
         <![CDATA[NOT Installed AND REGISTER_MANIFEST]]>
+      </Custom>
+      <Custom Action="EnablePSRemoting" After="InstallFiles">
+        <![CDATA[NOT Installed AND ENABLE_PSREMOTING]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -217,8 +228,8 @@
     <Property Id="REGISTER_MANIFEST" Value="1" /> <!-- TODO: Check if this works via quiet install as well or should it not?? -->
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
-      <Control Id="ContextMenu1" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Manifest"/>
-      <Control Id="ContextMenu2" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="CONTEXT_MENU_2" CheckBoxValue="0" Text="Enable PSRemoting"/>
+      <Control Id="ContextMenu1" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
+      <Control Id="ContextMenu2" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
