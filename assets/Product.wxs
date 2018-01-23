@@ -47,7 +47,7 @@
     <SetProperty Id="RegisterManifest"
                 Before="RegisterManifest"
                 Sequence="execute"
-                Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;&amp; '[$(var.ProductVersionWithName)]test.ps1'; exit $$($Error.Count)&quot;" />
+                Value ="&quot;[POWERSHELLEXE]&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]test.ps1&quot;" />
     <CustomAction Id="RegisterManifest"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
