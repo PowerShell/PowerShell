@@ -198,10 +198,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 remoteRunspace.Open();
-                if (remoteRunspace.Debugger != null)
-                {
-                    remoteRunspace.Debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
-                }
+                remoteRunspace.Debugger?.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
             }
             catch (RuntimeException e)
             {
