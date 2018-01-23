@@ -54,7 +54,7 @@
                   Impersonate="no" />
     <InstallExecuteSequence>
       <Custom Action="RegisterManifest_CustomAction" After="InstallFiles">
-        <![CDATA[NOT Installed AND (REGISTER_MANIFEST=1)]]>
+        <![CDATA[NOT Installed AND (REGISTER_MANIFEST)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
