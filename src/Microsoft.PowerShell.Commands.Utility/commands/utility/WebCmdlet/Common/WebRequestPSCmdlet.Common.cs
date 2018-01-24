@@ -1176,7 +1176,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var entry in WebSession.ContentHeaders)
                 {
-                    request.Content.Headers.Add(entry.Key, entry.Value);
+                    if (SkipHeaderValidation)
+                    {
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        request.Content.Headers.Add(entry.Key, entry.Value);
+                    }
                 }
             }
         }
@@ -1476,14 +1483,25 @@ namespace Microsoft.PowerShell.Commands
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
-                var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
-                if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
+                try
                 {
-                    try
+                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
                     }
-                    catch (ArgumentException ex)
+                }
+                catch (FormatException ex)
+                {
+                    if (!SkipHeaderValidation)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    if (!SkipHeaderValidation)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "WebCmdletEncodingException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
