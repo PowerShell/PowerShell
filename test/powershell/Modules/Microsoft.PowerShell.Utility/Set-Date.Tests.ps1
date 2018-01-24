@@ -17,7 +17,6 @@ Describe "Set-Date" -Tag "CI" {
     }
 
     It "Set-Date should produce an error in a non-elevated context" -Skip:($IsElevated) {
-        { Get-Date | Set-Date } | Should Throw
-        $Error[0].FullyQualifiedErrorId | Should Be "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
+        { Get-Date | Set-Date } | ShouldBeErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.SetDateCommand"
     }
 }
