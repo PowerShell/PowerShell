@@ -58,7 +58,9 @@ after_success:
 env:
   - CACHE_VERSION=netcoreapp.2.0.5
 
+# timeout uploading cache after 6 minutes (360 seconds)
 cache:
+  timeout: 360
   directories:
     - $HOME/.nuget
     - $HOME/.dotnet
