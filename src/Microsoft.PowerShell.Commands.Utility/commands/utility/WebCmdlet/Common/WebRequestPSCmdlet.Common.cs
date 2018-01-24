@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual object Body { get; set; }
 
         /// <summary>
-        /// Dictionary for use with RFC-7578 multipart\form-data submissions. 
+        /// Dictionary for use with RFC-7578 multipart/form-data submissions. 
         /// Keys are form fields and their respective values are form values.
         /// A value may be a collection of form values or single form value.
         /// </summary>

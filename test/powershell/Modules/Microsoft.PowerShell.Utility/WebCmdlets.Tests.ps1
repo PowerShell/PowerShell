@@ -1105,6 +1105,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             to the remote endpoint. Tests in this context for Content-Type match 'multipart/form-data'
             as we do not have access to the random GUID.
         #>
+        <#
+            Kestrel/ASP.NET inconsistently renders the new line for uploaded text files.
+            File content tests in this context use match as a workaround.
+        #>
         BeforeAll {
             $file1Name = "testfile1.txt"
             $file1Path = Join-Path $testdrive $file1Name
@@ -2031,6 +2035,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             MultipartFormDataContent sets a random GUID for the boundary before submitting the request
             to the remote endpoint. Tests in this context for Content-Type match 'multipart/form-data'
             as we do not have access to the random GUID.
+        #>
+        <#
+            Kestrel/ASP.NET inconsistently renders the new line for uploaded text files.
+            File content tests in this context use match as a workaround.
         #>
         BeforeAll {
             $file1Name = "testfile1.txt"
