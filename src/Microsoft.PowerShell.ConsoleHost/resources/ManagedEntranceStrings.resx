@@ -239,6 +239,17 @@ All parameters are case-insensitive.</value>
 
 -WindowStyle | -w
     Sets the window style to Normal, Minimized, Maximized or Hidden.
+
+-SettingsFile | -settings
+    Overrides the system-wide powershell.config.json settings file for the session.
+    By default, system-wide settings are read from the powershell.config.json
+    in the $PSHOME directory.
+
+    Note that these settings are not used by the endpoint specified
+    by the -ConfigurationName argument.
+
+    Example: pwsh -SettingsFile c:\myproject\powershell.config.json
+
     </value>
   </data>
 </root>

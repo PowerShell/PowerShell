@@ -186,6 +186,15 @@
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
     <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
   </data>
+  <data name="MissingSettingsFileArgument" xml:space="preserve">
+    <value>Cannot process the command because -SettingsFile requires a file path. Supply a path for the SettingsFile parameter and then try the command again.</value>
+  </data>
+  <data name="InvalidSettingsFileArgument" xml:space="preserve">
+    <value>Processing -SettingsFile '{0}' failed: {1}. Specify a valid path for the -SettingsFile parameter.</value>
+  </data>
+  <data name="SettingsFileNotExists" xml:space="preserve">
+    <value>The argument '{0}' passed to the -SettingsFile does not exist. Provide the path to an existing json file as an argument to the -SettingsFile parameter.</value>
+  </data>
   <data name="InvalidArgument" xml:space="preserve">
     <value>Invalid argument '{0}', did you mean:</value>
   </data>
