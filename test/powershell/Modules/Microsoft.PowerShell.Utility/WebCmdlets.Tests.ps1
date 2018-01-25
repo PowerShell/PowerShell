@@ -1098,6 +1098,29 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     Context "Multipart/form-data Tests" {
+        <#
+            Content-Type request headers for multipart/form-data appear as:
+                multipart/form-data; boundary="0ab0cb90-f01b-4c15-bd4d-53d073efcc1d"
+            MultipartFormDataContent sets a random GUID for the boundary before submitting the request
+            to the remote endpoint. Tests in this context for Content-Type match 'multipart/form-data'
+            as we do not have access to the random GUID.
+        #>
+        <#
+            Kestrel/ASP.NET inconsistently renders the new line for uploaded text files.
+            File content tests in this context use match as a workaround.
+        #>
+        BeforeAll {
+            $file1Name = "testfile1.txt"
+            $file1Path = Join-Path $testdrive $file1Name
+            $file1Contents = "Test123"
+            $file1Contents | Set-Content $file1Path -Force
+
+            $file2Name = "testfile2.txt"
+            $file2Path = Join-Path $testdrive $file2Name
+            $file2Contents = "Test456"
+            $file2Contents | Set-Content $file2Path -Force
+        }
+
         It "Verifies Invoke-WebRequest Supports Multipart String Values" {
             $body = GetMultipartBody -String
             $uri = Get-WebListenerUrl -Test 'Multipart'
@@ -1107,6 +1130,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
             $result.Items.TestString[0] | Should Be 'TestValue'
         }
+
         It "Verifies Invoke-WebRequest Supports Multipart File Values" {
             $body = GetMultipartBody -File
             $uri = Get-WebListenerUrl -Test 'Multipart'
@@ -1118,6 +1142,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Files[0].ContentType | Should Be 'text/plain'
             $result.Files[0].Content | Should Match 'TestContent'
         }
+
         It "Verifies Invoke-WebRequest Supports Mixed Multipart String and File Values" {
             $body = GetMultipartBody -String -File
             $uri = Get-WebListenerUrl -Test 'Multipart'
@@ -1129,6 +1154,108 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $result.Files[0].FileName | Should Be 'multipart.txt'
             $result.Files[0].ContentType | Should Be 'text/plain'
             $result.Files[0].Content | Should Match 'TestContent'
+        }
+
+        It "Verifies Invoke-WebRequest -Form supports string values" {
+            $form = @{TestString = "TestValue"}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString.Count | Should Be 1
+            $result.Items.TestString[0] | Should BeExactly 'TestValue'
+        }
+
+        It "Verifies Invoke-WebRequest -Form supports a collection of string values" {
+            $form = @{TestStrings = "TestValue", "TestValue2"}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestStrings.Count | Should Be 2
+            $result.Items.TestStrings[0] | Should BeExactly 'TestValue'
+            $result.Items.TestStrings[1] | Should BeExactly 'TestValue2'
+        }
+
+        It "Verifies Invoke-WebRequest -Form supports file values" {
+            $form = @{TestFile = [System.IO.FileInfo]$file1Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files.Count | Should Be 1
+
+            $result.Files[0].Name | Should BeExactly "TestFile"
+            $result.Files[0].FileName | Should BeExactly $file1Name
+            $result.Files[0].ContentType | Should BeExactly 'application/octet-stream'
+            $result.Files[0].Content | Should Match $file1Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form supports a collection of file values" {
+            $form = @{TestFiles = [System.IO.FileInfo]$file1Path, [System.IO.FileInfo]$file2Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files.Count | Should Be 2
+
+            $result.Files[0].Name | Should BeExactly "TestFiles"
+            $result.Files[0].FileName | Should BeExactly $file1Name
+            $result.Files[0].ContentType | Should BeExactly 'application/octet-stream'
+            $result.Files[0].Content | Should Match $file1Contents
+
+            $result.Files[1].Name | Should BeExactly "TestFiles"
+            $result.Files[1].FileName | Should BeExactly $file2Name
+            $result.Files[1].ContentType | Should BeExactly 'application/octet-stream'
+            $result.Files[1].Content | Should Match $file2Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form supports combinations of strings and files" {
+            $form = @{
+                TestStrings = "TestValue", "TestValue2"
+                TestFiles   = [System.IO.FileInfo]$file1Path, [System.IO.FileInfo]$file2Path
+            }
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $response = Invoke-WebRequest -Uri $uri -Form $form -Method 'POST'
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestStrings.Count | Should Be 2
+            $result.Files.Count | Should Be 2
+
+            $result.Items.TestStrings[0] | Should BeExactly 'TestValue'
+            $result.Items.TestStrings[1] | Should BeExactly 'TestValue2'
+
+            $result.Files[0].Name | Should Be "TestFiles"
+            $result.Files[0].FileName | Should BeExactly $file1Name
+            $result.Files[0].ContentType | Should BeExactly 'application/octet-stream'
+            $result.Files[0].Content | Should Match $file1Contents
+
+            $result.Files[1].Name | Should BeExactly "TestFiles"
+            $result.Files[1].FileName | Should BeExactly $file2Name
+            $result.Files[1].ContentType | Should BeExactly 'application/octet-stream'
+            $result.Files[1].Content | Should Match $file2Contents
+        }
+
+        It "Verifies Invoke-WebRequest -Form is mutually exclusive with -Body" {
+            $form = @{TestString = "TestValue"}
+            $body = "test"
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+
+            {Invoke-WebRequest -Uri $uri -Form $form -Body $Body -ErrorAction 'Stop'} |
+                ShouldBeErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
+        It "Verifies Invoke-WebRequest -Form is mutually exclusive with -InFile" {
+            $form = @{TestString = "TestValue"}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+
+            {Invoke-WebRequest -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
+                ShouldBeErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
     }
 
@@ -1902,6 +2029,29 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     Context "Multipart/form-data Tests" {
+        <#
+            Content-Type request headers for multipart/form-data appear as:
+                multipart/form-data; boundary="0ab0cb90-f01b-4c15-bd4d-53d073efcc1d"
+            MultipartFormDataContent sets a random GUID for the boundary before submitting the request
+            to the remote endpoint. Tests in this context for Content-Type match 'multipart/form-data'
+            as we do not have access to the random GUID.
+        #>
+        <#
+            Kestrel/ASP.NET inconsistently renders the new line for uploaded text files.
+            File content tests in this context use match as a workaround.
+        #>
+        BeforeAll {
+            $file1Name = "testfile1.txt"
+            $file1Path = Join-Path $testdrive $file1Name
+            $file1Contents = "Test123"
+            $file1Contents | Set-Content $file1Path -Force
+
+            $file2Name = "testfile2.txt"
+            $file2Path = Join-Path $testdrive $file2Name
+            $file2Contents = "Test456"
+            $file2Contents | Set-Content $file2Path -Force
+        }
+
         It "Verifies Invoke-RestMethod Supports Multipart String Values" {
             $body = GetMultipartBody -String
             $uri = Get-WebListenerUrl -Test 'Multipart'
@@ -1932,6 +2082,103 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $result.Files[0].FileName | Should Be 'multipart.txt'
             $result.Files[0].ContentType | Should Be 'text/plain'
             $result.Files[0].Content | Should Match 'TestContent'
+        }
+
+        It "Verifies Invoke-RestMethod -Form supports string values" {
+            $form = @{TestString = "TestValue"}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestString.Count | Should Be 1
+            $result.Items.TestString[0] | Should Be 'TestValue'
+        }
+
+        It "Verifies Invoke-RestMethod -Form supports a collection of string values" {
+            $form = @{TestStrings = "TestValue", "TestValue2"}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestStrings.Count | Should Be 2
+            $result.Items.TestStrings[0] | Should Be 'TestValue'
+            $result.Items.TestStrings[1] | Should Be 'TestValue2'
+        }
+
+        It "Verifies Invoke-RestMethod -Form supports file values" {
+            $form = @{TestFile = [System.IO.FileInfo]$file1Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files.Count | Should Be 1
+
+            $result.Files[0].Name | Should Be "TestFile"
+            $result.Files[0].FileName | Should Be $file1Name
+            $result.Files[0].ContentType | Should Be 'application/octet-stream'
+            $result.Files[0].Content | Should Match $file1Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form supports a collection of file values" {
+            $form = @{TestFiles = [System.IO.FileInfo]$file1Path, [System.IO.FileInfo]$file2Path}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Files.Count | Should Be 2
+
+            $result.Files[0].Name | Should Be "TestFiles"
+            $result.Files[0].FileName | Should Be $file1Name
+            $result.Files[0].ContentType | Should Be 'application/octet-stream'
+            $result.Files[0].Content | Should Match $file1Contents
+
+            $result.Files[1].Name | Should Be "TestFiles"
+            $result.Files[1].FileName | Should Be $file2Name
+            $result.Files[1].ContentType | Should Be 'application/octet-stream'
+            $result.Files[1].Content | Should Match $file2Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form supports combinations of strings and files" {
+            $form = @{
+                TestStrings = "TestValue", "TestValue2"
+                TestFiles   = [System.IO.FileInfo]$file1Path, [System.IO.FileInfo]$file2Path
+            }
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+            $result = Invoke-RestMethod -Uri $uri -Form $form -Method 'POST'
+
+            $result.Headers.'Content-Type' | Should Match 'multipart/form-data'
+            $result.Items.TestStrings.Count | Should Be 2
+            $result.Files.Count | Should Be 2
+
+            $result.Items.TestStrings[0] | Should Be 'TestValue'
+            $result.Items.TestStrings[1] | Should Be 'TestValue2'
+
+            $result.Files[0].Name | Should Be "TestFiles"
+            $result.Files[0].FileName | Should Be $file1Name
+            $result.Files[0].ContentType | Should Be 'application/octet-stream'
+            $result.Files[0].Content | Should Match $file1Contents
+
+            $result.Files[1].Name | Should Be "TestFiles"
+            $result.Files[1].FileName | Should Be $file2Name
+            $result.Files[1].ContentType | Should Be 'application/octet-stream'
+            $result.Files[1].Content | Should Match $file2Contents
+        }
+
+        It "Verifies Invoke-RestMethod -Form is mutually exclusive with -Body" {
+            $form = @{TestString = "TestValue"}
+            $body = "test"
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+
+            {Invoke-RestMethod -Uri $uri -Form $form -Body $Body -ErrorAction 'Stop'} |
+                ShouldBeErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+        It "Verifies Invoke-RestMethod -Form is mutually exclusive with -InFile" {
+            $form = @{TestString = "TestValue"}
+            $uri = Get-WebListenerUrl -Test 'Multipart'
+
+            {Invoke-RestMethod -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
+                ShouldBeErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
     }
 
