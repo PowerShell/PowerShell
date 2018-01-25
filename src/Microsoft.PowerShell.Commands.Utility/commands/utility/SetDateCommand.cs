@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         internal static class NativeMethods
         {
             [StructLayout(LayoutKind.Sequential)]
-            public class SystemTime
+            public struct SystemTime
             {
                 public UInt16 Year;
                 public UInt16 Month;
