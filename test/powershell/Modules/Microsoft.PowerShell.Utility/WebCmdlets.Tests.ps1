@@ -915,7 +915,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
-                ShouldBeErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
@@ -2101,7 +2101,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
-                ShouldBeErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {

@@ -1182,7 +1182,15 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        request.Content.Headers.Add(entry.Key, entry.Value);
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            ErrorRecord er = new ErrorRecord(ex, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
                     }
                 }
             }
