@@ -801,67 +801,67 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion Redirect tests
 
-    #region SkipHeaderVerification Tests
+    Context "Invoke-WebRequest SkipHeaderVerification Tests" {
+        It "Verifies Invoke-WebRequest default header handling with no errors" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $headers = @{"If-Match" = "*"}
+            $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers
 
-    It "Verifies Invoke-WebRequest default header handling with no errors" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $headers = @{"If-Match" = "*"}
-        $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers
+            $response.Error | Should BeNullOrEmpty
+            $response.Content.Headers."If-Match" | Should BeExactly "*"
+        }
 
-        $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers."If-Match" | Should BeExactly "*"
+        It "Verifies Invoke-WebRequest default header handling reports an error is returned for an invalid If-Match header value" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $headers = @{"If-Match" = "12345"}
+            $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers
+
+            $response.Error | Should Not BeNullOrEmpty
+            $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $response.Error.Exception.Message | Should Be "The format of value '12345' is invalid."
+        }
+
+        It "Verifies Invoke-WebRequest header handling does not report an error when using -SkipHeaderValidation" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $headers = @{"If-Match" = "12345"}
+            $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -SkipHeaderValidation
+
+            $response.Error | Should BeNullOrEmpty
+            $response.Content.Headers."If-Match" | Should BeExactly "12345"
+        }
+
+        It "Verifies Invoke-WebRequest default UserAgent handling with no errors" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
+            $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent -Cmdlet "Invoke-WebRequest"
+
+            $response.Error | Should BeNullOrEmpty
+            $Pattern = [regex]::Escape($UserAgent)
+            $response.Content.Headers."User-Agent" | Should Match $Pattern
+        }
+
+        It "Verifies Invoke-WebRequest default UserAgent handling reports an error is returned for an invalid UserAgent value" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $UserAgent = 'Invalid:Agent'
+            $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
+
+            $response.Error | Should Not BeNullOrEmpty
+            $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
+        }
+
+        It "Verifies Invoke-WebRequest UserAgent handling does not report an error when using -SkipHeaderValidation" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $UserAgent = 'Invalid:Agent'
+            $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-WebRequest"
+
+            $response.Error | Should BeNullOrEmpty
+            $Pattern = [regex]::Escape($UserAgent)
+            $response.Content.Headers."User-Agent" | Should Match $Pattern
+        }
+
+        It
     }
-
-    It "Verifies Invoke-WebRequest default header handling reports an error is returned for an invalid If-Match header value" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $headers = @{"If-Match" = "12345"}
-        $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers
-
-        $response.Error | Should Not BeNullOrEmpty
-        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        $response.Error.Exception.Message | Should Be "The format of value '12345' is invalid."
-    }
-
-    It "Verifies Invoke-WebRequest header handling does not report an error when using -SkipHeaderValidation" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $headers = @{"If-Match" = "12345"}
-        $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -SkipHeaderValidation
-
-        $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers."If-Match" | Should BeExactly "12345"
-    }
-
-    It "Verifies Invoke-WebRequest default UserAgent handling with no errors" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
-        $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent -Cmdlet "Invoke-WebRequest"
-
-        $response.Error | Should BeNullOrEmpty
-        $Pattern = [regex]::Escape($UserAgent)
-        $response.Content.Headers."User-Agent" | Should Match $Pattern
-    }
-
-    It "Verifies Invoke-WebRequest default UserAgent handling reports an error is returned for an invalid UserAgent value" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $UserAgent = 'Invalid:Agent'
-        $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
-
-        $response.Error | Should Not BeNullOrEmpty
-        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
-    }
-
-    It "Verifies Invoke-WebRequest UserAgent handling does not report an error when using -SkipHeaderValidation" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $UserAgent = 'Invalid:Agent'
-        $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-WebRequest"
-
-        $response.Error | Should BeNullOrEmpty
-        $Pattern = [regex]::Escape($UserAgent)
-        $response.Content.Headers."User-Agent" | Should Match $Pattern
-    }
-
-    #endregion SkipHeaderVerification Tests
 
     #region charset encoding tests
 
@@ -1922,67 +1922,65 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #endregion Redirect tests
 
-    #region SkipHeaderVerification tests
+    Context "Invoke-RestMethod SkipHeaderVerification Tests" {
+        It "Verifies Invoke-RestMethod default header handling with no errors" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $headers = @{"If-Match" = "*"}
+            $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -Cmdlet "Invoke-RestMethod"
 
-    It "Verifies Invoke-RestMethod default header handling with no errors" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $headers = @{"If-Match" = "*"}
-        $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -Cmdlet "Invoke-RestMethod"
+            $response.Error | Should BeNullOrEmpty
+            $response.Content.Headers."If-Match" | Should BeExactly "*"
+        }
 
-        $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers."If-Match" | Should BeExactly "*"
+        It "Verifies Invoke-RestMethod default header handling reports an error is returned for an invalid If-Match header value" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $headers = @{"If-Match" = "12345"}
+            $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -Cmdlet "Invoke-RestMethod"
+
+            $response.Error | Should Not BeNullOrEmpty
+            $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $response.Error.Exception.Message | Should Be "The format of value '12345' is invalid."
+        }
+
+        It "Verifies Invoke-RestMethod header handling does not report an error when using -SkipHeaderValidation" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $headers = @{"If-Match" = "12345"}
+            $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
+
+            $response.Error | Should BeNullOrEmpty
+            $response.Content.Headers."If-Match" | Should BeExactly "12345"
+        }
+
+        It "Verifies Invoke-RestMethod default UserAgent handling with no errors" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
+            $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent -Cmdlet "Invoke-RestMethod"
+
+            $response.Error | Should BeNullOrEmpty
+            $Pattern = [regex]::Escape($UserAgent)
+            $response.Content.Headers."User-Agent" | Should Match $Pattern
+        }
+
+        It "Verifies Invoke-RestMethod default UserAgent handling reports an error is returned for an invalid UserAgent value" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $UserAgent = 'Invalid:Agent'
+            $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-RestMethod"
+
+            $response.Error | Should Not BeNullOrEmpty
+            $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
+        }
+
+        It "Verifies Invoke-RestMethod UserAgent handling does not report an error when using -SkipHeaderValidation" {
+            $uri = Get-WebListenerUrl -Test 'Get'
+            $UserAgent = 'Invalid:Agent'
+            $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
+
+            $response.Error | Should BeNullOrEmpty
+            $Pattern = [regex]::Escape($UserAgent)
+            $response.Content.Headers."User-Agent" | Should Match $Pattern
+        }
     }
-
-    It "Verifies Invoke-RestMethod default header handling reports an error is returned for an invalid If-Match header value" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $headers = @{"If-Match" = "12345"}
-        $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -Cmdlet "Invoke-RestMethod"
-
-        $response.Error | Should Not BeNullOrEmpty
-        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        $response.Error.Exception.Message | Should Be "The format of value '12345' is invalid."
-    }
-
-    It "Verifies Invoke-RestMethod header handling does not report an error when using -SkipHeaderValidation" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $headers = @{"If-Match" = "12345"}
-        $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
-
-        $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers."If-Match" | Should BeExactly "12345"
-    }
-
-    It "Verifies Invoke-RestMethod default UserAgent handling with no errors" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
-        $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent -Cmdlet "Invoke-RestMethod"
-
-        $response.Error | Should BeNullOrEmpty
-        $Pattern = [regex]::Escape($UserAgent)
-        $response.Content.Headers."User-Agent" | Should Match $Pattern
-    }
-
-    It "Verifies Invoke-RestMethod default UserAgent handling reports an error is returned for an invalid UserAgent value" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $UserAgent = 'Invalid:Agent'
-        $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-RestMethod"
-
-        $response.Error | Should Not BeNullOrEmpty
-        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
-    }
-
-    It "Verifies Invoke-RestMethod UserAgent handling does not report an error when using -SkipHeaderValidation" {
-        $uri = Get-WebListenerUrl -Test 'Get'
-        $UserAgent = 'Invalid:Agent'
-        $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
-
-        $response.Error | Should BeNullOrEmpty
-        $Pattern = [regex]::Escape($UserAgent)
-        $response.Content.Headers."User-Agent" | Should Match $Pattern
-    }
-
-    #endregion SkipHeaderVerification tests
 
     Context "HTTPS Tests" {
         It "Validate Invoke-RestMethod -SkipCertificateCheck" {
