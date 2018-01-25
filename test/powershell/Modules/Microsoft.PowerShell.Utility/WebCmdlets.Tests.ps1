@@ -802,6 +802,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     #endregion Redirect tests
 
     Context "Invoke-WebRequest SkipHeaderVerification Tests" {
+        BeforeAll {
+            $Testfile = Join-Path $testdrive 'SkipHeaderVerification.txt'
+            'bar' | Set-Content $Testfile
+        }
+
         It "Verifies Invoke-WebRequest default header handling with no errors" {
             $uri = Get-WebListenerUrl -Test 'Get'
             $headers = @{"If-Match" = "*"}
@@ -860,7 +865,70 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Content.Headers."User-Agent" | Should Match $Pattern
         }
 
-        It
+        It "Verifies Invoke-WebRequest default ContentType handling reports no error is returned for a valid Content-Type header value and -Body" {
+            $contentType = 'text/plain'
+            $body = "bar"
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $response = Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -Body $body
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.data | Should BeExactly $body
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
+
+        It "Verifies Invoke-WebRequest default ContentType handling reports an error is returned for an invalid Content-Type header value and -Body" {
+            $contentType = 'foo'
+            $body = "bar"
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -ErrorAction 'Stop' } |
+                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
+
+        It "Verifies Invoke-WebRequest ContentType handling reports no error is returned for an invalid Content-Type header value, -Body, and -SkipHeaderValidation" {
+            $contentType = 'foo'
+            $body = "bar"
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $response = Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -SkipHeaderValidation
+            $result = $response.Content | ConvertFrom-Json
+
+            $result.data | Should BeExactly 'bar'
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
+
+        It "Verifies Invoke-WebRequest default ContentType handling reports no error is returned for a valid Content-Type header value and -InFile" {
+            $contentType = 'text/plain'
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $response = Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile
+            $result = $response.Content | ConvertFrom-Json
+
+            # Match used due to inconsistent newline rendering
+            $result.data | Should Match 'bar'
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
+
+        It "Verifies Invoke-WebRequest default ContentType handling reports an error is returned for an invalid Content-Type header value and -InFile" {
+            $contentType = 'foo'
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
+                ShouldBeErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
+
+        It "Verifies Invoke-WebRequest default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
+            $contentType = 'foo'
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $response = Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -SkipHeaderValidation
+            $result = $response.Content | ConvertFrom-Json
+
+            # Match used due to inconsistent newline rendering
+            $result.data | Should Match 'bar'
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
     }
 
     #region charset encoding tests
@@ -1923,6 +1991,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     #endregion Redirect tests
 
     Context "Invoke-RestMethod SkipHeaderVerification Tests" {
+        BeforeAll {
+            $Testfile = Join-Path $testdrive 'SkipHeaderVerification.txt'
+            'bar' | Set-Content $Testfile
+        }
+
         It "Verifies Invoke-RestMethod default header handling with no errors" {
             $uri = Get-WebListenerUrl -Test 'Get'
             $headers = @{"If-Match" = "*"}
@@ -1979,6 +2052,67 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $response.Error | Should BeNullOrEmpty
             $Pattern = [regex]::Escape($UserAgent)
             $response.Content.Headers."User-Agent" | Should Match $Pattern
+        }
+
+        It "Verifies Invoke-RestMethod default ContentType handling reports no error is returned for a valid Content-Type header value and -Body" {
+            $contentType = 'text/plain'
+            $body = "bar"
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $result = Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -Body $body
+
+            $result.data | Should BeExactly $body
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
+
+        It "Verifies Invoke-RestMethod default ContentType handling reports an error is returned for an invalid Content-Type header value and -Body" {
+            $contentType = 'foo'
+            $body = "bar"
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -ErrorAction 'Stop' } |
+                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+
+        It "Verifies Invoke-RestMethod ContentType handling reports no error is returned for an invalid Content-Type header value, -Body, and -SkipHeaderValidation" {
+            $contentType = 'foo'
+            $body = "bar"
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $result = Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -SkipHeaderValidation
+
+            $result.data | Should BeExactly $body
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
+
+        It "Verifies Invoke-RestMethod default ContentType handling reports no error is returned for a valid Content-Type header value and -InFile" {
+            $contentType = 'text/plain'
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $result = Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile
+
+            # Match used due to inconsistent newline rendering
+            $result.data | Should Match 'bar'
+            $result.headers.'Content-Type' | Should BeExactly $contentType
+        }
+
+        It "Verifies Invoke-RestMethod default ContentType handling reports an error is returned for an invalid Content-Type header value and -InFile" {
+            $contentType = 'foo'
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
+                ShouldBeErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+
+        It "Verifies Invoke-RestMethod default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
+            $contentType = 'foo'
+            $uri = Get-WebListenerUrl -Test 'Post'
+
+            $result = Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -SkipHeaderValidation
+
+            # Match used due to inconsistent newline rendering
+            $result.data | Should Match 'bar'
+            $result.headers.'Content-Type' | Should BeExactly $contentType
         }
     }
 
