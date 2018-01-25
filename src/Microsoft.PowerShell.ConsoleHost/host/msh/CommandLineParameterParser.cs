@@ -182,14 +182,13 @@ namespace Microsoft.PowerShell
             "noninteractive",
             "inputformat",
             "outputformat",
-#if !UNIX
             "windowstyle",
-#endif
             "encodedcommand",
             "configurationname",
             "file",
             "executionpolicy",
             "command",
+            "settingsfile",
             "help"
         };
 
@@ -588,9 +587,13 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !UNIX
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
+#if UNIX
+                    WriteCommandLineError(
+                        CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented);
+                    break;
+#else
                     ++i;
                     if (i >= args.Length)
                     {
@@ -611,8 +614,8 @@ namespace Microsoft.PowerShell
                             string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidWindowStyleArgument, args[i], e.Message));
                         break;
                     }
-                }
 #endif
+                }
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
                     if (!ParseFile(args, ref i, noexitSeen))
@@ -706,6 +709,36 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+                }
+
+                else if (MatchSwitch(switchKey, "settingsfile", "settings") )
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingSettingsFileArgument);
+                        break;
+                    }
+                    string configFile = null;
+                    try
+                    {
+                        configFile = NormalizeFilePath(args[i]);
+                    }
+                    catch (Exception ex)
+                    {
+                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidSettingsFileArgument, args[i], ex.Message);
+                        WriteCommandLineError(error);
+                        break;
+                    }
+
+                    if (!System.IO.File.Exists(configFile))
+                    {
+                        string error = string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.SettingsFileNotExists, configFile);
+                        WriteCommandLineError(error);
+                        break;
+                    }
+                    PowerShellConfig.Instance.SetSystemConfigFilePath(configFile);
                 }
 #if STAMODE
                 // explicit setting of the ApartmentState Not supported on NanoServer
@@ -847,6 +880,15 @@ namespace Microsoft.PowerShell
             executionPolicy = args[i];
         }
 
+        private static string NormalizeFilePath(string path)
+        {
+            // Normalize slashes
+            path = path.Replace(StringLiterals.AlternatePathSeparator,
+                                StringLiterals.DefaultPathSeparator);
+
+            return Path.GetFullPath(path);
+        }
+
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
             // Process file execution. We don't need to worry about checking -command
@@ -904,10 +946,7 @@ namespace Microsoft.PowerShell
                 string exceptionMessage = null;
                 try
                 {
-                    // Normalize slashes
-                    _file = args[i].Replace(StringLiterals.AlternatePathSeparator,
-                                            StringLiterals.DefaultPathSeparator);
-                    _file = Path.GetFullPath(_file);
+                    _file = NormalizeFilePath(args[i]);
                 }
                 catch (Exception e)
                 {
@@ -984,11 +1023,11 @@ namespace Microsoft.PowerShell
                                 string argName = arg.Substring(0, offset);
                                 if (TryGetBoolValue(argValue, out bool boolValue))
                                 {
-                                        _collectedArgs.Add(new CommandParameter(argName, boolValue));
+                                    _collectedArgs.Add(new CommandParameter(argName, boolValue));
                                 }
                                 else
                                 {
-                                        _collectedArgs.Add(new CommandParameter(argName, argValue));
+                                    _collectedArgs.Add(new CommandParameter(argName, argValue));
                                 }
                             }
                         }

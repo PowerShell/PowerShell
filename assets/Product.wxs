@@ -5,7 +5,7 @@
   <!-- TBD:Point to the actual release -->
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
   <?define ProductName = "$(env.ProductName)" ?>
-  <?define ProductGuid = "$(env.ProductGuid)" ?>
+  <?define ProductCode = "$(env.ProductCode)" ?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
   <?if $(sys.BUILDARCH)=x64?>
     <?define UpgradeCode = "31ab5147-9a97-4452-8443-d9709f0516e1" ?>
@@ -24,8 +24,8 @@
   <!-- Explorer context submenu entries. The ampersand denotes the keyboard shortcut. -->
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
-  <!-- The ProductCode is Product Id: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
-  <Product Id="$(var.ProductGuid)" Name="$(var.ProductSemanticVersionWithName)-$(sys.BUILDARCH)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
+  <!-- The ProductCode is Product Id and needs to be unique for every PowerShell version to allow SxS install: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductSemanticVersionWithName)-$(sys.BUILDARCH)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
     <!-- Add PowerShell icon for executable -->
