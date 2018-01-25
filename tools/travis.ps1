@@ -157,9 +157,9 @@ $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 # For PRs, Travis-ci strips out [ and ] so read the message directly from git
 if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
 {
-    # Get the second log entry body
-    # The first log is a merge for a PR
-    $commitMessage = git log --format=%B -n 1 --skip=1
+    # If the current job is a pull request, the env variable 'TRAVIS_PULL_REQUEST_SHA' contains
+    # the commit SHA of the HEAD commit of the PR.
+    $commitMessage = git log --format=%B -n 1 $env:TRAVIS_PULL_REQUEST_SHA
 }
 else
 {
