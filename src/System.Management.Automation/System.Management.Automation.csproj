@@ -8,13 +8,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0" />
+    <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <!-- the following package(s) are from https://github.com/dotnet/corefx -->
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0" />
     <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.4.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0" />
+    <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
     <PackageReference Include="PowerShell.Core.Instrumentation" Version="6.0.0-beta*" />
   </ItemGroup>
