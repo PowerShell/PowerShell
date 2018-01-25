@@ -262,9 +262,11 @@ function Get-PSSysLog
         [ValidateNotNullOrEmpty()]
         [string] $Id = 'powershell',
 
+        [Parameter(ParameterSetName = 'After')]
         [Parameter(ParameterSetName = 'TotalCount')]
         [int] $TotalCount,
 
+        [Parameter(ParameterSetName = 'After')]
         [Parameter(ParameterSetName = 'Tail')]
         [int] $Tail,
 
