@@ -29,7 +29,7 @@ You can download and install a PowerShell package for any of the following platf
 | -------------------------------------------| ------------------------| ----------------------------- |
 | [Windows (x64)][corefx-win]                | [.msi][rl-windows-64]   | [Instructions][in-windows]    |
 | [Windows (x86)][corefx-win]                | [.msi][rl-windows-86]   | [Instructions][in-windows]    |
-| [Ubuntu 17.04][corefx-linux]               | [.deb][rl-ubuntu17]     | [Instructions][in-ubuntu17]   |
+| [Ubuntu 17.10][corefx-linux]               | [.deb][rl-ubuntu17]     | [Instructions][in-ubuntu17]   |
 | [Ubuntu 16.04][corefx-linux]               | [.deb][rl-ubuntu16]     | [Instructions][in-ubuntu16]   |
 | [Ubuntu 14.04][corefx-linux]               | [.deb][rl-ubuntu14]     | [Instructions][in-ubuntu14]   |
 | [Debian 8.7+][corefx-linux]                | [.deb][rl-debian8]      | [Instructions][in-deb8]       |
@@ -62,7 +62,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x86.msi
-[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.17.04_amd64.deb
+[rl-ubuntu17]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.17.10_amd64.deb
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.16.04_amd64.deb
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.14.04_amd64.deb
 [rl-debian8]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.debian.8_amd64.deb
@@ -82,7 +82,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#msi
 [in-ubuntu14]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1604
-[in-ubuntu17]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1704
+[in-ubuntu17]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1710
 [in-deb8]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#debian-8
 [in-deb9]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#debian-9
 [in-centos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#centos-7
