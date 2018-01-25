@@ -20,6 +20,9 @@ namespace mvc
     {
         public static void Main(string[] args)
         {
+            if (args[0] != "fail")
+                throw new ApplicationException("Bad things happened.");
+
             if (args.Count() != 6)
             {
                 System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumberTls2> <HTTPSPortNumberTls11> <HTTPSPortNumberTls>");
