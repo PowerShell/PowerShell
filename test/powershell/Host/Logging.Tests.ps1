@@ -135,8 +135,28 @@ Describe 'SysLog tests on Linux' -Tag 'CI' {
         $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
 
         # TODO: Adjust for Linux distro, if needed.
-        $syslogFile = 'opt/log/syslog'
-        [bool] $isSupportedEnvironemnt = $IsLinux -and (Test-Path -Path $syslogFile)
+        $syslogFile = 'var/log/syslog'
+
+        [bool] $IsSupportedEnvironment = $IsLinux -and (Test-Path -Path $syslogFile)
+
+        if ($IsSupportedEnvironment)
+        {
+            if (Test-Path -Path 'var/log/syslog')
+            {
+                $syslogFile = 'var/log/syslog'
+            }
+            elseif (Test-Path -Path 'var/log/messages')
+            {
+                # Fedora and Centos
+                $syslogFile = 'var/log/messages'
+            }
+            else
+            {
+                # TODO: Look into journalctl and other variations.
+                Write-Warning -Message 'Unsupported Linux syslog configuration.'
+                $IsSupportedEnvironment = $false
+            }
+        }
     }
 
     It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
