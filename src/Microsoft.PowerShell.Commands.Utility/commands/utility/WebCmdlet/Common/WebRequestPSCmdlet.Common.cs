@@ -1188,7 +1188,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (FormatException ex)
                         {
-                            ErrorRecord er = new ErrorRecord(ex, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                             ThrowTerminatingError(er);
                         }
                     }
@@ -1503,7 +1504,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!SkipHeaderValidation)
                     {
-                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1511,7 +1513,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!SkipHeaderValidation)
                     {
-                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletEncodingException", ErrorCategory.InvalidArgument, ContentType);
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
