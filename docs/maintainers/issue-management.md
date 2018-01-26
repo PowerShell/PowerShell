@@ -1,8 +1,14 @@
 # Issue Management
 
+## Security Vulnerabilities
+
+If you believe that there is a security vulnerability in PowerShell Core,
+it **must** be reported to [secure@microsoft.com](https://technet.microsoft.com/en-us/security/ff852094.aspx) to allow for [Coordinated Vulnerability Disclosure](https://technet.microsoft.com/en-us/security/dn467923).
+**Only** file an issue, if secure@microsoft.com has confirmed filing an issue appropriate.
+
 ## Long-living issue labels
-=======
-## Issue and PR Labels
+
+### Issue and PR Labels
 
 Issues are opened for many different reasons.
 We use the following labels for issue classifications:
@@ -61,6 +67,7 @@ These labels describe what feature area of PowerShell that an issue affects:
 ### Operating Systems
 
 These are for issues that are specific to certain Operating Systems:
+
 * `OS-Linux`
 * `OS-macOS`
 * `OS-Windows`
