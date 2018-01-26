@@ -29,7 +29,7 @@ function RunTestCase
 
     $moduleName = "Microsoft.PowerShell.Core"
 
-    UpdateHelpFromLocalContentPath $moduleName $tag
+    UpdateHelpFromLocalContentPath $moduleName $tag # this runs Update-Help and fails if $PSHOME is Not writable
 
     $cmdlets = get-command -module $moduleName
 
@@ -64,6 +64,27 @@ function RunTestCase
     }
 }
 
+function PathIsReadOnly
+{
+    param ([string]$Path)
+    # attempt to write to location and catch
+    $readonly = $false
+    try
+    {
+        $filepath = Join-Path $Path "testfile-deleteme.txt"
+        "test" | Out-File $filepath
+    }
+    catch
+    {
+        $readonly = $_.Exception.GetType().Name -eq 'UnauthorizedAccessException'
+    }
+    Remove-Item -Path $filepath -ErrorAction SilentlyContinue
+
+    $readonly
+}
+
+$MicrosoftPowerShellCorePathIsReadOnly = PathIsReadOnly $PSHOME
+
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
 
     It "Get-Help returns information about the help system." {
@@ -75,7 +96,7 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
     }
 }
 
-Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') -Skip:$MicrosoftPowerShellCorePathIsReadOnly {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -86,7 +107,7 @@ Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdmin
     RunTestCase -tag "CI"
 }
 
-Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:$MicrosoftPowerShellCorePathIsReadOnly {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
