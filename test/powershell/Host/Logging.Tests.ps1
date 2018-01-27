@@ -38,8 +38,6 @@ enum LogKeyword
     Serializer = 0x40
     Session = 0x80
     ManagedPlugin = 0x100
-    UseAlwaysOperational = 0x8000000000000000
-    UseAlwaysAnalytic = 0x4000000000000000
 }
 
 function BuildCommaString
@@ -57,9 +55,9 @@ function BuildCommaString
     {
         if ($sb.Length -gt 0)
         {
-            $sb.Append(', ')
+            $null = $sb.Append(', ')
         }
-        $sb.Append($value.ToString())
+        $null = $sb.Append($value.ToString())
     }
     return $sb.ToString()
 }
@@ -88,7 +86,7 @@ function WriteLogSettings
         [ValidateNotNullOrEmpty()]
         [string] $LogId,
 
-        [Nullable(LogLevel)] $LogLevel = $null,
+        [System.Nullable[LogLevel]] $LogLevel = $null,
 
         [LogChannel[]] $LogChannels = $null,
 
@@ -96,93 +94,99 @@ function WriteLogSettings
     )
 
     [StringBuilder] $sb = [StringBuilder]::new()
-    $filename = [Guid]::NewGuid().ToString()
+    $filename = [Guid]::NewGuid().ToString('N')
     $fullPath = Join-Path -Path $TestDrive -ChildPath "$filename.config.json"
 
-    $sb.AppendLine('{')
-    $sb.AppendFormat('"LogIdentity": "{0}"', $LogId)
+    $null = $sb.AppendLine('{')
+    $null = $sb.AppendFormat('"LogIdentity": "{0}"', $LogId)
 
     [string] $channels = BuildCommaString($LogChannels)
     [string] $keywords = BuildCommaString($LogKeywords)
 
     if ($null -ne $LogLevel)
     {
-        $sb.AppendLine(',')
-        $sb.AppendFormat('"LogLevel": "{0}"', $LogLevel.ToString())
+        $null = $sb.AppendLine(',')
+        $null = $sb.AppendFormat('"LogLevel": "{0}"', $LogLevel.ToString())
     }
     if ([string]::IsNullOrEmpty($channels) -eq $false)
     {
-        $sb.AppendLine(',')
-        $sb.AppendFormat('"LogChannels": "{0}"', $channels)
+        $null = $sb.AppendLine(',')
+        $null = $sb.AppendFormat('"LogChannels": "{0}"', $channels)
     }
     if ([string]::IsNullOrEmpty($keywords) -eq $false)
     {
-        $sb.AppendLine(',')
-        $sb.AppendFormat('"LogKeywords": "{0}"', $keywords)
+        $null = $sb.AppendLine(',')
+        $null = $sb.AppendFormat('"LogKeywords": "{0}"', $keywords)
     }
 
-    $sb.AppendLine()
-    $sb.AppendLine('}')
+    $null = $sb.AppendLine()
+    $null = $sb.AppendLine('}')
 
     $sb.ToString() | Set-Content -Path $fullPath -ErrorAction Stop
     return $fullPath
 }
 
-Describe 'SysLog tests on Linux' -Tag 'CI' {
+class TestSettings
+{
+    [bool] $IsSupportedEnvironment
+    [string] $SysLogFile = [string]::Empty
 
-    BeforeAll
+    TestSettings([bool] $linux, [string]$pwshHome)
     {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $this.IsSupportedEnvironment = $linux
 
-        # TODO: Adjust for Linux distro, if needed.
-        $syslogFile = 'var/log/syslog'
-
-        [bool] $IsSupportedEnvironment = $IsLinux -and (Test-Path -Path $syslogFile)
-
-        if ($IsSupportedEnvironment)
+        if ($this.IsSupportedEnvironment)
         {
-            if (Test-Path -Path 'var/log/syslog')
+            if (Test-Path -Path '/var/log/syslog')
             {
-                $syslogFile = 'var/log/syslog'
+                $this.SysLogFile = '/var/log/syslog'
             }
-            elseif (Test-Path -Path 'var/log/messages')
+            elseif (Test-Path -Path '/var/log/messages')
             {
-                # Fedora and Centos
-                $syslogFile = 'var/log/messages'
+                $this.SysLogFile = '/var/log/messages'
             }
             else
             {
                 # TODO: Look into journalctl and other variations.
                 Write-Warning -Message 'Unsupported Linux syslog configuration.'
-                $IsSupportedEnvironment = $false
+                $this.IsSupportedEnvironment = $false
             }
         }
     }
+}
 
-    It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
+Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
+
+    $Settings = [TestSettings]::new($IsLinux -eq $true, $PSHome)
+    $PowerShell = Join-Path -Path $PSHome -ChildPath "pwsh"
+
+    It 'Verifies basic logging with no customizations' -Skip:(!$Settings.IsSupportedEnvironment) {
         $logId = 'DefaultSettings'
         $now = [DateTime]::Now
 
-        $config = WriteLogSettings -LogId $logId
-        & $powershell -NoProfile -SettingsFile $config -Command {(Get-ExecutionPolicy -Scope LocalMachine).ToString()}
+        $configFile = WriteLogSettings -LogId $logId
+        & $Powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        # Get log entries from teh last 100 that match our id and are after the time we launched Powershell
-        $items = Get-PSSysLog -Path $syslogFile -Id $logId -After $now -Tail 100
+        $items = [System.Collections.ArrayList]::new()
+        # Get log entries from the last 100 that match our id and are after the time we launched Powershell
+        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items
+
         $items.Count | Should BeGreaterThan 2
         $items[0].EventId | Should Be 'GitCommitId'
         $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
         $items[2].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
     }
 
-    It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
+    It 'Verifies logging level filtering works' -Skip:(!$Settings.IsSupportedEnvironment) {
         $logId = 'WarningLevel'
         $now = [DateTime]::Now
 
-        $config = WriteLogSettings -LogId $logId -LogLevel [LogLevel]::Warning
-        & $powershell -NoProfile -SettingsFile $config -Command {(Get-ExecutionPolicy -Scope LocalMachine).ToString()}
+        $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
+        & $Powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        $items = Get-PSSysLog -Path $syslogFile -Id $logId -After $now -Tail 100
+        $items = [System.Collections.ArrayList]::new()
         # by default, only informational events are logged. With Level = Warning, the log should be empty.
+        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items
         $items.Count | Should Be 0
     }
 }
