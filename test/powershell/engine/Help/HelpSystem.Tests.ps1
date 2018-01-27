@@ -29,7 +29,10 @@ function RunTestCase
 
     $moduleName = "Microsoft.PowerShell.Core"
 
-    UpdateHelpFromLocalContentPath $moduleName $tag # this runs Update-Help and fails if $PSHOME is Not writable
+    if (-not $MicrosoftPowerShellCorePathIsReadOnly)
+    {
+        UpdateHelpFromLocalContentPath $moduleName $tag # this runs Update-Help and fails if $PSHOME is Not writable
+    }
 
     $cmdlets = get-command -module $moduleName
 
@@ -47,7 +50,7 @@ function RunTestCase
     {
         if ($cmdletsToSkip -notcontains $cmdletName)
         {
-            It "Validate -Description and -Examples sections in help content. Run 'Get-help -name $cmdletName'" {
+            It "Validate -Description and -Examples sections in help content. Run 'Get-help -name $cmdletName'" -Skip:$MicrosoftPowerShellCorePathIsReadOnly {
 
                 $help = get-help -name $cmdletName
                 $help.Description | Out-String | Should Match $cmdletName
@@ -96,7 +99,7 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
     }
 }
 
-Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') -Skip:$MicrosoftPowerShellCorePathIsReadOnly {
+Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -107,7 +110,7 @@ Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdmin
     RunTestCase -tag "CI"
 }
 
-Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') -Skip:$MicrosoftPowerShellCorePathIsReadOnly {
+Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
