@@ -175,28 +175,53 @@ class PSSysLogItem
         return $item
     }
 }
+
 function ConvertFrom-SysLog
 {
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory, ValueFromPipeline)]
-        [ValidateNotNullOrEmpty()]
-        [string] $content,
+        [string[]] $Content,
 
         [string] $Id,
 
-        [Nullable[DateTime]] $After
+        [System.Collections.ArrayList] $Results,
+
+        [Nullable[DateTime]] $After,
+
+        [int] $TotalCount = 0
     )
+
+    Begin
+    {
+        [int] $totalWritten = 0
+        [bool] $done = $false
+    }
 
     Process
     {
-        [PSSysLogItem] $item = [PSSysLogItem]::Convert($content, $id, $after)
-
-        if ($item -ne $null)
+        foreach ($line in $Content)
         {
-            Write-Output -InputObject $item
+            if ($totalWritten -ge $TotalCount)
+            {
+                # throw terminating exception to cancel.
+                throw [System.Management.Automation.PipelineStoppedException]::new()
+            }
+
+            [PSSysLogItem] $item = [PSSysLogItem]::Convert($content, $id, $after)
+
+            if ($item -ne $null)
+            {
+                $totalWritten++
+                Write-Verbose "Writing item $totalWritten" -Verbose
+                $Results.Add($item)
+            }
         }
+    }
+    End
+    {
+        Write-Verbose "Found $totalWritten items"
     }
 }
 
@@ -204,8 +229,10 @@ function ConvertFrom-SysLog
 .SYNOPSIS
     Reads log entries with the specified identifier
 
-.DESCRIPTION
-    Long description
+.PARAMETER Results
+    An array to use to collect results.
+    This is used in-lieu of the output pipeline to work around
+    the inability of canceling a pipeline without losing output.
 
 .PARAMETER Path
     The fully qualified path to the syslog formatted file.
@@ -215,13 +242,18 @@ function ConvertFrom-SysLog
     The default value is 'powershell'
 
 .PARAMETER TotalCount
-    Specifies the number of lines from the beginning of a file
+    Specifies the number of items to return.
+    Can be used with After and Tail
 
-.PARAMETER TotalCount
+.PARAMETER Tail
     Specifies the number of lines from the end of a file
+    This value is passed through to the underlying Get-Content Cmdlet and controls
+    the number of lines to read from the syslog file. As a result, teh number of
+    returned PowerShell log items may be less than this value.
 
 .PARAMETER After
     Returns items after the specified DateTime
+    Can be used with TotalCount.
 
 .EXAMPLE
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/powershell'
@@ -251,49 +283,74 @@ function ConvertFrom-SysLog
 #>
 function Get-PSSysLog
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='All')]
     param
     (
-        [Parameter(Mandatory)]
+        #[Parameter(Mandatory)]
+        [Parameter(ParameterSetName = 'All')]
+        [Parameter(ParameterSetName = 'After')]
+        [Parameter(ParameterSetName = 'Tail')]
+        [ValidateNotNull()]
+        [System.Collections.ArrayList] $Results,
+
+        [Parameter(ParameterSetName = 'All')]
+        [Parameter(ParameterSetName = 'After')]
+        [Parameter(ParameterSetName = 'Tail')]
         [ValidateNotNullOrEmpty()]
         [string] $Path,
 
-        [Parameter()]
+        [Parameter(ParameterSetName = 'All')]
+        [Parameter(ParameterSetName = 'After')]
+        [Parameter(ParameterSetName = 'Tail')]
         [ValidateNotNullOrEmpty()]
         [string] $Id = 'powershell',
 
-        [Parameter(ParameterSetName = 'After')]
-        [Parameter(ParameterSetName = 'TotalCount')]
-        [int] $TotalCount,
-
+        [Parameter(ParameterSetName='All')]
         [Parameter(ParameterSetName = 'After')]
         [Parameter(ParameterSetName = 'Tail')]
+        [ValidateRange(0, [int]::MaxValue)]
+        [int] $TotalCount,
+
+        [Parameter(ParameterSetName = 'All')]
+        [Parameter(ParameterSetName = 'Tail')]
+        [ValidateRange(0, [int]::MaxValue)]
         [int] $Tail,
 
+        [Parameter(ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'After')]
         [Nullable[DateTime]] $After
     )
 
+    [int] $maxItems = 0
     $contentParms = @{Path = $Path}
-    if ($PSBoundParameters.ContainsKey('TotalCount'))
-    {
-        $contentParms['TotalCount'] = $TotalCount
-    }
-    elseif ($PSBoundParameters.ContainsKey('Tail'))
+    if ($PSBoundParameters.ContainsKey('Tail'))
     {
         $contentParms['Tail'] = $Tail
     }
 
-    if ([string]::IsNullOrEmpty($id))
+    if ($PSBoundParameters.ContainsKey('TotalCount'))
     {
-        Get-Content @contentParms | ConvertFrom-SysLog -After $After -Id $Id
+        $maxItems = $TotalCount
     }
-    else
-    {
-        [string] $filter = [string]::Format(" {0}[", $id)
 
-        Get-Content @contentParms | Where-Object {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After
+    try
+    {
+
+        if ([string]::IsNullOrEmpty($id))
+        {
+            Get-Content @contentParms | ConvertFrom-SysLog -After $After -Id $Id -Results $Results | out-null
+        }
+        else
+        {
+            [string] $filter = [string]::Format(" {0}[", $id)
+            Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After -TotalCount $maxItems -Results $Results | out-null
+        }
     }
+    catch [System.Management.Automation.PipelineStoppedException]
+    {
+    }
+    return $results.ToArray()
+
 }
 
 Export-ModuleMember -Function Get-PSSysLog
