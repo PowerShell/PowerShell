@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
-        [Alias("Message","Msg")]
         public PSObject[] InputObject
         {
             get { return _inputObjects; }

@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
-        [Alias("Msg","Message","InputObject")]
         public object Object { get; set; } = null;
 
 

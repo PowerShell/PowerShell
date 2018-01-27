@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
-        [Alias("Msg","InputObject")]
+        [Alias("Msg")]
         public string Message { get; set; } = null;
 
 
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
-        [Alias("Msg","InputObject")]
+        [Alias("Msg")]
         public string Message { get; set; } = null;
 
 
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
-        [Alias("Msg","InputObject")]
+        [Alias("Msg")]
         public string Message { get; set; } = null;
 
 
@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
         /// Object to be sent to the Information stream.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
-        [Alias("Msg","InputObject","Message")]
+        [Alias("Msg")]
         public Object MessageData { get; set; }
 
         /// <summary>
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "WithException")]
         [AllowNull]
         [AllowEmptyString]
-        [Alias("Msg","InputObject")]
+        [Alias("Msg")]
         public string Message { get; set; } = null;
 
         /// <summary>
