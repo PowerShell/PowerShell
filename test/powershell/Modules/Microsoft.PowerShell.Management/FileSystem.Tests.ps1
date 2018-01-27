@@ -1391,7 +1391,7 @@ Describe "UNC paths" -Tags 'CI' {
             $testPath = Join-Path "\\localhost" $systemDrive
             & $cmdlet $testPath
             Get-Location | Should BeExactly "Microsoft.PowerShell.Core\FileSystem::$testPath"
-            $children = { Get-ChildItem -ErrorAction Stop } | Should Not Throw
+            $children = Get-ChildItem -ErrorAction Stop
             $children.Count | Should BeGreaterThan 0
         }
         finally {
