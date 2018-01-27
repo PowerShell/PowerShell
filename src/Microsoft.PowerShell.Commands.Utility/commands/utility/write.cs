@@ -172,7 +172,7 @@ namespace Microsoft.PowerShell.Commands
         /// Object to be sent to the Information stream.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
-        [Alias("Msg")]
+        [Alias("Msg", "Message")]
         public Object MessageData { get; set; }
 
         /// <summary>
