@@ -98,6 +98,8 @@ Additional references:
 
 #### Before submitting
 
+* If your change would fix a security vulnerability,
+  first follow the [vulnerability issue reporting policy][vuln-reporting], before submitting a PR.
 * To avoid merge conflicts, make sure your branch is rebased on the `master` branch of this repository.
 * Many code changes will require new tests,
   so make sure you've added a new test if existing tests do not effectively test the code changed.
@@ -299,6 +301,7 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md
+[vuln-reporting]: ../docs/maintainers/issue-management.md#Security-Vulnerabilities
 [governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/

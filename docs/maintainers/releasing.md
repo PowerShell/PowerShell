@@ -14,7 +14,7 @@ This is to help track the release preparation work.
 
 > Note: Step 2, 3 and 4 can be done in parallel.
 
-1. Create a branch named `release` in `PowerShell/PowerShell` repository.
+1. Create a branch named `release-<Release Tag>` in our private repository.
    All release related changes should happen in this branch.
 1. Prepare packages
    - [Build release packages](#building-packages).
@@ -28,7 +28,7 @@ This is to help track the release preparation work.
 1. [Create NuGet packages](#nuget-packages) and publish them to [powershell-core feed][ps-core-feed].
 1. [Create the release tag](#release-tag) and push the tag to `PowerShell/PowerShell` repository.
 1. Create the draft and publish the release in Github.
-1. Merge the `release` branch to `master` and delete the `release` branch.
+1. Merge the `release-<Release Tag>` branch to `master` in `powershell/powershell` and delete the `release-<Release Tag>` branch.
 1. Publish Linux packages to Microsoft YUM/APT repositories.
 1. Trigger the release docker builds for Linux and Windows container images.
    - Linux: push a branch named `docker` to `powershell/powershell` repository to trigger the build at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
