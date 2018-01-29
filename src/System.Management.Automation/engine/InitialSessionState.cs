@@ -4788,21 +4788,23 @@ Begin
         $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
     }
 
-    $process = [System.Diagnostics.Process]::new();
+    $process = [System.Diagnostics.Process]::new()
 
-    $process.StartInfo.FileName = 'C:\Windows\system32\more.com';
-    $process.StartInfo.UseShellExecute = $false;
-    $process.StartInfo.RedirectStandardInput = $true;
+    $process.StartInfo.FileName = 'C:\Windows\system32\more.com'
+    $process.StartInfo.UseShellExecute = $false
+    $process.StartInfo.RedirectStandardInput = $true
 
-    $process.Start();
+    $null = $process.Start()
 
-    $streamWriter = $process.StandardInput;
+    $streamWriter = $process.StandardInput
 }
 
 Process
 {
-    if ($Line) {
+    if ($Line -is [string]) {
         $streamWriter.WriteLine($Line)
+    } else {
+        $Line | Out-String | more
     }
 }
 
@@ -4814,7 +4816,7 @@ End
         }
     } else {
         $streamWriter.Close()
-        $process.WaitForExit();
+        $process.WaitForExit()
         $process.Close()
     }
 }
