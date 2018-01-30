@@ -146,7 +146,7 @@ Describe "Get-Variable" -Tags "CI" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
 	    Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue -ErrorVariable removeGlobalAsLocal
-        $removeGlobalAsLocal.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+	    $removeGlobalAsLocal.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Should be able to get a global variable when there's one in the script scope" {
