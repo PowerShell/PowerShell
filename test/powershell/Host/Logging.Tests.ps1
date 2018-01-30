@@ -157,7 +157,7 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
 
         $items = [System.Collections.ArrayList]::new()
         # Get log entries from the last 100 that match our id and are after the time we launched Powershell
-        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items -Verbose
+        $items = Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Verbose -TotalCount 3
 
         $items.Count | Should BeGreaterThan 2
         $items[0].EventId | Should Be 'GitCommitId'
@@ -174,7 +174,7 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
 
         $items = [System.Collections.ArrayList]::new()
         # by default, only informational events are logged. With Level = Warning, the log should be empty.
-        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items -Verbose
+        $items = Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -TotalCount 1
         $items.Count | Should Be 0
     }
 }

@@ -186,8 +186,6 @@ function ConvertFrom-SysLog
 
         [string] $Id,
 
-        [System.Collections.ArrayList] $Results,
-
         [Nullable[DateTime]] $After,
 
         [int] $TotalCount = 0
@@ -203,19 +201,11 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            if ($totalWritten -gt 0 -and $totalWritten -ge $TotalCount)
-            {
-                # throw terminating exception to cancel.
-                Write-Verbose "Found $totalWritten items"
-                throw [System.Management.Automation.PipelineStoppedException]::new()
-            }
-
             [PSSysLogItem] $item = [PSSysLogItem]::Convert($content, $id, $after)
-
             if ($item -ne $null)
             {
                 $totalWritten++
-                $null = $Results.Add($item)
+                Write-Output $item
             }
         }
     }
@@ -333,24 +323,15 @@ function Get-PSSysLog
         $maxItems = $TotalCount
     }
 
-    try
+    if ($TotalCount -eq 0)
     {
-
-        if ([string]::IsNullOrEmpty($id))
-        {
-            Get-Content @contentParms | ConvertFrom-SysLog -After $After -Id $Id -Results $Results | Out-Null
-        }
-        else
-        {
-            [string] $filter = [string]::Format(" {0}[", $id)
-            Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After -TotalCount $maxItems -Results $Results | Out-Null
-        }
+        Get-Content @contentParms | ConvertFrom-SysLog -After $After -Id $Id
     }
-    catch [System.Management.Automation.PipelineStoppedException]
+    else
     {
+        [string] $filter = [string]::Format(" {0}[", $id)
+        Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After | Select-Object -First $maxItems
     }
-    return $results.ToArray()
-
 }
 
 Export-ModuleMember -Function Get-PSSysLog
