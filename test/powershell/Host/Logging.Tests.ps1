@@ -40,28 +40,6 @@ enum LogKeyword
     ManagedPlugin = 0x100
 }
 
-function BuildCommaString
-{
-    param
-    (
-        [object[]] $values
-    )
-    if ($values -eq $null -or $values.Length -eq 0)
-    {
-        return $null
-    }
-    [StringBuilder] $sb = [StringBuilder]::new()
-    foreach ($value in $values)
-    {
-        if ($sb.Length -gt 0)
-        {
-            $null = $sb.Append(', ')
-        }
-        $null = $sb.Append($value.ToString())
-    }
-    return $sb.ToString()
-}
-
 <#
 .SYNOPSIS
    Creates a powershell.config.json file with syslog settings
@@ -100,8 +78,16 @@ function WriteLogSettings
     $null = $sb.AppendLine('{')
     $null = $sb.AppendFormat('"LogIdentity": "{0}"', $LogId)
 
-    [string] $channels = BuildCommaString($LogChannels)
-    [string] $keywords = BuildCommaString($LogKeywords)
+    [string] $channels = [string]::Empty
+    if ($LogChannels -ne $null)
+    {
+        $channels = $LogChannels -join ', '
+    }
+    [string] $keywords = [string]::Empty
+    if ($LogKeywords -ne $null)
+    {
+        $keywords = $LogKeywords -join ', '
+    }
 
     if ($null -ne $LogLevel)
     {
@@ -133,7 +119,7 @@ class TestSettings
 
     TestSettings([bool] $linux, [string]$pwshHome)
     {
-        $this.IsSupportedEnvironment = $linux
+        $this.IsSupportedEnvironment = ($linux -eq $true)
 
         if ($this.IsSupportedEnvironment)
         {
@@ -157,19 +143,21 @@ class TestSettings
 
 Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
 
-    $Settings = [TestSettings]::new($IsLinux -eq $true, $PSHome)
-    $PowerShell = Join-Path -Path $PSHome -ChildPath "pwsh"
+    BeforeAll {
+        $Settings = [TestSettings]::new($IsLinux -eq $true, $PSHome)
+        $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+    }
 
     It 'Verifies basic logging with no customizations' -Skip:(!$Settings.IsSupportedEnvironment) {
         $logId = 'DefaultSettings'
         $now = [DateTime]::Now
 
         $configFile = WriteLogSettings -LogId $logId
-        & $Powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
         $items = [System.Collections.ArrayList]::new()
         # Get log entries from the last 100 that match our id and are after the time we launched Powershell
-        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items
+        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items -Verbose
 
         $items.Count | Should BeGreaterThan 2
         $items[0].EventId | Should Be 'GitCommitId'
@@ -182,11 +170,11 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
         $now = [DateTime]::Now
 
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-        & $Powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
         $items = [System.Collections.ArrayList]::new()
         # by default, only informational events are logged. With Level = Warning, the log should be empty.
-        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items
+        Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Results $items -Verbose
         $items.Count | Should Be 0
     }
 }

@@ -203,9 +203,10 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            if ($totalWritten -ge $TotalCount)
+            if ($totalWritten -gt 0 -and $totalWritten -ge $TotalCount)
             {
                 # throw terminating exception to cancel.
+                Write-Verbose "Found $totalWritten items"
                 throw [System.Management.Automation.PipelineStoppedException]::new()
             }
 
@@ -214,8 +215,7 @@ function ConvertFrom-SysLog
             if ($item -ne $null)
             {
                 $totalWritten++
-                Write-Verbose "Writing item $totalWritten" -Verbose
-                $Results.Add($item)
+                $null = $Results.Add($item)
             }
         }
     }
@@ -338,12 +338,12 @@ function Get-PSSysLog
 
         if ([string]::IsNullOrEmpty($id))
         {
-            Get-Content @contentParms | ConvertFrom-SysLog -After $After -Id $Id -Results $Results | out-null
+            Get-Content @contentParms | ConvertFrom-SysLog -After $After -Id $Id -Results $Results | Out-Null
         }
         else
         {
             [string] $filter = [string]::Format(" {0}[", $id)
-            Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After -TotalCount $maxItems -Results $Results | out-null
+            Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After -TotalCount $maxItems -Results $Results | Out-Null
         }
     }
     catch [System.Management.Automation.PipelineStoppedException]
