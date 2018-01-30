@@ -4801,11 +4801,7 @@ Begin
 
 Process
 {
-    if ($Line -is [string]) {
-        $streamWriter.WriteLine($Line)
-    } else {
-        $Line | Out-String | more
-    }
+    $Line | Out-String -Stream | ForEach-Object { $streamWriter.WriteLine($_) }
 }
 
 End
