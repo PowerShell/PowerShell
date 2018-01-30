@@ -158,7 +158,7 @@ function Get-WebListenerUrl {
             return $null
         }
         $Uri = [System.UriBuilder]::new()
-        $Uri.Host = 'localhost'
+        $Uri.Host = '127.0.0.1'
         $Uri.Port = $runningListener.HttpPort
         $Uri.Scheme = 'Http'
 
