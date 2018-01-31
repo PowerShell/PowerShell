@@ -82,14 +82,14 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-windows]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/windows.md#msi
 [in-ubuntu14]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1604
-[in-ubuntu17]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1710
+[in-ubuntu17]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#ubuntu-1704
 [in-deb8]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#debian-8
 [in-deb9]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#debian-9
 [in-centos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#centos-7
 [in-rhel7]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
 [in-opensuse422]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#opensuse-422
-[in-fedora26]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-26
-[in-fedora27]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-27
+[in-fedora26]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-25
+[in-fedora27]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#fedora-26
 [in-archlinux]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#arch-linux
 [in-appimage]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/linux.md#linux-appimage
 [in-macos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/macos.md
