@@ -158,6 +158,7 @@ function Get-WebListenerUrl {
             return $null
         }
         $Uri = [System.UriBuilder]::new()
+        # Use 127.0.0.1 and not localhost due to https://github.com/dotnet/corefx/issues/24104
         $Uri.Host = '127.0.0.1'
         $Uri.Port = $runningListener.HttpPort
         $Uri.Scheme = 'Http'
