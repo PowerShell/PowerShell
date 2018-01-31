@@ -13,6 +13,7 @@ it **must** be reported to [secure@microsoft.com](https://technet.microsoft.com/
 Issues are opened for many different reasons.
 We use the following labels for issue classifications:
 
+* `Issue-Announcement`: the issue is for discussing an [Announcement](https://github.com/PowerShell/Announcements)
 * `Issue-Bug`: the issue is reporting a bug
 * `Issue-Code Cleanup`: the issue is for cleaning up the code with no impact on functionality
 * `Issue-Discussion`: the issue may not have a clear classification yet.
