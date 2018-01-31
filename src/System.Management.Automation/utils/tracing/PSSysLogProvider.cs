@@ -17,8 +17,11 @@ namespace System.Management.Automation.Tracing
     {
         private static SysLogProvider s_provider;
 
-        // by default, do not include analytic events
-        internal const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
+        // by default, do not include channel bits
+        internal const PSKeyword DefaultKeywords = (PSKeyword) (0x00FFFFFFFFFFFFFF);
+
+        // the default enabled channel(s)
+        internal const PSChannel DefaultChannels = PSChannel.Operational;
 
         /// <summary>
         /// Class constructor.
