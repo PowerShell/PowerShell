@@ -73,14 +73,14 @@ namespace Microsoft.PowerShell
             try
             {
                 // if the semaphore file exists, try to send telemetry
-                var Enabled = Utils.NativeFileExists(TelemetrySemaphoreFilePath) && !GetEnvironmentVariableAsBool(TelemetryOptoutEnvVar, false);
+                var enabled = Utils.NativeFileExists(TelemetrySemaphoreFilePath) && !GetEnvironmentVariableAsBool(TelemetryOptoutEnvVar, false);
 
-                if ( ! Enabled )
+                if (!enabled)
                 {
                     return;
                 }
 
-                if ( _telemetryClient == null )
+                if (_telemetryClient == null)
                 {
                     _telemetryClient = new TelemetryClient();
                 }
