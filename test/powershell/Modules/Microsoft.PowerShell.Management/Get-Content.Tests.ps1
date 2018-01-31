@@ -9,6 +9,7 @@ Describe "Get-Content" -Tags "CI" {
     $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
     $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
     $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
+    $testContent = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
 
     BeforeEach {
         New-Item -Path $testPath -ItemType file -Force -Value $testString
@@ -109,49 +110,103 @@ baz
         $actual.Length | Should Be $tailCount
         $actual[0] | Should Be $expected
     }
-    It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
-        Set-Content -Path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
-        $result=Get-Content -Path $testPath -Readcount:-1 -Tail 5
-        $result.Length | Should Be 4
-        $expected = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Readcount 0 -Tail 3
-        $result.Length    | Should Be 3
-        $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Readcount 1 -Tail 3
-        $result.Length    | Should Be 3
-        $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Readcount 99999 -Tail 3
-        $result.Length    | Should Be 3
-        $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Readcount 2 -Tail 3
-        $result.Length    | Should Be 2
-        $expected = "Hello2,World2","Hello3,World3"
-        $expected = $expected,"Hello4,World4"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Readcount 2 -Tail 2
-        $result.Length    | Should Be 2
-        $expected = "Hello3,World3","Hello4,World4"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Delimiter "," -Tail 2
-        $result.Length    | Should Be 2
-        $expected = "World3${nl}Hello4", "World4${nl}"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -Delimiter "o" -Tail 3
-        $result.Length    | Should Be 3
-        $expected = "rld3${nl}Hell", '4,W', "rld4${nl}"
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
-        $result=Get-Content -Path $testPath -AsByteStream -Tail 10
-        $result.Length    | Should Be 10
-        if ($IsWindows) {
-            $expected =      52, 44, 87, 111, 114, 108, 100, 52, 13, 10
-        } else {
-            $expected = 111, 52, 44, 87, 111, 114, 108, 100, 52, 10
+    It "should Get-Content with a variety of -Tail and -ReadCount values" -TestCases @(
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = -1
+            tail = 5})
+        expectedLength = 4
+        expectedContent = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
         }
-        for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = 0
+            tail = 3})
+        expectedLength = 3
+        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        }
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = 1
+            tail = 3})
+        expectedLength = 3
+        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        }
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = 99999
+            tail = 3})
+        expectedLength = 3
+        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        }
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = 99999
+            tail = 3})
+        expectedLength = 3
+        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        }
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = 2
+            tail = 3})
+        expectedLength = 2
+        expectedContent = ("Hello2,World2","Hello3,World3"), "Hello4,World4"
+        }
+        @{
+        GetContentParams = @(@{path = $testPath
+            readcount = 2
+            tail = 2})
+        expectedLength = 2
+        expectedContent = "Hello3,World3","Hello4,World4"
+        }
+    ) {#[DRT]
+        param($GetContentParams, $expectedLength, $expectedContent)
+        Set-Content -Path $testPath $testContent
+        $result = Get-Content -Path $GetContentParams.path -Readcount $GetContentParams.readcount -Tail $GetContentParams.tail
+        $result.Length | Should Be $expectedLength
+        $result | Should BeExactly $expectedContent
+    }
+    It "should Get-Content with a variety of -Delimiter and -Tail values" -TestCases @(
+        @{
+        GetContentParams = @(@{path = $testPath
+            delimiter = ","
+            tail = 2})
+        expectedLength = 2
+        expectedContent = "World3${nl}Hello4", "World4${nl}"
+        }
+        @{
+        GetContentParams = @(@{path = $testPath
+            delimiter = "o"
+            tail = 3})
+        expectedLength = 3
+        expectedContent = "rld3${nl}Hell", '4,W', "rld4${nl}"
+        }
+    ) {#[DRT]
+        param($GetContentParams, $expectedLength, $expectedContent)
+        Set-Content -Path $testPath $testContent
+        $result = Get-Content -Path $GetContentParams.path -Delimiter $GetContentParams.delimiter -Tail $GetContentParams.tail
+        $result.Length | Should Be $expectedLength
+        $result | Should BeExactly $expectedContent
+    }
+    It "should Get-Content with a variety of -Tail values and -AsByteStream parameter" -TestCases @(
+        @{
+        GetContentParams = @(@{path = $testPath
+            tail = 10})
+        expectedLength = 10
+        expectedWindowsContent =         52, 44, 87, 111, 114, 108, 100, 52, 13, 10
+        expectedNotWindowsContent = 111, 52, 44, 87, 111, 114, 108, 100, 52, 10
+        }
+    ) {#[DRT]
+        param($GetContentParams, $expectedLength, $expectedWindowsContent, $expectedNotWindowsContent)
+        Set-Content -Path $testPath $testContent
+        $result = Get-Content -Path $GetContentParams.path -AsByteStream -Tail $GetContentParams.tail
+        $result.Length | Should Be $expectedLength
+        if ($isWindows) {
+            $result | Should BeExactly $expectedWindowsContent
+        } else {
+            $result | Should BeExactly $expectedNotWindowsContent
+        }
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
     It "should Get-Content that matches the input string"{
@@ -252,7 +307,7 @@ baz
         }
         It "Should return last three lines reading one at a time for -ReadCount 1 and -Tail 3"{
             $result = Get-Content -Path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
-            $result.Length | Should Be 3
+            $retest/powershell/Modules/Microsoft.PowerShell.Management/Get-Content.Tests.ps1sult.Length | Should Be 3
             $expected = $secondLine,$thirdLine,$fourthLine
             Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
         }
