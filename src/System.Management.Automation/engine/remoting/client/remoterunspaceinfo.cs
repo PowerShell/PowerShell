@@ -192,6 +192,16 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        /// <summary>
+        /// Name of the transport used.
+        /// </summary>
+        public String Transport
+        {
+            get
+            {
+                return GetTransportName();
+            }
+        }
         #endregion Public Properties
 
         #region Public Methods
@@ -263,7 +273,7 @@ namespace System.Management.Automation.Runspaces
             }
             else
             {
-                Name = AutoGenerateRunspaceName(Id);
+                Name = "Runspace" + Id;
                 remoteRunspace.PSSessionName = Name;
             }
 
@@ -319,34 +329,35 @@ namespace System.Management.Automation.Runspaces
         /// Generates and returns the runspace name
         /// </summary>
         /// <returns>auto generated name</returns>
-        private string AutoGenerateRunspaceName(int id)
+        private string GetTransportName()
         {
-            string sessionIdStr = id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
-
             if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
             {
-                return "WinRM" + sessionIdStr;
+                return "WSMan";
             }
             else if (_remoteRunspace.ConnectionInfo is SSHConnectionInfo)
             {
-                return "SSH" + sessionIdStr;
+                return "SSH";
             }
-            else if ((_remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo) ||
-                     (_remoteRunspace.ConnectionInfo is ContainerConnectionInfo))
+            else if (_remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo)
             {
-                return "NamedPipe" + sessionIdStr;
+                return "NamedPipe";
+            }
+            else if (_remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
+            {
+                return "Container";
             }
             else if (_remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
             {
-                return "Process" + sessionIdStr;
+                return "Process";
             }
             else if (_remoteRunspace.ConnectionInfo is VMConnectionInfo)
             {
-                return "Socket" + sessionIdStr;
+                return "VMBus";
             }
             else
             {
-                return "Session" + sessionIdStr;
+                return "Unknown";
             }
         }
 
@@ -368,26 +379,15 @@ namespace System.Management.Automation.Runspaces
         #region Static Methods
 
         /// <summary>
-        /// Generates a unique runspace id and name.
-        /// </summary>
-        /// <param name="transport">Transport being used</param>
-        /// <param name="rtnId">Returned Id</param>
-        /// <returns>Returned name</returns>
-        internal static String GenerateRunspaceName(string transport, out int rtnId)
-        {
-            int id = System.Threading.Interlocked.Increment(ref s_seed);
-            rtnId = id;
-            return ComposeRunspaceName(transport, id);
-        }
-
-        /// <summary>
-        /// Generates a unique runspace id and name. Assumes WSMan transport.
+        /// Generates a unique runspace id.
         /// </summary>
         /// <param name="rtnId">Returned Id</param>
         /// <returns>Returned name</returns>
         internal static String GenerateRunspaceName(out int rtnId)
         {
-            return GenerateRunspaceName("WSMan", out rtnId);
+            int id = GenerateRunspaceId();
+            rtnId = id;
+            return "Runspace" + id.ToString();
         }
 
         /// <summary>
@@ -397,28 +397,6 @@ namespace System.Management.Automation.Runspaces
         internal static int GenerateRunspaceId()
         {
             return System.Threading.Interlocked.Increment(ref s_seed);
-        }
-
-        /// <summary>
-        /// Creates a runspace name based on a given Id value.
-        /// </summary>
-        /// <param name="transport">Transport being used</param>
-        /// <param name="id">Integer Id</param>
-        /// <returns>Runspace name</returns>
-        internal static string ComposeRunspaceName(string transport, int id)
-        {
-            Dbg.Assert(transport != null, "Transport is null");
-            return transport + id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
-        }
-
-        /// <summary>
-        /// Creates a runspace name based on a given Id value.
-        /// </summary>
-        /// <param name="id">Integer Id</param>
-        /// <returns>Runspace name</returns>
-        internal static string ComposeRunspaceName(int id)
-        {
-            return ComposeRunspaceName("WSMan", id);
         }
 
         #endregion

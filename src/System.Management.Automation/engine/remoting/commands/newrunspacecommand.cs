@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
 
                         // Create new remote runspace with name and Id.
                         int rsId;
-                        string rsName = GetRunspaceName("WSMan", rsIndex, out rsId);
+                        string rsName = GetRunspaceName(rsIndex, out rsId);
                         RemoteRunspace newRemoteRunspace = new RemoteRunspace(
                             typeTable, newConnectionInfo, this.Host, this.SessionOption.ApplicationArguments,
                             rsName, rsId);
@@ -740,7 +740,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Create new remote runspace with name and Id.
                     int rsId;
-                    string rsName = GetRunspaceName("WSMan", i, out rsId);
+                    string rsName = GetRunspaceName(i, out rsId);
                     RemoteRunspace remoteRunspace = new RemoteRunspace(
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
@@ -815,7 +815,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Create new remote runspace with name and Id.
                     int rsId;
-                    string rsName = GetRunspaceName("WSMan", i, out rsId);
+                    string rsName = GetRunspaceName(i, out rsId);
                     RemoteRunspace runspace = new RemoteRunspace(
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
@@ -948,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
                 RemoteRunspace runspace = null;
                 VMConnectionInfo connectionInfo;
                 int rsId;
-                string rsName = GetRunspaceName("VMBus", index, out rsId);
+                string rsName = GetRunspaceName(index, out rsId);
 
                 try
                 {
@@ -1004,7 +1004,7 @@ namespace Microsoft.PowerShell.Commands
                 RemoteRunspace runspace = null;
                 ContainerConnectionInfo connectionInfo = null;
                 int rsId;
-                string rsName = GetRunspaceName("Container", index, out rsId);
+                string rsName = GetRunspaceName(index, out rsId);
                 index++;
 
                 try
@@ -1082,7 +1082,7 @@ namespace Microsoft.PowerShell.Commands
                     this.KeyFilePath,
                     this.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                string rsName = GetRunspaceName("SSH", index, out int rsIdUnused);
+                string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
                 remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
                                                                     host : this.Host,
@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.KeyFilePath,
                     sshConnection.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                string rsName = GetRunspaceName("SSH", index, out int rsIdUnused);
+                string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
                 remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
                                                                     host : this.Host,
@@ -1123,14 +1123,13 @@ namespace Microsoft.PowerShell.Commands
         /// Helper method to either get a user supplied runspace/session name
         /// or to generate one along with a unique Id.
         /// </summary>
-        /// <param name="transport">Transport used.</param>
         /// <param name="rsIndex">Runspace name array index.</param>
         /// <param name="rsId">Runspace Id.</param>
         /// <returns>Runspace name.</returns>
-        private string GetRunspaceName(string transport, int rsIndex, out int rsId)
+        private string GetRunspaceName(int rsIndex, out int rsId)
         {
             // Get a unique session/runspace Id and default Name.
-            string rsName = PSSession.GenerateRunspaceName(transport, out rsId);
+            string rsName = PSSession.GenerateRunspaceName(out rsId);
 
             // If there is a friendly name for the runspace, we need to pass it to the
             // runspace pool object, which in turn passes it on to the server during

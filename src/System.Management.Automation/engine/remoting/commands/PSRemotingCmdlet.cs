@@ -1308,7 +1308,7 @@ namespace Microsoft.PowerShell.Commands
                     // it can be easily identified if it becomes disconnected and is queried on the server.
                     int rsId = PSSession.GenerateRunspaceId();
                     string rsName = (DisconnectedSessionName != null && DisconnectedSessionName.Length > i) ?
-                        DisconnectedSessionName[i] : PSSession.ComposeRunspaceName(rsId);
+                        DisconnectedSessionName[i] : PSSession.GenerateRunspaceName(out rsId);
 
                     remoteRunspace = new RemoteRunspace(Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo,
                         this.Host, this.SessionOption.ApplicationArguments, rsName, rsId);
