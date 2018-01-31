@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell
         // The name of the file by when present in $PSHOME will enable telemetry.
         // If this file is not present, no telemetry will be sent.
         private const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
+        private const string TelemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
         // The path to the semaphore file which enables telemetry
         private static string TelemetrySemaphoreFilePath = Path.Combine(
@@ -42,6 +43,28 @@ namespace Microsoft.PowerShell
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
         }
 
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
+            var str = Environment.GetEnvironmentVariable(name);
+            if (string.IsNullOrEmpty(str))
+            {
+                return defaultValue;
+            }
+
+            switch (str.ToLowerInvariant())
+            {
+                case "true":
+                case "1":
+                case "yes":
+                    return true;
+                case "false":
+                case "0":
+                case "no":
+                    return false;
+                default:
+                    return defaultValue;
+            }
+        }
+
         /// <summary>
         /// Send the telemetry
         /// </summary>
@@ -50,14 +73,18 @@ namespace Microsoft.PowerShell
             try
             {
                 // if the semaphore file exists, try to send telemetry
-                if (Utils.NativeFileExists(TelemetrySemaphoreFilePath))
+                var enabled = Utils.NativeFileExists(TelemetrySemaphoreFilePath) && !GetEnvironmentVariableAsBool(TelemetryOptoutEnvVar, false);
+
+                if (!enabled)
                 {
-                    if ( _telemetryClient == null )
-                    {
-                        _telemetryClient = new TelemetryClient();
-                    }
-                    _telemetryClient.TrackEvent(eventName, payload, null);
+                    return;
                 }
+
+                if (_telemetryClient == null)
+                {
+                    _telemetryClient = new TelemetryClient();
+                }
+                _telemetryClient.TrackEvent(eventName, payload, null);
             }
             catch (Exception)
             {
