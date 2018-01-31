@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         // The name of the file by when present in $PSHOME will enable telemetry.
         // If this file is not present, no telemetry will be sent.
         private const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
-        private const string TelemetryOptout = "POWERSHELL_TELEMETRY_OPTOUT";
+        private const string TelemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
 
         // The path to the semaphore file which enables telemetry
         private static string TelemetrySemaphoreFilePath = Path.Combine(
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell
             try
             {
                 // if the semaphore file exists, try to send telemetry
-                var Enabled = Utils.NativeFileExists(TelemetrySemaphoreFilePath) && !GetEnvironmentVariableAsBool(TelemetryOptout, false);
+                var Enabled = Utils.NativeFileExists(TelemetrySemaphoreFilePath) && !GetEnvironmentVariableAsBool(TelemetryOptoutEnvVar, false);
 
                 if ( ! Enabled )
                 {
