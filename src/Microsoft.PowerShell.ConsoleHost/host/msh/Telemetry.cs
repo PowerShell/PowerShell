@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell
             TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
         }
 
-        internal static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
+        private static bool GetEnvironmentVariableAsBool(string name, bool defaultValue) {
             var str = Environment.GetEnvironmentVariable(name);
             if (string.IsNullOrEmpty(str))
             {
