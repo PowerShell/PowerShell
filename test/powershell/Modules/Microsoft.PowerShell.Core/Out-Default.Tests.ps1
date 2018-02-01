@@ -15,7 +15,7 @@ Describe "Out-Default Tests" -tag CI {
 "@
 
         & $powershell -noprofile -command $script | Should BeExactly 'bye'
-        "TestDrive:\transcript.txt" | Should Contain 'hello'
+        "TestDrive:\transcript.txt" | Should -FileContentMatch 'hello'
     }
 
     It "Out-Default reverts transcription state when used more than once in a pipeline" {
