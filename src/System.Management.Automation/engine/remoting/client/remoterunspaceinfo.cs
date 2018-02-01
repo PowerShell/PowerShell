@@ -195,13 +195,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Name of the transport used.
         /// </summary>
-        public String Transport
-        {
-            get
-            {
-                return GetTransportName();
-            }
-        }
+        public String Transport => GetTransportName();
+
         #endregion Public Properties
 
         #region Public Methods
