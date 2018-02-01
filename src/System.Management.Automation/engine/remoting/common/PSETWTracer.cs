@@ -198,8 +198,16 @@ namespace System.Management.Automation.Internal
     [Flags]
     internal enum PSChannel : byte
     {
+    #if UNIX
+        // On Windows, PSChannel is the numeric channel id value.
+        // On Linux, PSChannel it is used to filter events and 
+        // the underlying channel bitmask values are used instead.
+        Operational = 0x80,
+        Analytic = 0x40
+    #else
         Operational = 0x10,
         Analytic = 0x11
+    #endif   
     }
 
     /// <summary>

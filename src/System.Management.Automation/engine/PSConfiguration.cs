@@ -280,7 +280,7 @@ namespace System.Management.Automation.Configuration
 
             if (result == 0)
             {
-                result = PSSysLogProvider.DefaultChannels;
+                result = System.Management.Automation.Tracing.PSSysLogProvider.DefaultChannels;
             }
 
             return result;
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Configuration
 
             if (result == 0)
             {
-                result = PSSysLogProvider.DefaultKeywords;
+                result = System.Management.Automation.Tracing.PSSysLogProvider.DefaultKeywords;
             }
 
             return result;
