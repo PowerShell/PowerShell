@@ -483,6 +483,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter PassThru { get; set; }
 
+        /// <summary>
+        /// Flag to ignore warnings during compilation.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter IgnoreWarnings { get; set; }
+
         #endregion Parameters
 
         #region GererateSource
