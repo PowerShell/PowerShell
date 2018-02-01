@@ -151,7 +151,7 @@ baz
             readcount = 2
             tail = 3})
         expectedLength = 2
-        expectedContent = ("Hello2,World2","Hello3,World3"),"Hello4,World4"
+        expectedContent = ("Hello2,World2","Hello3,World3"), "Hello4,World4"
         }
         @{
         GetContentParams = @(@{path = $testPath
