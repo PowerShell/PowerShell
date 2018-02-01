@@ -232,14 +232,6 @@ All parameters are case-insensitive.</value>
 
     Example: pwsh -o XML -c Get-Date
 
--Version | -v
-    Shows the version of PowerShell and exits. Additional arguments are ignored.
-
-    Example: pwsh -v
-
--WindowStyle | -w
-    Sets the window style to Normal, Minimized, Maximized or Hidden.
-
 -SettingsFile | -settings
     Overrides the system-wide powershell.config.json settings file for the session.
     By default, system-wide settings are read from the powershell.config.json
@@ -250,6 +242,13 @@ All parameters are case-insensitive.</value>
 
     Example: pwsh -SettingsFile c:\myproject\powershell.config.json
 
+-Version | -v
+    Shows the version of PowerShell and exits. Additional arguments are ignored.
+
+    Example: pwsh -v
+
+-WindowStyle | -w
+    Sets the window style to Normal, Minimized, Maximized or Hidden.
     </value>
   </data>
 </root>

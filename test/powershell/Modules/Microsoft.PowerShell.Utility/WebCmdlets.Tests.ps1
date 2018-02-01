@@ -496,15 +496,15 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validate Invoke-WebRequest error with -Proxy and -NoProxy option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '10'
-        $command = "Invoke-WebRequest -Uri '$uri' -Proxy 'http://localhost:8080' -NoProxy -TimeoutSec 2"
+        $command = "Invoke-WebRequest -Uri '$uri' -Proxy 'http://127.0.0.1:8080' -NoProxy -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     $testCase = @(
-        @{ proxy_address = "http://localhost:9"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://localhost:9"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = "http://127.0.0.1:9"; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = "http://127.0.0.1:9"; name = 'https_proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-WebRequest error with -Proxy option set - '<name>'" -TestCases $testCase {
@@ -1632,15 +1632,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod error with -Proxy and -NoProxy option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '10'
-        $command = "Invoke-RestMethod -Uri '$uri' -Proxy 'http://localhost:8080' -NoProxy -TimeoutSec 2"
+        $command = "Invoke-RestMethod -Uri '$uri' -Proxy 'http://127.0.0.1:8080' -NoProxy -TimeoutSec 2"
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     $testCase = @(
-        @{ proxy_address = "http://localhost:9"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://localhost:9"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = "http://127.0.0.1:9"; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = "http://127.0.0.1:9"; name = 'https_proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-RestMethod error with -Proxy option - '<name>'" -TestCases $testCase {

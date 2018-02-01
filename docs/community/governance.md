@@ -132,6 +132,6 @@ See our [Pull Request Process][pull-request-process]
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../maintainers/issue-management.md
-[pull-request-process]: ../maintainers/pull-request-process.md
+[pull-request-process]: ../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request
 [docs-contributing]: https://github.com/PowerShell/PowerShell-Docs/blob/staging/CONTRIBUTING.md
 [maintainers]: ../maintainers/README.md

@@ -43,6 +43,18 @@
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    <CustomAction Id="SaveShortcutPath" Property="ShortcutPath" Value="[$ApplicationProgramsMenuShortcut]$(var.ProductSemanticVersionWithNameAndOptionalArchitecture).lnk" />
+    <CustomAction Id="FixShortcutWorkingDirectory" Script="vbscript" HideTarget="no" Impersonate="no">
+      shortcutPath = Session.Property("ShortcutPath")
+      Set fso = CreateObject("Scripting.FileSystemObject")
+      if (fso.FileExists(shortcutPath)) Then
+        Set wshShell = CreateObject("WSCript.Shell")
+        Set shortcut = wshShell.CreateShortcut(shortcutPath)
+
+        shortcut.workingdirectory = "%HOMEDRIVE%%HOMEPATH%"
+        shortcut.save
+      End If
+    </CustomAction>
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
         <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)">
@@ -185,6 +197,12 @@
         </Directory>
       </Directory>
     </Directory>
+    <InstallExecuteSequence>
+      <Custom Action="SaveShortcutPath" After="InstallFinalize" />
+      <Custom Action="FixShortcutWorkingDirectory" After="SaveShortcutPath">
+        NOT Installed OR NOT REMOVE OR UPGRADINGPRODUCTCODE
+      </Custom>
+    </InstallExecuteSequence>
   </Product>
 
 <!-- Explorer Context Menu Dialog -->

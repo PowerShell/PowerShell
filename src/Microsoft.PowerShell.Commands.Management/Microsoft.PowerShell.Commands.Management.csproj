@@ -68,6 +68,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.4.1" />
   </ItemGroup>
 
