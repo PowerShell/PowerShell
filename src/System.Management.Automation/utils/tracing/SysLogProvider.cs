@@ -169,7 +169,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="keywords">The PSKeyword to check.</param>
         /// <returns>true if the specified level and keywords are enabled for logging.</returns>
         internal bool IsEnabled(PSLevel level, PSKeyword keywords)
-        {           
+        {
             return ( ((ulong) keywords & _keywordFilter) != 0 &&
                      ((int) level <= _levelFilter) );
         }
