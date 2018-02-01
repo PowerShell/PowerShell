@@ -86,7 +86,7 @@ cat > $targetFile <<-"EOF"
   </Target>
 </Project>
 EOF
-dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/src/TypeCatalogGen/powershell.inc" /nologo
+dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/TypeCatalogGen/powershell.inc" /nologo
 ```
 
 `powershell.inc` contains the resolved paths to the DLLs of each dependency of PowerShell,
