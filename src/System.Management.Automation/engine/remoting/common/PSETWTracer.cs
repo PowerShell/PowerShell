@@ -200,7 +200,7 @@ namespace System.Management.Automation.Internal
     {
     #if UNIX
         // On Windows, PSChannel is the numeric channel id value.
-        // On Linux, PSChannel it is used to filter events and 
+        // On Non-Windows, PSChannel it is used to filter events and 
         // the underlying channel bitmask values are used instead.
         Operational = 0x80,
         Analytic = 0x40
