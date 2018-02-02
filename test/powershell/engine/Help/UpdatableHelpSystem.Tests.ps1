@@ -205,7 +205,10 @@ function RunUpdateHelpTests
                 $modulePathIsReadOnly = PathIsReadOnly $modulePath
             }
 
-            It "Validate Update-Help for module '$moduleName'" -Pending:$Pending -Skip:$modulePathIsReadOnly {
+            # -Skip and -$Pending are mutually exclusive on It block, so skip Pending tests
+            If ($Pending) {$modulePathIsReadOnly = $true}
+
+            It "Validate Update-Help for module '$moduleName'" -Skip:$modulePathIsReadOnly {
 
                 # If the help file is already installed, delete it.
                 Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("*help.xml") -Recurse -ea SilentlyContinue |
