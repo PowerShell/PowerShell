@@ -186,15 +186,12 @@ function ConvertFrom-SysLog
 
         [string] $Id,
 
-        [Nullable[DateTime]] $After,
-
-        [int] $TotalCount = 0
+        [Nullable[DateTime]] $After
     )
 
     Begin
     {
         [int] $totalWritten = 0
-        [bool] $done = $false
     }
 
     Process
@@ -219,11 +216,6 @@ function ConvertFrom-SysLog
 .SYNOPSIS
     Reads log entries with the specified identifier
 
-.PARAMETER Results
-    An array to use to collect results.
-    This is used in-lieu of the output pipeline to work around
-    the inability of canceling a pipeline without losing output.
-
 .PARAMETER Path
     The fully qualified path to the syslog formatted file.
 
@@ -238,7 +230,7 @@ function ConvertFrom-SysLog
 .PARAMETER Tail
     Specifies the number of lines from the end of a file
     This value is passed through to the underlying Get-Content Cmdlet and controls
-    the number of lines to read from the syslog file. As a result, teh number of
+    the number of lines to read from the syslog file. As a result, the number of
     returned PowerShell log items may be less than this value.
 
 .PARAMETER After
@@ -255,11 +247,12 @@ function ConvertFrom-SysLog
 
 .Example
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -Tail 200
-    Gets the last 200 items from /var/log/syslog
+    Gets the last 200 log entries from /var/log/syslog and returns items from
+    this set that have the id 'powershell'.
 
 .Example
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -TotalCount 200
-    Gets up to 200 items powershell from the /var/log/syslog
+    Gets up to 200 log entries with the id 'powershell' from /var/log/syslog
 
 .Example
     PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
@@ -276,13 +269,6 @@ function Get-PSSysLog
     [CmdletBinding(DefaultParameterSetName='All')]
     param
     (
-        #[Parameter(Mandatory)]
-        [Parameter(ParameterSetName = 'All')]
-        [Parameter(ParameterSetName = 'After')]
-        [Parameter(ParameterSetName = 'Tail')]
-        [ValidateNotNull()]
-        [System.Collections.ArrayList] $Results,
-
         [Parameter(ParameterSetName = 'All')]
         [Parameter(ParameterSetName = 'After')]
         [Parameter(ParameterSetName = 'Tail')]
