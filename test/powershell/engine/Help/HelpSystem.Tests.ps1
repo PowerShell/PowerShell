@@ -218,8 +218,6 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
 
-    $skip = $false
-
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
         try
