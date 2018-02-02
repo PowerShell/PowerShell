@@ -133,6 +133,27 @@ $testCases = @{
 $modulesInBox = @("Microsoft.PowerShell.Core"
                   Get-Module -ListAvailable | ForEach-Object{$_.Name}
 )
+function PathIsReadOnly
+{
+    param ([string]$Path)
+    # attempt to write to location and catch
+    $readonly = $false
+    try
+    {
+        $filepath = Join-Path $Path "testfile-deleteme.txt"
+        "test" | Out-File $filepath
+    }
+    catch
+    {
+        $readonly = $_.Exception.GetType().Name -eq 'UnauthorizedAccessException'
+    }
+    Remove-Item -Path $filepath -ErrorAction SilentlyContinue
+
+    $readonly
+}
+
+$PsHomePathIsReadOnly = PathIsReadOnly $PSHOME
+$MicrosoftPowerShellCorePathIsReadOnly = $PsHomePathIsReadOnly
 
 function GetFiles
 {
@@ -174,8 +195,17 @@ function RunUpdateHelpTests
     {
         if ($powershellCoreModules -contains $moduleName)
         {
+            if ($moduleName -eq "Microsoft.PowerShell.Core")
+            {
+                $modulePathIsReadOnly = $MicrosoftPowerShellCorePathIsReadOnly
+            }
+            else
+            {
+                $modulePath = (Get-Module -Name $moduleName -ListAvailable).ModuleBase
+                $modulePathIsReadOnly = PathIsReadOnly $modulePath
+            }
 
-            It "Validate Update-Help for module '$moduleName'" -Pending:$Pending {
+            It "Validate Update-Help for module '$moduleName'" -Pending:$Pending -Skip:$modulePathIsReadOnly {
 
                 # If the help file is already installed, delete it.
                 Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("*help.xml") -Recurse -ea SilentlyContinue |

@@ -95,7 +95,8 @@ function PathIsReadOnly
     $readonly
 }
 
-$MicrosoftPowerShellCorePathIsReadOnly = PathIsReadOnly $PSHOME
+$PsHomePathIsReadOnly = PathIsReadOnly $PSHOME
+$MicrosoftPowerShellCorePathIsReadOnly = $PsHomePathIsReadOnly
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
 
@@ -263,7 +264,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
 }
 
 Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows') {
-    It "Get-Help should find help files under pshome" {
+    It "Get-Help should find help files under pshome" -Skip:$PsHomePathIsReadOnly {
         $helpFile = "about_testCase.help.txt"
         $culture = (Get-Culture).Name
         $helpFolderPath = Join-Path $PSHOME $culture
