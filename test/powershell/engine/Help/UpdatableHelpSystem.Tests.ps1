@@ -197,18 +197,18 @@ function RunUpdateHelpTests
         {
             if ($moduleName -eq "Microsoft.PowerShell.Core")
             {
-                $modulePathIsReadOnly = $MicrosoftPowerShellCorePathIsReadOnly
+                $skip = $MicrosoftPowerShellCorePathIsReadOnly
             }
             else
             {
                 $modulePath = (Get-Module -Name $moduleName -ListAvailable).ModuleBase
-                $modulePathIsReadOnly = PathIsReadOnly $modulePath
+                $skip = PathIsReadOnly $modulePath
             }
 
             # -Skip and -$Pending are mutually exclusive on It block, so skip Pending tests
-            If ($Pending) {$modulePathIsReadOnly = $true}
+            If ($Pending) {$skip = $true}
 
-            It "Validate Update-Help for module '$moduleName'" -Skip:$modulePathIsReadOnly {
+            It "Validate Update-Help for module '$moduleName'" -Skip:$skip {
 
                 # If the help file is already installed, delete it.
                 Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("*help.xml") -Recurse -ea SilentlyContinue |
