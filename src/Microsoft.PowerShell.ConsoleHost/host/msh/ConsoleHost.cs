@@ -185,6 +185,12 @@ namespace Microsoft.PowerShell
 
                 s_cpp.Parse(tempArgs);
 
+#if UNIX
+                // On Unix, logging has to be deferred until after command-line parsing
+                // completes to allow overriding logging options.
+                PSEtwLog.LogConsoleStartup();
+#endif
+
                 if (s_cpp.ShowVersion)
                 {
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());

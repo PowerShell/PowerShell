@@ -30,6 +30,21 @@ namespace System.Management.Automation.Tracing
 #endif
         }
 
+        internal static void LogConsoleStartup()
+        {
+            // Set ETW activity Id
+            Guid activityId = EtwActivity.GetActivityId();
+
+            if (activityId == Guid.Empty)
+            {
+                EtwActivity.SetActivityId(EtwActivity.CreateActivityId());
+            }
+
+            PSEtwLog.LogOperationalInformation(PSEventId.Perftrack_ConsoleStartupStart, PSOpcode.WinStart,
+                PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
+
+        }
+
         /// <summary>
         /// Provider interface function for logging health event
         /// </summary>

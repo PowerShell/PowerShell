@@ -33,16 +33,9 @@ namespace Microsoft.PowerShell
         {
             System.Management.Automation.Runspaces.EarlyStartup.Init();
 
-            // Set ETW activity Id
-            Guid activityId = EtwActivity.GetActivityId();
-
-            if (activityId == Guid.Empty)
-            {
-                EtwActivity.SetActivityId(EtwActivity.CreateActivityId());
-            }
-
-            PSEtwLog.LogOperationalInformation(PSEventId.Perftrack_ConsoleStartupStart, PSOpcode.WinStart,
-                PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
+#if !UNIX
+            PSEtwLog.LogConsoleStartup()
+#endif
 
             // Windows Vista and later support non-traditional UI fallback ie., a
             // user on an Arabic machine can choose either French or English(US) as

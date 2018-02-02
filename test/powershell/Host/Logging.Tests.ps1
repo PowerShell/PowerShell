@@ -138,6 +138,11 @@ class TestSettings
                 $this.IsSupportedEnvironment = $false
             }
         }
+
+        if ($this.IsSupportedEnvironment)
+        {
+            $this.IsSupportedEnvironment = Test-IsElevated
+        }
     }
 }
 
@@ -149,7 +154,7 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
     }
 
     It 'Verifies basic logging with no customizations' -Skip:(!$Settings.IsSupportedEnvironment) {
-        $logId = 'DefaultSettings'
+        $logId = [Guid]::NewGuid().ToString('N')
         $now = [DateTime]::Now
 
         $configFile = WriteLogSettings -LogId $logId
@@ -159,14 +164,14 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
         # Get log entries from the last 100 that match our id and are after the time we launched Powershell
         $items = Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Verbose -TotalCount 3
 
-        $items.Count | Should BeGreaterThan 2
-        $items[0].EventId | Should Be 'GitCommitId'
-        $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
-        $items[2].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
+        $items.Count | Should BeGreaterThan 1
+        $items[0].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
+        $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
+        $items.Count | Should Be 2
     }
 
     It 'Verifies logging level filtering works' -Skip:(!$Settings.IsSupportedEnvironment) {
-        $logId = 'WarningLevel'
+        $logId = [Guid]::NewGuid().ToString('N')
         $now = [DateTime]::Now
 
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
@@ -175,6 +180,6 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
         $items = [System.Collections.ArrayList]::new()
         # by default, only informational events are logged. With Level = Warning, the log should be empty.
         $items = Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -TotalCount 1
-        $items.Count | Should Be 0
+        $items | Should Be $null
     }
 }
