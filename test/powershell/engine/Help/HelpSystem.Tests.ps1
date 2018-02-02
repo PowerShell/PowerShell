@@ -5,6 +5,18 @@ function UpdateHelpFromLocalContentPath
 {
     param ([string]$ModuleName, [string]$Tag = 'CI')
 
+	 # Update-Help fails if module path is Not writable, so skip tests in this situation
+	if ($moduleName -eq "Microsoft.PowerShell.Core")
+	{
+		if ($MicrosoftPowerShellCorePathIsReadOnly) return
+	}
+	else
+	{
+		$modulePath = (Get-Module -Name $ModuleName -ListAvailable).ModuleBase
+		$modulePathIsReadOnly = PathIsReadOnly $modulePath
+		if ($modulePathIsReadOnly) return
+	}
+
     if ($Tag -eq 'CI')
     {
         $helpContentPath = Join-Path $PSScriptRoot "assets"
@@ -29,10 +41,7 @@ function RunTestCase
 
     $moduleName = "Microsoft.PowerShell.Core"
 
-    if (-not $MicrosoftPowerShellCorePathIsReadOnly)
-    {
-        UpdateHelpFromLocalContentPath $moduleName $tag # this runs Update-Help and fails if $PSHOME is Not writable
-    }
+    UpdateHelpFromLocalContentPath $moduleName $tag
 
     $cmdlets = get-command -module $moduleName
 
