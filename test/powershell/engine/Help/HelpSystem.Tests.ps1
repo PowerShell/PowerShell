@@ -229,7 +229,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         catch
         {
             # $pshome is readonly-path for non-sudo on Linux, skip tests in this case
-            $skip = $_.Exception.GetType().Name -eq 'CreateDirectoryUnauthorizedAccessError'
+            $skip = $_.Exception.GetType().Name -eq 'UnauthorizedAccessException'
             if ($skip) {return}
         }
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
