@@ -224,7 +224,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         $modulePath = "$pshome\Modules\Test"
         try
         {
-            $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+            $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force -ErrorAction Stop
         }
         catch
         {
