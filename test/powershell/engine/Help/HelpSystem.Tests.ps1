@@ -5,17 +5,17 @@ function UpdateHelpFromLocalContentPath
 {
     param ([string]$ModuleName, [string]$Tag = 'CI')
 
-	 # Update-Help fails if module path is Not writable, so skip tests in this situation
-	if ($moduleName -eq "Microsoft.PowerShell.Core")
-	{
-		if ($MicrosoftPowerShellCorePathIsReadOnly) return
-	}
-	else
-	{
-		$modulePath = (Get-Module -Name $ModuleName -ListAvailable).ModuleBase
-		$modulePathIsReadOnly = PathIsReadOnly $modulePath
-		if ($modulePathIsReadOnly) return
-	}
+    # Update-Help fails if module path is Not writable, so skip tests in this situation
+    if ($moduleName -eq "Microsoft.PowerShell.Core")
+    {
+        if ($MicrosoftPowerShellCorePathIsReadOnly) { return }
+    }
+    else
+    {
+        $modulePath = (Get-Module -Name $ModuleName -ListAvailable).ModuleBase
+        $modulePathIsReadOnly = PathIsReadOnly $modulePath
+        if ($modulePathIsReadOnly) { return }
+    }
 
     if ($Tag -eq 'CI')
     {
