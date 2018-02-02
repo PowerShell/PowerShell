@@ -217,9 +217,21 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 }
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
+
+    $skip = $false
+
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
-        $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+        try
+        {
+            $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+        }
+        catch
+        {
+            # $pshome is readonly-path for non-sudo on Linux, skip tests in this case
+            $skip = $_.Exception.GetType().Name -eq 'CreateDirectoryUnauthorizedAccessError'
+            if ($skip) {return}
+        }
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
@@ -234,19 +246,19 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     AfterAll {
-        Remove-Item $modulePath -Recurse -Force
+        Remove-Item $modulePath -Recurse -Force -ErrorAction SilentlyContinue
         # Remove all the help content.
         Get-ChildItem -Path $PSHOME -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:$skip {
 
         $help = Get-Help about_testhelp
         $help.count | Should Be 1
         $help | Should BeExactly "Hello"
     }
 
-    It "Get-Help for about_Variable should return only one help object" {
+    It "Get-Help for about_Variable should return only one help object" -Skip:$skip {
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
