@@ -146,7 +146,7 @@ class TestSettings
     }
 }
 
-Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
+Describe 'Basic SysLog tests on Linux' -Tag 'Feature' {
 
     BeforeAll {
         $Settings = [TestSettings]::new($IsLinux -eq $true, $PSHome)
@@ -154,31 +154,37 @@ Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
     }
 
     It 'Verifies basic logging with no customizations' -Skip:(!$Settings.IsSupportedEnvironment) {
+        # generate a unique log application id
         $logId = [Guid]::NewGuid().ToString('N')
         $now = [DateTime]::Now
 
         $configFile = WriteLogSettings -LogId $logId
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        $items = [System.Collections.ArrayList]::new()
         # Get log entries from the last 100 that match our id and are after the time we launched Powershell
         $items = Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -Verbose -TotalCount 3
 
         $items.Count | Should BeGreaterThan 1
         $items[0].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
         $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
-        $items.Count | Should Be 2
+        # if there are more items than expected...
+        if ($items.Count -gt 2)
+        {
+            # Force reporting of the first unexpected item to help diagnosis
+            $items[2] | Should be $null
+        }
     }
 
     It 'Verifies logging level filtering works' -Skip:(!$Settings.IsSupportedEnvironment) {
+        # generate a unique log application id
         $logId = [Guid]::NewGuid().ToString('N')
         $now = [DateTime]::Now
 
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        $items = [System.Collections.ArrayList]::new()
-        # by default, only informational events are logged. With Level = Warning, the log should be empty.
+        # by default, only informational events are logged. With Level = Warning, nothing should
+        # have been logged.
         $items = Get-PSSysLog -Path $Settings.SyslogFile -Id $logId -After $now -Tail 100 -TotalCount 1
         $items | Should Be $null
     }
