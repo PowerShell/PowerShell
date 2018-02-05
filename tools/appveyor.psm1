@@ -474,6 +474,16 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
+        # test MSI installer
+        Write-Verbose "Smoke-Testing MSI installer"
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
+        & $msi /q /l*vx msiLog.txt
+        if ($LASTEXITCODE -ne 0)
+        {
+            Push-AppveyorArtifact msiLog.txt
+            throw "MSI installer failed and returned error code $LASTEXITCODE. Log was uploaded as artifact."
+        }
+
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
