@@ -1,7 +1,11 @@
 ### Writing Pester Tests
-Note that this document does not replace the documents found in the [Pester](https://github.com/pester/pester "Pester") project. This is just
-some quick tips and suggestions for creating Pester tests for this project. The Pester community is vibrant and active, if you have questions
-about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pester/wiki) has a lot of great information.
+Note that this document does not replace the documents found in the [Pester](https://github.com/pester/pester "Pester") project.
+This is just some quick tips and suggestions for creating Pester tests for this project.
+The Pester community is vibrant and active, if you have questions about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pester/wiki) has a lot of great information.
+As of January 2018, PowerShell Core is using Pester version 4 which has some changes from earlier versions.
+See [Migrating from Pester 3 to Pester 4](https://github.com/pester/Pester/wiki/Migrating-from-Pester-3-to-Pester-4) for more information.
+
+
 
 When creating tests, keep the following in mind:
 * Tests should not be overly complicated and test too many things
@@ -16,7 +20,7 @@ Here's the simplest of tests
 Describe "A variable can be assigned and retrieved" {
     It "Create a variable and make sure its value is correct" {
        $a = 1
-       $a | Should be 1
+       $a | Should Be 1
    }
 }
 ```
@@ -27,7 +31,7 @@ If you need to do type checking, that can be done as well
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
-       $a | Should be 1
+       $a | Should Be 1
     }
     It "1 is really an int" {
        $i = 1
@@ -42,7 +46,7 @@ alternatively, you could do the following:
 Describe "One is really one" {
     It "Compare 1 to 1" {
        $a = 1
-       $a | Should be 1
+       $a | Should Be 1
     }
     It "1 is really an int" {
        $i = 1
@@ -136,7 +140,7 @@ $testCases = @(
 Describe "A test" {
     It "<a> -xor <b> should be <expectedresult>" -testcase $testcases {
         param ($a, $b, $ExpectedResult)
-        $a -xor $b | Should be $ExpectedResult
+        $a -xor $b | Should Be $ExpectedResult
     }
 }
 ```
@@ -151,7 +155,7 @@ The following example illustrates simple use:
 Context "Get-Random is not random" {
         Mock Get-Random { return 3 }
         It "Get-Random returns 3" {
-            Get-Random | Should be 3
+            Get-Random | Should Be 3
         }
     }
 ```
