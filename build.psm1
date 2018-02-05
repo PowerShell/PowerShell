@@ -662,7 +662,8 @@ function Restore-PSModuleToBuild
 
     if($CI.IsPresent)
     {
-        Restore-PSPester -Destination $modulesDir
+        # take the latest version of pester and install it so it may be used
+        Save-Module -Path $modulesDir -Name Pester
     }
 }
 
@@ -987,7 +988,7 @@ function Start-PSPester {
         Write-Warning @"
 Pester module not found.
 Restore the module to '$Pester' by running:
-    Restore-PSPester
+    Save-Module Pester -Path '$binDir/Modules'
 "@
         return;
     }

@@ -90,7 +90,7 @@
 
         foreach($command in $commands)
         {
-            $command.GetType().Name | should be @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
+            $command.GetType().Name | Should BeIn @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
         }
     }
 

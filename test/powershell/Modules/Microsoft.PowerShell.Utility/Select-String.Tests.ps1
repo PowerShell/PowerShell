@@ -104,7 +104,7 @@ Describe "Select-String" -Tags "CI" {
 	It "Should return the name of the file and the string that 'string' is found if there is only one lines that has a match" {
 	    $expected = $testInputFile + ":1:This is a text string, and another string"
 
-	    Select-String $(Split-Path $testInputFile -NoQualifier) -Pattern "string" | Should Be $expected
+	    Select-String $testInputFile -Pattern "string" | Should Be $expected
 	}
 
 	It "Should return all strings where 'second' is found in testfile1 if there is only one lines that has a match" {
@@ -148,8 +148,7 @@ Describe "Select-String" -Tags "CI" {
 	    $expected  = "testfile1.txt:3:This is the third line"
 
 	    $relativePath = Join-Path -Path $testDirectory -ChildPath ".."
-	    $relativePath = Join-Path -Path $relativePath -ChildPath ".."
-	    $relativePath = Join-Path -Path $relativePath -ChildPath (Split-Path $testDirectory -NoQualifier)
+	    $relativePath = Join-Path -Path $relativePath -ChildPath $TestDirectory.Name
 	    $relativePath = Join-Path -Path $relativePath -ChildPath testfile1.txt
 	    Select-String third $relativePath  | Should Match $expected
 	}

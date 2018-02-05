@@ -42,7 +42,7 @@
 
     It "should only load the specified version" {
         Import-Module TestModule -RequiredVersion 1.1
-        (Get-Module TestModule).Version | Should Be "1.1"
+        (Get-Module TestModule).Version | Should BeIn "1.1"
     }
 }
 
@@ -192,7 +192,7 @@ Describe "Import-Module should be case insensitive" -Tags 'CI' {
         Import-Module testMODULE
         $m = Get-Module TESTmodule
         $m | Should BeOfType "System.Management.Automation.PSModuleInfo"
-        $m.Name | Should Be "TESTMODULE"
+        $m.Name | Should BeIn "TESTMODULE"
         mytest | Should BeExactly "hello"
         Remove-Module TestModule
         Get-Module tESTmODULE | Should BeNullOrEmpty
