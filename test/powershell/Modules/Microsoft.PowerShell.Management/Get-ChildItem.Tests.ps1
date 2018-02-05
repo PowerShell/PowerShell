@@ -83,7 +83,7 @@ Describe "Get-ChildItem" -Tags "CI" {
 
         It "get-childitem <PATH>/* -file should include <Path> as search directory" {
             $rootPath = Join-Path $TestDrive -ChildPath "TestPS" -AdditionalChildPath "D1","File1.txt"
-            New-Item $filePath -type file -Force > $null
+            New-Item $rootPath -type file -Force > $null
             (Get-ChildItem -Path $rootPath/* -File -Recurse).Name | Should Be "File1.txt"
         }
     }
