@@ -484,7 +484,7 @@ function Invoke-AppveyorFinish
         {
             Push-AppveyorArtifact msiLog.txt
             $exitCode = $msiExecProcess.ExitCode
-            throw "MSI installer failed and returned error code $($msiExecProcess.ExitCode). MSI Log was uploaded as artifact."
+            throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
         Write-Verbose "MSI smoke test was successful" -Verbose
 
