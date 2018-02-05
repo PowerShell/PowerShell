@@ -10,7 +10,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_D = "D39B4FD9-3E1D-4DD5-8718-22FE2C934CE3"
             $item_E = "EE150FEB-0F21-4AFF-8066-AF59E925810C"
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43"
-            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676" 
+            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676"
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
@@ -76,16 +76,14 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters" {
-            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6 
+            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6
             (Get-ChildItem -Path $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
             (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
         }
-        
+
         It "get-childitem <PATH>/* -file should include <Path> as search directory" {
-            $rootPath = Join-Path $TestDrive "TestPS"
-            $subPath = Join-Path $rootPath "D1"
-            $filePath = Join-Path $subPath "File1.txt"
-            New-Item $filePath -type file -Force
+            $rootPath = Join-Path $TestDrive -ChildPath "TestPS" -AdditionalChildPath "D1","File1.txt"
+            New-Item $filePath -type file -Force > $null
             (Get-ChildItem -Path $rootPath/* -File -Recurse).Name | Should Be "File1.txt"
         }
     }

@@ -1517,7 +1517,6 @@ namespace System.Management.Automation
                             // Should glob paths and files that match tem*, but then
                             // recurse into all subdirectories and do the same for
                             // those directories.
-
                             if ((!String.IsNullOrEmpty(path)) && ((!IsItemContainer(path))))
                             {
                                 if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
@@ -1532,7 +1531,6 @@ namespace System.Management.Automation
                                 string parentName = path.Substring(0, path.Length - childName.Length);
                                 path = parentName;
                             }
-
                         }
                     }
 
