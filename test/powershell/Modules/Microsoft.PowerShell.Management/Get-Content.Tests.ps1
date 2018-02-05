@@ -9,16 +9,19 @@ Describe "Get-Content" -Tags "CI" {
     $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
     $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
     $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
-    $testContent = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+    $testContent = "AA","BB","CC","DD"
+    $testDelimiterContent = "Hello1,World1","Hello2,World2","Hello3,World3","Hello4,World4"
 
     BeforeEach {
         New-Item -Path $testPath -ItemType file -Force -Value $testString
         New-Item -Path $testPath2 -ItemType file -Force -Value $testString2
     }
+
     AfterEach {
         Remove-Item -Path $testPath -Force
         Remove-Item -Path $testPath2 -Force
     }
+    
     It "Should throw an error on a directory  " {
         try {
             Get-Content . -ErrorAction Stop
@@ -28,41 +31,50 @@ Describe "Get-Content" -Tags "CI" {
             $_.FullyQualifiedErrorId | should be "GetContentReaderUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetContentCommand"
         }
     }
+
     It "Should return an Object when listing only a single line and the correct information from a file" {
         $content = (Get-Content -Path $testPath)
         $content | Should Be $testString
         $content.Count | Should Be 1
         $content | Should BeOfType "System.String"
     }
+
     It "Should deliver an array object when listing a file with multiple lines and the correct information from a file" {
         $content = (Get-Content -Path $testPath2)
         @(Compare-Object $content $testString2.Split($nl) -SyncWindow 0).Length | Should Be 0
         ,$content | Should BeOfType "System.Array"
     }
+
     It "Should be able to return a specific line from a file" {
         (Get-Content -Path $testPath2)[1] | Should be $secondline
     }
+
     It "Should be able to specify the number of lines to get the content of using the TotalCount switch" {
         $returnArray    = (Get-Content -Path $testPath2 -TotalCount 2)
         $returnArray[0] | Should Be $firstline
         $returnArray[1] | Should Be $secondline
     }
+
     It "Should be able to specify the number of lines to get the content of using the Head switch" {
         $returnArray    = (Get-Content -Path $testPath2 -Head 2)
         $returnArray[0] | Should Be $firstline
         $returnArray[1] | Should Be $secondline
     }
+
     It "Should be able to specify the number of lines to get the content of using the First switch" {
         $returnArray    = (Get-Content -Path $testPath2 -First 2)
         $returnArray[0] | Should Be $firstline
         $returnArray[1] | Should Be $secondline
     }
+
     It "Should return the last line of a file using the Tail switch" {
         Get-Content -Path $testPath -Tail 1 | Should Be $testString
     }
+
     It "Should return the last lines of a file using the Last alias" {
         Get-Content -Path $testPath2 -Last 1 | Should Be $fifthline
     }
+
     It "Should be able to get content within a different drive" {
         Push-Location env:
         $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
@@ -70,16 +82,20 @@ Describe "Get-Content" -Tags "CI" {
         Get-Content PATH     | Should Be $expectedoutput
         Pop-Location
     }
+
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
         {Get-Content -Path HKLM:\\software\\microsoft -EA stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
+
     It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
         {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
     }
+
     It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
         { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
     }
+
     It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
         @{EncodingName = 'String'},
         @{EncodingName = 'Unicode'},
@@ -110,97 +126,76 @@ baz
         $actual.Length | Should Be $tailCount
         $actual[0] | Should Be $expected
     }
-    It "should Get-Content with a variety of -Tail and -ReadCount values" -TestCases @(
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = -1
-            tail = 5})
-        expectedLength = 4
-        expectedContent = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+
+    It "should Get-Content with a variety of -Tail and -ReadCount: <test>" -TestCases @(
+        @{ test = "negative readcount"
+            GetContentParams = @{Path = $testPath; Readcount = -1; Tail = 5}
+            expectedLength = 4
+            expectedContent = "AA","BB","CC","DD"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = 0
-            tail = 3})
-        expectedLength = 3
-        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        @{ test = "readcount=0"
+            GetContentParams = @{Path = $testPath; Readcount = 0; Tail = 3}
+            expectedLength = 3
+            expectedContent = "BB","CC","DD"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = 1
-            tail = 3})
-        expectedLength = 3
-        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        @{ test = "readcount=1"
+            GetContentParams = @{Path = $testPath; Readcount = 1; Tail = 3}
+            expectedLength = 3
+            expectedContent = "BB","CC","DD"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = 99999
-            tail = 3})
-        expectedLength = 3
-        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        @{ test = "high readcount"
+            GetContentParams = @{Path = $testPath; Readcount = 99999; Tail = 3}
+            expectedLength = 3
+            expectedContent = "BB","CC","DD"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = 99999
-            tail = 3})
-        expectedLength = 3
-        expectedContent = "Hello2,World2","Hello3,World3","Hello4,World4"
+        @{ test = "readcount=2 tail=3"
+            GetContentParams = @{Path = $testPath; Readcount = 2; Tail = 3}
+            expectedLength = 2
+            expectedContent = ("BB","CC"), "DD"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = 2
-            tail = 3})
-        expectedLength = 2
-        expectedContent = ("Hello2,World2","Hello3,World3"), "Hello4,World4"
+        @{ test = "readcount=2 tail=2"
+            GetContentParams = @{Path = $testPath; Readcount = 2; Tail = 2}
+            expectedLength = 2
+            expectedContent = "CC","DD"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            readcount = 2
-            tail = 2})
-        expectedLength = 2
-        expectedContent = "Hello3,World3","Hello4,World4"
-        }
-    ) {#[DRT]
+    ) {
         param($GetContentParams, $expectedLength, $expectedContent)
         Set-Content -Path $testPath $testContent
-        $result = Get-Content -Path $GetContentParams.path -Readcount $GetContentParams.readcount -Tail $GetContentParams.tail
+        $result = Get-Content @GetContentParams
         $result.Length | Should Be $expectedLength
         $result -eq $expectedContent
     }
-    It "should Get-Content with a variety of -Delimiter and -Tail values" -TestCases @(
-        @{
-        GetContentParams = @(@{path = $testPath
-            delimiter = ","
-            tail = 2})
-        expectedLength = 2
-        expectedContent = "World3${nl}Hello4", "World4${nl}"
+
+    It "should Get-Content with a variety of -Delimiter and -Tail: <test>" -TestCases @(
+        @{ test = ", as delimiter"
+            GetContentParams = @{Path = $testPath; Delimiter = ","; Tail = 2}
+            expectedLength = 2
+            expectedContent = "World3${nl}Hello4", "World4${nl}"
         }
-        @{
-        GetContentParams = @(@{path = $testPath
-            delimiter = "o"
-            tail = 3})
-        expectedLength = 3
-        expectedContent = "rld3${nl}Hell", '4,W', "rld4${nl}"
+        @{ test = "o as delimiter"
+            GetContentParams = @{Path = $testPath; Delimiter = "o"; Tail = 3}
+            expectedLength = 3
+            expectedContent = "rld3${nl}Hell", '4,W', "rld4${nl}"
         }
-    ) {#[DRT]
+    ) {
         param($GetContentParams, $expectedLength, $expectedContent)
-        Set-Content -Path $testPath $testContent
-        $result = Get-Content -Path $GetContentParams.path -Delimiter $GetContentParams.delimiter -Tail $GetContentParams.tail
+        Set-Content -Path $testPath $testDelimiterContent
+        $result = Get-Content @GetContentParams
         $result.Length | Should Be $expectedLength
         $result | Should BeExactly $expectedContent
     }
+
     It "should Get-Content with a variety of -Tail values and -AsByteStream parameter" -TestCases @(
         @{
-        GetContentParams = @(@{path = $testPath
-            tail = 10})
-        expectedLength = 10
-        expectedWindowsContent =         52, 44, 87, 111, 114, 108, 100, 52, 13, 10
-        expectedNotWindowsContent = 111, 52, 44, 87, 111, 114, 108, 100, 52, 10
+            GetContentParams = @{Path = $testPath; Tail = 10; AsByteStream = $true}
+            expectedLength = 10
+            expectedWindowsContent = 13, 10, 67, 67, 13, 10, 68, 68, 13, 10
+            expectedNotWindowsContent = 10, 66, 66, 10, 67, 67, 10, 68, 68, 10
         }
-    ) {#[DRT]
+    ) {
         param($GetContentParams, $expectedLength, $expectedWindowsContent, $expectedNotWindowsContent)
         Set-Content -Path $testPath $testContent
-        $result = Get-Content -Path $GetContentParams.path -AsByteStream -Tail $GetContentParams.tail
+        $result = Get-Content @GetContentParams
         $result.Length | Should Be $expectedLength
         if ($isWindows) {
             $result | Should BeExactly $expectedWindowsContent
@@ -208,6 +203,7 @@ baz
             $result | Should BeExactly $expectedNotWindowsContent
         }
     }
+
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
     It "should Get-Content that matches the input string"{
         Set-Content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
@@ -282,6 +278,7 @@ baz
         Get-Content -Path $testPath -Tail 1 -ErrorAction Stop -Raw
         } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
     }
+
     Context "Check Get-Content containing multi-byte chars" {
         BeforeAll {
             $firstLine = "Hello,World"
