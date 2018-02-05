@@ -34,7 +34,9 @@ namespace Microsoft.PowerShell
             System.Management.Automation.Runspaces.EarlyStartup.Init();
 
 #if !UNIX
-            PSEtwLog.LogConsoleStartup()
+            // NOTE: On Unix, logging has to be deferred until after command-line parsing
+            // complete. On Windows, deferring the call is not needed.
+            PSEtwLog.LogConsoleStartup();
 #endif
 
             // Windows Vista and later support non-traditional UI fallback ie., a
