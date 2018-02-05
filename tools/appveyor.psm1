@@ -477,8 +477,9 @@ function Invoke-AppveyorFinish
         # test MSI installer
         Write-Verbose "Smoke-Testing MSI installer" -Verbose
         $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
-        & $msi /q /l*vx msiLog.txt
-        if ($LASTEXITCODE -ne 0)
+        $msiLog = Join-Path (Get-Location) 'msilog.txt'
+        $msiExecProcess =Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow
+        if ($msiExecProcess.ExitCode -ne 0)
         {
             Push-AppveyorArtifact msiLog.txt
             throw "MSI installer failed and returned error code $LASTEXITCODE. Log was uploaded as artifact."
