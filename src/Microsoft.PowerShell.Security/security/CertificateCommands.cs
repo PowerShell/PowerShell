@@ -64,6 +64,24 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _isLiteralPath = false;
 
+        /// <summary>
+        /// Gets or sets the password for unlocking the certificate
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SecureString Password
+        {
+            get
+            {
+                return _password;
+            }
+
+            set
+            {
+                _password = value;
+            }
+        }
+        private SecureString _password = null;
+
         //
         // list of files that were not found
         //
@@ -132,45 +150,17 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            cert = GetCertFromPfxFile(resolvedProviderPath);
+                            cert = GetCertFromPfxFile(resolvedProviderPath, _password);
                         }
-                        catch (CryptographicException)
+                        catch (CryptographicException e)
                         {
-                            //
-                            // CryptographicException is thrown when any error
-                            // occurs inside the crypto class library. It has a
-                            // protected member HResult that indicates the exact
-                            // error but it is not available outside the class.
-                            // Thus we have to assume that the above exception
-                            // was thrown because the pfx file is password
-                            // protected.
-                            //
-                            SecureString password = null;
-
-                            string prompt = null;
-                            prompt = CertificateCommands.GetPfxCertPasswordPrompt;
-
-                            password = SecurityUtils.PromptForSecureString(Host.UI, prompt);
-                            try
-                            {
-                                cert = GetCertFromPfxFile(resolvedProviderPath,
-                                                          password);
-                            }
-                            catch (CryptographicException e)
-                            {
-                                //
-                                // since we cannot really figure out the
-                                // meaning of a given CryptographicException
-                                // we have to use NotSpecified category here
-                                //
-                                ErrorRecord er =
-                                    new ErrorRecord(e,
-                                                    "GetPfxCertificateUnknownCryptoError",
-                                                    ErrorCategory.NotSpecified,
-                                                    null);
-                                WriteError(er);
-                                continue;
-                            }
+                            ErrorRecord er =
+                                new ErrorRecord(e,
+                                                "GetPfxCertificateUnknownCryptoError",
+                                                ErrorCategory.NotSpecified,
+                                                null);
+                            WriteError(er);
+                            continue;
                         }
 
                         WriteObject(cert);
@@ -210,14 +200,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static X509Certificate2 GetCertFromPfxFile(string path)
-        {
-            X509Certificate2 cert = new X509Certificate2(path);
-            return cert;
-        }
-
         private static X509Certificate2 GetCertFromPfxFile(string path, SecureString password)
         {
+            // Passing null password and DefaultKeySet here is equivalent to calling "new X509Certificate2(path)"
             var cert = new X509Certificate2(path, password, X509KeyStorageFlags.DefaultKeySet);
             return cert;
         }
