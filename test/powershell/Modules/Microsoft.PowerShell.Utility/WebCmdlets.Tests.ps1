@@ -993,6 +993,22 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
             $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
+
+        It "Verifies Invoke-WebRequest defaults to UTF8 on application/json when no charset is present" {
+            # when contenttype is set, WebListener suppresses charset unless it is included in the query
+            $query = @{
+                contenttype = 'application/json'
+                body        = '{"Test": "Test"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteWebRequest -Uri $uri -UseBasicParsing
+
+            $response.Error | Should BeNullOrEmpty
+            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
+            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output.Content | Should BeExactly $query.body
+        }
     }
 
     #endregion charset encoding tests
@@ -2302,6 +2318,21 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
             $response.Error | Should BeNullOrEmpty
             $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
+        }
+
+        It "Verifies Invoke-RestMethod defaults to UTF8 on application/json when no charset is present" {
+            # when contenttype is set, WebListener suppresses charset unless it is included in the query
+            $query = @{
+                contenttype = 'application/json'
+                body        = '{"Test": "Test"}'
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $expectedEncoding = [System.Text.Encoding]::UTF8
+            $response = ExecuteRestMethod -Uri $uri -UseBasicParsing
+
+            $response.Error | Should BeNullOrEmpty
+            $response.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
+            $response.output.Test | Should BeExactly 'Test'
         }
     }
 
