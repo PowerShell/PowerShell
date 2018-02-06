@@ -68,19 +68,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the password for unlocking the certificate
         /// </summary>
         [Parameter(Mandatory = false)]
-        public SecureString Password
-        {
-            get
-            {
-                return _password;
-            }
-
-            set
-            {
-                _password = value;
-            }
-        }
-        private SecureString _password = null;
+        public SecureString Password { get; set; }
 
         //
         // list of files that were not found
@@ -150,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            cert = GetCertFromPfxFile(resolvedProviderPath, _password);
+                            cert = GetCertFromPfxFile(resolvedProviderPath, Password);
                         }
                         catch (CryptographicException e)
                         {
