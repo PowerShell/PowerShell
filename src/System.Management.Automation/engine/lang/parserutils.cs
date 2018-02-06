@@ -863,7 +863,6 @@ namespace System.Management.Automation
         // and so on.
         //
         // In special case:
-        //     [char]'0'..[char]'9'
         //     "0".."9"
         // return objects of [int] type.
         private static object AsChar(object obj)
