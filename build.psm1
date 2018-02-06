@@ -538,7 +538,6 @@ Fix steps:
 
         ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
             log "Run dotnet restore $_ $RestoreArguments"
-
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
         }
     }
@@ -674,7 +673,6 @@ function Restore-PSPester
     )
     Save-Module -Name Pester -Path $Destination -Repository PSGallery
 }
-
 function Compress-TestContent {
     [CmdletBinding()]
     param(
