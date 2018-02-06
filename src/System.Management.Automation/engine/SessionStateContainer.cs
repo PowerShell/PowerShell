@@ -1501,8 +1501,11 @@ namespace System.Management.Automation
                     {
                         string childName = GetChildName(path, context);
                             
-                        // If -File is specified and path is ended with '*', we should include the parent path as search path
-                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && ((Microsoft.PowerShell.Commands.GetChildDynamicParameters)context.DynamicParameters).File.IsPresent)
+                        // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
+                        bool isFileOrDirectoryPresent = (((Microsoft.PowerShell.Commands.GetChildDynamicParameters)context.DynamicParameters).File.IsPresent) ||
+                                                 (((Microsoft.PowerShell.Commands.GetChildDynamicParameters)context.DynamicParameters).Directory.IsPresent);
+
+                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
                         {
                             string parentName = path.Substring(0, path.Length - childName.Length);
                             path = parentName;
