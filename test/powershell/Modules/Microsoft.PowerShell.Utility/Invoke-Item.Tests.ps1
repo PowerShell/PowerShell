@@ -72,10 +72,13 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 Stop-Process -InputObject $notepadProcess
             }
         } else {
-            ## On Unix, we use `UseShellExecute = false`
-            ## 'ping' on Unix write out usage to stderr
-            & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
-            Get-Content $redirectFile -Raw | Should Match "usage: ping"
+            ## We are using ForEach loop as there might be multiple copies of ping.
+            ForEach ($ping_path in $ping) {
+                ## On Unix, we use `UseShellExecute = false`
+                ## 'ping' on Unix write out usage to stderr
+                & $powershell -noprofile -c "Invoke-Item '$ping_path'" 2> $redirectFile
+                Get-Content $redirectFile -Raw | Should Match "usage: ping"
+            }
         }
     }
 
