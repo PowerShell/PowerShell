@@ -146,7 +146,7 @@ class TestSettings
     }
 }
 
-Describe 'Basic SysLog tests on Linux' -Tag 'Feature' {
+Describe 'Basic SysLog tests on Linux' -Tag 'CI' {
 
     BeforeAll {
         $Settings = [TestSettings]::new($IsLinux -eq $true, $PSHome)
