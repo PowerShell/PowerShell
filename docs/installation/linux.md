@@ -634,8 +634,11 @@ Optionally you can create a symbolic link to be able to start PowerShell without
 
 ```sh
 # Start PowerShell with sudo to create a symbolic link
-sudo ~/powershell/pwsh
-New-Item -ItemType SymbolicLink -Path "/usr/bin/pwsh" -Target "$PSHOME/pwsh" -Force
+sudo ~/powershell/pwsh -c New-Item -ItemType SymbolicLink -Path "/usr/bin/pwsh" -Target "\$PSHOME/pwsh" -Force
+
+# alternatively you can run following to create a symbolic link
+# sudo ln -s ~/powershell/pwsh /usr/bin/pwsh
+
 # Now to start PowerShell you can just run "pwsh"
 ```
 
