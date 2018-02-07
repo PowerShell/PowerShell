@@ -4288,8 +4288,6 @@ namespace System.Management.Automation.Language
                 {
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
-                    var l = lhs.Cast(typeof(object));
-                    var r = rhs.Cast(typeof(object));
 
                     return Expression.Call(CachedReflectionInfo.ParserOps_GetRangeEnumerator,
                                            lhs.Cast(typeof(object)),
