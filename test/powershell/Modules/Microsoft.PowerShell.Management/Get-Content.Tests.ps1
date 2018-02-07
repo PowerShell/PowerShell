@@ -189,9 +189,9 @@ baz
         @{
             GetContentParams = @{Path = $testPath; Tail = 10; AsByteStream = $true}
             expectedLength = 10
-            # ASCII codes of the last 10 characters in file.
-            # Expected content in Windows differs by carriage return character (code 13) in every line.
+            # Byte encoding of \r\nCC\r\nDD\r\n
             expectedWindowsContent = 13, 10, 67, 67, 13, 10, 68, 68, 13, 10
+            # Byte encoding of \nBB\nCC\nDD\n
             expectedNotWindowsContent = 10, 66, 66, 10, 67, 67, 10, 68, 68, 10
         }
     ) {
