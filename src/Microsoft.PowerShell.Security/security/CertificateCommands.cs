@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Gets or sets the password for unlocking the certificate
+        /// Gets or sets the password for unlocking the certificate.
         /// </summary>
         [Parameter(Mandatory = false)]
         public SecureString Password { get; set; }
@@ -190,7 +190,6 @@ namespace Microsoft.PowerShell.Commands
 
         private static X509Certificate2 GetCertFromPfxFile(string path, SecureString password)
         {
-            // Passing null password and DefaultKeySet here is equivalent to calling "new X509Certificate2(path)"
             var cert = new X509Certificate2(path, password, X509KeyStorageFlags.DefaultKeySet);
             return cert;
         }
