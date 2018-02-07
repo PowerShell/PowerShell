@@ -663,21 +663,19 @@ function Restore-PSModuleToBuild
     if($CI.IsPresent)
     {
         # take the latest version of pester and install it so it may be used
-        Save-Module -Path $modulesDir -Name Pester
+        Restore-PSPester -Destination $modulesDir
     }
 }
 
 function Restore-PSPester
 {
-    param
-    (
+    param(
         [ValidateNotNullOrEmpty()]
-        [string]
-        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-
-    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '1f546b6aaa0893e215e940a14f57c96f56f7eff1'
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery
 }
+
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -988,7 +986,7 @@ function Start-PSPester {
         Write-Warning @"
 Pester module not found.
 Restore the module to '$Pester' by running:
-    Save-Module Pester -Path '$binDir/Modules'
+    Restore-PSPester
 "@
         return;
     }
@@ -2433,54 +2431,6 @@ function Clear-PSRepo
     Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
         Write-Verbose "Cleaning $_ ..."
         git clean -fdX $_
-    }
-}
-
-
-# Install PowerShell modules from a git Repo such as PSL-Pester
-function Restore-GitModule
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Name,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Uri,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$CommitSha
-    )
-
-    log 'Restoring module from git repo:'
-    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
-
-    $clonePath = Join-Path -Path $Destination -ChildPath $Name
-    if(Test-Path $clonePath)
-    {
-        remove-Item -Path $clonePath -recurse -force
-    }
-
-    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
-
-    Push-location $clonePath
-    try {
-        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
-
-        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
-        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
-    }
-    finally
-    {
-        pop-location
     }
 }
 
