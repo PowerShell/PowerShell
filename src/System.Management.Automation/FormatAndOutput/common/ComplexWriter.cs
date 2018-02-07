@@ -147,7 +147,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 firstLineIndentation = 0;
             }
 
-
             // compute the first line indentation or hanging
             int firstLineWidth = _textColumns - rightIndentation - leftIndentation;
             int followingLinesWidth = firstLineWidth;
@@ -224,7 +223,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private const int maxRecursionDepth = 50;
     }
 
-
     internal sealed class IndentationManager
     {
         private sealed class IndentationStackFrame : IDisposable
@@ -287,7 +285,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _frameInfoStack.Peek().firstLine;
             }
         }
-
 
         private int ComputeRightIndentation()
         {

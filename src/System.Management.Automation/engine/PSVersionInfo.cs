@@ -226,7 +226,6 @@ namespace System.Management.Automation
             }
         }
 
-
         internal static string GetRegistryVersionKeyForSnapinDiscovery(string majorVersion)
         {
             int tempMajorVersion = 0;

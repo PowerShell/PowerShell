@@ -14,7 +14,6 @@ namespace System.Management.Automation.Provider
     {
         #region ISecurityDescriptorCmdletProvider method wrappers
 
-
         /// <summary>
         /// Internal wrapper for the GetSecurityDescriptor protected method. This method will
         /// only be called if the provider implements the ISecurityDescriptorCmdletProvider interface.
@@ -55,7 +54,6 @@ namespace System.Management.Automation.Provider
 
             permissionProvider.GetSecurityDescriptor(path, sections);
         } // GetSecurityDescriptor
-
 
         /// <summary>
         /// Internal wrapper for the SetSecurityDescriptor protected method. This method will

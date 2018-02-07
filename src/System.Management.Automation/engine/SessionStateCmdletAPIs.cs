@@ -1,10 +1,9 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 using System.Collections.Generic;
 using Dbg = System.Management.Automation;
-
 
 namespace System.Management.Automation
 {
@@ -275,7 +274,6 @@ namespace System.Management.Automation
                 CmdletInfo cmdletInfo =
                     scope.GetCmdlet(name);
 
-
                 if (cmdletInfo != null)
                 {
                     // Make sure the cmdlet isn't private or if it is that the current
@@ -354,5 +352,4 @@ namespace System.Management.Automation
         #endregion cmdlets
     } // SessionStateInternal class
 }
-
 

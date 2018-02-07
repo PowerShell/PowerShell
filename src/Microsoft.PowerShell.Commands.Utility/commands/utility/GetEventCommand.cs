@@ -58,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _eventId = -1;
 
-
         #endregion parameters
 
         private WildcardPattern _matchPattern;

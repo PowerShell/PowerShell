@@ -386,7 +386,6 @@ namespace System.Management.Automation
             return null;
         } // NewPropertyDynamicParameters
 
-
         /// <summary>
         /// Gets the dynamic parameters for the new-itemproperty cmdlet.
         /// </summary>
@@ -800,7 +799,6 @@ namespace System.Management.Automation
             return null;
         } // RemovePropertyDynamicParameters
 
-
         /// <summary>
         /// Gets the dynamic parameters for the remove-itemproperty cmdlet.
         /// </summary>
@@ -856,7 +854,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             object result = null;
             try
@@ -1669,7 +1666,6 @@ namespace System.Management.Automation
             }
         } // MoveProperty
 
-
         /// <summary>
         /// Moves the property from one item to another
         /// </summary>
@@ -1936,7 +1932,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             object result = null;
 
             try
@@ -2152,7 +2147,6 @@ namespace System.Management.Automation
                 }
             }
         } // RenameProperty
-
 
         /// <summary>
         /// Renames the property of the item at the specified path.

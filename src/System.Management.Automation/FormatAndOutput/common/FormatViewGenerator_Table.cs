@@ -272,7 +272,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return thi;
         }
 
-
         private bool HideHeaders
         {
             get

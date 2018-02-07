@@ -1127,7 +1127,6 @@ namespace System.Management.Automation.Tracing
                                             PowerShellTraceTask.None, message, instanceId);
         }
 
-
         /// <summary>
         ///
         /// </summary>

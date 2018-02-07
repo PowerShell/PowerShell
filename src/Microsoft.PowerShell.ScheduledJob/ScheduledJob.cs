@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 using System;
@@ -335,7 +335,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
 
-
         /// <summary>
         /// StopJob
         /// </summary>
@@ -374,7 +373,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             throw new PSNotSupportedException();
         }
-
 
         #endregion
 

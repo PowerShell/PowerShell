@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -12,7 +11,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 //using System.Globalization;
 //using System.Management.Automation;
 //using System.Reflection;
-
 
 
 namespace System.Management.Automation.Host
@@ -71,7 +69,6 @@ namespace System.Management.Automation.Host
             }
         }
 
-
         /// <summary>
         ///
         /// Sets the ParameterTypeName, ParameterTypeFullName, and ParameterAssemblyFullName as a single operation.
@@ -101,7 +98,6 @@ namespace System.Management.Automation.Host
             SetParameterTypeFullName(parameterType.FullName);
             SetParameterAssemblyFullName(parameterType.AssemblyQualifiedName);
         }
-
 
 
         /// <summary>
@@ -141,7 +137,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets the full string name of the parameter's type.
@@ -172,7 +167,6 @@ namespace System.Management.Automation.Host
                 return parameterTypeFullName;
             }
         }
-
 
         /// <summary>
         ///
@@ -205,7 +199,6 @@ namespace System.Management.Automation.Host
                 return parameterAssemblyFullName;
             }
         }
-
 
 
         /// <summary>
@@ -257,7 +250,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets and sets the help message for this field.
@@ -295,7 +287,6 @@ namespace System.Management.Automation.Host
                 helpMessage = value;
             }
         }
-
 
         /// <summary>
         ///
@@ -388,7 +379,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// For use by remoting serialization.
@@ -412,7 +402,6 @@ namespace System.Management.Automation.Host
 
             parameterTypeFullName = fullNameOfType;
         }
-
 
 
         /// <summary>
@@ -500,6 +489,5 @@ namespace System.Management.Automation.Host
         #endregion
     }
 }
-
 
 

@@ -793,7 +793,6 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-
         /// <summary>
         /// Prepares receive data streams for a reconnection
         /// </summary>
@@ -804,7 +803,6 @@ namespace System.Management.Automation.Remoting
                 _recvdData[index].PrepareForStreamConnect();
             }
         }
-
 
         /// <summary>
         /// This might be needed only for ServerCommandTransportManager case

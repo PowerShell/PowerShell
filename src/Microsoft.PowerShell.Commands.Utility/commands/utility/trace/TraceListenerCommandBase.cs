@@ -29,7 +29,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         internal string[] NameInternal { get; set; } = new string[0];
 
-
         /// <summary>
         /// The flags to be set on the TraceSource
         /// </summary>
@@ -440,7 +439,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         } // RemoveAllTraceListenersFromSource
-
 
         #endregion RemoveTraceListeners
 

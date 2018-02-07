@@ -26,7 +26,6 @@ using System.Security.Principal;
 using System.Security.AccessControl;
 using Dbg = System.Management.Automation;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     #region Get-HotFix
@@ -78,7 +77,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region Overrides
-
 
         private ManagementObjectSearcher _searchProcess;
 

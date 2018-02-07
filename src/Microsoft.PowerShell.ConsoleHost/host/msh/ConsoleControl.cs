@@ -3,7 +3,6 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 // Implementation notes: In the functions that take ConsoleHandle parameters, we only assert that the handle is valid and not
 // closed, as opposed to doing a check and throwing an exception.  This is because the win32 APIs that those functions wrap will
 // fail on invalid/closed handles, and the check for API failure will throw the exception.
@@ -12,7 +11,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 // handles should not be exposed to recycling attacks (because they are not exposed at all), but if they were, the worse they
 // could do is diddle with the console buffer.
 #pragma warning disable 1634, 1691
-
 
 using System;
 using System.Text;
@@ -724,11 +722,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-
 #endregion
 
 #region Input
-
 
 
         /// <summary>
@@ -1343,7 +1339,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called in CHK builds")]
         private static void CheckWriteConsoleOutputContents(BufferCell[,] contents, Rectangle contentsRegion)
@@ -2051,7 +2046,6 @@ namespace Microsoft.PowerShell
                 readRegion.Top += bufferSize.Y;
             }  // row iteration
 
-
             // The following nested loop set the value of the empty cells in contents:
             // character to ' '
             // foreground color to console's foreground color
@@ -2096,7 +2090,6 @@ namespace Microsoft.PowerShell
             }
         }
 #endregion ReadConsoleOutput CJK
-
 
         private static void ReadConsoleOutputPlain
         (
@@ -2276,7 +2269,6 @@ namespace Microsoft.PowerShell
                 rowIndex++;
             }
         }
-
 
         /// <summary>
         /// Wraps Win32 FillConsoleOutputCharacter
@@ -2544,7 +2536,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         /// Wraps Win32 GetConsoleTitle. 1K is the safe limit experimentally. The 64K limit
         /// found in the docs is disregarded because it is essentially meaningless.
@@ -2808,7 +2799,6 @@ namespace Microsoft.PowerShell
 
 #region Cursor
 
-
         /// <summary>
         /// Wraps Win32 SetConsoleCursorPosition
         /// </summary>
@@ -2847,7 +2837,6 @@ namespace Microsoft.PowerShell
                 throw e;
             }
         }
-
 
 
         /// <summary>
@@ -3124,7 +3113,6 @@ namespace Microsoft.PowerShell
 
             [DllImport(PinvokeDllNames.GetConsoleScreenBufferInfoDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool GetConsoleScreenBufferInfo(NakedWin32Handle consoleHandle, out CONSOLE_SCREEN_BUFFER_INFO consoleScreenBufferInfo);
-
 
             internal enum FileType
             {

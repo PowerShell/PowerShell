@@ -112,7 +112,6 @@ namespace System.Management.Automation
             _isTranscribing = context.EngineHostInterface.UI.IsTranscribing;
         }
 
-
         /// <summary>
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable object and only for the duration of a command.
@@ -1129,7 +1128,6 @@ namespace System.Management.Automation
                                 boType = argumentType;
                             }
 
-
                             if (boType == typeof(bool))
                             {
                                 if (LanguagePrimitives.IsBooleanType(toType))
@@ -1198,7 +1196,6 @@ namespace System.Management.Automation
                             }
                             break;
                         }
-
 
                         // NTRAID#Windows OS Bugs-1009284-2004/05/05-JeffJon
                         // Need to handle other collection types here as well

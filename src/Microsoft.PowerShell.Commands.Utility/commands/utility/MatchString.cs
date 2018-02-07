@@ -116,7 +116,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _filename;
 
-
         /// <summary>
         /// The full path of the file containing the matching line.
         /// <remarks>
@@ -434,7 +433,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new NotImplementedException();
             }
-
 
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             public void CopyTo(T[] array, int arrayIndex)

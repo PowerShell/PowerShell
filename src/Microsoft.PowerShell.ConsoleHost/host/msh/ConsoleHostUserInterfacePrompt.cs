@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System;
 using System.Globalization;
 using System.Collections;
@@ -16,7 +15,6 @@ using System.Management.Automation.Host;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
 using InternalHostUserInterface = System.Management.Automation.Internal.Host.InternalHostUserInterface;
-
 
 
 namespace Microsoft.PowerShell
@@ -45,7 +43,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private static
         bool
         AtLeastOneHelpMessageIsPresent(Collection<FieldDescription> descriptions)
@@ -63,7 +60,6 @@ namespace Microsoft.PowerShell
 
             return false;
         }
-
 
 
         /// <summary>

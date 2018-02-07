@@ -13,7 +13,6 @@ using System.Diagnostics.CodeAnalysis;
 
 #endregion
 
-
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>

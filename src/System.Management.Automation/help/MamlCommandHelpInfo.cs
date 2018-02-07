@@ -146,7 +146,6 @@ namespace System.Management.Automation
             }
         }
 
-
         #endregion
 
         #region Component, Role, Features

@@ -554,7 +554,6 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.UseDefaultCredentials = true;
             }
 
-
             if (null != CertificateThumbprint)
             {
                 X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
@@ -946,7 +945,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
-
 
             HttpClient httpClient = new HttpClient(handler);
 

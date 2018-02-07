@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -570,7 +570,6 @@ namespace Microsoft.PowerShell.Commands
             // get amount of memory physically installed
             //TODO: Local machine only. Check for that?
             rv.physicallyInstalledMemory = GetPhysicallyInstalledSystemMemory();
-
 
             // get time zone
             // we'll use .Net's TimeZoneInfo for now. systeminfo uses Caption from Win32_TimeZone
@@ -5118,7 +5117,6 @@ namespace Microsoft.PowerShell.Commands
         public const uint POWER_PLATFORM_ROLE_V2 = 0x2;
 
         public const UInt32 S_OK = 0;
-
 
         /// <summary>
         /// Import WINAPI function PowerDeterminePlatformRoleEx

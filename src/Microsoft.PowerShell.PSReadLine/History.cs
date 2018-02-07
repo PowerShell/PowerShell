@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -104,7 +104,6 @@ namespace Microsoft.PowerShell
         {
             WriteHistoryRange(0, _history.Count - 1, File.CreateText);
         }
-
 
         private int historyErrorReportedCount;
         private void ReportHistoryFileError(Exception e)

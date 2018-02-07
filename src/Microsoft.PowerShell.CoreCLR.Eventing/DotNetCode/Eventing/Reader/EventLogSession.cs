@@ -60,7 +60,6 @@ namespace System.Diagnostics.Eventing.Reader
         //
         private EventLogHandle _handle = EventLogHandle.Zero;
 
-
         //setup the System Context, once for all the EventRecords.
         [System.Security.SecuritySafeCritical]
         internal void SetupSystemContext()

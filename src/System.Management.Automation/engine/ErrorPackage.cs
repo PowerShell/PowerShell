@@ -927,7 +927,6 @@ namespace System.Management.Automation
 
     } // class ErrorDetails
 
-
     /// <summary>
     /// Represents an error.
     /// </summary>
@@ -1057,7 +1056,6 @@ namespace System.Management.Automation
             }
         }
         #endregion Serialization
-
 
 
         #region Remoting

@@ -24,7 +24,6 @@ Describe "Format-Custom" -Tags "CI" {
     }
 }
 
-
 Describe "Format-Custom DRT basic functionality" -Tags "CI" {
 	Add-Type -TypeDefinition @"
     public abstract class NamedItem

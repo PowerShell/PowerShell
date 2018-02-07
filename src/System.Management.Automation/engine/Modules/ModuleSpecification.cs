@@ -216,7 +216,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-
         /// <summary>
         /// Parse the specified string into a ModuleSpecification object
         /// </summary>

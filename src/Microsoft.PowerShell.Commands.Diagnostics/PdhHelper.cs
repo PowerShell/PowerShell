@@ -106,7 +106,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
     }
 
 
-
     internal static class PerfDetail
     {
         public const uint PERF_DETAIL_NOVICE = 100;   // The uninformed can understand it
@@ -203,7 +202,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             _isPreVista = isPreVista;
         }
 
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_PATH_ELEMENTS
         {
@@ -274,7 +272,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             public UInt32 SampleCount;
         }
 
-
         /*
         //
         // This is the structure returned by PdhGetCounterInfo().
@@ -303,7 +300,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             [FieldOffset(96)] public string szExplainText;
             [FieldOffset(104)]public IntPtr DataBuffer;
         }*/
-
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhBindInputDataSource(out PdhSafeDataSourceHandle phDataSource, string szLogFileNameList);
@@ -346,7 +342,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //Win7+ only
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern void PdhResetRelogCounterValues(PdhSafeLogHandle LogHandle);
-
 
         //Win7+ only
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
@@ -396,7 +391,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                        ref IntPtr pdwBufferSize,
                                                        uint dwFlags);
 
-
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhExpandWildCardPathH(PdhSafeDataSourceHandle hDataSource,
                                                            string szWildCardPath,
@@ -427,10 +421,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhSetQueryTimeRange(PdhSafeQueryHandle hQuery, ref PDH_TIME_INFO pInfo);
 
-
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhLookupPerfNameByIndex(string szMachineName, UInt32 dwNameIndex, IntPtr szNameBuffer, ref int pcchNameBufferSize);
-
 
         private PdhSafeDataSourceHandle _hDataSource = null;
 
@@ -468,7 +460,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         //
         private Dictionary<string, CounterHandleNInstance> _consumerPathToHandleAndInstanceMap = new Dictionary<string, CounterHandleNInstance>();
 
-
         //
         // m_ReloggerPathToHandleAndInstanceMap map is used for writing relog counters.
         //
@@ -503,7 +494,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             strColl.AddRange(allSubstringsWithNulls.Split('\0'));
         }
-
 
 
         private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
@@ -586,7 +576,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-
         public uint ConnectToDataSource(StringCollection blgFileNames)
         {
             if (blgFileNames.Count == 1)
@@ -634,7 +623,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return res;
         }
-
 
         public uint SetQueryTimeRange(DateTime startTime, DateTime endTime)
         {
@@ -799,7 +787,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         {
             Debug.Assert(_hDataSource != null && !_hDataSource.IsInvalid, "Call ConnectToDataSource before GetValidPathsFromFiles");
 
-
             StringCollection machineNames = new StringCollection();
             uint res = this.EnumBlgFilesMachines(ref machineNames);
             if (res != 0)
@@ -894,7 +881,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
         }
 
-
         private uint MakePath(PDH_COUNTER_PATH_ELEMENTS pathElts, out string outPath, bool bWildcardInstances)
         {
             outPath = "";
@@ -946,7 +932,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return MakePath(elts, out unifiedPath, true);
         }
-
 
         private uint ParsePath(string fullPath, ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements)
         {
@@ -1022,7 +1007,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009");
             string[] regCounters = (string[])rootKey.GetValue("Counter");
 
-
             // NOTE: 1-based enumeration because the name strings follow index strings in the array
             Int32 counterIndex = -1;
             Int32 objIndex = -1;
@@ -1062,7 +1046,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return (uint)PdhResults.PDH_INVALID_PATH;
             }
 
-
             // Now, call retrieve the localized names of the object and the counter by index:
             string objNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)objIndex, out objNameLocalized);
@@ -1071,7 +1054,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return res;
             }
             pathElts.ObjectName = objNameLocalized;
-
 
             string ctrNameLocalized;
             res = LookupPerfNameByIndex(pathElts.MachineName, (uint)counterIndex, out ctrNameLocalized);
@@ -1085,10 +1067,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             res = MakePath(pathElts, out localizedPath, false);
 
-
             return res;
         }
-
 
         public uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
         {
@@ -1123,7 +1103,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return res;
         }
-
 
 
         public uint GetValidPaths(string machineName,
@@ -1168,7 +1147,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-
         public uint AddCounters(ref StringCollection validPaths, bool bFlushOldCounters)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
@@ -1209,7 +1187,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return bAtLeastOneAdded ? 0 : res;
         }
-
 
         //
         // AddRelogCounters combines instances and adds counters to m_hQuery.
@@ -1324,7 +1301,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return (_reloggerPathToHandleAndInstanceMap.Keys.Count > 0) ? 0 : res;
         }
-
 
 
         //
@@ -1534,7 +1510,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-
         public uint ReadNextSet(out PerformanceCounterSampleSet nextSet, bool bSkipReading)
         {
             Debug.Assert(_hQuery != null && !_hQuery.IsInvalid);
@@ -1658,7 +1633,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                                            fmtValueDouble.CStatus);
             }
 
-
             nextSet = new PerformanceCounterSampleSet(batchStamp, samplesArr, _firstReading);
             _firstReading = false;
 
@@ -1676,7 +1650,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return res;
         }
-
 
         public uint GetFilesSummary(out CounterFileInfo summary)
         {
@@ -1769,7 +1742,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             rawStruct.TimeStamp.dwHighDateTime = (int)((new DateTime(sample.Timestamp.Ticks, DateTimeKind.Utc).ToFileTimeUtc() >> 32) & 0xFFFFFFFFL);
             rawStruct.TimeStamp.dwLowDateTime = (int)(new DateTime(sample.Timestamp.Ticks, DateTimeKind.Utc).ToFileTimeUtc() & 0xFFFFFFFFL);
             rawStruct.CStatus = sample.Status;
-
 
             return PdhSetCounterValue(_reloggerPathToHandleAndInstanceMap[lcPath].hCounter,
                                         ref rawStruct, /*PPDH_RAW_COUNTER */

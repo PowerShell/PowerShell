@@ -3,13 +3,11 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -146,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
         {
             get; set;
         }
-
 
         /// <summary>
         ///
@@ -343,6 +340,5 @@ namespace Microsoft.PowerShell.Commands
         private bool _isFilenameSet;
     }
 }
-
 
 

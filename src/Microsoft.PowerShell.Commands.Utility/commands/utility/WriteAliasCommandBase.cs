@@ -74,7 +74,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string Scope { get; set; }
 
-
         /// <summary>
         /// If set to true and an existing alias of the same name exists
         /// and is ReadOnly, the alias will be overwritten.

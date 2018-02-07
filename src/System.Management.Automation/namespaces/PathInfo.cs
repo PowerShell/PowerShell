@@ -110,7 +110,6 @@ namespace System.Management.Automation
         {
             string result = _path;
 
-
             if (_drive == null ||
                 _drive.Hidden)
             {

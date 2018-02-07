@@ -60,7 +60,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 fpt.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
                 cnListItemDefinition.formatTokenList.Add(fpt);
 
-
                 _listBody.defaultEntryDefinition.itemDefinitionList.Add(cnListItemDefinition);
             }
         }

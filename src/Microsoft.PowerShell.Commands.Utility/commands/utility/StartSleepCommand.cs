@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
 
-
         #region parameters
 
         /// <summary>
@@ -47,7 +46,6 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true)]
         [ValidateRangeAttribute(0, int.MaxValue / 1000)]
         public int Seconds { get; set; }
-
 
         /// <summary>
         /// Allows sleep time to be specified in milliseconds

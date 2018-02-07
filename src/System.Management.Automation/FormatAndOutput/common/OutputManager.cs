@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutputManagerInner", "OutputManagerInner");
         #endregion tracer
 
-
         #region LineOutput
         internal LineOutput LineOutput
         {
@@ -122,7 +121,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _mgr = null;
             }
         }
-
 
         /// <summary>
         /// instance of the pipeline manager object

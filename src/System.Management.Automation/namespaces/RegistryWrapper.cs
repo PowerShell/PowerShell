@@ -15,7 +15,6 @@ using System.Security.AccessControl;
 using System.Management.Automation.Provider;
 using Microsoft.PowerShell.Commands.Internal;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     internal interface IRegistryWrapper

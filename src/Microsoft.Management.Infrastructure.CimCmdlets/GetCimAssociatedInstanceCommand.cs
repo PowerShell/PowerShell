@@ -12,7 +12,6 @@ using System.Collections.Generic;
 
 #endregion
 
-
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>

@@ -49,7 +49,6 @@ namespace Dummy
     }
 
 
-
     Context 'Property.Instance.ValidateSet.String' {
         class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }
         # This call should not throw exception
@@ -268,7 +267,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 }
             }
 
-
             /// Implement of test IValidateSetValuesGenerator
             public class GenValuesForParamNull : IValidateSetValuesGenerator
             {
@@ -476,7 +474,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
                 }
             }
-
 
             function Get-TestValidateSetPS4
             {

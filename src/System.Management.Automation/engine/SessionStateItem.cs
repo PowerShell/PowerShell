@@ -208,7 +208,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
@@ -362,7 +361,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
@@ -598,7 +596,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
@@ -761,7 +758,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
@@ -989,7 +985,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
@@ -1143,7 +1138,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
@@ -1358,7 +1352,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);
 
@@ -1512,7 +1505,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             ItemCmdletProvider itemCmdletProvider =
                 GetItemProviderInstance(providerInstance);

@@ -2,13 +2,11 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography.X509Certificates;
 using System.ComponentModel;
 using DWORD = System.UInt32;
-
 
 namespace System.Management.Automation
 {
@@ -308,7 +306,6 @@ namespace System.Management.Automation
                                                       error,
                                                       filePath);
         }
-
 
         private static SignatureStatus GetSignatureStatusFromWin32Error(DWORD error)
         {

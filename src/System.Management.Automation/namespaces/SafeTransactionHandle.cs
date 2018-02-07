@@ -11,7 +11,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     using Microsoft.Win32.SafeHandles;
     using System.Management.Automation;
 
-
     [Guid("79427A2B-F895-40e0-BE79-B57DC82ED231"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     internal interface IKernelTransaction
     {

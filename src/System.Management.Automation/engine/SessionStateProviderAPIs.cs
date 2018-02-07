@@ -123,7 +123,6 @@ namespace System.Management.Automation
             return provider;
         }
 
-
         /// <summary>
         /// Determines the appropriate provider for the drive and then calls the NewDrive
         /// method of that provider.
@@ -1231,7 +1230,6 @@ namespace System.Management.Automation
 
                 throw sessionStateException;
             }
-
 
             // Make sure we are able to create an instance of the provider.
             // Note, this will also set the friendly name if the user didn't

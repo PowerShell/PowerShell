@@ -14,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-
 namespace Microsoft.WSMan.Management
 {
 
@@ -123,7 +122,6 @@ namespace Microsoft.WSMan.Management
             set { applicationname = value; }
         }
         private String applicationname = null;
-
 
         /// <summary>
         /// ProcessRecord method.

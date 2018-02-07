@@ -11,7 +11,6 @@ namespace mvc.Controllers
         public const string NoRelLinkHeader = "<url>; foo=\"bar\"";
         public const string NoUrlLinkHeader = "<>; rel=\"next\"";
 
-
     }
 
     internal static class StatusCodes

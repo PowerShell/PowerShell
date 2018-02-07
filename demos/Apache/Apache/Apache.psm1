@@ -216,7 +216,6 @@ Function Restart-ApacheHTTPServer{
 
 }
 
-
 Function Get-ApacheModule{
     $cmd = GetApacheCmd
 

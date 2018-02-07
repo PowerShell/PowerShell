@@ -119,7 +119,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private static string GetProviderAssemblyPath(ProviderInfo providerInfo)
         {
             if (providerInfo == null)

@@ -9,7 +9,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
 using Dbg = System.Management.Automation;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -1067,6 +1066,5 @@ namespace System.Management.Automation
         #endregion push-Pop current working directory
     }           // SessionStateInternal class
 }
-
 
 

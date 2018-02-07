@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright company="Microsoft">
 //     Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
@@ -9,7 +9,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     using System;
     using System.Collections;
     using System.Management.Automation;
-
 
     /// <summary>
     /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart

@@ -55,7 +55,6 @@ cat inline_python.ps1
 # and run it
 ./inline_python
 
-
 ####################################
 # cleanup
 rm hi

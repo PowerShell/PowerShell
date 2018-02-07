@@ -433,7 +433,6 @@ function foo()
         }
     }
 
-
     # here we are back to normal $env:PSModulePath, but all modules are there
     Context "Module by path" {
         BeforeAll {

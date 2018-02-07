@@ -24,7 +24,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 
 using System.Collections.Generic;
 
-
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     #region Root of Class Hierarchy
@@ -49,7 +48,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         public abstract string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get; }
     }
-
 
     #endregion
 
@@ -243,7 +241,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public string propertyName = null;
     }
 
-
     internal sealed class ListViewHeaderInfo : ShapeInfo
     {
         internal const string CLSID = "830bdcb24c1642258724e441512233a4";
@@ -257,7 +254,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
     }
-
 
     #endregion
 

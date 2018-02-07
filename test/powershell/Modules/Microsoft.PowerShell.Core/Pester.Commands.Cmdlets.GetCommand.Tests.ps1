@@ -1,4 +1,4 @@
-﻿##
+##
 ## Copyright (c) Microsoft Corporation. All rights reserved.
 ##
 
@@ -76,7 +76,6 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         )
         $observed | Should BeExactly $result
     }
-
 
     It "Get-Command -ShowCommandInfo ParameterSets property field test" {
         $properties = ($commandInfo.ParameterSets[0] | Get-Member -MemberType NoteProperty)

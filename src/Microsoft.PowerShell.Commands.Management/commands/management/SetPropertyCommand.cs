@@ -227,6 +227,5 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // SetItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

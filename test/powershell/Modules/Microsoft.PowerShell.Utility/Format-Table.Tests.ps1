@@ -27,7 +27,6 @@ Describe "Format-Table" -Tags "CI" {
 		}
 }
 
-
 Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		It "Format-Table with not existing table with force should throw PipelineStoppedException"{
 				$obj = New-Object -typename PSObject

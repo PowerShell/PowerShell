@@ -587,7 +587,6 @@ namespace System.Management.Automation
         /// </summary>
         private object _immediateBaseObject;
 
-
         private WeakReference<TypeTable> _typeTable;
 
         /// <summary>
@@ -735,7 +734,6 @@ namespace System.Management.Automation
 
         #endregion instance fields
 
-
         #endregion fields
 
         #region properties
@@ -808,7 +806,6 @@ namespace System.Management.Automation
             }
         }
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
-
 
         /// <summary>
         /// Gets the object we are directly wrapping.
@@ -1584,7 +1581,6 @@ namespace System.Management.Automation
                 returnValue._immediateBaseObject = CopyValueType(returnValue._immediateBaseObject);
             }
 
-
             // needToReAddInstanceMembersAndTypeNames = returnValue will have a different key (different from "this") returned from GetKeyForResurrectionTables
             bool needToReAddInstanceMembersAndTypeNames = !object.ReferenceEquals(GetKeyForResurrectionTables(this), GetKeyForResurrectionTables(returnValue));
             if (needToReAddInstanceMembersAndTypeNames)
@@ -1755,7 +1751,6 @@ namespace System.Management.Automation
         /// </remarks>
         public const string BaseObjectMemberSetName = "psbase";
 
-
         /// <summary>
         /// The PSObject's properties
         /// </summary>
@@ -1851,7 +1846,6 @@ namespace System.Management.Automation
             }
             return note.Value;
         }
-
 
 
         internal int GetSerializationDepth(TypeTable backupTypeTable)

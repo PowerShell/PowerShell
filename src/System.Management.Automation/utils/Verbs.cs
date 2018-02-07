@@ -194,7 +194,6 @@ namespace System.Management.Automation
         public const string Watch = "Watch";
     }//VerbsCommon
 
-
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates data.
     /// </summary>
@@ -496,7 +495,6 @@ namespace System.Management.Automation
         /// </summary>
         public const string Trace = "Trace";
     }//VerbsDiagnostic
-
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to communicate with something.

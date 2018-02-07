@@ -376,7 +376,6 @@ namespace System.Management.Automation.Remoting
         #endregion
     }
 
-
     /// <summary>
     /// A wrapper around TextWriter to allow for synchronized writing to a stream.
     /// Synchronization is required to avoid collision when multiple TransportManager's

@@ -145,7 +145,6 @@ class C
     }
 }
 
-
 function m2()
 {
     $canary = Get-Canary

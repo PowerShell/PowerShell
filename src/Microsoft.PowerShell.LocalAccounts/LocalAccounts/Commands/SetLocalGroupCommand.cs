@@ -8,7 +8,6 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 using Microsoft.PowerShell.LocalAccounts;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -94,7 +93,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameter Properties
 
 
-
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -103,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -147,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(ex.MakeErrorRecord());
             }
         }
-
 
         /// <summary>
         /// EndProcessing method.

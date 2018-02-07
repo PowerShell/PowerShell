@@ -182,7 +182,6 @@ Describe "Remove-Variable" -Tags "CI" {
     }
 }
 
-
 Describe "Remove-Variable basic functionality" -Tags "CI" {
 	It "Remove-Variable variable should works"{
 		New-Variable foo bar

@@ -78,7 +78,6 @@ namespace System.Management.Automation
             // that uses variables qualified by script: it works.
             GlobalScope.ScriptScope = GlobalScope;
 
-
             if (parent != null)
             {
                 GlobalScope.Parent = parent.GlobalScope;
@@ -123,7 +122,6 @@ namespace System.Management.Automation
             PSVariable errorvariable = new PSVariable("Error", new ArrayList(), ScopedItemOptions.Constant);
             GlobalScope.SetVariable(errorvariable.Name, errorvariable, false, false, this, fastPath: true);
 
-
             // Set variable $PSDefaultParameterValues
             Collection<Attribute> attributes = new Collection<Attribute>();
             attributes.Add(new ArgumentTypeConverterAttribute(typeof(System.Management.Automation.DefaultParameterDictionary)));
@@ -133,7 +131,6 @@ namespace System.Management.Automation
                                                                          RunspaceInit.PSDefaultParameterValuesDescription);
             GlobalScope.SetVariable(psDefaultParameterValuesVariable.Name, psDefaultParameterValuesVariable, false, false, this, fastPath: true);
         }
-
 
         #endregion Constructor
 
@@ -234,7 +231,6 @@ namespace System.Management.Automation
         /// is in the list, then all applications can be run. (This is the default.)
         /// </summary>
         public List<string> Applications { get; } = new List<string>(new string[] { "*" });
-
 
         /// <summary>
         /// List of functions/filters to export from this session state object...
@@ -534,7 +530,6 @@ namespace System.Management.Automation
         {
             return NewProviderInvocationException(resourceId, resourceStr, provider, path, e, true);
         }
-
 
         /// <summary>
         /// Constructs a new instance of a ProviderInvocationException

@@ -64,7 +64,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-
         [System.Security.SecurityCritical]
         public static void EvtSeek(
                             EventLogHandle resultSet,
@@ -212,7 +211,6 @@ namespace System.Diagnostics.Eventing.Reader
             if (!status)
                 EventLogException.Throw(win32Error);
         }
-
 
         [System.Security.SecurityCritical]
         public static EventLogHandle EvtOpenLog(EventLogHandle session, string path, PathType flags)
@@ -429,7 +427,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         [System.Security.SecurityCritical]
         internal static EventLogHandle EvtGetPublisherMetadataPropertyHandle(EventLogHandle pmHandle, UnsafeNativeMethods.EvtPublisherMetadataPropertyId thePropertyId)
         {
@@ -465,7 +462,6 @@ namespace System.Diagnostics.Eventing.Reader
                 if (buffer != IntPtr.Zero) Marshal.FreeHGlobal(buffer);
             }
         }
-
 
         // implies UnsafeNativeMethods.EvtFormatMessageFlags.EvtFormatMessageId flag.
         [System.Security.SecurityCritical]
@@ -987,7 +983,6 @@ namespace System.Diagnostics.Eventing.Reader
             return sb.ToString();
         }
 
-
         //The EvtFormatMessage used for the obtaining of the Keywords names.
         [System.Security.SecuritySafeCritical]
         public static IEnumerable<string> EvtFormatMessageRenderKeywords(EventLogHandle pmHandle, EventLogHandle eventHandle, UnsafeNativeMethods.EvtFormatMessageFlags flag)
@@ -1086,7 +1081,6 @@ namespace System.Diagnostics.Eventing.Reader
                     Marshal.FreeHGlobal(buffer);
             }
         }
-
 
         //Get the formatted description, using the msgId for FormatDescription(string [])
         [System.Security.SecuritySafeCritical]
@@ -1265,7 +1259,6 @@ namespace System.Diagnostics.Eventing.Reader
             if (val.Type != (int)desiredType)
                 throw new EventLogInvalidDataException();
 
-
             return ConvertToObject(val);
         }
 
@@ -1287,7 +1280,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return Marshal.PtrToStringAnsi(val.AnsiString);
         }
 
-
         [System.Security.SecurityCritical]
         public static EventLogHandle ConvertToSafeHandle(UnsafeNativeMethods.EvtVariant val)
         {
@@ -1296,7 +1288,6 @@ namespace System.Diagnostics.Eventing.Reader
             else
                 return new EventLogHandle(val.Handle, true);
         }
-
 
         [System.Security.SecurityCritical]
         public static Array ConvertToArray<T>(UnsafeNativeMethods.EvtVariant val, int size) where T : struct
@@ -1380,7 +1371,6 @@ namespace System.Diagnostics.Eventing.Reader
                 return array;
             }
         }
-
 
         [System.Security.SecurityCritical]
         public static string[] ConvertToStringArray(UnsafeNativeMethods.EvtVariant val, bool ansi)

@@ -50,7 +50,6 @@ try
             $WarnVar | should BeNullOrEmpty
         }
 
-
         Context "Rename-Computer Error Conditions" {
             $testcases =
                 @{ OldName = "." ; NewName = "localhost" ; ExpectedError = "FailToRenameComputer,Microsoft.PowerShell.Commands.RenameComputerCommand" },

@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Microsoft.PowerShell.Commands;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -76,7 +75,6 @@ namespace System.Management.Automation
         /// A workflow
         /// </summary>
         Workflow = 0x0080,
-
 
         /// <summary>
         /// A Configuration
@@ -293,7 +291,6 @@ namespace System.Management.Automation
         /// information for the command type.
         /// </remarks>
         public abstract string Definition { get; }
-
 
         /// <summary>
         /// This is required for renaming aliases, functions, and filters
@@ -657,7 +654,6 @@ namespace System.Management.Automation
         /// The prefix that was used when importing this command
         /// </summary>
         internal string Prefix { get; set; } = "";
-
 
         /// <summary>
         /// Create a copy of commandInfo for GetCommandCommand so that we can generate parameter

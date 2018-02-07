@@ -92,7 +92,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion parameters
 
-
         /// <summary>
         /// Add the event to the event queue
         /// </summary>

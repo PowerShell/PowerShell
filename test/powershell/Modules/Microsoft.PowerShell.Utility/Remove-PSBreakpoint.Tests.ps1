@@ -57,7 +57,6 @@ Get-Date
 	$(Get-PSBreakpoint).Id.Length | Should Be 0
     }
 
-
     #Clean up after ourselves
 
     Remove-Item $testScript

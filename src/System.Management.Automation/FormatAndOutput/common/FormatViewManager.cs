@@ -71,7 +71,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
         #endregion tracer
 
-
         private static string PSObjectTypeName(PSObject so)
         {
             // if so is not null, its TypeNames will not be null
@@ -360,7 +359,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         private static ViewGenerator SelectViewGeneratorFromViewDefinition(
                                         TerminatingErrorContext errorContext,
                                         MshExpressionFactory expressionFactory,
@@ -446,7 +444,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
             return viewGenerator;
         }
-
 
 
         /// <summary>
@@ -588,7 +585,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-
     /// <summary>
     /// Helper class to manage the logging of errors resulting from
     /// evaluations of MshExpression instances
@@ -714,7 +710,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return errorRecord;
         }
-
 
         private FormatErrorPolicy _formatErrorPolicy;
 

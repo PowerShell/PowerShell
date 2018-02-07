@@ -551,7 +551,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("DS")]
         public SwitchParameter DependentServices { get; set; }
 
-
         /// <summary>
         /// This returns the ServicesDependedOn of the specified service.
         /// </summary>
@@ -1473,7 +1472,6 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
 
-
         /// <summary>
         /// The following is the definition of the input parameter "Description".
         /// Specifies a new description for the service.
@@ -1492,7 +1490,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         internal string description = null;
-
 
         /// <summary>
         /// The following is the definition of the input parameter "StartupType".
@@ -1515,7 +1512,6 @@ namespace Microsoft.PowerShell.Commands
         // We set the initial value to an invalid value so that we can
         // distinguish when this is and is not set.
         internal ServiceStartupType startupType = ServiceStartupType.InvalidValue;
-
 
         /// <summary>
         /// The following is the definition of the input parameter "Status".

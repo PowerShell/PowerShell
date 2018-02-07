@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using System;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
@@ -69,7 +68,6 @@ namespace Microsoft.PowerShell.Commands
         //
         private ArrayList _filesNotFound = new ArrayList();
 
-
         /// <summary>
         /// Initializes a new instance of the GetPfxCertificateCommand
         /// class
@@ -122,7 +120,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string resolvedProviderPath =
                         SecurityUtils.GetFilePathOfExistingFile(this, resolvedPath);
-
 
                     if (resolvedProviderPath == null)
                     {

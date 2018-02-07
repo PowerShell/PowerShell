@@ -12,7 +12,6 @@ using System.Management.Automation;
 
 #endregion
 
-
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
@@ -63,7 +62,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
         private CimSession[] cimSession;
-
 
         /// <summary>
         /// <para>

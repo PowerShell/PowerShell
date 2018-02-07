@@ -126,7 +126,6 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // ConvertPathCommand
 } // namespace Microsoft.PowerShell.Commands
 

@@ -18,8 +18,6 @@ using System.Runtime.CompilerServices;
 
 
 
-
-
 [assembly: CLSCompliant(true)]
 namespace Microsoft.WSMan.Management
 {

@@ -116,7 +116,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
     }
 
-
     /// <summary>
     /// <para>Represents a set of access rights to be audited for a user or group. This class cannot be inherited.</para>
     /// </summary>
@@ -166,7 +165,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             get { return (RegistryRights)base.AccessMask; }
         }
     }
-
 
     /// <summary>
     /// <para>Represents the Windows access control security for a registry key. This class cannot be inherited.

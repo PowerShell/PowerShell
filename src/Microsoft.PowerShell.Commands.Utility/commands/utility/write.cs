@@ -26,7 +26,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Msg")]
         public string Message { get; set; } = null;
 
-
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Debug command
         /// </summary>
@@ -76,7 +75,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Msg")]
         public string Message { get; set; } = null;
 
-
         /// <summary>
         /// This method implements the ProcessRecord method for Write-verbose command
         /// </summary>
@@ -125,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
         [AllowEmptyString]
         [Alias("Msg")]
         public string Message { get; set; } = null;
-
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Warning command
@@ -213,7 +210,6 @@ namespace Microsoft.PowerShell.Commands
     }//WriteInformationCommand
 
     #endregion WriteInformationCommand
-
 
     #region WriteOrThrowErrorCommand
 
@@ -310,7 +306,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Alias("TargetType")]
         public string CategoryTargetType { get; set; } = "";
-
 
         /// <summary>
         /// Write an error to the output pipe, or throw a terminating error.
@@ -492,6 +487,5 @@ namespace Microsoft.PowerShell.Commands
     } // WriteErrorException
     #endregion WriteErrorException
 } //namespace
-
 
 

@@ -107,7 +107,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // CmdletProviderContext
 
-
         #region brokered properties
 
         /// <summary>

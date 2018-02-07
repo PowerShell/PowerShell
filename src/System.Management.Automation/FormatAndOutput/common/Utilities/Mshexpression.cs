@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal Exception Exception { get; } = null;
     }
 
-
     internal class MshExpression
     {
         /// <summary>
@@ -267,7 +266,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
         }
-
 
         // private members
         private string _stringValue;

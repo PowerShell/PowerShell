@@ -619,7 +619,6 @@ namespace System.Management.Automation.Remoting.Client
             WSMAN_DATA_TYPE_DWORD = 4
         };
 
-
         [StructLayout(LayoutKind.Sequential)]
         internal class WSManDataStruct
         {
@@ -786,7 +785,6 @@ namespace System.Management.Automation.Remoting.Client
                 get { return _bufferLength; }
                 set { _bufferLength = value; }
             }
-
 
             private string _text;
             internal string Text
@@ -1245,7 +1243,6 @@ namespace System.Management.Automation.Remoting.Client
                 this.args = null;
                 this.argsCount = 0;
             }
-
 
             /// <summary>
             /// Free resources.
@@ -2544,7 +2541,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr asyncCallback,
             [In, Out]  ref IntPtr shellOperationHandle);
 
-
         /// <summary>
         ///
         /// </summary>
@@ -2568,7 +2564,6 @@ namespace System.Management.Automation.Remoting.Client
         internal static extern void WSManReconnectShellEx(IntPtr wsManSessionHandle,
             int flags,
             IntPtr asyncCallback);
-
 
         [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManReconnectShellCommand", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManReconnectShellCommandEx(IntPtr wsManCommandHandle,
@@ -2611,7 +2606,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr asyncCallback,
             ref IntPtr commandOperationHandle);
 
-
         [DllImport(WSManNativeApi.WSManClientApiDll, EntryPoint = "WSManConnectShellCommand", SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern void WSManConnectShellCommandEx(IntPtr shellOperationHandle,
             int flags,
@@ -2621,7 +2615,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr connectXml,
             IntPtr asyncCallback,
             ref IntPtr commandOperationHandle);
-
 
         /// <summary>
         /// Registers a callback with WSMan to receive output from the remote end.
@@ -2732,7 +2725,6 @@ namespace System.Management.Automation.Remoting.Client
         internal static extern void WSManCloseCommand(IntPtr cmdHandle,
             int flags,
             IntPtr asyncCallback);
-
 
         /// <summary>
         /// Sends a signal. If <paramref name="cmdOperationHandle"/> is null, then the signal will
@@ -2903,7 +2895,6 @@ namespace System.Management.Automation.Remoting.Client
             int flags,
             int errorCode,
             [MarshalAs(UnmanagedType.LPWStr)] string extendedInformation);
-
 
         internal enum WSManFlagReceive : int
         {

@@ -46,7 +46,6 @@ namespace System.Management.Automation.ComInterop
         {
             parameter = Marshal(parameter);
 
-
             // Marshal.StringToBSTR(parameter)
             return Expression.Call(
                 typeof(Marshal).GetMethod("StringToBSTR"),

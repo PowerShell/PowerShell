@@ -1319,7 +1319,6 @@ namespace System.Management.Automation
             }
         } // ConstructCompiledParametersUsingRuntimeDefinedParameters
 
-
         /// <summary>
         /// Compiles the parameter using reflection against the CLR type.
         /// </summary>

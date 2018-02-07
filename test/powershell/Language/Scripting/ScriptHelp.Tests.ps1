@@ -1,4 +1,4 @@
-﻿$ProgressPreference = "SilentlyContinue"
+$ProgressPreference = "SilentlyContinue"
 
 Describe 'get-help HelpFunc1' -Tags "Feature" {
     BeforeAll {
@@ -80,7 +80,6 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         function helpFunc1 {}
     }
 
-
     Context 'Get-Help helpFunc1' {
         $x = get-help helpFunc1
         TestHelpFunc1 $x
@@ -158,7 +157,6 @@ Describe 'get-help file' -Tags "CI" {
         # .SYNOPSIS
         #    Script help, not function help
 
-
         function foo
         {
         }
@@ -193,7 +191,6 @@ Describe 'get-help other tests' -Tags "CI" {
         .SYNOPSIS
         This help block doesn't belong to any function because it is more than 1 line away from the function.
         #>
-
 
         function missingHelp { param($abc) }
             $x = get-help missingHelp
@@ -328,7 +325,6 @@ Describe 'get-help other tests' -Tags "CI" {
           description
 
         .Synopsis
-
 
         .Component
           component

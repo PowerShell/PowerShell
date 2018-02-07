@@ -47,7 +47,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Id")]
         public int SubscriptionId { get; set; } = -1;
 
-
         /// <summary>
         /// Also show supporting events
         /// </summary>

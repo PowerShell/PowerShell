@@ -54,7 +54,6 @@ namespace System.Management.Automation
         public string HelpFile { get; internal set; } = String.Empty;
     }
 
-
     /// <summary>
     /// Contains a class field information
     /// </summary>

@@ -566,7 +566,6 @@ namespace System.Management.Automation.Runspaces
 
         #region concurrent pipeline check
 
-
         private bool _performNestedCheck = true;
 
         /// <summary>
@@ -1018,7 +1017,6 @@ namespace System.Management.Automation.Runspaces
                 return (RunspaceBase)Runspace;
             }
         }
-
 
         /// <summary>
         /// Object used for synchronization

@@ -1,4 +1,4 @@
-﻿Describe "Tests for paths of submodules in module manifest" -tags "CI" {
+Describe "Tests for paths of submodules in module manifest" -tags "CI" {
 
     $moduleName = 'ModuleA'
     $moduleFileName = "$moduleName.psd1"

@@ -225,7 +225,6 @@ namespace System.Management.Automation.Provider
             } // TraceMethod
         } // RemoveDrive
 
-
         /// <summary>
         /// Gives the provider the ability to map drives after initialization.
         /// </summary>
@@ -263,5 +262,4 @@ namespace System.Management.Automation.Provider
 
     #endregion DriveCmdletProvider
 } // namespace System.Management.Automation
-
 

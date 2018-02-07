@@ -102,7 +102,6 @@ namespace System.Management.Automation
         }
     }
 
-
     /// <summary>
     /// An output object from the child process.
     /// If it's from the error stream isError will be true
@@ -767,7 +766,6 @@ namespace System.Management.Automation
             }
         }
 
-
         #region Process cleanup with Child Process cleanup
 
         /// <summary>
@@ -1222,7 +1220,6 @@ namespace System.Management.Automation
                     redirectOutput = false;
                 }
             }
-
 
             // See if the error output stream has been redirected, either through an explicit 2> foo.txt or
             // my merging error into output through 2>&1.
@@ -1933,7 +1930,6 @@ namespace System.Management.Automation
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool AllocConsole();
 
-
         /// <summary>
         /// Called to save the foreground window before allocating a hidden console window
         /// </summary>
@@ -2102,7 +2098,6 @@ namespace System.Management.Automation
             _serializedRemoteException = serializedRemoteException;
             _serializedRemoteInvocationInfo = serializedRemoteInvocationInfo;
         }
-
 
         #region ISerializable Members
 

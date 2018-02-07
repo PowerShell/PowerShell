@@ -2,12 +2,10 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using System;
 using System.Management.Automation;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 
 namespace Microsoft.PowerShell.Commands
@@ -35,7 +33,6 @@ namespace Microsoft.PowerShell.Commands
             HelpMessageResourceId = "ActivityParameterHelpMessage")]
         public string Activity { get; set; }
 
-
         /// <summary>
         ///
         /// Describes the current state of the activity.
@@ -50,7 +47,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Status { get; set; } = WriteProgressResourceStrings.Processing;
 
-
         /// <summary>
         ///
         /// Uniquely identifies this activity for purposes of chaining subordinate activities.
@@ -61,7 +57,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 2)]
         [ValidateRange(0, Int32.MaxValue)]
         public int Id { get; set; } = 0;
-
 
         /// <summary>
         ///
@@ -74,7 +69,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(-1, 100)]
         public int PercentComplete { get; set; } = -1;
 
-
         /// <summary>
         ///
         /// Seconds remaining to complete the operation, or -1 if n/a
@@ -84,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter]
         public int SecondsRemaining { get; set; } = -1;
-
 
         /// <summary>
         ///
@@ -96,7 +89,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string CurrentOperation { get; set; }
 
-
         /// <summary>
         ///
         /// Identifies the parent Id of this activity, or -1 if none.
@@ -107,7 +99,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateRange(-1, Int32.MaxValue)]
         public int ParentId { get; set; } = -1;
-
 
         /// <summary>
         ///
@@ -131,7 +122,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-
         /// <summary>
         ///
         /// Identifies the source of the record.
@@ -141,7 +131,6 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter]
         public int SourceId { get; set; }
-
 
         /// <summary>
         ///
@@ -163,9 +152,7 @@ namespace Microsoft.PowerShell.Commands
             WriteProgress(SourceId, pr);
         }
 
-
         private bool _completed;
-
 
         private const string HelpMessageBaseName = "WriteProgressResourceStrings";
     }

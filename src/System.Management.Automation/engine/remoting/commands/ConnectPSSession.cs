@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -224,7 +224,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private AuthenticationMechanism _authentication;
 
-
         /// <summary>
         /// Specifies the certificate thumbprint to be used to impersonate the user on the
         /// remote machine.
@@ -245,7 +244,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _thumbprint;
 
-
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
@@ -262,7 +260,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
         public Int32 Port { get; set; }
 
-
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
         /// remote connections is useSSL instead of the default http.Since
@@ -275,7 +272,6 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSL")]
         public SwitchParameter UseSSL { get; set; }
 
-
         /// <summary>
         /// Extended session options.  Used in this cmdlet to set server disconnect options.
         /// </summary>
@@ -284,7 +280,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public PSSessionOption SessionOption { get; set; }
-
 
         /// <summary>
         /// Allows the user of the cmdlet to specify a throttling value

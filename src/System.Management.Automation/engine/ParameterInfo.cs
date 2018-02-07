@@ -138,7 +138,6 @@ namespace System.Management.Automation
             Attributes = new ReadOnlyCollection<Attribute>(processedAttributes);
         }
 
-
         private void SetParameterSetData(ParameterSetSpecificMetadata parameterMetadata)
         {
             IsMandatory = parameterMetadata.IsMandatory;

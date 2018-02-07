@@ -157,7 +157,6 @@ namespace Microsoft.PowerShell
             return er;
         }
 
-
         /// <summary>
         /// Create an error record for 'operation not supported' condition
         /// </summary>
@@ -182,7 +181,6 @@ namespace Microsoft.PowerShell
 
             return er;
         }
-
 
         /// <summary>
         /// convert the specified provider path to a provider path

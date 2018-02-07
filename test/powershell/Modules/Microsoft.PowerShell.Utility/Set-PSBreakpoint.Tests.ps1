@@ -36,7 +36,6 @@ set-psbreakpoint -command foo
     $contents > $scriptFileName
     $contentsBug > $scriptFileNameBug
 
-
     It "Should be able to set psbreakpoints for -Line" {
         $brk = Set-PSBreakpoint -Line 13 -Script $scriptFileName
         $brk.Line | Should Be 13
@@ -71,7 +70,6 @@ set-psbreakpoint -command foo
         $brk.Column | Should BeIn 1
         Remove-PSBreakPoint -Id $brk.Id
     }
-
 
     It "-script and -line are positional" {
         $brk = sbp $scriptFileName 13

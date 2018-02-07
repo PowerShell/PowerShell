@@ -661,7 +661,6 @@ namespace System.Management.Automation
                 return false;
             }
 
-
             public static bool IsHardLink(FileSystemInfo fs)
             {
                 if (!fs.Exists || (fs.Attributes & FileAttributes.Directory) == FileAttributes.Directory)

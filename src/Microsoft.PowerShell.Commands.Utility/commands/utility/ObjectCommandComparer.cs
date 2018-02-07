@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
             this.cultureInfo = cultureInfo;
         }
 
-
         internal object PropertyValue { get; }
 
         internal bool IsExistingProperty { get; }
@@ -154,7 +153,6 @@ namespace Microsoft.PowerShell.Commands
             return (val == null);
         }
 
-
         internal int Compare(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)
         {
             if (first.IsExistingProperty && second.IsExistingProperty)
@@ -195,7 +193,6 @@ namespace Microsoft.PowerShell.Commands
             // This method will never throw exceptions, two null
             // objects are considered the same
             if (IsValueNull(first) && IsValueNull(second)) return 0;
-
 
             PSObject firstMsh = first as PSObject;
             if (firstMsh != null)

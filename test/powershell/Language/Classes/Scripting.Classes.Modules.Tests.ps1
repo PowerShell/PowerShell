@@ -1,4 +1,4 @@
-﻿Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
+Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
     It "doesn't throw for any module" {
         $discard = Get-Module -ListAvailable | ForEach-Object { $_.GetExportedTypeDefinitions() }
         $true | Should Be $true # we only verify that we didn't throw. This line contains a dummy Should to make pester happy.

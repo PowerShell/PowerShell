@@ -49,7 +49,6 @@ namespace System.Management.Automation.Runspaces
         }
 
 
-
         /// <summary>
         /// This constructor takes a localized message and an inner exception.
         /// </summary>
@@ -269,7 +268,6 @@ namespace System.Management.Automation.Runspaces
         {
             get { return _formatDBMgr; }
         }
-
 
         /// <summary>
         /// Adds the <paramref name="formatFile"/> to the current FormatTable's file list.

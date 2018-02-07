@@ -30,7 +30,6 @@ namespace Microsoft.PowerShell.Commands
         private const string DataTag = "data";
         private ResourceManager _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
-
         /// <summary>
         /// ProviderName
         /// </summary>
@@ -73,7 +72,6 @@ namespace Microsoft.PowerShell.Commands
         private int _id;
         private bool _idSpecified = false;
 
-
         /// <summary>
         /// Version (event version)
         /// </summary>
@@ -94,7 +92,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private byte _version;
         private bool _versionSpecified = false;
-
 
         /// <summary>
         /// Event Payload

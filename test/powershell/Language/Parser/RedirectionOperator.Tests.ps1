@@ -9,7 +9,6 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $asciiCR = [string][char]10
         }
 
-
         # If Out-File -Encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null

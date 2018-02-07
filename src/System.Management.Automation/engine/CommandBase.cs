@@ -222,7 +222,6 @@ namespace System.Management.Automation.Internal
 
         #endregion Override
 
-
         /// <summary>
         /// throws if the pipeline is stopping
         /// </summary>
@@ -257,7 +256,6 @@ namespace System.Management.Automation.Internal
         #endregion
     }
 }
-
 
 namespace System.Management.Automation
 {

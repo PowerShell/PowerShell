@@ -1136,7 +1136,6 @@ namespace System.Management.Automation
             return this;
         }
 
-
         /// <summary>
         /// Add a parameter to the last added command.
         /// For example, to construct a command string "get-process | select-object -property name"
@@ -2635,7 +2634,6 @@ namespace System.Management.Automation
             Invoke<T>(input, output, null);
         }
 
-
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and collect
         /// output data into the buffer <paramref name="output"/>
@@ -3096,7 +3094,6 @@ namespace System.Management.Automation
 
             return _batchAsyncResult;
         }
-
 
         /// <summary>
         /// Batch invocation callback
@@ -4259,7 +4256,6 @@ namespace System.Management.Automation
                     rsToUse = _rsConnection as Runspace;
                     Dbg.Assert(null != rsToUse,
                         "Nested PowerShell can only work on a Runspace");
-
 
                     // Perform work on the current thread. Nested Pipeline
                     // should be invoked from the same thread that the parent

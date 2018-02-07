@@ -102,7 +102,6 @@ namespace System.Management.Automation.Runspaces
             PSSnapIn = psSnapin;
         }
 
-
         /// <summary>
         /// Gets name of configuration entry
         /// </summary>
@@ -527,6 +526,5 @@ namespace System.Management.Automation.Runspaces
         None
     }
 }
-
 
 #pragma warning restore 56506

@@ -1,4 +1,4 @@
-﻿##
+##
 ## PowerShell Invoke-Command -RemoteDebug Tests
 ##
 

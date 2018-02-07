@@ -29,7 +29,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-
     /// <summary>
     /// helper object holding a generic object and the related
     /// "applies to" object.
@@ -210,7 +209,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return BestMatchIndexUndefined;
         }
 
-
         private bool MatchCondition(PSObject currentObject, MshExpression ex)
         {
             if (ex == null)
@@ -224,7 +222,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return retVal;
         }
-
 
         private MshExpressionFactory _expressionFactory;
         private TypeInfoDataBase _db;
@@ -333,7 +330,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return FormatShape.List;
         }
-
 
         internal static ViewDefinition GetViewByShapeAndType(MshExpressionFactory expressionFactory, TypeInfoDataBase db,
                 FormatShape shape, Collection<string> typeNames, string viewName)
@@ -561,7 +557,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return result;
         }
 
-
         private static bool IsOutOfBandView(ViewDefinition vd)
         {
             return (vd.mainControl is ComplexControlBody || vd.mainControl is ListControlBody) && vd.outOfBand;
@@ -618,7 +613,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return retVal;
         }
-
 
         internal static TypeGroupDefinition FindGroupDefinition(TypeInfoDataBase db, string groupName)
         {

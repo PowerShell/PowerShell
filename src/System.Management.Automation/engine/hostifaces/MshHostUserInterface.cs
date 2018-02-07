@@ -1032,7 +1032,6 @@ namespace System.Management.Automation.Host
         internal string PromptText { get; set; }
     }
 
-
     // Holds options for PowerShell transcription
     internal class TranscriptionOption : IDisposable
     {
@@ -1292,5 +1291,4 @@ namespace System.Management.Automation.Host
         }
     }
 } // namespace System.Management.Automation.Host
-
 

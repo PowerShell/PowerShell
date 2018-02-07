@@ -162,7 +162,6 @@ namespace System.Management.Automation
             return result;
         }
 
-
         /// <summary>
         /// The next available parameter set bit. This number increments but the parameter
         /// set bit is really 1 shifted left this number of times. This number also acts
@@ -403,7 +402,6 @@ namespace System.Management.Automation
             return result;
         } // GetParameterSetName
 
-
         /// <summary>
         /// Helper function to retrieve the name of the parameter
         /// which defined an alias.
@@ -478,7 +476,6 @@ namespace System.Management.Automation
             {
                 name = name.Substring(1);
             }
-
 
             // First try to match the bindable parameters
 
@@ -696,7 +693,6 @@ namespace System.Management.Automation
             return Parameter.ToString();
         }
     }
-
 
     /// <summary>
     /// This enum is used in the MergedCompiledCommandParameter class

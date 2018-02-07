@@ -348,7 +348,6 @@ namespace Microsoft.PowerShell.Commands
             } // AttachNotes
         } // ContentPathsCache
 
-
         /// <summary>
         /// A struct to hold the path information and the content readers/writers
         /// for an item.
@@ -410,7 +409,6 @@ namespace Microsoft.PowerShell.Commands
                             holder.PathInfo.Path,
                             e);
 
-
                     // Log a provider health event
 
                     MshLog.LogProviderHealthEvent(
@@ -447,7 +445,6 @@ namespace Microsoft.PowerShell.Commands
                             holder.PathInfo.Provider,
                             holder.PathInfo.Path,
                             e);
-
 
                     // Log a provider health event
 

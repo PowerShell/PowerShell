@@ -11,7 +11,6 @@ namespace System.Management.Automation
     {
         #region element tags
 
-
         /// <summary>
         /// Element tag for root node
         /// </summary>
@@ -26,7 +25,6 @@ namespace System.Management.Automation
         /// Element tag for properties
         /// </summary>
         internal const string Properties = "Property";
-
 
         #region attribute tags
 

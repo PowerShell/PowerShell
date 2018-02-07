@@ -76,7 +76,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         private static Dictionary<string, List<string>> GetTypeGroupMap(IEnumerable<TypeGroupDefinition> groupDefinitions)
         {
             var typeGroupMap = new Dictionary<string, List<string>>();

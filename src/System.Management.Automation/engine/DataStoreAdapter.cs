@@ -50,7 +50,6 @@ namespace System.Management.Automation
             }
         } // CurrentLocation
 
-
         /// <summary>
         /// The current working directory for the virtual drive
         /// as a relative path from Root

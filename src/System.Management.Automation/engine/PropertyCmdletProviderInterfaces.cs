@@ -25,7 +25,6 @@ namespace System.Management.Automation
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // CmdletProviderIntrinsics private
 
-
         /// <summary>
         /// Constructs a facade over the "real" session state API
         /// </summary>
@@ -371,7 +370,6 @@ namespace System.Management.Automation
             return _sessionState.SetProperty(new string[] { path }, propertyValue, false, false);
         } // SetProperty
 
-
         /// <summary>
         /// Sets the specified properties on the specified item(s)
         /// </summary>
@@ -435,7 +433,6 @@ namespace System.Management.Automation
 
             return _sessionState.SetProperty(path, propertyValue, force, literalPath);
         } // SetProperty
-
 
         /// <summary>
         /// Sets the specified properties on the specified item(s)
@@ -1615,7 +1612,6 @@ namespace System.Management.Automation
                     false, false);
         } // CopyProperty
 
-
         /// <summary>
         /// Copies a property on the specified item(s)
         /// </summary>
@@ -1699,7 +1695,6 @@ namespace System.Management.Automation
                     force,
                     literalPath);
         } // CopyProperty
-
 
         /// <summary>
         /// Copies a property on the specified item(s)
@@ -1928,7 +1923,6 @@ namespace System.Management.Automation
                     false);
         } // MoveProperty
 
-
         /// <summary>
         /// Moves a property on the specified item(s)
         /// </summary>
@@ -2016,7 +2010,6 @@ namespace System.Management.Automation
                     force,
                     literalPath);
         } // MoveProperty
-
 
         /// <summary>
         /// Moves a property on the specified item(s)

@@ -42,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _date;
         private bool _dateSpecified;
 
-
         /// <summary>
         /// Allows the user to override the year
         /// </summary>
@@ -62,7 +61,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _year;
         private bool _yearSpecified;
-
 
         /// <summary>
         /// Allows the user to override the month
@@ -84,7 +82,6 @@ namespace Microsoft.PowerShell.Commands
         private int _month;
         private bool _monthSpecified;
 
-
         /// <summary>
         /// Allows the user to override the day
         /// </summary>
@@ -104,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _day;
         private bool _daySpecified;
-
 
         /// <summary>
         /// Allows the user to override the hour
@@ -126,7 +122,6 @@ namespace Microsoft.PowerShell.Commands
         private int _hour;
         private bool _hourSpecified;
 
-
         /// <summary>
         /// Allows the user to override the minute
         /// </summary>
@@ -146,7 +141,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _minute;
         private bool _minuteSpecified;
-
 
         /// <summary>
         /// Allows the user to override the second
@@ -194,14 +188,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public DisplayHintType DisplayHint { get; set; } = DisplayHintType.DateTime;
 
-
         /// <summary>
         /// Unix format string
         /// </summary>
         [Parameter(ParameterSetName = "UFormat")]
         [ValidateNotNullOrEmpty]
         public string UFormat { get; set; }
-
 
         /// <summary>
         /// Unix format string
@@ -322,7 +314,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject(outputObj);
             }
         } // EndProcessing
-
 
         /// <summary>
         /// This is more an implementation of the UNIX strftime
@@ -538,5 +529,4 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion
 } // namespace Microsoft.PowerShell.Commands
-
 

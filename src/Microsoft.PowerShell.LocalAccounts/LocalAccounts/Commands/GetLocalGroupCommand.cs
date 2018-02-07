@@ -8,7 +8,6 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 using System.Diagnostics.CodeAnalysis;
 #endregion
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -63,7 +62,6 @@ namespace Microsoft.PowerShell.Commands
 
 
 
-
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -72,7 +70,6 @@ namespace Microsoft.PowerShell.Commands
         {
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -90,7 +87,6 @@ namespace Microsoft.PowerShell.Commands
             ProcessNames();
             ProcessSids();
         }
-
 
         /// <summary>
         /// EndProcessing method.

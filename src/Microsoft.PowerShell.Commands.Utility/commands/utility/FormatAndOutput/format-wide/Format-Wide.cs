@@ -25,7 +25,6 @@ namespace Microsoft.PowerShell.Commands
             this.implementation = new InnerFormatShapeCommand(FormatShape.Wide);
         }
 
-
         #region Command Line Switches
 
         /// <summary>
@@ -59,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
             set { _autosize = value; }
         }
         private Nullable<bool> _autosize = null;
-
 
         /// <summary>
         /// optional, non positional parameter
@@ -109,7 +107,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // the user specified -autosize:true AND a column number
                     string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
-
 
                     ErrorRecord errorRecord = new ErrorRecord(
                         new InvalidDataException(),

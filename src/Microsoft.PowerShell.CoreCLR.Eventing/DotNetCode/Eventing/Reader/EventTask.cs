@@ -27,7 +27,6 @@ namespace System.Diagnostics.Eventing.Reader
         private ProviderMetadata _pmReference;
         private object _syncObject;
 
-
         //called from EventMetadata
         internal EventTask(int value, ProviderMetadata pmReference)
         {

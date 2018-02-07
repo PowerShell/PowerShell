@@ -605,7 +605,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal MshExpressionResult result;
     }
 
-
     internal sealed class StringFormatError : FormattingError
     {
         internal string formatString;

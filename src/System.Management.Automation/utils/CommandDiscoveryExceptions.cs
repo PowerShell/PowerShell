@@ -492,7 +492,6 @@ namespace System.Management.Automation
         #region Private
 
 
-
         private static string BuildMessage(
             string commandName,
             Collection<string> missingItems,

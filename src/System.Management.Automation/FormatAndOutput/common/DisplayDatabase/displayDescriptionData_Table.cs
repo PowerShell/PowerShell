@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-
     /// <summary>
     /// information about the table header
     /// NOTE: if an instance of this class is present, the list must not be empty

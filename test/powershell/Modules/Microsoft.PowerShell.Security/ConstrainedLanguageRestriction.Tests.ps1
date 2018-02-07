@@ -1,4 +1,4 @@
-﻿##
+##
 ## Tests for PowerShell system lock down and constrained language mode restrictions
 ## These are Windows platform only tests
 ##

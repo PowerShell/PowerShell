@@ -298,7 +298,6 @@ class EventMessage
     }
 }
 
-
 enum LogLevel
 {
     Always = 0

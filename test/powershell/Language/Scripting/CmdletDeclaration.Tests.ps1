@@ -1,4 +1,4 @@
-﻿Describe "Cmdlet declaration statement" -Tags "CI" {
+Describe "Cmdlet declaration statement" -Tags "CI" {
     $testData = @(
         @{ Name = 'Verify non-cmdlet formatted names are allowed';
            Script = '
@@ -105,7 +105,6 @@
                     param([Parameter(mandatory=$true)]$a)
                     $a
                 }'})
-
 
         It '<Name>' -TestCases $testData {
             param($Name, $script)

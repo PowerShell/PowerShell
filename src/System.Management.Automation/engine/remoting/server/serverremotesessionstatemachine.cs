@@ -56,7 +56,6 @@ namespace System.Management.Automation.Remoting
 
         #region Constructors
 
-
         /// <summary>
         /// This constructor instantiates a FSM object for the server side to control the remote connection.
         /// It initializes the event handling matrix with event handlers.
@@ -127,7 +126,6 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceived] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyRequested] += DoKeyExchange; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyExchanged, (int)RemoteSessionEvent.KeyReceiveFailed] += DoKeyExchange; //
-
 
 
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)

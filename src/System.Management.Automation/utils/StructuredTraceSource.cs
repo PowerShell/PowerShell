@@ -442,7 +442,6 @@ namespace System.Management.Automation
                     assemblyFileInfo.CreationTime);
             }
 
-
             StringBuilder flagBuilder = new StringBuilder();
             // Label
 

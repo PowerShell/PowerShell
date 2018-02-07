@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -119,7 +119,6 @@ namespace System.Management.Automation.Language
             return result;
         }
         private string _keywordModuleName;
-
 
         /// <summary>
         /// Parse input that does not come from a file.
@@ -551,7 +550,6 @@ namespace System.Management.Automation.Language
         {
             //_v3FeatureUsed = true;
         }
-
 
         internal void RequireStatementTerminator()
         {
@@ -1865,7 +1863,6 @@ namespace System.Management.Automation.Language
                 }
             }
 
-
             switch (token.Kind)
             {
                 case TokenKind.If:
@@ -2825,7 +2822,6 @@ namespace System.Management.Automation.Language
                     Runspaces.Runspace.DefaultRunspace.ExecutionContext.Engine.EngineParser = currentParser;
                 }
 
-
                 Token lCurly = NextToken();
                 if (lCurly.Kind != TokenKind.LCurly)
                 {
@@ -2856,7 +2852,6 @@ namespace System.Management.Automation.Language
                 {
                     return new ErrorStatementAst(ExtentOf(startExtent, endErrorStatement), configurationToken);
                 }
-
 
                 #region "Add Configuration Keywords"
 

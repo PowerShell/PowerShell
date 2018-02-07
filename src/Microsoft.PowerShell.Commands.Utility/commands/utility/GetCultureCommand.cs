@@ -23,4 +23,3 @@ namespace Microsoft.PowerShell.Commands
     } // GetCultureCommand
 } // Microsoft.PowerShell.Commands
 
-

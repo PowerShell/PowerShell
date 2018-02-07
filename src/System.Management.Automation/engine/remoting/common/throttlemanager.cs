@@ -165,7 +165,6 @@ namespace System.Management.Automation.Remoting
             RunspaceDebugStop.SafeInvoke(this, new StartRunspaceDebugProcessingEventArgs(runspace));
         }
 
-
         #endregion
 
     } // IThrottleOperation

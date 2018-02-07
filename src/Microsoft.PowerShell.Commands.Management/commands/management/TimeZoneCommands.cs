@@ -665,7 +665,6 @@ namespace Microsoft.PowerShell.Commands
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool PrivilegeCheck(IntPtr ClientToken, ref PRIVILEGE_SET RequiredPrivileges, ref bool pfResult);
 
-
             /// <summary>
             /// PInvoke AdjustTokenPrivilege API
             /// </summary>

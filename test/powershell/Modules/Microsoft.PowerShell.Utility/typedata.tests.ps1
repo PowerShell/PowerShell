@@ -1,4 +1,4 @@
-﻿Describe "TestData cmdlets" -Tags "CI" {
+Describe "TestData cmdlets" -Tags "CI" {
     Context "Get-TypeData" {
         It "System.DateTime" {
             (Get-TypeData System.DateTime).TypeName | Should Be System.DateTime

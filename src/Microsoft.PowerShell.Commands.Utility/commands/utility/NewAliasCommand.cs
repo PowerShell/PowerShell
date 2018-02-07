@@ -38,7 +38,6 @@ namespace Microsoft.PowerShell.Commands
                     existingAlias = SessionState.Internal.GetAliasAtScope(Name, Scope);
                 }
 
-
                 if (existingAlias != null)
                 {
                     // Throw if alias exists and is private...

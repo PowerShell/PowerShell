@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //
 
-
 using System;
 using System.Text;
 using System.IO;
@@ -26,7 +25,6 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using Microsoft.PowerShell.Commands.GetCounter;
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -62,7 +60,6 @@ namespace Microsoft.PowerShell.Commands
 
         private List<string> _accumulatedFileNames = new List<string>();
 
-
         //
         // ListSet parameter
         //
@@ -84,7 +81,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _listSet = new string[0];
 
-
         //
         // StartTime parameter
         //
@@ -100,7 +96,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private DateTime _startTime = DateTime.MinValue;
 
-
         //
         // EndTime parameter
         //
@@ -115,7 +110,6 @@ namespace Microsoft.PowerShell.Commands
             set { _endTime = value; }
         }
         private DateTime _endTime = DateTime.MaxValue;
-
 
         //
         // Counter parameter
@@ -165,13 +159,11 @@ namespace Microsoft.PowerShell.Commands
         }
         private Int64 _maxSamples = KEEP_ON_SAMPLING;
 
-
         private ResourceManager _resourceMgr = null;
 
         private PdhHelper _pdhHelper = null;
 
         private bool _stopping = false;
-
 
         //
         // AccumulatePipelineFileNames() accumulates counter file paths in the pipeline scenario:
@@ -181,7 +173,6 @@ namespace Microsoft.PowerShell.Commands
         {
             _accumulatedFileNames.AddRange(_path);
         }
-
 
         //
         // BeginProcessing() is invoked once per pipeline
@@ -241,7 +232,6 @@ namespace Microsoft.PowerShell.Commands
             _pdhHelper.Dispose();
         }
 
-
         //
         // Handle Control-C
         //
@@ -250,7 +240,6 @@ namespace Microsoft.PowerShell.Commands
             _stopping = true;
             _pdhHelper.Dispose();
         }
-
 
         //
         // ProcessRecord() override.
@@ -330,7 +319,6 @@ namespace Microsoft.PowerShell.Commands
                         {
                             continue;
                         }
-
 
                         StringCollection counterSetCounters = new StringCollection();
                         StringCollection counterSetInstances = new StringCollection();
@@ -508,7 +496,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         //
         // ValidateFilePaths() helper.
         // Validates the _resolvedPaths: present for all parametersets.
@@ -562,7 +549,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
         }
-
 
         //
         // ResolveFilePath helper.
@@ -673,5 +659,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
 

@@ -1,4 +1,4 @@
-﻿Describe "GetDateFormatUpdates" -Tags "Feature" {
+Describe "GetDateFormatUpdates" -Tags "Feature" {
 
     It "Verifies that FileDate format works" {
         $date = Get-Date

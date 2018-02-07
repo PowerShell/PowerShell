@@ -45,7 +45,6 @@ Describe "TabCompletion" -Tags CI {
         $completionText -join ' ' | Should Be 'Alignment Expression FormatString Label Width'
     }
 
-
     It 'Should complete format-* hashtable on GroupBy: <cmd>' -TestCases (
         @{cmd = 'Format-Table'},
         @{cmd = 'Format-List'},

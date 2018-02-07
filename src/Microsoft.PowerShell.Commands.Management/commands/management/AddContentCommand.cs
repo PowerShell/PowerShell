@@ -52,7 +52,6 @@ namespace Microsoft.PowerShell.Commands
                                 holder.PathInfo.Path,
                                 e);
 
-
                         // Log a provider health event
 
                         MshLog.LogProviderHealthEvent(

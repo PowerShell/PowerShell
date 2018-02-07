@@ -34,7 +34,6 @@ namespace System.Diagnostics.Eventing.Reader
             return handle;
         }
 
-
         public override bool IsInvalid
         {
             get

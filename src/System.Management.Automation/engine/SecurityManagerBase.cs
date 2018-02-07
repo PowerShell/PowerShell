@@ -91,7 +91,6 @@ namespace System.Management.Automation
             return;
 #else
 
-
 #if DEBUG
             // If we are debugging, let the unit tests swap the file from beneath us
             if(commandInfo.CommandType == CommandTypes.ExternalScript)

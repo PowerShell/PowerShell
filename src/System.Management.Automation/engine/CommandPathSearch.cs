@@ -152,7 +152,6 @@ namespace System.Management.Automation
                             _lookupPaths[index]);
                     }
 
-
                     // Note, if the directory resolves to multiple paths, only the first is used.
 
                     if (!String.IsNullOrEmpty(resolvedPath))

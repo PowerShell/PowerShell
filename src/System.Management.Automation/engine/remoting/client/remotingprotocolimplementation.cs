@@ -230,7 +230,6 @@ namespace System.Management.Automation.Remoting
             _stateMachine.RaiseEvent(closeCompletedArg);
         }
 
-
         #endregion close
 
         #region negotiation

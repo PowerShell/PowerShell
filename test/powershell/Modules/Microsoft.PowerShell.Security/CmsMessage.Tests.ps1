@@ -58,7 +58,6 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     }
 }
 
-
 Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
     BeforeAll{

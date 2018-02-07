@@ -284,7 +284,6 @@ namespace System.Diagnostics.Eventing.Reader
             GC.SuppressFinalize(this);
         }
 
-
         [System.Security.SecuritySafeCritical]
         protected virtual void Dispose(bool disposing)
         {

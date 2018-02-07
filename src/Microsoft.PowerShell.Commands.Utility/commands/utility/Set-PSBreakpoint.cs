@@ -46,7 +46,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int? _column = null;
 
-
         /// <summary>
         /// the command(s) to set the breakpoint on
         /// </summary>

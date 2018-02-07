@@ -125,7 +125,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Remote discovery
 
-
         private IEnumerable<PSModuleInfo> GetAvailableViaPsrpSessionCore(string[] moduleNames, Runspace remoteRunspace)
         {
             Dbg.Assert(remoteRunspace != null, "Caller should verify remoteRunspace != null");

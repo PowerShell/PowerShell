@@ -36,7 +36,6 @@ namespace System.Management.Automation.Security
         /// SAFER_TOKEN_MAKE_INERT -> 0x00000004
         public const int SAFER_TOKEN_MAKE_INERT = 4;
 
-
         /// SAFER_CRITERIA_IMAGEPATH -> 0x00001
         public const int SAFER_CRITERIA_IMAGEPATH = 1;
 
@@ -92,7 +91,6 @@ namespace System.Management.Automation.Security
         internal const int MAX_PATH = 260;
     }
 
-
     /// <summary>
     /// pinvoke methods from crypt32.dll
     /// </summary>
@@ -127,7 +125,6 @@ namespace System.Management.Automation.Security
         internal static extern
         IntPtr CertEnumCertificatesInStore(IntPtr storeHandle,
                                             IntPtr certContext);
-
 
         /// <summary>
         /// signature of cert find function
@@ -170,7 +167,6 @@ namespace System.Management.Automation.Security
             CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY = 8 << 16,
             CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE = 9 << 16,
         }
-
 
 
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -521,7 +517,6 @@ namespace System.Management.Automation.Security
             // other flags not used
         };
 
-
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTUI_WIZ_DIGITAL_SIGN_INFO
         {
@@ -600,7 +595,6 @@ namespace System.Management.Automation.Security
             {
                 siex.pszHashAlg = hashAlgorithm;
             }
-
 
             return siex;
         }
@@ -681,7 +675,6 @@ namespace System.Management.Automation.Security
             uint dwKeyType,
             System.IntPtr pvKey,
             uint dwGroupId);
-
 
         [ArchitectureSensitive]
         internal static DWORD GetCertChoiceFromSigningOption(
@@ -1849,7 +1842,6 @@ namespace System.Management.Automation.Security
             string DllName,
             IntPtr reserved,
             uint Flags);
-
 
         [DllImport(PinvokeDllNames.FreeLibrary, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool FreeLibrary(

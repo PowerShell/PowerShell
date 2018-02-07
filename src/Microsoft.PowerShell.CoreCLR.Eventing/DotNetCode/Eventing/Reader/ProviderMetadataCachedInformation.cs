@@ -129,7 +129,6 @@ namespace System.Diagnostics.Eventing.Reader
             value.ProviderMetadata.Dispose();
         }
 
-
         private void AddCacheEntry(ProviderMetadataId key, ProviderMetadata pm)
         {
             if (IsCacheFull())

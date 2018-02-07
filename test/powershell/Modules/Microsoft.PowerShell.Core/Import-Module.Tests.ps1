@@ -1,4 +1,4 @@
-﻿Describe "Import-Module" -Tags "CI" {
+Describe "Import-Module" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath

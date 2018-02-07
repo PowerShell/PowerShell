@@ -246,7 +246,6 @@ namespace System.Management.Automation
         /// </summary>
         public ConsoleColor? BackgroundColor { get; set; }
 
-
         /// <summary>
         /// Returns a string-based representation of the host information message
         /// </summary>

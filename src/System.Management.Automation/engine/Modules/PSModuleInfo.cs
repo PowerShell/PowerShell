@@ -539,7 +539,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private bool IsScriptModuleFile(string path)
         {
             var ext = System.IO.Path.GetExtension(path);
@@ -821,7 +820,6 @@ namespace System.Management.Automation
 
         private readonly List<CmdletInfo> _compiledExports = new List<CmdletInfo>();
 
-
         /// <summary>
         /// Add AliasInfo to the fixed exports list...
         /// </summary>
@@ -839,7 +837,6 @@ namespace System.Management.Automation
         /// module. We need to consolidate the list so it can properly be constrained.
         /// </summary>
         internal List<AliasInfo> CompiledAliasExports { get; } = new List<AliasInfo>();
-
 
         /// <summary>
         /// FileList
@@ -1504,7 +1501,6 @@ namespace System.Management.Automation
             s_appdomainModulePathCache.Clear();
         }
 
-
 #if DEBUG
         /// <summary>
         /// A method available in debug mode providing access to the module path cache.
@@ -1613,7 +1609,6 @@ namespace System.Management.Automation
         /// </summary>
         Constant = 2
     }
-
 
     /// <summary>
     /// An EqualityComparer to compare 2 PSModuleInfo instances. 2 PSModuleInfos are

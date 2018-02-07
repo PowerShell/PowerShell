@@ -254,7 +254,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
 
-
         /// <summary>
         /// Writes the aliases to the file
         /// </summary>
@@ -326,7 +325,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-
 
         private void WriteHeader(StreamWriter writer)
         {

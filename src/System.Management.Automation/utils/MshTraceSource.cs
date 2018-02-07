@@ -230,7 +230,6 @@ namespace System.Management.Automation
 
         #region TraceFlags.New*Exception methods/helpers
 
-
         /// <summary>
         /// Traces the Message and StackTrace properties of the exception
         /// and returns the new exception. This is not allowed to call other
@@ -536,7 +535,6 @@ namespace System.Management.Automation
 
             return e;
         }
-
 
         /// <summary>
         /// Traces the Message and StackTrace properties of the exception

@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // Flags
 
-
         /// <summary>
         /// The parameter which determines the options for output from the
         /// trace listeners.

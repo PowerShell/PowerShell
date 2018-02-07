@@ -84,7 +84,6 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Parameters
 
-
         #region Cmdlet Overrides
 
         /// <summary>
@@ -170,7 +169,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Cmdlet Overrides
-
 
 
         private object _prompt = null;

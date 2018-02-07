@@ -63,7 +63,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-
         /// <summary>
         /// Gets an indication whether the asynchronous operation has completed.
         /// </summary>

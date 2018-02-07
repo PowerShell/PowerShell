@@ -127,7 +127,6 @@ namespace System.Management.Automation.Remoting
             return new RemoteDataObject<T>(destination, dataType, runspacePoolId, powerShellId, data);
         }
 
-
         /// <summary>
         /// Creates a RemoteDataObject by deserializing <paramref name="data"/>.
         /// </summary>

@@ -1,4 +1,4 @@
-﻿<############################################################################################
+<############################################################################################
  # File: Pester.AutomountedDrives.Tests.ps1
  # Pester.AutomountedDrives.Tests suite contains Tests that are
  # used for validating automounted PowerShell drives.

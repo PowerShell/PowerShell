@@ -739,7 +739,6 @@ namespace System.Management.Automation.Security
     }
 }
 
-
 #if UNIX
 
 // Porting note: Tracing is absolutely not available on Linux
@@ -977,7 +976,6 @@ namespace System.Management.Automation.Tracing
         {
             return false;
         }
-
 
         /// <summary>
         ///

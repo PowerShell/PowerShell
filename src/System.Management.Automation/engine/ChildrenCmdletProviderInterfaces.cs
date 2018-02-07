@@ -25,7 +25,6 @@ namespace System.Management.Automation
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // CmdletProviderIntrinsics private
 
-
         /// <summary>
         /// Constructs a facade over the "real" session state API
         /// </summary>
@@ -386,7 +385,6 @@ namespace System.Management.Automation
 
             return _sessionState.GetChildItemsDynamicParameters(path, recurse, context);
         } // GetChildItemsDynamicParameters
-
 
         #endregion GetChildItems
 
@@ -899,7 +897,6 @@ namespace System.Management.Automation
 
             return _sessionState.HasChildItems(path, context);
         } // HasChildItems
-
 
         #endregion HasChildItems
 

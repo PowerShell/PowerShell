@@ -99,7 +99,6 @@ namespace Microsoft.WSMan.Management
     /// access a second hop
     /// </summary>
 
-
     [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141438")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
@@ -1007,10 +1006,7 @@ namespace Microsoft.WSMan.Management
 
 
 
-
-
     }
-
 
 
 

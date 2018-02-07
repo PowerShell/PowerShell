@@ -1018,7 +1018,6 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion Helper Classes
 
-
     /// <summary>
     /// A class to set WMI connection options
     /// </summary>
@@ -1709,7 +1708,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-
         private ThrottleManager _throttleManager = new ThrottleManager();
 
         private object _syncObject = new object();           // sync object
@@ -1782,7 +1780,6 @@ namespace Microsoft.PowerShell.Commands
         private int _sinkCompleted;
         private bool _bJobFailed;
         private bool _bAtLeastOneObject;
-
 
         private ArrayList _wmiSinkArray;
         /// <summary>
@@ -1883,7 +1880,6 @@ namespace Microsoft.PowerShell.Commands
         /// Message indicating status of the job
         /// </summary>
         public override string StatusMessage { get; } = "test";
-
 
         /// <summary>
         /// Indicates if there is more data available in

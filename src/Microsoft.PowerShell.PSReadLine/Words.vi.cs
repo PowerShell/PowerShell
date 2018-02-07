@@ -246,7 +246,6 @@ namespace Microsoft.PowerShell
             return ViFindPreviousWordPoint(i, wordDelimiters);
         }
 
-
         /// <summary>
         /// Returns the cursor position of the beginning of the previous word when starting on white space
         /// </summary>

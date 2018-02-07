@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
 
-
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;

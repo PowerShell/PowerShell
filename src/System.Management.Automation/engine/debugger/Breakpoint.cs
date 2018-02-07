@@ -423,7 +423,6 @@ namespace System.Management.Automation
             }
 
 
-
             int sequencePointIndex;
             var sequencePoint = FindSequencePoint(functionContext, Line, Column, out sequencePointIndex);
             if (sequencePoint != null)

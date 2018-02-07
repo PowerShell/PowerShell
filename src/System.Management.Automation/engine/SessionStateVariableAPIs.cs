@@ -143,7 +143,6 @@ namespace System.Management.Automation
             return resultItem;
         } // GetVariableValue
 
-
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
@@ -849,7 +848,6 @@ namespace System.Management.Automation
                             false);
                     }
 
-
                     if (readers == null || readers.Count == 0)
                     {
                         // The drive was found but the path was wrong or something so return null.
@@ -1402,7 +1400,6 @@ namespace System.Management.Automation
                         notSupported,
                         false);
                 }
-
 
                 if (writers == null || writers.Count == 0)
                 {

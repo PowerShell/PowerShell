@@ -70,5 +70,4 @@ namespace System.Management.Automation.Tracing
     }
 }
 
-
 #endif

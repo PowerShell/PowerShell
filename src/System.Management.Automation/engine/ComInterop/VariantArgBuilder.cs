@@ -48,7 +48,6 @@ namespace System.Management.Automation.ComInterop
             );
         }
 
-
         internal override Expression UnmarshalFromRef(Expression value)
         {
             // value == IntPtr.Zero ? null : Marshal.GetObjectForNativeVariant(value);

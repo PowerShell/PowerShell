@@ -97,7 +97,6 @@ namespace System.Management.Automation
             return builder.ToString();
         }
 
-
         /// <summary>
         /// Gets the name of the method or property defined by funcdesc
         /// </summary>

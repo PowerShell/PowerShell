@@ -68,7 +68,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         internal void PrepareSystemData()
         {
             if (_systemProperties.filled)
@@ -285,7 +284,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public override EventBookmark Bookmark
         {
             [System.Security.SecuritySafeCritical]
@@ -340,7 +338,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public override string OpcodeDisplayName
         {
             get
@@ -391,7 +388,6 @@ namespace System.Diagnostics.Eventing.Reader
                 }
             }
         }
-
 
         public override IList<EventProperty> Properties
         {

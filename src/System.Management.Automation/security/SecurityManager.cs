@@ -596,7 +596,6 @@ namespace Microsoft.PowerShell
                     allowRun = true;
                     break;
 
-
                 case CommandTypes.Function:
                 case CommandTypes.Filter:
                 case CommandTypes.Workflow:
@@ -703,7 +702,6 @@ namespace Microsoft.PowerShell
 
                     break;
 
-
                 //
                 // if the publisher is not trusted, we prompt and
                 // ask the user if s/he wants to allow it to run
@@ -759,7 +757,6 @@ namespace Microsoft.PowerShell
             string alwaysRun = Authenticode.Choice_AlwaysRun;
             string alwaysRunHelp = Authenticode.Choice_AlwaysRun_Help;
 
-
             choices.Add(new ChoiceDescription(neverRun, neverRunHelp));
             choices.Add(new ChoiceDescription(doNotRun, doNotRunHelp));
             choices.Add(new ChoiceDescription(runOnce, runOnceHelp));
@@ -779,7 +776,6 @@ namespace Microsoft.PowerShell
             string suspend = Authenticode.Choice_Suspend;
             string suspendHelp = Authenticode.Choice_Suspend_Help;
 
-
             choices.Add(new ChoiceDescription(doNotRun, doNotRunHelp));
             choices.Add(new ChoiceDescription(runOnce, runOnceHelp));
             choices.Add(new ChoiceDescription(suspend, suspendHelp));
@@ -788,5 +784,4 @@ namespace Microsoft.PowerShell
         }
     }
 }
-
 

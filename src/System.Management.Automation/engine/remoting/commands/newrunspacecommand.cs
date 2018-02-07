@@ -15,7 +15,6 @@ using System.Management.Automation.Remoting.Client;
 using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

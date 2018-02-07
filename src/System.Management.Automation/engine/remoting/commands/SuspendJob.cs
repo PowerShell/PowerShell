@@ -100,7 +100,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _wait = false;
 
-
         #endregion Parameters
 
         #region Overrides

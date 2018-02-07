@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
-
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
@@ -48,7 +47,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 ProcessUnknownInvalidClassId(fid.ClassId2e4f51ef21dd47e99d3c952918aff9cd, so, "FormatObjectDeserializerDeserializeInvalidClassId");
                 return false;
             }
-
 
             // check the type of the object by
             // 1) verifying the type name information
@@ -410,7 +408,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return fid;
         }
 
-
         // returns null on failure
         private static FormatInfoData CreateInstance(string clsid, FormatObjectDeserializer deserializer)
         {
@@ -481,7 +478,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
 
-
     internal static class FormatInfoDataListDeserializer<T> where T : FormatInfoData
     {
         private static void ReadListHelper(IEnumerable en, List<T> lst, FormatObjectDeserializer deserializer)
@@ -505,7 +501,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ReadListHelper(PSObjectHelper.GetEnumerable(memberRaw), lst, deserializer);
         }
     }
-
 
     #region Formatting Objects Deserializer
 

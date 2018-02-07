@@ -124,7 +124,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 }
 
-
 Describe "Tests for circular references in required modules" -tags "CI" {
 
     function CreateTestModules([string]$RootPath, [string[]]$ModuleNames, [bool]$AddVersion, [bool]$AddGuid, [bool]$AddCircularReference)

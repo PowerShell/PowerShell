@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright company="Microsoft">
 //    Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
@@ -195,7 +195,6 @@ namespace System.Management.Automation
             _toolTip = toolTip;
             _resultType = resultType;
         }
-
 
         /// <summary>
         /// Initializes a new instance of this class internally if the result out of TabExpansion is a string.

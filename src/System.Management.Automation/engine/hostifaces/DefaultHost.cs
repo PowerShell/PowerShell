@@ -63,7 +63,6 @@ namespace Microsoft.PowerShell
 
         #endregion properties
 
-
         #region methods
 
         /// <summary>

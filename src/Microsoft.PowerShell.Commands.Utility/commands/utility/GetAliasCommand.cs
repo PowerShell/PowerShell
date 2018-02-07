@@ -111,7 +111,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
 
-
             bool matchfound = false;
             bool ContainsWildcard = WildcardPattern.ContainsWildcardCharacters(value);
             WildcardPattern wcPattern = WildcardPattern.Get(value, WildcardOptions.IgnoreCase);

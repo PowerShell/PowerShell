@@ -199,7 +199,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
     /// <summary>
     /// Defines the implementation of the 'ConvertTo-SecureString' cmdlet.
     /// This cmdlet imports a new SecureString from encrypted data --
@@ -277,7 +276,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _force;
-
 
         /// <summary>
         /// Processes records from the input pipeline.

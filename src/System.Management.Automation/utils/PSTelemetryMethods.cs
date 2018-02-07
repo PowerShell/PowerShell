@@ -126,7 +126,6 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             TelemetryWrapper.TraceMessage("PSGetCommandFailed", new { TimeInMS = timeInMS, CommandNames = name });
         }
 
-
         private static long[] s_tabCompletionTimes = new long[(int)CompletionResultType.DynamicKeyword + 1];
         private static int[] s_tabCompletionCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];
         private static int[] s_tabCompletionResultCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];

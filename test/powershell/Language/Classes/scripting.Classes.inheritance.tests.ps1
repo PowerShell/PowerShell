@@ -362,7 +362,6 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     }
 }
 
-
 Describe 'Classes inheritance ctors syntax errors' -Tags "CI" {
 
     #DotNet.Interface.NotImplemented

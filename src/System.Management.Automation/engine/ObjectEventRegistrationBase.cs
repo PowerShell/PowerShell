@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _sourceIdentifier = Guid.NewGuid().ToString();
 
-
         /// <summary>
         /// Parameter for any action to be invoked when the event arrives
         /// </summary>

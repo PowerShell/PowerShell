@@ -77,7 +77,6 @@ namespace System.Management.Automation
             return this;
         }
 
-
         /// <summary>
         /// Moves the enumerator to the next matching scoped item.
         /// </summary>
@@ -132,7 +131,6 @@ namespace System.Management.Automation
             }
         }
 
-
         public object Current
         {
             get
@@ -142,12 +140,10 @@ namespace System.Management.Automation
         }
 
 
-
         public void Reset()
         {
             InitializeScopeEnumerator();
         }
-
 
         public void Dispose()
         {
@@ -260,7 +256,6 @@ namespace System.Management.Automation
 
         #endregion private members
     } // class ScopedItemSearcher
-
 
     /// <summary>
     /// The scope searcher for variables
@@ -398,7 +393,6 @@ namespace System.Management.Automation
 
         private readonly CommandOrigin _origin;
 
-
         /// <summary>
         /// Derived classes override this method to return their
         /// particular type of scoped item.
@@ -433,7 +427,6 @@ namespace System.Management.Automation
             _name = path.IsFunction ? path.UnqualifiedPath : path.QualifiedName;
 
             script = scope.GetFunction(_name);
-
 
             if (script != null)
             {

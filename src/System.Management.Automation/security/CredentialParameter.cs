@@ -72,7 +72,6 @@ namespace System.Management.Automation
                 string caption = null;
                 string prompt = null;
 
-
                 caption = CredentialAttributeStrings.CredentialAttribute_Prompt_Caption;
 
                 prompt = CredentialAttributeStrings.CredentialAttribute_Prompt;

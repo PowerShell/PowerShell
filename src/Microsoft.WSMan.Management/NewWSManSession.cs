@@ -16,7 +16,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 
-
 namespace Microsoft.WSMan.Management
 {
     /// <summary>
@@ -27,7 +26,6 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction
     /// Connect-WSMan
     /// </summary>
-
 
     [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141449")]
     public class NewWSManSessionOptionCommand : PSCmdlet
@@ -86,7 +84,6 @@ namespace Microsoft.WSMan.Management
             }
         }
         private PSCredential _proxycredential;
-
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCACheck".
@@ -213,8 +210,6 @@ namespace Microsoft.WSMan.Management
 
 
 
-
-
         /// <summary>
         /// BeginProcessing method.
         /// </summary>
@@ -240,7 +235,6 @@ namespace Microsoft.WSMan.Management
                 WriteError(er);
                 return;
             }
-
 
 
             //Creating the Session Object

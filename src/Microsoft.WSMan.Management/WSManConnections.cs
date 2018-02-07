@@ -16,7 +16,6 @@ using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation;
 
-
 namespace Microsoft.WSMan.Management
 {
     #region Base class for cmdlets taking credential, authentication, certificatethumbprint
@@ -228,7 +227,6 @@ namespace Microsoft.WSMan.Management
         private SwitchParameter usessl;
 
 
-
         #endregion
 
         /// <summary>
@@ -355,7 +353,6 @@ namespace Microsoft.WSMan.Management
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
         }//End BeginProcessing()
-
 
 
     }//End Class

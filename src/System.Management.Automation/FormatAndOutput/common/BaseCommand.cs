@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private PSCmdlet _command;
     }
 
-
     /// <summary>
     /// helper class to invoke a command in a secondary pipeline.
     /// NOTE: this implementation does not return any error messages
@@ -66,7 +65,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     /*argumentAst*/null, parameterValue,
                     false));
         }
-
 
         /// <summary>
         /// send an object to the pipeline
@@ -232,7 +230,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal ImplementationCommandBase implementation = null;
 
-
         #region IDisposable Implementation
 
         /// <summary>
@@ -376,7 +373,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// callback to write object
         /// </summary>
         internal WriteObjectCallback WriteObjectCall;
-
 
         #region IDisposable Implementation
 

@@ -56,7 +56,6 @@ namespace System.Management.Automation
             _methods.Add(index);
         }
 
-
         /// <summary>
         /// Returns the different method overloads signatures.
         /// </summary>
@@ -64,7 +63,6 @@ namespace System.Management.Automation
         internal Collection<String> MethodDefinitions()
         {
             Collection<String> result = new Collection<string>();
-
 
             foreach (int index in _methods)
             {

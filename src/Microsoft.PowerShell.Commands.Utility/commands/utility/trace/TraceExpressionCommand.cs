@@ -138,7 +138,6 @@ namespace Microsoft.PowerShell.Commands
             set { base.PSHostListener = value; }
         } // PSHost
 
-
         #endregion Parameters
 
         #region Cmdlet code
@@ -152,7 +151,6 @@ namespace Microsoft.PowerShell.Commands
         {
             Collection<PSTraceSource> preconfiguredSources = null;
             _matchingSources = ConfigureTraceSource(base.NameInternal, false, out preconfiguredSources);
-
 
             TurnOnTracing(_matchingSources, false);
             TurnOnTracing(preconfiguredSources, true);
@@ -215,13 +213,11 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-
             if (!LanguagePrimitives.IsNull(result))
             {
                 WriteObject(result, true);
             }
         } // ProcessRecord
-
 
         /// <summary>
         /// Finishes running the command if specified and then sets the

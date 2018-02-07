@@ -37,7 +37,6 @@ namespace System.Management.Automation
         /// </summary>
         private SessionState _sessionState;
 
-
         /// <summary>
         /// Gets the name of the provider.
         /// </summary>
@@ -337,7 +336,6 @@ namespace System.Management.Automation
             : this(sessionState, implementingType, name, String.Empty, String.Empty, helpFile, psSnapIn)
         {
         }
-
 
         /// <summary>
         /// Constructor for the ProviderInfo class.
@@ -680,5 +678,4 @@ namespace System.Management.Automation
         }
     } // class ProviderInfo
 } // namespace System.Management.Automation
-
 

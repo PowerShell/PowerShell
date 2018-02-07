@@ -51,7 +51,6 @@ function position_message
     }
 }
 
-
 #
 # Pester friendly version of Test-Error
 #
@@ -105,7 +104,6 @@ function ShouldBeParseError
        }
     }
 }
-
 
 function Flatten-Ast
 {

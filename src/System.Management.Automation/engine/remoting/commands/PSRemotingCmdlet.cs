@@ -997,7 +997,6 @@ namespace Microsoft.PowerShell.Commands
             throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
         }
 
-
         /// <summary>
         /// Validates parameter value and returns as integer
         /// </summary>
@@ -1167,7 +1166,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private Object[] _args;
-
 
         /// <summary>
         /// Indicates that if a job/command is invoked remotely the connection should be severed
@@ -1842,7 +1840,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal List<IThrottleOperation> Operations { get; } = new List<IThrottleOperation>();
 
-
         /// <summary>
         /// Closes the input streams on all the pipelines
         /// </summary>
@@ -2034,7 +2031,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         #endregion Overrides
 
         #region "Get PowerShell instance"
@@ -2213,7 +2209,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion "Get PowerShell instance"
 
         #region "UsingExpression Utilities"
-
 
         /// <summary>
         /// Get the converted script for a remote PSv2 end

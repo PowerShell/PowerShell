@@ -416,7 +416,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-
         /// <summary>
         /// <see cref="CimResultConte"/>
         /// </summary>

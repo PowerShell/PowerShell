@@ -804,7 +804,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         internal const string ClassNameSessionSet = "ClassNameSessionSet";
 
-
         /// <summary>
         /// resource Uri session set name
         /// </summary>

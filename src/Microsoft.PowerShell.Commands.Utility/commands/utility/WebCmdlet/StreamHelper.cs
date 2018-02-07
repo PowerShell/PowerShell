@@ -316,7 +316,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             } while (read != 0);
 
-
             if (cmdlet != null)
             {
                 ProgressRecord record = new ProgressRecord(ActivityId,

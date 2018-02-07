@@ -457,7 +457,6 @@ namespace System.Management.Automation
             return IsTypeEnumerable(PSObject.Base(obj)?.GetType());
         }
 
-
         /// <summary>
         /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable
         /// </summary>
@@ -536,7 +535,6 @@ namespace System.Management.Automation
 
             return LanguagePrimitives.ReturnNullEnumerable;
         }
-
 
         private static readonly CallSite<Func<CallSite, object, IEnumerator>> s_getEnumeratorSite =
             CallSite<Func<CallSite, object, IEnumerator>>.Create(PSEnumerableBinder.Get());
@@ -808,7 +806,6 @@ namespace System.Management.Automation
                     default: return 1;
                 }
             }
-
 
             string firstString = first as string;
 
@@ -1230,7 +1227,6 @@ namespace System.Management.Automation
 
             return false;
         }
-
 
         /// <summary>
         /// Verifies if type is one of the boolean types
@@ -3212,7 +3208,6 @@ namespace System.Management.Automation
                 valueToConvert.ToString(), resultType.ToString(), exception.Message);
         }
 
-
         private static Delegate ConvertPSMethodInfoToDelegate(object valueToConvert,
                                                       Type resultType,
                                                       bool recurse,
@@ -3884,7 +3879,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private class ConvertCheckingForCustomConverter
         {
             internal PSConverter<object> tryfirstConverter;
@@ -4189,7 +4183,6 @@ namespace System.Management.Automation
         private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
         private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
-
 
         internal static void RebuildConversionCache()
         {

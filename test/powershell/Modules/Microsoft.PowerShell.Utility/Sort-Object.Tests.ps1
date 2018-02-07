@@ -1,4 +1,4 @@
-﻿Describe "Sort-Object" -Tags "CI" {
+Describe "Sort-Object" -Tags "CI" {
 
     It "should be able to sort object in ascending with using Property switch" {
         { Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length } | Should Not Throw

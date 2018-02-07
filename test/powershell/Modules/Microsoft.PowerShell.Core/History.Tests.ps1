@@ -1,4 +1,4 @@
-﻿Describe "History cmdlet test cases" -Tags "CI" {
+Describe "History cmdlet test cases" -Tags "CI" {
     Context "Simple History Tests" {
         BeforeEach {
             $setting = [system.management.automation.psinvocationsettings]::New()

@@ -39,7 +39,6 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $env:PSModulePath = $originalModulePath
     }
 
-
     It "validate sxs module path" {
 
         $env:PSModulePath = ""
@@ -52,7 +51,6 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths[1].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should Be $expectedSharedPath
         $paths[2].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should Be $expectedSystemPath
     }
-
 
     It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR) {
 

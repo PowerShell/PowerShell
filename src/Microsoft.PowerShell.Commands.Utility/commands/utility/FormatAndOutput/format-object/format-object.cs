@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
             this.implementation = new InnerFormatShapeCommand(FormatShape.Complex);
         }
 
-
         #region Command Line Switches
 
         /// <summary>

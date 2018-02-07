@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 #pragma warning disable 1634, 1691
 
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -272,7 +271,6 @@ namespace Microsoft.PowerShell
             }
         }
         private static CommandLineParameterParser s_cpp;
-
 
 
 #if UNIX
@@ -857,7 +855,6 @@ namespace Microsoft.PowerShell
         private PSObject _consoleColorProxy;
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -876,7 +873,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
 
         /// <summary>
@@ -1248,7 +1244,6 @@ namespace Microsoft.PowerShell
         }
 
         internal WrappedSerializer.DataFormat OutputFormat { get; private set; }
-
 
         internal WrappedSerializer.DataFormat InputFormat { get; private set; }
 
@@ -1919,7 +1914,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Escapes backtick and tick characters with a backtick, returns the result
@@ -2070,7 +2064,6 @@ namespace Microsoft.PowerShell
         /// raised when the host pushes a runspace
         /// </summary>
         internal event EventHandler RunspacePushed;
-
 
         #endregion non-overrides
 
@@ -2885,9 +2878,7 @@ namespace Microsoft.PowerShell
 
         private static ConsoleHost s_theConsoleHost;
 
-
         internal static InitialSessionState DefaultInitialSessionState;
-
 
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
@@ -2936,5 +2927,4 @@ namespace Microsoft.PowerShell
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace
-
 

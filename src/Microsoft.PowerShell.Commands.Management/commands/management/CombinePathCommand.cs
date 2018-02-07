@@ -217,7 +217,6 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // JoinPathCommand
 } // namespace Microsoft.PowerShell.Commands
 

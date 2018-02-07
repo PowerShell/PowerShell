@@ -6,7 +6,6 @@ param(
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
 
-
 function Send-DailyWebHook
 {
     param (
@@ -148,7 +147,6 @@ function Set-DailyBuildBadge
     }
 }
 
-
 # https://docs.travis-ci.com/user/environment-variables/
 # TRAVIS_EVENT_TYPE: Indicates how the build was triggered.
 # One of push, pull_request, api, cron.
@@ -165,7 +163,6 @@ else
 {
     $commitMessage = $env:TRAVIS_COMMIT_MESSAGE
 }
-
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'

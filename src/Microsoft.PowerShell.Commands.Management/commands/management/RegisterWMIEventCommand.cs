@@ -45,7 +45,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string ComputerName { get; set; } = "localhost";
 
-
         /// <summary>
         /// The WMI class to use
         /// </summary>
@@ -96,7 +95,6 @@ namespace Microsoft.PowerShell.Commands
             return returnValue.ToString();
         }
         #endregion helper functions
-
 
         /// <summary>
         /// Returns the object that generates events to be monitored

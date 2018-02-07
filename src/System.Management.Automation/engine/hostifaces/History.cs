@@ -13,7 +13,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -137,11 +136,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         #endregion public
 
         #region internal
-
 
 
         /// <summary>
@@ -159,7 +156,6 @@ namespace Microsoft.PowerShell.Commands
                 _cleared = value;
             }
         }
-
 
 
         /// <summary>
@@ -233,7 +229,6 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _endTime;
 
 
-
         /// <summary>
         /// Flag indicating an entry is present/cleared
         /// </summary>
@@ -255,7 +250,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
     }
-
 
     /// <summary>
     /// This class implements history and provides APIs for adding and fetching
@@ -378,7 +372,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-
         /// <summary>
         /// Get count HistoryEntries
         /// </summary>
@@ -399,7 +392,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw PSTraceSource.NewArgumentNullException("newest");
             }
-
 
             if (count == -1 || count > _countEntriesAdded || count > _countEntriesInBuffer)
                 count = _countEntriesInBuffer;
@@ -558,7 +550,6 @@ namespace Microsoft.PowerShell.Commands
             }// end lock
         }// end function
 
-
         /// <summary>
         /// Get History Entries based on the WildCard Pattern value.
         /// If passed 0, returns all the values, else return on the basis of count.
@@ -649,7 +640,6 @@ namespace Microsoft.PowerShell.Commands
 
 
 
-
         /// <summary>
         /// Clears the history entry from buffer for a given id.
         /// </summary>
@@ -683,7 +673,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         ///<summary>
         /// gets the total number of entries added
         ///</summary>
@@ -693,7 +682,6 @@ namespace Microsoft.PowerShell.Commands
         {
             return _capacity;
         }
-
 
         #endregion internal
 
@@ -856,7 +844,6 @@ namespace Microsoft.PowerShell.Commands
                 _countEntriesInBuffer++;
         }
 
-
         /// <summary>
         /// Get the current history size
         /// </summary>
@@ -906,7 +893,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private long _countEntriesAdded;
 
-
         /// <summary>
         /// Private object for synchronization
         /// </summary>
@@ -922,7 +908,6 @@ namespace Microsoft.PowerShell.Commands
             return _countEntriesAdded + 1;
         }
     }
-
 
     /// <summary>
     /// This class Implements the get-history command
@@ -981,7 +966,6 @@ namespace Microsoft.PowerShell.Commands
                 _count = value;
             }
         }
-
 
         /// <summary>
         /// Implements the Processing() method for show/History command
@@ -1112,7 +1096,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-
         /// <summary>
         /// Implements the BeginProcessing() method for eval/History command
         /// </summary>
@@ -1194,7 +1177,6 @@ namespace Microsoft.PowerShell.Commands
                 //when the host is not interactive, HostException is thrown
                 //do nothing
             }
-
 
             // Items invoked as History should act as though they were submitted by the user - so should still come from
             // the runspace itself. For this reason, it is insufficient to just use the InvokeScript method on the Cmdlet class.
@@ -1365,7 +1347,6 @@ namespace Microsoft.PowerShell.Commands
             return entry;
         }
 
-
         /// <summary>
         /// Id of history entry to execute.
         /// </summary>
@@ -1411,7 +1392,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-
 
     /// <summary>
     /// This class Implements the add-history command
@@ -1459,7 +1439,6 @@ namespace Microsoft.PowerShell.Commands
             LocalPipeline lpl = (LocalPipeline)((RunspaceBase)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
             lpl.AddHistoryEntryFromAddHistoryCmdlet();
         }
-
 
         /// <summary>
         /// override for ProcessRecord
@@ -1667,7 +1646,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
     ///<summary>
     /// This Class implements the Clear History cmdlet
     ///</summary>
@@ -1727,7 +1705,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
 
         private string[] _commandline = null;
-
 
         ///<summary>
         /// Clears the specified number of history entries
@@ -1924,7 +1901,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// Clears the session history based on the Commandline parameter
         /// takes no parameters
@@ -1988,7 +1964,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-
 
         /// <summary>
         /// Clears the session history based on the input parameter
@@ -2057,7 +2032,6 @@ namespace Microsoft.PowerShell.Commands
             return;
         }//end function
 
-
         /// <summary>
         /// history obj
         /// </summary>
@@ -2071,5 +2045,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion Private
     }
 }
-
 

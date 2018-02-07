@@ -25,7 +25,6 @@ namespace System.Management.Automation
         /// </summary>
         private PSDriveInfo _currentDrive;
 
-
         #region NewDrive
 
         /// <summary>
@@ -223,7 +222,6 @@ namespace System.Management.Automation
                     throw;
                 }
 
-
                 if (ProvidersCurrentWorkingDrive[drive.Provider] == null)
                 {
                     // Set the new drive as the current
@@ -412,7 +410,6 @@ namespace System.Management.Automation
                 // The provider can be specified as pipeline input.
                 return null;
             }
-
 
             DriveCmdletProvider provider = GetDriveProviderInstance(providerId);
 
@@ -772,7 +769,6 @@ namespace System.Management.Automation
                 // want to let errors find their way out. If there are any
                 // failures we just don't mount the drive.
 
-
                 MshLog.LogProviderHealthEvent(
                     this.ExecutionContext,
                     this.ExecutionContext.ProviderNames.FileSystem,
@@ -923,7 +919,6 @@ namespace System.Management.Automation
                     {
                     }
 
-
                     scope.RemoveDrive(drive);
                 }
             }
@@ -962,7 +957,6 @@ namespace System.Management.Automation
                 try
                 {
                     char driveChar = Convert.ToChar(drive.Name, CultureInfo.InvariantCulture);
-
 
                     if (Char.ToUpperInvariant(driveChar) >= 'A' && Char.ToUpperInvariant(driveChar) <= 'Z')
                     {
@@ -1277,7 +1271,6 @@ namespace System.Management.Automation
                     SessionStateScope scope = GetScopeByID(scopeID);
                     scope.RemoveDrive(drive);
 
-
                     // If the drive is the current drive for the provider, remove
                     // it from the current drive list.
 
@@ -1381,7 +1374,6 @@ namespace System.Management.Automation
                     e);
             }
 
-
             if (result != null)
             {
                 // Make sure the provider didn't try to pull a fast one on us
@@ -1440,7 +1432,6 @@ namespace System.Management.Automation
                 driveNames.Add(drive.Name.Substring(0, 1));
             }
 
-
             foreach (SessionStateScope lookupScope in scopeEnumerator)
             {
                 foreach (PSDriveInfo drive in lookupScope.Drives)
@@ -1465,7 +1456,6 @@ namespace System.Management.Automation
                             if (!(driveNames.Contains(drive.Name)))
                                 driveTable.Remove(drive.Name);
                         }
-
 
 
                         if (driveIsValid && !driveTable.ContainsKey(drive.Name))

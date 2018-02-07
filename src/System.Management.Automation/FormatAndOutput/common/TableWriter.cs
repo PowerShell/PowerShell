@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         /// <summary>
         /// Initialize the table specifying the width of each column
         /// </summary>
@@ -214,7 +213,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-
             if (multiLine)
             {
                 string[] lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
@@ -245,7 +243,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (validColumnCount == 0)
                 return null;
-
 
             StringCollection[] scArray = new StringCollection[validColumnCount];
             for (int k = 0; k < scArray.Length; k++)
@@ -334,7 +331,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return sc;
         }
 
-
         private string GenerateRow(string[] values, int[] alignment, DisplayCells dc)
         {
             StringBuilder sb = new StringBuilder();
@@ -366,7 +362,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return sb.ToString();
         }
-
 
         private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc)
         {

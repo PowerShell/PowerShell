@@ -70,7 +70,6 @@ End {
         $additionalFiles += $BuildPackagePath
     }
 
-
     $psReleaseBranch = 'master'
     $psReleaseFork = 'PowerShell'
     $location = Join-Path -Path $PSScriptRoot -ChildPath 'PSRelease'

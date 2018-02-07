@@ -11,7 +11,6 @@ using System.Management.Automation.Internal;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -408,7 +407,6 @@ namespace System.Management.Automation
         /// Tells whether to bail out in the next call to Read
         /// </summary>
         private bool _bailInNextCall;
-
 
         /// <summary>
         /// Populates the parameters specified from the pipeline.
@@ -855,5 +853,4 @@ namespace System.Management.Automation
 #endregion helper_methods
     }
 }
-
 

@@ -578,7 +578,6 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 
         It "Access hidden property should still work" { $instance.hiddenZ | should be 42 }
 
-
         # Formatting should not include hidden members by default
         $tableOutput = $instance | Format-Table -HideTableHeaders -AutoSize | Out-String
         It "Table formatting should not have included hidden member hiddenZ - should contain 10" { $tableOutput.Contains(10) | should be $true}
@@ -627,7 +626,6 @@ Describe 'Scoped Types Test' -Tags "CI" {
 
         It "[C1]::new() in nested scope" { (f1) | should be "f1 scope" }
         It "'new-object C1' in nested scope" { (f2) | should be "f2 scope" }
-
 
         It "[C1]::new() in nested scope (in pipeline)" { (1 | f1 | f2 | f1) | should be "f1 scope" }
         It "'new-object C1' in nested scope (in pipeline)" { (1 | f2 | f1 | f2) | should be "f2 scope" }

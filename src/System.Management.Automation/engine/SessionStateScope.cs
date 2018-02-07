@@ -535,7 +535,6 @@ namespace System.Management.Automation
                 }
             }
 
-
             _variables[name] = variable;
             variable.SessionState = sessionState;
             return variable;
@@ -935,7 +934,6 @@ namespace System.Management.Automation
                     throw e;
                 }
 
-
                 // Ensure we are not trying to set the alias to constant as this can only be
                 // done at creation time.
 
@@ -989,7 +987,6 @@ namespace System.Management.Automation
             return result;
         } // SetAliasValue
 
-
         /// <summary>
         /// Sets an alias to the given value.
         /// </summary>
@@ -1020,7 +1017,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(
                 aliasToSet != null,
                 "The caller should verify the aliasToSet");
-
 
             var aliasInfos = GetAliases();
             AliasInfo aliasInfo;

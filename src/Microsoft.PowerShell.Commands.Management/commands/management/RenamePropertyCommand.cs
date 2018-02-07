@@ -149,6 +149,5 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // RenameItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

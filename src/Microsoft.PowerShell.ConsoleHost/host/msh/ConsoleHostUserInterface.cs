@@ -128,7 +128,6 @@ namespace Microsoft.PowerShell
         //    }
         //}
 
-
         /// <summary>
         ///
         /// true if command completion is currently running
@@ -189,7 +188,6 @@ namespace Microsoft.PowerShell
 
             return ReadLine(false, "", out unused, true, true);
         }
-
 
         /// <summary>
         ///
@@ -452,7 +450,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Handle writing print token with proper cursor adjustment for ReadLineSafe
@@ -499,7 +496,6 @@ namespace Microsoft.PowerShell
             }
             WriteToConsole(printToken, false);
         }
-
 
 
         /// <summary>
@@ -549,7 +545,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>
         /// </summary>
@@ -560,7 +555,6 @@ namespace Microsoft.PowerShell
             WriteToConsole(" ", true);
             _rawui.CursorPosition = cursorPosition;
         }
-
 
 #if !UNIX
         /// <summary>
@@ -644,7 +638,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
         {
             ConsoleColor fg = RawUI.ForegroundColor;
@@ -671,14 +664,12 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private void WriteLineToConsole()
         {
             WriteToConsole(Crlf, true);
         }
 
         #endregion WriteToConsole
-
 
 
         /// <summary>
@@ -724,7 +715,6 @@ namespace Microsoft.PowerShell
                 writer.Write(value);
             }
         }
-
 
 
         /// <summary>
@@ -776,7 +766,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -807,7 +796,6 @@ namespace Microsoft.PowerShell
         }
 
         #region Word Wrapping
-
 
 
         /// <summary>
@@ -929,13 +917,11 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// Struct used by WrapText
         ///
         /// </summary>
-
 
         [Flags]
         internal enum WordFlags
@@ -950,7 +936,6 @@ namespace Microsoft.PowerShell
             internal string Text;
             internal WordFlags Flags;
         }
-
 
 
         /// <summary>
@@ -1065,7 +1050,6 @@ namespace Microsoft.PowerShell
             }
             return result;
         }
-
 
 
         /// <summary>
@@ -1274,7 +1258,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// See base class
@@ -1357,7 +1340,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         public override void WriteErrorLine(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -1408,9 +1390,7 @@ namespace Microsoft.PowerShell
 
         #endregion Line-oriented interaction
 
-
         #region implementation
-
 
 
         // We use System.Environment.NewLine because we are platform-agnostic
@@ -1886,7 +1866,6 @@ namespace Microsoft.PowerShell
         }
 #endif
 
-
         /// <summary>
         /// Strip nulls from a string...
         /// </summary>
@@ -1904,7 +1883,6 @@ namespace Microsoft.PowerShell
             }
             return sb.ToString();
         }
-
 
         /// <summary>
         ///

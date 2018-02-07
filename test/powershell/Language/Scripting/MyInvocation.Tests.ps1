@@ -1,4 +1,4 @@
-﻿Describe 'Testing of MyInvocation' -Tags "CI" {
+Describe 'Testing of MyInvocation' -Tags "CI" {
     It 'MyInvocation works in Function' {
 
         function myfunc

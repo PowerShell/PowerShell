@@ -27,7 +27,6 @@ using System.Resources;
 using Microsoft.Win32;
 using System.Text.RegularExpressions;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     #region New-WebServiceProxy
@@ -104,7 +103,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private PSCredential _credential;
-
 
         /// <summary>
         /// use default credential..

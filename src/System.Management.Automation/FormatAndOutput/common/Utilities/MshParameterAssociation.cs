@@ -35,7 +35,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal MshParameter OriginatingParameter { get; }
     }
 
-
     internal static class AssociationManager
     {
         internal static List<MshResolvedExpressionParameterAssociation> SetupActiveProperties(List<MshParameter> rawMshParameterList,

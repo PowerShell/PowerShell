@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -674,7 +674,6 @@ namespace System.Management.Automation
         {
             return Create(runspace, filter, null, null, receiveImmediately);
         }
-
 
         /// <summary>
         /// Queries the runspace for jobs and constructs a collection of job proxies to interact with them.
@@ -1358,7 +1357,6 @@ namespace System.Management.Automation
                                "Either the runspace or a runspacepool should not be null");
 
                     AssignRunspaceOrRunspacePool(powershell);
-
 
                     // set the commands for the powershell
                     powershell.Commands.AddCommand("Remove-Job").AddParameter("InstanceId", _remoteJobInstanceId);

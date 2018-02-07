@@ -375,7 +375,6 @@ namespace Microsoft.PowerShell.Commands
             _usingDelimiter = true;
         }
 
-
         /// <summary>
         /// Reads the specified number of characters or a lines from the file.
         /// </summary>

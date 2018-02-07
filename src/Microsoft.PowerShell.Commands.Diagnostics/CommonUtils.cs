@@ -87,10 +87,8 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
         [DllImport(LibraryLoadDllName)]
         private static extern bool FreeLibrary(IntPtr hModule);
 
-
         [DllImport(LocalizationDllName, EntryPoint = "GetUserDefaultLangID", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         private static extern ushort GetUserDefaultLangID();
-
 
         public static uint FormatMessageFromModule(uint lastError, string moduleName, out String msg)
         {

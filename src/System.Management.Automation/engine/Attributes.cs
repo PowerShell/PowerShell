@@ -484,7 +484,6 @@ namespace System.Management.Automation
             Type = new[] { new PSTypeName(typeName) };
         }
 
-
         /// <summary>
         /// Construct the attribute from an array of <see>System.Type</see>
         /// </summary>
@@ -810,7 +809,6 @@ namespace System.Management.Automation
         public string Help { get; set; }
     }
 
-
     /// <summary>
     /// Specify that the member is hidden for the purposes of cmdlets like Get-Member and
     /// that the member is not displayed by default by Format-* cmdlets.
@@ -874,7 +872,6 @@ namespace System.Management.Automation
                     MaxLength, len);
             }
         }
-
 
         /// <summary>
         /// Initializes a new instance of the ValidateLengthAttribute class
@@ -1419,7 +1416,6 @@ namespace System.Management.Automation
             ICollection ic;
             IEnumerable ie;
             IEnumerator ienumerator;
-
 
             if (arguments == null || arguments == AutomationNull.Value)
             {

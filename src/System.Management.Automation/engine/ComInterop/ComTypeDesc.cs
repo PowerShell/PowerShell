@@ -31,7 +31,6 @@ namespace System.Management.Automation.ComInterop
             TypeLib = typeLibDesc;
         }
 
-
         internal static ComTypeDesc FromITypeInfo(ComTypes.ITypeInfo typeInfo, ComTypes.TYPEATTR typeAttr)
         {
             if (typeAttr.typekind == ComTypes.TYPEKIND.TKIND_COCLASS)

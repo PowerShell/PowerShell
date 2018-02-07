@@ -254,7 +254,6 @@ namespace System.Management.Automation.Remoting
         IPCExceptionLaunchingProcess = 2107,
     }
 
-
     /// <summary>
     /// This static class defines the resource base name used by remoting errors.
     /// It also provides a convenience method to get the localized strings.
@@ -368,7 +367,6 @@ namespace System.Management.Automation.Remoting
         {
         }
 
-
         #endregion Constructors
 
         /// <summary>
@@ -380,7 +378,6 @@ namespace System.Management.Automation.Remoting
             SetErrorId(typeof(PSRemotingDataStructureException).FullName);
         }
     }
-
 
     /// <summary>
     /// This exception is used by remoting code to indicate an error condition in network operations.
@@ -413,7 +410,6 @@ namespace System.Management.Automation.Remoting
         {
             SetDefaultErrorRecord();
         }
-
 
 
         /// <summary>

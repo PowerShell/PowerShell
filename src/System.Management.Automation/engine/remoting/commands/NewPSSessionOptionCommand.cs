@@ -128,7 +128,6 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public PSCredential ProxyCredential { get; set; }
 
-
         /// <summary>
         /// When connecting over HTTPS, the client does not validate that the server
         /// certificate is signed by a trusted certificate authority (CA). Use only when

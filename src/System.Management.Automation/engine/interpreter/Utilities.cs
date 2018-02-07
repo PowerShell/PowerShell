@@ -675,7 +675,6 @@ namespace System.Management.Automation.Interpreter
         private static readonly StorageInfo[] s_updating = Automation.Utils.EmptyArray<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
 
-
         public ThreadLocal()
         {
         }

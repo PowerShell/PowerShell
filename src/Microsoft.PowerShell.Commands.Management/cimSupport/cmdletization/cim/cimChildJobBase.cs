@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -398,7 +398,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             operationOptions.SetOption("__MI_OPERATIONOPTIONS_IMPROVEDPERF_STREAMING", 1);
 
-
             operationOptions.Flags |= this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.SchemaConformanceLevel;
 
             if (this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ResourceUri != null)
@@ -523,7 +522,6 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             return _jobSpecificCustomOptions.Value;
         }
-
 
         #endregion
 

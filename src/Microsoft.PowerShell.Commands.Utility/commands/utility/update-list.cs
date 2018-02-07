@@ -113,7 +113,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// EndProcessing method.
         /// </summary>

@@ -49,7 +49,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
 
-
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
     }

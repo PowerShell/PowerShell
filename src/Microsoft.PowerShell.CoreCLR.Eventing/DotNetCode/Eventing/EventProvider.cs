@@ -266,7 +266,6 @@ namespace System.Diagnostics.Eventing
             }
         }
 
-
         [System.Security.SecurityCritical]
         private static unsafe string EncodeObject(ref object data, EventData* dataDescriptor, byte* dataBuffer)
         /*++
@@ -427,7 +426,6 @@ namespace System.Diagnostics.Eventing
             return null;
         }
 
-
         /// <summary>
         /// WriteMessageEvent, method to write a string with level and Keyword.
         /// The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
@@ -486,7 +484,6 @@ namespace System.Diagnostics.Eventing
         {
             return WriteMessageEvent(eventMessage, 0, 0);
         }
-
 
         /// <summary>
         /// WriteEvent method to write parameters with event schema properties
@@ -596,7 +593,6 @@ namespace System.Diagnostics.Eventing
             }
             return true;
         }
-
 
         /// <summary>
         /// WriteTransferEvent, method to write a parameters with event schema properties
@@ -766,7 +762,6 @@ namespace System.Diagnostics.Eventing
         {
             return t_activityId;
         }
-
 
         [System.Security.SecurityCritical]
         public static void SetActivityId(ref Guid id)

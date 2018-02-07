@@ -1,4 +1,4 @@
-﻿Describe "String cmdlets" -Tags "CI" {
+Describe "String cmdlets" -Tags "CI" {
     Context "Select-String" {
         BeforeAll {
             $sep = [io.path]::DirectorySeparatorChar

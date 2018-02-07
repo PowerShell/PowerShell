@@ -101,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
                 new ErrorRecord(ex, "SetValueException", ErrorCategory.InvalidData, null));
         }
 
-
         private static string ParameterSet2ResourceString(string parameterSet)
         {
             if (parameterSet.Equals(netSetName, StringComparison.OrdinalIgnoreCase))

@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using System.ComponentModel;
 using System.Management.Automation.Runspaces;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -95,7 +94,6 @@ namespace System.Management.Automation
     {
         internal event EventHandler<SettingValueExceptionEventArgs> SettingValueException;
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
-
 
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)
             : base(propertyName, Utils.EmptyArray<Attribute>())
@@ -702,7 +700,6 @@ namespace System.Management.Automation
         {
         }
 
-
         /// <summary>
         /// Retrieves a <see cref="PSObjectTypeDescriptor"/> to provide information about the properties for an object of the type <see cref="PSObject"/>.
         /// </summary>
@@ -750,5 +747,4 @@ namespace System.Management.Automation
         }
     }
 }
-
 

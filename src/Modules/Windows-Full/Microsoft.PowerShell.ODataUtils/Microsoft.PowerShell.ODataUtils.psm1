@@ -1,6 +1,5 @@
 Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
 
-
 # This module doesn't support Arm because of Add-Type cmdlet
 $ProcessorArchitecture = (Get-WmiObject -query "Select Architecture from Win32_Processor").Architecture
 

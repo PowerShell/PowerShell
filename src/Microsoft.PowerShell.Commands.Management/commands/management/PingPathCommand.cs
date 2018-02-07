@@ -207,7 +207,6 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // PingPathCommand
 } // namespace Microsoft.PowerShell.Commands
 

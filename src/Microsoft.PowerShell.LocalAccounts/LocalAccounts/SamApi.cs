@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
@@ -210,7 +210,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
         public LOGON_HOURS LogonHours;
     }
 
-
     [StructLayout(LayoutKind.Sequential)]
     internal struct POLICY_PRIMARY_DOMAIN_INFO
     {
@@ -273,7 +272,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
         internal const UInt32 SAM_USER_ENUMERATION_FILTER_INTERNET  = 0x00000002;
         internal const UInt32 SAM_SERVER_LOOKUP_DOMAIN              = 0x0020;
 
-
         //
         // Bits to be used in UserAllInformation's WhichFields field (to indicate
         // which items were queried or set).
@@ -310,7 +308,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
         internal const UInt32 USER_ALL_OWFPASSWORD          = 0x20000000;   // boolean
 
         internal const UInt32 USER_ALL_UNDEFINED_MASK       = 0xC0000000;
-
 
         //
         // Bit masks for the UserAccountControl member of the USER_ALL_INFORMATION structure
@@ -350,7 +347,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
                                                out IntPtr serverHandle,
                                                UInt32 desiredAccess,
                                                ref OBJECT_ATTRIBUTES objectAttributes);
-
 
         [DllImport("samlib.dll")]
         internal static extern UInt32 SamRidToSid(IntPtr objectHandle, UInt32 rid, out IntPtr sid);
@@ -443,7 +439,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
                                                              out IntPtr userHandle,
                                                              out UInt32 grantedAccess,
                                                              out UInt32 relativeId);
-
 
         [DllImport("samlib.dll")]
         internal static extern UInt32 SamQueryInformationUser(IntPtr userHandle,

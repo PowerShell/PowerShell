@@ -57,7 +57,6 @@ namespace System.Management.Automation
         internal Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> PipelineableMandatoryByPropertyNameParameters
         { get; } = new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
 
-
         /// <summary>
         /// Gets the parameters that do not take pipeline input and are mandatory in this parameter set
         /// </summary>

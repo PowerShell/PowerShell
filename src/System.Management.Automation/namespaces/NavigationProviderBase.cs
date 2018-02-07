@@ -661,7 +661,6 @@ namespace System.Management.Automation.Provider
                 }
                 basePath = basePath.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
@@ -854,7 +853,6 @@ namespace System.Management.Automation.Provider
             }
         } // GetChildName
 
-
         /// <summary>
         /// Determines if the item specified by the path is a container.
         /// </summary>
@@ -886,7 +884,6 @@ namespace System.Management.Automation.Provider
                         SessionStateStrings.CmdletProvider_NotSupported);
             }
         }
-
 
         /// <summary>
         /// Moves the item specified by path to the specified destination.
@@ -963,7 +960,6 @@ namespace System.Management.Automation.Provider
                 return null;
             }
         } // MoveItemDynamicParameters
-
 
         #endregion Protected methods
 

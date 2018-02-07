@@ -61,7 +61,6 @@ namespace System.Management.Automation
         internal const string MshSnapin_VendorResource = "VendorIndirect";
         internal const string MshSnapin_LogPipelineExecutionDetails = "LogPipelineExecutionDetails";
 
-
         //Name of default mshsnapins
         internal const string CoreMshSnapinName = "Microsoft.PowerShell.Core";
         internal const string HostMshSnapinName = "Microsoft.PowerShell.Host";
@@ -358,7 +357,6 @@ namespace System.Management.Automation
             }
         }
 
-
         internal void LoadIndirectResources()
         {
             using (RegistryStringResourceIndirect resourceReader = RegistryStringResourceIndirect.GetResourceIndirectReader())
@@ -416,7 +414,6 @@ namespace System.Management.Automation
         }
 
 
-
         internal PSSnapInInfo Clone()
         {
             PSSnapInInfo cloned = new PSSnapInInfo(Name,
@@ -429,7 +426,6 @@ namespace System.Management.Automation
 
             return cloned;
         }
-
 
         /// <summary>
         /// Returns true if the PSSnapIn Id is valid. A PSSnapIn is valid iff it contains only
@@ -468,7 +464,6 @@ namespace System.Management.Automation
             return;
         }
     }
-
 
 
     /// <summary>
@@ -573,7 +568,6 @@ namespace System.Management.Automation
             return r;
         }
 
-
         /// <summary>
         /// Reads all registered mshsnapin for specified psVersion
         /// </summary>
@@ -642,7 +636,6 @@ namespace System.Management.Automation
             return mshsnapins;
         }
 
-
         /// <summary>
         /// Read mshsnapin for specified mshsnapinId and psVersion
         /// </summary>
@@ -683,7 +676,6 @@ namespace System.Management.Automation
 
             return ReadOne(mshsnapinRoot, mshsnapinId);
         }
-
 
 
         /// <summary>
@@ -1268,7 +1260,6 @@ namespace System.Management.Automation
             new DefaultPSSnapInInformation("Microsoft.PowerShell.Core", "System.Management.Automation", null,
                                            "CoreMshSnapInResources,Description", "CoreMshSnapInResources,Vendor");
 
-
         /// <summary>
         ///
         /// </summary>
@@ -1325,5 +1316,4 @@ namespace System.Management.Automation
         private static PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
     }
 }
-
 

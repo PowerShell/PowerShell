@@ -239,7 +239,6 @@ namespace System.Management.Automation
 
         private NetworkCredential _netCred;
 
-
         /// <summary>
         /// Returns an equivalent NetworkCredential object for this
         /// PSCredential.
@@ -271,7 +270,6 @@ namespace System.Management.Automation
 
             return _netCred;
         }
-
 
         /// <summary>
         /// Provides an explicit cast to get a NetworkCredential

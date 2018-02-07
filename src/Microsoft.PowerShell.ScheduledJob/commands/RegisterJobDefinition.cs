@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -26,7 +26,6 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private const string FilePathParameterSet = "FilePath";
         private const string ScriptBlockParameterSet = "ScriptBlock";
-
 
         /// <summary>
         /// File path for script to be run in job.

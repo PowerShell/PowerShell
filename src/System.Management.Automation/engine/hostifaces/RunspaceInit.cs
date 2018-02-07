@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using Dbg = System.Management.Automation.Diagnostics;
 using DWORD = System.UInt32;
 
-
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>

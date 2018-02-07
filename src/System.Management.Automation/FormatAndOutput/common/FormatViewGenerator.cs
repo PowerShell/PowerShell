@@ -217,7 +217,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-
                 FormatEntry fe = new FormatEntry();
                 startGroup.groupingEntry.formatValueList.Add(fe);
 
@@ -272,7 +271,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return _groupingManager.UpdateGroupingKeyValue(so);
         }
 
-
         internal GroupEndData GenerateGroupEndData()
         {
             return new GroupEndData();
@@ -307,7 +305,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return result;
         }
-
 
         private GroupingInfoManager _groupingManager = null;
 
@@ -397,14 +394,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-
         internal FormatErrorManager ErrorManager
         {
             get { return _errorManager; }
         }
 
         private FormatErrorManager _errorManager;
-
 
         #region helpers
 

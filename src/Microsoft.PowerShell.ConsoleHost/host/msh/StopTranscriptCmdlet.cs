@@ -3,11 +3,9 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -49,6 +47,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
 
 

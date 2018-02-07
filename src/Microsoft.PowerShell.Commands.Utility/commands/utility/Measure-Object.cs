@@ -131,7 +131,6 @@ namespace Microsoft.PowerShell.Commands
         public object Minimum { get; set; }
     }
 
-
     /// <summary>
     /// Class output by Measure-Object
     /// </summary>
@@ -412,7 +411,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion TextMeasure ParameterSet
         #endregion Command Line Switches
-
 
         /// <summary>
         /// Which parameter set the Cmdlet is in.

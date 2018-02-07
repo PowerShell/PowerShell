@@ -74,7 +74,6 @@ namespace System.Management.Automation.Runspaces
             _currentState = currentState;
         }
 
-
         #region ISerializable Members
 
         // No need to implement GetObjectData

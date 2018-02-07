@@ -2465,7 +2465,6 @@ namespace System.Management.Automation
                         rest.Add(Current(enumerator));
                     }
 
-
                     return rest.ToArray();
                 }
 
@@ -2643,7 +2642,6 @@ namespace System.Management.Automation
 
             return matches;
         }
-
 
         /// <summary>
         /// Implements the ForEach() operator.
@@ -3216,7 +3214,6 @@ namespace System.Management.Automation
                     e.Message);
             }
         }
-
 
         /// <summary>
         /// A routine used to advance an enumerator and catch errors that might occur

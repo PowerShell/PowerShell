@@ -133,7 +133,6 @@ namespace System.Management.Automation
             _errorRecord.SetInvocationInfo(new InvocationInfo(invocationInfo.MyCommand, errorPosition));
         }
 
-
         #endregion ctor
 
         #region ErrorRecord

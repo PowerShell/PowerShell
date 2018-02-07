@@ -26,7 +26,6 @@ namespace System.Diagnostics.Eventing.Reader
         private long? _oldestRecordNumber;
         private bool? _isLogFull;
 
-
         [System.Security.SecuritySafeCritical]
         internal EventLogInformation(EventLogSession session, string channelName, PathType pathType)
         {

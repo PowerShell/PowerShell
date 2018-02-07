@@ -1245,7 +1245,6 @@ namespace System.Management.Automation
         #endregion IDispose
     }
 
-
     /// <summary>
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
     /// (i.e. when the script block has undeclared variables or more than one statement)
@@ -1299,7 +1298,6 @@ namespace System.Management.Automation
         {
             this.SetErrorId(errorId);
         }
-
 
         #region Serialization
         /// <summary>

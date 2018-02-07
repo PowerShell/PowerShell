@@ -228,7 +228,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _resolvedPath = null;
 
-
         /// <summary>
         /// Validate / convert arguments
         /// </summary>
@@ -437,7 +436,6 @@ namespace Microsoft.PowerShell.Commands
                 _resolvedPath = LiteralPath;
             }
         }
-
 
         /// <summary>
         /// Processes records from the input pipeline.

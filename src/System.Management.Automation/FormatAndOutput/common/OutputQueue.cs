@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _groupingDuration = groupingDuration;
         }
 
-
         /// <summary>
         /// add an object to the cache
         /// </summary>
@@ -325,7 +324,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return retVal;
         }
-
 
         /// <summary>
         /// front end queue (if present, cache ALL, if not, bypass)

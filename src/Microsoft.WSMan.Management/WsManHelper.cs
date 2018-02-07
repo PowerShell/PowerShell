@@ -88,7 +88,6 @@ namespace Microsoft.WSMan.Management
 
         private static ResourceManager _resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
 
-
         //
         //
         //Below class is just a static container which would release sessions in case this DLL is unloaded.
@@ -108,7 +107,6 @@ namespace Microsoft.WSMan.Management
         //
         //
         //
-
 
         internal static void ReleaseSessions()
         {
@@ -199,7 +197,6 @@ namespace Microsoft.WSMan.Management
             }
             return result;
         }
-
 
         /// <summary>
         /// add a session to dictionary
@@ -568,7 +565,6 @@ namespace Microsoft.WSMan.Management
             {
                 m_resource = (IWSManResourceLocator)wsmanObj.CreateResourceLocator(resource);
 
-
                 if (optionset != null)
                 {
                     foreach (DictionaryEntry entry in optionset)
@@ -765,7 +761,6 @@ namespace Microsoft.WSMan.Management
                         connObject.SetProxy((int)sessionoption.ProxyAccessType, (int)sessionoption.ProxyAuthentication, null, null);
                     }
 
-
                 }
                 if (sessionoption.SkipCACheck)
                 {
@@ -829,7 +824,6 @@ namespace Microsoft.WSMan.Management
 
         internal void CleanUp()
         {
-
 
             if (_sr != null)
             {
@@ -1097,7 +1091,6 @@ namespace Microsoft.WSMan.Management
                 throw (e);
             }
 
-
         }
 
         /// <summary>
@@ -1125,7 +1118,6 @@ namespace Microsoft.WSMan.Management
         ///
         /// </summary>
         private static Dictionary<string, string> ResourceValueCache = new Dictionary<string, string>();
-
 
     }
 }

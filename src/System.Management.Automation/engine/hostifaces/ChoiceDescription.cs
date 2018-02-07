@@ -2,9 +2,7 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 
 namespace System.Management.Automation.Host
@@ -133,7 +131,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets and sets the help message for this field.
@@ -173,6 +170,5 @@ namespace System.Management.Automation.Host
         }
     }
 }
-
 
 

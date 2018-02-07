@@ -78,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = JobCmdletBase.CommandParameterSet)]
         public int Newest { get; set; }
 
-
         /// <summary>
         /// SessionId for which job
         /// need to be obtained

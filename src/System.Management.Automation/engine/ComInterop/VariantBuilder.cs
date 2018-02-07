@@ -138,7 +138,6 @@ namespace System.Management.Automation.ComInterop
                 return null;
             }
 
-
             switch (_targetComType)
             {
                 case VarEnum.VT_EMPTY:

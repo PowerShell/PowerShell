@@ -873,7 +873,6 @@ namespace System.Management.Automation.Runspaces.Internal
 
             _openAsyncResult = asyncResult;
 
-
             // send a message using the data structure handler to open the RunspacePool
             // on the remote server
             DataStructureHandler.CreateRunspacePoolAndOpenAsync();

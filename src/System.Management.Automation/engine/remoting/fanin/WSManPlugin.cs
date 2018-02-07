@@ -400,7 +400,6 @@ namespace System.Management.Automation.Remoting
                                                            p);
                 }
 
-
                 mgdShellSession.registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
                                  eventWaitHandle,
                                  new WaitOrTimerCallback(WSManPluginManagedEntryWrapper.PSPluginOperationShutdownCallback),

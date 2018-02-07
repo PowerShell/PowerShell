@@ -1060,7 +1060,6 @@ namespace System.Management.Automation
             return false;
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -2504,7 +2503,6 @@ namespace System.Management.Automation
             WriteEncodedString(serializer, streamName, property, Convert.ToString(source, CultureInfo.InvariantCulture), entry);
         }
 
-
         /// <summary>
         /// Serialize string as item or property
         /// </summary>
@@ -2868,7 +2866,6 @@ namespace System.Management.Automation
             }
             return new String(result, 0, rlen);
         }
-
 
         /// <summary>
         /// Writes element string in monad namespace
@@ -3759,7 +3756,6 @@ namespace System.Management.Automation
                     - 29 // size of <Obj><TNRef RefId="0"/></Obj> in UTF8 encoding
                     );
                 dso.InternalTypeNames = new ConsolidatedString(typeNames);
-
 
                 //Skip the node
                 Skip();

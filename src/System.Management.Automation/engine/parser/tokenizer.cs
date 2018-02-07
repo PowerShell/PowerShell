@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -358,7 +358,6 @@ namespace System.Management.Automation.Language
         public Func<DynamicKeywordStatementAst, ParseError[]> SemanticCheck { get; set; }
     }
 
-
     internal static class DynamicKeywordExtension
     {
         internal static bool IsMetaDSCResource(this DynamicKeyword keyword)
@@ -681,7 +680,6 @@ namespace System.Management.Automation.Language
             _positionHelper.LineStartMap = lineStartMap.ToArray();
         }
 
-
         internal TokenizerState StartNestedScan(UnscannedSubExprToken nestedText)
         {
             TokenizerState ts = new TokenizerState
@@ -774,7 +772,6 @@ namespace System.Management.Automation.Language
             }
             return false;
         }
-
 
         internal void SkipNewlines(bool skipSemis, bool v3)
         {
@@ -2952,7 +2949,6 @@ namespace System.Management.Automation.Language
             }
             return NewToken(tokenKind);
         }
-
 
         private Token ScanGenericToken(char firstChar)
         {

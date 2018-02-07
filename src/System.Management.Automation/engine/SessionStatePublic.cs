@@ -71,7 +71,6 @@ namespace System.Management.Automation
             _sessionState.PublicSessionState = this;
         } // SessionState
 
-
         /// <summary>
         /// Construct a new session state object...
         /// </summary>

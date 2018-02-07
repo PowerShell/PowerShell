@@ -1,4 +1,4 @@
-﻿# This is a Pester test suite to validate the cmdlets in LocalAccounts module
+# This is a Pester test suite to validate the cmdlets in LocalAccounts module
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 

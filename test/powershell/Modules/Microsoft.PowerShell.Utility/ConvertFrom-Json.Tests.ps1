@@ -7,7 +7,6 @@ Describe 'ConvertFrom-Json' -tags "CI" {
         )
     }
 
-
     It 'Can convert a single-line object with AsHashtable switch set to <AsHashtable>' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)
         ('{"a" : "1"}' | ConvertFrom-Json -AsHashtable:$AsHashtable).a | Should Be 1

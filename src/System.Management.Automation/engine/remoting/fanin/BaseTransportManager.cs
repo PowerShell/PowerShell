@@ -1210,7 +1210,6 @@ namespace System.Management.Automation.Remoting.Client
     }
 }
 
-
 namespace System.Management.Automation.Remoting.Server
 {
     /// <summary>

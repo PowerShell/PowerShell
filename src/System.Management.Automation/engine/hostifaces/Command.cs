@@ -558,7 +558,6 @@ namespace System.Management.Automation.Runspaces
 
         #region Serialization / deserialization for remoting
 
-
         /// <summary>
         /// Creates a Command object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
@@ -642,7 +641,6 @@ namespace System.Management.Automation.Runspaces
 
             commandAsPSObject.Properties.Add(new PSNoteProperty(RemoteDataNameStrings.MergeUnclaimedPreviousCommandResults, this.MergeUnclaimedPreviousCommandResults));
 
-
             if (psRPVersion != null &&
                 psRPVersion >= RemotingConstants.ProtocolVersionWin10RTM)
             {
@@ -712,7 +710,6 @@ namespace System.Management.Automation.Runspaces
 
             return commandAsPSObject;
         }
-
 
         #endregion
 

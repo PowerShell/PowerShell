@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
 
-
 namespace System.Management.Automation
 {
     /// <summary>

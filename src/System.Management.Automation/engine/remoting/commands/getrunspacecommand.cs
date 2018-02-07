@@ -207,7 +207,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private PSCredential _psCredential;
 
-
         /// <summary>
         /// Use basic authentication to authenticate the user.
         /// </summary>
@@ -226,7 +225,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private AuthenticationMechanism _authentication;
-
 
         /// <summary>
         /// Specifies the certificate thumbprint to be used to impersonate the user on the
@@ -248,7 +246,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _thumbprint;
 
-
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
@@ -264,7 +261,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerInstanceIdParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
         public Int32 Port { get; set; }
-
 
         /// <summary>
         /// This parameter suggests that the transport scheme to be used for
@@ -289,7 +285,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         public Int32 ThrottleLimit { get; set; } = 0;
 
-
         /// <summary>
         /// Filters returned remote runspaces based on runspace state.
         /// </summary>
@@ -304,7 +299,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameParameterSet)]
         [Parameter(ParameterSetName = GetPSSessionCommand.VMNameInstanceIdParameterSet)]
         public SessionFilterState State { get; set; }
-
 
         /// <summary>
         /// Session options.

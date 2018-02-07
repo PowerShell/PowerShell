@@ -220,7 +220,6 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal int ProgressPercent { get; }
 
-
         /// <summary>
         /// Module name
         /// </summary>
@@ -674,7 +673,6 @@ namespace System.Management.Automation.Help
                     }
                 }
             }
-
 
             if (!String.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
             {

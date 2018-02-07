@@ -138,7 +138,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
 
-
     /// <summary>
     /// Implementation of the LineOutput interface on top of Console and RawConsole
     /// </summary>
@@ -258,7 +257,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string promptString = StringUtil.Format(FormatAndOut_out_xxx.ConsoleLineOutput_PagingPrompt);
                 _prompt = new PromptHandler(promptString, this);
             }
-
 
             PSHostRawUserInterface raw = _console.RawUI;
             if (raw != null)

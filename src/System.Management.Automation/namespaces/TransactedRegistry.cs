@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Runtime.Versioning;
     using System.Diagnostics.CodeAnalysis;
 
-
     /**
      * Registry encapsulation. Contains members representing all top level system
      * keys.

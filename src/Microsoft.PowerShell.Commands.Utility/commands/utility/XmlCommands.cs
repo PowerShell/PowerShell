@@ -137,7 +137,6 @@ namespace Microsoft.PowerShell.Commands
             CreateFileStream();
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -314,7 +313,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _isLiteralPath = false;
 
-
         #endregion Command Line Parameters
 
         #region IDisposable Members
@@ -367,7 +365,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
     /// <summary>
     /// implementation for the convertto-xml command
     /// </summary>
@@ -378,7 +375,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Command Line Parameters
 
-
         /// <summary>
         /// Depth of serialization
         /// </summary>
@@ -386,14 +382,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, int.MaxValue)]
         public int Depth { get; set; } = 0;
 
-
         /// <summary>
         /// Input Object which is written to XML format
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
         [AllowNull]
         public PSObject InputObject { get; set; }
-
 
         /// <summary>
         /// Property that sets NoTypeInformation parameter.
@@ -422,7 +416,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command Line Parameters
 
-
         #region Overrides
 
         /// <summary>
@@ -441,7 +434,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// override ProcessRecord
         /// </summary>
@@ -453,7 +445,6 @@ namespace Microsoft.PowerShell.Commands
 
                 if (null != _serializer)
                     _serializer.SerializeAsStream(InputObject);
-
 
                 if (null != _serializer)
                 {
@@ -630,7 +621,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion IDisposable Members
     }
 
-
     /// <summary>
     /// Helper class to import single XML file
     /// </summary>
@@ -741,7 +731,6 @@ namespace Microsoft.PowerShell.Commands
                 PSObject totalCount = _cmdlet.PagingParameters.NewTotalCount(0, 0);
                 _cmdlet.WriteObject(totalCount);
             }
-
 
             ulong skip = _cmdlet.PagingParameters.Skip;
             ulong first = _cmdlet.PagingParameters.First;

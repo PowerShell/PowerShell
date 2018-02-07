@@ -72,7 +72,6 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
     }
 }
 
-
 Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
 
     BeforeAll {

@@ -278,7 +278,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion command data
 
-
         #region command code
 
         /// <summary>

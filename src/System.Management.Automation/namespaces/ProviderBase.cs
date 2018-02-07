@@ -1052,7 +1052,6 @@ namespace System.Management.Automation.Provider
             return contentProvider.GetContentReaderDynamicParameters(path);
         } // GetContentReaderDynamicParameters
 
-
         /// <summary>
         /// Internal wrapper for the GetContentWriter protected method. This method will
         /// only be called if the provider implements the IContentCmdletProvider interface.
@@ -1124,7 +1123,6 @@ namespace System.Management.Automation.Provider
             return contentProvider.GetContentWriterDynamicParameters(path);
         } // GetContentWriterDynamicParameters
 
-
         /// <summary>
         /// Internal wrapper for the ClearContent protected method. This method will
         /// only be called if the provider implements the IContentCmdletProvider interface.
@@ -1191,7 +1189,6 @@ namespace System.Management.Automation.Provider
             }
             return contentProvider.ClearContentDynamicParameters(path);
         } // ClearContentDynamicParameters
-
 
         #endregion IContentCmdletProvider method wrappers
 
@@ -1329,7 +1326,6 @@ namespace System.Management.Automation.Provider
                     Diagnostics.Assert(
                         Context != null,
                         "The context should always be set");
-
 
                     return new CommandInvocationIntrinsics(Context.ExecutionContext);
                 } // TraceProperty
@@ -1782,7 +1778,6 @@ namespace System.Management.Automation.Provider
             }
         } // WriteVerbose
 
-
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteProgress" />
         public void WriteProgress(ProgressRecord progressRecord)
         {
@@ -1800,7 +1795,6 @@ namespace System.Management.Automation.Provider
                 Context.WriteProgress(progressRecord);
             }
         } // WriteProgress
-
 
         /// <Content contentref="System.Management.Automation.Cmdlet.WriteDebug" />
         public void WriteDebug(string text)
@@ -1988,7 +1982,6 @@ namespace System.Management.Automation.Provider
 
                 string childName = navProvider.GetChildName(path, Context);
 
-
                 result.AddOrSetProperty("PSChildName", childName);
                 providerBaseTracer.WriteLine("Attaching {0} = {1}", "PSChildName", childName);
             }
@@ -2136,7 +2129,6 @@ namespace System.Management.Automation.Provider
         } // WriteError
 
         #endregion User feedback mechanisms
-
 
         #endregion protected members
     } // CmdletProvider

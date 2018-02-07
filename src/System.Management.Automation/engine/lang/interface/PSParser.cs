@@ -3,7 +3,6 @@
 
     Project:     PowerShell
 
-
     Contents:    PowerShell parser interface for syntax editors
 
     Classes:     System.Management.Automation.PSParser

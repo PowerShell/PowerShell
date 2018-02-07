@@ -1,4 +1,4 @@
-﻿Describe "Get-Command Tests" -Tags "CI" {
+Describe "Get-Command Tests" -Tags "CI" {
     BeforeAll {
         function TestGetCommand-DynamicParametersDCR
         {
@@ -39,7 +39,6 @@
                         $p1 = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$ac1)
                         $dynamicParamDictionary.Add("OneString",$p1)
 
-
                         $attr2 = [System.Management.Automation.ParameterAttribute]::new()
                         $attr2.Mandatory = $false
                         $attr2.ParameterSetName = "__AllParameterSets"
@@ -60,7 +59,6 @@
                         $ac1.Add($attr1)
                         $p1 = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$ac1)
                         $dynamicParamDictionary.Add("OneString",$p1)
-
 
                         $attr2 = [System.Management.Automation.ParameterAttribute]::new()
                         $attr2.Mandatory = $false
@@ -220,7 +218,6 @@
         $results.ToString() | Should Match "-Wait"
         $results.ToString() | Should Match "-Delimiter"
     }
-
 
     It "Test Script Lookup Positive Script Info" {
         $tempFile = "mytempfile.ps1"

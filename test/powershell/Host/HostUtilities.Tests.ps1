@@ -1,4 +1,4 @@
-﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()

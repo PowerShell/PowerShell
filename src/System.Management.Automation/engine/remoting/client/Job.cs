@@ -259,7 +259,6 @@ namespace System.Management.Automation
             Reason = jobStateInfo.Reason;
         }
 
-
         #endregion constructors
 
         #region public_properties
@@ -1730,7 +1729,6 @@ namespace System.Management.Automation
             this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
         { }
 
-
         /// <summary>
         /// Internal constructor for initializing PSRemotingJob using
         /// computer names
@@ -2192,7 +2190,6 @@ namespace System.Management.Automation
                 return _moreData;
             }
         }
-
 
         private bool _stopIsCalled = false;
         /// <summary>

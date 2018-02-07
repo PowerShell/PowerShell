@@ -124,7 +124,6 @@ namespace System.Management.Automation
 // HelpFile
     }
 
-
     /// <summary>
     /// Contains a DSC resource property information
     /// </summary>

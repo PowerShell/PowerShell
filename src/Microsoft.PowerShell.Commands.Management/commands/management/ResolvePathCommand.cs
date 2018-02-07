@@ -76,7 +76,6 @@ namespace Microsoft.PowerShell.Commands
         } // Relative
         private SwitchParameter _relative;
 
-
         #endregion Parameters
 
         #region parameter data
@@ -157,7 +156,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
         #endregion Command code
-
 
     } // ResolvePathCommand
 } // namespace Microsoft.PowerShell.Commands

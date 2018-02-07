@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; }
 
-
         /// <summary>
         /// The member names to be retrieved
         /// </summary>
@@ -76,14 +75,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Name { set; get; } = new string[] { "*" };
 
-
         /// <summary>
         /// The member types to be retrieved
         /// </summary>
         [Parameter]
         [Alias("Type")]
         public PSMemberTypes MemberType { set; get; } = PSMemberTypes.All;
-
 
         /// <summary>
         /// View from which the members are retrieved.
@@ -190,7 +187,6 @@ namespace Microsoft.PowerShell.Commands
                 // PSMemberSet instance is created to represent PSExtended, PSAdapted, PSBase, PSObject hidden
                 // properties. We should honor extended properties for such case.
 
-
                 // request is to search dotnet or adapted or both members.
                 // dotnet,adapted members cannot be Script*,Note*,Code*
                 memberTypeToSearch ^= (PSMemberTypes.AliasProperty | PSMemberTypes.CodeMethod | PSMemberTypes.CodeProperty
@@ -264,7 +260,6 @@ namespace Microsoft.PowerShell.Commands
                 return String.Compare(first.Name, second.Name, StringComparison.OrdinalIgnoreCase);
             }
         }
-
 
         /// <summary>
         /// This method implements the End method for get-member command

@@ -84,9 +84,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Remove-Item -Path $pathString -Force -Recurse
     }
 
-
 }
-
 
 Describe "Get-Date" -Tags "CI" {
     It "-Format FileDate works" {

@@ -149,7 +149,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal delegate void DoPlayBackCall();
 
-
         /// <summary>
         /// if RequiresBuffering = true, this call will be made to
         /// start the playback

@@ -177,7 +177,6 @@ namespace PSTests.Parallel
                 Assert.Equal(0, process.ExitCode);
             }
 
-
             // Since there are now two references to the file, both are considered
             // hardlinks by our API (though all files are hardlinks on Linux)
             FileSystemInfo fd = new FileInfo(path);

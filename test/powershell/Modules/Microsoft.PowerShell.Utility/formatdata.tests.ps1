@@ -1,4 +1,4 @@
-﻿Describe "FormatData" -tags "Feature" {
+Describe "FormatData" -tags "Feature" {
 
     Context "Export" {
         It "can export all types" {

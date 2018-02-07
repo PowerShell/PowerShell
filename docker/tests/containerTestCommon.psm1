@@ -87,7 +87,6 @@ function Get-WindowsContainer
     }
 }
 
-
 $script:repoName = 'microsoft/powershell'
 function Get-RepoName
 {
@@ -250,7 +249,6 @@ function Test-PSPackage
     $testlistStubValue = $TestList
     $packageLocationStubName = 'PACKAGELOCATIONSTUB'
     $packageLocationStubValue = $PSPackageLocation
-
 
     $results = @{}
     $returnValue = $true

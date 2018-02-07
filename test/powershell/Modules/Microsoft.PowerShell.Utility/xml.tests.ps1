@@ -1,4 +1,4 @@
-﻿Describe "XML cmdlets" -Tags "Feature" {
+Describe "XML cmdlets" -Tags "Feature" {
     Context "Select-XML" {
         BeforeAll {
             $fileName = New-Item -Path 'TestDrive:\testSelectXml.xml'

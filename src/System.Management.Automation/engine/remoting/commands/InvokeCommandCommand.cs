@@ -597,7 +597,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// Extended Session Options for controlling the session creation. Use
         /// "New-WSManSessionOption" cmdlet to supply value for this parameter.

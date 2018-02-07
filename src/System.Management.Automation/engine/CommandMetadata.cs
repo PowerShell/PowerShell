@@ -1020,7 +1020,6 @@ end
                 commandOrigin = "";
             }
 
-
             if (_wrappedAnyCmdlet)
             {
                 result = string.Format(CultureInfo.InvariantCulture, @"

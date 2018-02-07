@@ -23,7 +23,6 @@ using Microsoft.CodeAnalysis.Emit;
 
 using PathType = System.IO.Path;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -475,7 +474,6 @@ namespace Microsoft.PowerShell.Commands
         }
         internal OutputAssemblyType outputType = OutputAssemblyType.Library;
         internal bool outputTypeSpecified = false;
-
 
         /// <summary>
         /// Flag to pass the resulting types along.

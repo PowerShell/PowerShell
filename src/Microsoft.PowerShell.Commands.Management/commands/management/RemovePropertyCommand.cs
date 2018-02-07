@@ -180,6 +180,5 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // RemoveItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

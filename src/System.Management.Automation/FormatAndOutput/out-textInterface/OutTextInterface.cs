@@ -31,7 +31,6 @@ namespace Microsoft.PowerShell.Commands
 
         private object _lineOutput = null;
 
-
         /// <summary>
         /// set inner command
         /// </summary>
@@ -91,7 +90,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
 
 
 

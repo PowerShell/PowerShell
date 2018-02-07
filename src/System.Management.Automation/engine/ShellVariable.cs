@@ -148,7 +148,6 @@ namespace System.Management.Automation
             _description = description;
         }
 
-
         /// <summary>
         /// Constructs a variable with the given name, value, options, and attributes
         /// </summary>
@@ -247,7 +246,6 @@ namespace System.Management.Automation
             }
         }
         private string _description = String.Empty;
-
 
         internal void DebuggerCheckVariableRead()
         {
@@ -419,7 +417,6 @@ namespace System.Management.Automation
             get { return _attributes ?? (_attributes = new PSVariableAttributeCollection(this)); }
         }
         private PSVariableAttributeCollection _attributes;
-
 
         /// <summary>
         /// Checks if the given value meets the validation attribute constraints on the PSVariable.
@@ -733,7 +730,6 @@ namespace System.Management.Automation
             // The variable assignment binder copies mutable values and returns other values as is.
             return _copyMutableValueSite.Target.Invoke(_copyMutableValueSite, o);
         }
-
 
         internal void WrapValue()
         {

@@ -1,4 +1,4 @@
-﻿Describe 'Unit tests for JsonObject' -tags "CI" {
+Describe 'Unit tests for JsonObject' -tags "CI" {
 
     BeforeAll {
         $jsonWithEmptyKey = '{"": "Value"}'

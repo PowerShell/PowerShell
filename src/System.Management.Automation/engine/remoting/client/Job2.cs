@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -1880,7 +1880,6 @@ namespace System.Management.Automation
                     // all child jobs are either suspended or finished.
                     return false;
                 }
-
 
                 // Ignore state changes which are not resulting in state change to finished.
                 // State will be Running once at least one child is running.

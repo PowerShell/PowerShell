@@ -93,7 +93,6 @@ namespace System.Management.Automation
 
         #region Constructors
 
-
 #if CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// Creates the runspace pool driver

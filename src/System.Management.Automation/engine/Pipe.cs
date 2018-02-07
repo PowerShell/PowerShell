@@ -448,7 +448,6 @@ namespace System.Management.Automation.Internal
             }
         }
 
-
         /// <summary>
         /// Writes a set of objects to the pipe.  This could recursively
         /// call to the downstream cmdlet, or write the objects to the

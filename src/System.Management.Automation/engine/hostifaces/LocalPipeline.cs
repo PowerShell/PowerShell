@@ -82,7 +82,6 @@ namespace System.Management.Automation.Runspaces
             InitStreams();
         }
 
-
         /// <summary>
         /// Copy constructor to support cloning
         /// </summary>
@@ -1063,7 +1062,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-
         private long _historyIdForThisPipeline = -1;
         /// <summary>
         /// This method is called Add-History cmdlet to add history entry.
@@ -1116,7 +1114,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #region TLS
-
 
 
 

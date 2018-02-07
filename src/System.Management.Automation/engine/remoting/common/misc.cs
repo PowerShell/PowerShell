@@ -36,7 +36,6 @@ namespace System.Management.Automation
         internal RemoteDataObject<PSObject> RemoteData { get; set; }
     }
 
-
     /// <summary>
     /// This event arg is designed to contain generic data received from the other side of the connection.
     /// It can be used for both the client side and for the server side.
@@ -288,7 +287,6 @@ namespace System.Management.Automation
             State = sessionStateInfo.State;
             Reason = sessionStateInfo.Reason;
         }
-
 
         #endregion Constructors
 

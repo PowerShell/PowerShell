@@ -949,7 +949,6 @@ namespace System.Management.Automation
             return BoolToObject(!rType.IsInstanceOfType(lval));
         }
 
-
         /// <summary>
         /// Implementation of the PowerShell -like operator
         /// </summary>
@@ -1309,7 +1308,6 @@ namespace System.Management.Automation
             }
             return mshObj.InternalTypeNames[0];
         }
-
 
 
 

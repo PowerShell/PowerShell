@@ -83,7 +83,6 @@ function Add-UserToGroup
   $groupAD.Add($userAD.AdsPath);
 }
 
-
 # tests if we should run a daily build
 # returns true if the build is scheduled
 # or is a pushed tag

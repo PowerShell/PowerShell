@@ -54,7 +54,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
 
-
         /// <summary>
         /// Abstract Property - Input Object which is written in Csv format
         /// Derived as Different Attributes.In ConvertTo-CSV, This is a positional parameter. Export-CSV not a Positional behaviour.
@@ -81,7 +80,6 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
         #endregion Command Line Parameters
-
 
 
         /// <summary>
@@ -170,7 +168,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _isLiteralPath = false;
-
 
 
         /// <summary>
@@ -265,7 +262,6 @@ namespace Microsoft.PowerShell.Commands
 
             _helper = new ExportCsvHelper(this, base.Delimiter);
         }
-
 
         /// <summary>
         /// Convert the current input object to Csv and write to file/WriteObject
@@ -516,7 +512,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
-
         /// <summary>
         /// mandatory file name to read from
         /// </summary>
@@ -575,7 +570,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _useculture;
-
 
         ///<summary>
         /// Header property to customize the names
@@ -702,7 +696,6 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
             _helper = new ExportCsvHelper(this, base.Delimiter);
         }
-
 
 
         /// <summary>
@@ -896,7 +889,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         //Name of properties to be written in CSV format
-
 
         /// <summary>
         /// Get the name of properties from source PSObject and
@@ -1362,7 +1354,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 //Read the next character
                 char ch = ReadChar();
-
 
                 if ((ch == _delimiter))
                 {

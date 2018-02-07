@@ -271,7 +271,6 @@ namespace System.Management.Automation.Tracing
             provider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
         }
 
-
         internal static void SetActivityIdForCurrentThread(Guid newActivityId)
         {
             provider.SetActivityIdForCurrentThread(newActivityId);

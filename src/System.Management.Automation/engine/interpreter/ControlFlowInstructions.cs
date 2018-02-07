@@ -639,7 +639,6 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-
     internal sealed class ThrowInstruction : Instruction
     {
         internal static readonly ThrowInstruction Throw = new ThrowInstruction(true, false);

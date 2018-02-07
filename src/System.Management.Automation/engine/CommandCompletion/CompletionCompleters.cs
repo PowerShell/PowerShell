@@ -2352,7 +2352,6 @@ namespace System.Management.Automation
             return null;
         }
 
-
         private static bool InvokeScriptArgumentCompleter(
             ScriptBlock scriptBlock,
             string commandName,
@@ -3194,7 +3193,6 @@ namespace System.Management.Automation
             var providerName = context.WordToComplete ?? string.Empty;
             var quote = HandleDoubleAndSingleQuote(ref providerName);
 
-
             if (!providerName.EndsWith("*", StringComparison.Ordinal))
             {
                 providerName += "*";
@@ -3805,7 +3803,6 @@ namespace System.Management.Automation
         }
 
         #endregion Native Command Argument Completion
-
 
         /// <summary>
         /// Find the positional argument at the specific position from the parsed argument list
@@ -5311,7 +5308,6 @@ namespace System.Management.Automation
 
             return false;
         }
-
 
         #endregion Members
 

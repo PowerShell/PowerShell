@@ -25,7 +25,6 @@ namespace System.Management.Automation
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // ProviderIntrinsics private
 
-
         /// <summary>
         /// Constructs a facade over the "real" session state API
         /// </summary>

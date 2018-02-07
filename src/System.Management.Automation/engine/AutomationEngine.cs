@@ -7,7 +7,6 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -30,7 +29,6 @@ namespace System.Management.Automation
         /// </summary>
         ///
         internal CommandDiscovery CommandDiscovery { get; }
-
 
         /// <summary>
         /// The principal constructor that most hosts will use when creating

@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This is the source code for the tool 'TypeCatalogGen.exe', which has been checked in %SDXROOT%\tools\managed\v4.0\TypeCatalogGen.
  * The tool 'TypeCatalogGen.exe' is used when building 'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll' for OneCore powershell
  * to generate the CoreCLR type catalog initialization code, which will then be compiled into the same DLL.
@@ -466,5 +466,4 @@ namespace System.Management.Automation
         }
     }
 }
-
 

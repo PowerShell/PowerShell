@@ -45,7 +45,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
 
-
         private ViewDefinition LoadView(XmlNode viewNode, int index)
         {
             using (this.StackFrame(viewNode, index))

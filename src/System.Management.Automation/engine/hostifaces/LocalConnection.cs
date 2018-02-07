@@ -296,7 +296,6 @@ namespace System.Management.Automation.Runspaces
         }
         private TranscriptionData _transcriptionData = null;
 
-
         private JobRepository _jobRepository;
         /// <summary>
         /// List of jobs in this runspace
@@ -1190,7 +1189,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-
         #endregion SessionStateProxy
 
         #region IDisposable Members
@@ -1569,7 +1567,6 @@ namespace System.Management.Automation.Runspaces
         {
         }
 
-
         /// <summary>
         /// Populates a <see cref="SerializationInfo"/> with the
         /// data needed to serialize the RunspaceOpenModuleLoadException object.
@@ -1591,7 +1588,6 @@ namespace System.Management.Automation.Runspaces
 
     #endregion Helper Class
 }
-
 
 
 

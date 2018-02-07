@@ -3,7 +3,6 @@
 
     Project:     PowerShell
 
-
     Contents:    PowerShell token interface for syntax editors
 
     Classes:     System.Management.Automation.PSToken

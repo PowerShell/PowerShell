@@ -25,7 +25,6 @@ namespace System.Management.Automation
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // DriveManagementIntrinsics private
 
-
         /// <summary>
         /// Constructs a Drive management facade
         /// </summary>

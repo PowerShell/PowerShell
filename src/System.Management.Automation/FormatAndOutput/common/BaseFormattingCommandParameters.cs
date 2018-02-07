@@ -403,7 +403,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-
     /// <summary>
     /// definitions for hash table keys
     /// </summary>
@@ -426,7 +425,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // specific to format-custom (no format string for it, just the name)
         internal const string DepthEntryKey = "depth";
     }
-
 
     internal class FormatGroupByParameterDefinition : CommandParameterDefinition
     {

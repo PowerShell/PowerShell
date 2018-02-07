@@ -1,4 +1,4 @@
-﻿Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
+Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
     BeforeAll {
 		$functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
 		$functionDefinition = @'
@@ -220,7 +220,6 @@
         }
     }
 
-
 	It "Test that invoke has a higher precedence for a script than for an executable. (line 279)" {
 		"1">$testfile
         $result = ExecuteCommand ". $testfile"
@@ -373,7 +372,6 @@ foo``u{2195}abc
 			$result | should be $expected
 		}
     }
-
 
 	It "This test checks that array substitution occurs inside double quotes. (line 646)" {
         $result = ExecuteCommand '$MyArray = "a","b";"Hello $MyArray"'

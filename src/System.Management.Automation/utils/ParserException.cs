@@ -41,7 +41,6 @@ namespace System.Management.Automation
             _errors = (ParseError[])info.GetValue("Errors", typeof(ParseError[]));
         }
 
-
         /// <summary>
         /// Add private data for serialization.
         /// </summary>
@@ -169,7 +168,6 @@ namespace System.Management.Automation
             }
         }
     } // ParseException
-
 
     /// <summary>
     /// Defines the exception thrown when a incomplete parse error occurs while parsing msh script text.

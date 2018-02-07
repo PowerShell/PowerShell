@@ -8,7 +8,6 @@ using System.Text;
 using System.ComponentModel;
 using Microsoft.PowerShell;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -49,7 +48,6 @@ namespace System.Management.Automation
                 yield return baseType;
             }
         }
-
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
@@ -161,7 +159,6 @@ namespace System.Management.Automation
             return prop.GetValue(property.baseObject);
         }
 
-
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty
         /// </summary>
@@ -176,8 +173,6 @@ namespace System.Management.Automation
 
 
 
-
-
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
@@ -189,7 +184,6 @@ namespace System.Management.Automation
             return prop.IsSettable;
         }
 
-
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
@@ -200,7 +194,6 @@ namespace System.Management.Automation
             ComProperty prop = (ComProperty)property.adapterData;
             return prop.IsGettable;
         }
-
 
         /// <summary>
         /// Returns the name of the type corresponding to the property
@@ -214,7 +207,6 @@ namespace System.Management.Automation
             return forDisplay ? ToStringCodeMethods.Type(prop.Type) : prop.Type.FullName;
         }
 
-
         /// <summary>
         ///  get the property signature.
         /// </summary>
@@ -226,9 +218,7 @@ namespace System.Management.Automation
             return prop.ToString();
         }
 
-
         #region Methods
-
 
         /// <summary>
         /// Called after a non null return from GetMethodData to try to call

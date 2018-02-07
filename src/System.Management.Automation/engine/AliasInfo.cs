@@ -354,7 +354,6 @@ namespace System.Management.Automation
         /// </summary>
         public string Description { get; set; } = String.Empty;
 
-
         /// <summary>
         /// If ResolvedCommand returns null, this property will
         /// return the name of the command that could not be resolved.

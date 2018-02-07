@@ -229,7 +229,6 @@ namespace Microsoft.PowerShell.Commands
             WriteRegistryItemObject(result, path);
         } // GetItem
 
-
         /// <summary>
         /// Sets registry values at <paramref name="path "/> to the <paramref name="value"/> specified.
         /// </summary>
@@ -811,7 +810,6 @@ namespace Microsoft.PowerShell.Commands
             return result.ToString();
         } // EscapeSpecialChars
 
-
         /// <summary>
         /// Escapes the characters in the registry key name that are used by globbing and
         /// path.
@@ -928,7 +926,6 @@ namespace Microsoft.PowerShell.Commands
                 MoveRegistryItem(path, newPath);
             } // ShouldProcess
         } // RenameItem
-
 
         /// <summary>
         /// Creates a new registry key or value at the specified <paramref name="path"/>.
@@ -1366,7 +1363,6 @@ namespace Microsoft.PowerShell.Commands
             key.Close();
         } // CopyItem
 
-
         private bool CopyRegistryKey(
             IRegistryWrapper key,
             string path,
@@ -1427,7 +1423,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string destinationPath = MakePath(destinationParent, destinationName);
-
 
             // Confirm the copy item with the user
 
@@ -1969,7 +1964,6 @@ namespace Microsoft.PowerShell.Commands
         } // SetProperty
 
 
-
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to the
         /// get-itemproperty cmdlet.
@@ -2072,7 +2066,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         #region Unimplemented methods
 
         /// <summary>
@@ -2100,7 +2093,6 @@ namespace Microsoft.PowerShell.Commands
         {
             return null;
         }
-
 
         /// <summary>
         /// Gives the provider a chance to attach additional parameters to the
@@ -2363,7 +2355,6 @@ namespace Microsoft.PowerShell.Commands
             WriteErrorIfPerfectMatchNotFound(hadAMatch, path, propertyName);
         }
 
-
         /// <summary>
         /// Renames a property of the item at the specified <paramref name="path"/>.
         /// </summary>
@@ -2451,7 +2442,6 @@ namespace Microsoft.PowerShell.Commands
 
             key.Close();
         }
-
 
         /// <summary>
         /// Copies a property of the item at the specified <paramref name="path"/> to a new property on the
@@ -2558,7 +2548,6 @@ namespace Microsoft.PowerShell.Commands
             key.Close();
         }
 
-
         /// <summary>
         /// Moves a property on an item specified by <paramref name="sourcePath"/>.
         /// </summary>
@@ -2664,7 +2653,6 @@ namespace Microsoft.PowerShell.Commands
             destinationKey.Close();
         }
 
-
         /// <summary>
         /// Gets the parent path of the given <paramref name="path"/>.
         /// </summary>
@@ -2766,7 +2754,6 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
-
 
         #region Unimplemented methods
 
@@ -2934,7 +2921,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion IDynamicPropertyCmdletProvider
 
-
         #region Private members
 
         private void CopyProperty(
@@ -3081,7 +3067,6 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException("path");
             }
 
-
             filteredCollection = new Collection<string>();
             key = GetRegkeyForPathWriteIfError(path, writeAccess);
 
@@ -3180,7 +3165,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteErrorIfPerfectMatchNotFound(hadAMatch, path, requestedValueName);
             } // foreach
         }
-
 
         private void WriteErrorIfPerfectMatchNotFound(bool hadAMatch, string path, string requestedValueName)
         {
@@ -3782,7 +3766,6 @@ namespace Microsoft.PowerShell.Commands
             SetRegistryValue(key, propertyName, value, kind, path, true);
         }
 
-
         /// <summary>
         /// Sets or creates a registry value on a key.
         /// </summary>
@@ -3883,7 +3866,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteWrappedPropertyObject(newValue, propertyName, path);
             }
         } // SetRegistryValue
-
 
         /// <summary>
         /// helper to wrap property values when sent to the pipeline into an PSObject;

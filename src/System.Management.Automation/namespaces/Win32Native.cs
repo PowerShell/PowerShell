@@ -266,7 +266,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal const int MUTEX_MODIFY_STATE = 0x00000001;
         internal const int MUTEX_ALL_ACCESS = 0x001F0001;
 
-
         internal const int LMEM_FIXED = 0x0000;
         internal const int LMEM_ZEROINIT = 0x0040;
         internal const int LPTR = (LMEM_FIXED | LMEM_ZEROINIT);
@@ -366,7 +365,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             internal uint ftTimeLow;
             internal uint ftTimeHigh;
         }
-
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct KERB_S4U_LOGON
@@ -531,7 +529,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal const String SECUR32 = "secur32.dll";
         internal const String MSCORWKS = "mscorwks.dll";
 
-
         internal const String LSTRCPY = "lstrcpy";
         internal const String LSTRCPYN = "lstrcpyn";
         internal const String LSTRLEN = "lstrlen";
@@ -539,10 +536,8 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal const String LSTRLENW = "lstrlenW";
         internal const String MOVEMEMORY = "RtlMoveMemory";
 
-
         // From WinBase.h
         internal const int SEM_FAILCRITICALERRORS = 1;
-
 
         [DllImport(
              ADVAPI32,
@@ -587,12 +582,10 @@ namespace Microsoft.PowerShell.Commands.Internal
             byte[] dacl,
             byte[] sacl);
 
-
         [DllImport(KERNEL32, SetLastError = true)]
         [ResourceExposure(ResourceScope.None)]
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern IntPtr LocalFree(IntPtr handle);
-
 
 
 
@@ -820,7 +813,6 @@ namespace Microsoft.PowerShell.Commands.Internal
                     int samDesigner, SECURITY_ATTRIBUTES lpSecurityAttributes,
                     out SafeRegistryHandle hkResult, out int lpdwDisposition,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter);
-
 
 
         private const int FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;

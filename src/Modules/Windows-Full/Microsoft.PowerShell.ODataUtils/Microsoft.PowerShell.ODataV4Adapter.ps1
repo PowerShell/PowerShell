@@ -384,7 +384,6 @@ function ParseTypeDefinitions
 
     if($null -eq $SchemaXML) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseTypeDefinitions") }
 
-
     foreach ($typeDefinition in $SchemaXML.TypeDefinition)
     {
         $newType = [ODataUtils.EntityTypeV4] @{
@@ -778,7 +777,6 @@ function VerifyMetadata
     $reservedProperties = @("Filter", "OrderBy", "Skip", "Top", "ConnectionUri", "CertificateThumbPrint", "Credential")
     $validEntitySets = @()
     $sessionCommands = Get-Command -All
-
 
     foreach ($metadata in $metadataSet)
     {
@@ -1653,7 +1651,6 @@ function SaveCDXMLInstanceCmdlets
                 }
                 $xmlWriter.WriteAttributeString('DefaultCmdletParameterSet', $defaultCmdletParameterSet)
 
-
                 $xmlWriter.WriteStartElement('QueryableProperties')
 
                 $position = 0
@@ -1757,7 +1754,6 @@ function SaveCDXMLInstanceCmdlets
                     $xmlWriter.WriteEndElement()
                     $xmlWriter.WriteEndElement()
                 }
-
 
                 $xmlWriter.WriteEndElement()
             }

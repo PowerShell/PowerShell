@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -43,7 +43,6 @@ namespace System.Management.Automation.SecurityAccountsManager
         public IntPtr domainHandle;     // The domain handle used to acquire the data.
 #endregion Additional members
     }
-
 
     /// <summary>
     /// Provides methods for manipulating local Users and Groups.
@@ -175,7 +174,6 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             Max         = Win32.MAXIMUM_ALLOWED
         }
-
 
         /// <summary>
         /// The operation under way. Used in the <see cref="Context"/> class.
@@ -854,7 +852,6 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             RemoveUser(user.SID);
         }
-
 
         /// <summary>
         /// Rename a local user.

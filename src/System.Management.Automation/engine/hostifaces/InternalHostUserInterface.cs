@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System.Management.Automation.Language;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
@@ -128,7 +127,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -172,7 +170,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -203,7 +200,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.Write(value);
         }
-
 
 
         /// <summary>
@@ -242,7 +238,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -268,7 +263,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteLine();
         }
-
 
 
         /// <summary>
@@ -303,7 +297,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-
         public override
         void
         WriteErrorLine(string value)
@@ -320,7 +313,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteErrorLine(value);
         }
-
 
 
         /// <summary>
@@ -357,7 +349,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteLine(foregroundColor, backgroundColor, value);
         }
-
 
 
         /// <summary>
@@ -405,7 +396,6 @@ namespace System.Management.Automation.Internal.Host
                 _informationalBuffers.AddDebug(record);
             }
         }
-
 
         /// <summary>
         /// Helper function for WriteDebugLine
@@ -515,7 +505,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-
         /// <summary>
         ///
         /// Ask the user whether to continue/stop or break to a nested prompt.
@@ -597,7 +586,6 @@ namespace System.Management.Automation.Internal.Host
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -632,7 +620,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteProgress(sourceId, record);
         }
-
 
 
         /// <summary>
@@ -856,7 +843,6 @@ namespace System.Management.Automation.Internal.Host
 
             return result;
         }
-
 
 
 

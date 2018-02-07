@@ -27,14 +27,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Date", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public DateTime Date { get; set; }
 
-
         /// <summary>
         /// Allows a use to specify a timespan with which to apply to the current time
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Adjust", ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         public TimeSpan Adjust { get; set; }
-
 
         /// <summary>
         /// This option determines the default output format used to display the object set-date emits
@@ -136,5 +134,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     } // SetDateCommand
 } // namespace Microsoft.PowerShell.Commands
-
 

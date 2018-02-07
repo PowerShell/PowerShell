@@ -1,4 +1,4 @@
-﻿Describe "Get-Verb" -Tags "CI" {
+Describe "Get-Verb" -Tags "CI" {
 
     It "Should get a list of Verbs" {
         Get-Verb | Should not be $null

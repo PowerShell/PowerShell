@@ -152,6 +152,5 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // CopyItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

@@ -19,7 +19,6 @@ namespace System.Management.Automation.Internal
         }
 
 
-
         internal static
         string
         Format(string formatSpec, object o1, object o2)
@@ -28,14 +27,12 @@ namespace System.Management.Automation.Internal
         }
 
 
-
         internal static
         string
         Format(string formatSpec, params object[] o)
         {
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
-
 
 
         internal static

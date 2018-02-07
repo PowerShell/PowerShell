@@ -8,7 +8,6 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -546,7 +545,6 @@ namespace System.Management.Automation
                 options |= ScopedItemOptions.Private;
             }
 
-
             FunctionScopeItemSearcher searcher =
                 new FunctionScopeItemSearcher(
                     this,
@@ -635,7 +633,6 @@ namespace System.Management.Automation
             {
                 options |= ScopedItemOptions.Private;
             }
-
 
             FunctionScopeItemSearcher searcher =
                 new FunctionScopeItemSearcher(

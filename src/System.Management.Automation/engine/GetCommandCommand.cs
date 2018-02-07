@@ -898,7 +898,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-
                     // Only for this case, the loop should exit
                     // Get-Command Foo
                     if (isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
@@ -911,7 +910,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             } while (true);
-
 
             if (All)
             {

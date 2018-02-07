@@ -1013,7 +1013,6 @@ namespace System.Management.Automation
             return CoreCreatePipeline(null, false, false);
         }
 
-
         /// <summary>
         /// Create a pipeline from a command string
         /// </summary>

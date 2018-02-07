@@ -593,7 +593,6 @@ namespace System.Management.Automation.Internal.Host
             get { return _externalHostRef.IsOverridden; }
         }
 
-
         internal ExecutionContext Context { get; }
 
         internal PSHost ExternalHost

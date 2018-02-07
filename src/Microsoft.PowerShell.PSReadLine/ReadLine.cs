@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -557,7 +557,6 @@ namespace Microsoft.PowerShell
             _visualSelectionCommandCount = 0;
             _statusIsErrorMessage = false;
 
-
 #if UNIX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
             int index = newPrompt.LastIndexOf('\n');
@@ -848,7 +847,6 @@ namespace Microsoft.PowerShell
             argBuffer.Clear();
             _singleton.ClearStatusMessage(render: true);
         }
-
 
         /// <summary>
         /// Erases the current prompt and calls the prompt function to redisplay

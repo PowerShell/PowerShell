@@ -87,7 +87,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets the version of the hosting application.  This value should remain invariant for a particular build of the
@@ -110,7 +109,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets a GUID that uniquely identifies this instance of the host.  The value should remain invariant for the lifetime of
@@ -122,7 +120,6 @@ namespace System.Management.Automation.Host
         {
             get;
         }
-
 
 
         /// <summary>
@@ -151,7 +148,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets the host's culture: the culture that the runspace should use to set the CurrentCulture on new threads
@@ -175,7 +171,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Gets the host's UI culture: the culture that the runspace and cmdlets should use to do resource loading.
@@ -193,7 +188,6 @@ namespace System.Management.Automation.Host
         {
             get;
         }
-
 
 
         /// <summary>
@@ -217,7 +211,6 @@ namespace System.Management.Automation.Host
         /// </param>
 
         public abstract void SetShouldExit(int exitCode);
-
 
 
         /// <summary>
@@ -248,7 +241,6 @@ namespace System.Management.Automation.Host
         public abstract void EnterNestedPrompt();
 
 
-
         /// <summary>
         ///
         /// Causes the host to end the currently running input loop.  If the input loop was created by a prior call to
@@ -268,7 +260,6 @@ namespace System.Management.Automation.Host
         /// <seealso cref="EnterNestedPrompt"/>
 
         public abstract void ExitNestedPrompt();
-
 
 
         /// <summary>
@@ -311,7 +302,6 @@ namespace System.Management.Automation.Host
         }
 
 
-
         /// <summary>
         ///
         /// Called by the engine to notify the host that it is about to execute a "legacy" command line application.  A legacy
@@ -349,7 +339,6 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHost.NotifyEndApplication"/>
 
         public abstract void NotifyBeginApplication();
-
 
 
         /// <summary>

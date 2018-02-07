@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -126,7 +126,6 @@ namespace System.Management.Automation.PerformanceData
             int counterId,
             long stepAmount,
             bool isNumerator);
-
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
@@ -546,7 +545,6 @@ namespace System.Management.Automation.PerformanceData
                 return false;
             }
         }
-
 
         /// <summary>
         /// This method retrieves the counter value associated with counter 'counterName'

@@ -135,7 +135,6 @@ namespace System.Management.Automation.ComInterop
             return null;
         }
 
-
         //CONFORMING
         private static bool IsIdentityConversion(Type source, Type destination)
         {

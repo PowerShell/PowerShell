@@ -91,7 +91,6 @@ public class ABC {}
 "@
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $true
 
-
             $assemblies = pwsh -noprofile -command @"
     using assembly System.Drawing
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name

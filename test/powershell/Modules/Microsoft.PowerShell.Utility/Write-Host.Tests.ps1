@@ -1,4 +1,4 @@
-﻿Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
+Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"

@@ -1,4 +1,4 @@
-﻿Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
         $defaultParamValues = $PSdefaultParameterValues.Clone()

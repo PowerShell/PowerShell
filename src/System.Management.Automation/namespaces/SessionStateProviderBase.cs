@@ -128,7 +128,6 @@ namespace Microsoft.PowerShell.Commands
             return value;
         } // GetValueOfItem
 
-
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
         /// to perform a check should override this method.
@@ -1145,7 +1144,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
         #endregion
     } // SessionStateProviderBase
-
 
     /// <summary>
     /// The content reader/writer for all providers deriving from SessionStateProviderBase

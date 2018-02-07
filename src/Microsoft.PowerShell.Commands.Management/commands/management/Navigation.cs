@@ -206,7 +206,6 @@ namespace Microsoft.PowerShell.Commands
         ///
         public virtual string Filter { get; set; }
 
-
         /// <summary>
         /// Gets or sets the include property
         /// </summary>
@@ -225,7 +224,6 @@ namespace Microsoft.PowerShell.Commands
 
 // Include
 
-
         /// <summary>
         /// Gets or sets the exclude property
         /// </summary>
@@ -243,7 +241,6 @@ namespace Microsoft.PowerShell.Commands
         } = new string[0];
 
 // Exclude
-
 
         /// <summary>
         /// Gets or sets the force property
@@ -275,7 +272,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // Force
         private bool _force;
-
 
         /// <summary>
         /// Retrieves the dynamic parameters for the command from
@@ -419,7 +415,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region Location parameter set parameters
 
-
         /// <summary>
         /// Gets or sets the provider from which to get the current location.
         /// </summary>
@@ -486,7 +481,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region command data
 
-
         #region Location parameter set data
 
         /// <summary>
@@ -505,9 +499,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Stack parameter set data
 
-
         #endregion command data
-
 
         #region command code
 
@@ -716,7 +708,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion command code
     } // class GetLocationCommand
     #endregion GetLocationCommand
-
 
     #region SetLocationCommand
 
@@ -962,7 +953,6 @@ namespace Microsoft.PowerShell.Commands
             } // set
         } // LiteralPath
 
-
         /// <summary>
         /// Gets or sets the parameter -passThru which states output from
         /// the command should be placed in the pipeline.
@@ -1156,9 +1146,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Command data
 
-
         #region Command code
-
 
         /// <summary>
         /// Gets the top container from the location stack and sets the
@@ -1586,7 +1574,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-
                 WildcardPattern providerMatcher = null;
                 PSSnapinQualifiedName pssnapinQualifiedProviderName = null;
 
@@ -1605,7 +1592,6 @@ namespace Microsoft.PowerShell.Commands
                             pssnapinQualifiedProviderName.ShortName,
                             WildcardOptions.IgnoreCase);
                 }
-
 
                 WildcardPattern nameMatcher = null;
 
@@ -3387,7 +3373,6 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-
                 // See if the item to be moved is in use.
                 bool isCurrentLocationOrAncestor = false;
                 try
@@ -3560,7 +3545,6 @@ namespace Microsoft.PowerShell.Commands
             get { return base.Force; }
             set { base.Force = value; }
         }
-
 
         /// <summary>
         /// Gets or sets the pass through property which determines

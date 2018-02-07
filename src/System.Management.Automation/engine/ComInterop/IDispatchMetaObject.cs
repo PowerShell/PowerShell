@@ -145,7 +145,6 @@ namespace System.Management.Automation.ComInterop
             return base.BindGetMember(binder);
         }
 
-
         private DynamicMetaObject BindGetMember(ComMethodDesc method, bool canReturnCallables)
         {
             if (method.IsDataMember)

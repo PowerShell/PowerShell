@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation;
 
-
 #endregion
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets

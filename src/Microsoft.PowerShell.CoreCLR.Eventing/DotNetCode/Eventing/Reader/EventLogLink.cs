@@ -78,7 +78,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public string LogName
         {
             get

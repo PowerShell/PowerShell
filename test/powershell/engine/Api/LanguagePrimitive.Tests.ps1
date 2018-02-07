@@ -1,4 +1,4 @@
-﻿Describe "Language Primitive Tests" -Tags "CI" {
+Describe "Language Primitive Tests" -Tags "CI" {
     It "Equality comparison with string and non-numeric type should not be culture sensitive" {
         $date = [datetime]'2005,3,10'
         $val = [System.Management.Automation.LanguagePrimitives]::Equals($date, "3/10/2005")

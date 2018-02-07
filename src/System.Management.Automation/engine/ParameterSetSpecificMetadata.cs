@@ -133,7 +133,6 @@ namespace System.Management.Automation
         /// </summary>
         internal string HelpMessageResourceId { get; } = null;
 
-
         /// <summary>
         /// Gets or sets the value that tells whether this parameter set
         /// data is for the "all" parameter set
@@ -220,9 +219,7 @@ namespace System.Management.Automation
             return helpInfo;
         }
 
-
         private ParameterAttribute _attribute;
     } // ParameterSetSpecificMetadata
 }
-
 

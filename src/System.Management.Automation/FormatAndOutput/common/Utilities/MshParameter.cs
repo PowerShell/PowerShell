@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics.CodeAnalysis;
 
-
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
@@ -195,7 +194,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return false;
         }
 
-
         #region Error Processing
 
         private static void ProcessAmbiguousKey(TerminatingErrorContext invocationContext,
@@ -220,7 +218,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal List<HashtableEntryDefinition> hashEntries = new List<HashtableEntryDefinition>();
     }
-
 
     /// <summary>
     /// engine to process a generic object[] from the command line and
@@ -247,7 +244,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             errorRecord.ErrorDetails = new ErrorDetails(msg);
             invocationContext.ThrowTerminatingError(errorRecord);
         }
-
 
         internal ParameterProcessor(CommandParameterDefinition p)
         {
@@ -337,7 +333,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // now the key is verified, need to check the type
                 bool matchType = false;
 
-
                 if (def.AllowedTypes == null || def.AllowedTypes.Length == 0)
                 {
                     // we match on any type, it will be up to the entry to further check
@@ -411,7 +406,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         #region Error Processing
-
 
         private static void ProcessUnknownParameterType(TerminatingErrorContext invocationContext, object actualObject, Type[] allowedTypes)
         {
@@ -492,7 +486,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string msg = StringUtil.Format(FormatAndOut_MshParameter.MissingKeyMandatoryEntryError, keyName);
             ParameterProcessor.ThrowParameterBindingException(invocationContext, "DictionaryKeyMandatoryEntry", msg);
         }
-
 
         #endregion
 

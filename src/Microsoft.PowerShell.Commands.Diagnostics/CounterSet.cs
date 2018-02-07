@@ -64,7 +64,6 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         }
         private PerformanceCounterCategoryType _counterSetType;
 
-
         public string Description
         {
             get

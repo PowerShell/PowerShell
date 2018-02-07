@@ -511,7 +511,6 @@ namespace System.Management.Automation
             }
         }
 
-
         #region comment out RequiresNetFrameworkVersion feature 8/10/2010
         /*
          * The "#requires -NetFrameworkVersion" feature is CUT OFF.
@@ -537,7 +536,6 @@ namespace System.Management.Automation
         }
         */
         #endregion
-
 
         /// <summary>
         /// used to determine compatibility between the versions in the requires statement and
@@ -1004,7 +1002,6 @@ namespace System.Management.Automation
             return matchingModules;
         }
 
-
         private static CommandInfo InvokeCommandNotFoundHandler(string commandName, ExecutionContext context, string originalCommandName, CommandOrigin commandOrigin)
         {
             CommandInfo result = null;
@@ -1341,7 +1338,6 @@ namespace System.Management.Automation
         private HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-
         /// <summary>
         /// Gets a CommandPathSearch constructed with the specified patterns and
         /// using the PATH as the lookup directories
@@ -1507,7 +1503,6 @@ namespace System.Management.Automation
         private static string s_pathExtCacheKey;
         private static string[] s_cachedPathExtCollection;
         private static string[] s_cachedPathExtCollectionWithPs1;
-
 
         /// <summary>
         /// Gets the cmdlet information for the specified name.
@@ -1864,5 +1859,4 @@ namespace System.Management.Automation
         public void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
     }
 }
-
 

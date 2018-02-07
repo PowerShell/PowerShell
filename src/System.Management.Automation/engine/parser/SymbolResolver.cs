@@ -679,7 +679,6 @@ namespace System.Management.Automation.Language
             ast.Accept(_symbolResolvePostActionVisitor);
         }
 
-
         internal static string GetModuleQualifiedName(string namespaceName, string typeName)
         {
             const char NAMESPACE_SEPARATOR = '.';

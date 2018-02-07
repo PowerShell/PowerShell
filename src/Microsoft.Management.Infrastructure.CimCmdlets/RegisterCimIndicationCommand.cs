@@ -11,7 +11,6 @@ using System.Management.Automation;
 using Microsoft.PowerShell.Commands;
 #endregion
 
-
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>

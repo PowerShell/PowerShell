@@ -49,7 +49,6 @@ namespace System.Management.Automation.Host
             SetDefaultErrorRecord();
         }
 
-
         /// <summary>
         ///
         /// Initializes a new instance of the HostException class and defines the error message and
@@ -189,7 +188,6 @@ namespace System.Management.Automation.Host
         {
             SetDefaultErrorRecord();
         }
-
 
         /// <summary>
         ///

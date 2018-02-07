@@ -72,7 +72,6 @@ namespace System.Management.Automation.ComInterop
                     // http://msdn.microsoft.com/en-us/library/aa912367.aspx
                     argErr = ((uint)args.Length) - argErr - 2;
 
-
                     // One or more of the arguments could not be coerced.
 
                     Type destinationType = null;
@@ -376,7 +375,6 @@ namespace System.Management.Automation.ComInterop
 
             return type.CreateType().GetMethod("ConvertByrefToPtr");
         }
-
 
         #region Generated Convert ByRef Delegates
 
@@ -820,7 +818,6 @@ namespace System.Management.Automation.ComInterop
 
         #endregion
     }
-
 
     internal static class NativeMethods
     {

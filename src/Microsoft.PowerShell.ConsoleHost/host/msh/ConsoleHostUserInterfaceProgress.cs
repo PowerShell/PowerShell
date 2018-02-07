@@ -3,12 +3,10 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System;
 using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Threading;
-
 
 namespace Microsoft.PowerShell
 {
@@ -54,7 +52,6 @@ namespace Microsoft.PowerShell
                 _pendingProgress = null;
             }
         }
-
 
 
         /// <summary>
@@ -107,7 +104,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'
@@ -132,7 +128,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         void
         PostWrite()
@@ -142,7 +137,6 @@ namespace Microsoft.PowerShell
                 _progPane.Show();
             }
         }
-
 
 
         private
@@ -165,7 +159,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         void
         PreRead()
@@ -177,7 +170,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         void
         PostRead()
@@ -187,7 +179,6 @@ namespace Microsoft.PowerShell
                 _progPane.Show();
             }
         }
-
 
 
         private
@@ -211,7 +202,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private ProgressPane _progPane = null;
         private PendingProgress _pendingProgress = null;
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
@@ -220,6 +210,5 @@ namespace Microsoft.PowerShell
         private int progPaneUpdateFlag = 0;
     }
 }   // namespace
-
 
 

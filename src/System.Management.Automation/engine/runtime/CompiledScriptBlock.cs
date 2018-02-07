@@ -39,7 +39,6 @@ namespace System.Management.Automation
         ProcessBlockOnly,
     }
 
-
     internal class CompiledScriptBlockData
     {
         internal CompiledScriptBlockData(IParameterMetadataProvider ast, bool isFilter)

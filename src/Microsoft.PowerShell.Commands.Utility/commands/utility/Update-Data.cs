@@ -6,7 +6,6 @@ using System;
 using System.Management.Automation;
 using System.Collections.ObjectModel;
 
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

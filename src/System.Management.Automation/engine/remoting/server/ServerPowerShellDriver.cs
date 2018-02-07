@@ -9,7 +9,6 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Internal;
 using System.Threading;
 
-
 namespace System.Management.Automation
 {
     /// <summary>

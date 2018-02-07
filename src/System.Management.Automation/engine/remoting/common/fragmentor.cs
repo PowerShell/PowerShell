@@ -418,7 +418,6 @@ namespace System.Management.Automation.Remoting
         }
     }
 
-
     /// <summary>
     /// A stream used to store serialized data. This stream holds serialized data in the
     /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment.

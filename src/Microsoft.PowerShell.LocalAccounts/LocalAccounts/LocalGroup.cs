@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Microsoft.PowerShell.LocalAccounts;
 
@@ -46,7 +46,6 @@ namespace Microsoft.PowerShell.Commands
             Description = other.Description;
         }
         #endregion Construction
-
 
         #region Public Methods
         /// <summary>

@@ -1,4 +1,4 @@
-﻿//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------
 // <copyright company="Microsoft">
 //    Copyright (c) Microsoft Corporation. All rights reserved.
 // </copyright>
@@ -127,7 +127,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         internal string CommandNeedingHelp
         {
             get
@@ -148,7 +147,6 @@ namespace Microsoft.PowerShell.Commands
         {
             _graphicalHostReflectionWrapper.CallMethod("DisplayHelp", helpResults);
         }
-
 
         internal string GetImportModuleCommand(string module)
         {

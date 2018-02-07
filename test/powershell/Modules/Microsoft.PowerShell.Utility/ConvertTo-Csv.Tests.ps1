@@ -39,7 +39,6 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     $Name = "Hello"; $Data = "World";
     $testObject = New-Object psobject -Property @{ FirstColumn = $Name; SecondColumn = $Data }
 
-
     It "Should Be able to be called without error" {
 	{ $testObject | ConvertTo-Csv } | Should Not Throw
     }

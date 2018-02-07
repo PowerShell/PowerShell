@@ -11,7 +11,6 @@ using Microsoft.Management.Infrastructure.Options;
 
 #endregion
 
-
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -162,7 +162,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         }
     }
 
-
 // These structures are filled in by Marshalling, so fields will be initialized
 // invisibly to the C# compiler, and some fields will not be used in C# code.
 #pragma warning disable 0649, 0169
@@ -195,7 +194,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         internal const UInt32 STANDARD_RIGHTS_WRITE     = READ_CONTROL;
         internal const UInt32 STANDARD_RIGHTS_EXECUTE   = READ_CONTROL;
 
-
         internal const UInt32 STANDARD_RIGHTS_ALL       = 0x001F0000;
 
         internal const UInt32 SPECIFIC_RIGHTS_ALL       = 0x0000FFFF;
@@ -208,7 +206,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         internal const UInt32 GENERIC_WRITE             = 0x40000000;
         internal const UInt32 GENERIC_EXECUTE           = 0x20000000;
         internal const UInt32 GENERIC_ALL               = 0x10000000;
-
 
         // These constants control the behavior of the FormatMessage Windows API function
         internal const uint FORMAT_MESSAGE_ALLOCATE_BUFFER  = 0x00000100;
@@ -335,7 +332,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         internal const int NERR_LastAdmin               = NERR_BASE + 352;  // This operation is not allowed on the last administrative account.
         #endregion Win32 Error Codes
 
-
         #region SECURITY_DESCRIPTOR Control Flags
         internal const UInt16 SE_DACL_PRESENT           = 0x0004;
         internal const UInt16 SE_SELF_RELATIVE          = 0x8000;
@@ -365,7 +361,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
                                                       StringBuilder domainName,
                                                       ref uint domainNameLength,
                                                       out SID_NAME_USE peUse);
-
 
         [DllImport(PInvokeDllNames.GetSecurityDescriptorDaclDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

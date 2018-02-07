@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Collections.ObjectModel;
@@ -947,7 +946,6 @@ namespace System.Management.Automation
                 _powershell.InstanceId,
                 eventArgs.Data);
         }
-
 
         /// <summary>
         /// Does the cleanup necessary on pipeline completion

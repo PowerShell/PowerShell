@@ -99,7 +99,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-
         #region Implementation
 
         /// <summary>
@@ -268,7 +267,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 return true;
             }
-
 
             bool installed = false;
 

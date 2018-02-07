@@ -147,7 +147,6 @@ namespace System.Management.Automation
                                                                                _context
                                                                                );
 
-
                             resourceInfo.FriendlyName = resource.FriendlyName;
 
                             resourceInfo.CompanyName = resource.CompanyName;

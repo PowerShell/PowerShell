@@ -147,7 +147,6 @@ namespace System.Management.Automation
                         intptrAlgorithm,
                         0);
 
-
                 // If we couldn't find an OID for the hash
                 // algorithm, it was invalid.
                 if (oidPtr == IntPtr.Zero)

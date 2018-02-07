@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -25,7 +25,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string ExecutionParameterSet = "Execution";
         private const string ScriptBlockParameterSet = "ScriptBlock";
         private const string FilePathParameterSet = "FilePath";
-
 
         /// <summary>
         /// Name of scheduled job definition.

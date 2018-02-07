@@ -103,7 +103,6 @@ namespace Microsoft.PowerShell.Commands
                 string scriptName;
                 scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out scriptName);
 
-
                 Hashtable configTable = null;
 
                 try

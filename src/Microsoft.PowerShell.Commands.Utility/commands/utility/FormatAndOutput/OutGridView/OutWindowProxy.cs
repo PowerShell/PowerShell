@@ -22,7 +22,6 @@ namespace Microsoft.PowerShell.Commands
         private const string IndexPropertyName = "IndexValue";
         private int _index;
 
-
         /// <summary> Columns definition of the underlying Management List</summary>
         private HeaderInfo _headerInfo;
 
@@ -260,7 +259,6 @@ namespace Microsoft.PowerShell.Commands
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-
 
 
         /// <summary>

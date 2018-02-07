@@ -75,7 +75,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _exclude = new string[0];
 
-
         #region helpers
 
         /// <summary>
@@ -244,7 +243,6 @@ namespace Microsoft.PowerShell.Commands
 
     }
 
-
     /// <summary>
     /// Implements get-variable command.
     /// </summary>
@@ -278,7 +276,6 @@ namespace Microsoft.PowerShell.Commands
         private string[] _name = new string[] { "*" };
 
 
-
         /// <summary>
         /// Output only the value(s) of the requested variable(s).
         /// </summary>
@@ -295,7 +292,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _valueOnly;
-
 
         /// <summary>
         /// The Include parameter for all the variable commands
@@ -408,7 +404,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public string Description { get; set; }
-
 
         /// <summary>
         /// The options for the variable to specify if the variable should
@@ -574,7 +569,6 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
     } // NewVariableCommand
 
-
     /// <summary>
     /// This class implements set-variable command
     /// </summary>
@@ -638,7 +632,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public string Description { get; set; }
 
-
         /// <summary>
         /// The options for the variable to specify if the variable should
         /// be ReadOnly, Constant, and/or Private.
@@ -693,7 +686,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private SessionStateEntryVisibility? _visibility;
-
 
         /// <summary>
         /// The variable object should be passed down the pipeline.
@@ -976,7 +968,6 @@ namespace Microsoft.PowerShell.Commands
                                     matchingVariable.Value = varValue;
                                 }
 
-
                                 if (Description != null)
                                 {
                                     matchingVariable.Description = Description;
@@ -1113,7 +1104,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 Scope = "local";
             }
-
 
             foreach (string varName in Name)
             {

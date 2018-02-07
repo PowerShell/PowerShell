@@ -48,7 +48,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private const string extensionSet = "ExtensionSet";
 
-
         /// <summary>
         /// The parameter set name to get the qualifier set.
         /// </summary>
@@ -186,7 +185,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-
 
         #endregion parameter data
 

@@ -3,7 +3,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System;
 using System.Collections;
 using System.Management.Automation;
@@ -11,7 +10,6 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace Microsoft.PowerShell
 {
@@ -158,7 +156,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         void
         EvictNode()
@@ -182,7 +179,6 @@ namespace Microsoft.PowerShell
                 RemoveNode(listWhereFound, indexWhereFound);
             }
         }
-
 
         /// <summary>
         ///
@@ -220,7 +216,6 @@ namespace Microsoft.PowerShell
             Dbg.Assert(_nodeCount == this.CountNodes(), "We've lost track of the number of nodes in the tree");
 #endif
         }
-
 
         private
         void
@@ -268,7 +263,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// Adds a node to the tree, first removing the oldest node if the tree is too large.
@@ -299,7 +293,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         class FindOldestNodeVisitor : NodeVisitor
         {
@@ -319,11 +312,9 @@ namespace Microsoft.PowerShell
             }
 
 
-
             internal
             ProgressNode
             FoundNode;
-
 
 
             internal
@@ -331,15 +322,12 @@ namespace Microsoft.PowerShell
             ListWhereFound;
 
 
-
             internal
             int
             IndexWhereFound = -1;
 
-
             private int _oldestSoFar;
         }
-
 
 
         private
@@ -366,7 +354,6 @@ namespace Microsoft.PowerShell
 #endif
             return v.FoundNode;
         }
-
 
         private
         ProgressNode
@@ -395,7 +382,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// Convenience overload.
@@ -413,7 +399,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         class FindByIdNodeVisitor : NodeVisitor
         {
@@ -423,7 +408,6 @@ namespace Microsoft.PowerShell
                 _sourceIdToFind = sourceIdToFind;
                 _idToFind = activityIdToFind;
             }
-
 
 
             internal override
@@ -441,11 +425,9 @@ namespace Microsoft.PowerShell
             }
 
 
-
             internal
             ProgressNode
             FoundNode;
-
 
 
             internal
@@ -453,17 +435,14 @@ namespace Microsoft.PowerShell
             ListWhereFound;
 
 
-
             internal
             int
             IndexWhereFound = -1;
 
 
-
             private int _idToFind = -1;
             private Int64 _sourceIdToFind;
         }
-
 
 
         /// <summary>
@@ -520,7 +499,6 @@ namespace Microsoft.PowerShell
 #endif
             return v.FoundNode;
         }
-
 
 
         /// <summary>
@@ -594,7 +572,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private
         class AgeAndResetStyleVisitor : NodeVisitor
         {
@@ -607,7 +584,6 @@ namespace Microsoft.PowerShell
                 return true;
             }
         }
-
 
 
         /// <summary>
@@ -628,11 +604,9 @@ namespace Microsoft.PowerShell
         }
 
 
-
         #endregion // Updating Code
 
         #region Rendering Code
-
 
 
         /// <summary>
@@ -716,7 +690,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// Helper function for Render().  Recursively renders nodes.
@@ -776,7 +749,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
 
         private
@@ -845,7 +817,6 @@ namespace Microsoft.PowerShell
             return ht.Tally;
         }
 
-
 #if DEBUG || ASSERTIONS_TRACE
 
         /// <summary>
@@ -888,7 +859,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// Debugging code. NodeVisitor that counts up the number of nodes in the tree.
@@ -913,7 +883,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// Debugging code.  Counts the number of nodes in the tree of nodes.
@@ -935,7 +904,6 @@ namespace Microsoft.PowerShell
         }
 
 #endif
-
 
         /// <summary>
         ///
@@ -1029,7 +997,6 @@ namespace Microsoft.PowerShell
 
             return false;
         }
-
 
 
         /// <summary>
@@ -1132,11 +1099,9 @@ namespace Microsoft.PowerShell
 
 
 
-
         #endregion // Rendering Code
 
         #region Utility Code
-
 
 
         private abstract
@@ -1199,9 +1164,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         #endregion
-
 
 
         private ArrayList _topLevelNodes = new ArrayList();
@@ -1209,6 +1172,5 @@ namespace Microsoft.PowerShell
         private const int maxNodeCount = 128;
     }
 }   // namespace
-
 
 

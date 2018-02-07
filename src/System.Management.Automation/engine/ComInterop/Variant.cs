@@ -828,11 +828,9 @@ namespace System.Management.Automation.ComInterop
             _typeUnion._unionTypes._byref = UnsafeMethods.ConvertIntPtrByrefToPtr(ref value);
         }
 
-
         // *** END GENERATED CODE ***
 
         #endregion
-
 
         // VT_VARIANT
 

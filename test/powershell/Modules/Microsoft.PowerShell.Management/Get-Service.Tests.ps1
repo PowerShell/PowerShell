@@ -1,4 +1,4 @@
-﻿Describe "Get-Service cmdlet tests" -Tags "CI" {
+Describe "Get-Service cmdlet tests" -Tags "CI" {
   # Service cmdlet is currently working on windows only
   # So skip the tests on non-Windows
   BeforeAll {

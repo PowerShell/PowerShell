@@ -92,7 +92,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         // called on the pipeline thread
 
         private void ErrorObjectStreamHandler(object sender, EventArgs e)
@@ -113,7 +112,6 @@ namespace Microsoft.PowerShell
                 _parent.ErrorSerializer.Serialize(obj);
             }
         }
-
 
         /// <summary>
         /// This method handles the failure in executing pipeline asynchronously
@@ -424,7 +422,6 @@ namespace Microsoft.PowerShell
 
             return results;
         }
-
 
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Needed by ProfileTests as mentioned in bug 140572")]
         internal Collection<PSObject> ExecuteCommand(string command)

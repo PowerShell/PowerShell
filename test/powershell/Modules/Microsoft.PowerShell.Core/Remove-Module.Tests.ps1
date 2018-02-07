@@ -1,4 +1,4 @@
-﻿Describe "Remove-Module" -Tags "CI" {
+Describe "Remove-Module" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
 
     BeforeEach {

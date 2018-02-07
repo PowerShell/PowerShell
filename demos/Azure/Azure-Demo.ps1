@@ -1,4 +1,4 @@
-﻿### The techniques used in this demo are documented at
+### The techniques used in this demo are documented at
 ### https://azure.microsoft.com/en-us/documentation/articles/powershell-azure-resource-manager/
 
 ### Import AzureRM.Profile.NetCore.Preview and AzureRM.Resources.NetCore.Preview modules.

@@ -11,7 +11,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     using System.Linq;
     using System.Management.Automation;
 
-
     /// <summary>
     /// Implements a facade around ShowCommandParameterInfo and its deserialized counterpart
     /// </summary>

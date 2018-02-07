@@ -1088,7 +1088,6 @@ namespace System.Management.Automation
                     }
                 }
 
-
                 int n = -1;
                 result.Add(GetSection(commentLines, ref n));
             }

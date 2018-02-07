@@ -72,7 +72,6 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
         { $ast.GetScriptBlock() } | Should Throw
     }
 
-
     It "with semantic errors" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput('function foo{param()begin{}end{[ref][ref]1}dynamicparam{}}', [ref]$null, [ref]$e)
 

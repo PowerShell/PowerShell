@@ -135,7 +135,6 @@ namespace System.Management.Automation.Remoting
         }
 
 
-
         private RemoteRunspacePoolInternal _remoteRunspacePool;
 
         /// <summary>
@@ -232,7 +231,6 @@ namespace System.Management.Automation.Remoting
         #endregion Constructors
 
         #region connect/close
-
 
         /// <summary>
         /// Creates a Remote Session Asynchronously.
@@ -606,5 +604,4 @@ namespace System.Management.Automation.Remoting
         #endregion IDisposable
     }
 }
-
 

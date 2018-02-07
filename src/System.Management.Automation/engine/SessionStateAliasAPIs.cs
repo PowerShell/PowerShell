@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation;
 
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -118,7 +117,6 @@ namespace System.Management.Automation
         /// </summary>
         internal List<AliasInfo> ExportedAliases { get; } = new List<AliasInfo>();
 
-
         /// <summary>
         /// Gets the value of the specified alias from the alias table.
         /// </summary>
@@ -141,7 +139,6 @@ namespace System.Management.Automation
             {
                 return null;
             }
-
 
             // Use the scope enumerator to find the alias using the
             // appropriate scoping rules
@@ -620,7 +617,6 @@ namespace System.Management.Automation
                 AliasInfo alias =
                     scope.GetAlias(aliasName);
 
-
                 if (alias != null)
                 {
                     // Make sure the alias isn't private or if it is that the current
@@ -665,5 +661,4 @@ namespace System.Management.Automation
         #endregion aliases
     } // SessionStateInternal class
 }
-
 

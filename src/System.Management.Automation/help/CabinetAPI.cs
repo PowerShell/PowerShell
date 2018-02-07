@@ -64,7 +64,6 @@ namespace System.Management.Automation.Internal
         #endregion
     }
 
-
     /// <summary>
     /// Abstract class which defines a CabinetExtractor loader. An implementation
     /// of this class will be instantiated onetime from the C++/CLI

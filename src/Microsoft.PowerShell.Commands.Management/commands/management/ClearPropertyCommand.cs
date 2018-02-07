@@ -173,6 +173,5 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // ClearItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

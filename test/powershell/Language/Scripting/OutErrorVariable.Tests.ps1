@@ -1,4 +1,4 @@
-﻿Describe "Tests OutVariable only" -Tags "CI" {
+Describe "Tests OutVariable only" -Tags "CI" {
     BeforeAll {
 
         function get-foo1
@@ -370,7 +370,6 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             get-foo7 "foo-output" -ev script:foo_err1 -ov script:foo_out1 | get-foo7 -ev script:foo_err2 -ov script:foo_out2
             get-foo7 "foo-output" -ev script:foo_err3 -ov script:foo_out3 | get-foo7 -ev script:foo_err4 -ov script:foo_out4
         }
-
 
         get-bar5 -ev script:bar_err -ov script:bar_out 2>&1 > $null
 

@@ -279,7 +279,6 @@ namespace System.Management.Automation
                 return;
             }
 
-
             if (HandlePrimitiveKnownTypePSObject(source, property, depth))
             {
                 return;
@@ -427,7 +426,6 @@ namespace System.Management.Automation
 
             return true;
         }
-
 
         /// <summary>
         /// Checks if source is known container type and returns appropriate

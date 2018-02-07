@@ -176,7 +176,6 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
         }
 
-
         /// <summary>
         /// one time initialization: acquire a screen host interface
         /// by creating one on top of a file

@@ -233,7 +233,6 @@ Describe 'Basic Job Tests' -Tags 'CI' {
         }
     }
 
-
     Context 'Remove-Job tests' {
         # The test pattern used here is different from other tests since there is a scoping issue in Pester.
         # If BeforeEach is used then $removeJobTestCases does not bind when the It is called.

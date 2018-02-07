@@ -176,7 +176,6 @@ namespace System.Management.Automation
         } // void MasterStreamOpen
 
 
-
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {
             ErrorRecord errorRecord = new ErrorRecord(

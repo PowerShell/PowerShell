@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -436,7 +436,6 @@ namespace System.Management.Automation.PerformanceData
                 return false;
             }
         }
-
 
         #endregion
 

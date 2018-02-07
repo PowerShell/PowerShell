@@ -3,7 +3,6 @@
 
     Project:     PowerShell
 
-
     Contents:    PowerShell error interface for syntax editors
 
     Classes:     System.Management.Automation.PSParseError

@@ -153,7 +153,6 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
-
 	It "Update-TypeData with Invalid DynamicType with No MemberName should throw Exception"{
 	    $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String')
         $ps.Invoke()

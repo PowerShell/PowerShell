@@ -107,7 +107,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _isLiteralPath = false;
 
-
         /// <summary>
         /// Scans paths recursively
         /// </summary>

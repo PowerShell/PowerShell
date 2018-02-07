@@ -519,7 +519,6 @@ namespace System.Management.Automation
         PSTransactionContext CurrentPSTransaction { get; }
         #endregion Transaction Support
 
-
         #region Misc
         #region ThrowTerminatingError
         /// <summary>

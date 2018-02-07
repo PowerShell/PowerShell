@@ -123,7 +123,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         // Go through all the received events. If one matches the subscription identifier,
         // break.
         private void ScanEventQueue()

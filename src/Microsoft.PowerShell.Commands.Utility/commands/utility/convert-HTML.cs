@@ -398,7 +398,6 @@ namespace Microsoft.PowerShell.Commands
             return "";
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -418,7 +417,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebUtility.HtmlEncode(_title);
             }
-
 
             // This first line ensures w3c validation will succeed. However we are not specifying
             // an encoding in the HTML because we don't know where the text will be written and

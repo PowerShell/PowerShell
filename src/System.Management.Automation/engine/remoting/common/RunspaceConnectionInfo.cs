@@ -247,7 +247,6 @@ namespace System.Management.Automation.Runspaces
         internal const int DefaultTimeout = -1;
         internal const int InfiniteTimeout = 0;
 
-
         /// <summary>
         /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations
         /// (close runspace or stop powershell). For instance, when the user hits ctrl-C,
@@ -713,7 +712,6 @@ namespace System.Management.Automation.Runspaces
                 _proxyCredential = value;
             }
         }
-
 
         /// <summary>
         /// When connecting over HTTPS, the client does not validate that the server

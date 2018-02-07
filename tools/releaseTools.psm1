@@ -245,5 +245,4 @@ function Get-NewOfficalPackage
     }
 }
 
-
 Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage

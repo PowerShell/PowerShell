@@ -18,7 +18,6 @@ using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
 
-
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
@@ -203,7 +202,6 @@ namespace System.Management.Automation.Remoting
 
             return result;
         }
-
 
         /// <summary>
         /// Creates the struct from initialization parameters xml.

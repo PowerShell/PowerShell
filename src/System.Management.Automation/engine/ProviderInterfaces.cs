@@ -53,7 +53,6 @@ namespace System.Management.Automation
 
         #region Public methods
 
-
         /// <summary>
         /// Gets the specified provider(s).
         /// </summary>

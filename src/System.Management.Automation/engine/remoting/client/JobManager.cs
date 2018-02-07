@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
@@ -615,7 +615,6 @@ namespace System.Management.Automation
                     cmdlet.WriteObject(job);
                 }
             }
-
 
             return allJobs;
         }

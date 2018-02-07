@@ -891,7 +891,6 @@ namespace System.Management.Automation
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
-
             if (null != originalHelpInfo)
             {
                 result = originalHelpInfo.Copy();
@@ -1329,7 +1328,6 @@ namespace System.Management.Automation
                         SearchResolutionOptions.CommandNameIsPattern,
                         CommandTypes.Cmdlet,
                         context);
-
 
             return searcher;
         }

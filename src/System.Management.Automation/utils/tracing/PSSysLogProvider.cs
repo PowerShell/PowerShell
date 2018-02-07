@@ -58,7 +58,6 @@ namespace System.Management.Automation.Tracing
         }
 
 
-
         /// <summary>
         /// Determines whether any session is requesting the specified event from the provider.
         /// </summary>

@@ -206,7 +206,6 @@ namespace System.Management.Automation.Runspaces
             Reason = pipelineStateInfo.Reason;
         }
 
-
         #endregion constructors
 
         #region public_properties
@@ -460,7 +459,6 @@ namespace System.Management.Automation.Runspaces
         #endregion events
 
         #region methods
-
 
         /// <summary>
         /// Invoke the pipeline, synchronously, returning the results as an array of
@@ -744,5 +742,4 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
     }
 }
-
 

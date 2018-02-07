@@ -2,7 +2,6 @@
 Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
-
 using System;
 using Dbg = System.Management.Automation;
 using System.Collections;
@@ -399,7 +398,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private ScopedItemOptions _options = ScopedItemOptions.None;
-
 
         /// <summary>
         /// Determines if the Options parameter was set.

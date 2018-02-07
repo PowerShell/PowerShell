@@ -153,7 +153,6 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         /// Returns true if help content in help info matches the
         /// pattern contained in <paramref name="pattern"/>.

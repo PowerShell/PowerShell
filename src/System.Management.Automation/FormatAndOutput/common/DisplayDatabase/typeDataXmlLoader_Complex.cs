@@ -297,7 +297,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             } // foreach
 
-
             if (expressionNodeFound)
             {
                 // we add only if we encountered one, since it's not mandatory

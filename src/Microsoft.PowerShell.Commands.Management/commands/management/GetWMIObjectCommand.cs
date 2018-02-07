@@ -21,7 +21,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
 
-
         /// <summary>
         /// The WMI class to query
         /// </summary>

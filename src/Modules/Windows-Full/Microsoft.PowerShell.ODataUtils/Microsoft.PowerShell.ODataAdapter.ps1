@@ -1,6 +1,5 @@
 Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
 
-
 # Add .NET classes used by the module
 Add-Type -TypeDefinition $global:BaseClassDefinitions
 
@@ -812,7 +811,6 @@ function GenerateGetProxyCmdlet
                             $xmlWriter.WriteEndElement()
                         }
                     }
-
 
                     # Add Query Parameters (i.e., Top, Skip, OrderBy, Filter) to the generated Get-* cmdlets.
                     $queryParameters =

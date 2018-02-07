@@ -1,4 +1,4 @@
-﻿Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
+Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
         # Create new types and test functions.
         $type1,$type2,$type3,$type4 = Add-Type -PassThru -TypeDefinition @'

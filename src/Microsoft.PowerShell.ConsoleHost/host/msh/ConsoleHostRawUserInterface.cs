@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 --********************************************************************/
 
 
-
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -18,7 +17,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using WORD = System.UInt16;
 using DWORD = System.UInt32;
-
 
 
 namespace Microsoft.PowerShell
@@ -132,7 +130,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -190,7 +187,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -233,7 +229,6 @@ namespace Microsoft.PowerShell
                 ConsoleControl.SetConsoleCursorPosition(handle, value);
             }
         }
-
 
 
         /// <summary>
@@ -302,7 +297,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
 
         /// <summary>
@@ -376,7 +370,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -435,7 +428,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
 
         /// <summary>
@@ -571,7 +563,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// See base class
@@ -597,7 +588,6 @@ namespace Microsoft.PowerShell
                 return s;
             }
         }
-
 
 
         /// <summary>
@@ -789,7 +779,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         private static
         void
         KEY_EVENT_RECORDToKeyInfo(ConsoleControl.KEY_EVENT_RECORD keyEventRecord, out KeyInfo keyInfo)
@@ -800,7 +789,6 @@ namespace Microsoft.PowerShell
                 (ControlKeyStates)keyEventRecord.ControlKeyState,
                 keyEventRecord.KeyDown);
         }
-
 
 
         /// <summary>
@@ -825,7 +813,6 @@ namespace Microsoft.PowerShell
 
             cachedKeyEvent.RepeatCount = 0;
         }
-
 
 
         /// <summary>
@@ -883,7 +870,6 @@ namespace Microsoft.PowerShell
                 return false;
             }
         }
-
 
         /// <summary>
         ///
@@ -1003,7 +989,6 @@ namespace Microsoft.PowerShell
 
             ConsoleControl.WriteConsoleOutput(handle, origin, contents);
         }
-
 
 
         /// <summary>
@@ -1186,7 +1171,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         /// <summary>
         ///
         /// See base class.
@@ -1270,7 +1254,6 @@ namespace Microsoft.PowerShell
 
             return contents;
         }
-
 
 
         /// <summary>
@@ -1386,7 +1369,6 @@ namespace Microsoft.PowerShell
             return ConsoleControl.LengthInBufferCells(s, offset, parent.SupportsVirtualTerminal);
         }
 
-
         /// <summary>
         ///
         /// See base class
@@ -1423,7 +1405,6 @@ namespace Microsoft.PowerShell
 
 #region helpers
 
-
         // pass-by-ref for speed.
         /// <summary>
         ///
@@ -1455,7 +1436,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         /// Get output buffer info
         /// </summary>
@@ -1474,7 +1454,6 @@ namespace Microsoft.PowerShell
             bufferInfo = ConsoleControl.GetConsoleScreenBufferInfo(result);
             return result;
         }
-
 
 
 #endregion helpers

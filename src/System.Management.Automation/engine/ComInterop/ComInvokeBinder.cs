@@ -265,7 +265,6 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-
             //
             // Call Invoke
             //

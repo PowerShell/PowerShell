@@ -70,7 +70,6 @@ namespace Microsoft.PowerShell
                     return ImmediateParent;
                 }
 
-
                 // Check whether we have any fallback specified
                 // MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK
                 // returns fallback cultures (specified by the user)
@@ -362,7 +361,6 @@ namespace Microsoft.PowerShell
             long numberLangs = 0;
             int bufferSize = 0;
             string returnval = "";
-
 
             if (filterOutNonConsoleCultures)
             {

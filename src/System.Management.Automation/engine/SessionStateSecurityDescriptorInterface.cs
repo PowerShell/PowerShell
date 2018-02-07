@@ -57,7 +57,6 @@ namespace System.Management.Automation
 
         #region GetSecurityDescriptor
 
-
         /// <summary>
         /// Gets the security descriptor from the specified item.
         /// </summary>

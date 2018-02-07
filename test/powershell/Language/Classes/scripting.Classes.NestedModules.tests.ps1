@@ -37,7 +37,6 @@ Describe 'NestedModules' -Tags "CI" {
 
     try {
 
-
         # Create modules in TestDrive:\
         New-TestModule -Name NoRoot -NestedContents @(
             'class A { [string] foo() { return "A1"} }',

@@ -1,4 +1,4 @@
-﻿
+
 # Test Settings:
 # This is the list of PowerShell Core modules for which we test update-help
 $powershellCoreModules = @(

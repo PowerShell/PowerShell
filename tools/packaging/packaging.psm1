@@ -1227,7 +1227,6 @@ function New-ZipPackage
     }
 }
 
-
 function New-NugetPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1254,7 +1253,6 @@ function New-NugetPackage
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $PackageConfiguration,
-
 
         # Source Path to the Product Files - required to package the contents into an Zip
         [Parameter(Mandatory = $true)]

@@ -1,4 +1,4 @@
-﻿Describe "CliXml test" -Tags "CI" {
+Describe "CliXml test" -Tags "CI" {
 
     BeforeAll {
         $testFilePath = Join-Path "testdrive:\" "testCliXml"
@@ -96,7 +96,6 @@
         }
 
         It "can be created with literal path using pipeline" {
-
 
             $filePath = Join-Path $subFilePath 'gps.xml'
             ($gpsList | Select-Object -First 1) | Export-Clixml -Depth 1 -LiteralPath $filePath

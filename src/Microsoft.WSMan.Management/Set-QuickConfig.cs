@@ -14,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-
 namespace Microsoft.WSMan.Management
 {
     #region Set-WsManQuickConfig
@@ -92,9 +91,7 @@ namespace Microsoft.WSMan.Management
         }//End BeginProcessing()
 
 
-
         #region private
-
 
         private void QuickConfigRemoting(bool serviceonly)
         {
@@ -111,7 +108,6 @@ namespace Microsoft.WSMan.Management
                 string action = string.Empty;
                 string xpathStatus = string.Empty;
                 string xpathResult = string.Empty;
-
 
                 if (!usessl)
                 {
@@ -134,7 +130,6 @@ namespace Microsoft.WSMan.Management
                     action = "Analyze";
                 }
 
-
                 string analysisOutputXml = m_SessionObj.Invoke(action, "winrm/config/service", analysisInputXml, 0);
                 XmlDocument resultopxml = new XmlDocument();
                 resultopxml.LoadXml(analysisOutputXml);
@@ -151,7 +146,6 @@ namespace Microsoft.WSMan.Management
                     xpathText = "/cfg:Analyze_OUTPUT/cfg:Results";
                     xpathUpdate = "/cfg:Analyze_OUTPUT/cfg:EnableRemoting_INPUT";
                 }
-
 
 
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);

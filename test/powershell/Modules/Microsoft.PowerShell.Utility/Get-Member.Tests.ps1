@@ -63,7 +63,6 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
                 }
             }
 
-
             public string LastName
             {
                 get
@@ -75,7 +74,6 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
                     lastName = value;
                 }
             }
-
 
             public int YearsInMS
             {

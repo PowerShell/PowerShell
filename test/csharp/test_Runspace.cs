@@ -61,7 +61,6 @@ namespace PSTests.Parallel
             }
         }
 
-
         [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {

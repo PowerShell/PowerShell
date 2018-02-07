@@ -420,7 +420,6 @@ namespace System.Management.Automation.Language
             typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), staticFlags);
 
 
-
         internal static readonly ConstructorInfo ReturnException_ctor =
             typeof(ReturnException).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(object) }, null);
 

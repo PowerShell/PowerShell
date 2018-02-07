@@ -21,14 +21,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
         }
 
-
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
         {
             return (PdhHelper.PdhCloseLog(handle, 0) == 0);
         }
     }
-
 
 
 
@@ -43,7 +41,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return handle == IntPtr.Zero;
             }
         }
-
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()
@@ -63,7 +60,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 return handle == IntPtr.Zero;
             }
         }
-
 
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
         protected override bool ReleaseHandle()

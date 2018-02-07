@@ -63,7 +63,6 @@ namespace System.Management.Automation.Runspaces
             Value = value;
         }
 
-
         #endregion Public constructors
 
         #region Public properties
@@ -307,5 +306,4 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-
 

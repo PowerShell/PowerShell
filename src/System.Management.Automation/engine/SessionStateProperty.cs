@@ -806,7 +806,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             object result = null;
             try
             {

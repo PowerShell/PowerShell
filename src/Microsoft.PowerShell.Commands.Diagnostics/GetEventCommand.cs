@@ -73,7 +73,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _logName = { "*" };
 
-
         /// <summary>
         /// ListProvider parameter
         /// </summary>
@@ -99,7 +98,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _listProvider = { "*" };
 
-
         /// <summary>
         /// ProviderName parameter
         /// </summary>
@@ -123,7 +121,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _providerName;
 
-
         /// <summary>
         /// Path parameter
         /// </summary>
@@ -146,7 +143,6 @@ namespace Microsoft.PowerShell.Commands
             set { _path = value; }
         }
         private string[] _path;
-
 
         /// <summary>
         /// MaxEvents parameter
@@ -244,7 +240,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private PSCredential _credential = PSCredential.Empty;
 
-
         /// <summary>
         /// FilterXPath parameter
         /// </summary>
@@ -293,7 +288,6 @@ namespace Microsoft.PowerShell.Commands
             set { _xmlQuery = value; }
         }
         private XmlDocument _xmlQuery = null;
-
 
         /// <summary>
         /// FilterHashtable parameter
@@ -349,7 +343,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _oldest = false;
 
-
         //
         // Query builder constant strings
         //
@@ -404,7 +397,6 @@ namespace Microsoft.PowerShell.Commands
         private const string hashkey_data_lc = "data";
         private const string hashkey_supress_lc = "suppresshashfilter";
 
-
         /// <summary>
         /// BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here
         /// </summary>
@@ -412,7 +404,6 @@ namespace Microsoft.PowerShell.Commands
         {
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
         }
-
 
         /// <summary>
         /// EndProcessing() is invoked once per pipeline
@@ -437,7 +428,6 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
         }
-
 
         /// <summary>
         /// ProcessRecord() override.
@@ -480,7 +470,6 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
         }
-
 
         //
         // AccumulatePipelineCounters() accumulates log names in the pipeline scenario:
@@ -540,7 +529,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         //
         // Process GetProviderSet parameter set
         //
@@ -557,7 +545,6 @@ namespace Microsoft.PowerShell.Commands
                     //
                     return;
                 }
-
 
                 EventLogQuery logQuery = null;
                 if (_providersByLogMap.Count > 1)
@@ -583,7 +570,6 @@ namespace Microsoft.PowerShell.Commands
                 ReadEvents(logQuery);
             }
         }
-
 
         //
         // Process ListLog parameter set
@@ -746,7 +732,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         //
         // Process FileSet parameter set
         //
@@ -857,7 +842,6 @@ namespace Microsoft.PowerShell.Commands
             return eventLogSession;
         }
 
-
         //
         // ReadEvents helper.
         //
@@ -901,7 +885,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     outputObj.Properties.Add(new PSNoteProperty("Message", evtMessage));
 
-
                     //
                     // Enumerate the object one level to get to event payload
                     //
@@ -917,7 +900,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-
 
 
         //
@@ -1311,7 +1293,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             } //end foreach hashtable
 
-
             result.Append(queryListClose);
 
             return result.ToString();
@@ -1444,7 +1425,6 @@ namespace Microsoft.PowerShell.Commands
             return string.Format(CultureInfo.InvariantCulture, SystemSecurityTemplate, sidCandidate.ToString());
         }
 
-
         //
         // HandleStartTimeHashValue helper for hashtable structured query builder.
         // Constructs and returns TimeCreated XPath portion as a string.
@@ -1487,7 +1467,6 @@ namespace Microsoft.PowerShell.Commands
 
             return ret.ToString();
         }
-
 
         //
         // HandleEndTimeHashValue helper for hashtable structured query builder.
@@ -1563,7 +1542,6 @@ namespace Microsoft.PowerShell.Commands
             return ret.ToString();
         }
 
-
         //
         // HandleNamedDataHashValue helper for hashtable structured query builder.
         // Constructs and returns named event data field XPath portion as a string.
@@ -1597,7 +1575,6 @@ namespace Microsoft.PowerShell.Commands
 
             return ret.ToString();
         }
-
 
         //
         // Helper checking whether at least one of log, _path, provider is specified.
@@ -1672,7 +1649,6 @@ namespace Microsoft.PowerShell.Commands
             }
             return true;
         }
-
 
         //
         // KeywordStringToInt64 helper converts a string to Int64.
@@ -1876,7 +1852,6 @@ namespace Microsoft.PowerShell.Commands
             return ret;
         }
 
-
         //
         // BuildProvidersPredicate() builds a predicate expression like:
         // "System/Provider[@Name='a' or @Name='b']"
@@ -1902,7 +1877,6 @@ namespace Microsoft.PowerShell.Commands
 
             return predicate.ToString();
         }
-
 
         //
         // BuildAllProvidersPredicate() builds a predicate expression like:
@@ -1947,7 +1921,6 @@ namespace Microsoft.PowerShell.Commands
 
             return predicate.ToString();
         }
-
 
         //
         // AddLogsForProviderToInternalMap helper.
@@ -2129,5 +2102,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
 

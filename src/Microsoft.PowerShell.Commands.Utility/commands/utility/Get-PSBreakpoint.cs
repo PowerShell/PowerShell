@@ -264,7 +264,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         /// <summary>
         /// Gives the criteria to filter breakpoints
         /// </summary>

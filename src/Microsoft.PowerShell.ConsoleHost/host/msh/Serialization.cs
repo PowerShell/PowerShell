@@ -7,9 +7,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Xml;
 
-
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 
 namespace Microsoft.PowerShell
@@ -57,7 +55,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         protected
         Serialization(DataFormat dataFormat, string streamName)
         {
@@ -68,13 +65,11 @@ namespace Microsoft.PowerShell
         }
 
 
-
         protected static string XmlCliTag = "#< CLIXML";
 
         protected string streamName;
         protected DataFormat format;
     }
-
 
 
     internal
@@ -107,7 +102,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         internal
         void
         Serialize(object o)
@@ -138,7 +132,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         internal
         void
         End()
@@ -162,13 +155,11 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         internal TextWriter textWriter;
         private XmlWriter _xmlWriter;
         private Serializer _xmlSerializer;
         private bool _firstCall = true;
     }
-
 
 
     internal
@@ -207,7 +198,6 @@ namespace Microsoft.PowerShell
                     break;
             }
         }
-
 
 
         internal
@@ -251,7 +241,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         internal
         bool
         AtEnd
@@ -280,7 +269,6 @@ namespace Microsoft.PowerShell
         }
 
 
-
         internal
         void
         End()
@@ -297,7 +285,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         internal TextReader textReader;
         private XmlReader _xmlReader;
         private Deserializer _xmlDeserializer;
@@ -305,5 +292,4 @@ namespace Microsoft.PowerShell
         private bool _atEnd;
     }
 }   // namespace
-
 

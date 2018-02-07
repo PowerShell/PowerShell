@@ -1,4 +1,4 @@
-﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
+Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         class fruit {
             [string] $name;

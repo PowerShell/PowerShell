@@ -105,7 +105,6 @@ namespace System.Diagnostics.Eventing.Reader
             }
         }
 
-
         public IEnumerable<EventKeyword> Keywords
         {
             get

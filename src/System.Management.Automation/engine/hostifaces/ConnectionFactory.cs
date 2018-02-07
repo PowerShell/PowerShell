@@ -290,7 +290,6 @@ namespace System.Management.Automation.Runspaces
                 maxRunspaces, initialSessionState, host);
         }
 
-
         #endregion
 
         #region RunspacePool - remote Factory

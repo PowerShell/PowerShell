@@ -12,7 +12,6 @@ Describe 'Testing of script internationalization' -Tags "CI" {
         $global:PSDefaultParameterValues = $defaultParamValues
     }
 
-
     It 'convertFromString-Data should work with data statement.' {
 
         data mydata
@@ -147,7 +146,6 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 
         $exception | Should Match $Expected
     }
-
 
     it 'Check alternate syntax that also supports complex variable names' {
 

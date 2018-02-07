@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             WideViewHeaderInfo wideViewHeaderInfo = new WideViewHeaderInfo();
             startFormat.shapeInfo = wideViewHeaderInfo;
 
-
             if (!this.AutoSize)
             {
                 // autosize overrides columns

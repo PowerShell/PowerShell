@@ -1,4 +1,4 @@
-﻿#
+#
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
 #
 $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -197,7 +197,6 @@ try
             if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         }
-
 
         It "Verifies that broken alias results in one error" {
             try {

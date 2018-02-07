@@ -168,6 +168,5 @@ namespace Microsoft.PowerShell.Commands
         } // ProcessRecord
         #endregion Command code
 
-
     } // MoveItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands
