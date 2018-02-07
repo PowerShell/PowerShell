@@ -1,6 +1,4 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+
 
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;

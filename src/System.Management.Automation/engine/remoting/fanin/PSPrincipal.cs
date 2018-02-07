@@ -1,6 +1,4 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+
 
 /*
  * Contains definition for PSSenderInfo, PSPrincipal, PSIdentity which are

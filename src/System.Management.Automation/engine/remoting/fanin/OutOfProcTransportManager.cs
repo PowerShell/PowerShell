@@ -1,6 +1,4 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+
 
 /*
  * Common file that contains implementation for both server and client transport

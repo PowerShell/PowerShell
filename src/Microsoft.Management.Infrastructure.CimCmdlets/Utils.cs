@@ -1,7 +1,3 @@
-/*============================================================================
- * Copyright (c) Microsoft Corporation. All rights reserved.
- *============================================================================
- */
 
 // #define LOGENABLE // uncomment this line to enable the log,
                   // create c:\temp\cim.log before invoking cimcmdlets

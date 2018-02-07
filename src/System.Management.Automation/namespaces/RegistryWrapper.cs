@@ -1,6 +1,4 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+
 /*
  * The registry wrapper provides a common interface to both the transacted
  * and non-transacted registry APIs.  It is used exclusively by the registry provider

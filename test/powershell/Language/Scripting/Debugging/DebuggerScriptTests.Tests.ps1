@@ -1,8 +1,3 @@
-##
-## Copyright (c) Microsoft Corporation. All rights reserved.
-##
-## Script debugging tests
-##
 
 Describe "Breakpoints set on custom FileSystem provider files should work" -Tags "CI" {
     #

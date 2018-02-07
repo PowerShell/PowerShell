@@ -1,6 +1,4 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+
 #if !UNIX // Not built on Unix
 
 using System;

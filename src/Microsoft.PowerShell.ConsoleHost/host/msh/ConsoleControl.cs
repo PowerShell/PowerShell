@@ -1,7 +1,5 @@
 #if !UNIX
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+
 
 // Implementation notes: In the functions that take ConsoleHandle parameters, we only assert that the handle is valid and not
 // closed, as opposed to doing a check and throwing an exception.  This is because the win32 APIs that those functions wrap will

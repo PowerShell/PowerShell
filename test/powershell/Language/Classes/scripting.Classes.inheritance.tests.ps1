@@ -1,6 +1,4 @@
-#
-# Copyright (c) Microsoft Corporation. All rights reserved.
-#
+
 
 Describe 'Classes inheritance syntax' -Tags "CI" {
 

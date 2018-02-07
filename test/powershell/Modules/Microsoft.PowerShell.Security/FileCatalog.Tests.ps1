@@ -1,7 +1,5 @@
 # This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
-#
-# Copyright (c) Microsoft Corporation. All rights reserved.
-#
+
 
 try {
     #skip all tests on non-windows platform

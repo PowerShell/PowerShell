@@ -1,6 +1,3 @@
-##
-## Copyright (c) Microsoft Corporation. All rights reserved.
-##
 
 Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 

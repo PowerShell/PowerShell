@@ -1,6 +1,4 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable RedundantCast

@@ -1,11 +1,3 @@
-//-----------------------------------------------------------------------
-// <copyright company="Microsoft">
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-// <summary>
-// Implements GraphicalHostReflectionWrapper
-// </summary>
-//-----------------------------------------------------------------------
 
 namespace System.Management.Automation.Internal
 {

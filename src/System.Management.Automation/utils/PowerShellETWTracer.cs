@@ -1,7 +1,5 @@
 #if !UNIX
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+
 using System.Globalization;
 using System.Management.Automation.Runspaces;
 using System.Text;

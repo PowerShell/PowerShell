@@ -1,6 +1,4 @@
-#
-# Copyright (c) Microsoft Corporation. All rights reserved.
-#
+
 
 Describe 'Positive Parse Properties Tests' -Tags "CI" {
     It 'PositiveParsePropertiesTest' {

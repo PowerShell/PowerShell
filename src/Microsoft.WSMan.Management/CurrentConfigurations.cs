@@ -1,19 +1,3 @@
-//------------------------------------------------------------------
-// <copyright file="CurrentConfigurations.cs" company="Microsoft">
-//     Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-//
-// <author email="psarda">
-//     Pankaj Sarda
-// </author>
-//
-// <summary>
-// Class that queries the server and gets current configurations.
-// Also provides a generic way to update the configurations.
-// </summary>
-//
-// <remarks/>
-//------------------------------------------------------------------
 
 namespace Microsoft.WSMan.Management
 {

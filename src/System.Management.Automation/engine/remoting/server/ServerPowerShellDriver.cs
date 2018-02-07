@@ -1,6 +1,4 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+
 
 using System.Security.Principal;
 using System.Management.Automation.Runspaces;
