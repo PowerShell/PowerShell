@@ -156,7 +156,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		}
 
 		It "Format-Table with multiple line string for End-To-End should work" {
-				$p = "Line1\nLine2"
+				$p = "Line1`nLine2"
 				$result = $p | Format-Table -Property "foo","bar" -Force | Out-String
 				$result.Replace(" ","").Replace([Environment]::NewLine,"") | Should BeExactly "foobar------"
 		}
