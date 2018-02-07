@@ -51,10 +51,12 @@ namespace System.Management.Automation.Runspaces
                 TableControl.Create()
                     .GroupByProperty("PSParentPath")
                     .AddHeader(width: 41)
-                    .AddHeader()
+                    .AddHeader(width: 20)
+                    .AddHeader(label: "EnhancedKeyUsageList")
                     .StartRowDefinition()
                         .AddPropertyColumn("Thumbprint")
                         .AddPropertyColumn("Subject")
+                        .AddScriptBlockColumn("$_.EnhancedKeyUsageList.FriendlyName")
                     .EndRowDefinition()
                 .EndTable());
         }
@@ -84,7 +86,7 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("ThumbprintWide",
                 WideControl.Create()
                     .GroupByProperty("PSParentPath")
-                    .AddPropertyEntry("ThumbPrint")
+                    .AddPropertyEntry("Thumbprint")
                 .EndWideControl());
 
             yield return new FormatViewDefinition("PathOnly",
@@ -108,10 +110,12 @@ namespace System.Management.Automation.Runspaces
                     .GroupByScriptBlock("split-path $_.Path", customControl: sharedControls[0])
                     .AddHeader(label: "SignerCertificate", width: 41)
                     .AddHeader()
+                    .AddHeader()
                     .AddHeader(label: "Path")
                     .StartRowDefinition()
                         .AddScriptBlockColumn("$_.SignerCertificate.Thumbprint")
                         .AddPropertyColumn("Status")
+                        .AddPropertyColumn("StatusMessage")
                         .AddScriptBlockColumn("split-path $_.Path -leaf")
                     .EndRowDefinition()
                 .EndTable());
