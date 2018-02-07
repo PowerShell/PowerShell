@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell
             // See if they want to bypass the authorization manager
             if (_executionPolicy == ExecutionPolicy.Bypass)
                 return true;
-#if !CORECLR
+
             // Always check the SAFER APIs if code integrity isn't being handled system-wide through
             // WLDP or AppLocker. In those cases, the scripts will be run in ConstrainedLanguage.
             // Otherwise, block.
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
             }
-#endif
+
             if (_executionPolicy == ExecutionPolicy.Unrestricted)
             {
                 // Product binaries are always trusted
