@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -436,7 +437,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(Ex, "GetEventLogNoEntriesFound", ErrorCategory.ObjectNotFound, null));
             }
         }
-
 
         private bool FiltersMatch(EventLogEntry entry)
         {

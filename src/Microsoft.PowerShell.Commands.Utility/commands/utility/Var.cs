@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -272,7 +273,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string[] _name = new string[] { "*" };
-
 
         /// <summary>
         /// Output only the value(s) of the requested variable(s).

@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Reflection;
@@ -474,7 +475,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static readonly Dictionary<string, Func<FormatInfoData>> s_constructors;
     }
-
 
     internal static class FormatInfoDataListDeserializer<T> where T : FormatInfoData
     {

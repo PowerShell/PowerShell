@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -68,7 +69,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _format = "blg";
 
-
         //
         // MaxSize parameter
         // Maximum output file size, in megabytes.
@@ -125,7 +125,6 @@ namespace Microsoft.PowerShell.Commands
             set { _circular = value; }
         }
         private SwitchParameter _circular;
-
 
         private ResourceManager _resourceMgr = null;
 

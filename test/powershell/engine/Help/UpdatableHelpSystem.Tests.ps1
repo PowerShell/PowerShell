@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 # Test Settings:
 # This is the list of PowerShell Core modules for which we test update-help

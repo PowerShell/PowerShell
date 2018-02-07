@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Debug-Runspace" -tag "CI" {
     BeforeAll {
         $rs1 = [runspacefactory]::CreateRunspace()

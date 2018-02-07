@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Format-Custom" -Tags "CI" {
 
     Context "Check Format-Custom aliases" {

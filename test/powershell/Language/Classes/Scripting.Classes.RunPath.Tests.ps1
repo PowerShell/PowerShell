@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Script with a class definition run path" -Tags "CI" {
 
     $TestCases = @(

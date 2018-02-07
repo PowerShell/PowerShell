@@ -1,5 +1,5 @@
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -51,7 +51,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Invoked by ConsoleHostUserInterface.WriteProgress to update the set of outstanding activities for which
@@ -101,7 +100,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'
@@ -125,7 +123,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         private
         void
         PostWrite()
@@ -135,7 +132,6 @@ namespace Microsoft.PowerShell
                 _progPane.Show();
             }
         }
-
 
         private
         void
@@ -156,7 +152,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         private
         void
         PreRead()
@@ -167,7 +162,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         private
         void
         PostRead()
@@ -177,7 +171,6 @@ namespace Microsoft.PowerShell
                 _progPane.Show();
             }
         }
-
 
         private
         void
@@ -199,7 +192,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         private ProgressPane _progPane = null;
         private PendingProgress _pendingProgress = null;
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
@@ -208,5 +200,4 @@ namespace Microsoft.PowerShell
         private int progPaneUpdateFlag = 0;
     }
 }   // namespace
-
 

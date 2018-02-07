@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Verb" -Tags "CI" {
 
     It "Should get a list of Verbs" {

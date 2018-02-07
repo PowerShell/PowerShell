@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "ArrayExpression Tests" -Tags "CI" {
     It "@([object[]](1,2,3)) should return a 3-element array of object[]" {
         $result = @([object[]](1,2,3))

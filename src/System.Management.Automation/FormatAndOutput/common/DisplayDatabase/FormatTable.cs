@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Globalization;
@@ -45,7 +46,6 @@ namespace System.Management.Automation.Runspaces
         {
             SetDefaultErrorRecord();
         }
-
 
         /// <summary>
         /// This constructor takes a localized message and an inner exception.

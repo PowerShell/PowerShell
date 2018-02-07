@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation.Language;
@@ -212,7 +213,6 @@ namespace Microsoft.PowerShell.Commands
             }
             return moduleSpecString;
         }
-
 
         /// <summary>
         /// Parse the specified string into a ModuleSpecification object

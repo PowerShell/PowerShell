@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -138,7 +139,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region internal
 
-
         /// <summary>
         /// Cleared status of an entry
         /// </summary>
@@ -154,7 +154,6 @@ namespace Microsoft.PowerShell.Commands
                 _cleared = value;
             }
         }
-
 
         /// <summary>
         /// Sets Id
@@ -225,7 +224,6 @@ namespace Microsoft.PowerShell.Commands
         ///End time of execution
         ///
         private DateTime _endTime;
-
 
         /// <summary>
         /// Flag indicating an entry is present/cleared
@@ -368,7 +366,6 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
         }
-
 
         /// <summary>
         /// Get count HistoryEntries
@@ -635,8 +632,6 @@ namespace Microsoft.PowerShell.Commands
                 return entries;
             }
         }
-
-
 
         /// <summary>
         /// Clears the history entry from buffer for a given id.

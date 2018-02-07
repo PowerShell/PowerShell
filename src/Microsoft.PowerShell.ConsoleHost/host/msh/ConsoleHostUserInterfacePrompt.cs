@@ -1,5 +1,5 @@
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -13,7 +13,6 @@ using System.Management.Automation.Host;
 using System.Security;
 using Dbg = System.Management.Automation.Diagnostics;
 using InternalHostUserInterface = System.Management.Automation.Internal.Host.InternalHostUserInterface;
-
 
 namespace Microsoft.PowerShell
 {
@@ -40,7 +39,6 @@ namespace Microsoft.PowerShell
             Overflow
         }
 
-
         private static
         bool
         AtLeastOneHelpMessageIsPresent(Collection<FieldDescription> descriptions)
@@ -58,7 +56,6 @@ namespace Microsoft.PowerShell
 
             return false;
         }
-
 
         /// <summary>
         ///

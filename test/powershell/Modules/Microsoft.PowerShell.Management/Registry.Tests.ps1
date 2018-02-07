@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 try {
     #skip all tests on non-windows platform
     $defaultParamValues = $PSdefaultParameterValues.Clone()

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 
 Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {

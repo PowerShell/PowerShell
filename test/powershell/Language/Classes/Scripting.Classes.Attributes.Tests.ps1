@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Attributes Test' -Tags "CI" {
 
     BeforeAll {
@@ -47,7 +49,6 @@ namespace Dummy
 '@
         Add-Type -TypeDefinition $dummyAttributesSource
     }
-
 
     Context 'Property.Instance.ValidateSet.String' {
         class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }

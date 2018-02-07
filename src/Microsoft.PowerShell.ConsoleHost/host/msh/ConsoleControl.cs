@@ -1,5 +1,7 @@
-#if !UNIX
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
+#if !UNIX
 
 // Implementation notes: In the functions that take ConsoleHandle parameters, we only assert that the handle is valid and not
 // closed, as opposed to doing a check and throwing an exception.  This is because the win32 APIs that those functions wrap will
@@ -723,7 +725,6 @@ namespace Microsoft.PowerShell
 #endregion
 
 #region Input
-
 
         /// <summary>
         ///
@@ -2533,7 +2534,6 @@ namespace Microsoft.PowerShell
             return new Size(result.X, result.Y);
         }
 
-
         /// <summary>
         /// Wraps Win32 GetConsoleTitle. 1K is the safe limit experimentally. The 64K limit
         /// found in the docs is disregarded because it is essentially meaningless.
@@ -2835,7 +2835,6 @@ namespace Microsoft.PowerShell
                 throw e;
             }
         }
-
 
         /// <summary>
         /// Wraps Win32 GetConsoleCursorInfo

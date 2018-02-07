@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*
  * Contains definition for PSSenderInfo, PSPrincipal, PSIdentity which are

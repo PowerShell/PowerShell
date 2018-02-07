@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable with description should works"{

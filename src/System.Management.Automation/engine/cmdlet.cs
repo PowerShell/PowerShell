@@ -1,6 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
-
-
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -10,7 +11,6 @@ using System.Reflection;
 using System.Resources;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace System.Management.Automation
 {

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Nullable Boolean DCR Tests" -Tags "CI" {
     BeforeAll {
         function ParserTestFunction

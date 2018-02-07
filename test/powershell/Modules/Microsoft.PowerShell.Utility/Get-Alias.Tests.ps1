@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Bogus Scope Name should throw PSArgumentException"{

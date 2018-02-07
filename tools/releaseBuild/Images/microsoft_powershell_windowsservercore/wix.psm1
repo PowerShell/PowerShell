@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Import-Module "$PSScriptRoot\dockerInstall.psm1"
 
 # Install using Wix Zip because the MSI requires an older version of dotnet

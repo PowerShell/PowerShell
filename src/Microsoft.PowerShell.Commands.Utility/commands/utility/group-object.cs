@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -106,7 +107,6 @@ namespace Microsoft.PowerShell.Commands
             Group.Add(groupValue);
             Count++;
         }
-
 
         private static string BuildName(List<ObjectCommandPropertyValue> propValues)
         {

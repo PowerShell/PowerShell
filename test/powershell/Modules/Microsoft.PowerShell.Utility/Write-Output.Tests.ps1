@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Write-Output DRT Unit Tests" -Tags "CI" {
     It "Simple Write Object Test" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # Tests related to TFS item 1370133 [PSUpgrade] Need -NoNewline parameter on Out-File, Add-Content and Set-Content
 # Connect request https://connect.microsoft.com/PowerShell/feedback/details/524739/need-nonewline-parameter-on-out-file-add-content-and-set-content
 

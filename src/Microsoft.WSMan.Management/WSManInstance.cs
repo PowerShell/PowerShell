@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -810,7 +812,6 @@ namespace Microsoft.WSMan.Management
         }
         private Hashtable valueset;
 
-
         #endregion
 
         private WSManHelper helper ;
@@ -932,7 +933,6 @@ namespace Microsoft.WSMan.Management
         }
 
     }
-
 
     #endregion
 
@@ -1100,8 +1100,6 @@ namespace Microsoft.WSMan.Management
             set { usessl = value; }
         }
         private SwitchParameter usessl;
-
-
 
         #endregion
 

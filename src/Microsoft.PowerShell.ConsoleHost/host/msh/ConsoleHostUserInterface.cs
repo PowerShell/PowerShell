@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -495,7 +496,6 @@ namespace Microsoft.PowerShell
             WriteToConsole(printToken, false);
         }
 
-
         /// <summary>
         ///
         /// Handle backspace with proper cursor adjustment for ReadLineSafe
@@ -541,7 +541,6 @@ namespace Microsoft.PowerShell
             }
             // do nothing if cursorPosition.X is left of screen
         }
-
 
         /// <summary>
         /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>
@@ -635,7 +634,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text)
         {
             ConsoleColor fg = RawUI.ForegroundColor;
@@ -661,14 +659,12 @@ namespace Microsoft.PowerShell
             WriteToConsole(Crlf, true);
         }
 
-
         private void WriteLineToConsole()
         {
             WriteToConsole(Crlf, true);
         }
 
         #endregion WriteToConsole
-
 
         /// <summary>
         ///
@@ -713,7 +709,6 @@ namespace Microsoft.PowerShell
                 writer.Write(value);
             }
         }
-
 
         /// <summary>
         ///
@@ -763,7 +758,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// See base class
@@ -794,7 +788,6 @@ namespace Microsoft.PowerShell
         }
 
         #region Word Wrapping
-
 
         /// <summary>
         ///
@@ -914,7 +907,6 @@ namespace Microsoft.PowerShell
             return result;
         }
 
-
         /// <summary>
         ///
         /// Struct used by WrapText
@@ -934,7 +926,6 @@ namespace Microsoft.PowerShell
             internal string Text;
             internal WordFlags Flags;
         }
-
 
         /// <summary>
         ///
@@ -1048,7 +1039,6 @@ namespace Microsoft.PowerShell
             }
             return result;
         }
-
 
         /// <summary>
         ///
@@ -1337,7 +1327,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         public override void WriteErrorLine(string value)
         {
             if (string.IsNullOrEmpty(value))
@@ -1389,7 +1378,6 @@ namespace Microsoft.PowerShell
         #endregion Line-oriented interaction
 
         #region implementation
-
 
         // We use System.Environment.NewLine because we are platform-agnostic
 

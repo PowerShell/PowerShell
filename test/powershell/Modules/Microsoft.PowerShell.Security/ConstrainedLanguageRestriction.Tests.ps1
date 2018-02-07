@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 ##
 ## Tests for PowerShell system lock down and constrained language mode restrictions
 ## These are Windows platform only tests

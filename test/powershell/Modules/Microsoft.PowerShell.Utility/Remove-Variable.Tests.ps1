@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # ensure the machine is in a clean state from the outset.
 Remove-Variable -Name var1 -ErrorAction SilentlyContinue -Force
 

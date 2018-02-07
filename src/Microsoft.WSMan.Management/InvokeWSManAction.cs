@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -11,7 +13,6 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-
 
 namespace Microsoft.WSMan.Management
 {
@@ -311,8 +312,6 @@ namespace Microsoft.WSMan.Management
             //  WSManHelper helper = new WSManHelper();
             helper.CleanUp();
         }
-
-
 
 
     }//End Class

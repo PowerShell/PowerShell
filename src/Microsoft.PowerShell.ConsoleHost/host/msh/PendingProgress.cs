@@ -1,5 +1,5 @@
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -153,7 +153,6 @@ namespace Microsoft.PowerShell
             AgeNodesAndResetStyle();
         }
 
-
         private
         void
         EvictNode()
@@ -260,7 +259,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Adds a node to the tree, first removing the oldest node if the tree is too large.
@@ -290,7 +288,6 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-
         private
         class FindOldestNodeVisitor : NodeVisitor
         {
@@ -309,16 +306,13 @@ namespace Microsoft.PowerShell
                 return true;
             }
 
-
             internal
             ProgressNode
             FoundNode;
 
-
             internal
             ArrayList
             ListWhereFound;
-
 
             internal
             int
@@ -326,7 +320,6 @@ namespace Microsoft.PowerShell
 
             private int _oldestSoFar;
         }
-
 
         private
         ProgressNode
@@ -379,7 +372,6 @@ namespace Microsoft.PowerShell
             return result;
         }
 
-
         /// <summary>
         ///
         /// Convenience overload.
@@ -396,7 +388,6 @@ namespace Microsoft.PowerShell
                 FindNodeById(sourceId, activityId, out listWhereFound, out indexWhereFound);
         }
 
-
         private
         class FindByIdNodeVisitor : NodeVisitor
         {
@@ -406,7 +397,6 @@ namespace Microsoft.PowerShell
                 _sourceIdToFind = sourceIdToFind;
                 _idToFind = activityIdToFind;
             }
-
 
             internal override
             bool
@@ -422,26 +412,21 @@ namespace Microsoft.PowerShell
                 return true;
             }
 
-
             internal
             ProgressNode
             FoundNode;
-
 
             internal
             ArrayList
             ListWhereFound;
 
-
             internal
             int
             IndexWhereFound = -1;
 
-
             private int _idToFind = -1;
             private Int64 _sourceIdToFind;
         }
-
 
         /// <summary>
         ///
@@ -497,7 +482,6 @@ namespace Microsoft.PowerShell
 #endif
             return v.FoundNode;
         }
-
 
         /// <summary>
         ///
@@ -569,7 +553,6 @@ namespace Microsoft.PowerShell
             return found;
         }
 
-
         private
         class AgeAndResetStyleVisitor : NodeVisitor
         {
@@ -582,7 +565,6 @@ namespace Microsoft.PowerShell
                 return true;
             }
         }
-
 
         /// <summary>
         ///
@@ -601,11 +583,9 @@ namespace Microsoft.PowerShell
             NodeVisitor.VisitNodes(_topLevelNodes, arsv);
         }
 
-
         #endregion // Updating Code
 
         #region Rendering Code
-
 
         /// <summary>
         ///
@@ -687,7 +667,6 @@ namespace Microsoft.PowerShell
             return (string[])result.ToArray(typeof(string));
         }
 
-
         /// <summary>
         ///
         /// Helper function for Render().  Recursively renders nodes.
@@ -747,7 +726,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
         private
         class HeightTallyer : NodeVisitor
@@ -856,7 +834,6 @@ namespace Microsoft.PowerShell
             return true;
         }
 
-
         /// <summary>
         ///
         /// Debugging code. NodeVisitor that counts up the number of nodes in the tree.
@@ -879,7 +856,6 @@ namespace Microsoft.PowerShell
             int
             Count;
         }
-
 
         /// <summary>
         ///
@@ -996,7 +972,6 @@ namespace Microsoft.PowerShell
             return false;
         }
 
-
         /// <summary>
         ///
         /// "Compresses" the nodes representing the outstanding progress activities until their rendering will fit within a
@@ -1095,12 +1070,9 @@ namespace Microsoft.PowerShell
             return 0;
         }
 
-
-
         #endregion // Rendering Code
 
         #region Utility Code
-
 
         private abstract
         class NodeVisitor
@@ -1164,11 +1136,9 @@ namespace Microsoft.PowerShell
 
         #endregion
 
-
         private ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
         private const int maxNodeCount = 128;
     }
 }   // namespace
-
 

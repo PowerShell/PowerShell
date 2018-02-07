@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <############################################################################################
  # File: Pester.AutomountedDrives.Tests.ps1
  # Pester.AutomountedDrives.Tests suite contains Tests that are

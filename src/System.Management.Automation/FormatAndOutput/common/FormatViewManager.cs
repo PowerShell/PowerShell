@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -442,7 +443,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
             return viewGenerator;
         }
-
 
         /// <summary>
         /// the view generator that produced data for a selected shape

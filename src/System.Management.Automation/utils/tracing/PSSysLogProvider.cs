@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if UNIX
-//
-//    Copyright (C) Microsoft.  All rights reserved.
-//
+
 using System.Diagnostics.Eventing;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
@@ -56,7 +56,6 @@ namespace System.Management.Automation.Tracing
                 return _payloadBuilder;
             }
         }
-
 
         /// <summary>
         /// Determines whether any session is requesting the specified event from the provider.

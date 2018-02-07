@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace system.collections.generic
 using namespace System.Management.Automation
 Describe "Generics support" -Tags "CI" {

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tab completion bug fix" -Tags "CI" {
 
     It "Issue#682 - '[system.manage<tab>' should work" {

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 <#
   Windows PowerShell Diagnostics Module
   This module contains a set of wrapper scripts that

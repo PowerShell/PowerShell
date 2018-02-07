@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
 
     AfterAll {
@@ -151,7 +153,6 @@ Describe "DSC MOF Compilation" -tags "CI" {
           setScript = "#!/bin/bash`nsetsebool -P httpd_can_network_connect=1"
           TestScript = "#!/bin/bash`n exit 1"
         }
-
 
         }
 

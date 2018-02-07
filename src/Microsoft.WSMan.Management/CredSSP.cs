@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -1002,11 +1004,7 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-
-
     }
-
-
 
     #endregion
 }

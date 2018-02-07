@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Breakpoints set on custom FileSystem provider files should work" -Tags "CI" {
     #

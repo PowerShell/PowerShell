@@ -1,4 +1,6 @@
-#if CORECLR
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #if CORECLR
 
 #pragma warning disable
@@ -6327,6 +6329,4 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
     }
 }
-#endif
-
 #endif

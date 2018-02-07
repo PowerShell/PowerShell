@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Management.Automation;
@@ -177,7 +180,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private System.Management.Automation.SwitchParameter usermaynotchangepassword;
         #endregion Parameter Properties
-
 
         #region Cmdlet Overrides
         /// <summary>

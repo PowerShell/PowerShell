@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     BeforeAll {
         $asciiString = "abc"

@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
@@ -210,7 +211,6 @@ namespace System.Management.Automation
 
             return null;
         }
-
 
         /// <summary>
         /// Sets value of this property.

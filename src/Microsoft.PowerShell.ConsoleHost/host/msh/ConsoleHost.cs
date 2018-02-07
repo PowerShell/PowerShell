@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 
@@ -269,7 +271,6 @@ namespace Microsoft.PowerShell
             }
         }
         private static CommandLineParameterParser s_cpp;
-
 
 #if UNIX
         /// <summary>
@@ -852,7 +853,6 @@ namespace Microsoft.PowerShell
         }
         private PSObject _consoleColorProxy;
 
-
         /// <summary>
         ///
         /// See base class
@@ -871,7 +871,6 @@ namespace Microsoft.PowerShell
                 }
             }
         }
-
 
         /// <summary>
         ///
@@ -2877,7 +2876,6 @@ namespace Microsoft.PowerShell
         private static ConsoleHost s_theConsoleHost;
 
         internal static InitialSessionState DefaultInitialSessionState;
-
 
         [TraceSource("ConsoleHost", "ConsoleHost subclass of S.M.A.PSHost")]
         private static

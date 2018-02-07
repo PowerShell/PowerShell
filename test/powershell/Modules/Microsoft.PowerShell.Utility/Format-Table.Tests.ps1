@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
 		It "Should call format table on piped input without error" {
 				{ Get-Date | Format-Table } | Should Not Throw

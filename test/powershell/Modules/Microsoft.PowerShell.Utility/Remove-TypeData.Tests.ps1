@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $XMLFile1 = Join-Path $TestDrive -ChildPath "testFile1.ps1xml"

@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -78,7 +79,6 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoTypeInformation { get; set; } = true;
 
         #endregion Command Line Parameters
-
 
         /// <summary>
         /// Write the string to a file or pipeline
@@ -166,7 +166,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private bool _isLiteralPath = false;
-
 
         /// <summary>
         /// Property that sets force parameter.
@@ -694,7 +693,6 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
             _helper = new ExportCsvHelper(this, base.Delimiter);
         }
-
 
         /// <summary>
         /// Convert the current input object to Csv and write to stream/WriteObject

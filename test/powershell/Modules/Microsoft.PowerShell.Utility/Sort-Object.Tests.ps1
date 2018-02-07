@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Sort-Object" -Tags "CI" {
 
     It "should be able to sort object in ascending with using Property switch" {

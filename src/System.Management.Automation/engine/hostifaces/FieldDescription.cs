@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -9,7 +10,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 //using System.Globalization;
 //using System.Management.Automation;
 //using System.Reflection;
-
 
 namespace System.Management.Automation.Host
 {
@@ -97,7 +97,6 @@ namespace System.Management.Automation.Host
             SetParameterAssemblyFullName(parameterType.AssemblyQualifiedName);
         }
 
-
         /// <summary>
         ///
         /// Gets the short name of the parameter's type.
@@ -133,7 +132,6 @@ namespace System.Management.Automation.Host
                 return parameterTypeName;
             }
         }
-
 
         /// <summary>
         ///
@@ -198,7 +196,6 @@ namespace System.Management.Automation.Host
             }
         }
 
-
         /// <summary>
         ///
         /// A short, human-presentable message to describe and identify the field.  If supplied, a typical implementation of
@@ -246,7 +243,6 @@ namespace System.Management.Automation.Host
                 label = value;
             }
         }
-
 
         /// <summary>
         ///
@@ -376,7 +372,6 @@ namespace System.Management.Automation.Host
             parameterTypeName = nameOfType;
         }
 
-
         /// <summary>
         ///
         /// For use by remoting serialization.
@@ -400,7 +395,6 @@ namespace System.Management.Automation.Host
 
             parameterTypeFullName = fullNameOfType;
         }
-
 
         /// <summary>
         ///
@@ -487,5 +481,4 @@ namespace System.Management.Automation.Host
         #endregion
     }
 }
-
 

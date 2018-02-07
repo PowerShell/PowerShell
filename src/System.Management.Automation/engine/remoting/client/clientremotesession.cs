@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Threading;
 using System.Management.Automation.Internal;
@@ -131,7 +132,6 @@ namespace System.Management.Automation.Remoting
                 return _serverProtocolVersion;
             }
         }
-
 
         private RemoteRunspacePoolInternal _remoteRunspacePool;
 

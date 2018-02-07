@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Unique DRT Unit Tests" -Tags "CI" {
     It "Command get-unique works with AsString switch" {
         $inputArray = "aa","aa","Aa","ba","BA","BA"

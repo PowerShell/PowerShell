@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -88,7 +90,6 @@ namespace Microsoft.WSMan.Management
             QuickConfigRemoting(false);
         }//End BeginProcessing()
 
-
         #region private
 
         private void QuickConfigRemoting(bool serviceonly)
@@ -144,7 +145,6 @@ namespace Microsoft.WSMan.Management
                     xpathText = "/cfg:Analyze_OUTPUT/cfg:Results";
                     xpathUpdate = "/cfg:Analyze_OUTPUT/cfg:EnableRemoting_INPUT";
                 }
-
 
                 XmlNamespaceManager nsmgr = new XmlNamespaceManager(resultopxml.NameTable);
                 nsmgr.AddNamespace("cfg", "http://schemas.microsoft.com/wbem/wsman/1/config/service");

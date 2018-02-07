@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -1704,7 +1705,6 @@ namespace Microsoft.PowerShell.Commands
                 SetJobState(JobState.Running, null);
             }
         }
-
 
         private ThrottleManager _throttleManager = new ThrottleManager();
 

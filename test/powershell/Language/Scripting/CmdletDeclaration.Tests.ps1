@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Cmdlet declaration statement" -Tags "CI" {
     $testData = @(
         @{ Name = 'Verify non-cmdlet formatted names are allowed';

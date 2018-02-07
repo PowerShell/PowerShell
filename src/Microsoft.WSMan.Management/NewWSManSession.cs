@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -12,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-
 
 namespace Microsoft.WSMan.Management
 {
@@ -206,8 +207,6 @@ namespace Microsoft.WSMan.Management
         }
         private bool useutf16;
 
-
-
         /// <summary>
         /// BeginProcessing method.
         /// </summary>
@@ -233,7 +232,6 @@ namespace Microsoft.WSMan.Management
                 WriteError(er);
                 return;
             }
-
 
             //Creating the Session Object
             SessionOption objSessionOption = new SessionOption();

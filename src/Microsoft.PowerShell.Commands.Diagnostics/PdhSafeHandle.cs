@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Runtime.InteropServices;
@@ -25,8 +26,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return (PdhHelper.PdhCloseLog(handle, 0) == 0);
         }
     }
-
-
 
     internal sealed class PdhSafeQueryHandle : SafeHandle
     {

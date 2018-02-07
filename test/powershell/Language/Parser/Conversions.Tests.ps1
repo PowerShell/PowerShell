@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'conversion syntax' -Tags "CI" {
     # these test suite covers ([<type>]<expression>).<method>() syntax.
     # it mixes two purposes: casting and super-class method calls.

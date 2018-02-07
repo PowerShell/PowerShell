@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -257,7 +258,6 @@ namespace Microsoft.PowerShell.Commands
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-
 
         /// <summary>
         /// Close the window if it has already been displayed.

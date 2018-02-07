@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Content" -Tags "CI" {
     $testString = "This is a test content for a file"
     $nl         = [Environment]::NewLine

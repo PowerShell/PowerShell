@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Globalization;
 
@@ -10,7 +11,6 @@ namespace System.Management.Automation.Host
 
     // I would have preferred to make these nested types within PSHostRawUserInterface, but that
     // is evidently discouraged by the .net design guidelines.
-
 
     /// <summary>
     ///
@@ -72,7 +72,6 @@ namespace System.Management.Automation.Host
             this.y = y;
         }
 
-
         /// <summary>
         ///
         /// Overrides <see cref="System.Object.ToString"/>
@@ -90,7 +89,6 @@ namespace System.Management.Automation.Host
         {
             return String.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
         }
-
 
         /// <summary>
         ///
@@ -122,7 +120,6 @@ namespace System.Management.Automation.Host
 
             return result;
         }
-
 
         /// <summary>
         ///
@@ -188,7 +185,6 @@ namespace System.Management.Automation.Host
             return result;
         }
 
-
         /// <summary>
         ///
         /// Compares two instances for equality
@@ -219,7 +215,6 @@ namespace System.Management.Automation.Host
             return result;
         }
 
-
         /// <summary>
         ///
         /// Compares two instances for inequality
@@ -248,7 +243,6 @@ namespace System.Management.Automation.Host
             return !(first == second);
         }
     }
-
 
     /// <summary>
     ///
@@ -309,7 +303,6 @@ namespace System.Management.Automation.Host
             this.width = width;
             this.height = height;
         }
-
 
         /// <summary>
         ///
@@ -486,7 +479,6 @@ namespace System.Management.Automation.Host
         }
     }
 
-
     /// <summary>
     ///
     /// Governs the behavior of <see cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey()"/>
@@ -531,7 +523,6 @@ namespace System.Management.Automation.Host
 
         IncludeKeyUp = 0x0008
     }
-
 
     /// <summary>
     ///
@@ -597,7 +588,6 @@ namespace System.Management.Automation.Host
 
         EnhancedKey = 0x0100
     }
-
 
     /// <summary>
     ///
@@ -848,8 +838,6 @@ namespace System.Management.Automation.Host
         }
     }
 
-
-
     /// <summary>
     ///
     /// Represents a rectangular region of the screen.
@@ -998,7 +986,6 @@ namespace System.Management.Automation.Host
             : this(upperLeft.X, upperLeft.Y, lowerRight.X, lowerRight.Y)
         {
         }
-
 
         /// <summary>
         ///
@@ -1179,7 +1166,6 @@ namespace System.Management.Automation.Host
             return !(first == second);
         }
     }
-
 
     /// <summary>
     ///
@@ -1466,8 +1452,6 @@ namespace System.Management.Automation.Host
 
     #endregion Ancillary types
 
-
-
     /// <summary>
     ///
     /// Defines the lowest-level user interface functions that an interactive application hosting an MSH
@@ -1501,7 +1485,6 @@ namespace System.Management.Automation.Host
             // do nothing
         }
 
-
         /// <summary>
         ///
         /// Gets or sets the color used to render characters on the screen buffer. Each character cell in the screen buffer can
@@ -1523,7 +1506,6 @@ namespace System.Management.Automation.Host
             set;
         }
 
-
         /// <summary>
         ///
         /// Gets or sets the color used to render the background behind characters on the screen buffer.  Each character cell in
@@ -1539,7 +1521,6 @@ namespace System.Management.Automation.Host
             get;
             set;
         }
-
 
         /// <summary>
         ///
@@ -1569,7 +1550,6 @@ namespace System.Management.Automation.Host
             set;
         }
 
-
         /// <summary>
         ///
         /// Gets or sets position of the view window relative to the screen buffer, in characters. (0,0) is the upper left of the screen
@@ -1589,7 +1569,6 @@ namespace System.Management.Automation.Host
             set;
         }
 
-
         /// <summary>
         ///
         /// Gets or sets the cursor size as a percentage 0..100.
@@ -1604,7 +1583,6 @@ namespace System.Management.Automation.Host
             get;
             set;
         }
-
 
         /// <summary>
         ///
@@ -1625,7 +1603,6 @@ namespace System.Management.Automation.Host
             set;
         }
 
-
         /// <summary>
         ///
         /// Gets or sets the current view window size, measured in character cells.  The window size cannot be larger than the
@@ -1645,7 +1622,6 @@ namespace System.Management.Automation.Host
             get;
             set;
         }
-
 
         /// <summary>
         ///
@@ -1677,7 +1653,6 @@ namespace System.Management.Automation.Host
             get;
         }
 
-
         /// <summary>
         ///
         /// Gets the largest window possible for the current font and display hardware, ignoring the current buffer dimensions.  In
@@ -1703,7 +1678,6 @@ namespace System.Management.Automation.Host
         {
             get;
         }
-
 
         /// <summary>
         ///
@@ -1732,7 +1706,6 @@ namespace System.Management.Automation.Host
         {
             return ReadKey(ReadKeyOptions.IncludeKeyDown);
         }
-
 
         /// <summary>
         ///
@@ -1772,7 +1745,6 @@ namespace System.Management.Automation.Host
         KeyInfo
         ReadKey(ReadKeyOptions options);
 
-
         /// <summary>
         ///
         /// Resets the keyboard input buffer.
@@ -1785,7 +1757,6 @@ namespace System.Management.Automation.Host
         public abstract
         void
         FlushInputBuffer();
-
 
         /// <summary>
         ///
@@ -1808,7 +1779,6 @@ namespace System.Management.Automation.Host
             get;
         }
 
-
         /// <summary>
         ///
         /// Gets or sets the titlebar text of the current view window.
@@ -1822,7 +1792,6 @@ namespace System.Management.Automation.Host
             get;
             set;
         }
-
 
         /// <summary>
         ///
@@ -1853,7 +1822,6 @@ namespace System.Management.Automation.Host
         public abstract
         void
         SetBufferContents(Coordinates origin, BufferCell[,] contents);
-
 
         /// <summary>
         ///
@@ -1908,7 +1876,6 @@ namespace System.Management.Automation.Host
         void
         SetBufferContents(Rectangle rectangle, BufferCell fill);
 
-
         /// <summary>
         ///
         /// Extracts a rectangular region of the screen buffer.
@@ -1955,7 +1922,6 @@ namespace System.Management.Automation.Host
         public abstract
         BufferCell[,]
         GetBufferContents(Rectangle rectangle);
-
 
         /// <summary>
         ///

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 param(
     [ValidateSet('Bootstrap','Build','Failure','Success')]
     [String]$Stage = 'Build'

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Diagnostics
 using namespace System.Management.Automation.Internal
 
@@ -271,5 +273,4 @@ Describe "Runspace Debugging API tests" -tag CI {
 
     }
 }
-
 

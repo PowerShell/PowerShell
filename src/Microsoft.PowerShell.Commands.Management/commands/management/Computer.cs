@@ -1,5 +1,7 @@
-#if !UNIX
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
+#if !UNIX
 
 using System;
 using System.Collections;
@@ -1477,7 +1479,7 @@ $result
                             Microsoft.Management.Infrastructure.CimType.String,
                             (dPassword == null) ? CimFlags.NullValue : CimFlags.None));
 
-                        if ( ! InternalTestHooks.TestRenameComputer ) 
+                        if ( ! InternalTestHooks.TestRenameComputer )
                         {
                             CimMethodResult result = cimSession.InvokeMethod(
                                 ComputerWMIHelper.CimOperatingSystemNamespace,
@@ -2101,7 +2103,7 @@ $result
                         Microsoft.Management.Infrastructure.CimType.SInt32,
                         CimFlags.None));
 
-                    if ( ! InternalTestHooks.TestStopComputer ) 
+                    if ( ! InternalTestHooks.TestStopComputer )
                     {
                         CimMethodResult result = cimSession.InvokeMethod(
                             ComputerWMIHelper.CimOperatingSystemNamespace,

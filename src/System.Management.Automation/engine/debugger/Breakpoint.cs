@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.IO;
@@ -419,7 +420,6 @@ namespace System.Management.Automation
             {
                 couldBeInNestedScriptBlock = false;
             }
-
 
             int sequencePointIndex;
             var sequencePoint = FindSequencePoint(functionContext, Line, Column, out sequencePointIndex);

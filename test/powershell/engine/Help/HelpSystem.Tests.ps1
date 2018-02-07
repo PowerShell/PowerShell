@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
 

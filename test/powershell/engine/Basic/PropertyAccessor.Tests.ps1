@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
 # Functional tests to verify basic conditions for IO to the powershell.config.json files
 # The properties files are supported on non-Windows OSes, but the tests are specific to

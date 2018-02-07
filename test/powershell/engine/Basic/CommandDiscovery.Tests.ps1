@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {

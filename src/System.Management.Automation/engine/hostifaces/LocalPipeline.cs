@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -1112,8 +1113,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #region TLS
-
-
 
         /// <summary>
         /// Gets the execution context in the thread local storage of current

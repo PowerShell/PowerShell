@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 
@@ -25,9 +27,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         // Returned by enumeration APIs to indicate more information is available to successive calls.
         //
         public const UInt32 STATUS_MORE_ENTRIES             = 0x00000105;
-
-
-
 
 
         /////////////////////////////////////////////////////////////////////////

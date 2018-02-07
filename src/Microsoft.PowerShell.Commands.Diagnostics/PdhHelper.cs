@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Diagnostics;
@@ -102,7 +103,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public const long PDH_SQL_ALTER_DETAIL_FAILED = 0xC0000BFDL;
         public const long PDH_QUERY_PERF_DATA_TIMEOUT = 0xC0000BFEL;
     }
-
 
     internal static class PerfDetail
     {
@@ -492,7 +492,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             strColl.AddRange(allSubstringsWithNulls.Split('\0'));
         }
-
 
         private uint GetCounterInfoPlus(IntPtr hCounter, out UInt32 counterType, out UInt32 defaultScale, out UInt64 timeBase)
         {
@@ -1102,7 +1101,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-
         public uint GetValidPaths(string machineName,
                                    string objectName,
                                    ref StringCollection counters,
@@ -1299,7 +1297,6 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return (_reloggerPathToHandleAndInstanceMap.Keys.Count > 0) ? 0 : res;
         }
-
 
         //
         // AddRelogCountersPreservingPaths preserves all paths and adds as relog counters to m_hQuery.

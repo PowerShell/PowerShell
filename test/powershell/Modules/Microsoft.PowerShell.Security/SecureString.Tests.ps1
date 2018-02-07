@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "SecureString conversion tests" -Tags "CI" {
     BeforeAll {
         $string = "ABCD"

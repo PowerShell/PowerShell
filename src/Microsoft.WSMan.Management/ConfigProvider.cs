@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -385,7 +387,6 @@ namespace Microsoft.WSMan.Management
                 //Gets the session object from the cache.
                 object sessionobj;
                 SessionObjCache.TryGetValue(host, out sessionobj);
-
 
                 /*
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether it has Child Items.
@@ -1417,7 +1418,6 @@ namespace Microsoft.WSMan.Management
                 //Gets the session object from the cache.
                 object sessionobj;
                 SessionObjCache.TryGetValue(host, out sessionobj);
-
 
                 /*
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether Item is Container
@@ -4211,7 +4211,6 @@ namespace Microsoft.WSMan.Management
                                                 obj.Properties.Add(new PSNoteProperty(p.Properties["ResourceDir"].Value.ToString(), WSManStringLiterals.ContainerChildValue));
                                                 WritePSObjectPropertiesAsWSManElementObjects(obj, path, key, null, WsManElementObjectTypes.WSManConfigContainerElement, recurse);
 
-
                                                 //WriteItemObject(new WSManConfigContainerElement(p.Properties["ResourceDir"].Value.ToString(), WSManStringLiterals.ContainerChildValue, key), path + WSManStringLiterals.DefaultPathSeparator + p.Properties["ResourceDir"].Value.ToString(), true);
                                                 break;
                                             case ProviderMethods.GetChildNames:
@@ -6331,7 +6330,6 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
         }
         private string[] _keys;
     }
-
 
 #endregion "WsMan Output Objects"
 

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe 'Automatic variable $input' -Tags "CI" {
     # Skip on hold for discussion on https://github.com/PowerShell/PowerShell/issues/1563

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     BeforeAll {
         class SampleClass5 {

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $scriptFileName = "GetTryCatchCallStack.ps1"

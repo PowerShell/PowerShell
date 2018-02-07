@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -411,7 +412,6 @@ namespace System.Management.Automation
             }
         }
 
-
         internal PSSnapInInfo Clone()
         {
             PSSnapInInfo cloned = new PSSnapInInfo(Name,
@@ -462,7 +462,6 @@ namespace System.Management.Automation
             return;
         }
     }
-
 
     /// <summary>
     /// Internal class to read information about a mshsnapin
@@ -674,7 +673,6 @@ namespace System.Management.Automation
 
             return ReadOne(mshsnapinRoot, mshsnapinId);
         }
-
 
         /// <summary>
         /// Reads the mshsnapin info for a specific key under specific monad version

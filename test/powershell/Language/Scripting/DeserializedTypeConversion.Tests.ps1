@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
         # Create new types and test functions.

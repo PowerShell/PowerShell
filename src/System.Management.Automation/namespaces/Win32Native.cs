@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // NOTE: A vast majority of this code was copied from BCL in
 // Namespace: Microsoft.Win32
@@ -587,8 +589,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
         internal static extern IntPtr LocalFree(IntPtr handle);
 
-
-
         internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);  // WinBase.h
         internal static readonly IntPtr NULL = IntPtr.Zero;
 
@@ -813,7 +813,6 @@ namespace Microsoft.PowerShell.Commands.Internal
                     int samDesigner, SECURITY_ATTRIBUTES lpSecurityAttributes,
                     out SafeRegistryHandle hkResult, out int lpdwDisposition,
                     SafeTransactionHandle hTransaction, IntPtr pExtendedParameter);
-
 
         private const int FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
         private const int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;

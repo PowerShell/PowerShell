@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // NOTE: define this if you want to test the output on US machine and ASCII
 // characters
@@ -133,8 +134,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private PSHostRawUserInterface _rawUserInterface;
     }
-
-
 
     /// <summary>
     /// Implementation of the LineOutput interface on top of Console and RawConsole

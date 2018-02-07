@@ -1,6 +1,5 @@
-#pragma warning disable 1634, 1691
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56523
@@ -165,7 +164,6 @@ namespace System.Management.Automation.Security
             CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY = 8 << 16,
             CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE = 9 << 16,
         }
-
 
         [DllImport("crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern

@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -6,7 +7,6 @@ using System.Management.Automation;
 using System.Xml;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace Microsoft.PowerShell
 {
@@ -52,7 +52,6 @@ namespace Microsoft.PowerShell
             None = 2
         }
 
-
         protected
         Serialization(DataFormat dataFormat, string streamName)
         {
@@ -62,13 +61,11 @@ namespace Microsoft.PowerShell
             this.streamName = streamName;
         }
 
-
         protected static string XmlCliTag = "#< CLIXML";
 
         protected string streamName;
         protected DataFormat format;
     }
-
 
     internal
     class WrappedSerializer : Serialization
@@ -98,7 +95,6 @@ namespace Microsoft.PowerShell
                     break;
             }
         }
-
 
         internal
         void
@@ -159,7 +155,6 @@ namespace Microsoft.PowerShell
         private bool _firstCall = true;
     }
 
-
     internal
     class WrappedDeserializer : Serialization
     {
@@ -196,7 +191,6 @@ namespace Microsoft.PowerShell
                     break;
             }
         }
-
 
         internal
         object
@@ -238,7 +232,6 @@ namespace Microsoft.PowerShell
             return o;
         }
 
-
         internal
         bool
         AtEnd
@@ -265,7 +258,6 @@ namespace Microsoft.PowerShell
                 return result;
             }
         }
-
 
         internal
         void

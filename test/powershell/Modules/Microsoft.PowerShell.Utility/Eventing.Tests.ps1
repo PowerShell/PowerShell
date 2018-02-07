@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Event Subscriber Tests" -tags "CI" {
     BeforeEach {
         Get-EventSubscriber | Unregister-Event

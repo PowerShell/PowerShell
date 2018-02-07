@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -354,7 +355,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 AddAddressesToMailMessage(_cc, "cc");
             }
-
 
             //set the delivery notification
             _mMailMessage.DeliveryNotificationOptions = _deliverynotification;

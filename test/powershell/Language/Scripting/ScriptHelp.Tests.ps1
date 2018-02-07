@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $ProgressPreference = "SilentlyContinue"
 
 Describe 'get-help HelpFunc1' -Tags "Feature" {

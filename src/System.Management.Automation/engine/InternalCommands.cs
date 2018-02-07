@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Linq.Expressions;
@@ -1632,7 +1633,6 @@ namespace Microsoft.PowerShell.Commands
             return members;
         }
     }
-
 
     /// <summary>
     /// Implements a cmdlet that sets the script debugging options.

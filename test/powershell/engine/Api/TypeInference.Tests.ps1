@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
 
@@ -857,7 +859,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should be 1
         $res.Name | Should be System.Int32
     }
-
 
     It 'Infers type of script property with safe eval' -Skip {
         class Y {}

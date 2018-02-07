@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -289,7 +290,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<MshParameter> _expandMshParameterList;
 
-
         private MshExpressionFilter _exclusionFilter;
 
         private class UniquePSObjectHelper
@@ -389,7 +389,6 @@ namespace Microsoft.PowerShell.Commands
                 ProcessExpandParameter(_expandMshParameterList[0], inputObject, matchedProperties);
             }
         }
-
 
         private void ProcessParameter(MshParameter p, PSObject inputObject, List<PSNoteProperty> result)
         {

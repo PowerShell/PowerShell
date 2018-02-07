@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Select-String" -Tags "CI" {
     $nl = [Environment]::NewLine
     $currentDirectory = $pwd.Path

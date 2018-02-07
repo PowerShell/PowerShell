@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
         BeforeAll {

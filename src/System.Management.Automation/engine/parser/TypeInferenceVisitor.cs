@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -922,7 +925,7 @@ namespace System.Management.Automation
                 foreach (var t in InferTypes(previousPipelineElement))
                 {
                     var memberName = (((AstPair)argument).Argument as StringConstantExpressionAst)?.Value;
-                    
+
                     if (memberName != null)
                     {
                         var members = _context.GetMembersByInferredType(t, false, null);
@@ -1007,17 +1010,17 @@ namespace System.Management.Automation
             if (memberAsStringConst == null)
                 return Utils.EmptyArray<PSTypeName>();
 
-            var exprType = GetExpressionType(expression, isStatic);                
+            var exprType = GetExpressionType(expression, isStatic);
             if (exprType == null || exprType.Length == 0)
             {
                 return Utils.EmptyArray<PSTypeName>();
             }
-            
+
             var res = new List<PSTypeName>(10);
             bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
             var maybeWantDefaultCtor = isStatic
                 && isInvokeMemberExpressionAst
-                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");            
+                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.

@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Globalization;
 using System.Management.Automation.SecurityAccountsManager.Native;
 

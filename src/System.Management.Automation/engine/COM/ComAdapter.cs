@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -168,8 +169,6 @@ namespace System.Management.Automation
             ComProperty prop = (ComProperty)property.adapterData;
             prop.SetValue(property.baseObject, setValue);
         }
-
-
 
         /// <summary>
         /// Returns true if the property is settable

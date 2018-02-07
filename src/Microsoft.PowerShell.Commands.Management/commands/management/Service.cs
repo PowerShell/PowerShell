@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #if !UNIX // Not built on Unix
 
@@ -1468,7 +1470,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [Credential()]
         public PSCredential Credential { get; set; }
-
 
         /// <summary>
         /// The following is the definition of the input parameter "Description".

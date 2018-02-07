@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -19,7 +21,6 @@ namespace Microsoft.WSMan.Management
 {
 
     #region "public Api"
-
 
     #region WsManEnumFlags
     /// <summary><para>_WSManEnumFlags enumeration.</para></summary>
@@ -56,8 +57,6 @@ namespace Microsoft.WSMan.Management
     }
 
     #endregion WsManEnumFlags
-
-
 
     #region WsManSessionFlags
     /// <summary><para>WSManSessionFlags enumeration.</para></summary>
@@ -774,7 +773,6 @@ namespace Microsoft.WSMan.Management
         // Clear all selectors
         // IDL: HRESULT ClearSelectors (void);
 
-
         [DispId(3)]
         void ClearSelectors();
 
@@ -847,7 +845,6 @@ namespace Microsoft.WSMan.Management
         [DispId(8)]
         void ClearOptions();
 
-
         /// <summary><para><c>Error</c> property of <c>IWSManResourceLocator</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
         // IDL: BSTR Error;
@@ -863,7 +860,6 @@ namespace Microsoft.WSMan.Management
             [return: MarshalAs(UnmanagedType.BStr)]
             get;
         }
-
 
     }
 #endregion IWsManResourceLocator

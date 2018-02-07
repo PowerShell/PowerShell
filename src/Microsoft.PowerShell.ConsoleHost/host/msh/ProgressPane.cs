@@ -1,5 +1,5 @@
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation.Host;
@@ -37,7 +37,6 @@ namespace Microsoft.PowerShell
             _rawui = ui.RawUI;
         }
 
-
         /// <summary>
         ///
         /// Indicates whether the pane is visible on the screen buffer or not.
@@ -58,7 +57,6 @@ namespace Microsoft.PowerShell
                 return (_savedRegion != null);
             }
         }
-
 
         /// <summary>
         ///
@@ -143,7 +141,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is
@@ -167,7 +164,6 @@ namespace Microsoft.PowerShell
                 _rawui.CursorPosition = _savedCursor;
             }
         }
-
 
         /// <summary>
         ///
@@ -249,7 +245,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         private Coordinates _location = new Coordinates(0, 0);
         private Coordinates _savedCursor;
         private Size _bufSize;
@@ -259,6 +254,4 @@ namespace Microsoft.PowerShell
         private ConsoleHostUserInterface _ui;
     }
 }   // namespace
-
-
 

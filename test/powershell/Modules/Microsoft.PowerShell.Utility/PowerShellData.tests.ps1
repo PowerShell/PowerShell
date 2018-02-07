@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
 
     It "Validates error on a missing path" {

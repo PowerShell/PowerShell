@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     BeforeAll {
         If (-not $IsCoreCLR) {

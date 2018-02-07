@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()

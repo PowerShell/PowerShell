@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 

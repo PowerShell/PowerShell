@@ -1,5 +1,5 @@
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -48,7 +48,6 @@ namespace Microsoft.PowerShell
             FullPlus = 4,
         };
 
-
         /// <summary>
         ///
         /// Constructs an instance from a ProgressRecord.
@@ -70,7 +69,6 @@ namespace Microsoft.PowerShell
             this.Style = RenderStyle.FullPlus;
             this.SourceId = sourceId;
         }
-
 
         /// <summary>
         ///
@@ -334,7 +332,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
         /// <summary>
         ///
         /// Renders a node in the "Minimal" style.
@@ -395,7 +392,6 @@ namespace Microsoft.PowerShell
                     maxWidth));
         }
 
-
         /// <summary>
         ///
         /// The nodes that have this node as their parent.
@@ -405,7 +401,6 @@ namespace Microsoft.PowerShell
         internal
         ArrayList
         Children;
-
 
         /// <summary>
         ///
@@ -424,7 +419,6 @@ namespace Microsoft.PowerShell
         int
         Age;
 
-
         /// <summary>
         ///
         /// The style in which this node should be rendered.
@@ -434,7 +428,6 @@ namespace Microsoft.PowerShell
         internal
         RenderStyle
         Style = RenderStyle.FullPlus;
-
 
         /// <summary>
         ///

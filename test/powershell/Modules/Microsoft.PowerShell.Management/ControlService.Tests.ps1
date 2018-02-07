@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" {
   BeforeAll {
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -167,7 +168,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Cmdlet Overrides
-
 
         private object _prompt = null;
         private Boolean _safe = false;

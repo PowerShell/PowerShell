@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -224,7 +226,6 @@ namespace Microsoft.WSMan.Management
         }
         private SwitchParameter usessl;
 
-
         #endregion
 
         /// <summary>
@@ -351,7 +352,6 @@ namespace Microsoft.WSMan.Management
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
         }//End BeginProcessing()
-
 
     }//End Class
     #endregion Disconnect-WSMAN

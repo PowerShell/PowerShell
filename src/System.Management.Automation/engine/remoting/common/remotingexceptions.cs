@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
@@ -408,7 +409,6 @@ namespace System.Management.Automation.Remoting
         {
             SetDefaultErrorRecord();
         }
-
 
         /// <summary>
         /// This constructor takes a localized message and an inner exception.

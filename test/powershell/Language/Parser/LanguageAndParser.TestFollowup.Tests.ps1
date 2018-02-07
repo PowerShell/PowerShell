@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $powershellexe = (get-process -id $PID).mainmodule.filename
 
 Describe "Clone array" -Tags "CI" {

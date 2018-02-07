@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 <#
 .Synopsis
     Registers or unregisters the PowerShell ETW manifest

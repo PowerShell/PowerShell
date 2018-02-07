@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Globalization;
@@ -172,7 +173,6 @@ namespace System.Management.Automation
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
         } // void MasterStreamOpen
-
 
         internal static void ReportFileOpenFailure(Cmdlet cmdlet, string filePath, Exception e)
         {

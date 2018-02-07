@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
@@ -391,7 +394,6 @@ namespace System.Management.Automation.Security
             return SystemEnforcementMode.None;
         }
         private static bool s_hadMissingWldpAssembly = false;
-
 
         /// <summary>
         /// Gets lockdown policy as applied to a COM object
