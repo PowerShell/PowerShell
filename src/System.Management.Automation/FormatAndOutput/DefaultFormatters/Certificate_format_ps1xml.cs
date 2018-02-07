@@ -51,12 +51,12 @@ namespace System.Management.Automation.Runspaces
                 TableControl.Create()
                     .GroupByProperty("PSParentPath")
                     .AddHeader(width: 41)
-                    .AddHeader()
-                    .AddHeader()
+                    .AddHeader(width: 20)
+                    .AddHeader(label: "EnhancedKeyUsageList")
                     .StartRowDefinition()
                         .AddPropertyColumn("Thumbprint")
                         .AddPropertyColumn("Subject")
-                        .AddPropertyColumn("EnhancedKeyUsageList")
+                        .AddScriptBlockColumn("$_.EnhancedKeyUsageList.FriendlyName")
                     .EndRowDefinition()
                 .EndTable());
         }
