@@ -155,13 +155,13 @@ Install-PowerShellRemoting.ps1
 #### Executed by another instance of PowerShell on behalf of the instance that it will register
 
 ``` powershell
-<path to powershell>\Install-PowerShellRemoting.ps1 -PowerShellHome "<absolute path to the instance's $PSHOME>" -PowerShellVersion "<the powershell version tag>"
+<path to powershell>\Install-PowerShellRemoting.ps1 -PowerShellHome "<absolute path to the instance's $PSHOME>"
 ```
 
 For Example:
 
 ``` powershell
-C:\Program Files\PowerShell\6.0.0.9\Install-PowerShellRemoting.ps1 -PowerShellHome "C:\Program Files\PowerShell\6.0.0.9\" -PowerShellVersion "6.0.0-alpha.9"
+& 'C:\Program Files\PowerShell\6.0.1\Install-PowerShellRemoting.ps1' -PowerShellHome 'C:\Program Files\PowerShell\6.0.1\'
 ```
 
 **NOTE:** The remoting registration script will restart WinRM, so all existing PSRP sessions will terminate immediately after the script is run. If run during a remote session, this will terminate the connection.
@@ -171,8 +171,8 @@ C:\Program Files\PowerShell\6.0.0.9\Install-PowerShellRemoting.ps1 -PowerShellHo
 Create a PowerShell session to the new PowerShell endpoint by specifying `-ConfigurationName "some endpoint name"`. To connect to the PowerShell instance from the example above, use either:
 
 ``` powershell
-New-PSSession ... -ConfigurationName "powershell.6.0.0-alpha.9"
-Enter-PSSession ... -ConfigurationName "powershell.6.0.0-alpha.9"
+New-PSSession ... -ConfigurationName "powershell.6.0.1"
+Enter-PSSession ... -ConfigurationName "powershell.6.0.1"
 ```
 
 Note that `New-PSSession` and `Enter-PSSession` invocations that do not specify `-ConfigurationName` will target the default PowerShell endpoint, `microsoft.powershell`.
