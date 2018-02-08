@@ -1,4 +1,6 @@
-
+﻿/********************************************************************++
+Copyright (c) Microsoft Corporation. All rights reserved.
+--********************************************************************/
 
 using System;
 using System.Collections;
@@ -6,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+
 
 namespace Microsoft.PowerShell
 {

@@ -1,4 +1,6 @@
-
+﻿/********************************************************************++
+Copyright (c) Microsoft Corporation. All rights reserved.
+--********************************************************************/
 
 using System;
 using System.Collections.Generic;
@@ -56,6 +58,7 @@ namespace Microsoft.PowerShell
                 instance.wasBackward = isBackward;
                 instance.wasBackoff = isBackoff;
             }
+
 
             public static void Search(char keyChar, object arg, bool backoff)
             {
@@ -827,6 +830,7 @@ namespace Microsoft.PowerShell
             _singleton._buffer.Remove(first, length);
             _singleton.Render();
         }
+
 
         /// <summary>
         /// Prompts for a search string and initiates search upon AcceptLine.
