@@ -70,6 +70,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = false)]
         public SecureString Password { get; set; }
 
+        /// <summary>
+        /// Do not prompt for password if not given.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Force { get; set; }
+
         //
         // list of files that were not found
         //
@@ -136,6 +142,22 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        if (Password == null && !Force.IsPresent) 
+                        {
+							try 
+							{
+								cert = GetCertFromPfxFile(resolvedProviderPath, null);
+								WriteObject(cert);
+								continue;
+							} 
+							catch (CryptographicException) 
+							{
+                                Password = SecurityUtils.PromptForSecureString(
+                                    Host.UI,
+                                    CertificateCommands.GetPfxCertPasswordPrompt);
+							}                            
+                        }
+                        
                         try
                         {
                             cert = GetCertFromPfxFile(resolvedProviderPath, Password);

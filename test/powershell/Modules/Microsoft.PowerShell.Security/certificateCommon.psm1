@@ -66,6 +66,46 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
+Function New-ProtectedCertificate
+{
+    <#
+    .SYNOPSIS
+    Write to disk expired password-protected pfx certificate
+
+    .NOTES
+    Password: "password"
+    #>
+
+    $protectedCert = "
+MIIECQIBAzCCA88GCSqGSIb3DQEHAaCCA8AEggO8MIIDuDCCAdcGCSqGSIb3DQEHBqCCAcgwggHE
+AgEAMIIBvQYJKoZIhvcNAQcBMBwGCiqGSIb3DQEMAQYwDgQI9rPW9m+pkz0CAggAgIIBkMrPJ7+l
+ZzdnMxxodZgAglSPD8iHSYkr3pEVqGI2vZTjpVxDPGFKL2grHlmllD1HPVMmdTS4vAoaHeR8r2rZ
+76rcm5eaWuOsoDLF24hYyXnmKZzhEhVxhghgCMLa99cIVcPKEznxXJ3UZxk4aUZDSLGjGhtMVS3f
+xQIQ3YPHvdvKkL83eGavL+ltMJo4Y0oP+NzU9TQw6jAnotmRtbbwqfZCXOf3BOyYHi3wXsPddcl7
+PRqtL+aiISqsdd69q+LYs8dAx6JJeglutUxmtJ1u1wvS+yTzcqgKkxZvdBlzyyr6/nKvzz2U7yQv
+qZiyazLv/u/a0DCJu7Pc7+nVNwjO8ZYJnOccQopO00lMPchXjMj+gS1tu+yTT6otg0/3ej48fpWw
+qqfEWdASndC3nGA6XmkOYvL9ydItz9gSKqj0eVvJZHzhq5ihCnB8NfgKj3e5vwHz5w7LKaDKinRV
+S029VyLZNZarivWvP4I5t5C3n6DXE9XB8QJLJcadJXMFSMr2sAje6q3f5RwuSZ5UlDM0xTIwggHZ
+BgkqhkiG9w0BBwGgggHKBIIBxjCCAcIwggG+BgsqhkiG9w0BDAoBAqCCAYYwggGCMBwGCiqGSIb3
+DQEMAQMwDgQIlpNJ+M/gSzECAggABIIBYGS5bGAY105/oqUpum2OCw2zCvh2VW5Q7AnTFFf1jSo/
+l4aSb9u73Owhl72aWm+xsj86IqnxgXd7I4I+opJH31gTKlbxEZGyfv7N0hlTlYweIxtuZ3YSAt/q
+RtP31T475ID8C2U44dS5F2SaVC6MVu4RyTXCUTm8Y5R4pwfajkzmFi0dosBKquYUGdCz6b9j36BH
+Ls9LOoRmeXBv48qo5mTyS5QnRAQ5BABaz4rb5v/fs0Xhb1dvEyMAQeuQxNayfhqibEcOl/lV0TPh
+ZTQzdyfQ9WuyHu85RENWsYp1No7E8/F6lP0o02QIRnfGpyJTUtBBByHip8YHEVbcFcqLCnybH+2i
+Y0YpzsSIt6P1F/+e2yLLHklhgD4yXLJmafuiIQLP2Jf4Yj20MHF2By8ngJokBdjSO/y3PJ2P6Bec
+Y0btFBIA7u2INRpOTkZKkIWIfdrYRGjWxYbTxUJwsTsHFigxJTAjBgkqhkiG9w0BCRUxFgQULexg
+8Da086lTrBiE7Jt1JpBRGk4wMTAhMAkGBSsOAwIaBQAEFIVA18AQ5NUwdMnm0wckAd0hOK9lBAj5
+Ab1TGwBPbgICCAA=
+"
+
+    $protectedCert = $protectedCert -replace '\s',''
+    $certBytes = [Convert]::FromBase64String($protectedCert)
+    $certLocation = Join-Path $TestDrive "PassProtectedCert.pfx"
+    [IO.File]::WriteAllBytes($certLocation, $certBytes)
+
+    return $certLocation
+}
+
 Function New-BadCertificate
 {
     $codeSigningCert = "
