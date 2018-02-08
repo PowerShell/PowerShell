@@ -633,7 +633,7 @@ tar -xvf ./powershell-6.0.1-linux-arm32.tar.gz -C ~/powershell
 Optionally you can create a symbolic link to be able to start PowerShell without specifying path to the "pwsh" binary
 
 ```sh
-# Start PowerShell with sudo to create a symbolic link
+# Start PowerShell from bash with sudo to create a symbolic link
 sudo ~/powershell/pwsh -c New-Item -ItemType SymbolicLink -Path "/usr/bin/pwsh" -Target "\$PSHOME/pwsh" -Force
 
 # alternatively you can run following to create a symbolic link
