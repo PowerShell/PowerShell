@@ -159,6 +159,7 @@ Describe 'get-help file' -Tags "CI" {
         # .SYNOPSIS
         #    Script help, not function help
 
+
         function foo
         {
         }
@@ -193,6 +194,7 @@ Describe 'get-help other tests' -Tags "CI" {
         .SYNOPSIS
         This help block doesn't belong to any function because it is more than 1 line away from the function.
         #>
+
 
         function missingHelp { param($abc) }
             $x = get-help missingHelp

@@ -59,7 +59,7 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
         $results[2].Command | Should be $scriptFileName
         $results[2].ScriptName | Should be $scriptFilePath
         $results[2].ScriptLineNumber | Should be 32
-        $results[2].InvocationInfo.ScriptLineNumber | Should be 44
+        $results[2].InvocationInfo.ScriptLineNumber | Should be 46
     }
 
     It "Verify that the script block of a trap statement shows up on the call stack" {
@@ -79,11 +79,11 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
         $results[0].Command | Should be $scriptFileName
         $results[0].ScriptName | Should be $scriptFilePath
         $results[0].ScriptLineNumber | Should be 3
-        $results[0].InvocationInfo.ScriptLineNumber | Should be 75
+        $results[0].InvocationInfo.ScriptLineNumber | Should be 77
 
         $results[1].Command | Should be $scriptFileName
         $results[1].ScriptName | Should be $scriptFilePath
         $results[1].ScriptLineNumber | Should be 7
-        $results[1].InvocationInfo.ScriptLineNumber | Should be 75
+        $results[1].InvocationInfo.ScriptLineNumber | Should be 77
     }
 }
