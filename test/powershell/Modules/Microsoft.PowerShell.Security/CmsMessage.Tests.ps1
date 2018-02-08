@@ -34,8 +34,7 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     It "Verify Get-PfxCertificate wrong password" {
         $pass = ConvertTo-SecureString "wrongpass" -AsPlainText -Force
         $e = { Get-PfxCertificate $protectedCertLocation -Password $pass -ErrorAction Stop } | ShouldBeErrorId "GetPfxCertificateUnknownCryptoError,Microsoft.PowerShell.Commands.GetPfxCertificateCommand"
-        $e.Exception.HResult | Should Be -2147024810
-
+        $e.Exception.Message | Should Match "password is not correct"
     }
 
     It "Verify CMS message recipient resolution by path" -Skip:(!$IsWindows) {
