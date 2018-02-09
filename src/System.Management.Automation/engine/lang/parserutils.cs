@@ -788,12 +788,10 @@ namespace System.Management.Automation
         /// <summary>
         /// The implementation of the PowerShell range operator.
         /// </summary>
-        /// <param name="context">The execution context in which to evaluate the expression.</param>
-        /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="lval">The object on which to start.</param>
         /// <param name="rval">The object on which to stop.</param>
         /// <returns>The array of objects.</returns>
-        internal static object RangeOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval)
+        internal static object RangeOperator(object lval, object rval)
         {
             var lbase = PSObject.Base(lval);
             var rbase = PSObject.Base(rval);
