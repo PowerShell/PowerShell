@@ -202,9 +202,11 @@ elseif($Stage -eq 'Build')
     }
 
     $pesterParam = @{
-        'binDir'   = $output
-        'PassThru' = $true
-        'Terse'    = $true
+        'binDir'     = $output
+        'PassThru'   = $true
+        'Terse'      = $true
+        'Tag'        = @()
+        'ExcludeTag' = @('RequireSudo')
     }
 
     if ($isFullBuild) {
@@ -226,7 +228,14 @@ elseif($Stage -eq 'Build')
         Remove-Item -force ${telemetrySemaphoreFilepath}
     }
 
+    # Running tests which do not require sudo.
     $pesterPassThruObject = Start-PSPester @pesterParam
+
+    # Running tests, which require sudo.
+    pesterParam['Tag'] = @('RequireSudo')
+    pesterParam['ExcludeTag'] = @()
+    pesterParam['Sudo'] = $true
+    $pesterPassThruObject += Start-PSPester @pesterParam
 
     # Determine whether the build passed
     try {
