@@ -630,6 +630,18 @@ tar -xvf ./powershell-6.0.1-linux-arm32.tar.gz -C ~/powershell
 ~/powershell/pwsh
 ```
 
+Optionally you can create a symbolic link to be able to start PowerShell without specifying path to the "pwsh" binary
+
+```sh
+# Start PowerShell from bash with sudo to create a symbolic link
+sudo ~/powershell/pwsh -c New-Item -ItemType SymbolicLink -Path "/usr/bin/pwsh" -Target "\$PSHOME/pwsh" -Force
+
+# alternatively you can run following to create a symbolic link
+# sudo ln -s ~/powershell/pwsh /usr/bin/pwsh
+
+# Now to start PowerShell you can just run "pwsh"
+```
+
 ### Uninstallation - Raspbian
 
 ```sh
