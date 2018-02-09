@@ -978,6 +978,7 @@ function Start-PSPester {
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
+        [switch]$Sudo,
         [switch]$IncludeFailingTest
     )
 
@@ -1161,14 +1162,18 @@ Restore the module to '$Pester' by running:
                 try
                 {
                     $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $PassThruCommand = {& $powershell -noprofile -c $Command }
+                    if ($Sudo.IsPresent) {
+                        $PassThruCommand =  {& sudo $powershell -noprofile -c $Command }
+                    }
+
+                    $writeCommand = { Write-Host $_ }
                     if ($Terse)
                     {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                        $writeCommand = { Write-Terse $_ }
                     }
-                    else
-                    {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
-                    }
+
+                    Start-NativeExecution -sb $PassThruCommand | ForEach-Object $writeCommand
                     Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
