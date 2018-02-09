@@ -144,18 +144,18 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (Password == null && !Force.IsPresent) 
                         {
-							try 
-							{
-								cert = GetCertFromPfxFile(resolvedProviderPath, null);
-								WriteObject(cert);
-								continue;
-							} 
-							catch (CryptographicException) 
-							{
+                            try 
+                            {
+                                cert = GetCertFromPfxFile(resolvedProviderPath, null);
+                                WriteObject(cert);
+                                continue;
+                            } 
+                            catch (CryptographicException) 
+                            {
                                 Password = SecurityUtils.PromptForSecureString(
                                     Host.UI,
                                     CertificateCommands.GetPfxCertPasswordPrompt);
-							}                            
+                            }                            
                         }
                         
                         try
