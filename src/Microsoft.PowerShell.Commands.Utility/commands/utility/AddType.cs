@@ -307,10 +307,17 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "FromMember")]
         [Parameter(ParameterSetName = "FromPath")]
         [Parameter(ParameterSetName = "FromLiteralPath")]
-        [ValidateNotNullOrEmpty()]
         [Alias("RA")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public String[] ReferencedAssemblies { get; set; } = Utils.EmptyArray<string>();
+        public String[] ReferencedAssemblies
+        {
+            get { return referencedAssemblies; }
+            set
+            {
+                if (value != null) { referencedAssemblies = value; }
+            }
+        }
+        private string[] referencedAssemblies = Utils.EmptyArray<string>();
 
         /// <summary>
         /// The path to the output assembly.
