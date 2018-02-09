@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
 // ---------------------------------------------------------------------------
 //
 //  Contents:  A class that extracts the path to $PSHOME and the path to its

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
 //
 //  Contents:  Entry points for PowerShell plugin used to host powershell
