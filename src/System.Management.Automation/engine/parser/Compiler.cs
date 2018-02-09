@@ -4879,8 +4879,7 @@ namespace System.Management.Automation.Language
                     //    IntOps.Range((int)lhs, (int)rhs)
                     // In the case there are no extra type checks and casts at run time.
                     return Expression.Call(
-                        CachedReflectionInfo.ParserOps_RangeOperator,
-                        _executionContextParameter, Expression.Constant(binaryExpressionAst.ErrorPosition), lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
+                        CachedReflectionInfo.ParserOps_RangeOperator, lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
 
                 case TokenKind.Multiply:
                     if (lhs.Type == typeof(double) && rhs.Type == typeof(double))
