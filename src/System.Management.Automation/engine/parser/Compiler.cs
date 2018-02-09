@@ -4869,15 +4869,10 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
-                    // TODO: replace this with faster code.
-                    //
-                    // The idea behind "faster" is to avoid extra runtime type checks.
-                    // The code below generate code like:
-                    //    IntOps.Range((object)lhs, (object)rhs)
-                    // This forces us to perform a type check and casts at both generate time here and at run time in IntOps.Range.
-                    // We can be faster if we generate the code like:
-                    //    IntOps.Range((int)lhs, (int)rhs)
-                    // In the case there are no extra type checks and casts at run time.
+                    // We could generate faster code using Expression.Dynamic with a binder.
+                    // Currently, type checks are done in ParserOps.RangeOperator at runtime every time
+                    // a range operator is used. By replacing with Expression.Dynamic and a binder, the
+                    // type check is done only once when you repeatedly execute the same line in script.
                     return Expression.Call(
                         CachedReflectionInfo.ParserOps_RangeOperator, lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
 
