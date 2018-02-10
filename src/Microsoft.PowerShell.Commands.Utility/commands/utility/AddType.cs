@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "FromMember")]
         [Parameter(ParameterSetName = "FromSource")]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNull()]
         [Alias("Using")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] UsingNamespace { get; set; } = Utils.EmptyArray<string>();
