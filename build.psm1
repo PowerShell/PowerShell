@@ -978,6 +978,7 @@ function Start-PSPester {
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
+        [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
         [switch]$Sudo,
         [switch]$IncludeFailingTest
     )
