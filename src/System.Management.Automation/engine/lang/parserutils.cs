@@ -786,6 +786,92 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The implementation of the PowerShell range operator.
+        /// </summary>
+        /// <param name="lval">The object on which to start.</param>
+        /// <param name="rval">The object on which to stop.</param>
+        /// <returns>The array of objects.</returns>
+        internal static object RangeOperator(object lval, object rval)
+        {
+            var lbase = PSObject.Base(lval);
+            var rbase = PSObject.Base(rval);
+
+            // If both arguments is [char] type or [string] type with length==1
+            // return objects of [char] type.
+            // In special case "0".."9" return objects of [int] type.
+            if (AsChar(lbase) is char lc && AsChar(rbase) is char rc)
+            {
+                return CharOps.Range(lc, rc);
+            }
+
+            // As a last resort, the range operator tries to return objects of [int] type.
+            //    1..10
+            //    "1".."10"
+            //    [int]"1"..[int]"10"
+            var l = Convert.ToInt32(lbase);
+            var r = Convert.ToInt32(rbase);
+
+            return IntOps.Range(l, r);
+        }
+
+        /// <summary>
+        /// The implementation of an enumerator for the PowerShell range operator.
+        /// </summary>
+        /// <param name="lval">The object on which to start.</param>
+        /// <param name="rval">The object on which to stop.</param>
+        /// <returns>The enumerator.</returns>
+        internal static IEnumerator GetRangeEnumerator(object lval, object rval)
+        {
+            var lbase = PSObject.Base(lval);
+            var rbase = PSObject.Base(rval);
+
+            // If both arguments is [char] type or [string] type with length==1
+            // return objects of [char] type.
+            // In special case "0".."9" return objects of [int] type.
+            if (AsChar(lbase) is char lc && AsChar(rbase) is char rc)
+            {
+                return new CharRangeEnumerator(lc, rc);
+            }
+
+            // As a last resort, the range operator tries to return objects of [int] type.
+            //    1..10
+            //    "1".."10"
+            //    [int]"1"..[int]"10"
+            var l = Convert.ToInt32(lbase);
+            var r = Convert.ToInt32(rbase);
+
+            return new RangeEnumerator(l, r);
+        }
+
+        // Help function for Range operator.
+        //
+        // In common case:
+        //      for [char] type
+        //      for [string] type and length == 1
+        // return objects of [char] type:
+        //     [char]'A'..[char]'Z'
+        //     [char]'A'..'Z'
+        //     [char]'A'.."Z"
+        //     'A'..[char]'Z'
+        //     "A"..[char]'Z'
+        //     "A".."Z"
+        //     [char]"A"..[string]"Z"
+        //     "A"..[char]"Z"
+        //     [string]"A".."Z"
+        // and so on.
+        //
+        // In special case:
+        //     "0".."9"
+        // return objects of [int] type.
+        private static object AsChar(object obj)
+        {
+            if (obj is char) return obj;
+            if (obj is string str && str.Length == 1 && !Char.IsDigit(str, 0)) return str[0];
+            return null;
+        }
+
+
+        /// <summary>
         /// The implementation of the PowerShell -replace operator....
         /// </summary>
         /// <param name="context">The execution context in which to evaluate the expression</param>
@@ -1478,7 +1564,13 @@ namespace System.Management.Automation
         }
 
         private int _current;
-        public object Current
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public virtual int Current
         {
             get { return _current; }
         }
@@ -1521,6 +1613,70 @@ namespace System.Management.Automation
             return true;
         }
     }
+
+    /// <summary>
+    /// The simple enumerator class is used for the range operator '..'
+    /// in expressions like 'A'..'B' | ForEach-Object { $_ }
+    /// </summary>
+    internal class CharRangeEnumerator : IEnumerator
+    {
+        private int _increment = 1;
+
+        private bool _firstElement = true;
+
+        public CharRangeEnumerator(char lowerBound, char upperBound)
+        {
+            LowerBound = lowerBound;
+            Current = lowerBound;
+            UpperBound = upperBound;
+            if (lowerBound > upperBound)
+                _increment = -1;
+        }
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        internal char LowerBound
+        {
+            get; private set;
+        }
+
+        internal char UpperBound
+        {
+            get; private set;
+        }
+
+        public char Current
+        {
+            get; private set;
+        }
+
+        public bool MoveNext()
+        {
+            if (_firstElement)
+            {
+                _firstElement = false;
+                return true;
+            }
+
+            if (Current == UpperBound)
+            {
+                return false;
+            }
+
+            Current = (char)(Current + _increment);
+            return true;
+        }
+
+        public void Reset()
+        {
+            Current = LowerBound;
+            _firstElement = true;
+        }
+    }
+
     #endregion RangeEnumerator
 
     #region InterpreterError
