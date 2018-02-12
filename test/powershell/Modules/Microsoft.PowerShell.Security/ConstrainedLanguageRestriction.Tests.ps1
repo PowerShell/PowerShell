@@ -1,10 +1,5 @@
-﻿##
-## Tests for PowerShell system lock down and constrained language mode restrictions
-## These are Windows platform only tests
-##
-## Copyright (c) Microsoft Corporation. All rights reserved.
-## Licensed under the MIT License.
-##
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 ##
 ## ----------
@@ -153,7 +148,7 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
                 }
 
-                $expectedErrorId | Should Be "MethodInvocationNotSupportedInConstrainedLanguage"
+                $expectedErrorId | Should BeExactly "MethodInvocationNotSupportedInConstrainedLanguage"
             }
         }
 
