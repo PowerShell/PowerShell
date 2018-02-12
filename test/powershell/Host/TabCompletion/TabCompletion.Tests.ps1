@@ -727,11 +727,8 @@ dir -Recurse `
                 @{ inputStr = "Get-Process >${tempDir}\My"; expected = "'${tempDir}${separator}My ``[Path``]'" }
                 @{ inputStr = "Get-Process > '${tempDir}\My ``[Path``]\'"; expected = "'${tempDir}${separator}My ``[Path``]${separator}test.ps1'" }
                 @{ inputStr = "cd ``[My"; expected = "'.${separator}``[My``] Path'" }
-                @{ inputStr = "Get-Help '.\``[My``] Path'\"; expected = "'.${separator}``[My``] Path${separator}test.ps1'" }
                 @{ inputStr = "Get-Process >``[My"; expected = "'.${separator}``[My``] Path'" }
-                @{ inputStr = "Get-Process >'.\``[My``] Path\'"; expected = "'.${separator}``[My``] Path${separator}test.ps1'" }
                 @{ inputStr = "Get-Process >${tempDir}\``[My"; expected = "'${tempDir}${separator}``[My``] Path'" }
-                @{ inputStr = "Get-Process > '${tempDir}\``[My``] Path\'"; expected = "'${tempDir}${separator}``[My``] Path${separator}test.ps1'" }
             )
 
             Push-Location -Path $tempDir
