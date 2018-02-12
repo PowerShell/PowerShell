@@ -217,3 +217,16 @@ Describe "Members of System.Type" -Tags "CI" {
         [MyType].ImplementedInterfaces | Should Be System.Collections.IEnumerable
     }
 }
+
+Describe "WildcardPattern" -Tags "CI" {
+    It "Unescaping escaped string should get the original" -TestCases (
+        @{inputval = '*This'},
+        @{inputval = 'Is?'},
+        @{inputval = 'Real[ly]'},
+        @{inputval = 'Ba`sic'},
+        @{inputval = 'Test `[more`]?'}
+    ) {
+        param($inputval)
+        [WildcardPattern]::Unescape([WildcardPattern]::Escape($inputval)) | Should Be $inputval
+    }
+}

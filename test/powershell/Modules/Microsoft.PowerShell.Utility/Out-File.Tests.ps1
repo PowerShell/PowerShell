@@ -22,6 +22,7 @@ Describe "Out-File" -Tags "CI" {
         $expectedContent = "some test text"
         $inObject = New-Object psobject -Property @{text=$expectedContent}
         $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt
+        $testfile2 = Join-Path -Path $TestDrive -ChildPath "``[outfileTest``].txt"
     }
 
     AfterEach {
@@ -87,6 +88,14 @@ Describe "Out-File" -Tags "CI" {
         $actual[9]  | Should Match "some test text"
         $actual[10] | Should Be ""
         $actual[11] | Should Be ""
+    }
+
+    It "Should create file with correct name" {
+        Out-File -FilePath $testfile
+        Out-File -FilePath $testfile2
+
+        Test-Path $testfile | Should Be $true
+        Test-Path $testfile2 | Should Be $true
     }
 
     It "Should limit each line to the specified number of characters when the width switch is used on objects" {

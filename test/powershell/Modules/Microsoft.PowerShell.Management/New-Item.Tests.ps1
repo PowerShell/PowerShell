@@ -19,9 +19,11 @@ function Clean-State
 Describe "New-Item" -Tags "CI" {
     $tmpDirectory         = $TestDrive
     $testfile             = "testfile.txt"
+    $testfile2            = "``[test``]file.txt"
     $testfolder           = "newDirectory"
     $testlink             = "testlink"
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
+    $FullyQualifiedFile2  = Join-Path -Path $tmpDirectory -ChildPath $testfile2
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
 
@@ -59,6 +61,12 @@ Describe "New-Item" -Tags "CI" {
         New-Item -Name $testfile -Path $tmpDirectory -Type file
 
         Test-Path $FullyQualifiedFile | Should Be $true
+    }
+
+    It "Should create a file with correct name" {
+        New-Item -Path $FullyQualifiedFile2 -ItemType file
+
+        Test-Path $FullyQualifiedFile2 | Should Be $true
     }
 
     It "Should create a file with sample text inside the file using the Value switch" {
