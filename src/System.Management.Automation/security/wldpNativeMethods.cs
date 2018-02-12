@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //
 //  Application white listing policies such as AppLocker and DeviceGuard UMCI are only implemented on Windows OSs
 //
