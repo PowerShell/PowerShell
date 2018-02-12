@@ -19,15 +19,11 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// implementation for the Export-Clixml command
+    /// Base implementation for ConvertTo-Clixml and Export-Clixml
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113297")]
-    public sealed class ExportClixmlCommand : PSCmdlet, IDisposable
+    public abstract class ToClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
-
-        // If a Passthru parameter is added, the SupportsShouldProcess
-        // implementation will need to be modified.
 
         /// <summary>
         /// Depth of serialization
@@ -35,6 +31,172 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [ValidateRange(1, int.MaxValue)]
         public int Depth { get; set; } = 0;
+
+        /// <summary>
+        /// Input object to be exported
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, Mandatory = true)]
+        [AllowNull]
+        public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Encoding optional flag
+        /// </summary>
+        ///
+        [Parameter()]
+        [ArgumentToEncodingTransformationAttribute()]
+        [ArgumentCompletions(
+            EncodingConversion.Ascii,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.OEM,
+            EncodingConversion.Unicode,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf8Bom,
+            EncodingConversion.Utf8NoBom,
+            EncodingConversion.Utf32
+            )]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+
+        #endregion Command Line Parameters
+
+        #region to-clixml
+        /// <summary>
+        /// To-be-supplied implementation specific TextWriter for the xml serializer to use
+        /// </summary>
+        protected abstract TextWriter GetTextWriter();
+
+        /// <summary>
+        /// IDisposable style cleanup for any implementation specific stuff.  If overridden, be sure to call base.CleanUp()
+        /// </summary>
+        protected virtual void CleanUp()
+        {
+            if (_xmlWriter != null)
+            {
+                _xmlWriter.Dispose();
+                _xmlWriter = null;
+            }
+        }
+
+        /// <summary>
+        /// xml writer
+        /// </summary>
+        private XmlWriter _xmlWriter;
+
+        /// <summary>
+        /// xml serializer
+        /// </summary>
+        private Serializer _serializer;
+
+        /// <summary>
+        /// create the xml serializer using implementation specific TextWriter
+        /// </summary>
+        private void CreateXmlSerializer()
+        {
+            TextWriter textWriter = GetTextWriter();
+            if (textWriter == null)
+            {
+                return;
+            }
+
+            // create xml writer
+            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            xmlSettings.CloseOutput = true;
+            xmlSettings.Encoding = textWriter.Encoding;
+            xmlSettings.Indent = true;
+            xmlSettings.OmitXmlDeclaration = true;
+            _xmlWriter = XmlWriter.Create(textWriter, xmlSettings);
+            if (Depth == 0)
+            {
+                _serializer = new Serializer(_xmlWriter);
+            }
+            else
+            {
+                _serializer = new Serializer(_xmlWriter, Depth, useDepthFromTypes: true);
+            }
+
+        }
+        #endregion to-clixml
+
+        #region PSCmdlet Overrides
+
+        /// <summary>
+        /// BeginProcessing override, create the XML scaffolding
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            CreateXmlSerializer();
+        }
+
+        /// <summary>
+        /// ProcessRecord override, serialize the input object to the xml writer
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            if (null != _serializer)
+            {
+                _serializer.Serialize(InputObject);
+                _xmlWriter.Flush();
+            }
+        }
+
+        /// <summary>
+        /// EndProcessing override, dispose of the serializer and anything else 
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (_serializer != null)
+            {
+                _serializer.Done();
+                _serializer = null;
+            }
+            CleanUp();
+        }
+
+        /// <summary>
+        /// StopProcessing override
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            base.StopProcessing();
+            _serializer.Stop();
+        }
+
+        #endregion PSCmdlet Overrides
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Set to true when object is disposed
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// public dispose method
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed == false)
+            {
+                CleanUp();
+            }
+            _disposed = true;
+        }
+
+        #endregion IDisposable Members
+    }
+
+    /// <summary>
+    /// implementation for the Export-Clixml command
+    /// </summary>
+    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113297")]
+    public sealed class ExportClixmlCommand : ToClixmlCommand
+    {
+        #region Command Line Parameters
+
+        // If a Passthru parameter is added, the SupportsShouldProcess
+        // implementation will need to be modified.
 
         /// <summary>
         /// mandatory file name to write to
@@ -62,151 +224,45 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Input object to be exported
-        /// </summary>
-        [Parameter(ValueFromPipeline = true, Mandatory = true)]
-        [AllowNull]
-        public PSObject InputObject { get; set; }
-
-        /// <summary>
         /// Property that sets force parameter.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force
-        {
-            get
-            {
-                return _force;
-            }
-            set
-            {
-                _force = value;
-            }
-        }
-        private bool _force;
+        public SwitchParameter Force { get; set; }
 
         /// <summary>
         /// Property that prevents file overwrite.
         /// </summary>
         [Parameter]
         [Alias("NoOverwrite")]
-        public SwitchParameter NoClobber
-        {
-            get
-            {
-                return _noclobber;
-            }
-            set
-            {
-                _noclobber = value;
-            }
-        }
-        private bool _noclobber;
-
-        /// <summary>
-        /// Encoding optional flag
-        /// </summary>
-        ///
-        [Parameter]
-        [ArgumentToEncodingTransformationAttribute()]
-        [ArgumentCompletions(
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.OEM,
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf8Bom,
-            EncodingConversion.Utf8NoBom,
-            EncodingConversion.Utf32
-            )]
-        [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+        public SwitchParameter NoClobber { get; set; }
 
         #endregion Command Line Parameters
 
-        #region Overrides
-
-        /// <summary>
-        /// BeginProcessing override
-        /// </summary>
-        protected override
-        void
-        BeginProcessing()
-        {
-            CreateFileStream();
-        }
-
-
-        /// <summary>
-        ///
-        /// </summary>
-        protected override
-        void
-        ProcessRecord()
-        {
-            if (null != _serializer)
-            {
-                _serializer.Serialize(InputObject);
-                _xw.Flush();
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        protected override
-        void
-        EndProcessing()
-        {
-            if (_serializer != null)
-            {
-                _serializer.Done();
-                _serializer = null;
-            }
-            CleanUp();
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            base.StopProcessing();
-            _serializer.Stop();
-        }
-
-        #endregion Overrides
-
-        #region file
+        #region FileStream implementation for ToClixmlCommand
 
         /// <summary>
         /// handle to file stream
         /// </summary>
-        private FileStream _fs;
-
-        /// <summary>
-        /// stream writer used to write to file
-        /// </summary>
-        private XmlWriter _xw;
-
-        /// <summary>
-        /// Serializer used for serialization
-        /// </summary>
-        private Serializer _serializer;
+        private FileStream _fileStream;
 
         /// <summary>
         /// FileInfo of file to clear read-only flag when operation is complete
         /// </summary>
         private FileInfo _readOnlyFileInfo = null;
 
-        private void CreateFileStream()
+        /// <summary>
+        /// Get a TextWriter (StreamWriter) for the file specified by the Path parameter
+        /// </summary>
+        protected override TextWriter GetTextWriter()
         {
             Dbg.Assert(Path != null, "FileName is mandatory parameter");
 
-            if (!ShouldProcess(Path)) return;
+            if (!ShouldProcess(Path))
+            {
+                return null;
+            }
 
-            StreamWriter sw;
+            StreamWriter streamWriter;
             PathUtils.MasterStreamOpen(
                 this,
                 this.Path,
@@ -215,69 +271,89 @@ namespace Microsoft.PowerShell.Commands
                 false, // append
                 this.Force,
                 this.NoClobber,
-                out _fs,
-                out sw,
+                out _fileStream,
+                out streamWriter,
                 out _readOnlyFileInfo,
                 _isLiteralPath
                 );
 
-            // create xml writer
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
-            xmlSettings.CloseOutput = true;
-            xmlSettings.Encoding = sw.Encoding;
-            xmlSettings.Indent = true;
-            xmlSettings.OmitXmlDeclaration = true;
-            _xw = XmlWriter.Create(sw, xmlSettings);
-            if (Depth == 0)
-            {
-                _serializer = new Serializer(_xw);
-            }
-            else
-            {
-                _serializer = new Serializer(_xw, Depth, true);
-            }
+            return streamWriter;
         }
-
-        private
-        void
-        CleanUp()
-        {
-            if (_fs != null)
-            {
-                if (_xw != null)
-                {
-                    _xw.Dispose();
-                    _xw = null;
-                }
-                _fs.Dispose();
-                _fs = null;
-            }
-        }
-
-        #endregion file
-
-        #region IDisposable Members
 
         /// <summary>
-        /// Set to true when object is disposed
+        /// disposable-style cleanup
         /// </summary>
-        private bool _disposed;
-
-        /// <summary>
-        /// public dispose method
-        /// </summary>
-        public
-        void
-        Dispose()
+        protected override void CleanUp()
         {
-            if (_disposed == false)
+            if (_fileStream != null)
             {
-                CleanUp();
+                base.CleanUp();
+                _fileStream.Dispose();
+                _fileStream = null;
             }
-            _disposed = true;
         }
 
-        #endregion IDisposable Members
+        #endregion FileStream implementation for ToClixmlCommand
+
+    }
+
+
+    /// <summary>
+    /// implementation for the ConvertTo-Clixml command
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertTo, "Clixml")]
+    public sealed class ConvertToClixmlCommand : ToClixmlCommand
+    {
+        #region Command Line Parameters
+
+        // just use what ToClixmlCommand gives us
+
+        #endregion Command Line Parameters
+
+        #region PSCmdlet implementation
+
+        /// <summary>
+        /// Extend ProcessRecord() to also write the converted string to the output stream
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            base.ProcessRecord(); // convert
+            WriteObject(_stringWriter.ToString());
+        }
+
+        #endregion PSCmdlet implementation
+
+        #region StringWriter implementation for ToClixmlCommand
+
+        /// <summary>
+        /// handle to string stream
+        /// </summary>
+        private StringWriter _stringWriter;
+
+        /// <summary>
+        /// Get a TextWriter (StringWriter) to output as string on pipeline
+        /// </summary>
+        protected override TextWriter GetTextWriter()
+        {
+            _stringWriter = new StringWriter();
+            return _stringWriter;
+        }
+
+        /// <summary>
+        /// disposable-style cleanup
+        /// </summary>
+        protected override void CleanUp()
+        {
+            if (_stringWriter != null)
+            {
+                base.CleanUp();
+                _stringWriter.Dispose();
+                _stringWriter = null;
+            }
+        }
+
+        #endregion StringWriter implementation for ToClixmlCommand
+
     }
 
     /// <summary>
@@ -351,9 +427,103 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in Path)
                 {
-                    _helper = new ImportXmlHelper(path, this, _isLiteralPath);
+                    _helper = new ImportXmlHelper(this, ImportXmlHelper.CreateFileStream(path, this, _isLiteralPath));
                     _helper.Import();
                 }
+            }
+        }
+
+        /// <summary>
+        /// StopProcessing overload
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            base.StopProcessing();
+            _helper.Stop();
+        }
+    }
+
+    /// <summary>
+    /// Implements ConvertFrom-Clixml command
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertFrom, "Clixml", SupportsPaging = true)]
+    public sealed class ConvertFromClixmlCommand : PSCmdlet, IDisposable
+    {
+        #region Command Line Parameters
+
+        /// <summary>
+        /// gets or sets the InputString property
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
+        public string InputObject { get; set; }
+
+        /// <summary>
+        /// inputObjectBuffer buffers all InputObjet contents available in the pipeline.
+        /// </summary>
+        private List<string> _inputObjectBuffer = new List<string>();
+
+        #endregion Command Line Parameters
+
+        #region IDisposable Members
+
+        private bool _disposed = false;
+
+        /// <summary>
+        /// public dispose method
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                if (_helper != null)
+                {
+                    _helper.Dispose();
+                    _helper = null;
+                }
+                _disposed = true;
+                GC.SuppressFinalize(this);
+            }
+        }
+
+        #endregion
+
+        private ImportXmlHelper _helper;
+
+        /// <summary>
+        /// ProcessRecord overload
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            _inputObjectBuffer.Add(InputObject);
+        }
+
+        /// <summary>
+        /// the main execution method for the convertfrom-clixml command
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            // When Input is provided through pipeline, the input can be represented in the following two ways:
+            // 1. Each input in the collection is a complete clixml content. There can be multiple inputs of this format.
+            // 2. The complete input is a collection which represents a single clixml content. This is typically the majority of the case.
+            bool successfullyConverted = false;
+
+            try
+            {
+                foreach (var item in _inputObjectBuffer)
+                {
+                    _helper = new ImportXmlHelper(this, ImportXmlHelper.CreateMemoryStream(item));
+                    _helper.Import();
+                }
+            }
+            catch (XmlException)
+            {
+                successfullyConverted = false;
+            }
+
+            if (!successfullyConverted && _inputObjectBuffer.Count > 0)
+            {
+                _helper = new ImportXmlHelper(this, ImportXmlHelper.CreateMemoryStream(string.Join(System.Environment.NewLine, _inputObjectBuffer)));
+                _helper.Import();
             }
         }
 
@@ -632,40 +802,32 @@ namespace Microsoft.PowerShell.Commands
 
 
     /// <summary>
-    /// Helper class to import single XML file
+    /// Base Helper class to import XML 
     /// </summary>
     internal class ImportXmlHelper : IDisposable
     {
         #region constructor
 
         /// <summary>
-        /// XML file to import
-        /// </summary>
-        private readonly string _path;
-
-        /// <summary>
         /// Reference to cmdlet which is using this helper class
         /// </summary>
         private readonly PSCmdlet _cmdlet;
-        private bool _isLiteralPath;
 
-        internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
+        /// <summary>
+        /// handle to  stream
+        /// </summary>
+        internal Stream _stream;
+
+
+        internal ImportXmlHelper(PSCmdlet cmdlet, Stream stream)
         {
-            Dbg.Assert(fileName != null, "filename is mandatory");
-            Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
-            _path = fileName;
             _cmdlet = cmdlet;
-            _isLiteralPath = isLiteralPath;
+            _stream = stream;
         }
 
         #endregion constructor
 
-        #region file
-
-        /// <summary>
-        /// handle to file stream
-        /// </summary>
-        internal FileStream _fs;
+        #region stream
 
         /// <summary>
         /// XmlReader used to read file
@@ -690,22 +852,16 @@ namespace Microsoft.PowerShell.Commands
             return XmlReader.Create(textReader, InternalDeserializer.XmlReaderSettingsForCliXml);
         }
 
-        internal void CreateFileStream()
-        {
-            _fs = PathUtils.OpenFileStream(_path, _cmdlet, _isLiteralPath);
-            _xr = CreateXmlReader(_fs);
-        }
-
         private void CleanUp()
         {
-            if (_fs != null)
+            if (_stream != null)
             {
-                _fs.Dispose();
-                _fs = null;
+                _stream.Dispose();
+                _stream = null;
             }
         }
 
-        #endregion file
+        #endregion stream
 
         #region IDisposable Members
 
@@ -733,7 +889,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void Import()
         {
-            CreateFileStream();
+            _xr = CreateXmlReader(_stream);
             _deserializer = new Deserializer(_xr);
             // If total count has been requested, return a dummy object with zero confidence
             if (_cmdlet.PagingParameters.IncludeTotalCount)
@@ -808,7 +964,22 @@ namespace Microsoft.PowerShell.Commands
                 _deserializer.Stop();
             }
         }
-    } // ImportXmlHelper
+
+        internal static Stream CreateFileStream(string path, PSCmdlet cmdlet, bool isLiteralPath)
+        {
+            return PathUtils.OpenFileStream(path, cmdlet, isLiteralPath);
+        }
+
+        internal static Stream CreateMemoryStream(string input)
+        {
+            Stream s = new MemoryStream();
+            StreamWriter w = new StreamWriter(s);
+            w.Write(input);
+            w.Flush();
+            s.Position = 0;
+            return s;
+        }
+    } // ImportXmlMemoryHelper
 
     #region Select-Xml
     ///<summary>

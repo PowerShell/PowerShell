@@ -123,6 +123,30 @@
         }
     }
 
+    Context "ConvertTo-CliXml" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+            $filePath = Join-Path $subFilePath 'gps.xml'
+        }
+
+        AfterEach {
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "converts an object to string as expected" {
+            $objClixml = ConvertTo-Clixml -Depth 1 -InputObject ($gpsList | Select-Object -First 1)
+
+            $objClixml | Should Match "<I32 N=`"Id`">$($gps.Id)</I32>"
+        }
+
+        It "converts an object from the pipeline to string as expected" {
+            $objClixml = ($gpsList | Select-Object -First 1) | ConvertTo-Clixml -Depth 1
+
+            $objClixml | Should Match "<I32 N=`"Id`">$($gps.Id)</I32>"
+        }
+    }
+
     Context "Import-CliXML" {
         BeforeAll {
             $gpsList = Get-Process pwsh
@@ -158,7 +182,7 @@
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should Not BeNullOrEmpty
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should Not BeNullOrEmpty
@@ -172,7 +196,7 @@
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should Not BeNullOrEmpty
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should Not BeNullOrEmpty
@@ -186,6 +210,30 @@
             $testPath = "testdrive:\Bug161470NonExistPath.txt"
             Export-Clixml -Path $testPath -InputObject "string" -WhatIf
             $testPath | Should Not Exist
+        }
+    }
+
+    Context "ConvertFrom-CliXml" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+
+            $clixml = ConvertTo-CliXml -InputObject $gps
+            $clixml | Should Not BeNullOrEmpty
+        }
+
+        It "deserializes an object as expected" {
+            $importedProcess = ConvertFrom-Clixml -InputObject $clixml
+
+            $importedProcess.ProcessName | Should Be $gps.ProcessName
+            $importedProcess.Id | Should Be $gps.Id
+        }
+
+        It "deserializes an object from the pipeline as expected" {
+            $importedProcess = $clixml | ConvertFrom-Clixml
+
+            $importedProcess.ProcessName | Should Be $gps.ProcessName
+            $importedProcess.Id | Should Be $gps.Id
         }
     }
 }
@@ -217,6 +265,22 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
     It "Verifies that importing the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
+
+        # Wait up to 10 seconds for calc.exe to run
+        $calcProc = $null
+        $count = 0
+        while (!$calcProc -and ($count++ -lt 20)) {
+            $calcProc = Get-Process -Name 'win32calc', 'calculator' 2>$null
+            Start-Sleep -Milliseconds 500
+        }
+
+        $calcProc | Should BeNullOrEmpty
+    }
+
+    It "Verifies that converting from the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
+
+        $cliXmlContent = Get-Content -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml") -Raw
+        ConvertFrom-CliXml -InputObject $cliXmlContent
 
         # Wait up to 10 seconds for calc.exe to run
         $calcProc = $null
