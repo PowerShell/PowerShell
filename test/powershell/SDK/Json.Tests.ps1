@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # http://www.newtonsoft.com/json/help/html/ParsingLINQtoJSON.htm
 
 Describe "Json.NET LINQ Parsing" -tags "CI" {

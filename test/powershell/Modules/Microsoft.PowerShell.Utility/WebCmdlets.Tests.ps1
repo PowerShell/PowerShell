@@ -1,6 +1,6 @@
-﻿#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
+
 # This is a Pester test suite which validate the Web cmdlets.
 #
 # Note: These tests use data from WebListener
@@ -760,7 +760,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Error | Should BeNullOrEmpty
         $response.Content.Headers."Authorization" | Should BeExactly "test"
     }
-
 
     It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "File encoding tests" -Tag CI {
 
     Context "ParameterType for parameter 'Encoding' should be 'Encoding'" {

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $RenameTesthook = "TestRenameComputer"
 $RenameResultName = "TestRenameComputerResults"
 $DefaultResultValue = 0
@@ -49,7 +51,6 @@ try
             $result.NewComputerName | should be $newname
             $WarnVar | should BeNullOrEmpty
         }
-
 
         Context "Rename-Computer Error Conditions" {
             $testcases =

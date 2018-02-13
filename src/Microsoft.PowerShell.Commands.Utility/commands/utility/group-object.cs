@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -109,8 +108,6 @@ namespace Microsoft.PowerShell.Commands
             Count++;
         }
 
-
-
         private static string BuildName(List<ObjectCommandPropertyValue> propValues)
         {
             StringBuilder sb = new StringBuilder();
@@ -140,7 +137,6 @@ namespace Microsoft.PowerShell.Commands
             }
             return sb.Length >= 2 ? sb.Remove(sb.Length - 2, 2).ToString() : string.Empty;
         }
-
 
         /// <summary>
         ///

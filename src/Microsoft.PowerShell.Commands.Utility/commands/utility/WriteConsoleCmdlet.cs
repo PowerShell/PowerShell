@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -22,8 +21,6 @@ namespace Microsoft.PowerShell.Commands
         // Parameters
         //
 
-
-
         /// <summary>
         ///
         /// Object to be output.
@@ -32,7 +29,6 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
         public object Object { get; set; } = null;
-
 
         /// <summary>
         ///
@@ -53,8 +49,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
-
         /// <summary>
         ///
         /// The separator to print between objects
@@ -64,7 +58,6 @@ namespace Microsoft.PowerShell.Commands
 
         [Parameter]
         public object Separator { get; set; } = " ";
-
 
         //
         // Cmdlet Overrides
@@ -117,8 +110,6 @@ namespace Microsoft.PowerShell.Commands
 
             return null;
         }
-
-
 
         /// <summary>
         ///

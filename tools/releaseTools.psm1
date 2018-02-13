@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 class CommitNode {
     [string] $Hash
     [string[]] $Parents
@@ -244,6 +246,5 @@ function Get-NewOfficalPackage
         }
     }
 }
-
 
 Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage

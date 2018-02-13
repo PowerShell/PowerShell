@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Convert-Path tests" -Tag CI {
     It "Convert-Path should handle provider qualified paths" {
         Convert-Path "FileSystem::${TESTDRIVE}" | should be "${TESTDRIVE}"

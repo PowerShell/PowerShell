@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -264,7 +263,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ev.HasMorePages = _lines.Count > 0;
         }
 
-
         /// <summary>
         /// flag for one time initialization of the interface (columns, etc.)
         /// </summary>
@@ -289,7 +287,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// font size
         /// </summary>
         private int _printFontSize = 0;
-
 
         /// <summary>
         /// default font, used if the printFont is not specified or if the

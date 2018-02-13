@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Out-String DRT Unit Tests" -Tags "CI" {
 
     It "check display of properties with names containing wildcard characters" {

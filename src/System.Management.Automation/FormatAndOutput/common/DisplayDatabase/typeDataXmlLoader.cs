@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Concurrent;
@@ -31,7 +30,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ConcurrentBag<string> errors;
         internal string psSnapinName;
     }
-
 
     /// <summary>
     /// class to load the XML document into data structures.
@@ -166,7 +164,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // Flag that determines whether validation should be suppressed while
         // processing pre-validated type / formatting information.
         private bool _suppressValidation = false;
-
 
         /// <summary>
         /// entry point for the loader algorithm
@@ -1102,7 +1099,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return cpt;
             }
 
-
             var frame = (CustomItemFrame)item;
             var frameToken = new FrameToken
             {
@@ -1301,7 +1297,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion
 
-
         #region Type Groups Loading
 
         private void LoadTypeGroups(TypeInfoDataBase db, XmlNode typeGroupsNode)
@@ -1392,7 +1387,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         #endregion
-
 
         #region AppliesTo Loading
 
@@ -1557,7 +1551,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-
                 if (typeFound && typeGroupFound)
                 {
                     //Error at XPath {0} in file {1}: Cannot have SelectionSetName and TypeName at the same time.
@@ -1690,14 +1683,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return groupBy;
                 }
 
-
                 // failure: expression is mandatory
                 //Error at XPath {0} in file {1}: An expression is expected.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectExpression, ComputeCurrentXPath(), FilePath));
                 return null;
             }
         }
-
 
         private TextToken LoadLabel(XmlNode textNode)
         {
@@ -1805,7 +1796,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // success in loading
             resource.loadingInfo = this.LoadingInfo;
-
 
             // optional pre-load and binding verification
             if (this.VerifyStringResources)
@@ -2186,5 +2176,4 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
     }
 }
-
 

@@ -1,7 +1,5 @@
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
-//
-
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -26,7 +24,6 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using Microsoft.PowerShell.Commands.GetCounter;
 using Microsoft.PowerShell.Commands.Diagnostics.Common;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -54,7 +51,6 @@ namespace Microsoft.PowerShell.Commands
         private string _path;
         private string _resolvedPath;
 
-
         //
         // Format parameter.
         // Valid strings are "blg", "csv", "tsv" (case-insensitive).
@@ -73,8 +69,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _format = "blg";
 
-
-
         //
         // MaxSize parameter
         // Maximum output file size, in megabytes.
@@ -87,7 +81,6 @@ namespace Microsoft.PowerShell.Commands
             set { _maxSize = value; }
         }
         private UInt32 _maxSize = 0;
-
 
         //
         // InputObject parameter
@@ -108,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
             set { _counterSampleSets = value; }
         }
         private PerformanceCounterSampleSet[] _counterSampleSets = new PerformanceCounterSampleSet[0];
-
 
         //
         // Force switch
@@ -133,8 +125,6 @@ namespace Microsoft.PowerShell.Commands
             set { _circular = value; }
         }
         private SwitchParameter _circular;
-
-
 
         private ResourceManager _resourceMgr = null;
 
@@ -213,7 +203,6 @@ namespace Microsoft.PowerShell.Commands
             _pdhHelper.Dispose();
         }
 
-
         ///
         /// Handle Control-C
         ///
@@ -278,7 +267,6 @@ namespace Microsoft.PowerShell.Commands
 
                 _queryInitialized = true;
             }
-
 
             foreach (PerformanceCounterSampleSet set in _counterSampleSets)
             {

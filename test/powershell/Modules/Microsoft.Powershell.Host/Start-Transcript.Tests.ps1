@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     BeforeAll {
@@ -48,7 +50,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath = join-path $TestDrive "transcriptdata.txt"
         Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
-
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue

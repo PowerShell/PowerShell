@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # get a random string of characters a-z and A-Z
 function Get-RandomString
 {

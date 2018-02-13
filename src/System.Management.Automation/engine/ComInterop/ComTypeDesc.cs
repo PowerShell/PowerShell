@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 
@@ -30,7 +29,6 @@ namespace System.Management.Automation.ComInterop
             }
             TypeLib = typeLibDesc;
         }
-
 
         internal static ComTypeDesc FromITypeInfo(ComTypes.ITypeInfo typeInfo, ComTypes.TYPEATTR typeAttr)
         {

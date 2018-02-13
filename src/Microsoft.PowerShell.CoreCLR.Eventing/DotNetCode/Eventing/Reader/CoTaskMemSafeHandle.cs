@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -33,7 +35,6 @@ namespace System.Diagnostics.Eventing.Reader
         {
             return handle;
         }
-
 
         public override bool IsInvalid
         {

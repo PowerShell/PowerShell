@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'New-WinEvent' -Tags "CI" {
 
     Context "New-WinEvent tests" {

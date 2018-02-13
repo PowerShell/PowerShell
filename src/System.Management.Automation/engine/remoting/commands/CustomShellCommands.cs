@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -1163,7 +1162,6 @@ else
                     tempValue);
             }
 
-
             if (sessionType == PSSessionType.Workflow && !isUseSharedProcessSpecified)
             {
                 UseSharedProcess = true;
@@ -1392,7 +1390,6 @@ else
                 }
             }
         }
-
 
         /// <summary>
         /// Checks if the current thread is running elevated. If not, throws an error.
@@ -2998,7 +2995,6 @@ $args[0] | ForEach-Object {{
         // To Escape } -- }}
         // To Escape " -- ""
 
-
         private const string getSessionTypeFormat = @"(get-item 'WSMan::localhost\Plugin\{0}\InitializationParameters\sessiontype' -ErrorAction SilentlyContinue).Value";
         private const string getCurrentIdleTimeoutmsFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\Quotas\IdleTimeoutms').Value";
         private const string getAssemblyNameDataFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\InitializationParameters\assemblyname').Value";
@@ -3044,7 +3040,6 @@ function Set-SessionPluginIdleTimeoutQuotas([int] $maxIdleTimeoutms, [int] $idle
 }}
 Set-SessionPluginIdleTimeoutQuotas $args[0] $args[1] $args[2]
 ";
-
 
         private const string setSessionConfigurationOptionsSbFormat = @"
 function Set-SessionPluginOptions([hashtable] $options) {{
@@ -3519,7 +3514,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 File.Copy(_configFilePath, destPath, true);
             }
 
-
             string shellNotFoundErrorMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsShellNotFound, shellName);
             string shellNotPowerShellMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsShellNotPowerShellBased, shellName);
             string shellForPowerShellCoreMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsPowerShellCoreShellNotModifiable, shellName);
@@ -3552,7 +3546,6 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                                shellForWindowsPowerShellMsg,
                                                accessModeSpecified ? AccessMode : PSSessionConfigurationAccessMode.Disabled,
            });
-
 
             errorList = (ArrayList)Context.DollarErrorVariable;
 
@@ -5418,7 +5411,6 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
         /// </summary>
         [Parameter()]
         public SwitchParameter Full { get; set; }
-
 
         /// <summary>
         /// </summary>

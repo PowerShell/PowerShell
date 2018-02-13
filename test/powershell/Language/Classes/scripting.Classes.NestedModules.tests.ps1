@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'NestedModules' -Tags "CI" {
 
     function New-TestModule {
@@ -36,7 +38,6 @@ Describe 'NestedModules' -Tags "CI" {
     $originalPSModulePath = $env:PSModulePath
 
     try {
-
 
         # Create modules in TestDrive:\
         New-TestModule -Name NoRoot -NestedContents @(

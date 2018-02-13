@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Export-Csv" -Tags "CI" {
     BeforeAll {
         $testObject = @("test","object","array")

@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*
  * Common file that contains implementation for both server and client transport
@@ -375,7 +374,6 @@ namespace System.Management.Automation.Remoting
 
         #endregion
     }
-
 
     /// <summary>
     /// A wrapper around TextWriter to allow for synchronized writing to a stream.

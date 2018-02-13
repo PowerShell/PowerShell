@@ -1,4 +1,6 @@
-﻿Describe "Language Primitive Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Language Primitive Tests" -Tags "CI" {
     It "Equality comparison with string and non-numeric type should not be culture sensitive" {
         $date = [datetime]'2005,3,10'
         $val = [System.Management.Automation.LanguagePrimitives]::Equals($date, "3/10/2005")

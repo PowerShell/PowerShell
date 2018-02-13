@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 #
 # Wrap Python script in such a way to make it easy to
 # consume from PowerShell

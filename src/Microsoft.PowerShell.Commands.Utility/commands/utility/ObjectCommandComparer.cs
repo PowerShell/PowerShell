@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #region Using directives
 
@@ -42,7 +41,6 @@ namespace Microsoft.PowerShell.Commands
             _caseSensitive = isCaseSensitive;
             this.cultureInfo = cultureInfo;
         }
-
 
         internal object PropertyValue { get; }
 
@@ -154,7 +152,6 @@ namespace Microsoft.PowerShell.Commands
             return (val == null);
         }
 
-
         internal int Compare(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)
         {
             if (first.IsExistingProperty && second.IsExistingProperty)
@@ -195,7 +192,6 @@ namespace Microsoft.PowerShell.Commands
             // This method will never throw exceptions, two null
             // objects are considered the same
             if (IsValueNull(first) && IsValueNull(second)) return 0;
-
 
             PSObject firstMsh = first as PSObject;
             if (firstMsh != null)

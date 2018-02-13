@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
         (Get-Process -Id $pid -IncludeUserName).UserName | Should Match $env:USERNAME

@@ -1,6 +1,5 @@
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
 
 Describe 'Classes inheritance syntax' -Tags "CI" {
 
@@ -361,7 +360,6 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
     }
 }
-
 
 Describe 'Classes inheritance ctors syntax errors' -Tags "CI" {
 

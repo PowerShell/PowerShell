@@ -1,7 +1,7 @@
-﻿# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
+
+# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
 
 try {
     #skip all tests on non-windows platform
@@ -203,7 +203,6 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "CatalogTestFile1.mof" = "7C1885AE5F76F58DAA232A5E962875F90308C3CB8580400EE12F999B4E10F940";
                 "CatalogTestFile2.xml" = "00B7DA28CD285F796660D36B77B2EC6054F21A44D5B329EB6BC4EC7687D70B13";
                 "TestImage.gif" = "2D938D255D0D6D547747BD21447CF7295318D34D9B4105D04C1C27487D2FF402" }
-
 
             $catalogPath = "$env:TEMP\NewFileCatalogVersion2WithMultipleFoldersAndFiles.cat"
             $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml", "$testDataPath\TestImage.gif")

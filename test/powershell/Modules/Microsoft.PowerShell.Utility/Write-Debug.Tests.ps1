@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Write-Debug tests" -Tags "CI" {
     It "Should not have added line breaks" {
         $text = "0123456789"

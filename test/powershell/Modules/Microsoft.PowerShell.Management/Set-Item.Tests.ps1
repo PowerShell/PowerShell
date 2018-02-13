@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Set-Item" -Tag "CI" {
     $testCases = @{ Path = "variable:SetItemTestCase"; Value = "TestData"; Validate = { $SetItemTestCase | Should be "TestData" }; Reset = {remove-item variable:SetItemTestCase} },
         @{ Path = "alias:SetItemTestCase"; Value = "Get-Alias"; Validate = { (Get-Alias SetItemTestCase).Definition | should be "Get-Alias"}; Reset = { remove-item alias:SetItemTestCase } },

@@ -2,7 +2,7 @@
 RootModule = 'Microsoft.Powershell.LocalAccounts'
 ModuleVersion = '1.0.0.0'
 GUID = '8e362604-2c0b-448f-a414-a6a690a644e2'
-Author = 'Microsoft Corporation'
+Author = 'PowerShell'
 CompanyName = 'Microsoft Corporation'
 Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 Description = 'Provides cmdlets to work with local users and local groups'

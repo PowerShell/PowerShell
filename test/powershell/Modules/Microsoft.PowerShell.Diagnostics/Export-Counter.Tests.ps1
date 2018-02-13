@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <############################################################################################
  # File: Export-Counter.Tests.ps1
  # Provides Pester tests for the Export-Counter cmdlet.

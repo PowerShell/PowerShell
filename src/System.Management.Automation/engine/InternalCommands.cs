@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Linq.Expressions;
@@ -123,7 +122,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion ScriptBlockSet
 
-
         #region PropertyAndMethodSet
 
         /// <summary>
@@ -153,7 +151,6 @@ namespace Microsoft.PowerShell.Commands
         private object[] _arguments;
 
         #endregion PropertyAndMethodSet
-
 
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
@@ -719,7 +716,6 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-
         /// <summary>
         /// Execute the end scriptblock when the pipeline is complete
         /// </summary>
@@ -783,7 +779,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
         private string _property;
         /// <summary>
         /// The property to retrieve value
@@ -824,7 +819,6 @@ namespace Microsoft.PowerShell.Commands
             set { _property = value; }
             get { return _property; }
         }
-
 
         private object _convertedValue;
         private object _value = true;
@@ -1640,8 +1634,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-
-
     /// <summary>
     /// Implements a cmdlet that sets the script debugging options.
     /// </summary>
@@ -1835,7 +1827,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
     #endregion Set-StrictMode
-
 
     #endregion Built-in cmdlets that are used by or require direct access to the engine.
 }

@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -417,7 +416,6 @@ namespace System.Management.Automation.Remoting
             return blobLength;
         }
     }
-
 
     /// <summary>
     /// A stream used to store serialized data. This stream holds serialized data in the
