@@ -881,7 +881,6 @@ function Get-PesterTag {
 
     get-childitem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
         $fullname = $_.fullname
-        Write-Host $_.fullname
         $tok = $err = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
         $des = $ast.FindAll({$args[0] -is "System.Management.Automation.Language.CommandAst" -and $args[0].CommandElements[0].Value -eq "Describe"},$true)
@@ -1029,52 +1028,52 @@ Restore the module to '$Pester' by running:
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $Command = ""
+    $command = ""
     if ($Terse)
     {
-        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+        $command += "`$ProgressPreference = 'silentlyContinue'; "
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
+    $command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($Environment.IsWindows) {
-        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+        $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
 
-    $Command += "Import-Module '$Pester'; "
+    $command += "Import-Module '$Pester'; "
 
     if ($Unelevate)
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
 
-    $Command += "Invoke-Pester "
+    $command += "Invoke-Pester "
 
-    $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
     }
     if ($Tag) {
-        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+        $command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $Command += "-Quiet "
+        $command += "-Quiet "
     }
     if ( $PassThru ) {
-        $Command += "-PassThru "
+        $command += "-PassThru "
     }
 
-    $Command += "'" + ($Path -join "','") + "'"
+    $command += "'" + ($Path -join "','") + "'"
     if ($Unelevate)
     {
-        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+        $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
-    Write-Verbose $Command
+    Write-Verbose $command
 
     $script:nonewline = $true
     $script:inerror = $false
@@ -1160,39 +1159,39 @@ Restore the module to '$Pester' by running:
         {
             if ($PassThru.IsPresent)
             {
-                $PassThruFile = [System.IO.Path]::GetTempFileName()
+                $passThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $Command += "|Export-Clixml -Path '$PassThruFile' -Force"
+                    $command += "|Export-Clixml -Path '$passThruFile' -Force"
 
-                    $PassThruCommand = {& $powershell -noprofile -c $Command }
+                    $passThruCommand = {& $powershell -noprofile -c $command }
                     if ($Sudo.IsPresent) {
-                        $PassThruCommand =  {& sudo $powershell -noprofile -c $Command }
+                        $passThruCommand =  {& sudo $powershell -noprofile -c $command }
                     }
 
-                    $WriteCommand = { Write-Host $_ }
+                    $writeCommand = { Write-Host $_ }
                     if ($Terse)
                     {
-                        $WriteCommand = { Write-Terse $_ }
+                        $writeCommand = { Write-Terse $_ }
                     }
 
-                    Start-NativeExecution -sb $PassThruCommand | ForEach-Object $WriteCommand
-                    Import-Clixml -Path $PassThruFile | Where-Object {$_.TotalCount -is [Int32]}
+                    Start-NativeExecution -sb $passThruCommand | ForEach-Object $writeCommand
+                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
                 {
-                    Remove-Item $PassThruFile -ErrorAction SilentlyContinue
+                    Remove-Item $passThruFile -ErrorAction SilentlyContinue -Force
                 }
             }
             else
             {
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command} | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command}
                 }
             }
         }
