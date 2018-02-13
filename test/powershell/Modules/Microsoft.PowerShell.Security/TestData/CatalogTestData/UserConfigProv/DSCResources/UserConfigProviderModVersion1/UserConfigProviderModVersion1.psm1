@@ -1,4 +1,5 @@
-﻿
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 # The Get-TargetResource cmdlet is used to fetch the desired state of the DSC managed node through a powershell script.
 # This cmdlet executes the user supplied script (i.e., the script is responsible for validating the desired state of the
@@ -21,7 +22,6 @@ function Get-TargetResource
      $result;
   }
 
-
 # The Set-TargetResource cmdlet is used to Set the desired state of the DSC managed node through a powershell script.
 # The method executes the user supplied script (i.e., the script is responsible for validating the desired state of the
 # DSC managed node). If the DSC managed node requires a restart either during or after the execution of the SetScript,
@@ -40,7 +40,6 @@ function Set-TargetResource
  	New-Item -Path $path -Type File -force
 	Add-Content -Path $path -Value $text
 }
-
 
 # The Test-TargetResource cmdlet is used to validate the desired state of the DSC managed node through a powershell script.
 # The method executes the user supplied script (i.e., the script is responsible for validating the desired state of the

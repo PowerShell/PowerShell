@@ -1,4 +1,6 @@
-﻿#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
 
 function UpdateHelpFromLocalContentPath
@@ -163,7 +165,6 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
         $verb = $helptest.verb
         $noun = $helptest.noun
         $pending = $helptest.pending
-
 
         It -Pending:$pending "Shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name $verb-$noun -Path $path)" {
 

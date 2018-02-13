@@ -1,6 +1,6 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -335,7 +335,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             throw new PSNotSupportedException();
         }
 
-
         /// <summary>
         /// StopJob
         /// </summary>
@@ -374,7 +373,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         {
             throw new PSNotSupportedException();
         }
-
 
         #endregion
 

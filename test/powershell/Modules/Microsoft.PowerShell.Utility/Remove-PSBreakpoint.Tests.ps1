@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Remove-PSBreakpoint" -Tags "CI" {
     # Set up test script
     $testScript = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath psbreakpointtestscript.ps1
@@ -56,7 +58,6 @@ Get-Date
 
 	$(Get-PSBreakpoint).Id.Length | Should Be 0
     }
-
 
     #Clean up after ourselves
 

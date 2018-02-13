@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 
@@ -22,7 +21,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 
 using PathType = System.IO.Path;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -475,7 +473,6 @@ namespace Microsoft.PowerShell.Commands
         }
         internal OutputAssemblyType outputType = OutputAssemblyType.Library;
         internal bool outputTypeSpecified = false;
-
 
         /// <summary>
         /// Flag to pass the resulting types along.

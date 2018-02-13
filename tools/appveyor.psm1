@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $ErrorActionPreference = 'Stop'
 $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
@@ -82,7 +84,6 @@ function Add-UserToGroup
 
   $groupAD.Add($userAD.AdsPath);
 }
-
 
 # tests if we should run a daily build
 # returns true if the build is scheduled

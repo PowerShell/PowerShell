@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Import-Module $PSScriptRoot/Apache/Apache.psm1
 
 #list Apache Modules

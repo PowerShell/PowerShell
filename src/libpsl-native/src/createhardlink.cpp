@@ -1,5 +1,6 @@
-//! @file createsymlink.cpp
-//! @author George FLeming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief create new hard link
 
 #include "createhardlink.h"

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Move-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"

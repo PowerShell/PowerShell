@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
 # TEST SPECIFIC HELPER METHODS FOR TESTING Get-ComputerInfo cmdlet
 #
@@ -396,7 +398,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             $connectionStatus = 13 # default NetConnectionStatus.Other
             if ($adapter.NetConnectionStatus) { $connectionStatus = $adapter.NetConnectionStatus}
 
-
             $config =$configHash.Item([string]$adapter.Index)
 
             $dHCPEnabled = $null
@@ -443,7 +444,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                     'Description'=$processor.Description;
                     'Architecture'=$processor.Architecture;
                     'AddressWidth'=$processor.AddressWidth;
-
 
                     'Availability'=$processor.Availability;
                     'CpuStatus'=$processor.CpuStatus;
@@ -1336,7 +1336,6 @@ try {
         It "(special case) Test for property = OsFreePhysicalMemory" {
             ($observed.OsFreePhysicalMemory -gt 0) | Should Be $true
         }
-
 
         It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT -or !$IsWindows) {
             ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Update-TypeData basic functionality" -Tags "CI" {
     BeforeAll {
@@ -152,7 +154,6 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.HadErrors  |Should be $true
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
-
 
 	It "Update-TypeData with Invalid DynamicType with No MemberName should throw Exception"{
 	    $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String')

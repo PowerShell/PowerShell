@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -24,7 +23,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
-
         /// <summary>
         /// This parameter specifies that objects should be converted to
         /// strings and the strings should be compared.
@@ -37,7 +35,6 @@ namespace Microsoft.PowerShell.Commands
             set { _asString = value; }
         }
         private bool _asString;
-
 
         /// <summary>
         /// This parameter specifies that just the types of the objects

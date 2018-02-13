@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -398,7 +397,6 @@ namespace Microsoft.PowerShell.Commands
             return "";
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -418,7 +416,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebUtility.HtmlEncode(_title);
             }
-
 
             // This first line ensures w3c validation will succeed. However we are not specifying
             // an encoding in the HTML because we don't know where the text will be written and

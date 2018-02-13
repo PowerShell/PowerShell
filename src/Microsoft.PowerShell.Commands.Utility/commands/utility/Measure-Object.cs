@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -130,7 +129,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public object Minimum { get; set; }
     }
-
 
     /// <summary>
     /// Class output by Measure-Object
@@ -412,7 +410,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion TextMeasure ParameterSet
         #endregion Command Line Switches
-
 
         /// <summary>
         /// Which parameter set the Cmdlet is in.

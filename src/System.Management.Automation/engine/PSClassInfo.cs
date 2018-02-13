@@ -1,8 +1,5 @@
-//-----------------------------------------------------------------------
-// <copyright company="Microsoft Corporation">
-//     Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -53,7 +50,6 @@ namespace System.Management.Automation
         /// </summary>
         public string HelpFile { get; internal set; } = String.Empty;
     }
-
 
     /// <summary>
     /// Contains a class field information

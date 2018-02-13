@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Write-Error Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1

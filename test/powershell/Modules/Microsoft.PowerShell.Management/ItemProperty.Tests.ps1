@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Simple ItemProperty Tests" -Tag "CI" {
     It "Can retrieve the PropertyValue with Get-ItemPropertyValue" {
         Get-ItemPropertyValue -path $TESTDRIVE -Name Attributes | should be "Directory"

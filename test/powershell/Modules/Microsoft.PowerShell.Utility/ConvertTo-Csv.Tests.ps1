@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
     $inputObject = [pscustomobject]@{ First = 1; Second = 2 }
 
@@ -38,7 +40,6 @@ Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
 Describe "ConvertTo-Csv" -Tags "CI" {
     $Name = "Hello"; $Data = "World";
     $testObject = New-Object psobject -Property @{ FirstColumn = $Name; SecondColumn = $Data }
-
 
     It "Should Be able to be called without error" {
 	{ $testObject | ConvertTo-Csv } | Should Not Throw

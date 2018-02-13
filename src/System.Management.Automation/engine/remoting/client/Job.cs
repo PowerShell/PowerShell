@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -258,7 +257,6 @@ namespace System.Management.Automation
             State = jobStateInfo.State;
             Reason = jobStateInfo.Reason;
         }
-
 
         #endregion constructors
 
@@ -1730,7 +1728,6 @@ namespace System.Management.Automation
             this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
         { }
 
-
         /// <summary>
         /// Internal constructor for initializing PSRemotingJob using
         /// computer names
@@ -2192,7 +2189,6 @@ namespace System.Management.Automation
                 return _moreData;
             }
         }
-
 
         private bool _stopIsCalled = false;
         /// <summary>

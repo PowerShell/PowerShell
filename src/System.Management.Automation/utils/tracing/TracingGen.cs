@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if !UNIX
 using System.Diagnostics.Eventing;
 using System.Diagnostics.CodeAnalysis;
@@ -245,7 +247,6 @@ namespace System.Management.Automation.Tracing
             WriteEvent(WriteTransferEventEvent, currentActivityId, parentActivityId);
         }
 
-
         /// <summary>
         /// DebugMessage (EventId: 0xc000/49152)
         /// </summary>
@@ -254,7 +255,6 @@ namespace System.Management.Automation.Tracing
         {
             WriteEvent(DebugMessageEvent, message);
         }
-
 
         /// <summary>
         /// AbortingWorkflowExecution (EventId: 0xb038/45112)
@@ -982,6 +982,5 @@ namespace System.Management.Automation.Tracing
     }
 }
 // This code was generated on 02/01/2012 19:52:32
-
 
 #endif

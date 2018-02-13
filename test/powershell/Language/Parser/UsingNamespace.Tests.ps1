@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 # There is an automatic 'using namespace system' which is
 # tested by this test, so don't uncomment the following:

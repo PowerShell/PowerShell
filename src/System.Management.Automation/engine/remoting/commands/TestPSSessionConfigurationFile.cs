@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -102,7 +101,6 @@ namespace Microsoft.PowerShell.Commands
                 // Create a script info for loading the file...
                 string scriptName;
                 scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out scriptName);
-
 
                 Hashtable configTable = null;
 

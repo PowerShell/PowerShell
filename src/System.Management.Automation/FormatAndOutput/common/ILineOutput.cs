@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Management.Automation;
@@ -148,7 +147,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// call to cause the playback to happen when ready to execute
         /// </summary>
         internal delegate void DoPlayBackCall();
-
 
         /// <summary>
         /// if RequiresBuffering = true, this call will be made to

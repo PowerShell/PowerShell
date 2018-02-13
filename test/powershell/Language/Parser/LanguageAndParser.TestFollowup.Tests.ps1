@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $powershellexe = (get-process -id $PID).mainmodule.filename
 
 Describe "Clone array" -Tags "CI" {
@@ -71,7 +73,6 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput('function ', [ref]$null, [ref]$e)
         { $ast.GetScriptBlock() } | Should Throw
     }
-
 
     It "with semantic errors" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput('function foo{param()begin{}end{[ref][ref]1}dynamicparam{}}', [ref]$null, [ref]$e)

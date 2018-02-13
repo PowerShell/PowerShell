@@ -1,6 +1,5 @@
-# This is a Pester test suite to validate the cmdlets in LocalAccounts module
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 # Module removed due to #4272
 # disabling tests

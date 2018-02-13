@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
@@ -873,7 +876,6 @@ function Get-PSOutput {
     }
 }
 
-
 function Get-PesterTag {
     param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
     $alltags = @{}
@@ -1369,7 +1371,6 @@ function Test-PSPesterResults
     }
 }
 
-
 function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
@@ -1436,7 +1437,6 @@ function Start-PSxUnit {
         Pop-Location
     }
 }
-
 
 function Install-Dotnet {
     [CmdletBinding()]
@@ -1921,7 +1921,6 @@ function Start-ResGen
     }
 }
 
-
 function Find-Dotnet() {
     $originalPath = $env:PATH
     $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -1979,7 +1978,6 @@ function Convert-TxtResourceToXml
     }
 }
 
-
 function script:Use-MSBuild {
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
@@ -1997,7 +1995,6 @@ function script:Use-MSBuild {
 
     Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
-
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
@@ -2540,7 +2537,6 @@ function Restore-PSModule
         }
     }
 }
-
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>

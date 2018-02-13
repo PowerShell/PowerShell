@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -228,7 +227,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _resolvedPath = null;
 
-
         /// <summary>
         /// Validate / convert arguments
         /// </summary>
@@ -437,7 +435,6 @@ namespace Microsoft.PowerShell.Commands
                 _resolvedPath = LiteralPath;
             }
         }
-
 
         /// <summary>
         /// Processes records from the input pipeline.

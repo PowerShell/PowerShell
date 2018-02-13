@@ -1,12 +1,11 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #region Using directives
 
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-
 
 #endregion
 
@@ -28,7 +27,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
-
         /// <summary>
         /// The script block to apply
         /// </summary>
@@ -45,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
 
         #region methods
 
-
         /// <summary>
         /// Output the timer
         /// </summary>
@@ -53,7 +50,6 @@ namespace Microsoft.PowerShell.Commands
         {
             WriteObject(_stopWatch.Elapsed);
         } // EndProcessing
-
 
         /// <summary>
         /// Execute the script block passing in the current pipeline object as

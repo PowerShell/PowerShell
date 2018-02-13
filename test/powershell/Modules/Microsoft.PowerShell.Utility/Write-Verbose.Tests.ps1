@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Write-Verbose" -Tags "CI" {
     It "Should be able to call cmdlet without error" {
 	{ Write-Verbose -Message "test" -ErrorAction SilentlyContinue } | Should Not Throw

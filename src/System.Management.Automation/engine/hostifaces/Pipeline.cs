@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -205,7 +204,6 @@ namespace System.Management.Automation.Runspaces
             State = pipelineStateInfo.State;
             Reason = pipelineStateInfo.Reason;
         }
-
 
         #endregion constructors
 
@@ -460,7 +458,6 @@ namespace System.Management.Automation.Runspaces
         #endregion events
 
         #region methods
-
 
         /// <summary>
         /// Invoke the pipeline, synchronously, returning the results as an array of
@@ -744,5 +741,4 @@ namespace System.Management.Automation.Runspaces
         #endregion IDisposable Members
     }
 }
-
 

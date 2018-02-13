@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -90,7 +89,6 @@ namespace System.Management.Automation
         }
 
         #endregion ctor
-
 
         #region helper_methods
 
@@ -276,23 +274,19 @@ namespace System.Management.Automation
             // second parameter changed from true to false
             ValidateParameterSets(true, false);
 
-
             // Always get the dynamic parameters as there may be mandatory parameters there
 
             // Now try binding the dynamic parameters
             HandleCommandLineDynamicParameters(out currentBindingException);
 
-
             // Try binding the default parameters again. After dynamic binding, new parameter metadata are
             // included, so it's possible a previously unsuccessful binding will succeed.
             ApplyDefaultParameterBinding("DYNAMIC BIND", true);
-
 
             // If this generated an exception (but we didn't have one from the non-dynamic
             // parameters, report on this one.
             if (reportedBindingException == null)
                 reportedBindingException = currentBindingException;
-
 
             // If the cmdlet implements a ValueFromRemainingArguments parameter (VarArgs)
             // bind the unbound arguments to that parameter.
@@ -300,7 +294,6 @@ namespace System.Management.Automation
 
             VerifyArgumentsProcessed(reportedBindingException);
         }
-
 
         /// <summary>
         /// Process all valid parameter sets, and filter out those that don't take any pipeline input
@@ -403,7 +396,6 @@ namespace System.Management.Automation
             }
             return;
         }
-
 
         /// <summary>
         /// Bind the default parameter value pairs
@@ -518,7 +510,6 @@ namespace System.Management.Automation
 
             return result;
         }
-
 
         /// <summary>
         /// Get all qualified default parameter value pairs based on the
@@ -868,7 +859,6 @@ namespace System.Management.Automation
                 _warningSet.Add(cmdletName + Separator + paramName);
             }
         }
-
 
         /// <summary>
         /// Verify if all arguments from the command line are bound.
@@ -1446,7 +1436,6 @@ namespace System.Management.Automation
             return result;
         }
 
-
         /// <summary>
         /// Binds the specified argument to the specified parameter using the appropriate
         /// parameter binder.
@@ -1590,7 +1579,6 @@ namespace System.Management.Automation
             return result;
         }
 
-
         /// <summary>
         /// Binds the remaining arguments to an unbound ValueFromRemainingArguments parameter (Varargs)
         /// </summary>
@@ -1714,7 +1702,6 @@ namespace System.Management.Automation
                 }
             }
         } // HandleRemainingArguments
-
 
         /// <summary>
         /// Determines if the cmdlet supports dynamic parameters. If it does,
@@ -2119,7 +2106,6 @@ namespace System.Management.Automation
                                 latchOnToDefault = true;
                             }
                         }
-
 
                         if (!latchOnToDefault)
                         {
@@ -2849,7 +2835,6 @@ namespace System.Management.Automation
                     ParameterBinderStrings.AmbiguousParameterSet,
                     "AmbiguousParameterSet");
 
-
             // Trace the parameter sets still active
             uint currentParameterSet = 1;
 
@@ -3016,9 +3001,7 @@ namespace System.Management.Automation
 
                     // Create a collection to store the prompt descriptions of unbound mandatory parameters
 
-
                     Collection<FieldDescription> fieldDescriptionList = CreatePromptDataStructures(missingMandatoryParameters);
-
 
                     Dictionary<String, PSObject> parameters =
                         PromptForMissingMandatoryParameters(
@@ -3271,7 +3254,6 @@ namespace System.Management.Automation
             }
             return label.ToString();
         }
-
 
         /// <summary>
         /// Gets the parameter set name for the current parameter set.
@@ -3830,7 +3812,6 @@ namespace System.Management.Automation
             // different parameters depending on the type of the incoming pipeline
             // object.
 
-
             // Loop through each of the delay bind script blocks and invoke them.
             // Bind the result to the associated parameter
 
@@ -3915,7 +3896,6 @@ namespace System.Management.Automation
                     newValue = output[0];
                 }
 
-
                 // Create a new CommandParameterInternal for the output of the script block.
                 var newArgument = CommandParameterInternal.CreateParameterWithArgument(
                     argument.ParameterAst, argument.ParameterName, "-" + argument.ParameterName + ":",
@@ -3963,9 +3943,7 @@ namespace System.Management.Automation
             return result;
         }
 
-
         #endregion helper_methods
-
 
         #region private_members
 
@@ -4817,5 +4795,4 @@ namespace System.Management.Automation
         #endregion KeyValidation
     }
 }
-
 

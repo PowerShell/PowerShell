@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using System;
 
 namespace mvc.Controllers
@@ -10,7 +12,6 @@ namespace mvc.Controllers
         public const string MalformedUrlLinkHeader = "{url}; foo";
         public const string NoRelLinkHeader = "<url>; foo=\"bar\"";
         public const string NoUrlLinkHeader = "<>; rel=\"next\"";
-
 
     }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -396,7 +395,6 @@ namespace System.Management.Automation
             return currentMatch;
         }
 
-
         /// <summary>
         /// Gets the CommandInfo representing the current command match.
         /// </summary>
@@ -421,7 +419,6 @@ namespace System.Management.Automation
                 return _currentMatch;
             }
         } // Current
-
 
         object IEnumerator.Current
         {
@@ -629,7 +626,6 @@ namespace System.Management.Automation
                     }
                     break;
                 }
-
 
                 if ((_commandTypes & CommandTypes.Application) != 0)
                 {
@@ -1355,7 +1351,6 @@ namespace System.Management.Automation
 
             return result;
         } // CanDoPathLookup
-
 
         /// <summary>
         /// The command name to search for

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56523
@@ -211,7 +210,6 @@ namespace System.Management.Automation.Internal
 
             return ExecutionPolicy.Restricted;
         }
-
 
         private static bool? _hasGpScriptParent;
 
@@ -972,7 +970,6 @@ namespace Microsoft.PowerShell.Commands
     }
 }
 
-
 namespace System.Management.Automation
 {
     using System.Security.Cryptography.Pkcs;
@@ -1457,7 +1454,6 @@ namespace System.Management.Automation
                     processedThumbprints.Add(certificate.Thumbprint);
                 }
 
-
                 if (purpose == ResolutionPurpose.Encryption)
                 {
                     // Only let wildcards expand to one recipient. Otherwise, data
@@ -1739,12 +1735,10 @@ namespace System.Management.Automation
             internal static extern int AmsiInitialize(
                 [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
 
-
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiUninitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiUninitialize(System.IntPtr amsiContext);
-
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
@@ -1752,13 +1746,11 @@ namespace System.Management.Automation
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiOpenSession(System.IntPtr amsiContext, ref System.IntPtr amsiSession);
 
-
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiCloseSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiCloseSession(System.IntPtr amsiContext, System.IntPtr amsiSession);
-
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
@@ -1771,7 +1763,6 @@ namespace System.Management.Automation
             internal static extern int AmsiScanBuffer(
                 System.IntPtr amsiContext, System.IntPtr buffer, uint length,
                 [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
-
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*

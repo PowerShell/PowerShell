@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -399,8 +398,6 @@ namespace System.Management.Automation
 
         #region Engine State
 
-
-
         /// <summary>
         /// The state for current engine that is running.
         /// </summary>
@@ -572,7 +569,6 @@ namespace System.Management.Automation
         /// <value>Reference to command discovery</value>
         internal CommandProcessorBase CurrentCommandProcessor { get; set; }
 
-
         /// <summary>
         /// Redirect to the CommandDiscovery in the engine.
         /// </summary>
@@ -584,7 +580,6 @@ namespace System.Management.Automation
                 return Engine.CommandDiscovery;
             }
         }
-
 
         /// <summary>
         /// Interface that should be used for interaction with host
@@ -604,7 +599,6 @@ namespace System.Management.Automation
         {
             get { return EngineHostInterface; }
         }
-
 
         /// <summary>
         /// Interface to the public API for the engine

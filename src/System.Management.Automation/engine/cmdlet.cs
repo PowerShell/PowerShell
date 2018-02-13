@@ -1,8 +1,7 @@
-#pragma warning disable 1634, 1691
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+#pragma warning disable 1634, 1691
 
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -12,8 +11,6 @@ using System.Reflection;
 using System.Resources;
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
-
-
 
 namespace System.Management.Automation
 {
@@ -58,7 +55,6 @@ namespace System.Management.Automation
             }
         );
 
-
         /// <summary>
         /// Lists the common parameters that are added by the PowerShell engine when a cmdlet defines
         /// additional capabilities (SupportsShouldProcess, SupportsTransactions)
@@ -77,7 +73,6 @@ namespace System.Management.Automation
                     "WhatIf", "Confirm", "UseTransaction" };
             }
         );
-
 
         /// <summary>
         /// Is this command stopping?
@@ -1171,7 +1166,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         #endregion ShouldProcess
 

@@ -1,12 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Linq;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-
 
 namespace System.Management.Automation
 {
@@ -30,7 +28,6 @@ namespace System.Management.Automation
         /// </summary>
         ///
         internal CommandDiscovery CommandDiscovery { get; }
-
 
         /// <summary>
         /// The principal constructor that most hosts will use when creating

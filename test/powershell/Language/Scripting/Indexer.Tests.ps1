@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Tests for indexers' -Tags "CI" {
     It 'Indexer in dictionary' {
 

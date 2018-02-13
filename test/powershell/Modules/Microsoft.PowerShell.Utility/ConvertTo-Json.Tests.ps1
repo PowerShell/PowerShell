@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
     It 'Newtonsoft.Json.Linq.Jproperty should be converted to Json properly' {
         $EgJObject = New-Object -TypeName Newtonsoft.Json.Linq.JObject

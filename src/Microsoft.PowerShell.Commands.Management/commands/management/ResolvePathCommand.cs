@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -75,7 +74,6 @@ namespace Microsoft.PowerShell.Commands
             } // set
         } // Relative
         private SwitchParameter _relative;
-
 
         #endregion Parameters
 
@@ -157,7 +155,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
         #endregion Command code
-
 
     } // ResolvePathCommand
 } // namespace Microsoft.PowerShell.Commands

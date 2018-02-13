@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Out-Host Tests" -tag CI {
     BeforeAll {
         $th = New-TestHost

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Import-LocalizedData LocalizedData -FileName Microsoft.PowerShell.ODataUtilsStrings.psd1
 
 # Add .NET classes used by the module
@@ -383,7 +386,6 @@ function ParseTypeDefinitions
     )
 
     if($null -eq $SchemaXML) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseTypeDefinitions") }
-
 
     foreach ($typeDefinition in $SchemaXML.TypeDefinition)
     {
@@ -778,7 +780,6 @@ function VerifyMetadata
     $reservedProperties = @("Filter", "OrderBy", "Skip", "Top", "ConnectionUri", "CertificateThumbPrint", "Credential")
     $validEntitySets = @()
     $sessionCommands = Get-Command -All
-
 
     foreach ($metadata in $metadataSet)
     {
@@ -1653,7 +1654,6 @@ function SaveCDXMLInstanceCmdlets
                 }
                 $xmlWriter.WriteAttributeString('DefaultCmdletParameterSet', $defaultCmdletParameterSet)
 
-
                 $xmlWriter.WriteStartElement('QueryableProperties')
 
                 $position = 0
@@ -1757,7 +1757,6 @@ function SaveCDXMLInstanceCmdlets
                     $xmlWriter.WriteEndElement()
                     $xmlWriter.WriteEndElement()
                 }
-
 
                 $xmlWriter.WriteEndElement()
             }

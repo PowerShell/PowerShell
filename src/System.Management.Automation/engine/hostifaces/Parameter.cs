@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Language;
 using Microsoft.Management.Infrastructure;
@@ -62,7 +61,6 @@ namespace System.Management.Automation.Runspaces
             }
             Value = value;
         }
-
 
         #endregion Public constructors
 
@@ -307,5 +305,4 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-
 

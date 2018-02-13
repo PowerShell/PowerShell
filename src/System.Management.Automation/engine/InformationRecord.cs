@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using System.Collections.Generic;
@@ -245,7 +244,6 @@ namespace System.Management.Automation
         /// The background color of the message
         /// </summary>
         public ConsoleColor? BackgroundColor { get; set; }
-
 
         /// <summary>
         /// Returns a string-based representation of the host information message
