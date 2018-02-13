@@ -90,7 +90,7 @@ Describe "Out-File" -Tags "CI" {
         $actual[11] | Should Be ""
     }
 
-    It "Should create file with correct name" {
+    It "Should create the file with correct name when FilePath contains special char" {
         Out-File -FilePath $testfile
         Out-File -FilePath $testfile2
 

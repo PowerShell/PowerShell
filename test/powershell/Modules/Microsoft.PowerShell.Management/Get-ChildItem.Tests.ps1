@@ -19,6 +19,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
             $null = New-Item -Path (Join-Path -Path $TestDrive -ChildPath $item_E) -Name $item_G -ItemType "File" -Force
 
+            $specialDirName = "Test[Dir]"
             $specialDir = "Test``[Dir``]"
         }
 
@@ -84,11 +85,10 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should list files in directory contains special char" {
-            $null = New-Item -Path $TestDrive -Name $specialDir -ItemType Directory -Force
+            $null = New-Item -Path $TestDrive -Name $specialDirName -ItemType Directory -Force
             $specialPath = Join-Path $TestDrive $specialDir
             $null = New-Item -Path $specialPath -Name file1.txt -ItemType File -Force
             $null = New-Item -Path $specialPath -Name file2.txt -ItemType File -Force
-            { Get-ChildItem -Path $specialPath } | Should Not Throw
             (Get-ChildItem -Path $specialPath).Count | Should Be 2
         }
     }

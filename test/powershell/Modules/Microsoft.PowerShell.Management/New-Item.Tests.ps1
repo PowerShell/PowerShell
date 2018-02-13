@@ -63,12 +63,6 @@ Describe "New-Item" -Tags "CI" {
         Test-Path $FullyQualifiedFile | Should Be $true
     }
 
-    It "Should create a file with correct name" {
-        New-Item -Path $FullyQualifiedFile2 -ItemType file
-
-        Test-Path $FullyQualifiedFile2 | Should Be $true
-    }
-
     It "Should create a file with sample text inside the file using the Value switch" {
         $expected = "This is test string"
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Value $expected
@@ -90,6 +84,12 @@ Describe "New-Item" -Tags "CI" {
         New-Item -Path $FullyQualifiedFile -ItemType file
 
         Test-Path $FullyQualifiedFile | Should Be $true
+    }
+
+    It "Should create a file with correct name when Name switch is not used and Path contains special char" {
+        New-Item -Path $FullyQualifiedFile2 -ItemType file
+
+        Test-Path $FullyQualifiedFile2 | Should Be $true
     }
 
     It "Should be able to create a multiple items in different directories" {
