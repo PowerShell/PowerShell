@@ -4764,7 +4764,7 @@ $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or 
 
 # Respect PAGER, use more on Windows, and use less on Linux
 if (Test-Path env:PAGER) {
-    $pager,$moreArgs = $env:PAGER -split ' ',2
+    $pager,$moreArgs = $env:PAGER -split '\s+'
     $moreCommand = (Get-Command -CommandType Application $pager | Select-Object -First 1).Definition
 } elseif ($IsWindows) {
     $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
