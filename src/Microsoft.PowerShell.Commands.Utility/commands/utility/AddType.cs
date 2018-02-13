@@ -14,6 +14,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Security;
 using System.Text;
 
@@ -1233,9 +1234,11 @@ namespace Microsoft.PowerShell.Commands
                     emitResult = compilation.Emit(peStream: ms, options: _emitOptions);
                     if (emitResult.Success)
                     {
+                        // TODO:  We could use Assembly.LoadFromStream() in future.
+                        // See https://github.com/dotnet/corefx/issues/26994
                         ms.Flush();
                         ms.Seek(0, SeekOrigin.Begin);
-                        Assembly assembly = Assembly.Load(ms.ToArray());
+                        Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 
                         CacheNewTypes(newTypes);
                         CacheAssemply(assembly);
