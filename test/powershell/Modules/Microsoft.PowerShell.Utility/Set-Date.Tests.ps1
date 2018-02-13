@@ -1,9 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
-    # Currently, CI tests on Linux/macOS are always run as normal user. So we need to skip these tests on non-Windows platform.
-    # CI tests in root privilege on Linux/macOS is not supported.
-    # See : https://github.com/PowerShell/PowerShell/issues/5645
     It "Set-Date should be able to set the date in an elevated context" {
         { Get-Date | Set-Date } | Should Not Throw
     }
