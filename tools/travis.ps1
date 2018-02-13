@@ -240,7 +240,7 @@ elseif($Stage -eq 'Build')
     # Determine whether the build passed
     try {
         # this throws if there was an error
-        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | For-Each Object { Test-PSPesterResults -ResultObject }
+        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject }
         $result = "PASS"
     }
     catch {
