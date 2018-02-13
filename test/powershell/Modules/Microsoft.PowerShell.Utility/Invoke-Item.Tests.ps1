@@ -53,7 +53,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
     }
 
     It "Should invoke an executable file without error" {
-        # In case there is a couple of ping executables, we are taking just the first one.
+        # In case there is a couple of ping executables, we take the first one.
         $ping = (Get-Command "ping" -CommandType Application | Select-Object -First 1).Source
         $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
 
