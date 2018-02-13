@@ -1,4 +1,4 @@
-Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo') {
+Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     # Currently, CI tests on Linux/macOS are always run as normal user. So we need to skip these tests on non-Windows platform.
     # CI tests in root privilege on Linux/macOS is not supported.
     # See : https://github.com/PowerShell/PowerShell/issues/5645

@@ -881,6 +881,7 @@ function Get-PesterTag {
 
     get-childitem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
         $fullname = $_.fullname
+        Write-Host $_.fullname
         $tok = $err = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
         $des = $ast.FindAll({$args[0] -is "System.Management.Automation.Language.CommandAst" -and $args[0].CommandElements[0].Value -eq "Describe"},$true)
@@ -896,7 +897,7 @@ function Get-PesterTag {
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
                     $values | ForEach-Object {
-                        if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
+                        if (@('REQUIREADMINONWINDOWS', 'REQUIRESUDOONUNIX', 'SLOW') -contains $_) {
                             # These are valid tags also, but they are not the priority tags
                         }
                         elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
@@ -1159,27 +1160,28 @@ Restore the module to '$Pester' by running:
         {
             if ($PassThru.IsPresent)
             {
-                $passThruFile = [System.IO.Path]::GetTempFileName()
+                $PassThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $Command += "|Export-Clixml -Path '$PassThruFile' -Force"
+
                     $PassThruCommand = {& $powershell -noprofile -c $Command }
                     if ($Sudo.IsPresent) {
                         $PassThruCommand =  {& sudo $powershell -noprofile -c $Command }
                     }
 
-                    $writeCommand = { Write-Host $_ }
+                    $WriteCommand = { Write-Host $_ }
                     if ($Terse)
                     {
-                        $writeCommand = { Write-Terse $_ }
+                        $WriteCommand = { Write-Terse $_ }
                     }
 
-                    Start-NativeExecution -sb $PassThruCommand | ForEach-Object $writeCommand
-                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
+                    Start-NativeExecution -sb $PassThruCommand | ForEach-Object $WriteCommand
+                    Import-Clixml -Path $PassThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
                 {
-                    Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                    Remove-Item $PassThruFile -ErrorAction SilentlyContinue
                 }
             }
             else
