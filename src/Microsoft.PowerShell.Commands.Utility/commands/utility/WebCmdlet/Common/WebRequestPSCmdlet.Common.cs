@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -554,7 +553,6 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.UseDefaultCredentials = true;
             }
 
-
             if (null != CertificateThumbprint)
             {
                 X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
@@ -946,7 +944,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
-
 
             HttpClient httpClient = new HttpClient(handler);
 

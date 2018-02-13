@@ -1,8 +1,9 @@
-#if CORECLR
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #if CORECLR
 
 #pragma warning disable
-
 
 namespace Microsoft.PowerShell.Cmdletization.Xml
 {
@@ -25,7 +26,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         //     CDXML files are under the namespace "http://schemas.microsoft.com/cmdlets-over-objects/2009/11".
         //  3. ReadTypedPrimitive(XmlQualifiedName type) and ReadTypedNull(XmlQualifiedName type). See the comments
         //     in them for more information.
-
 
         #region "Constructor"
 
@@ -58,7 +58,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
 
         #endregion "Constructor"
-
 
         #region "Field Definition"
 
@@ -145,7 +144,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
 
         #endregion "Field Definition"
 
-
         #region "Property Definition"
 
         internal XmlReader Reader
@@ -196,7 +194,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
 
         #endregion "Property Definition"
-
 
         #region "Method Definition"
 
@@ -533,7 +530,6 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
 
         #endregion "Method Definition"
-
 
         #endregion Copy_From_XmlSerializationReader
 
@@ -6333,7 +6329,4 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         }
     }
 }
-#endif
-
-
 #endif

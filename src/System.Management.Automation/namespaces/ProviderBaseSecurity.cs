@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Security.AccessControl;
 
@@ -13,7 +12,6 @@ namespace System.Management.Automation.Provider
     public abstract partial class CmdletProvider
     {
         #region ISecurityDescriptorCmdletProvider method wrappers
-
 
         /// <summary>
         /// Internal wrapper for the GetSecurityDescriptor protected method. This method will
@@ -55,7 +53,6 @@ namespace System.Management.Automation.Provider
 
             permissionProvider.GetSecurityDescriptor(path, sections);
         } // GetSecurityDescriptor
-
 
         /// <summary>
         /// Internal wrapper for the SetSecurityDescriptor protected method. This method will

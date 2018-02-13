@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -142,7 +141,6 @@ namespace System.Management.Automation
 
             return resultItem;
         } // GetVariableValue
-
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
@@ -849,7 +847,6 @@ namespace System.Management.Automation
                             false);
                     }
 
-
                     if (readers == null || readers.Count == 0)
                     {
                         // The drive was found but the path was wrong or something so return null.
@@ -1402,7 +1399,6 @@ namespace System.Management.Automation
                         notSupported,
                         false);
                 }
-
 
                 if (writers == null || writers.Count == 0)
                 {

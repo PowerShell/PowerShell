@@ -1,4 +1,6 @@
-﻿Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
     # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'

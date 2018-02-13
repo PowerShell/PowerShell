@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -47,7 +46,6 @@ namespace Microsoft.PowerShell.Commands
         /// The parameter set name to get the extension
         /// </summary>
         private const string extensionSet = "ExtensionSet";
-
 
         /// <summary>
         /// The parameter set name to get the qualifier set.
@@ -186,7 +184,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region parameter data
-
 
         #endregion parameter data
 

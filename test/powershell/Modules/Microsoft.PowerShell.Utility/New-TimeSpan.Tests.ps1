@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "New-TimeSpan DRT Unit Tests" -Tags "CI" {
 
      It "Should works proper with new-timespan"{

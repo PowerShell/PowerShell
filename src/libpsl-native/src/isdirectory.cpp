@@ -1,5 +1,6 @@
-//! @file isdirectory.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief returns if the path is a directory
 
 #include "getstat.h"

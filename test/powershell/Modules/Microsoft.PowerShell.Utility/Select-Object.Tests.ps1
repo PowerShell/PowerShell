@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 
 Describe "Select-Object" -Tags "CI" {

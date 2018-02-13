@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -916,7 +915,6 @@ function __cmdletization_BindCommonParameters
                 }
             }
         }
-
 
         private const string StaticCommonParameterSetTemplate = "{1}"; //"{0}::{1}";
         private const string StaticMethodParameterSetTemplate = "{0}"; //"{1}::{0}";
@@ -2195,7 +2193,6 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                     cmdletMetadatas.Concat(
                         _cmdletizationMetadata.Class.StaticCmdlets.Select(c => c.CmdletMetadata));
             }
-
 
             foreach (CommonCmdletMetadata cmdletMetadata in cmdletMetadatas)
             {

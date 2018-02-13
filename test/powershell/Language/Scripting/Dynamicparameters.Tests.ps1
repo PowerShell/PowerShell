@@ -1,4 +1,6 @@
-﻿Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
         Class MyTestParameter {
             [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]

@@ -1,6 +1,6 @@
-﻿#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
+
 # This is a Pester test suite which validate the Json cmdlets.
 #
 
@@ -335,7 +335,6 @@ Describe "Json Tests" -Tags "Feature" {
             $result.SampleValue | Should Be 12345
         }
 
-
         It "ConvertFrom-Json sample values" {
 
             $json = '{"SampleInt":98765, "SampleString":"stringVal","SampleArray":[2,"two"], "SampleTrue":true, "SampleFalse":false,"SampleNull":null, "SampleFloat":9.8765E43}'
@@ -343,7 +342,6 @@ Describe "Json Tests" -Tags "Feature" {
 
             # Validate the result object
             ValidateSampleObject -result $result
-
 
             $json = '{"SampleInt":98765, "SampleString":"stringVal","SampleArray":[2,"two"], "SampleTrue":true, ' +
                     '"SampleFalse":false,"SampleNull":null, "SampleFloat":9.8765E43, "SampleObject":'+
@@ -1270,7 +1268,6 @@ Describe "Validate Json serialization" -Tags "CI" {
         }
     }
 
-
     Context "Validate Json Serialization for 'Get-CimClass' and 'Get-Command'" {
 
         function ValidateProperties
@@ -1368,7 +1365,6 @@ Describe "Validate Json serialization" -Tags "CI" {
             $actual | Should Be $expectedNoWhiteSpace
         }
     }
-
 
     Context "Validate Json output is either Pretty or Compressed" {
 

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable normal variable Name should works"{
 		Set-Variable foo bar

@@ -1,5 +1,6 @@
-//! @file getcomputername.cpp
-//! @author George Fleming <v-geflem@microsoft>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Implements GetComputerName Win32 API
 
 #include "getcomputername.h"

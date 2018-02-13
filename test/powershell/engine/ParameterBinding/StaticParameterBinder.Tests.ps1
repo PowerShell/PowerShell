@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Management.Automation.Language
 
 Describe "StaticParameterBinder tests" -Tags "CI" {

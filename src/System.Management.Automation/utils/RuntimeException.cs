@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
@@ -132,7 +131,6 @@ namespace System.Management.Automation
                 _targetObject);
             _errorRecord.SetInvocationInfo(new InvocationInfo(invocationInfo.MyCommand, errorPosition));
         }
-
 
         #endregion ctor
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Specialized;
 using System.Management.Automation.Internal;
@@ -67,7 +66,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 columnNumber++;
             }
         }
-
 
         /// <summary>
         /// Initialize the table specifying the width of each column
@@ -214,7 +212,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-
             if (multiLine)
             {
                 string[] lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
@@ -245,7 +242,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (validColumnCount == 0)
                 return null;
-
 
             StringCollection[] scArray = new StringCollection[validColumnCount];
             for (int k = 0; k < scArray.Length; k++)
@@ -334,7 +330,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return sc;
         }
 
-
         private string GenerateRow(string[] values, int[] alignment, DisplayCells dc)
         {
             StringBuilder sb = new StringBuilder();
@@ -366,7 +361,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return sb.ToString();
         }
-
 
         private static string GenerateRowField(string val, int width, int alignment, DisplayCells dc)
         {

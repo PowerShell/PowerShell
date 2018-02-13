@@ -1,4 +1,6 @@
-﻿$ProgressPreference = "SilentlyContinue"
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+$ProgressPreference = "SilentlyContinue"
 
 Describe 'get-help HelpFunc1' -Tags "Feature" {
     BeforeAll {
@@ -79,7 +81,6 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         #
         function helpFunc1 {}
     }
-
 
     Context 'Get-Help helpFunc1' {
         $x = get-help helpFunc1
@@ -328,7 +329,6 @@ Describe 'get-help other tests' -Tags "CI" {
           description
 
         .Synopsis
-
 
         .Component
           component

@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -176,7 +176,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion
 
-
         #region DriveCmdletProvider
         /// <summary>
         ///
@@ -220,7 +219,6 @@ namespace Microsoft.WSMan.Management
             WSManHelper.ReleaseSessions();
             return drive;
         }
-
 
         #endregion
 
@@ -389,8 +387,6 @@ namespace Microsoft.WSMan.Management
                 //Gets the session object from the cache.
                 object sessionobj;
                 SessionObjCache.TryGetValue(host, out sessionobj);
-
-
 
                 /*
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether it has Child Items.
@@ -573,7 +569,6 @@ namespace Microsoft.WSMan.Management
                 WriteItemObject(GetItemPSObjectWithTypeName(WSManStringLiterals.rootpath, WSManStringLiterals.ContainerChildValue, null, null, null, WsManElementObjectTypes.WSManConfigElement), WSManStringLiterals.rootpath, true);
                 return;
             }
-
 
             if (path.Contains(WSManStringLiterals.DefaultPathSeparator.ToString()))
             {
@@ -865,7 +860,6 @@ namespace Microsoft.WSMan.Management
                 AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
                 return;
             }
-
 
             if (path.Contains(WSManStringLiterals.DefaultPathSeparator.ToString()))
             {
@@ -1353,7 +1347,6 @@ namespace Microsoft.WSMan.Management
             return null;
         }
 
-
         #endregion
 
         #region ContainerCmdletProvider
@@ -1426,8 +1419,6 @@ namespace Microsoft.WSMan.Management
                 object sessionobj;
                 SessionObjCache.TryGetValue(host, out sessionobj);
 
-
-
                 /*
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether Item is Container
 
@@ -1490,7 +1481,6 @@ namespace Microsoft.WSMan.Management
                     }
                     strPathCheck = strPathCheck + WSManStringLiterals.DefaultPathSeparator;
                     XmlDocument xmlPlugins = FindResourceValue(sessionobj, WsManURI, null);
-
 
                     string currentpluginname = string.Empty;
                     GetPluginNames(xmlPlugins, out objPluginNames, out currentpluginname, path);
@@ -1616,7 +1606,6 @@ namespace Microsoft.WSMan.Management
             string host = GetHostName(path);
             string uri = NormalizePath(path, host);
 
-
             //Chk for Winrm Service
             if (IsPathLocalMachine(host))
             {
@@ -1643,7 +1632,6 @@ namespace Microsoft.WSMan.Management
                 string inputStr = String.Empty;
                 string strPathCheck = String.Empty;
                 strPathCheck = host + WSManStringLiterals.DefaultPathSeparator;
-
 
                 if (path.Contains(strPathCheck + WSManStringLiterals.containerPlugin))//(path.Contains(@"\plugin"))
                 {
@@ -1766,7 +1754,6 @@ namespace Microsoft.WSMan.Management
                 return;
             }
 
-
             if (path.Length == 0 || !path.Contains(WSManStringLiterals.DefaultPathSeparator.ToString()))
             {
                 NewItemCreateComputerConnection(path);
@@ -1796,7 +1783,6 @@ namespace Microsoft.WSMan.Management
             {
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
                 SessionObjCache.TryGetValue(host, out sessionobj);
-
 
                 string strPathChk = host + WSManStringLiterals.DefaultPathSeparator;
                 if (path.Contains(strPathChk + WSManStringLiterals.containerPlugin))//(path.Contains(@"\plugin"))
@@ -2069,7 +2055,6 @@ namespace Microsoft.WSMan.Management
                 string NewItem = String.Empty;
                 string[] Keys = null;
 
-
                 int pos = path.LastIndexOf(strPathChk + WSManStringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase) + strPathChk.Length + 1;
                 int pindex = path.IndexOf(WSManStringLiterals.DefaultPathSeparator, pos);
                 if (pindex != -1)
@@ -2088,7 +2073,6 @@ namespace Microsoft.WSMan.Management
                 PSObject ps = ProcessPluginConfigurationLevel(pxml);
                 ArrayList ResourceArray = ProcessPluginResourceLevel(pxml, out SecurityArray);
                 ArrayList InitParamArray = ProcessPluginInitParamLevel(pxml);
-
 
                 strPathChk = strPathChk + WSManStringLiterals.DefaultPathSeparator + pName + WSManStringLiterals.DefaultPathSeparator;
                 if (path.Contains(strPathChk + WSManStringLiterals.containerResources))
@@ -3734,7 +3718,6 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-
         /// <summary>
         /// Used By ItemExists, HasChildItem,IsValidPath, IsItemContainer
         /// </summary>
@@ -3762,7 +3745,6 @@ namespace Microsoft.WSMan.Management
             {
                 ChildName = path;
             }
-
 
             //Get the wsman host name to find the session object
             string host = GetHostName(path);
@@ -4065,7 +4047,6 @@ namespace Microsoft.WSMan.Management
                 throw new InvalidOperationException("InvalidPath");
             }
 
-
             //Checks the WinRM Service
             if (IsPathLocalMachine(host))
             {
@@ -4229,8 +4210,6 @@ namespace Microsoft.WSMan.Management
                                                 PSObject obj = new PSObject();
                                                 obj.Properties.Add(new PSNoteProperty(p.Properties["ResourceDir"].Value.ToString(), WSManStringLiterals.ContainerChildValue));
                                                 WritePSObjectPropertiesAsWSManElementObjects(obj, path, key, null, WsManElementObjectTypes.WSManConfigContainerElement, recurse);
-
-
 
                                                 //WriteItemObject(new WSManConfigContainerElement(p.Properties["ResourceDir"].Value.ToString(), WSManStringLiterals.ContainerChildValue, key), path + WSManStringLiterals.DefaultPathSeparator + p.Properties["ResourceDir"].Value.ToString(), true);
                                                 break;
@@ -4585,7 +4564,6 @@ namespace Microsoft.WSMan.Management
             keys = keysColumns.Split('|');
         }
 
-
         private void ProcessCertMappingObjects(XmlDocument xmlCerts, out Hashtable Certcache, out Hashtable Keyscache)
         {
             Hashtable lCache = new Hashtable();
@@ -4789,7 +4767,6 @@ namespace Microsoft.WSMan.Management
                         {
                             objResource.Properties.Add(new PSNoteProperty("SupportsOptions", false));
                         }
-
 
                         //Processing capabilities
 
@@ -5365,7 +5342,6 @@ namespace Microsoft.WSMan.Management
         }
         private Hashtable optionset;
 
-
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
         /// This parameter takes a set of authentication methods the user can select
@@ -5793,7 +5769,6 @@ namespace Microsoft.WSMan.Management
 
     }
 
-
 #endregion
 
 #region Listener Dynamic Parameters
@@ -5975,7 +5950,6 @@ namespace Microsoft.WSMan.Management
         private SwitchParameter _concatenate = false;
     }
 
-
 #endregion SetItemDynamicParameters
 
 #endregion
@@ -6123,7 +6097,6 @@ namespace Microsoft.WSMan.Management
         /// certmapping Container - Exposed as ClientCertificate in the provider.
         /// </summary>
         internal const string containerCertMapping = "Service/certmapping";
-
 
         /// <summary>
         /// Possible Values in Plugin Top Level XML
@@ -6358,11 +6331,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
         private string[] _keys;
     }
 
-
-
 #endregion "WsMan Output Objects"
 
-
 }
-
 

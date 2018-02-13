@@ -1,5 +1,6 @@
-//! @file test-getfullyqualifiedname.cpp
-//! @author George Fleming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Unit tests for GetFullyQualifiedName
 
 #include <gtest/gtest.h>

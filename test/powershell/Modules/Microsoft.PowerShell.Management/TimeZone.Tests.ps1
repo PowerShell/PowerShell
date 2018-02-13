@@ -1,6 +1,5 @@
-# This is a Pester test suite to validate the cmdlets in the TimeZone module
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 <#
     --------------------------------------

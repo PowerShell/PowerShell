@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -13,8 +13,6 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-
-
 
 namespace Microsoft.WSMan.Management
 {
@@ -206,7 +204,6 @@ namespace Microsoft.WSMan.Management
         }
         private Hashtable valueset;
 
-
         /// <summary>
         /// The following is the definition of the input parameter "ResourceURI".
         /// URI of the resource class/instance representation
@@ -223,12 +220,10 @@ namespace Microsoft.WSMan.Management
         }
         private Uri resourceuri;
 
-
         private WSManHelper helper;
         IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
         IWSManSession m_session = null;
         string connectionStr = string.Empty;
-
 
         /// <summary>
         /// BeginProcessing method.
@@ -242,7 +237,6 @@ namespace Microsoft.WSMan.Management
             //create the connection string
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
 
-
         }
 
         /// <summary>
@@ -250,7 +244,6 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void ProcessRecord()
         {
-
 
             try
             {
@@ -319,10 +312,6 @@ namespace Microsoft.WSMan.Management
             //  WSManHelper helper = new WSManHelper();
             helper.CleanUp();
         }
-
-
-
-
 
 
     }//End Class

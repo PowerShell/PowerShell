@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Range Operator" -Tags CI {
     Context "Range integer operations" {
         It "Range operator generates arrays of integers" {

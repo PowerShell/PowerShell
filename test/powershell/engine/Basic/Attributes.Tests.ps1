@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Attribute tests" -Tags "CI" {
     BeforeEach {
         Remove-Item $testdrive/test.ps1 -Force -ErrorAction SilentlyContinue

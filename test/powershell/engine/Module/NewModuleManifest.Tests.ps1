@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "New-ModuleManifest tests" -tags "CI" {
     BeforeEach {
         $null = New-Item -ItemType Directory -Path testdrive:/module

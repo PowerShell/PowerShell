@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Globalization;
 using System.Collections.ObjectModel;
@@ -219,7 +218,6 @@ namespace System.Management.Automation.Help
         /// Progress percentage
         /// </summary>
         internal int ProgressPercent { get; }
-
 
         /// <summary>
         /// Module name
@@ -674,7 +672,6 @@ namespace System.Management.Automation.Help
                     }
                 }
             }
-
 
             if (!String.IsNullOrEmpty(currentCulture) && helpInfo.HelpContentUriCollection.Count == 0)
             {

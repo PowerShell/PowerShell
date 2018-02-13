@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Configuration file locations" -tags "CI","Slow" {
 
     BeforeAll {

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 
@@ -56,7 +55,6 @@ namespace System.Management.Automation
         /// </summary>
         internal Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata> PipelineableMandatoryByPropertyNameParameters
         { get; } = new Dictionary<MergedCompiledCommandParameter, ParameterSetSpecificMetadata>();
-
 
         /// <summary>
         /// Gets the parameters that do not take pipeline input and are mandatory in this parameter set

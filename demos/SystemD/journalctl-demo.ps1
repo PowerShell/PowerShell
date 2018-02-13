@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Import-Module $PSScriptRoot/SystemD/SystemD.psm1
 
 #list recent journal events

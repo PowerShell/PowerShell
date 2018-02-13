@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation;
@@ -24,7 +23,6 @@ namespace System.Management.Automation
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // CmdletProviderIntrinsics private
-
 
         /// <summary>
         /// Constructs a facade over the "real" session state API
@@ -777,7 +775,6 @@ namespace System.Management.Automation
             _sessionState.InvokeDefaultAction(new string[] { path }, false);
         } // InvokeDefaultAction
 
-
         /// <summary>
         /// Invokes the default action of the item(s) at the specified path(s).
         /// </summary>
@@ -826,7 +823,6 @@ namespace System.Management.Automation
 
             _sessionState.InvokeDefaultAction(path, literalPath);
         } // InvokeDefaultAction
-
 
         /// <summary>
         /// Invokes the default action for the item at the specified path.
@@ -1225,7 +1221,6 @@ namespace System.Management.Automation
             return _sessionState.NewItem(new string[] { path }, name, itemTypeName, content, false);
         } // NewItem
 
-
         /// <summary>
         /// Creates a new item at the given path.
         /// </summary>
@@ -1295,7 +1290,6 @@ namespace System.Management.Automation
 
             return _sessionState.NewItem(path, name, itemTypeName, content, force);
         } // NewItem
-
 
         /// <summary>
         /// Creates a new item at the given path.
@@ -1999,7 +1993,6 @@ namespace System.Management.Automation
             return _sessionState.MoveItem(new string[] { path }, destination, false, false);
         } // MoveItem
 
-
         /// <summary>
         /// Moves the item at the specified path to the specified destination.
         /// </summary>
@@ -2069,7 +2062,6 @@ namespace System.Management.Automation
 
             return _sessionState.MoveItem(path, destination, force, literalPath);
         } // MoveItem
-
 
         /// <summary>
         /// Moves the item at the specified path to the specified destination.

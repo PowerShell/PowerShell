@@ -1,6 +1,6 @@
 @{
     GUID = '41486F7D-842F-40F1-ACE4-8405F9C2ED9B'
-    Author="Microsoft Corporation"
+    Author="PowerShell"
     CompanyName="Microsoft Corporation"
     Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
     ModuleVersion = '2.0.0.0'

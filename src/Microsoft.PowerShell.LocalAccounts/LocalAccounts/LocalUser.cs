@@ -1,4 +1,7 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 
 using Microsoft.PowerShell.LocalAccounts;
 
@@ -52,7 +55,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public bool UserMayChangePassword { get; set; }
 
-
         /// <summary>
         /// Indicates whether the user must have a password (true) or not (false).
         /// </summary>
@@ -68,7 +70,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DateTime? LastLogon { get; set; }
         #endregion Public Properties
-
 
         #region Construction
         /// <summary>

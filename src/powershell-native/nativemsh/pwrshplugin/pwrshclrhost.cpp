@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Contents:  Source code for abstraction of CLR and worker differences between PowerShell versions.
 //  pwrshplugin is totally unmanaged.

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
 		It "Should call format table on piped input without error" {
 				{ Get-Date | Format-Table } | Should Not Throw
@@ -26,7 +28,6 @@ Describe "Format-Table" -Tags "CI" {
 
 		}
 }
-
 
 Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		It "Format-Table with not existing table with force should throw PipelineStoppedException"{

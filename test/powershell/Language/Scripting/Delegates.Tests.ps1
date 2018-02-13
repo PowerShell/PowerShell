@@ -1,4 +1,6 @@
-﻿Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
     BeforeAll {
         function lineno
         {

@@ -1,4 +1,6 @@
-﻿Describe "CliXml test" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "CliXml test" -Tags "CI" {
 
     BeforeAll {
         $testFilePath = Join-Path "testdrive:\" "testCliXml"
@@ -96,7 +98,6 @@
         }
 
         It "can be created with literal path using pipeline" {
-
 
             $filePath = Join-Path $subFilePath 'gps.xml'
             ($gpsList | Select-Object -First 1) | Export-Clixml -Depth 1 -LiteralPath $filePath

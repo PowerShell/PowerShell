@@ -1,8 +1,5 @@
-﻿##
-## Copyright (c) Microsoft Corporation. All rights reserved.
-##
-## Debugging in Host tests
-##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" {
 

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
 
@@ -39,7 +41,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should Be 1
         $res.Name | Should be 'System.Int32'
     }
-
 
     It "Infers type from string literal" {
         $res = [AstTypeInference]::InferTypeOf( { "Text" }.Ast)
@@ -138,7 +139,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should Be 0
     }
 
-
     It "Infers type from using statement" {
         $res = [AstTypeInference]::InferTypeOf( { $pid = 1; $using:pid }.Ast.EndBlock.Statements[1].PipelineElements[0].Expression)
         $res.Count | Should Be 1
@@ -191,7 +191,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should Be 1
         $res.Name | Should be 'System.String'
     }
-
 
     It "Infers type from named block" {
         $res = [AstTypeInference]::InferTypeOf( { begin {1}}.Ast.BeginBlock)
@@ -579,7 +578,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should be 0
     }
 
-
     It 'Infers type of alias property' {
         class X {
             [int] $Length
@@ -592,7 +590,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should be 1
         $res.Name | Should be System.Int32
     }
-
 
     It 'Infers type of code property' {
         class X {
@@ -641,7 +638,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should be 1
         $res.Name | Should be System.Int32
     }
-
 
     It 'Infers type of note property' {
 
@@ -844,7 +840,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should Be System.DateTime
     }
 
-
     It 'Infers type of note property with safe eval' -Skip {
         $res = [AstTypeInference]::InferTypeOf( {
                 [pscustomobject] @{
@@ -864,8 +859,6 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should be 1
         $res.Name | Should be System.Int32
     }
-
-
 
     It 'Infers type of script property with safe eval' -Skip {
         class Y {}
