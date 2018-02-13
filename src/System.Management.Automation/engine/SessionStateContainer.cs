@@ -1499,6 +1499,22 @@ namespace System.Management.Automation
                     // expectations:
                     if (recurse)
                     {
+                        string childName = GetChildName(path, context);
+                            
+                        // If -File or -Directory is specified and path is ended with '*', we should include the parent path as search path
+
+                        bool isFileOrDirectoryPresent = false;
+
+                        if(context.DynamicParameters is Microsoft.PowerShell.Commands.GetChildDynamicParameters dynParam)
+                        {
+                            isFileOrDirectoryPresent = dynParam.File.IsPresent || dynParam.Directory.IsPresent;
+                        }
+
+                        if (String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase) && isFileOrDirectoryPresent)
+                        {
+                            string parentName = path.Substring(0, path.Length - childName.Length);
+                            path = parentName;
+                        }
                         // dir c:\tem* -include *.ps1 -rec => No change
                         if ((context.Include == null) || (context.Include.Count == 0))
                         {
@@ -1509,9 +1525,8 @@ namespace System.Management.Automation
                             // Should glob paths and files that match tem*, but then
                             // recurse into all subdirectories and do the same for
                             // those directories.
-                            if ((!String.IsNullOrEmpty(path)) && (!IsItemContainer(path)))
+                            if (!String.IsNullOrEmpty(path) && !IsItemContainer(path))
                             {
-                                string childName = GetChildName(path, context);
                                 if (!String.Equals(childName, "*", StringComparison.OrdinalIgnoreCase))
                                 {
                                     if (context.Include != null)

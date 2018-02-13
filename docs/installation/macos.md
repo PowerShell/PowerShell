@@ -41,14 +41,14 @@ brew cask upgrade powershell
 ### Installation via Direct Download
 
 Using macOS 10.12+, download the PKG package
-`powershell-6.0.0-osx.10.12-x64.pkg`
+`powershell-6.0.1-osx.10.12-x64.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-osx.10.12-x64.pkg -target /
+sudo installer -pkg powershell-6.0.1-osx.10.12-x64.pkg -target /
 ```
 
 [releases]: https://github.com/PowerShell/PowerShell/releases
@@ -57,19 +57,19 @@ sudo installer -pkg powershell-6.0.0-osx.10.12-x64.pkg -target /
 
 ```sh
 # Download the powershell '.tar.gz' archive
-curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx-x64.tar.gz
+curl -L -o /tmp/powershell.tar.gz https://github.com/PowerShell/PowerShell/releases/download/v6.0.1/powershell-6.0.1-osx-x64.tar.gz
 
 # Create the target folder where powershell will be placed
-sudo mkdir -p /usr/local/microsoft/powershell/6.0.0
+sudo mkdir -p /usr/local/microsoft/powershell/6.0.1
 
 # Expand powershell to the target folder
-sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell/6.0.0
+sudo tar zxf /tmp/powershell.tar.gz -C /usr/local/microsoft/powershell/6.0.1
 
 # Set execute permissions
-sudo chmod +x /usr/local/microsoft/powershell/6.0.0/pwsh
+sudo chmod +x /usr/local/microsoft/powershell/6.0.1/pwsh
 
 # Create the symbolic link that points to pwsh
-sudo ln -s /usr/local/microsoft/powershell/6.0.0/pwsh /usr/local/bin/pwsh
+sudo ln -s /usr/local/microsoft/powershell/6.0.1/pwsh /usr/local/bin/pwsh
 ```
 
 ### Uninstallation

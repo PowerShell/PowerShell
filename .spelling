@@ -372,6 +372,7 @@ v0.4.0
 v0.5.0
 v0.6.0
 v6.0.0
+v6.0.1
 ValidateNotNullOrEmpty
 WebListener
 WebRequest
@@ -493,6 +494,7 @@ nanoserver-insider-powershell
 - docs/BREAKINGCHANGES.md
 7-bit
 CoreFX
+honored
 non-Windows
 psd1
 runbooks

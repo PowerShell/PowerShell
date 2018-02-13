@@ -99,7 +99,7 @@ With this change, `-Verbose` and `-Debug` no longer affect the behavior of `$Err
 
 When an API returns just `null`, Invoke-RestMethod was serializing this as the string `"null"` instead of `$null`.  This change fixes the logic in `Invoke-RestMethod` to properly serialize a valid single value JSON `null` literal as `$null`.
 
-### Remove `-ComputerName` from `\*-Computer` cmdlets [#5277](https://github.com/PowerShell/PowerShell/issues/5277)
+### Remove `-ComputerName` from `*-Computer` cmdlets [#5277](https://github.com/PowerShell/PowerShell/issues/5277)
 
 Due to issues with RPC remoting in CoreFX (particularly on non-Windows platforms) and ensuring a consistent remoting experience in PowerShell,
 the `-ComputerName` parameter was removed from the `\*-Computer` cmdlets.
@@ -132,7 +132,7 @@ Use `-IncludeTypeInformation` to retain the previous behavior.
 
 When using HTTP, content including passwords are sent as clear-text.
 This change is to not allow this by default and return an error if credentials are being passed in an insecure manner.
-Users can bypass this by using the `-AllowUnencryptedAuthethentication` switch.
+Users can bypass this by using the `-AllowUnencryptedAuthentication` switch.
 
 ## API changes
 
@@ -294,3 +294,20 @@ With this change, W3C extended log format is supported.
 
 Remove the `BuildVersion` property from `$PSVersionTable`. This property was tied to the Windows build version.
 Instead, we recommend that you use `GitCommitId` to retrieve the exact build version of PowerShell Core.
+
+### Changes to Web Cmdlets
+
+The underlying .NET API of the Web Cmdlets has been changed to `System.Net.Http.HttpClient`.
+This change provides many benefits.
+However, this change along with a lack of interoperability with Internet Explorer have resulted in several breaking changes within `Invoke-WebRequest` and `Invoke-RestMethod`.
+
+* `Invoke-WebRequest` now supports basic HTML Parsing only. `Invoke-WebRequest` always returns a `BasicHtmlWebResponseObject` object.
+  The `ParsedHtml` and `Forms` properties have been removed.
+* `BasicHtmlWebResponseObject.Headers` values are now `String[]` instead of `String`.
+* `BasicHtmlWebResponseObject.BaseResponse` is now a `System.Net.Http.HttpResponseMessage` object.
+* The `Response` property on Web Cmdlet exceptions is now a `System.Net.Http.HttpResponseMessage` object.
+* Strict RFC header parsing is now default for the `-Headers` and `-UserAgent` parameter. This can be bypassed with `-SkipHeaderValidation`.
+* `file://` and `ftp://` URI schemes are no longer supported.
+* `System.Net.ServicePointManager` settings are no longer honored.
+* There is currently no certificate based authentication available on macOS.
+* Use of `-Credential` over an `http://` URI will result in an error. Use an `https://` URI or supply the `-AllowUnencryptedAuthentication` parameter to suppress the error.

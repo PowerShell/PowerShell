@@ -10,7 +10,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_D = "D39B4FD9-3E1D-4DD5-8718-22FE2C934CE3"
             $item_E = "EE150FEB-0F21-4AFF-8066-AF59E925810C"
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43"
-            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676" 
+            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676"
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
@@ -21,6 +21,18 @@ Describe "Get-ChildItem" -Tags "CI" {
 
             $specialDirName = "Test[Dir]"
             $specialDir = "Test``[Dir``]"
+
+            $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
+            $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
+            $file2 = Join-Path $searchRoot -ChildPath "File1.txt"
+
+            $PathWildCardTestCases = @(
+                @{Parameters = @{Path = $searchRoot; Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory without wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory with wildcard"},
+                @{Parameters = @{Path = $searchRoot; Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file without wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
+            )
         }
 
         It "Should list the contents of the current folder" {
@@ -90,6 +102,25 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $specialPath -Name file1.txt -ItemType File -Force
             $null = New-Item -Path $specialPath -Name file2.txt -ItemType File -Force
             (Get-ChildItem -Path $specialPath).Count | Should Be 2
+        }
+
+        It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
+            param($Parameters, $ExpectedCount)
+
+            $null = New-Item $file1 -Force -ItemType File
+
+            (Get-ChildItem @Parameters).Count | Should Be $ExpectedCount
+        }
+
+        It "get-childitem with and without file in search root" {
+            $null = New-Item $file2 -Force -ItemType File
+
+            (Get-ChildItem -Path $searchRoot -File -Recurse).Count | Should be 2
+            (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should be 1
+
+            Remove-Item $file2 -ErrorAction SilentlyContinue -Force
+            (Get-ChildItem -Path $searchRoot -File -Recurse).Count | Should be 1
+            (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should be 1
         }
     }
 

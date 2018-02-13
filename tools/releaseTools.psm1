@@ -189,4 +189,61 @@ function Get-ChangeLog
     $new_commits | Sort-Object -Descending -Property IsBreakingChange | ForEach-Object -MemberName ChangeLogMessage
 }
 
-Export-ModuleMember -Function Get-ChangeLog
+##############################
+#.SYNOPSIS
+#Gets packages which have newer packages in nuget.org
+#
+#.PARAMETER Path
+#The path to check for csproj files with packagse
+#
+#.OUTPUTS
+#Objects which represet the csproj package ref, with the current and new version
+##############################
+function Get-NewOfficalPackage
+{
+    param(
+        [String]
+        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+    )
+    # Calculate the filter to find the CSProj files
+    $filter = Join-Path -Path $Path -ChildPath '*.csproj'
+    $csproj = Get-ChildItem $filter -Recurse
+
+    $csproj | ForEach-Object{
+        $file = $_
+
+        # parse the csproj
+        [xml] $csprojXml = (Get-content -Raw -Path $_)
+
+        # get the package references
+        $packages=$csprojXml.Project.ItemGroup.PackageReference
+
+        # check to see if there is a newer package for each refernce
+        foreach($package in $packages)
+        {
+            # Get the name of the package
+            $name = $package.Include
+
+            # don't pull 'Microsoft.Management.Infrastructure' from nuget
+            if($name -and $name -ne 'Microsoft.Management.Infrastructure')
+            {
+                # Get the current package from nuget
+                $newPackage = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue
+
+                # If the current package has a different version from the version in the csproj, print the details
+                if($newPackage -and $newPackage.Version.ToString() -ne $package.version)
+                {
+                    [pscustomobject]@{
+                        Csproj = $file
+                        PackageName = $name
+                        CsProjVersion = $Package.Version
+                        NuGetVersion = $newPackage.Version
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage

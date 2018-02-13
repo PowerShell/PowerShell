@@ -1073,6 +1073,7 @@ namespace Microsoft.PowerShell.Commands
             ValidateComputerName(resolvedComputerNames);
 
             var remoteRunspaces = new List<RemoteRunspace>();
+            int index = 0;
             foreach (var computerName in resolvedComputerNames)
             {
                 var sshConnectionInfo = new SSHConnectionInfo(
@@ -1081,7 +1082,13 @@ namespace Microsoft.PowerShell.Commands
                     this.KeyFilePath,
                     this.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+                string rsName = GetRunspaceName(index, out int rsIdUnused);
+                index++;
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
+                                                                    host : this.Host,
+                                                                    typeTable : typeTable,
+                                                                    applicationArguments : null,
+                                                                    name : rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;
@@ -1091,6 +1098,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var sshConnections = ParseSSHConnectionHashTable();
             var remoteRunspaces = new List<RemoteRunspace>();
+            int index = 0;
             foreach (var sshConnection in sshConnections)
             {
                 var sshConnectionInfo = new SSHConnectionInfo(
@@ -1099,7 +1107,13 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.KeyFilePath,
                     sshConnection.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
-                remoteRunspaces.Add(RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace);
+                string rsName = GetRunspaceName(index, out int rsIdUnused);
+                index++;
+                remoteRunspaces.Add(RunspaceFactory.CreateRunspace( connectionInfo : sshConnectionInfo,
+                                                                    host : this.Host,
+                                                                    typeTable : typeTable,
+                                                                    applicationArguments : null,
+                                                                    name : rsName) as RemoteRunspace);
             }
 
             return remoteRunspaces;

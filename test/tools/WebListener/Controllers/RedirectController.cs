@@ -3,10 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Primitives;
 using mvc.Models;
+
 
 namespace mvc.Controllers
 {
@@ -14,18 +18,30 @@ namespace mvc.Controllers
     {
         public IActionResult Index(int count)
         {
-            string url;
+            string url = Regex.Replace(input: Request.GetDisplayUrl(), pattern: "\\/Redirect.*", replacement: "", options: RegexOptions.IgnoreCase);
             if (count <= 1)
             {
-                url = "/Get/";
+                url = $"{url}/Get/";
             }
             else
             {
                 int nextHop = count - 1;
-                url = String.Format("/Redirect/{0}", nextHop);
+                url = $"{url}/Redirect/{nextHop}";
             }
-            Response.Redirect(url, false);
+
+            if (Request.Query.TryGetValue("type", out StringValues type) && Enum.TryParse(type.FirstOrDefault(), out HttpStatusCode status))
+            {
+                Response.StatusCode = (int)status;
+                url = $"{url}?type={type.FirstOrDefault()}";
+                Response.Headers.Add("Location", url);
+            }
+            else
+            {
+                Response.Redirect(url, false);
+            }
+
             ViewData["Url"] = url;
+
             return View();
         }
         public IActionResult Error()

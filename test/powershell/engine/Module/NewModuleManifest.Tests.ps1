@@ -1,6 +1,6 @@
 Describe "New-ModuleManifest tests" -tags "CI" {
     BeforeEach {
-        New-Item -ItemType Directory -Path testdrive:/module
+        $null = New-Item -ItemType Directory -Path testdrive:/module
         $testModulePath = "testdrive:/module/test.psd1"
     }
 
@@ -9,13 +9,10 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     }
 
     BeforeAll {
-        if ($IsWindows)
-        {
-            $ExpectedManifestBytes = @(255,254,35,0,13,0,10,0)
-        }
-        else
-        {
-            $ExpectedManifestBytes = @(35,10)
+        if ($IsWindows) {
+            $ExpectedManifestBytes = @(35,13) # CR
+        } else {
+            $ExpectedManifestBytes = @(35,10) # LF
         }
     }
 
@@ -38,10 +35,9 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     }
 
     It "Verify module manifest encoding" {
-        
+
         # verify first line of the manifest:
-        # on Windows platforms - 3 characters - '#' '\r' '\n' - in UTF-16 with BOM - this should be @(255,254,35,0,13,0,10,0)
-        # on non-Windows platforms - 2 characters - '#' '\n' - in UTF-8 no BOM - this should be @(35,10)
+        # 2 characters - '#' '\n' - in UTF-8 no BOM - this should be @(35,10)
         TestNewModuleManifestEncoding -expected $ExpectedManifestBytes
     }
 

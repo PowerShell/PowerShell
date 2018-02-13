@@ -196,6 +196,8 @@ function Start-PSPackage {
                     "deb", "nupkg"
                 } elseif ($Environment.IsRedHatFamily) {
                     "rpm", "nupkg"
+                } elseif ($Environment.IsSUSEFamily) {
+                    "rpm", "nupkg"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
@@ -242,8 +244,8 @@ function Start-PSPackage {
                     ProductVersion = $Version
                     AssetsPath = "$PSScriptRoot\..\..\assets"
                     LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
-                    # Product Guid needs to be unique for every PowerShell version to allow SxS install
-                    ProductGuid = New-Guid
+                    # Product Code needs to be unique for every PowerShell version since it is a unique identifier for the particular product release
+                    ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                 }
@@ -576,8 +578,8 @@ function New-UnixPackage {
                 $Iteration += ".$DebDistro"
             }
             "rpm" {
-                if (!$Environment.IsRedHatFamily) {
-                    throw ($ErrorMessage -f "Redhat Family")
+                if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
+                    throw ($ErrorMessage -f "Redhat or SUSE Family")
                 }
             }
             "osxpkg" {
@@ -614,9 +616,9 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = if ($Environment.IsLinux) {
-            "/usr/bin"
+            "/usr/bin/"
         } elseif ($Environment.IsMacOS) {
-            "/usr/local/bin"
+            "/usr/local/bin/"
         }
         $linkSource = "/tmp/pwsh"
 
@@ -1038,7 +1040,7 @@ function New-AfterScripts
         $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
+    elseif ($Environment.IsUbuntu -or $Environment.IsDebian -or $Environment.IsSUSEFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii

@@ -249,6 +249,55 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
     }
 
+    Context "-SettingsFile Commandline switch" {
+
+        BeforeAll {
+            if ($IsWindows) {
+                $CustomSettingsFile = Join-Path -Path $TestDrive -ChildPath 'Powershell.test.json'
+                $DefaultExecutionPolicy = 'RemoteSigned'
+            }
+        }
+        BeforeEach {
+            if ($IsWindows) {
+                # reset the content of the settings file to a known state.
+                Set-Content -Path $CustomSettingsfile -Value "{`"Microsoft.PowerShell:ExecutionPolicy`":`"$DefaultExecutionPolicy`"}" -ErrorAction Stop
+            }
+        }
+
+        # NOTE: The -settingsFile command-line option only reads settings for the local machine. As a result, the tests that use Set/Get-ExecutionPolicy
+        # must use an explicit scope of LocalMachine to ensure the setting is written to the expected file.
+        # Skip the tests on Unix platforms because *-ExecutionPolicy cmdlets don't work by design.
+
+        It "Verifies PowerShell reads from the custom -settingsFile" -skip:(!$IsWindows) {
+            $actualValue = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {(Get-ExecutionPolicy -Scope LocalMachine).ToString()}
+            $actualValue  | Should Be $DefaultExecutionPolicy
+        }
+
+        It "Verifies PowerShell writes to the custom -settingsFile" -skip:(!$IsWindows) {
+            $expectedValue = 'AllSigned'
+
+            # Update the execution policy; this should update the settings file.
+            & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope LocalMachine }
+
+            # ensure the setting was written to the settings file.
+            $content = (Get-Content -Path $CustomSettingsFile | ConvertFrom-Json)
+            $content.'Microsoft.PowerShell:ExecutionPolicy' | Should Be $expectedValue
+
+            # ensure the setting is applied on next run
+            $actualValue = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {(Get-ExecutionPolicy -Scope LocalMachine).ToString()}
+            $actualValue  | Should Be $expectedValue
+        }
+
+        It "Verify PowerShell removes a setting from the custom -settingsFile" -skip:(!$IsWindows) {
+            # Remove the LocalMachine execution policy; this should update the settings file.
+            & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope LocalMachine }
+
+            # ensure the setting was removed from the settings file.
+            $content = (Get-Content -Path $CustomSettingsFile | ConvertFrom-Json)
+            $content.'Microsoft.PowerShell:ExecutionPolicy' | Should Be $null
+        }
+    }
+
     Context "Pipe to/from powershell" {
         $p = [PSCustomObject]@{X=10;Y=20}
 
