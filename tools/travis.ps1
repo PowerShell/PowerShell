@@ -200,8 +200,8 @@ elseif($Stage -eq 'Build')
         $ProgressPreference = $originalProgressPreference
     }
 
-    $testResultsNoSudo = "$pwd\TestResultsNoSudo.xml"
-    $testResultsSudo = "$pwd\TestResultsSudo.xml"
+    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
+    $testResultsSudo = "$pwd/TestResultsSudo.xml"
 
     $pesterParam = @{
         'binDir'     = $output
