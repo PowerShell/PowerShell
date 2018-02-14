@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using Dbg = System.Management.Automation;
@@ -124,7 +122,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Dynamic Parameters
 
         #region protected members
-
 
         /// <summary>
         /// Gets a alias from session state
@@ -369,7 +366,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private ScopedItemOptions _options;
-
 
         /// <summary>
         /// Determines if the Options parameter was set.

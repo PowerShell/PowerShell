@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -21,7 +20,6 @@ namespace Microsoft.PowerShell.Commands
         private const string ToStringValuePropertyName = "ToStringValue";
         private const string IndexPropertyName = "IndexValue";
         private int _index;
-
 
         /// <summary> Columns definition of the underlying Management List</summary>
         private HeaderInfo _headerInfo;
@@ -260,8 +258,6 @@ namespace Microsoft.PowerShell.Commands
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-
 
         /// <summary>
         /// Close the window if it has already been displayed.

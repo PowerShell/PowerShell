@@ -1,5 +1,6 @@
-//! @file getinodedata.cpp
-//! @author Jeff Bienstadt <v-jebien@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Retrieve the device ID and inode number of a file
 
 #include "getinodedata.h"

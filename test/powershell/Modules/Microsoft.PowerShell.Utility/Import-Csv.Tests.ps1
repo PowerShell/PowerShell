@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         $fileToGenerate = Join-Path $TestDrive -ChildPath "importCSVTest.csv"

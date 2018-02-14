@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 function Test-UnblockFile {
     try {
         Get-Content -Path $testfilepath -Stream Zone.Identifier -ErrorAction Stop | Out-Null

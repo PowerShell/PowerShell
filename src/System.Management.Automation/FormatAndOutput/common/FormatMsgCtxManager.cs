@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 
@@ -33,7 +32,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal GroupStartCallback gs = null;
         internal GroupEndCallback ge = null;
         internal PayloadCallback payload = null;
-
 
         /// <summary>
         /// The current output context, as determined by the
@@ -125,7 +123,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
         }
-
 
         /// <summary>
         /// access the active context (top of the stack). It can be null.

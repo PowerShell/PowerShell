@@ -1,4 +1,5 @@
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // NOTE: A vast majority of this code was copied from BCL in
@@ -50,7 +51,6 @@
 
 */
 
-
 using BCLDebug = System.Diagnostics.Debug;
 
 namespace Microsoft.PowerShell.Commands.Internal
@@ -68,7 +68,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Globalization;
     using System.Transactions;
     using System.Diagnostics.CodeAnalysis;
-
 
     // Putting this in a separate internal class to avoid OACR warning DoNotDeclareReadOnlyMutableReferenceTypes.
     internal sealed class BaseRegistryKeys
@@ -136,7 +135,6 @@ namespace Microsoft.PowerShell.Commands.Internal
         private RegistryKeyPermissionCheck _checkMode;
         private System.Transactions.Transaction _myTransaction;
         private SafeTransactionHandle _myTransactionHandle;
-
 
         // This is a wrapper around RegOpenKeyTransacted that implements a workaround
         // to TxF bug number 181242 After calling RegOpenKeyTransacted, it calls RegQueryInfoKey.
@@ -1288,7 +1286,6 @@ namespace Microsoft.PowerShell.Commands.Internal
             return data;
         }
 
-
         /// <summary>
         /// <para>Retrieves the registry data type of the value associated with the specified name.
         /// Utilizes Transaction.Current for its transaction.</para>
@@ -1711,7 +1708,6 @@ namespace Microsoft.PowerShell.Commands.Internal
                 sb.Length = temp;
             return sb.ToString();
         }
-
 
         private static void FixupPath(StringBuilder path)
         {

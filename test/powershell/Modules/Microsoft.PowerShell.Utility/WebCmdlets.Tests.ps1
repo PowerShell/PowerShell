@@ -1,6 +1,6 @@
-﻿#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
+
 # This is a Pester test suite which validate the Web cmdlets.
 #
 # Note: These tests use data from WebListener
@@ -76,9 +76,9 @@ function ExecuteRequestWithHeaders {
     try {
         $headers = @{ Connection = 'close'}
         if ($cmdletName -eq "Invoke-WebRequest") {
-            $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers
+            $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers
         } else {
-            $result.Output = Invoke-RestMethod -Uri $uri -TimeoutSec 5 -Headers $headers
+            $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers
         }
     } catch {
         $result.Error = $_
@@ -139,10 +139,10 @@ function ExecuteRedirectRequest {
     try {
         $headers = @{"Authorization" = "test"}
         if ($Cmdlet -eq 'Invoke-WebRequest') {
-            $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+            $result.Output = Invoke-WebRequest -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
             $result.Content = $result.Output.Content | ConvertFrom-Json
         } else {
-            $result.Output = Invoke-RestMethod -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+            $result.Output = Invoke-RestMethod -Uri $uri -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
@@ -178,10 +178,10 @@ function ExecuteRequestWithCustomHeaders {
 
     try {
         if ($Cmdlet -eq 'Invoke-WebRequest') {
-            $result.Output = Invoke-WebRequest -Uri $Uri -TimeoutSec 5 -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
+            $result.Output = Invoke-WebRequest -Uri $Uri -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
             $result.Content = $result.Output.Content | ConvertFrom-Json
         } else {
-            $result.Output = Invoke-RestMethod -Uri $Uri -TimeoutSec 5 -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
+            $result.Output = Invoke-RestMethod -Uri $Uri -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
@@ -251,7 +251,7 @@ function ExecuteWebRequest {
     $result = [PSObject]@{Output = $null; Error = $null; Content = $null}
 
     try {
-        $result.Output = Invoke-WebRequest -Uri $Uri -TimeoutSec 5 -UseBasicParsing:$UseBasicParsing.IsPresent
+        $result.Output = Invoke-WebRequest -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent
         $result.Content = $result.Output.Content
     } catch {
         $result.Error = $_
@@ -277,7 +277,7 @@ function ExecuteRestMethod {
     $VerbosePreference = 'Continue'
     try {
         $verboseFile = Join-Path $TestDrive -ChildPath ExecuteRestMethod.verbose.txt
-        $result.Output = Invoke-RestMethod -Uri $Uri -TimeoutSec 5 -UseBasicParsing:$UseBasicParsing.IsPresent -Verbose 4>$verboseFile
+        $result.Output = Invoke-RestMethod -Uri $Uri -UseBasicParsing:$UseBasicParsing.IsPresent -Verbose 4>$verboseFile
         $result.Content = $result.Output
 
         if (Test-Path -Path $verboseFile) {
@@ -398,7 +398,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
     It "Invoke-WebRequest returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -410,7 +410,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -422,7 +422,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest returns Correct User-Agent on Windows" -Skip:(!$IsWindows) {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -434,7 +434,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Invoke-WebRequest returns headers dictionary" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-WebRequest -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -447,7 +447,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-WebRequest -Uri $uri -TimeoutSec 5 -DisableKeepAlive"
+        $command = "Invoke-WebRequest -Uri $uri -DisableKeepAlive"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -537,7 +537,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 5 -NoProxy -SkipCertificateCheck"
+        $command = "Invoke-WebRequest -Uri '$uri' -NoProxy -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -619,7 +619,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $expectedAgent = $agents[$agentName]
         $uri = Get-WebListenerUrl -Test 'Get'
         $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
-        $command = "Invoke-WebRequest -Uri $uri -UserAgent ($userAgent)  -TimeoutSec 5"
+        $command = "Invoke-WebRequest -Uri $uri -UserAgent ($userAgent) "
 
         It "Validate Invoke-WebRequest UserAgent. Execute--> $command" {
 
@@ -760,7 +760,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Error | Should BeNullOrEmpty
         $response.Content.Headers."Authorization" | Should BeExactly "test"
     }
-
 
     It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
@@ -1546,7 +1545,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
     It "Invoke-RestMethod returns Correct User-Agent on MacOSX" -Skip:(!$IsMacOS) {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-RestMethod -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
 
@@ -1556,7 +1555,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod returns Correct User-Agent on Linux" -Skip:(!$IsLinux) {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-RestMethod -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
 
@@ -1566,7 +1565,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod returns Correct User-Agent on Windows" -Skip:(!$IsWindows) {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-RestMethod -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
 
@@ -1576,7 +1575,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Invoke-RestMethod returns headers dictionary" {
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5"
+        $command = "Invoke-RestMethod -Uri '$uri'"
 
         $result = ExecuteWebCommand -command $command
 
@@ -1587,7 +1586,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod -DisableKeepAlive" {
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get'
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -DisableKeepAlive"
+        $command = "Invoke-RestMethod -Uri '$uri' -DisableKeepAlive"
 
         $result = ExecuteWebCommand -command $command
 
@@ -1674,7 +1673,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
 
         $uri = Get-WebListenerUrl -Test 'Get' -Https:$($protocol -eq 'https')
-        $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 5 -NoProxy -SkipCertificateCheck"
+        $command = "Invoke-RestMethod -Uri '$uri' -NoProxy -SkipCertificateCheck"
 
         $result = ExecuteWebCommand -command $command
 
@@ -1751,7 +1750,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $expectedAgent = $agents[$agentName]
         $uri = Get-WebListenerUrl -Test 'Get'
         $userAgent = "[Microsoft.PowerShell.Commands.PSUserAgent]::$agentName"
-        $command = "Invoke-RestMethod -Uri $uri -UserAgent ($userAgent)  -TimeoutSec 5"
+        $command = "Invoke-RestMethod -Uri $uri -UserAgent ($userAgent) "
 
         It "Validate Invoke-RestMethod UserAgent. Execute--> $command" {
 
@@ -2712,7 +2711,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
             contenttype = 'text/plain'
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $result = iwr $uri -TimeoutSec 5
+        $result = iwr $uri
         $result.StatusCode | Should Be "200"
         $result.Content | Should Be "hello"
     }
@@ -2723,7 +2722,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
             body        = @{Hello = "world"} | ConvertTo-Json -Compress
         }
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-        $result = irm $uri -TimeoutSec 5
+        $result = irm $uri
         $result.Hello | Should Be "world"
     }
 }

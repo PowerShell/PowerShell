@@ -8,13 +8,13 @@ ModuleVersion = '2.5'
 GUID = '369f0ee4-4cda-4ac3-a5c5-08e7bbc06e1a'
 
 # Author of this module
-Author = 'manikb'
+Author = 'PowerShell'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright = '(c) 2015 manikb. All rights reserved.'
+Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'NestedRequiredModule1 module'

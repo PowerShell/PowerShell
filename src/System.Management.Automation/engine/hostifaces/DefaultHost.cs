@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -62,7 +61,6 @@ namespace Microsoft.PowerShell
         public override CultureInfo CurrentUICulture { get; } = null;
 
         #endregion properties
-
 
         #region methods
 

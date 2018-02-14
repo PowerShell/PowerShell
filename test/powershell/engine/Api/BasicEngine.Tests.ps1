@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Basic engine APIs' -Tags "CI" {
     Context 'powershell::Create' {
         It 'can create default instance' {

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Group-Object DRT Unit Tests" -Tags "CI" {
     It "Test for CaseSensitive switch" {
         $testObject = 'aA', 'aA', 'AA', 'AA'

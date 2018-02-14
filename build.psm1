@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
@@ -662,21 +665,20 @@ function Restore-PSModuleToBuild
 
     if($CI.IsPresent)
     {
+        # take the latest version of pester and install it so it may be used
         Restore-PSPester -Destination $modulesDir
     }
 }
 
 function Restore-PSPester
 {
-    param
-    (
+    param(
         [ValidateNotNullOrEmpty()]
-        [string]
-        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-
-    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '1f546b6aaa0893e215e940a14f57c96f56f7eff1'
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery
 }
+
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -873,7 +875,6 @@ function Get-PSOutput {
         return (New-PSOptions).Output
     }
 }
-
 
 function Get-PesterTag {
     param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
@@ -1363,7 +1364,6 @@ function Test-PSPesterResults
     }
 }
 
-
 function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
@@ -1430,7 +1430,6 @@ function Start-PSxUnit {
         Pop-Location
     }
 }
-
 
 function Install-Dotnet {
     [CmdletBinding()]
@@ -1915,7 +1914,6 @@ function Start-ResGen
     }
 }
 
-
 function Find-Dotnet() {
     $originalPath = $env:PATH
     $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -1973,7 +1971,6 @@ function Convert-TxtResourceToXml
     }
 }
 
-
 function script:Use-MSBuild {
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
@@ -1991,7 +1988,6 @@ function script:Use-MSBuild {
 
     Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
-
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
@@ -2435,54 +2431,6 @@ function Clear-PSRepo
     }
 }
 
-
-# Install PowerShell modules from a git Repo such as PSL-Pester
-function Restore-GitModule
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Name,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Uri,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$CommitSha
-    )
-
-    log 'Restoring module from git repo:'
-    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
-
-    $clonePath = Join-Path -Path $Destination -ChildPath $Name
-    if(Test-Path $clonePath)
-    {
-        remove-Item -Path $clonePath -recurse -force
-    }
-
-    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
-
-    Push-location $clonePath
-    try {
-        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
-
-        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
-        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
-    }
-    finally
-    {
-        pop-location
-    }
-}
-
 # Install PowerShell modules such as PackageManagement, PowerShellGet
 function Restore-PSModule
 {
@@ -2582,7 +2530,6 @@ function Restore-PSModule
         }
     }
 }
-
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>

@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #if !UNIX
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
 
 using System;
 using System.Management.Automation;
@@ -613,7 +613,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         } // constructor
-
 
         /// <summary>
         /// Removes an item at the specified path
@@ -1321,7 +1320,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-
             CommandInfo commandInfo =
                 new CmdletInfo(
                     "Import-Module",
@@ -1368,7 +1366,6 @@ namespace Microsoft.PowerShell.Commands
             string result = null;
 
             int separatorIndex = path.LastIndexOf(StringLiterals.DefaultPathSeparator);
-
 
             // Since there was no path separator return the entire path
             if (separatorIndex == -1)
@@ -2218,7 +2215,6 @@ namespace Microsoft.PowerShell.Commands
             GetChildItemsOrNames(path, false, returnContainers, true, GetFilter());
         } // GetChildNames
 
-
         /// <summary>
         /// Determines if the item at the specified path is a store
         /// or location.
@@ -2877,7 +2873,6 @@ namespace Microsoft.PowerShell.Commands
                 nsMgr.AddNamespace("msh", HelpCommentsParser.mshURI);
                 nsMgr.AddNamespace("command", HelpCommentsParser.commandURI);
 
-
                 // Compose XPath query to select the appropriate node based on the cmdlet
                 string xpathQuery = String.Format(
                     CultureInfo.InvariantCulture,
@@ -3245,7 +3240,6 @@ namespace Microsoft.PowerShell.Commands
     {
         private List<EnhancedKeyUsageRepresentation> _ekuList = new List<EnhancedKeyUsageRepresentation>();
 
-
         /// <summary>
         /// get property of EKUList
         /// </summary>
@@ -3370,7 +3364,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
-
 
     /// <summary>
     /// downlevel helper function to determine if the OS is WIN8 and above
@@ -3525,7 +3518,6 @@ namespace Microsoft.PowerShell.Commands
             Security.NativeMethods.CertEnumSystemStoreCallBackProto callBack =
                 new Security.NativeMethods.CertEnumSystemStoreCallBackProto(CertEnumSystemStoreCallBack);
 
-
             // Return a new list to avoid synchronization issues.
 
             List<string> names = new List<string>();
@@ -3543,7 +3535,6 @@ namespace Microsoft.PowerShell.Commands
 
             return names;
         }
-
 
         /// <summary>
         /// call back function used by CertEnumSystemStore

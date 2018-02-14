@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 $script:forcePull = $true
 # Get docker Engine OS
 function Get-DockerEngineOs
@@ -86,7 +89,6 @@ function Get-WindowsContainer
         }
     }
 }
-
 
 $script:repoName = 'microsoft/powershell'
 function Get-RepoName
@@ -250,7 +252,6 @@ function Test-PSPackage
     $testlistStubValue = $TestList
     $packageLocationStubName = 'PACKAGELOCATIONSTUB'
     $packageLocationStubValue = $PSPackageLocation
-
 
     $results = @{}
     $returnValue = $true

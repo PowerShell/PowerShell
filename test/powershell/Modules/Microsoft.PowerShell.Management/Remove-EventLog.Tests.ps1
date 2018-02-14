@@ -1,4 +1,6 @@
-﻿Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
         $defaultParamValues = $PSdefaultParameterValues.Clone()

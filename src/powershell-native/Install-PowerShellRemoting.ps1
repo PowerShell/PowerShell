@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 #####################################################################################################
 #
 # Registers the WinRM endpoint for this instance of PowerShell.

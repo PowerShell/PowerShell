@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $ps = Join-Path -Path $PsHome -ChildPath "pwsh"
 
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
@@ -36,7 +38,6 @@ set-psbreakpoint -command foo
     $contents > $scriptFileName
     $contentsBug > $scriptFileNameBug
 
-
     It "Should be able to set psbreakpoints for -Line" {
         $brk = Set-PSBreakpoint -Line 13 -Script $scriptFileName
         $brk.Line | Should Be 13
@@ -67,11 +68,10 @@ set-psbreakpoint -command foo
 
     It "-script and -line can take multiple items" {
         $brk = sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName
-        $brk.Line | Should Be 11,12,13
-        $brk.Column | Should Be 1
+        $brk.Line | Should BeIn 11,12,13
+        $brk.Column | Should BeIn 1
         Remove-PSBreakPoint -Id $brk.Id
     }
-
 
     It "-script and -line are positional" {
         $brk = sbp $scriptFileName 13

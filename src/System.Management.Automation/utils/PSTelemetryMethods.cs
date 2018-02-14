@@ -1,7 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if LEGACYTELEMETRY
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
 
 using System;
 using System.Collections.Generic;
@@ -125,7 +124,6 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         {
             TelemetryWrapper.TraceMessage("PSGetCommandFailed", new { TimeInMS = timeInMS, CommandNames = name });
         }
-
 
         private static long[] s_tabCompletionTimes = new long[(int)CompletionResultType.DynamicKeyword + 1];
         private static int[] s_tabCompletionCounts = new int[(int)CompletionResultType.DynamicKeyword + 1];

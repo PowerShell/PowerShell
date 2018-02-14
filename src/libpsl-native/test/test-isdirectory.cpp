@@ -1,5 +1,6 @@
-//! @file test-isdirectory.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Tests IsDirectory
 
 #include <gtest/gtest.h>

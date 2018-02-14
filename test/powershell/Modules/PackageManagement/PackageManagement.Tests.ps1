@@ -1,4 +1,4 @@
-﻿#
+#
 #  Copyright (c) Microsoft Corporation. All rights reserved.
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 
 $InternalGallery = "https://dtlgalleryint.cloudapp.net/api/v2/"
 $InternalSource = 'OneGetTestSource'
-
 
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
@@ -37,7 +36,6 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         $gpp | Where-Object { $_.name -eq "PowerShellGet" } | should not BeNullOrEmpty
     }
 
-
     It "find-packageprovider PowerShellGet" {
         $fpp = (Find-PackageProvider -Name "PowerShellGet" -force).name
         $fpp -contains "PowerShellGet" | should be $true
@@ -47,7 +45,6 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name
         $ipp -contains "gistprovider" | should be $true
     }
-
 
     it "Find-package"  {
         $f = Find-Package -ProviderName NuGet -Name jquery -source Nugettest

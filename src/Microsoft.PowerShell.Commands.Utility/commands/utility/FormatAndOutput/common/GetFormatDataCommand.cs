@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Linq;
@@ -75,7 +74,6 @@ namespace Microsoft.PowerShell.Commands
                 _filter[0] = WildcardPattern.Get("*", WildcardOptions.None);
             }
         }
-
 
         private static Dictionary<string, List<string>> GetTypeGroupMap(IEnumerable<TypeGroupDefinition> groupDefinitions)
         {

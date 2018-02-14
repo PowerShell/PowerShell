@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -115,7 +114,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string _filename;
-
 
         /// <summary>
         /// The full path of the file containing the matching line.
@@ -434,7 +432,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 throw new NotImplementedException();
             }
-
 
             [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             public void CopyTo(T[] array, int arrayIndex)

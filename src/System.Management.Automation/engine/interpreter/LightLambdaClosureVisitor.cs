@@ -236,7 +236,6 @@ namespace System.Management.Automation.Interpreter
             return Visit(node.ReduceExtensions());
         }
 
-
         #region MergedRuntimeVariables
 
         /// <summary>

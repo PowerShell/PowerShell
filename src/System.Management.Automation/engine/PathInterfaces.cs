@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation;
@@ -1182,7 +1181,6 @@ namespace System.Management.Automation
             return _sessionState.GetParentPath(path, root, context, false);
         } // GetParentPath
 
-
         /// <summary>
         /// Gets the parent path of the specified path.
         /// Allow to use FileSystem as the default provider when the
@@ -1334,7 +1332,6 @@ namespace System.Management.Automation
 
             return _sessionState.GetChildName(path, context, false);
         } // ParseChildName
-
 
         /// <summary>
         /// Gets the child name of the specified path.

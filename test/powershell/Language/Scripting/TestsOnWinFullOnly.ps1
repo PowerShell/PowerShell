@@ -1,4 +1,6 @@
-﻿function Run-TestOnWinFull
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+function Run-TestOnWinFull
 {
     [CmdletBinding()]
     param( [string]$name )

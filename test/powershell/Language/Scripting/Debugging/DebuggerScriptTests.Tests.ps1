@@ -1,8 +1,5 @@
-﻿##
-## Copyright (c) Microsoft Corporation. All rights reserved.
-##
-## Script debugging tests
-##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Breakpoints set on custom FileSystem provider files should work" -Tags "CI" {
     #
@@ -52,7 +49,6 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
         if ($null -ne (Get-PSDrive -Name tmpTestA1 2>$null)) { Remove-PSDrive -Name tmpTestA1 -Force }
     }
 }
-
 
 Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
     #
@@ -108,7 +104,6 @@ Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
     }
 }
 
-
 Describe "Function calls clear debugger cache too early" -Tags "CI" {
     #
     #  <Test>
@@ -163,7 +158,6 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
     }
 }
 
-
 Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     #
     #  <Test>
@@ -211,7 +205,6 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         }
     }
 
-
     Context "COM TESTS" {
         # DRT for 133807 SetBreakpointWithShortPath
         BeforeAll {
@@ -247,7 +240,6 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         }
     }
 }
-
 
 Describe "Unit tests for various script breakpoints" -Tags "CI" {
     #
@@ -411,7 +403,6 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     }
 }
 
-
 Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
     #
     #  <Test>
@@ -498,7 +489,6 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
         if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
     }
 }
-
 
 Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
     #
@@ -603,7 +593,6 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -r -force -ea silentlycontinue }
     }
 }
-
 
 Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
     #####################################################################################

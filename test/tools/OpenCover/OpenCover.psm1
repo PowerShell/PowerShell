@@ -1,4 +1,7 @@
-﻿#region privateFunctions
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+#region privateFunctions
 
 $script:psRepoPath = [string]::Empty
 if ($null -ne (Get-Command -Name 'git' -ErrorAction Ignore)) {
@@ -425,7 +428,6 @@ function Get-CodeCoverage
     $xmlPath = (get-item $CoverageXmlFile).Fullname
     (Get-CoverageData -xmlPath $xmlPath)
 }
-
 
 <#
 .Synopsis

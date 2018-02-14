@@ -175,7 +175,6 @@ namespace System.Management.Automation.Security
         }
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
-
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -401,8 +400,6 @@ namespace System.Management.Automation.Security
         }
         private static bool s_hadMissingWldpAssembly = false;
 
-
-
         /// <summary>
         /// Gets lockdown policy as applied to a COM object
         /// </summary>
@@ -567,7 +564,6 @@ namespace System.Management.Automation.Security
             /// dwFlags: DWORD->unsigned int
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
-
 
             /// Return Type: HRESULT->LONG->int
             /// rclsid: IID*

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Environment-Variables" -Tags "CI" {
 
     It "Should have environment variables" {

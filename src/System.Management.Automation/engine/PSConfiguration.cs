@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Text;
@@ -247,8 +250,6 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         const string LogDefaultValue = "default";
 
-        const PSChannel DefaultChannels = PSChannel.Operational;
-
         /// <summary>
         /// Gets the bitmask of the PSChannel values to log.
         /// </summary>
@@ -282,14 +283,11 @@ namespace System.Management.Automation.Configuration
 
             if (result == 0)
             {
-                result = DefaultChannels;
+                result = System.Management.Automation.Tracing.PSSysLogProvider.DefaultChannels;
             }
 
             return result;
         }
-
-        // by default, do not include analytic events.
-        const PSKeyword DefaultKeywords = (PSKeyword) (0xFFFFFFFFFFFFFFFF & ~(ulong)PSKeyword.UseAlwaysAnalytic);
 
         /// <summary>
         /// Gets the bitmask of keywords to log.
@@ -324,7 +322,7 @@ namespace System.Management.Automation.Configuration
 
             if (result == 0)
             {
-                result = DefaultKeywords;
+                result = System.Management.Automation.Tracing.PSSysLogProvider.DefaultKeywords;
             }
 
             return result;

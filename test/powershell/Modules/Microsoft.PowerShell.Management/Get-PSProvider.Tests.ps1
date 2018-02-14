@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-PSProvider" -Tags "CI" {
     It "Should be able to call with no parameters without error" {
 	{ Get-PSProvider } | Should Not Throw
