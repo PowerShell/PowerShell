@@ -1576,7 +1576,7 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "libunwind"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
+                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel' }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -1597,7 +1597,7 @@ function Start-PSBootstrap {
                 $Deps += "gcc", "cmake", "make"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff" }
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -1609,6 +1609,7 @@ function Start-PSBootstrap {
                 }
 
                 # Install dependencies
+                log "Installing $Deps"
                 Start-NativeExecution {
                     Invoke-Expression "$baseCommand $Deps"
                 }
