@@ -69,16 +69,54 @@ Context:
 #>
 
 #region Utilities
+
 function Test-Elevated
 {
-    [CmdletBinding()]
-    [OutputType([bool])]
-    Param()
+    if(-not (Test-Path -Path "env:SUDO_USER"))
+    {
+        throw "This command must be run from sudo"
+    }
+}
 
-    # if the current Powershell session was called with administrator privileges,
-    # the Administrator Group's well-known SID will show up in the Groups for the current identity.
-    # Note that the SID won't show up unless the process is elevated.
-    return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
+function Test-MacOS
+{
+    if (-not $IsMacOS)
+    {
+        throw "This command requires MacOS"
+    }
+}
+
+function Test-Linux
+{
+    if (-not $IsLinux)
+    {
+        throw "This command requires Linux"
+    }
+}
+
+function Start-NativeExecution
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [ValidateNotNull()]
+        [ScriptBlock] $command
+    )
+    $saveErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+
+    try
+    {
+        & $command
+        if ($LASTEXITCODE -ne 0)
+        {
+            throw "Execution of {$command} failed with exit code $LASTEXITCODE"
+        }
+    }
+    finally
+    {
+        $ErrorActionPreference = $saveErrorAction
+    }
 }
 
 #endregion Utilities
@@ -195,7 +233,7 @@ class PSLogItem
         [DateTime]$time = [DateTime]::Parse($parts[[SysLogIds]::Time], [System.Globalization.CultureInfo]::InvariantCulture)
         $time = [DateTime]::new($year, $month, $day, $time.Hour, $time.Minute, $time.Second)
 
-        if ($after -ne $null -and $after -gt $time)
+        if ($after -ne $null -and $time -ge $after)
         {
             return $null
         }
@@ -326,7 +364,7 @@ class PSLogItem
                 break
             }
 
-            if ($after -ne $null -and $after -gt $time)
+            if ($after -ne $null -and $time -ge $after)
             {
                 $result = $null
                 break
@@ -443,7 +481,7 @@ function ConvertFrom-SysLog
     returned PowerShell log items may be less than this value.
 
 .PARAMETER After
-    Returns items after the specified DateTime
+    Returns items on or after the specified DateTime
     Can be used with TotalCount.
 
 .EXAMPLE
@@ -467,7 +505,7 @@ function ConvertFrom-SysLog
     PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
     PS> Get-PSSysLog -id 'powershell' -logPath '/var/log/syslog' -After $time
 
-    Gets log entries with the id 'powershell' that occured after a specific date/time
+    Gets log entries with the id 'powershell' that occured on or after a specific date/time
 
 .NOTES
     This function reads syslog entries using Get-Content, filters based on the id, and
@@ -505,6 +543,7 @@ function Get-PSSysLog
         [Parameter(ParameterSetName = 'After')]
         [Nullable[DateTime]] $After
     )
+    Test-Linux
 
     [int] $maxItems = 0
     $contentParms = @{Path = $Path}
@@ -629,7 +668,7 @@ function ConvertFrom-OSLog
         {
             [object] $item = [PSLogItem]::ConvertOsLog($content, $id, $after)
 
-            # os_log entries can span multiple lines when new lines are included
+            # os_log entries can span multiple lines when new lines are
             # included in the entry''s message text.
             # To ensure the entire log entry is processed,
             #    LogItemBuilder.Add will not return an item until it encounters the start
@@ -667,40 +706,26 @@ function ConvertFrom-OSLog
     The fully qualified path to the syslog formatted file.
 
 .PARAMETER Id
-    The identifier for the entries name of the process producing the logs.
-    The default value is 'pwsh'
+    The identifier for the PowerShell log identity of the instance(s) producing the log content.
+    The default value is 'powershell'
 
 .PARAMETER TotalCount
-    Specifies the number of items to return.
+    Specifies the maximum of items to return.
 
 .PARAMETER After
-    Returns items after the specified DateTime
+    Returns items on or after the specified DateTime
 
 .EXAMPLE
-    PS> sudo log collect --start "2018-02-07 14:33:30" --output ./system.logarchive
-    PS> log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.txt
-    PS> Get-PSOsLog -id 'pwsh' -logPath './pwsh.log.txt'
+    PS> Import-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Get-PSOsLog -logPath "$PSDrive/mytest.txt"
 
-    Gets all log entries from the log with the process id of 'pwsh'
+    Gets all log entries from a given timestamp.
 
-.Example
-    PS> sudo log collect --start "2018-02-07 14:33:30" --output ./system.logarchive
-    PS> log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.txt
-    PS> Get-PSOsLog -id 'pwsh' -logPath './pwsh.log.txt' -TotalCount 200
+.EXAMPLE
+    PS> Import-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Get-PSOsLog -id 'mypwsh' -logPath "$PSDrive/mytest.txt" -TotalCount 200
 
-    Gets up to 200 powershell log entries
-
-.Example
-    PS> $time = [DateTime]::Parse('1/19/2018 1:26:49 PM')
-    PS> sudo log collect --start "2018-02-07 14:33:30" --output ./system.logarchive
-    PS> log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.txt
-    PS> Get-PSOsLog -id 'pwsh' -logPath './pwsh.log.txt' -After $time
-
-    Gets powershell log entries that occured after a specific date/time
-
-.NOTES
-    This function reads syslog entries using Get-Content, filters based on the id, and
-    returns an object for each log entry.
+    Gets upto 200 log entries from a given timestamp with the log identity of 'mypwsh'
 #>
 function Get-PSOsLog
 {
@@ -711,13 +736,15 @@ function Get-PSOsLog
         [ValidateNotNullOrEmpty()]
         [string] $Path,
 
-        [string] $Id = 'pwsh',
+        [string] $Id = 'powershell',
 
         [ValidateRange(0, [int]::MaxValue)]
         [int] $TotalCount,
 
         [Nullable[DateTime]] $After
     )
+    Test-MacOS
+    Test-Elevated
 
     [int] $maxItems = 0
     $contentParms = @{Path = $Path}
@@ -733,65 +760,148 @@ function Get-PSOsLog
     }
     else
     {
-        [string] $filter = [string]::Format(" {0}: (", $id)
+        [string] $filter = [string]::Format("com.microsoft.powershell.{0}: (", $id)
         Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
     }
 }
 
 <#
 .SYNOPSIS
-    Exports os_log entries to a text file.
-
-.DESCRIPTION
-    This function exports os_log entries and converts
-    the output to a text file.
+    Import PowerShell os_log content as text.
 
 .PARAMETER WorkingDirectory
     The fully qualified path to the working directory to use.
-
-.PARAMETER Path
-    The fully qualified file to create
+    A subdirectory under the working directory will be created for imported content.
+    The subdirectory will be removed before the command completes.
 
 .PARAMETER After
     The datetime for the starting entries to export.
-    Log entries with a timestamp greater or equal to this value will be exported.
+    Log entries with a timestamp on or after this value will be returned.
 
 .EXAMPLE
-    PS> $now = [DateTime]::Now
-    PS> # perform some work
-    PS> Export-OSLog -Path .\mylog.txt -After $now
+    PS> $timestamp = [DateTime]::Now
+    PS> # perform some work...
+    PS> $content = (Get-Import -WorkingDirectory $PSDrive -After $timestamp)
+
+.EXAMPLE
+    PS> $timestamp = [DateTime]::Now
+    PS> # perform some work...
+    PS> Import-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
 
 .NOTES
     This function must be run as elevated (sudo) on MacOS
 #>
-function Export-OSLog
+function Import-OSLog
 {
     param
     (
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string] $WorkingDirectory,
 
-        [string] $Path,
-
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [DateTime] $After
     )
-    throw "This function is not implemented"
+    Test-MacOS
+    Test-Elevated
 
-    if (-not $IsMacOs)
+    if ((Test-Path -Path $WorkingDirectory) -eq $false)
     {
-        throw "This function must be run on MacOS"
+        throw "WorkingDirectory must exist: $WorkingDirectory"
     }
+    $generatedName = [Guid]::new().ToString('N') + '.logarchive'
+    $generatedDir = Join-Path -Path $WorkingDirectory -ChildPath $generatedName
 
-    if (-not (Test-Elevated))
+    try
     {
-        throw "This function requires sudo."
+        $null = New-Item -Path $generatedDir -ItemType Directory -ErrorAction Stop
+
+        if ($After -ne $null)
+        {
+            [string] $startTime = $After.ToString("yyyy-MM-dd HH:mm:ss")
+            Start-NativeExecution -command {log collect --start $startTime --output $generatedDir}
+        }
+        else
+        {
+            Start-NativeExecution -command {log collect --output $generatedDir}
+        }
+
+        Start-NativeExecution -command {log show $generatedDir --info --predicate 'process == "pwsh"'}
     }
+    finally
+    {
+        if (Test-Path -Path $generatedDir)
+        {
+            Remove-Item -Path $generatedDir -Force -Recurse -ErrorAction SilentlyContinue
+        }
+    }
+}
 
-    $dateFormat = "yyyy-MM-dd HH:mm:ss"
+<#
+.SYNOPSIS
+    Enables or disables persistence of PowerShell logging
 
-    $collect = [string]::Format("log collect --start {0} --output $Path", $After.Format($dateFormat), $WorkingDirectory)
-    $convert = [string]::Format("log show $WorkingDirectory --info --predicate 'process == `"{0}`"'", $WorkingDirectory, $id)
+.PARAMETER Enable
+    Enables persistence. When not specified, disable
+
+.EXAMPLE
+    Set-OsLogPersistence -Enable
+    Enables persistence of PowerShell log entries
+
+.EXAMPLE
+    Set-OsLogPersistence
+    Reverts persistence to the default state.
+#>
+function Set-OsLogPersistence
+{
+    [CmdletBinding()]
+    param
+    (
+        [switch] $Enable
+    )
+    Test-MacOS
+    Test-Elevated
+
+    if ($PSBoundParameters.ContainsKey('Enable') -and $PSBoundParameters['Enable'].IsPresent)
+    {
+        Write-Verbose -Message "Enabling log persistence"
+        Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode="persist:info,level:info" }
+    }
+    else
+    {
+        Write-Verbose -Message "Reverting log persistence to the default"
+        Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode="persist:default,level:default" }
+    }
+}
+
+<#
+.SYNOPSIS
+   Gets the current PowerShell logging persistence setting
+#>
+function Get-OsLogPersistence
+{
+    $result = Start-NativeExecution -command {log config --status --subsystem com.microsoft.powershell}
+    $parts = $result.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
+
+    if ($parts[$parts.Length - 1] -eq 'PERSIST_DEFAULT')
+    {
+        # Not configured
+        $result = new-object PSObject -Property @{
+            Level = 'DEFAULT'
+            Persist = 'DEFAULT'
+        }
+    }
+    else
+    {
+        $result = new-object PSObject -Property @{
+            Level = $parts[$parts.Length - 2]
+            Persist = $parts[$parts.Length -1]
+        }
+    }
+    return $result
 }
 
 #region os_log support
 
-Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Export-OSLog
+Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Import-OSLog, Get-OsLogPersistence, Set-OsLogPersistence
