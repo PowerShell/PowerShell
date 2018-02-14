@@ -694,7 +694,7 @@ namespace System.Management.Automation
 namespace System.Management.Automation.Security
 {
     /// <summary>
-    /// Application white listing security policies only affect Windows OSs
+    /// Application white listing security policies only affect Windows OSs.
     /// </summary>
     internal sealed class SystemPolicy
     {
