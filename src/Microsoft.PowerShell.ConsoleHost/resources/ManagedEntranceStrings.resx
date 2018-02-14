@@ -168,7 +168,7 @@ All parameters are case-insensitive.
     This can be any endpoint registered on the local machine including the default PowerShell
     remoting endpoints or a custom endpoint having specific user role capabilities.
 
-    Example: pwsh -configurationmame AdminRoles
+    Example: pwsh -configurationname AdminRoles
 
 -EncodedCommand | -e | -ec
     Accepts a base64 encoded string version of a command. Use this parameter to submit
