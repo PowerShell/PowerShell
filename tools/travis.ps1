@@ -200,12 +200,16 @@ elseif($Stage -eq 'Build')
         $ProgressPreference = $originalProgressPreference
     }
 
+    $testResultsNoSudo = "$pwd\TestResultsNoSudo.xml"
+    $testResultsSudo = "$pwd\TestResultsSudo.xml"
+
     $pesterParam = @{
         'binDir'     = $output
         'PassThru'   = $true
         'Terse'      = $true
         'Tag'        = @()
         'ExcludeTag' = @('RequireSudoOnUnix')
+        'OutputFile' = $testResultsNoSudo
     }
 
     if ($isFullBuild) {
@@ -228,18 +232,19 @@ elseif($Stage -eq 'Build')
     }
 
     # Running tests which do not require sudo.
-    $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
+    Start-PSPester @pesterParam
 
     # Running tests, which require sudo.
     pesterParam['Tag'] = @('RequireSudoOnUnix')
     pesterParam['ExcludeTag'] = @()
     pesterParam['Sudo'] = $true
-    $pesterPassThruSudoObject = Start-PSPester @pesterParam
+    pesterParam['OutputFile'] = $testResultsSudo
+    Start-PSPester @pesterParam
 
     # Determine whether the build passed
     try {
         # this throws if there was an error
-        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
+        @($testResultsNoSudo, $testResultsSudo) | ForEach-Object { Test-PSPesterResults -TestResultsFile $_ }
         $result = "PASS"
     }
     catch {

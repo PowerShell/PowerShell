@@ -16,7 +16,8 @@ addons:
   artifacts:
     paths:
       - $(ls powershell*{deb,pkg,AppImage,gz} | tr "\n" ":")
-      - pester-tests.xml
+      - ./tools/TestResultsSudo.xml
+      - ./tools/TestResultsNoSudo.xml
 
 install:
   # Default 2.0.0 Ruby is buggy
