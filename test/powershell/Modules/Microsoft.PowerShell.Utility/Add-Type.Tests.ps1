@@ -123,8 +123,9 @@ public class AttributeTest$guid : PSCmdlet
     ) {
         param($type1, $type2, $file1, $file2, $sourceLanguage)
 
-        { $type1 = Invoke-Expression -Command $type1 } | Should Throw
-        { $type2 = Invoke-Expression -Command $type2 } | Should Throw
+        # The types shouldn't exist before compile the test code.
+        $type1 -as [type] | Should BeNullOrEmpty
+        $type2 -as [type] | Should BeNullOrEmpty
 
         $returnedTypes = Add-Type -Path $file1,$file2 -Language $sourceLanguage -PassThru
 
@@ -213,7 +214,7 @@ public class AttributeTest$guid : PSCmdlet
         { Invoke-Expression -Command $cmdlet } | Should Throw
 
         $testModule = Import-Module -Name $outFile -PassThru
-        Invoke-Expression -Command $cmdlet | Should BeExactly $guid
+        & $cmdlet | Should BeExactly $guid
 
         Remove-Module $testModule -Force
     }
