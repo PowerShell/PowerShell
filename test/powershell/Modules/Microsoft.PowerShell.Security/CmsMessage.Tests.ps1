@@ -28,7 +28,7 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     It "Verify Get-PfxCertificate right password" {
         $pass = ConvertTo-SecureString "password" -AsPlainText -Force
         $cert = Get-PfxCertificate $protectedCertLocation -Password $pass
-        $cert.Subject | Should Be "CN=MyDataEnciphermentCert"
+        $cert.Subject | Should Be "CN=localhost"
     }
 
     It "Verify Get-PfxCertificate wrong password" {
