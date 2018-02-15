@@ -232,19 +232,19 @@ elseif($Stage -eq 'Build')
     }
 
     # Running tests which do not require sudo.
-    Start-PSPester @pesterParam
+    $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
 
     # Running tests, which require sudo.
     $pesterParam['Tag'] = @('RequireSudoOnUnix')
     $pesterParam['ExcludeTag'] = @()
     $pesterParam['Sudo'] = $true
     $pesterParam['OutputFile'] = $testResultsSudo
-    Start-PSPester @pesterParam
+    $pesterPassThruSudoObject = Start-PSPester @pesterParam
 
     # Determine whether the build passed
     try {
         # this throws if there was an error
-        @($testResultsNoSudo, $testResultsSudo) | ForEach-Object { Test-PSPesterResults -TestResultsFile $_ }
+        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $result = "PASS"
     }
     catch {
