@@ -173,16 +173,9 @@ Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 
 ## NuGet Packages
 
-In the `release` branch, run `Publish-NuGetFeed` to generate PowerShell NuGet packages:
-
-```powershell
-# Assume the to-be-used release tag is 'v6.0.0-beta.1'
-Publish-NuGetFeed -ReleaseTag 'v6.0.0-beta.1'
-```
-
-PowerShell NuGet packages and the corresponding symbol packages will be generated at `PowerShell/nuget-artifacts` by default.
-Currently the NuGet packages published to [powershell-core feed][ps-core-feed] only contain assemblies built for Windows.
-Maintainers are working on including the assemblies built for non-Windows platforms.
+The NuGet packages for hosting PowerShell for Windows and non-Windows are being built in our release build pipeline.
+The assemblies from the individual Windows and Linux builds are consumed and packed into NuGet packages.
+These are then released to [ps-core-feed].
 
 [ps-core-feed]: https://powershell.myget.org/gallery/powershell-core
 
