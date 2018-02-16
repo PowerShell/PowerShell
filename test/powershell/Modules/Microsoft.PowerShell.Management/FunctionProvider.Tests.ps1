@@ -36,7 +36,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
             $options = "ReadOnly"
             Set-Item $nonExistingFunction -Options $options -Value $functionValue
             (Get-Item $nonExistingFunction).Options | Should -Be $options
-            (Get-Item $nonExistingFunction).ScriptBlock | Should -BeLike $functionValue
+            (Get-Item $nonExistingFunction).ScriptBlock | Should -Be $functionValue
         }
 
         It "Removes existing function if Set-Item has no arguments beside function name" {
@@ -55,8 +55,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         }
 
         It "Throws PSArgumentException when Set-Item is called with incorrect function value" {
-            Set-Item $nonExistingFunction -Value 123 -ErrorVariable x -ErrorAction silentlycontinue
-            $x.FullyQualifiedErrorId | Should -Match "Argument,Microsoft.PowerShell.Commands.SetItemCommand"
+            { Set-Item $nonExistingFunction -Value 123 -ErrorAction Stop } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.SetItemCommand"
         }
     }
 }
