@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Basic Function Provider Tests" -Tags "CI" {
     BeforeAll {
         $existingFunction = "existingFunction"
@@ -11,7 +12,6 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     }
 
     AfterAll {
-        # Restore the previous location.
         Set-Location -Path $restoreLocation
     }
 
@@ -27,15 +27,15 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
 
         It "Sets the new options in existing function" {
             $newOptions = "ReadOnly, AllScope"
-            (Get-Item $existingFunction).Options | Should -be "None"
+            (Get-Item $existingFunction).Options | Should -Be "None"
             Set-Item $existingFunction -Options $newOptions
-            (Get-Item $existingFunction).Options | Should -be $newOptions
+            (Get-Item $existingFunction).Options | Should -Be $newOptions
         }
 
         It "Sets the options and a value of type ScriptBlock for a new function" {
             $options = "ReadOnly"
-            Set-Item $nonExistingFunction -Options $options -value $functionValue
-            (Get-Item $nonExistingFunction).Options | Should -be $options
+            Set-Item $nonExistingFunction -Options $options -Value $functionValue
+            (Get-Item $nonExistingFunction).Options | Should -Be $options
             (Get-Item $nonExistingFunction).ScriptBlock | Should -BeLike $functionValue
         }
 
@@ -45,18 +45,18 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         }
 
         It "Sets a value of type FunctionInfo for a new function" {
-            Set-Item $nonExistingFunction -value (Get-Item $existingFunction)
+            Set-Item $nonExistingFunction -Value (Get-Item $existingFunction)
             Invoke-Expression $nonExistingFunction | Should -Be $text
         }
 
         It "Sets a value of type String for a new function" {
-            Set-Item $nonExistingFunction -value "return '$text' "
+            Set-Item $nonExistingFunction -Value "return '$text' "
             Invoke-Expression $nonExistingFunction | Should -Be $text
         }
 
         It "Throws PSArgumentException when Set-Item is called with incorrect function value" {
-            Set-Item $nonExistingFunction -Value 123  -errorvariable x -erroraction silentlycontinue
-            $x.CategoryInfo | Should -Match "PSArgumentException"
+            Set-Item $nonExistingFunction -Value 123 -ErrorVariable x -ErrorAction silentlycontinue
+            $x.FullyQualifiedErrorId | Should -Match "Argument,Microsoft.PowerShell.Commands.SetItemCommand"
         }
     }
 }
