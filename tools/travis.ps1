@@ -200,10 +200,16 @@ elseif($Stage -eq 'Build')
         $ProgressPreference = $originalProgressPreference
     }
 
+    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
+    $testResultsSudo = "$pwd/TestResultsSudo.xml"
+
     $pesterParam = @{
-        'binDir'   = $output
-        'PassThru' = $true
-        'Terse'    = $true
+        'binDir'     = $output
+        'PassThru'   = $true
+        'Terse'      = $true
+        'Tag'        = @()
+        'ExcludeTag' = @('RequireSudoOnUnix')
+        'OutputFile' = $testResultsNoSudo
     }
 
     if ($isFullBuild) {
@@ -225,12 +231,20 @@ elseif($Stage -eq 'Build')
         Remove-Item -force ${telemetrySemaphoreFilepath}
     }
 
-    $pesterPassThruObject = Start-PSPester @pesterParam
+    # Running tests which do not require sudo.
+    $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
+
+    # Running tests, which require sudo.
+    $pesterParam['Tag'] = @('RequireSudoOnUnix')
+    $pesterParam['ExcludeTag'] = @()
+    $pesterParam['Sudo'] = $true
+    $pesterParam['OutputFile'] = $testResultsSudo
+    $pesterPassThruSudoObject = Start-PSPester @pesterParam
 
     # Determine whether the build passed
     try {
         # this throws if there was an error
-        Test-PSPesterResults -ResultObject $pesterPassThruObject
+        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $result = "PASS"
     }
     catch {
