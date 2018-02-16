@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 Describe "Basic Function Provider Tests" -Tags "CI" {
     BeforeAll {
-        $existingFunction = "prompt"
+        $existingFunction = "existingFunction"
         $nonExistingFunction = "nonExistingFunction"
         $text = "Hello World!"
         $functionValue = { return $text }
         $restoreLocation = Get-Location
+        Set-Location Function:
     }
 
     AfterAll {
@@ -15,40 +16,37 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     }
 
     Context "Validate Set-Item Cmdlet" {
-
-        BeforeAll {
-            Set-Location Function:
+        BeforeEach {
+            Set-Item $existingFunction -Options "None" -Value $functionValue
         }
 
         AfterEach {
-            # Removes $nonExistingFunction in case it was added. 
-            Set-Item $nonExistingFunction
-            $nonExistingFunction | Should -Not -Exist
+            Remove-Item $existingFunction -ErrorAction SilentlyContinue -Force
+            Remove-Item $nonexistingFunction -ErrorAction SilentlyContinue -Force
         }
 
         It "Sets the new options in existing function" {
+            $newOptions = "ReadOnly, AllScope"
             (Get-Item $existingFunction).Options | Should -be "None"
-            Set-Item $existingFunction -Options "AllScope"
-            (Get-Item $existingFunction).Options | Should -be "AllScope"
+            Set-Item $existingFunction -Options $newOptions
+            (Get-Item $existingFunction).Options | Should -be $newOptions
         }
 
         It "Sets the options and a value of type ScriptBlock for a new function" {
-            Set-Item $nonExistingFunction -Options "AllScope" -value $functionValue
-            (Get-Item $nonExistingFunction).Options | Should -be "AllScope"
+            $options = "ReadOnly"
+            Set-Item $nonExistingFunction -Options $options -value $functionValue
+            (Get-Item $nonExistingFunction).Options | Should -be $options
             (Get-Item $nonExistingFunction).ScriptBlock | Should -BeLike $functionValue
         }
 
         It "Removes existing function if Set-Item has no arguments beside function name" {
-            $existingFunction | Should -Exist
             Set-Item $existingFunction
             $existingFunction | Should -Not -Exist
         }
 
         It "Sets a value of type FunctionInfo for a new function" {
-            Set-Item $nonExistingFunction -value $functionValue
-            $tmpFunction = "tmpFunction"
-            Set-Item $tmpFunction -value (Get-Item $nonExistingFunction)
-            Invoke-Expression $tmpFunction | Should -Be $text
+            Set-Item $nonExistingFunction -value (Get-Item $existingFunction)
+            Invoke-Expression $nonExistingFunction | Should -Be $text
         }
 
         It "Sets a value of type String for a new function" {
