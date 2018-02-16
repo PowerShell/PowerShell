@@ -1609,7 +1609,6 @@ function Start-PSBootstrap {
                 }
 
                 # Install dependencies
-                log "Installing $Deps"
                 Start-NativeExecution {
                     Invoke-Expression "$baseCommand $Deps"
                 }
