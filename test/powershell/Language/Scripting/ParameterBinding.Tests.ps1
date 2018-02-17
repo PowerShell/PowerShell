@@ -1,4 +1,6 @@
-﻿Describe "Tests for parameter binding" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
         BeforeAll {
             $f = "function get-foo { param([Parameter(mandatory=`$true)] `$a) `$a };"
@@ -359,7 +361,6 @@
 
             get-fooc
         }
-
 
         It "No default value specified should not cause error when nothing is set on parameter" {
             function get-food

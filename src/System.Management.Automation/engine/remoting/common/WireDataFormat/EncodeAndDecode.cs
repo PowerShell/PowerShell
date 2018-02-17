@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Tracing;
 using System.Threading;
@@ -787,8 +786,6 @@ namespace System.Management.Automation
                                             Guid.Empty,
                                             dataAsPSObject);
         }
-
-
 
         /// <summary>
         /// This method generates a Remoting data structure handler message for

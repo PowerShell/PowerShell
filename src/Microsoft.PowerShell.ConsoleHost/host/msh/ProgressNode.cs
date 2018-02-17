@@ -1,8 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -11,7 +8,6 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace Microsoft.PowerShell
 {
@@ -52,8 +48,6 @@ namespace Microsoft.PowerShell
             FullPlus = 4,
         };
 
-
-
         /// <summary>
         ///
         /// Constructs an instance from a ProgressRecord.
@@ -75,8 +69,6 @@ namespace Microsoft.PowerShell
             this.Style = RenderStyle.FullPlus;
             this.SourceId = sourceId;
         }
-
-
 
         /// <summary>
         ///
@@ -340,8 +332,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         /// <summary>
         ///
         /// Renders a node in the "Minimal" style.
@@ -402,8 +392,6 @@ namespace Microsoft.PowerShell
                     maxWidth));
         }
 
-
-
         /// <summary>
         ///
         /// The nodes that have this node as their parent.
@@ -413,8 +401,6 @@ namespace Microsoft.PowerShell
         internal
         ArrayList
         Children;
-
-
 
         /// <summary>
         ///
@@ -433,8 +419,6 @@ namespace Microsoft.PowerShell
         int
         Age;
 
-
-
         /// <summary>
         ///
         /// The style in which this node should be rendered.
@@ -445,8 +429,6 @@ namespace Microsoft.PowerShell
         RenderStyle
         Style = RenderStyle.FullPlus;
 
-
-
         /// <summary>
         ///
         /// Identifies the source of the progress record.
@@ -456,7 +438,6 @@ namespace Microsoft.PowerShell
         internal
         Int64
         SourceId;
-
 
         /// <summary>
         ///
@@ -493,7 +474,6 @@ namespace Microsoft.PowerShell
 
             return 0;
         }
-
 
         /// <summary>
         ///
@@ -553,7 +533,6 @@ namespace Microsoft.PowerShell
             return lines;
         }
 
-
         /// <summary>
         ///
         /// The number of vertical BufferCells that are required to render the node in the Compact style.
@@ -585,5 +564,4 @@ namespace Microsoft.PowerShell
         }
     }
 }   // namespace
-
 

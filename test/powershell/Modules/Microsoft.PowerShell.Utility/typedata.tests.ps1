@@ -1,4 +1,6 @@
-﻿Describe "TestData cmdlets" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "TestData cmdlets" -Tags "CI" {
     Context "Get-TypeData" {
         It "System.DateTime" {
             (Get-TypeData System.DateTime).TypeName | Should Be System.DateTime

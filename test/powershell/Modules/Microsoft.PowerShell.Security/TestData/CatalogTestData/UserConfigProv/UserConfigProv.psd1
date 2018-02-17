@@ -1,6 +1,6 @@
 @{
     ModuleVersion = '3.0.0.1'
-    Author = 'fayzas'
+    Author = 'PowerShell'
     CompanyName = 'Microsoft Corporation'
     Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
     Description = 'Hello World!'

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -28,7 +27,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return LanguagePrimitives.IsTrue(res[0].Result);
         }
     }
-
 
     /// <summary>
     /// helper object holding a generic object and the related
@@ -210,7 +208,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return BestMatchIndexUndefined;
         }
 
-
         private bool MatchCondition(PSObject currentObject, MshExpression ex)
         {
             if (ex == null)
@@ -224,7 +221,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return retVal;
         }
-
 
         private MshExpressionFactory _expressionFactory;
         private TypeInfoDataBase _db;
@@ -333,7 +329,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return FormatShape.List;
         }
-
 
         internal static ViewDefinition GetViewByShapeAndType(MshExpressionFactory expressionFactory, TypeInfoDataBase db,
                 FormatShape shape, Collection<string> typeNames, string viewName)
@@ -561,7 +556,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return result;
         }
 
-
         private static bool IsOutOfBandView(ViewDefinition vd)
         {
             return (vd.mainControl is ComplexControlBody || vd.mainControl is ListControlBody) && vd.outOfBand;
@@ -618,7 +612,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return retVal;
         }
-
 
         internal static TypeGroupDefinition FindGroupDefinition(TypeInfoDataBase db, string groupName)
         {

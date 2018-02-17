@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
@@ -112,7 +111,6 @@ namespace System.Management.Automation
         {
             return GetParentPath(path, root, context, false);
         }
-
 
         /// <summary>
         /// Gets the path to the parent object for the given object.
@@ -451,7 +449,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, false);
 
@@ -678,16 +675,13 @@ namespace System.Management.Automation
                         // 1. Test for the drive root ending with a path separator.
                         bool driveRootEndsWithPathSeparator = IsPathSeparator(drive.Root[drive.Root.Length - 1]);
 
-
                         // 2. Test for the path starting with the drive root followed by a path separator
                         int indexAfterDriveRoot = drive.Root.Length;
                         bool pathStartsWithDriveRootAndPathSeparator = indexAfterDriveRoot < path.Length && IsPathSeparator(path[indexAfterDriveRoot]);
 
-
                         // 3. Test for the drive root exactly matching the path.
                         //    Since we know the path starts with the drive root then they are equal if the lengths are equal.
                         bool pathEqualsDriveRoot = drive.Root.Length == path.Length;
-
 
                         if (driveRootEndsWithPathSeparator || pathStartsWithDriveRootAndPathSeparator || pathEqualsDriveRoot)
                         {
@@ -703,7 +697,6 @@ namespace System.Management.Automation
                 getProviderPathContext.RemoveStopReferral();
             }
         } // NormalizeRelativePath
-
 
         /// <summary>
         /// Tests the specified character for equality with one of the powershell path separators and
@@ -773,7 +766,6 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
             // Get an instance of the provider
-
 
             Provider.CmdletProvider providerInstance = GetProviderInstance(provider);
 
@@ -1024,7 +1016,6 @@ namespace System.Management.Automation
                 "Caller should validate context before calling this method");
 
             // Get an instance of the provider
-
 
             Provider.CmdletProvider providerInstance = provider.CreateInstance();
 
@@ -1344,7 +1335,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             CmdletProvider providerInstance = provider.CreateInstance();
 
@@ -1738,7 +1728,6 @@ namespace System.Management.Automation
                 context != null,
                 "Caller should validate context before calling this method");
 
-
             NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, false);
 
@@ -1904,7 +1893,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
-
 
             NavigationCmdletProvider navigationCmdletProvider =
                 GetNavigationProviderInstance(providerInstance, false);

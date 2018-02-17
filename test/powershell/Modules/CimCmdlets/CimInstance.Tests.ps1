@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:pending'] = $true

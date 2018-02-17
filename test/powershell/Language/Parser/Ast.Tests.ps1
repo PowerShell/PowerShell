@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using Namespace System.Management.Automation.Language
 Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     It "A hashtable is returned from a HashtableAst" {

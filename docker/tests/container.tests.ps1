@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Import-module -Name "$PSScriptRoot\containerTestCommon.psm1" -Force
 $script:linuxContainerTests = Get-LinuxContainer
 $script:windowsContainerTests = Get-WindowsContainer
@@ -73,7 +76,7 @@ Describe "Linux Containers run PowerShell" -Tags 'Behavior', 'Linux' {
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.1'
     }
 }
 
@@ -97,6 +100,6 @@ Describe "Windows Containers run PowerShell" -Tags 'Behavior', 'Windows' {
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.1'
     }
 }

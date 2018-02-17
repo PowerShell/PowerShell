@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -59,7 +61,6 @@ namespace System.Diagnostics.Eventing.Reader
         //invoking methods on it is marked SecurityCritical as appropriate.
         //
         private EventLogHandle _handle = EventLogHandle.Zero;
-
 
         //setup the System Context, once for all the EventRecords.
         [System.Security.SecuritySafeCritical]

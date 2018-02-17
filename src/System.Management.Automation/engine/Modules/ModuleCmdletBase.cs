@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -938,7 +937,6 @@ namespace Microsoft.PowerShell.Commands
                 //Now we resolve the possible paths in case it is relative path/path contains wildcards
                 var modulePathCollection = GetResolvedPathCollection(modulePath, this.Context);
 
-
                 if (modulePathCollection != null)
                 {
                     foreach (string resolvedModulePath in modulePathCollection)
@@ -1063,7 +1061,6 @@ namespace Microsoft.PowerShell.Commands
 
             return modules;
         }
-
 
         /// <summary>
         /// Get a list of all modules
@@ -2090,7 +2087,6 @@ namespace Microsoft.PowerShell.Commands
                 Array.Clear(tmpNestedModules, 0, tmpNestedModules.Length);
             }
 
-
             // Set the private data member for the module if the manifest contains
             // this member
             object privateData = null;
@@ -2942,7 +2938,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-
                 if (actualRootModuleIsXaml)
                 {
                     manifestInfo.SetModuleType(ModuleType.Workflow);
@@ -3348,7 +3343,6 @@ namespace Microsoft.PowerShell.Commands
                         newManifestInfo.AddDetectedAliasExport(pair.Key, pair.Value);
                     }
                 }
-
 
                 if (newManifestInfo.DeclaredVariableExports == null ||
                     newManifestInfo.DeclaredVariableExports.Count == 0)
@@ -4210,7 +4204,6 @@ namespace Microsoft.PowerShell.Commands
                     powerShell.AddParameter("Version", requiredModule.Version);
                 }
 
-
                 powerShell.Invoke();
                 if (powerShell.Streams.Error != null && powerShell.Streams.Error.Count > 0)
                 {
@@ -4963,7 +4956,6 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<string> filePaths;
 
-
             if (context != null && context.EngineSessionState != null && context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
             {
                 try
@@ -5000,7 +4992,6 @@ namespace Microsoft.PowerShell.Commands
             ProviderInfo provider = null;
 
             Collection<string> filePaths;
-
 
             if (context != null && context.EngineSessionState != null && context.EngineSessionState.IsProviderLoaded(context.ProviderNames.FileSystem))
             {
@@ -5156,7 +5147,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         Context.EngineSessionState.RemoveCmdletEntry(keyToRemove, true);
                     }
-
 
                     // Remove any providers imported by this module. Providers are always imported into
                     // the top level session state. Only binary modules can import providers.
@@ -6351,7 +6341,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
-
 
         private static void AnalyzeSnapinDomainHelper()
         {
@@ -7566,7 +7555,6 @@ namespace Microsoft.PowerShell.Commands
                 cmdlet.WriteVerbose(message);
             }
         }
-
 
         private static void SetCommandVisibility(bool isImportModulePrivate, CommandInfo command)
         {

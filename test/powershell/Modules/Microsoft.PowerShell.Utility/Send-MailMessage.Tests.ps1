@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Basic Send-MailMessage tests" -Tags CI {
     BeforeAll {
         function test-smtpserver

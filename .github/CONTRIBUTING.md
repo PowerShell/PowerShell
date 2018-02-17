@@ -98,6 +98,8 @@ Additional references:
 
 #### Before submitting
 
+* If your change would fix a security vulnerability,
+  first follow the [vulnerability issue reporting policy][vuln-reporting], before submitting a PR.
 * To avoid merge conflicts, make sure your branch is rebased on the `master` branch of this repository.
 * Many code changes will require new tests,
   so make sure you've added a new test if existing tests do not effectively test the code changed.
@@ -147,6 +149,25 @@ Additional references:
   While not required, we appreciate any contributors who add this label and create the issue themselves.
   Even better, all contributors are free to contribute the documentation themselves.
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
+* If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
+  It is standard practice to have both a copyright and license notice for each source file.
+  * For `.h`, `.cpp`, and `.cs` files use:
+
+        // Copyright (c) Microsoft Corporation. All rights reserved.
+        // Licensed under the MIT License.
+
+  * For `.ps1` and `.psm1` files use:
+
+        # Copyright (c) Microsoft Corporation. All rights reserved.
+        # Licensed under the MIT License.
+
+* If your change adds a new module manifest (.psd1 file), ensure that:
+
+  ```powershell
+  Author = "PowerShell"
+  Company = "Microsoft Corporation"
+  Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
+  ```
 
 ### Pull Request - Work in Progress
 
@@ -299,6 +320,7 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md
+[vuln-reporting]: ../docs/maintainers/issue-management.md#Security-Vulnerabilities
 [governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/

@@ -43,6 +43,18 @@
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    <CustomAction Id="SaveShortcutPath" Property="ShortcutPath" Value="[$ApplicationProgramsMenuShortcut]$(var.ProductSemanticVersionWithNameAndOptionalArchitecture).lnk" />
+    <CustomAction Id="FixShortcutWorkingDirectory" Script="vbscript" HideTarget="no" Impersonate="no">
+      shortcutPath = Session.Property("ShortcutPath")
+      Set fso = CreateObject("Scripting.FileSystemObject")
+      if (fso.FileExists(shortcutPath)) Then
+        Set wshShell = CreateObject("WSCript.Shell")
+        Set shortcut = wshShell.CreateShortcut(shortcutPath)
+
+        shortcut.workingdirectory = "%HOMEDRIVE%%HOMEPATH%"
+        shortcut.save
+      End If
+    </CustomAction>
 
     <SetProperty Id="RegisterManifest" Before="RegisterManifest" Sequence="execute"
                  Value ="&quot;[$(var.ProductVersionWithName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductVersionWithName)]RegisterManifest.ps1&quot;" />
@@ -141,8 +153,13 @@
             <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">
               <CreateFolder/>
             </Component>
-            <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
+                <!-- create key for easy detection of a particular version of a powershell core package 
+                     The upgrade code is used in the key because it will change when we allow SxS       -->
+                <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                    <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)"/>
+                </RegistryKey>
+                <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                     <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
                 </RegistryKey>
@@ -200,7 +217,7 @@
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductSemanticVersionWithName)">
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Description="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
               Icon = "PowerShellExe.ico" />
@@ -210,6 +227,12 @@
         </Directory>
       </Directory>
     </Directory>
+    <InstallExecuteSequence>
+      <Custom Action="SaveShortcutPath" After="InstallFinalize" />
+      <Custom Action="FixShortcutWorkingDirectory" After="SaveShortcutPath">
+        NOT Installed OR NOT REMOVE OR UPGRADINGPRODUCTCODE
+      </Custom>
+    </InstallExecuteSequence>
   </Product>
 
 <!-- Explorer Context Menu Dialog -->

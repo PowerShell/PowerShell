@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation;
@@ -24,7 +23,6 @@ namespace System.Management.Automation
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // DriveManagementIntrinsics private
-
 
         /// <summary>
         /// Constructs a Drive management facade

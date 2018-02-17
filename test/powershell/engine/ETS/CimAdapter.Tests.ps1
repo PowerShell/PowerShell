@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 function getIndex
 {
 	param([string[]]$strings,[string]$pattern)

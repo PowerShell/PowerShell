@@ -1,4 +1,6 @@
-﻿Describe "Alias tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Alias tests" -Tags "CI" {
 
     BeforeAll {
         $testPath = Join-Path testdrive:\ ("testAlias\[.test")

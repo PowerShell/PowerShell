@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <#
 .Synopsis
     Install PowerShell Core on Windows, Linux or macOS.

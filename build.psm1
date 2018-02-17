@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
@@ -135,9 +138,11 @@ function Get-EnvironmentInformation
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
-        $environment += @{'IsOpenSUSE13' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
+        $environment += @{'IsSLES' = $LinuxInfo.ID -match 'sles'}
+        $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
-        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsOpenSUSE}
+        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora}
+        $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -521,7 +526,9 @@ Fix steps:
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
+        log "Run dotnet restore"
+
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
         $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
@@ -531,11 +538,7 @@ Fix steps:
             $RestoreArguments += "quiet"
         }
 
-        ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
-            log "Run dotnet restore $_ $RestoreArguments"
-
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
-        }
+        ($srcProjectDirs + $testProjectDirs) | ForEach-Object { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
     }
 
     # handle ResGen
@@ -648,28 +651,32 @@ function Restore-PSModuleToBuild
         $CI
     )
 
+    $ProgressPreference = "SilentlyContinue"
     log "Restore PowerShell modules to $publishPath"
 
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
 
-    Copy-PSGalleryModules -Destination $modulesDir
+    # Restore modules from powershellgallery feed
+    Restore-PSModule -Destination $modulesDir -Name @(
+        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+        'PowerShellGet'
+        'Microsoft.PowerShell.Archive'
+    ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
 
     if($CI.IsPresent)
     {
+        # take the latest version of pester and install it so it may be used
         Restore-PSPester -Destination $modulesDir
     }
 }
 
 function Restore-PSPester
 {
-    param
-    (
+    param(
         [ValidateNotNullOrEmpty()]
-        [string]
-        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-
-    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '1f546b6aaa0893e215e940a14f57c96f56f7eff1'
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery
 }
 
 function Compress-TestContent {
@@ -869,7 +876,6 @@ function Get-PSOutput {
     }
 }
 
-
 function Get-PesterTag {
     param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
     $alltags = @{}
@@ -892,7 +898,7 @@ function Get-PesterTag {
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
                     $values | ForEach-Object {
-                        if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
+                        if (@('REQUIREADMINONWINDOWS', 'REQUIRESUDOONUNIX', 'SLOW') -contains $_) {
                             # These are valid tags also, but they are not the priority tags
                         }
                         elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
@@ -974,6 +980,8 @@ function Start-PSPester {
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
+        [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
+        [switch]$Sudo,
         [switch]$IncludeFailingTest
     )
 
@@ -1022,52 +1030,52 @@ Restore the module to '$Pester' by running:
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $Command = ""
+    $command = ""
     if ($Terse)
     {
-        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+        $command += "`$ProgressPreference = 'silentlyContinue'; "
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
+    $command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($Environment.IsWindows) {
-        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+        $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
 
-    $Command += "Import-Module '$Pester'; "
+    $command += "Import-Module '$Pester'; "
 
     if ($Unelevate)
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
 
-    $Command += "Invoke-Pester "
+    $command += "Invoke-Pester "
 
-    $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
     }
     if ($Tag) {
-        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+        $command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $Command += "-Quiet "
+        $command += "-Quiet "
     }
     if ( $PassThru ) {
-        $Command += "-PassThru "
+        $command += "-PassThru "
     }
 
-    $Command += "'" + ($Path -join "','") + "'"
+    $command += "'" + ($Path -join "','") + "'"
     if ($Unelevate)
     {
-        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+        $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
-    Write-Verbose $Command
+    Write-Verbose $command
 
     $script:nonewline = $true
     $script:inerror = $false
@@ -1156,31 +1164,36 @@ Restore the module to '$Pester' by running:
                 $passThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $command += "|Export-Clixml -Path '$passThruFile' -Force"
+
+                    $passThruCommand = {& $powershell -noprofile -c $command }
+                    if ($Sudo.IsPresent) {
+                        $passThruCommand =  {& sudo $powershell -noprofile -c $command }
+                    }
+
+                    $writeCommand = { Write-Host $_ }
                     if ($Terse)
                     {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                        $writeCommand = { Write-Terse $_ }
                     }
-                    else
-                    {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
-                    }
+
+                    Start-NativeExecution -sb $passThruCommand | ForEach-Object $writeCommand
                     Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
                 {
-                    Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                    Remove-Item $passThruFile -ErrorAction SilentlyContinue -Force
                 }
             }
             else
             {
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command} | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command}
                 }
             }
         }
@@ -1358,7 +1371,6 @@ function Test-PSPesterResults
     }
 }
 
-
 function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
@@ -1418,14 +1430,13 @@ function Start-PSxUnit {
 
         # '-fxversion' workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
         # Run sequential tests first, and then run the tests that can execute in parallel
-        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+        dotnet xunit -fxversion 2.0.5 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
+        dotnet xunit -fxversion 2.0.5 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
     }
     finally {
         Pop-Location
     }
 }
-
 
 function Install-Dotnet {
     [CmdletBinding()]
@@ -1486,8 +1497,6 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($Environment.IsFedora) {
         "dnf install -y -q"
-    } elseif ($Environment.IsOpenSUSE) {
-        "zypper --non-interactive install"
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -1569,6 +1578,26 @@ function Start-PSBootstrap {
 
                 $PackageManager = Get-RedHatPackageManager
 
+                $baseCommand = "$sudo $PackageManager"
+
+                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+
+                # Install dependencies
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
+                }
+            } elseif ($Environment.IsSUSEFamily) {
+                # Build tools
+                $Deps += "gcc", "cmake", "make"
+
+                # Packaging tools
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff" }
+
+                $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
 
                 # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
@@ -1892,7 +1921,6 @@ function Start-ResGen
     }
 }
 
-
 function Find-Dotnet() {
     $originalPath = $env:PATH
     $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -1950,7 +1978,6 @@ function Convert-TxtResourceToXml
     }
 }
 
-
 function script:Use-MSBuild {
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
@@ -1968,7 +1995,6 @@ function script:Use-MSBuild {
 
     Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
-
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
@@ -2352,6 +2378,7 @@ function Start-CrossGen {
         "Microsoft.PowerShell.Security.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
+        "Microsoft.PowerShell.PSReadLine.dll",
         "System.Management.Automation.dll"
     )
 
@@ -2411,108 +2438,105 @@ function Clear-PSRepo
     }
 }
 
-
-# Install PowerShell modules from a git Repo such as PSL-Pester
-function Restore-GitModule
+# Install PowerShell modules such as PackageManagement, PowerShellGet
+function Restore-PSModule
 {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
-        [string]$Name,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Uri,
+        [string[]]$Name,
 
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [string]$Destination,
 
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$CommitSha
-    )
+        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
 
-    log 'Restoring module from git repo:'
-    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
-
-    $clonePath = Join-Path -Path $Destination -ChildPath $Name
-    if(Test-Path $clonePath)
-    {
-        remove-Item -Path $clonePath -recurse -force
-    }
-
-    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
-
-    Push-location $clonePath
-    try {
-        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
-
-        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
-        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
-    }
-    finally
-    {
-        pop-location
-    }
-}
-
-# Install PowerShell modules such as PackageManagement, PowerShellGet
-function Copy-PSGalleryModules
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination
+        [string]$RequiredVersion
         )
 
-    if (!$Destination.EndsWith("Modules")) {
-        throw "Installing to an unexpected location"
-    }
+    $needRegister = $true
+    $RepositoryName = "mygetpsmodule"
 
-    $cache = dotnet nuget locals global-packages -l
-    if ($cache -match "info : global-packages: (.*)") {
-        $nugetCache = $matches[1]
-    }
-    else {
-        throw "Can't find nuget global cache"
-    }
+    # Check if the PackageManagement works in the base-oS or PowerShellCore
+    $null = Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
+    $null = Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
 
-    $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
+    # Get the existing registered PowerShellGet repositories
+    $psrepos = PowerShellGet\Get-PSRepository
 
-    foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
-        $name = $m.Include
-        $version = $m.Version
-        log "Name='$Name', Version='$version', Destination='$Destination'"
-
-        # Remove the build revision from the src (nuget drops it).
-        $srcVer = if ($version -match "(\d+.\d+.\d+).\d+") {
-            $matches[1]
-        } else {
-            $version
+    foreach ($repo in $psrepos)
+    {
+        if(($repo.SourceLocation -eq $SourceLocation) -or ($repo.SourceLocation.TrimEnd("/") -eq $SourceLocation.TrimEnd("/")))
+        {
+            # found a registered repository that matches the source location
+            $needRegister = $false
+            $RepositoryName = $repo.Name
+            break
         }
-        #
-        # Remove semantic version in the destination directory
-        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
-            $matches[1]
-        } else {
-            $version
+    }
+
+    if($needRegister)
+    {
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
         }
 
-        # Nuget seems to always use lowercase in the cache
-        $src = "$nugetCache/$($name.ToLower())/$srcVer"
-        $dest = "$Destination/$name/$destVer"
+        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
+        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
+        if($ev)
+        {
+            throw ("Failed to register repository '{0}'" -f $RepositoryName)
+        }
 
-        Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
-        New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
-        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
-        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
+        if(-not $regVar)
+        {
+            throw ("'{0}' is not registered" -f $RepositoryName)
+        }
+    }
+
+    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
+
+    # do not output progress
+    $ProgressPreference = "SilentlyContinue"
+    $Name | ForEach-Object {
+
+        $command = @{
+                        Name=$_
+                        Path = $Destination
+                        Repository =$RepositoryName
+                    }
+
+        if($RequiredVersion)
+        {
+            $command.Add("RequiredVersion", $RequiredVersion)
+        }
+
+        # pull down the module
+        log "running save-module $_"
+        PowerShellGet\Save-Module @command -Force
+
+        # Remove PSGetModuleInfo.xml file
+        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
+            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
+        }
+    }
+
+    # Clean up
+    if($needRegister)
+    {
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            log "Unregistering PSRepository with name: $RepositoryName"
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        }
     }
 }
-
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>

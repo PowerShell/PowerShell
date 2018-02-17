@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 #
 # Demo simple interoperation between PowerShell and Python
 
@@ -54,7 +57,6 @@ cat inline_python.ps1
 
 # and run it
 ./inline_python
-
 
 ####################################
 # cleanup

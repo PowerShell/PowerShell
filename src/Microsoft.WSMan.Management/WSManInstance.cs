@@ -1,6 +1,6 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -16,7 +16,6 @@ using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation;
 using System.Globalization;
-
 
 namespace Microsoft.WSMan.Management
 {
@@ -579,7 +578,6 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-
         /// <summary>
         /// BeginProcessing method.
         /// </summary>
@@ -588,7 +586,6 @@ namespace Microsoft.WSMan.Management
 
             helper.CleanUp();
         }
-
 
     }
     #endregion
@@ -684,7 +681,6 @@ namespace Microsoft.WSMan.Management
             set { filepath = value; }
         }
         private string filepath;
-
 
         /// <summary>
         /// The following is the definition of the input parameter "Fragment".
@@ -816,8 +812,6 @@ namespace Microsoft.WSMan.Management
         }
         private Hashtable valueset;
 
-
-
         #endregion
 
         private WSManHelper helper ;
@@ -830,7 +824,6 @@ namespace Microsoft.WSMan.Management
             helper = new WSManHelper(this);
             helper.WSManOp = "set";
             IWSManSession m_session = null;
-
 
             if (dialect != null)
             {
@@ -941,10 +934,7 @@ namespace Microsoft.WSMan.Management
 
     }
 
-
-
     #endregion
-
 
     #region Remove-WsManInstance
 
@@ -1111,11 +1101,7 @@ namespace Microsoft.WSMan.Management
         }
         private SwitchParameter usessl;
 
-
-
-
         #endregion
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -1200,9 +1186,7 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-
     }
-
 
     #endregion
 
@@ -1417,7 +1401,6 @@ namespace Microsoft.WSMan.Management
             }
 
         }//End BeginProcessing()
-
 
         /// <summary>
         /// ProcessRecord method.

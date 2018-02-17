@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -132,7 +131,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private long[] _instanceIds = null;
 
-
         /// <summary>
         /// match eventlog entries by the Index
         /// gets or sets an array of indexes
@@ -151,7 +149,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private int[] _indexes = null;
-
 
         /// <summary>
         /// match eventlog entries by the EntryType
@@ -223,7 +220,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "List")]
         public SwitchParameter List { get; set; }
-
 
         /// <summary>
         /// Return the log names rather than the EventLog objects
@@ -442,8 +438,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-
-
         private bool FiltersMatch(EventLogEntry entry)
         {
             if (_indexes != null)
@@ -614,7 +608,6 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LogName { get; set; }
 
-
         /// <summary>
         /// Clear eventlog entries from these Computers.
         /// </summary>
@@ -706,7 +699,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string LogName { get; set; }
 
-
         /// <summary>
         /// The source by which the application is registered on the specified computer.
         /// </summary>
@@ -747,7 +739,6 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         [ValidateLength(0, 32766)]
         public string Message { get; set; }
-
 
         /// <summary>
         /// Write eventlog entries of this log
@@ -1317,7 +1308,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("SRC")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Source { get; set; }
-
 
         /// <summary>
         /// BeginProcessing method.

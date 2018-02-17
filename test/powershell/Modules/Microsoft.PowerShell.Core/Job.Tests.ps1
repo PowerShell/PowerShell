@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Job Cmdlet Tests" -Tag "CI" {
     Context "Simple Jobs" {
         BeforeEach {

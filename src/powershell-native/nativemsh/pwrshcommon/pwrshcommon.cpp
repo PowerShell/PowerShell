@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // Implementation of common code used by native PowerShell
@@ -682,6 +681,7 @@ namespace NativeMsh
         "Microsoft.PowerShell.ConsoleHost",
         "Microsoft.PowerShell.CoreCLR.Eventing",
         "Microsoft.PowerShell.LocalAccounts",
+        "Microsoft.PowerShell.PSReadLine",
         "Microsoft.PowerShell.SDK",
         "Microsoft.PowerShell.Security",
         "Microsoft.VisualBasic",

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 $script:forcePull = $true
 # Get docker Engine OS
 function Get-DockerEngineOs
@@ -86,7 +89,6 @@ function Get-WindowsContainer
         }
     }
 }
-
 
 $script:repoName = 'microsoft/powershell'
 function Get-RepoName
@@ -222,7 +224,7 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.0",
+        $PSVersion = "6.0.1",
         [string]
         $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
     )
@@ -250,7 +252,6 @@ function Test-PSPackage
     $testlistStubValue = $TestList
     $packageLocationStubName = 'PACKAGELOCATIONSTUB'
     $packageLocationStubValue = $PSPackageLocation
-
 
     $results = @{}
     $returnValue = $true

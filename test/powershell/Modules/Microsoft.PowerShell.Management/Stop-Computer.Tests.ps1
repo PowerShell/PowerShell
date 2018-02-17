@@ -1,10 +1,13 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # note these will manipulate private data in the PowerShell engine which will
 # enable us to not actually stop the system, but return right before we do
 $stopTesthook = "TestStopComputer"
 $stopTesthookResultName = "TestStopComputerResults"
 $DefaultResultValue = 0
 
-try 
+try
 {
     # set up for testing
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
@@ -32,7 +35,7 @@ try
             $computerNames = "localhost","${env:COMPUTERNAME}"
             Stop-Computer -Computer $computerNames -ErrorAction Stop| Should BeNullOrEmpty
         }
-    
+
         It "Should support WsmanAuthentication types" {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {

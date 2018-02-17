@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Native Command Arguments" -tags "CI" {
     # When passing arguments to native commands, quoted segments that contain
     # spaces need to be quoted with '"' characters when they are passed to the

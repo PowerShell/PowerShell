@@ -1,4 +1,6 @@
-﻿Describe "Object cmdlets" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Object cmdlets" -Tags "CI" {
     Context "Group-Object" {
         It "AsHashtable returns a hashtable" {
             $result = Get-Process | Group-Object -Property ProcessName -AsHashTable

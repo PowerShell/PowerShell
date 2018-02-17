@@ -1,6 +1,6 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Collections;
@@ -237,7 +237,6 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
         public abstract PSEventSubscriber SubscribeEvent(object source, string eventName, string sourceIdentifier, PSObject data, PSEventReceivedEventHandler handlerDelegate, bool supportEvent, bool forwardEvent);
 
-
         /// <summary>
         /// Subscribes to an event on an object.
         ///
@@ -316,7 +315,6 @@ namespace System.Management.Automation
         {
             return SubscribeEvent(source, eventName, sourceIdentifier, data, handlerDelegate, supportEvent, forwardEvent, maxTriggerCount);
         }
-
 
         /// <summary>
         /// Unsubscribes from an event on an object.
@@ -537,7 +535,6 @@ namespace System.Management.Automation
             return SubscribeEvent(source, eventName, sourceIdentifier, data, handlerDelegate, supportEvent, forwardEvent, 0);
         }
 
-
         /// <summary>
         /// Subscribes to an event on an object.
         ///
@@ -577,7 +574,6 @@ namespace System.Management.Automation
 
             return subscriber;
         }
-
 
         #region OnIdleProcessing
 
@@ -843,7 +839,6 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         /// Unsubscribes from an event on an object.
         ///
@@ -855,7 +850,6 @@ namespace System.Management.Automation
         {
             UnsubscribeEvent(subscriber, false);
         }
-
 
         /// <summary>
         /// Unsubscribes from an event on an object.
@@ -1337,7 +1331,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         internal bool IsExecutingEventAction
         {
@@ -1982,7 +1975,6 @@ namespace System.Management.Automation
         internal static readonly HashSet<string> EngineEvents = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Exiting, OnIdle, OnScriptBlockInvoke };
     }
 
-
     /// <summary>
     /// Represents a subscriber to an event
     /// </summary>
@@ -2107,7 +2099,6 @@ namespace System.Management.Automation
         /// </summary>
         public PSEventReceivedEventHandler HandlerDelegate { get; } = null;
 
-
         /// <summary>
         /// Get the flag that marks this event as a supporting event
         /// </summary>
@@ -2188,7 +2179,6 @@ namespace System.Management.Automation
             }
         }
     }
-
 
     /// <summary>
     /// The generic event handler from which specific event handlers extend. When possible,
@@ -2429,7 +2419,6 @@ namespace System.Management.Automation
     /// </summary>
     public delegate void PSEventReceivedEventHandler(Object sender, PSEventArgs e);
 
-
     /// <summary>
     /// The event arguments associated with unsubscribing from an event
     /// </summary>
@@ -2457,7 +2446,6 @@ namespace System.Management.Automation
     /// The delegate that handles notifications of the event being unsubscribed
     /// </summary>
     public delegate void PSEventUnsubscribedEventHandler(Object sender, PSEventUnsubscribedEventArgs e);
-
 
     /// <summary>
     /// This class contains the collection of events received by the
@@ -2650,7 +2638,6 @@ namespace System.Management.Automation
             }
         }
         private bool _moreData = false;
-
 
         /// <summary>
         /// Location in which this job is running

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='default')]
 # PowerShell Script to clone, build and package PowerShell from specified fork and branch
 param (

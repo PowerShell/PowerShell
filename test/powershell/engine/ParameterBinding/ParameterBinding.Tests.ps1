@@ -1,4 +1,6 @@
-﻿Describe "Parameter Binding Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Parameter Binding Tests" -Tags "CI" {
     It "Should throw a parameter binding exception when two parameters have the same position" {
         function test-PositionalBinding1 {
             [CmdletBinding()]

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Split Operator" -Tags CI {
     Context "Binary split operator" {
         It "Binary split operator can split array of value" {

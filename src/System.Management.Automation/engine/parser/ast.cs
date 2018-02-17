@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // This file contains all of the publicly visible parts of the PowerShell abstract syntax tree.
@@ -2734,7 +2733,6 @@ namespace System.Management.Automation.Language
             SetParent(Name);
             SetParent(Alias);
         }
-
 
         /// <summary>
         /// Construct a using module statement that aliases an item with module specification as hashtable.
@@ -6061,7 +6059,6 @@ namespace System.Management.Automation.Language
         #endregion Visitors
     }
 
-
     /// <summary>
     /// Defines types of configuration document
     /// </summary>
@@ -6183,7 +6180,6 @@ namespace System.Management.Automation.Language
         }
 
         #endregion Visitors
-
 
         #region Internal methods/properties
 
@@ -9415,7 +9411,6 @@ namespace System.Management.Automation.Language
 
         // Indicates that this ast was constructed as part of a schematized object instead of just a plain hash literal.
         internal bool IsSchemaElement { get; set; }
-
 
         #region Visitors
 

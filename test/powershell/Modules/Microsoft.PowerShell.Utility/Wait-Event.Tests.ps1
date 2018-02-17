@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Wait-Event" -Tags "CI" {
 
     Context "Validate Wait-Event is waiting for events" {

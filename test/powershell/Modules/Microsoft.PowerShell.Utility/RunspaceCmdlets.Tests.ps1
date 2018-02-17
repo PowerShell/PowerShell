@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Runspace cmdlet tests" -Tag "CI" {
     BeforeAll {
         $CurrentRunspace = $ExecutionContext.Host.Runspace

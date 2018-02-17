@@ -1,4 +1,7 @@
-﻿#region privateFunctions
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+#region privateFunctions
 
 $script:psRepoPath = [string]::Empty
 if ($null -ne (Get-Command -Name 'git' -ErrorAction Ignore)) {
@@ -394,6 +397,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
    Microsoft.WSMan.Management                          3.93   4.45     Branch:3.93 Sequence:4.45
    Microsoft.WSMan.Runtime                             0      0        Branch:  0 Sequence:  0
    Microsoft.PowerShell.Commands.Diagnostics           44.96  49.93    Branch:44.96 Sequence:49.93
+   Microsoft.PowerShell.PSReadLine                     7.12   9.94     Branch:7.12 Sequence:9.94
    Microsoft.PowerShell.PackageManagement              59.77  62.04    Branch:59.77 Sequence:62.04
    Microsoft.PackageManagement                         41.73  44.47    Branch:41.73 Sequence:44.47
    Microsoft.Management.Infrastructure.CimCmdlets      13.20  17.01    Branch:13.20 Sequence:17.01
@@ -425,7 +429,6 @@ function Get-CodeCoverage
     (Get-CoverageData -xmlPath $xmlPath)
 }
 
-
 <#
 .Synopsis
    Compare results between two coverage runs.
@@ -450,6 +453,7 @@ function Get-CodeCoverage
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66            0 95.31                0
    Microsoft.PowerShell.CoreCLR.Eventing               28.70            0 36.23                0
    Microsoft.PowerShell.PackageManagement              59.77            0 62.04                0
+   Microsoft.PowerShell.PSReadLine                     7.12             0 9.94                 0
    Microsoft.PowerShell.Security                       15.17            0 18.16                0
    Microsoft.WSMan.Management                          3.93             0 4.45                 0
    Microsoft.WSMan.Runtime                             0                0 0                    0
@@ -475,6 +479,7 @@ function Get-CodeCoverage
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66            0 95.31                0
    Microsoft.PowerShell.CoreCLR.Eventing               28.70            0 36.23                0
    Microsoft.PowerShell.PackageManagement              59.77            0 62.04                0
+   Microsoft.PowerShell.PSReadLine                     7.12             0 9.94                 0
    Microsoft.PowerShell.Security                       15.17            0 18.16                0
    Microsoft.WSMan.Management                          3.93             0 4.45                 0
    Microsoft.WSMan.Runtime                             0                0 0                    0

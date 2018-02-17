@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -17,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Path specified, using globbing to resolve
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]        
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Path { get; set; }
@@ -84,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         void WriteInvalidDataFileError(string resolvedPath, string errorId)
-        {            
+        {
             var errorCategory = ErrorCategory.InvalidData;
             var errorMessage = string.Format(UtilityResources.CouldNotParseAsPowerShellDataFile, resolvedPath);
             var exception = new InvalidOperationException(errorMessage);

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "PSVersionTable" -Tags "CI" {
 
     BeforeAll {
@@ -5,7 +7,7 @@ Describe "PSVersionTable" -Tags "CI" {
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
         $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
-        $fullVersionPattern = "^v(\d+\.\d+\.\d+)-(.+)-(\d+)-g(.+)$"
+        $fullVersionPattern = "^v(\d+\.\d+\.\d+)(-.+)?-(\d+)-g(.+)$"
 
         $expectedPSVersion = ($formattedVersion -split " ")[0]
         $expectedVersionPattern = "^$mainVersionPattern$"

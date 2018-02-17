@@ -19,6 +19,7 @@ The following table shows the status for the above commit, dated 06/18/2017
 | Microsoft.PowerShell.CoreCLR.AssemblyLoadContext | 97.65% |
 | Microsoft.PowerShell.CoreCLR.Eventing | 29.91% |
 | Microsoft.PowerShell.LocalAccounts | 86.35% |
+| Microsoft.PowerShell.PSReadLine | 10.18% |
 | Microsoft.PowerShell.Security | 44.44% |
 | Microsoft.WSMan.Management | 4.91% |
 | System.Management.Automation | 50.42% |
@@ -50,6 +51,10 @@ The following table shows the status for the above commit, dated 06/18/2017
 ### Microsoft.PowerShell.CoreCLR.Eventing
 
 - [ ] Add tests for ETW events. [#4156](https://github.com/PowerShell/PowerShell/issues/4156)
+
+### Microsoft.PowerShell.PSReadLine
+
+- [ ] We need tests from PSReadline repo or ignore coverage data for this module. (This will be filtered out.)
 
 ### Microsoft.PowerShell.Security
 

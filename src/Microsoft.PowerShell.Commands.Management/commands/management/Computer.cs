@@ -1,8 +1,8 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #if !UNIX
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -1046,7 +1046,6 @@ $result
                         }
                     }// end while(true)
 
-
                     if (_timeUp)
                     {
                         // The timeout expires. Write out timeout error messages for the computers that haven't finished restarting
@@ -1138,7 +1137,6 @@ $result
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Alias("CN", "__SERVER", "Server", "IPAddress")]
         public String[] ComputerName { get; set; } = new string[] { "." };
-
 
         /// <summary>
         /// The following is the definition of the input parameter "Credential".
@@ -1481,7 +1479,7 @@ $result
                             Microsoft.Management.Infrastructure.CimType.String,
                             (dPassword == null) ? CimFlags.NullValue : CimFlags.None));
 
-                        if ( ! InternalTestHooks.TestRenameComputer ) 
+                        if ( ! InternalTestHooks.TestRenameComputer )
                         {
                             CimMethodResult result = cimSession.InvokeMethod(
                                 ComputerWMIHelper.CimOperatingSystemNamespace,
@@ -1771,7 +1769,6 @@ $result
         /// </summary>
         internal const string localhostStr = "localhost";
 
-
         /// <summary>
         /// Get the local admin user name from a local NetworkCredential
         /// </summary>
@@ -1967,7 +1964,6 @@ $result
             return renamecomputerchangeinfo;
         }
 
-
         internal static void WriteNonTerminatingError(int errorcode, PSCmdlet cmdlet, string computername)
         {
             Win32Exception ex = new Win32Exception(errorcode);
@@ -2107,7 +2103,7 @@ $result
                         Microsoft.Management.Infrastructure.CimType.SInt32,
                         CimFlags.None));
 
-                    if ( ! InternalTestHooks.TestStopComputer ) 
+                    if ( ! InternalTestHooks.TestStopComputer )
                     {
                         CimMethodResult result = cimSession.InvokeMethod(
                             ComputerWMIHelper.CimOperatingSystemNamespace,

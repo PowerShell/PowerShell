@@ -1,4 +1,6 @@
-﻿Describe "Add-Member DRT Unit Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Mandatory parameters should not be null nor empty" {
         # when Name is null

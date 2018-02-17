@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Remoting;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -35,7 +34,6 @@ namespace System.Management.Automation
         /// </summary>
         internal RemoteDataObject<PSObject> RemoteData { get; set; }
     }
-
 
     /// <summary>
     /// This event arg is designed to contain generic data received from the other side of the connection.
@@ -288,7 +286,6 @@ namespace System.Management.Automation
             State = sessionStateInfo.State;
             Reason = sessionStateInfo.Reason;
         }
-
 
         #endregion Constructors
 
