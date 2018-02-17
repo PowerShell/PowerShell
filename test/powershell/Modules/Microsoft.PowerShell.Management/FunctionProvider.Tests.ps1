@@ -15,16 +15,16 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         Set-Location -Path $restoreLocation
     }
 
+    BeforeEach {
+        Set-Item $existingFunction -Options "None" -Value $functionValue
+    }
+
+    AfterEach {
+        Remove-Item $existingFunction -ErrorAction SilentlyContinue -Force
+        Remove-Item $nonexistingFunction -ErrorAction SilentlyContinue -Force
+    }
+
     Context "Validate Set-Item Cmdlet" {
-        BeforeEach {
-            Set-Item $existingFunction -Options "None" -Value $functionValue
-        }
-
-        AfterEach {
-            Remove-Item $existingFunction -ErrorAction SilentlyContinue -Force
-            Remove-Item $nonexistingFunction -ErrorAction SilentlyContinue -Force
-        }
-
         It "Sets the new options in existing function" {
             $newOptions = "ReadOnly, AllScope"
             (Get-Item $existingFunction).Options | Should -Be "None"
@@ -56,6 +56,36 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
 
         It "Throws PSArgumentException when Set-Item is called with incorrect function value" {
             { Set-Item $nonExistingFunction -Value 123 -ErrorAction Stop } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.SetItemCommand"
+        }
+    }
+
+    Context "Validate Get-Item Cmdlet" {
+        It "Gets existing functions by name" {
+            { Get-Item $existingFunction } | Should -Not -Throw
+            (Get-Item $existingFunction).Name | Should -Be $existingFunction
+            (Get-Item $existingFunction).Options | Should -Be "None"
+            (Get-Item $existingFunction).ScriptBlock | Should -Be $functionValue
+        }
+
+        It "Matches regex with stars to the function names" {
+            { Get-Item "ex*on" } | Should -Not -Throw
+            (Get-Item "ex*on").Name | Should -Be $existingFunction
+
+            # Stars representing empty string.
+            { Get-Item "*existingFunction*" } | Should -Not -Throw
+            (Get-Item "*existingFunction*").Name | Should -Be $existingFunction
+
+            # Finds 2 functions that match the regex.
+            Set-Item $nonExistingFunction -Value $functionValue
+            { Get-Item "*Function" } | Should -Not -Throw
+            (Get-Item "*Function*").Count | Should -Be 2
+        }
+    }
+
+    Context "Validate Remove-Item Cmdlet" {
+        It "Removes function" {
+            Remove-Item $existingFunction
+            $existingFunction | Should -Not -Exist
         }
     }
 }
