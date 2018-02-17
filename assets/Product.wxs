@@ -62,7 +62,7 @@
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
                   Execute="deferred"
-                  Return="check"
+                  Return="ignore"
                   Impersonate="no" />
     <SetProperty Id="EnablePSRemoting" Before="EnablePSRemoting" Sequence="execute"
                  Value ="&quot;[$(var.ProductVersionWithName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;Enable-PSRemoting&quot;" />
@@ -70,7 +70,7 @@
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
                   Execute="deferred"
-                  Return="check"
+                  Return="ignore"
                   Impersonate="no" />
     <InstallExecuteSequence>
       <Custom Action="RegisterManifest" After="InstallFiles">
