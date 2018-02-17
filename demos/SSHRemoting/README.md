@@ -46,9 +46,9 @@ In addition you will need to enable password authentication and optionally key b
     ```none
     PasswordAuthentication yes
     ```
-    - Add a PowerShell subsystem entry, replace `c:/program files/powershell/6.0.0/pwsh.exe` with the correct path to the version you want to use
+    - Add a PowerShell subsystem entry, replace `c:/program files/powershell/6.0.1/pwsh.exe` with the correct path to the version you want to use
     ```none
-    Subsystem    powershell c:/program files/powershell/6.0.0/pwsh.exe -sshs -NoLogo -NoProfile
+    Subsystem    powershell c:/program files/powershell/6.0.1/pwsh.exe -sshs -NoLogo -NoProfile
     ```
     - Optionally enable key authentication
     ```none
