@@ -63,7 +63,7 @@ Enter-PSHostProcess,https://go.microsoft.com/fwlink/?LinkId=403736
 Exit-PSHostProcess,https://go.microsoft.com/fwlink/?LinkId=403737
 Clear-RecycleBin,https://go.microsoft.com/fwlink/?LinkId=524082
 ConvertFrom-String,https://go.microsoft.com/fwlink/?LinkId=507579
-New-TemporaryFile,https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/new-temporaryfile
+New-TemporaryFile,https://go.microsoft.com/fwlink/?LinkId=526726
 New-Guid,https://go.microsoft.com/fwlink/?LinkId=526920
 Format-Hex,https://go.microsoft.com/fwlink/?LinkId=526919
 Convert-String,https://go.microsoft.com/fwlink/?LinkId=528577

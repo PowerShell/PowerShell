@@ -23,7 +23,9 @@ Describe "New-TemporaryFile" -Tags "CI" {
             $tempFile | Should Exist
             $tempFile | Should BeOfType System.IO.FileInfo
         } finally {
-            [System.IO.File]::Delete($tempFile)
+            if (Test-Path $tempFile) {
+                Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
+            }
         }
     }
 
