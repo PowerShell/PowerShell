@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "New-TemporaryFile" cmdlet
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, HelpUri = "https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/new-temporaryfile")]
+    [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/new-temporaryfile")]
     [OutputType(typeof(System.IO.FileInfo))]
     public class NewTemporaryFileCommand : Cmdlet
     {
