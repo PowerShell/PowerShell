@@ -14,19 +14,29 @@
         A FileInfo object for the temporary file is returned.
 #>
 
-Describe "NewTemporaryFile" -Tags "CI" {
+Describe "New-TemporaryFile" -Tags "CI" {
 
     It "creates a new temporary file" {
-        $tempFile = New-TemporaryFile
+        try {
+            $tempFile = New-TemporaryFile
 
-        Test-Path $tempFile | Should be $true
-        $tempFile | Should BeOfType System.IO.FileInfo
-
-        if(Test-Path $tempFile)
-        {
-            Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
+            $tempFile | Should Exist
+            $tempFile | Should BeOfType System.IO.FileInfo
+        } finally {
+            [System.IO.File]::Delete($tempFile)
         }
     }
+
+    It "throws terminating error when it fails to create new temporary file to Windows limit of 65535 files" {
+
+        try {
+            $tempFiles = foreach ($i in (1..65536)) { New-TemporaryFile -ErrorAction Ignore }
+            { New-TemporaryFile } | Should Throw "The file exists"
+        } finally {
+            $tempFiles | ForEach-Object { [System.IO.File]::Delete($PSItem) }
+        }
+    }
+
 
     It "with WhatIf does not create a file" {
         New-TemporaryFile -WhatIf | Should Be $null

@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "New-TemporaryFile" cmdlet
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526726")]
+    [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, HelpUri = "https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/new-temporaryfile")]
     [OutputType(typeof(System.IO.FileInfo))]
     public class NewTemporaryFileCommand : Cmdlet
     {
@@ -20,18 +20,18 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             string filePath = null;
-            string tempPath = System.Environment.GetEnvironmentVariable("TEMP");
+            string tempPath = Path.GetTempPath();
             if (ShouldProcess(tempPath))
             {
                 try
                 {
                     filePath = Path.GetTempFileName();
                 }
-                catch (Exception e)
+                catch (IOException ioException)
                 {
-                    WriteError(
+                    ThrowTerminatingError(
                         new ErrorRecord(
-                            e,
+                            ioException,
                             "NewTemporaryFileWriteError",
                             ErrorCategory.WriteError,
                             tempPath));
