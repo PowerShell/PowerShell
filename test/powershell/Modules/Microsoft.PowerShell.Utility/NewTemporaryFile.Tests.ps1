@@ -33,16 +33,16 @@ Describe "New-TemporaryFile" -Tags "CI" {
             $tempFiles = foreach ($i in (1..65536)) { New-TemporaryFile -ErrorAction Ignore }
             { New-TemporaryFile } | Should Throw "The file exists"
         } finally {
-            $tempFiles | ForEach-Object { [System.IO.File]::Delete($PSItem) }
+            $tempFiles | ForEach-Object { if (Test-Path $PSItem) { [System.IO.File]::Delete($PSItem) }
+            }
+        }
+
+
+        It "with WhatIf does not create a file" {
+            New-TemporaryFile -WhatIf | Should Be $null
+        }
+
+        It "has an OutputType of System.IO.FileInfo" {
+            (Get-Command New-TemporaryFile).OutputType | Should Be "System.IO.FileInfo"
         }
     }
-
-
-    It "with WhatIf does not create a file" {
-        New-TemporaryFile -WhatIf | Should Be $null
-    }
-
-    It "has an OutputType of System.IO.FileInfo" {
-        (Get-Command New-TemporaryFile).OutputType | Should Be "System.IO.FileInfo"
-    }
-}
