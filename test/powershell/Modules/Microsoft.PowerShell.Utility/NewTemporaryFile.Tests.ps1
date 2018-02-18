@@ -27,22 +27,11 @@ Describe "New-TemporaryFile" -Tags "CI" {
         }
     }
 
-    It "throws terminating error when it fails to create new temporary file to Windows limit of 65535 files" {
-
-        try {
-            $tempFiles = foreach ($i in (1..65536)) { New-TemporaryFile -ErrorAction Ignore }
-            { New-TemporaryFile } | Should Throw "The file exists"
-        } finally {
-            $tempFiles | ForEach-Object { if (Test-Path $PSItem) { [System.IO.File]::Delete($PSItem) }
-            }
-        }
-
-
-        It "with WhatIf does not create a file" {
-            New-TemporaryFile -WhatIf | Should Be $null
-        }
-
-        It "has an OutputType of System.IO.FileInfo" {
-            (Get-Command New-TemporaryFile).OutputType | Should Be "System.IO.FileInfo"
-        }
+    It "with WhatIf does not create a file" {
+        New-TemporaryFile -WhatIf | Should Be $null
     }
+
+    It "has an OutputType of System.IO.FileInfo" {
+        (Get-Command New-TemporaryFile).OutputType | Should Be "System.IO.FileInfo"
+    }
+}
