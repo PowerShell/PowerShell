@@ -132,7 +132,7 @@
                 <!-- create key for easy detection of a particular version of a powershell core package 
                      The upgrade code is used in the key because it will change when we allow SxS       -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)"/>
+                    <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemVer"/>
                 </RegistryKey>
                 <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
