@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -219,7 +218,6 @@ namespace System.Management.Automation
             AddAllMethods<T>(wmiObject, returnValue);
             return returnValue;
         }
-
 
         /// <summary>
         /// Called after a non null return from GetMember to try to call
@@ -704,7 +702,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(parameterList.Length == verifiedArguments.Length,
                 "The number of parameters and arguments should match");
 
-
             // we should not cache inParameters as we are updating
             // inParameters object with argument values..Caching will
             // have side effects in this scenario like we have to clear
@@ -889,7 +886,6 @@ namespace System.Management.Automation
         protected abstract object InvokeManagementMethod(ManagementObject wmiObject,
             string methodName, ManagementBaseObject inParams);
 
-
         /// <summary>
         /// Get a method object given method name
         /// </summary>
@@ -903,7 +899,6 @@ namespace System.Management.Automation
         protected abstract T GetManagementObjectMethod<T>(ManagementBaseObject wmiObject,
             string methodName) where T : PSMemberInfo;
 
-
         /// <summary>
         /// Returns null if propertyName is not a property in the adapter or
         /// the corresponding PSProperty with its adapterData set to information
@@ -914,7 +909,6 @@ namespace System.Management.Automation
         /// <returns>The PSProperty corresponding to propertyName from obj</returns>
         protected abstract PSProperty DoGetProperty(ManagementBaseObject wmiObject,
             string propertyName);
-
 
         #endregion
 
@@ -1109,7 +1103,6 @@ namespace System.Management.Automation
                                     string.Empty);
                 // ignore the exception.
             }
-
 
             return null;
         }

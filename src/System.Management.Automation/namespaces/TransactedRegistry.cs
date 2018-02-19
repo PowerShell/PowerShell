@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // NOTE: A vast majority of this code was copied from BCL in
@@ -12,7 +14,6 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Runtime.InteropServices;
     using System.Runtime.Versioning;
     using System.Diagnostics.CodeAnalysis;
-
 
     /**
      * Registry encapsulation. Contains members representing all top level system

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <#
 Enumerate all events in the manifest and create a hash table of event id to message id.
 >  $manifest.assembly.instrumentation.events.provider.events.event
@@ -288,16 +290,15 @@ class EventMessage
     }
 
     static hidden $escapeStrings =
-    @(
-        {Source = '%t'; Dest = '`t'},
-        {Source = '%n'; Dest = '`n'},
-        {Source = '%r'; Dest = '`r'},
-        {Source = '%%'; Dest = '`%'},
-        {Source = '%space'; Dest = ' '},
-        {Source = '%.'; Dest = '.'}
-    )
+    @{
+        '%t' = "`t";
+        '%n'="`n";
+        '%r'="`r";
+        '%%'='%';
+        '%space'=' ';
+        '%.'='.'
+    }
 }
-
 
 enum LogLevel
 {

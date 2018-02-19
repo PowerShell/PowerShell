@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "ConvertFrom-StringData DRT Unit Tests" -Tags "CI" {
     It "Should able to throw error when convert invalid line" {
         $str =@"
@@ -65,8 +67,9 @@ bazz = 2
     It "Should work for multiple lines" {
 	{ ConvertFrom-StringData -StringData $sampleData } | Should Not Throw
 
-	$(ConvertFrom-StringData -StringData $sampleData).Keys   | Should Be "foo", "bar", "bazz"
+    # keys are not order guaranteed
+	$(ConvertFrom-StringData -StringData $sampleData).Keys   | Should BeIn @("foo", "bar", "bazz")
 
-	$(ConvertFrom-StringData -StringData $sampleData).Values | Should Be "0","1","2"
+	$(ConvertFrom-StringData -StringData $sampleData).Values | Should BeIn @("0","1","2")
     }
 }

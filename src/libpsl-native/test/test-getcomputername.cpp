@@ -1,5 +1,6 @@
-//! @file test-getcomputername.cpp
-//! @author George Fleming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Unit tests for GetComputerName
 
 #include <gtest/gtest.h>

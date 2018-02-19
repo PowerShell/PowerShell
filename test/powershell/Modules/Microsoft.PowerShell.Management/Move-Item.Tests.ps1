@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Move-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"
@@ -9,7 +11,7 @@ Describe "Move-Item tests" -Tag "CI" {
         Move-Item $source $target
         test-path $source | Should be $false
         test-path $target | Should be $true
-        "$target" | Should ContainExactly "This is content"
+        "$target" | Should FileContentMatchExactly "This is content"
     }
 
     Context "Move-Item with filters" {
@@ -49,7 +51,7 @@ Describe "Move-Item tests" -Tag "CI" {
             $newBarPath | Should Exist
             $booPath | Should Exist
             $fooPath | Should Exist
-            $newBarPath | Should ContainExactly $barContent
+            $newBarPath | Should FileContentMatchExactly $barContent
         }
         It "Can move to different directory, filtered with -Exclude" {
             Move-Item -Path $filePath -Destination $moveToPath -Exclude "b*" -ErrorVariable e -ErrorAction SilentlyContinue
@@ -58,7 +60,7 @@ Describe "Move-Item tests" -Tag "CI" {
             $newFooPath | Should Exist
             $booPath | Should Exist
             $barPath | Should Exist
-            $newFooPath | Should ContainExactly $fooContent
+            $newFooPath | Should FileContentMatchExactly $fooContent
         }
         It "Can move to different directory, filtered with -Filter" {
             Move-Item -Path $filePath -Destination $moveToPath -Filter "bo*" -ErrorVariable e -ErrorAction SilentlyContinue
@@ -67,7 +69,7 @@ Describe "Move-Item tests" -Tag "CI" {
             $newBooPath | Should Exist
             $barPath | Should Exist
             $fooPath | Should Exist
-            $newBooPath | Should ContainExactly $booContent
+            $newBooPath | Should FileContentMatchExactly $booContent
         }
 
         It "Can rename via move, filtered with -Include" {
@@ -77,7 +79,7 @@ Describe "Move-Item tests" -Tag "CI" {
             $barPath | Should Not Exist
             $booPath | Should Exist
             $fooPath | Should Exist
-            $renameToPath | Should ContainExactly $barContent
+            $renameToPath | Should FileContentMatchExactly $barContent
         }
         It "Can rename via move, filtered with -Exclude" {
             Move-Item -Path $filePath -Destination $renameToPath -Exclude "b*" -ErrorVariable e -ErrorAction SilentlyContinue
@@ -86,7 +88,7 @@ Describe "Move-Item tests" -Tag "CI" {
             $fooPath | Should Not Exist
             $booPath | Should Exist
             $barPath | Should Exist
-            $renameToPath | Should ContainExactly $fooContent
+            $renameToPath | Should FileContentMatchExactly $fooContent
         }
         It "Can rename via move, filtered with -Filter" {
             Move-Item -Path $filePath -Destination $renameToPath -Filter "bo*" -ErrorVariable e -ErrorAction SilentlyContinue
@@ -95,7 +97,7 @@ Describe "Move-Item tests" -Tag "CI" {
             $booPath | Should Not Exist
             $fooPath | Should Exist
             $barPath | Should Exist
-            $renameToPath | Should ContainExactly $booContent
+            $renameToPath | Should FileContentMatchExactly $booContent
         }
     }
 }

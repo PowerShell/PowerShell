@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1135,7 +1134,6 @@ namespace System.Management.Automation
             _psCommand.AddCommand(cmd);
             return this;
         }
-
 
         /// <summary>
         /// Add a parameter to the last added command.
@@ -2635,7 +2633,6 @@ namespace System.Management.Automation
             Invoke<T>(input, output, null);
         }
 
-
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and collect
         /// output data into the buffer <paramref name="output"/>
@@ -3096,7 +3093,6 @@ namespace System.Management.Automation
 
             return _batchAsyncResult;
         }
-
 
         /// <summary>
         /// Batch invocation callback
@@ -4259,7 +4255,6 @@ namespace System.Management.Automation
                     rsToUse = _rsConnection as Runspace;
                     Dbg.Assert(null != rsToUse,
                         "Nested PowerShell can only work on a Runspace");
-
 
                     // Perform work on the current thread. Nested Pipeline
                     // should be invoked from the same thread that the parent

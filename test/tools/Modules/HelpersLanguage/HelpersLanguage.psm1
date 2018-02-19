@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
 # Run the new parser, return either errors or the ast
 #
@@ -50,7 +52,6 @@ function position_message
         $position.Line.Insert($position.ColumnNumber, " <<<<")
     }
 }
-
 
 #
 # Pester friendly version of Test-Error
@@ -105,7 +106,6 @@ function ShouldBeParseError
        }
     }
 }
-
 
 function Flatten-Ast
 {

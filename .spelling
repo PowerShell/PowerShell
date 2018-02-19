@@ -103,6 +103,7 @@ linux-x64
 lockfile
 macOS
 md
+microsoft
 Microsoft.PowerShell.Archive
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
@@ -223,6 +224,8 @@ _Jobs
 -Include
 -Title
 0xfeeddeadbeef
+about_
+about_Jobs
 acceptance
 alpha.10
 alpha.11
@@ -372,6 +375,7 @@ v0.4.0
 v0.5.0
 v0.6.0
 v6.0.0
+v6.0.1
 ValidateNotNullOrEmpty
 WebListener
 WebRequest
@@ -381,11 +385,14 @@ WindowsVersion
 WSManCredSSP
 XPath
 Youtube
+stuntguy3000
+SwarfegaGit
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
  - CODE_OF_CONDUCT.md
 microsoft.com
+o
 opencode
 #endregion
 
@@ -417,6 +424,8 @@ u
 
 #region demos/DSC/readme.md Overrides
  - demos/DSC/readme.md
+www.github.com
+omi
 #endregion
 
 #region demos/python/README.md Overrides
@@ -482,15 +491,26 @@ WindowsPSModulePath
 andschwa's
 CurrentUser
 hub.docker.com
-microsoft
 NanoServer-Insider
 nanoserver-insider-powershell
 #endregion
 
+#region docs/BREAKINGCHANGES.md Overrides
+- docs/BREAKINGCHANGES.md
+7-bit
+CoreFX
+honored
+non-Windows
+psd1
+runbooks
+runspace
+v1
+v2
+WMI-based
+#endregion
+
 #region docs/building/internals.md Overrides
  - docs/building/internals.md
-_arm
-_arm64
 Catalog
 flavor
 libpsl
@@ -500,6 +520,8 @@ plugin
 powershell-unix
 src
 v141
+x64_arm
+x64_arm64
 #endregion
 
 #region docs/building/macos.md Overrides
@@ -674,6 +696,7 @@ RemoteSigned
 #region docs/learning-powershell/debugging-from-commandline.md Overrides
  - docs/learning-powershell/debugging-from-commandline.md
 _Debuggers
+about_Debuggers
 celsius
 Set-PSBreakpoint
 test.ps1
@@ -925,6 +948,7 @@ TabCompletion
 
 #region docs/testing-guidelines/TestRoadmap.md Overrides
  - docs/testing-guidelines/TestRoadmap.md
+_no_
 corefx
 DotCover
 Downlevel
@@ -958,6 +982,7 @@ Gitter
 microsoft.com
 msi
 omnisharp-vscode
+o
 opencode
 pkg
 tgz
@@ -977,6 +1002,7 @@ libpsl-native
 _history.txt
 _PSReadline
 50ms
+about_PSReadline
 AddToHistoryHandler
 AppData
 BackgroundColor

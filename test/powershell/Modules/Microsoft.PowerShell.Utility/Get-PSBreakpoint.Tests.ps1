@@ -1,4 +1,6 @@
-﻿Describe "Get-PSBreakpoint" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Get-PSBreakpoint" -Tags "CI" {
 
     $scriptName = "Get-PSBreakpoint.Tests.ps1"
     $fullScriptPath = Join-Path -Path $PSScriptRoot -ChildPath $scriptName

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -79,7 +78,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
-
         /// <summary>
         ///
         /// </summary>
@@ -146,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private int _first = 0;
         private bool _firstOrLastSpecified;
-
 
         /// <summary>
         /// Skips the specified number of items from top when used with First,from end when used with Last
@@ -293,8 +290,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private List<MshParameter> _expandMshParameterList;
 
-
-
         private MshExpressionFilter _exclusionFilter;
 
         private class UniquePSObjectHelper
@@ -351,7 +346,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-
             //If property parameter is mentioned
             List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
             foreach (MshParameter p in _propertyMshParameterList)
@@ -395,8 +389,6 @@ namespace Microsoft.PowerShell.Commands
                 ProcessExpandParameter(_expandMshParameterList[0], inputObject, matchedProperties);
             }
         }
-
-
 
         private void ProcessParameter(MshParameter p, PSObject inputObject, List<PSNoteProperty> result)
         {
@@ -472,7 +464,6 @@ namespace Microsoft.PowerShell.Commands
         {
             MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
             List<MshExpressionResult> expressionResults = ex.GetValues(inputObject);
-
 
             if (expressionResults.Count == 0)
             {

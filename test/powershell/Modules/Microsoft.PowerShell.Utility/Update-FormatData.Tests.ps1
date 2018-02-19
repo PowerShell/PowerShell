@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Update-FormatData" -Tags "CI" {
 
     BeforeAll {
@@ -71,7 +73,6 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
         { Update-FormatData -Path "$testdrive\test.format.ps1xml" -ErrorAction Stop } | ShouldBeErrorId "FormatXmlUpdateException,Microsoft.PowerShell.Commands.UpdateFormatDataCommand"
     }
 }
-
 
 Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
 

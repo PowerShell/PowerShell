@@ -1,5 +1,7 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
-# Functional tests to verify basic conditions for IO to the PowerShellProperties.json files
+# Functional tests to verify basic conditions for IO to the powershell.config.json files
 # The properties files are supported on non-Windows OSes, but the tests are specific to
 # Windows so that file IO can be verified using supported cmdlets.
 #
@@ -14,18 +16,18 @@ try {
     $IsNotSkipped = ($IsWindows -and !$IsInbox) # Only execute for PowerShell Core on Windows
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
-    Describe "User-Specific PowerShellProperties.json Modifications" -Tags "CI" {
+    Describe "User-Specific powershell.config.json Modifications" -Tags "CI" {
 
         BeforeAll {
             if ($IsNotSkipped) {
-                # Discover the user-specific PowerShellProperties.json file
+                # Discover the user-specific powershell.config.json file
                 $userSettingsDir = [System.IO.Path]::Combine($env:USERPROFILE, "Documents", $productName)
-                $userPropertiesFile = Join-Path $userSettingsDir "PowerShellProperties.json"
+                $userPropertiesFile = Join-Path $userSettingsDir "powershell.config.json"
 
                 # Save the file for restoration after the tests are complete
                 $backupPropertiesFile = ""
                 if (Test-Path $userPropertiesFile) {
-                    $backupPropertiesFile = Join-Path $userSettingsDir "ORIGINAL_PowerShellProperties.json"
+                    $backupPropertiesFile = Join-Path $userSettingsDir "ORIGINAL_powershell.config.json"
                     Copy-Item -Path $userPropertiesFile -Destination $backupPropertiesFile -Force -ErrorAction Continue
                 }
                 elseif (-not (Test-Path $userSettingsDir)) {
@@ -49,12 +51,12 @@ try {
             if ($IsNotSkipped) {
                 if (-not $backupPropertiesFile)
                 {
-                    # Remove PowerShellProperties.json if it did not exist before the tests
+                    # Remove powershell.config.json if it did not exist before the tests
                     Remove-Item -Path $userPropertiesFile -Force -ErrorAction SilentlyContinue
                 }
                 else
                 {
-                    # Restore the original PowerShellProperties.json file if it existed before the test pass.
+                    # Restore the original powershell.config.json file if it existed before the test pass.
                     Move-Item -Path $backupPropertiesFile -Destination $userPropertiesFile -Force -ErrorAction Continue
                 }
 

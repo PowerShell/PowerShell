@@ -1,4 +1,7 @@
-﻿using System.Security.Principal;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System.Security.Principal;
 
 namespace Microsoft.PowerShell.Commands
 {

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // NOTE: define this if you want to test the output on US machine and ASCII
 // characters
@@ -136,9 +135,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private PSHostRawUserInterface _rawUserInterface;
     }
 
-
-
-
     /// <summary>
     /// Implementation of the LineOutput interface on top of Console and RawConsole
     /// </summary>
@@ -258,7 +254,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string promptString = StringUtil.Format(FormatAndOut_out_xxx.ConsoleLineOutput_PagingPrompt);
                 _prompt = new PromptHandler(promptString, this);
             }
-
 
             PSHostRawUserInterface raw = _console.RawUI;
             if (raw != null)

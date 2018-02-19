@@ -1,4 +1,6 @@
-﻿Describe "Common parameters support for script cmdlets" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
         $rs.open()
@@ -143,7 +145,6 @@
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ActionPreferenceStopException"
             } # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
-
 
             # BUG in runspace api.
             #$ps.error.count | Should Be 1
@@ -306,7 +307,6 @@
             $ps.InvocationStateInfo.State | Should Be 'Completed'
         }
     }
-
 
     Context 'confirmimpact support: High under the non-interactive host' {
         BeforeAll {

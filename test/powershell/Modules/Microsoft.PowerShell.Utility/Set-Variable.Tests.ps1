@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	It "Set-Variable normal variable Name should works"{

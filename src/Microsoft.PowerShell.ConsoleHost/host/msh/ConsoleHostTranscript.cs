@@ -1,18 +1,12 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 
-
 using Dbg = System.Management.Automation.Diagnostics;
-
-
 
 namespace Microsoft.PowerShell
 {
@@ -38,7 +32,6 @@ namespace Microsoft.PowerShell
             }
         }
         private bool _isTranscribing;
-
 
         /*
         internal void StartTranscribing(string transcriptFilename, bool shouldAppend)
@@ -73,8 +66,6 @@ namespace Microsoft.PowerShell
         }
         */
         private string _transcriptFileName = String.Empty;
-
-
 
         internal
         string
@@ -113,8 +104,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         internal
         void
         WriteToTranscript(string text)
@@ -128,11 +117,8 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         private StreamWriter _transcriptionWriter;
         private object _transcriptionStateLock = new object();
     }
 }   // namespace
-
 

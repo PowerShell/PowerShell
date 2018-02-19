@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -127,7 +126,6 @@ namespace System.Management.Automation.Remoting
         /// The following is the definition of the input parameter "ProxyCredential".
         /// </summary>
         public PSCredential ProxyCredential { get; set; }
-
 
         /// <summary>
         /// When connecting over HTTPS, the client does not validate that the server

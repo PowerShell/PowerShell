@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # Precondition: start from fresh PS session, do not have the media mounted
 param([switch]$useModule, [string]$VHDPath)
 
@@ -47,7 +50,7 @@ try
 
     $drive = CreateVHD -VHDPath $VHDPath -Size 5mb
     $pathToCheck = "${drive}:"
-    
+
     if ($useModule)
     {
         Test-DrivePresenceFromModule -Path $pathToCheck

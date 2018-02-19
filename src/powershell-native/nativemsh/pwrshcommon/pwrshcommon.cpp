@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 //
 // Implementation of common code used by native PowerShell
@@ -1238,18 +1237,19 @@ namespace NativeMsh
     // Note: During successful calls the following values must be freed by the caller:
     //      pwszMonadVersion
     //      pwszRuntimeVersion
-    //      pwzsRegKeyValue
+    //      pwszRegKeyValue
     //
     // The caller must take care to check to see if they must be freed during error scenarios
     // because the function may fail after allocating one or more strings.
     //
+    _Success_(return == 0)
     unsigned int PwrshCommon::GetRegistryInfo(
-        __deref_out_opt PWSTR * pwszMonadVersion,
+        __out PWSTR * pwszMonadVersion,
         __inout_ecount(1) int * lpMonadMajorVersion,
         int monadMinorVersion,
-        __deref_out_opt PWSTR * pwszRuntimeVersion,
+        __out PWSTR * pwszRuntimeVersion,
         LPCWSTR lpszRegKeyNameToRead,
-        __deref_out_opt PWSTR * pwzsRegKeyValue)
+        __out PWSTR * pwszRegKeyValue)
     {
         HKEY hEngineKey = NULL;
         bool bEngineKeyOpened = true;
@@ -1257,12 +1257,27 @@ namespace NativeMsh
         wchar_t * wszMshEngineRegKeyPath = NULL;
         LPWSTR wszFullMonadVersion = NULL;
 
+        if (NULL != pwszRegKeyValue)
+        {
+            *pwszRegKeyValue = NULL;
+        }
+
+        if (NULL != pwszRuntimeVersion)
+        {
+            *pwszRuntimeVersion = NULL;
+        }
+
+        if (NULL != pwszMonadVersion)
+        {
+            *pwszMonadVersion = NULL;
+        }
+
         do
         {
             if (NULL == pwszMonadVersion ||
                 NULL == lpMonadMajorVersion ||
                 NULL == pwszRuntimeVersion ||
-                NULL == pwzsRegKeyValue)
+                NULL == pwszRegKeyValue)
             {
                 exitCode = EXIT_CODE_READ_REGISTRY_FAILURE;
                 break;
@@ -1315,7 +1330,7 @@ namespace NativeMsh
             {
                 LPCWSTR wszRequestedRegValueName = lpszRegKeyNameToRead;
                 if (!this->RegQueryREG_SZValue(hEngineKey, wszRequestedRegValueName,
-                    wszMshEngineRegKeyPath, pwzsRegKeyValue))
+                    wszMshEngineRegKeyPath, pwszRegKeyValue))
                 {
                     exitCode = EXIT_CODE_READ_REGISTRY_FAILURE;
                     break;
@@ -1361,12 +1376,13 @@ namespace NativeMsh
         return exitCode;
     }
 
+    _Success_(return == 0)
     unsigned int PwrshCommon::GetRegistryInfo(
-        __deref_out_opt PWSTR * pwszMonadVersion,
+        __out PWSTR * pwszMonadVersion,
         __inout_ecount(1) int * lpMonadMajorVersion,
         int monadMinorVersion,
-        __deref_out_opt PWSTR * pwszRuntimeVersion,
-        __deref_out_opt PWSTR * pwszConsoleHostAssemblyName)
+        __out PWSTR * pwszRuntimeVersion,
+        __out PWSTR * pwszConsoleHostAssemblyName)
     {
         return GetRegistryInfo(pwszMonadVersion,
             lpMonadMajorVersion,

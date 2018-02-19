@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Culture DRT Unit Tests" -Tags "CI" {
     It "Should works proper with get-culture" {
         $results = get-Culture
@@ -19,6 +21,5 @@ Describe "Get-Culture" -Tags "CI" {
 	(Get-Culture).Name | Should Be $PsCulture
 
     }
-
 
 }

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe 'Argument transformation attribute on optional argument with explicit $null' -Tags "CI" {
     $tdefinition = @'
@@ -66,7 +68,6 @@ Describe 'Argument transformation attribute on optional argument with explicit $
 
         return $Address
     }
-
 
     It "There was no error importing the in-memory module" {
         $ErrorImportingModule | Should Be $null

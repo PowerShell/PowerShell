@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Break statements with classes' -Tags "CI" {
 
     function Get-Errors([string]$sourceCode) {

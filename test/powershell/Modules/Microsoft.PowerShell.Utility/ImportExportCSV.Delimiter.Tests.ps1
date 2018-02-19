@@ -1,4 +1,6 @@
-﻿Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
     BeforeAll {
         # note, we will not use "," as that's the default for CSV
         $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",

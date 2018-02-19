@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -272,7 +271,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-
                     // if the token is has a formatting string, it's a leaf node,
                     // do the formatting and we will be done
                     if (cpt.control == null || cpt.control is FieldControlBody)
@@ -493,7 +491,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-
             formatValueList.Add(fpf);
             formatValueList.Add(new FormatNewLine());
         }
@@ -561,7 +558,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         val = result.Result;
                     }
                 }
-
 
                 // extract the optional max depth
                 TraversalInfo level = currentLevel;

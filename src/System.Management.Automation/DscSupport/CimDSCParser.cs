@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Serialization;
@@ -368,7 +371,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
 
             if (!File.Exists(fullFilePath))
             {
-                throw PSTraceSource.NewArgumentException("fullFilePath");
+                var errorMessage = string.Format(CultureInfo.CurrentCulture, ParserStrings.FileNotFound, fullFilePath);
+                throw PSTraceSource.NewArgumentException(nameof(fullFilePath), errorMessage);
             }
 
             using (FileStream fs = File.OpenRead(fullFilePath))
@@ -2737,7 +2741,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
             }
 
-
             bool supported = false;
             bool missingDefaultConstructor = false;
             if (type.GetTypeInfo().IsValueType)
@@ -3730,7 +3733,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     }
                 }
 
-
                 if($null -ne $value['ExclusiveResources'])
                 {
 # make sure the references are well-formed
@@ -3898,7 +3900,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
     }
 
-
 # Generate the MOF text for this resource instance.
 # when generate mof text for OMI_ConfigurationDocument we handle below two cases:
 # 1. we will add versioning related property based on meta configuration instance already process
@@ -3924,5 +3925,4 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     ";
     }
 }
-
 

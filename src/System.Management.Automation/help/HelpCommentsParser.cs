@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections;
@@ -1087,7 +1086,6 @@ namespace System.Management.Automation
                         CollectCommentText(comment, commentLines);
                     }
                 }
-
 
                 int n = -1;
                 result.Add(GetSection(commentLines, ref n));

@@ -1,5 +1,6 @@
-//! @file getlinkcount.cpp
-//! @author George FLeming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Retrieve link count of a file
 
 #include "getlinkcount.h"

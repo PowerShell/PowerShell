@@ -31,7 +31,7 @@ At the end of this exercise, you should be able to launch the PowerShell session
 
 [inst-linux]: ../installation/linux.md
 [inst-win]: ../installation/windows.md
-[inst-macos]: ../installation/linux.md#os-x-1011
+[inst-macos]: ../installation/macos.md
 
 Getting Started with PowerShell
 ----

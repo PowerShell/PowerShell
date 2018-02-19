@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
@@ -166,7 +169,6 @@ namespace System.Management.Automation.Security
             }
         }
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
-
 
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
@@ -393,8 +395,6 @@ namespace System.Management.Automation.Security
         }
         private static bool s_hadMissingWldpAssembly = false;
 
-
-
         /// <summary>
         /// Gets lockdown policy as applied to a COM object
         /// </summary>
@@ -559,7 +559,6 @@ namespace System.Management.Automation.Security
             /// dwFlags: DWORD->unsigned int
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
-
 
             /// Return Type: HRESULT->LONG->int
             /// rclsid: IID*

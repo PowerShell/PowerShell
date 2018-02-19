@@ -273,7 +273,6 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-
         public object Run(params object[] arguments)
         {
             if (_compiled != null || TryGetCompiled())

@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -30,7 +29,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         private string _sourceIdentifier = Guid.NewGuid().ToString();
-
 
         /// <summary>
         /// Parameter for any action to be invoked when the event arrives

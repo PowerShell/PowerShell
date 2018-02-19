@@ -1,9 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Management.Automation;
 using System.Reflection;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public static class UtilsTests
     {

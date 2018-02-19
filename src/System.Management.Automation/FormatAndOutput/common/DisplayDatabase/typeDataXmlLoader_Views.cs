@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -43,8 +42,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
         }
-
-
 
         private ViewDefinition LoadView(XmlNode viewNode, int index)
         {

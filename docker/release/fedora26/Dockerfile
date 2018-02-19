@@ -2,7 +2,7 @@
 
 FROM fedora:26
 
-ARG POWERSHELL_VERSION=6.0.0-rc.2
+ARG POWERSHELL_VERSION=6.0.1
 ARG IMAGE_NAME=microsoft/powershell:fedora26
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

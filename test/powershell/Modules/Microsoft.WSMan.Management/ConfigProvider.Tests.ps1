@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
     BeforeAll {
         #skip all tests on non-windows platform

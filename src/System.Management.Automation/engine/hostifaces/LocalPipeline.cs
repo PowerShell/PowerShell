@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -81,7 +80,6 @@ namespace System.Management.Automation.Runspaces
             _stopper = new PipelineStopper(this);
             InitStreams();
         }
-
 
         /// <summary>
         /// Copy constructor to support cloning
@@ -269,7 +267,7 @@ namespace System.Management.Automation.Runspaces
             RegistryKey key;
             try
             {
-                key = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPrefix());
+                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\PowerShell\\1\\ShellIds");
             }
             catch (System.Security.SecurityException)
             {
@@ -1063,7 +1061,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-
         private long _historyIdForThisPipeline = -1;
         /// <summary>
         /// This method is called Add-History cmdlet to add history entry.
@@ -1116,9 +1113,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         #region TLS
-
-
-
 
         /// <summary>
         /// Gets the execution context in the thread local storage of current

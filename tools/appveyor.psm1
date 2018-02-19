@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $ErrorActionPreference = 'Stop'
 $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
@@ -82,7 +84,6 @@ function Add-UserToGroup
 
   $groupAD.Add($userAD.AdsPath);
 }
-
 
 # tests if we should run a daily build
 # returns true if the build is scheduled
@@ -325,7 +326,8 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $testResultsXUnitFile = "$pwd\TestResultsXUnit.xml"
+    $SequentialXUnitTestResultsFile = "$pwd\SequentialXUnitTestResults.xml"
+    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -359,9 +361,10 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
-    Start-PSxUnit -TestResultsFile $testResultsXUnitFile
+    Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
     Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
-    Update-AppVeyorTestResults -resultsFile $testResultsXUnitFile
+    Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
+    Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
 
     #
     # Fail the build, if tests failed
@@ -372,7 +375,12 @@ function Invoke-AppVeyorTest
         Test-PSPesterResults -TestResultsFile $_
     }
 
-    $testPassResult = Test-XUnitTestResults -TestResultsFile $testResultsXUnitFile
+    @(
+        $SequentialXUnitTestResultsFile,
+        $ParallelXUnitTestResultsFile
+    ) | ForEach-Object {
+        Test-XUnitTestResults -TestResultsFile $_
+    }
 
     Set-BuildVariable -Name TestPassed -Value True
 }
@@ -438,6 +446,7 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
+    $exitCode = 0
     try {
         $releaseTag = Get-ReleaseTag
 
@@ -466,6 +475,19 @@ function Invoke-AppveyorFinish
 
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
+
+        # Smoke Test MSI installer
+        Write-Verbose "Smoke-Testing MSI installer" -Verbose
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
+        $msiLog = Join-Path (Get-Location) 'msilog.txt'
+        $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
+        if ($msiExecProcess.ExitCode -ne 0)
+        {
+            Push-AppveyorArtifact msiLog.txt
+            $exitCode = $msiExecProcess.ExitCode
+            throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
+        }
+        Write-Verbose "MSI smoke test was successful" -Verbose
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
@@ -519,5 +541,14 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+    }
+    finally {
+        # A throw statement would not make the build fail. This function is AppVeyor specific
+        # and is the only command executed in 'on_finish' phase, so it's safe that we request
+        # the current runspace to exit with the specified exit code. If the exit code is non-zero,
+        # AppVeyor will fail the build.
+        # See this link for details:
+        # https://help.appveyor.com/discussions/problems/4498-powershell-exception-in-test_script-does-not-fail-build
+        $host.SetShouldExit($exitCode)
     }
 }

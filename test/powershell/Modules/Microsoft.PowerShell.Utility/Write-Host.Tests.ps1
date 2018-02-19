@@ -1,4 +1,6 @@
-﻿Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"

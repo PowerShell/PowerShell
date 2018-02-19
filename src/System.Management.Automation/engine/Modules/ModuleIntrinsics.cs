@@ -1,9 +1,9 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.IO;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using Microsoft.PowerShell.Commands;
@@ -977,8 +977,8 @@ namespace System.Management.Automation
         internal static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
-            string systemWideModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.SystemWide);
-            string personalModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.CurrentUser);
+            string systemWideModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.SystemWide);
+            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
 
             string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
 
