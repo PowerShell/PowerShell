@@ -392,6 +392,7 @@ SwarfegaGit
 #region CODE_OF_CONDUCT.md Overrides
  - CODE_OF_CONDUCT.md
 microsoft.com
+o
 opencode
 #endregion
 
@@ -981,6 +982,7 @@ Gitter
 microsoft.com
 msi
 omnisharp-vscode
+o
 opencode
 pkg
 tgz
