@@ -72,6 +72,14 @@ Describe "Stream writer tests" -Tags "CI" {
     Context "Write-Information cmdlet" {
         BeforeAll {
             $ps = [powershell]::Create()
+
+            $testInfoData = @(
+                @{ Name = 'defaults'; Command = "Write-Information TestMessage";           returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Object';  Command = "Write-Information -Object TestMessage";   returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Message'; Command = "Write-Information -Message TestMessage";  returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Msg';     Command = "Write-Information -Msg TestMessage";      returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Tag';     Command = "Write-Information TestMessage -Tag Test"; returnCount = 1; returnValue = 'TestMessage' }
+            )
         }
 
         BeforeEach {
@@ -111,5 +119,15 @@ Describe "Stream writer tests" -Tags "CI" {
             $result[0].MessageData | Should be "teststring"
             $result[1].MessageData | Should be "12345"
        }
+
+       It "Write-Information works with <Name>" -TestCases:$testInfoData {
+            param($Command, $returnCount, $returnValue, $returnInfo)
+            $ps.AddScript($Command).Invoke()
+
+            $result = $th.ui.Streams.Information
+
+            $result.Count | Should Be $returnCount
+            (Compare-Object $result $returnInfo -SyncWindow 0).length -eq 0 | Should Be $true
+        }
     }
 }
