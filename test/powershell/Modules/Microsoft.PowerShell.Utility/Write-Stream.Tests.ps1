@@ -75,7 +75,7 @@ Describe "Stream writer tests" -Tags "CI" {
 
             $testInfoData = @(
                 @{ Name = 'defaults'; Command = "Write-Information TestMessage";           returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Object';  Command = "Write-Information -Object TestMessage";   returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Object';  Command = "Write-Information -MessageData TestMessage";   returnCount = 1; returnValue = 'TestMessage' }
                 @{ Name = '-Message'; Command = "Write-Information -Message TestMessage";  returnCount = 1; returnValue = 'TestMessage' }
                 @{ Name = '-Msg';     Command = "Write-Information -Msg TestMessage";      returnCount = 1; returnValue = 'TestMessage' }
                 @{ Name = '-Tag';     Command = "Write-Information TestMessage -Tag Test"; returnCount = 1; returnValue = 'TestMessage' }
@@ -121,13 +121,13 @@ Describe "Stream writer tests" -Tags "CI" {
        }
 
        It "Write-Information works with <Name>" -TestCases:$testInfoData {
-            param($Command, $returnCount, $returnValue, $returnInfo)
+            param($Command, $returnCount, $returnValue)
             $ps.AddScript($Command).Invoke()
 
-            $result = $th.ui.Streams.Information
+            $result = $ps.Streams.Information
 
             $result.Count | Should Be $returnCount
-            (Compare-Object $result $returnInfo -SyncWindow 0).length -eq 0 | Should Be $true
+            (Compare-Object $result $returnValue -SyncWindow 0).length -eq 0 | Should Be $true
         }
     }
 }
