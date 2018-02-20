@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Native pipeline should have proper encoding' -tags 'CI' {
     It '$OutputEncoding should be set to UTF8 without BOM' {
         $OutputEncoding.BodyName | Should Be "utf-8"

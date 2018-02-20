@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Concurrent;
@@ -12,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -129,7 +127,6 @@ namespace Microsoft.PowerShell.Commands
             get { return _serializationMethod; }
         }
 
-
         /// <summary>
         /// TargetTypeForDeserialization
         /// </summary>
@@ -140,7 +137,6 @@ namespace Microsoft.PowerShell.Commands
             set { _targetTypeForDeserialization = value; }
             get { return _targetTypeForDeserialization; }
         }
-
 
         /// <summary>
         /// SerializationDepth
@@ -154,7 +150,6 @@ namespace Microsoft.PowerShell.Commands
             get { return _serializationDepth; }
         }
 
-
         /// <summary>
         /// DefaultDisplayProperty
         /// </summary>
@@ -165,7 +160,6 @@ namespace Microsoft.PowerShell.Commands
             set { _defaultDisplayProperty = value; }
             get { return _defaultDisplayProperty; }
         }
-
 
         /// <summary>
         /// InheritPropertySerializationSet
@@ -178,7 +172,6 @@ namespace Microsoft.PowerShell.Commands
             get { return _inheritPropertySerializationSet; }
         }
 
-
         /// <summary>
         /// StringSerializationSource
         /// </summary>
@@ -189,7 +182,6 @@ namespace Microsoft.PowerShell.Commands
             set { _stringSerializationSource = value; }
             get { return _stringSerializationSource; }
         }
-
 
         /// <summary>
         /// DefaultDisplayPropertySet
@@ -214,7 +206,6 @@ namespace Microsoft.PowerShell.Commands
             set { _defaultKeyPropertySet = value; }
             get { return _defaultKeyPropertySet; }
         }
-
 
         /// <summary>
         /// PropertySerializationSet

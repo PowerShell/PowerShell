@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 ## Converts a SDDL string into an object-based representation of a security
 ## descriptor

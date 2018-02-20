@@ -1,8 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Language;
 using System.Management.Automation.Host;
@@ -127,8 +124,6 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -171,8 +166,6 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -203,8 +196,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.Write(value);
         }
-
-
 
         /// <summary>
         ///
@@ -241,8 +232,6 @@ namespace System.Management.Automation.Internal.Host
             _externalUI.Write(foregroundColor, backgroundColor, value);
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -268,8 +257,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteLine();
         }
-
-
 
         /// <summary>
         ///
@@ -302,8 +289,6 @@ namespace System.Management.Automation.Internal.Host
             _externalUI.WriteLine(value);
         }
 
-
-
         public override
         void
         WriteErrorLine(string value)
@@ -320,8 +305,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteErrorLine(value);
         }
-
-
 
         /// <summary>
         ///
@@ -357,8 +340,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteLine(foregroundColor, backgroundColor, value);
         }
-
-
 
         /// <summary>
         ///
@@ -405,7 +386,6 @@ namespace System.Management.Automation.Internal.Host
                 _informationalBuffers.AddDebug(record);
             }
         }
-
 
         /// <summary>
         /// Helper function for WriteDebugLine
@@ -514,8 +494,6 @@ namespace System.Management.Automation.Internal.Host
             WriteDebugRecord(new DebugRecord(message));
         }
 
-
-
         /// <summary>
         ///
         /// Ask the user whether to continue/stop or break to a nested prompt.
@@ -596,8 +574,6 @@ namespace System.Management.Automation.Internal.Host
             return shouldContinue;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -632,8 +608,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalUI.WriteProgress(sourceId, record);
         }
-
-
 
         /// <summary>
         ///
@@ -856,9 +830,6 @@ namespace System.Management.Automation.Internal.Host
 
             return result;
         }
-
-
-
 
         /// <summary>
         ///

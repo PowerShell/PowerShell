@@ -41,7 +41,7 @@ In addition you will need to enable password authentication and optionally key b
     New-PSSession [-HostName] <string[]> [-Name <string[]>] [-UserName <string>] [-KeyFilePath <string>] [-SSHTransport] [<CommonParameters>]
     ```
 1. Install the latest [Win32 Open SSH] build from GitHub using the [installation] instructions
-1. Edit the sshd_config file at the location where you installed Win32 Open SSH
+1. Edit the `sshd_config` file at the location where you installed Win32 Open SSH
     - Make sure password authentication is enabled
     ```none
     PasswordAuthentication yes
@@ -70,7 +70,7 @@ In addition you will need to enable password authentication and optionally key b
     sudo apt install openssh-client
     sudo apt install openssh-server
     ```
-1. Edit the sshd_config file at location /etc/ssh
+1. Edit the `sshd_config` file at location /etc/ssh
     - Make sure password authentication is enabled
     ```none
     PasswordAuthentication yes
@@ -218,4 +218,4 @@ GitCommitId                    v6.0.0-alpha.17
 [installation]: https://github.com/PowerShell/Win32-OpenSSH/wiki/Install-Win32-OpenSSH
 [PowerShell for Linux]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#ubuntu-1404
 [Ubuntu SSH]: https://help.ubuntu.com/lts/serverguide/openssh-server.html
-[PowerShell for MacOS]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#macos-1012
+[PowerShell for MacOS]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/macos.md

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # get a random string of characters a-z and A-Z
 function Get-RandomString
 {
@@ -64,7 +67,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     # we could suppress the WhatIf output here if we use the testhost, but it's not necessary
     It "The filesystem provider supports should process" -skip:(!$IsWindows) {
       clear-content TESTDRIVE:\$file2 -WhatIf
-      "TESTDRIVE:\$file2" | should contain "This is content"
+      "TESTDRIVE:\$file2" | should FileContentMatch "This is content"
     }
 
     It "The filesystem provider should support ShouldProcess (reference ProviderSupportsShouldProcess member)" {

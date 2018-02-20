@@ -1,5 +1,6 @@
-//! @file test-getlinkcount.cpp
-//! @author George Fleming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Implements test for getLinkCount()
 
 #include <gtest/gtest.h>

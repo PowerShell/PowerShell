@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using Dbg = System.Management.Automation;
 using System.Management.Automation.Host;
@@ -90,7 +89,6 @@ namespace System.Management.Automation
             // PlatformNotSupportedException
             return;
 #else
-
 
 #if DEBUG
             // If we are debugging, let the unit tests swap the file from beneath us

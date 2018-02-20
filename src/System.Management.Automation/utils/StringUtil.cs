@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Host;
 using System.Threading;
@@ -18,8 +17,6 @@ namespace System.Management.Automation.Internal
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
 
-
-
         internal static
         string
         Format(string formatSpec, object o1, object o2)
@@ -27,16 +24,12 @@ namespace System.Management.Automation.Internal
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o1, o2);
         }
 
-
-
         internal static
         string
         Format(string formatSpec, params object[] o)
         {
             return String.Format(System.Globalization.CultureInfo.CurrentCulture, formatSpec, o);
         }
-
-
 
         internal static
         string

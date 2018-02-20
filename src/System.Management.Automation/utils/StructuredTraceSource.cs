@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #define TRACE
 
 using System.Collections.Generic;
@@ -441,7 +441,6 @@ namespace System.Management.Automation
                     "\tAssembly File Timestamp: {0}",
                     assemblyFileInfo.CreationTime);
             }
-
 
             StringBuilder flagBuilder = new StringBuilder();
             // Label

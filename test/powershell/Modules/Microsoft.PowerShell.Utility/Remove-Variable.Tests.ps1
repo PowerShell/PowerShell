@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # ensure the machine is in a clean state from the outset.
 Remove-Variable -Name var1 -ErrorAction SilentlyContinue -Force
 
@@ -5,7 +8,8 @@ Describe "Remove-Variable" -Tags "CI" {
     It "Should throw an error when a dollar sign is used in the variable name place" {
 	New-Variable -Name var1 -Value 4
 
-	Remove-Variable $var1 -ErrorAction SilentlyContinue | Should Throw
+	Remove-Variable $var1 -ErrorAction SilentlyContinue -ErrorVariable err
+	$err.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
     }
 
     It "Should not throw error when used without the Name field, and named variable is properly specified and exists" {
@@ -25,7 +29,7 @@ Describe "Remove-Variable" -Tags "CI" {
     }
 
     It "Should throw error when used with Name field, and named variable does not exist" {
-	Remove-Variable -Name nonexistentVariable -ErrorAction SilentlyContinue | Should Throw
+	{ Remove-Variable -Name nonexistentVariable -ErrorAction Stop } | Should Throw
     }
 
     It "Should be able to remove a set of variables using wildcard characters" {
@@ -87,7 +91,7 @@ Describe "Remove-Variable" -Tags "CI" {
     It "Should throw an error when attempting to remove a read-only variable and the Force switch is not used" {
 	New-Variable -Name var1 -Value 2 -Option ReadOnly
 
-	Remove-Variable -Name var1 -ErrorAction SilentlyContinue | Should Throw
+	{ Remove-Variable -Name var1 -ErrorAction Stop } | Should Throw
 
 	$var1 | Should Be 2
 
@@ -99,7 +103,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable -Name var1 -Force
 
-	$var1 | Should Be # Nothing.  It should be nothing at all.
+	$var1 | Should BeNullOrEmpty
     }
 
     Context "Scope Tests" {
@@ -108,79 +112,78 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    Remove-Variable -Name var1 -Scope global
 
-	    $var1 | Should Be #Nothing.
+	    $var1 | Should BeNullOrEmpty
 	}
 
 	It "Should not be able to clear a global variable using the local switch" {
 	    New-Variable -Name var1 -Value "context" -Scope global
 
-	    Remove-Variable -Name var1 -Scope local -ErrorAction SilentlyContinue | Should Throw
+	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should Throw
 
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope global
-	    $var1 | Should Be # Nothing
+	    $var1 | Should BeNullOrEmpty
 	}
 
 	It "Should not be able to clear a global variable using the script switch" {
 	    New-Variable -Name var1 -Value "context" -Scope global
 
-	    Remove-Variable -Name var1 -Scope local -ErrorAction SilentlyContinue | Should Throw
+	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should Throw
 
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope global
-	    $var1 | Should Be # Nothing
+	    $var1 | Should BeNullOrEmpty
 	}
 
 	It "Should be able to remove an item locally using the local switch" {
 	    New-Variable -Name var1 -Value "context" -Scope local
 
-	    Remove-Variable -Name var1 -Scope local -ErrorAction SilentlyContinue | Should Throw
+	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should Throw
 
-	    $var1 | Should Be # Nothing
+	    $var1 | Should Be context
 	}
 
 	It "Should be able to remove an item locally using the global switch" {
 	    New-Variable -Name var1 -Value "context" -Scope local
 
-	    Remove-Variable -Name var1 -Scope global -ErrorAction SilentlyContinue | Should Throw
+	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should Throw
 
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope local
-	    $var1 | Should Be # Nothing
+	    $var1 | Should BeNullOrEmpty
 	}
 
 	It "Should be able to remove a local variable using the script scope switch" {
 	    New-Variable -Name var1 -Value "context" -Scope local
 
-	    Remove-Variable -Name var1 -Scope script -ErrorAction SilentlyContinue | Should Throw
+	    { Remove-Variable -Name var1 -Scope script -ErrorAction Stop } | Should Throw
 
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope local
-	    $var1 | Should Be # Nothing
+	    $var1 | Should BeNullOrEmpty
 	}
 
 	It "Should be able to remove a script variable created using the script switch" {
 	    New-Variable -Name var1 -Value "context" -Scope script
 
-	    Remove-Variable -Name var1 -Scope script | Should Throw
+	    { Remove-Variable -Name var1 -Scope script } | Should Not Throw
 
-	    $var1 | Should Be # Nothing
+	    $var1 | Should BeNullOrEmpty
 	}
 
 	It "Should not be able to remove a global script variable that was created using the script scope switch" {
 	    New-Variable -Name var1 -Value "context" -Scope script
 
-	    Remove-Variable -Name var1 -Scope global -ErrorAction SilentlyContinue | Should Throw
+	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should Throw
 
 	    $var1 | Should Be "context"
 	}
     }
 }
-
 
 Describe "Remove-Variable basic functionality" -Tags "CI" {
 	It "Remove-Variable variable should works"{
@@ -200,7 +203,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
 
@@ -214,7 +217,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 		Remove-Variable foo -Force
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
@@ -231,7 +234,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 
 		try
@@ -242,7 +245,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
 
@@ -258,7 +261,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 			catch
 			{
 				$_.CategoryInfo | Should Match "ItemNotFoundException"
-				$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+				$_.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 

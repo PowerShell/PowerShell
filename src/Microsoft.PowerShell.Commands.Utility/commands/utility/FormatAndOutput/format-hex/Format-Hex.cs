@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Text;
@@ -82,9 +85,9 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                List<string> pathsToProcess = String.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ? 
+                List<string> pathsToProcess = String.Equals(this.ParameterSetName, "LiteralPath", StringComparison.OrdinalIgnoreCase) ?
                                               ResolvePaths(LiteralPath, true) : ResolvePaths(Path, false);
-                
+
                 ProcessPath(pathsToProcess);
             }
         }
@@ -241,18 +244,18 @@ namespace Microsoft.PowerShell.Commands
                 List<string> pathsToProcess = ResolvePaths(path, true);
                 ProcessPath(pathsToProcess);
             }
-            
+
             else if (obj is string)
             {
                 string inputString = obj.ToString();
                 inputBytes = Encoding.GetBytes(inputString);
             }
-            
+
             else if (obj is byte)
             {
                 inputBytes = new byte[] { (byte)obj };
             }
-            
+
             else if (obj is byte[])
             {
                 inputBytes = ((byte[])obj);
@@ -279,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 inputBytes = BitConverter.GetBytes((Int64)obj);
             }
-            
+
             else if (obj is Int64[])
             {
                 List<byte> inputStreamArray = new List<byte>();

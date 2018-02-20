@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
@@ -36,7 +35,6 @@ namespace System.Management.Automation
         /// The instance of session state the provider belongs to.
         /// </summary>
         private SessionState _sessionState;
-
 
         /// <summary>
         /// Gets the name of the provider.
@@ -337,7 +335,6 @@ namespace System.Management.Automation
             : this(sessionState, implementingType, name, String.Empty, String.Empty, helpFile, psSnapIn)
         {
         }
-
 
         /// <summary>
         /// Constructor for the ProviderInfo class.
@@ -680,5 +677,4 @@ namespace System.Management.Automation
         }
     } // class ProviderInfo
 } // namespace System.Management.Automation
-
 

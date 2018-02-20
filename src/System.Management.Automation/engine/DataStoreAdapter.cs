@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 
@@ -49,7 +48,6 @@ namespace System.Management.Automation
                 _currentWorkingDirectory = value;
             }
         } // CurrentLocation
-
 
         /// <summary>
         /// The current working directory for the virtual drive

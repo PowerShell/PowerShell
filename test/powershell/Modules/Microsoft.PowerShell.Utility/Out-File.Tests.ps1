@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
@@ -11,8 +13,8 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "outfileAppendTest.txt"
         { 'This is first line.' | out-file $tempFile } | Should Not Throw
         { 'This is second line.' | out-file -append $tempFile } | Should Not Throw
-        $tempFile |Should Contain "first"
-        $tempFile |Should Contain "second"
+        $tempFile |Should FileContentMatch "first"
+        $tempFile |Should FileContentMatch "second"
         Remove-Item $tempFile -Force
     }
 }

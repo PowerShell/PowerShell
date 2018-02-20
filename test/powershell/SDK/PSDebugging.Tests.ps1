@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Diagnostics
 using namespace System.Management.Automation.Internal
 
@@ -24,7 +26,6 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $process = [Process]::Start($debugfn)
         return $process
     }
-
 
     function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
     {
@@ -95,7 +96,6 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         $line | Should Be  "For instructions about how to customize your debugger prompt, type `"help about_prompt`"."
     }
 
-
     It "Should be able to step over debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
@@ -111,7 +111,6 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         EnsureChildHasExited $process
         $process.ExitCode | Should Be 0
     }
-
 
     It "Should be able to step out of debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
@@ -163,7 +162,6 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 
     }
 
-
     It -Pending "Should be able to get the call stack in debugging" {
         $debugfn = NewProcessStartInfo "-noprofile -c ""`$function:foo = { 'bar' }""" -RedirectStdIn
         $process = RunPowerShell $debugfn
@@ -181,7 +179,6 @@ Describe "PowerShell Command Debugging" -tags "CI" {
         EnsureChildHasExited $process
 
     }
-
 
 }
 
@@ -276,6 +273,4 @@ Describe "Runspace Debugging API tests" -tag CI {
 
     }
 }
-
-
 

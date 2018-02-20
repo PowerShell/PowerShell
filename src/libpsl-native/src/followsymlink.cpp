@@ -1,5 +1,6 @@
-//! @file followSymLink.cpp
-//! @author George FLeming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief returns whether a path is a symbolic link
 
 #include "followsymlink.h"

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Format-Wide" -Tags "CI" {
 
     It "Should have the same output between the alias and the unaliased function" {

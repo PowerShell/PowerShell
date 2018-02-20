@@ -16,7 +16,7 @@ ModuleVersion = '1.0'
 GUID = 'fa1606d1-94cb-4264-bfb6-def714420084'
 
 # Author of this module
-Author = 'Microsoft Corporation'
+Author = 'PowerShell'
 
 # Company or vendor of this module
 CompanyName = 'Microsoft Corporation'

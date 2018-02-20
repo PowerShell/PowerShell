@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Set-Content cmdlet tests" -Tags "CI" {
     BeforeAll {
         $file1 = "file1.txt"

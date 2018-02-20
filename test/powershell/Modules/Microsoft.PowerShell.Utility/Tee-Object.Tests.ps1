@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tee-Object" -Tags "CI" {
 
     Context "Validate Tee-Object is correctly forking output" {

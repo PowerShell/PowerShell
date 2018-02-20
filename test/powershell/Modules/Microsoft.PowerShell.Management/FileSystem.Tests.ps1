@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"
@@ -378,8 +380,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         BeforeEach {
             $file = New-Item -ItemType File -Path $filePath -Force
         }
-        AfterEach
-        {
+        AfterEach {
             Remove-Item -Force -Recurse -Path $dirPath -ErrorAction SilentlyContinue
             Remove-Item -Force -LiteralPath $newPath -ErrorAction SilentlyContinue
         }
@@ -1392,7 +1393,7 @@ Describe "UNC paths" -Tags 'CI' {
             $testPath = Join-Path "\\localhost" $systemDrive
             & $cmdlet $testPath
             Get-Location | Should BeExactly "Microsoft.PowerShell.Core\FileSystem::$testPath"
-            $children = { Get-ChildItem -ErrorAction Stop } | Should Not Throw
+            $children = Get-ChildItem -ErrorAction Stop
             $children.Count | Should BeGreaterThan 0
         }
         finally {

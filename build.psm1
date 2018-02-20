@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
@@ -135,9 +138,11 @@ function Get-EnvironmentInformation
         $environment += @{'IsCentOS' = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'}
         $environment += @{'IsFedora' = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24}
         $environment += @{'IsOpenSUSE' = $LinuxInfo.ID -match 'opensuse'}
-        $environment += @{'IsOpenSUSE13' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
+        $environment += @{'IsSLES' = $LinuxInfo.ID -match 'sles'}
+        $environment += @{'IsOpenSUSE13' = $Environmenst.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'}
         $environment += @{'IsOpenSUSE42.1' = $Environment.IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'}
-        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora -or $Environment.IsOpenSUSE}
+        $environment += @{'IsRedHatFamily' = $Environment.IsCentOS -or $Environment.IsFedora}
+        $environment += @{'IsSUSEFamily' = $Environment.IsSLES -or $Environment.IsOpenSUSE}
 
         # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
         # https://github.com/PowerShell/PowerShell/issues/2511
@@ -660,21 +665,20 @@ function Restore-PSModuleToBuild
 
     if($CI.IsPresent)
     {
+        # take the latest version of pester and install it so it may be used
         Restore-PSPester -Destination $modulesDir
     }
 }
 
 function Restore-PSPester
 {
-    param
-    (
+    param(
         [ValidateNotNullOrEmpty()]
-        [string]
-        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
+        [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-
-    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '1f546b6aaa0893e215e940a14f57c96f56f7eff1'
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery
 }
+
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -872,7 +876,6 @@ function Get-PSOutput {
     }
 }
 
-
 function Get-PesterTag {
     param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
     $alltags = @{}
@@ -895,7 +898,7 @@ function Get-PesterTag {
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
                     $values | ForEach-Object {
-                        if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
+                        if (@('REQUIREADMINONWINDOWS', 'REQUIRESUDOONUNIX', 'SLOW') -contains $_) {
                             # These are valid tags also, but they are not the priority tags
                         }
                         elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
@@ -977,6 +980,8 @@ function Start-PSPester {
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
+        [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
+        [switch]$Sudo,
         [switch]$IncludeFailingTest
     )
 
@@ -1025,52 +1030,52 @@ Restore the module to '$Pester' by running:
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $Command = ""
+    $command = ""
     if ($Terse)
     {
-        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+        $command += "`$ProgressPreference = 'silentlyContinue'; "
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
+    $command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($Environment.IsWindows) {
-        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+        $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
 
-    $Command += "Import-Module '$Pester'; "
+    $command += "Import-Module '$Pester'; "
 
     if ($Unelevate)
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
 
-    $Command += "Invoke-Pester "
+    $command += "Invoke-Pester "
 
-    $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
     }
     if ($Tag) {
-        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+        $command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $Command += "-Quiet "
+        $command += "-Quiet "
     }
     if ( $PassThru ) {
-        $Command += "-PassThru "
+        $command += "-PassThru "
     }
 
-    $Command += "'" + ($Path -join "','") + "'"
+    $command += "'" + ($Path -join "','") + "'"
     if ($Unelevate)
     {
-        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+        $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
-    Write-Verbose $Command
+    Write-Verbose $command
 
     $script:nonewline = $true
     $script:inerror = $false
@@ -1159,31 +1164,36 @@ Restore the module to '$Pester' by running:
                 $passThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $command += "|Export-Clixml -Path '$passThruFile' -Force"
+
+                    $passThruCommand = {& $powershell -noprofile -c $command }
+                    if ($Sudo.IsPresent) {
+                        $passThruCommand =  {& sudo $powershell -noprofile -c $command }
+                    }
+
+                    $writeCommand = { Write-Host $_ }
                     if ($Terse)
                     {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                        $writeCommand = { Write-Terse $_ }
                     }
-                    else
-                    {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
-                    }
+
+                    Start-NativeExecution -sb $passThruCommand | ForEach-Object $writeCommand
                     Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
                 {
-                    Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                    Remove-Item $passThruFile -ErrorAction SilentlyContinue -Force
                 }
             }
             else
             {
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command} | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command}
                 }
             }
         }
@@ -1361,7 +1371,6 @@ function Test-PSPesterResults
     }
 }
 
-
 function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
@@ -1421,14 +1430,13 @@ function Start-PSxUnit {
 
         # '-fxversion' workaround required due to https://github.com/dotnet/cli/issues/7901#issuecomment-343323674
         # Run sequential tests first, and then run the tests that can execute in parallel
-        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
-        dotnet xunit -fxversion 2.0.0 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
+        dotnet xunit -fxversion 2.0.5 -configuration $Options.configuration -xml $SequentialTestResultsFile -namespace "PSTests.Sequential" -parallel none
+        dotnet xunit -fxversion 2.0.5 -configuration $Options.configuration -xml $ParallelTestResultsFile -namespace "PSTests.Parallel" -nobuild
     }
     finally {
         Pop-Location
     }
 }
-
 
 function Install-Dotnet {
     [CmdletBinding()]
@@ -1489,8 +1497,6 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($Environment.IsFedora) {
         "dnf install -y -q"
-    } elseif ($Environment.IsOpenSUSE) {
-        "zypper --non-interactive install"
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -1572,6 +1578,26 @@ function Start-PSBootstrap {
 
                 $PackageManager = Get-RedHatPackageManager
 
+                $baseCommand = "$sudo $PackageManager"
+
+                # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
+                if($NoSudo)
+                {
+                    $baseCommand = $PackageManager
+                }
+
+                # Install dependencies
+                Start-NativeExecution {
+                    Invoke-Expression "$baseCommand $Deps"
+                }
+            } elseif ($Environment.IsSUSEFamily) {
+                # Build tools
+                $Deps += "gcc", "cmake", "make"
+
+                # Packaging tools
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff" }
+
+                $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
 
                 # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
@@ -1895,7 +1921,6 @@ function Start-ResGen
     }
 }
 
-
 function Find-Dotnet() {
     $originalPath = $env:PATH
     $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -1953,7 +1978,6 @@ function Convert-TxtResourceToXml
     }
 }
 
-
 function script:Use-MSBuild {
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
@@ -1971,7 +1995,6 @@ function script:Use-MSBuild {
 
     Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
-
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
@@ -2052,6 +2075,16 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersion
 }
 
+<#
+    .Synopsis
+        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of WiX.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
 function New-MSIPackage
 {
     [CmdletBinding()]
@@ -2069,9 +2102,10 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductVersion,
 
-        # Product Guid needs to change for every version to support SxS install
+        # The ProductCode property is a unique identifier for the particular product release
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $ProductGuid = 'a5249933-73a1-4b10-8a4c-13c98bdc16fe',
+        [string] $ProductCode,
 
         # Source Path to the Product Files - required to package the contents into an MSI
         [Parameter(Mandatory = $true)]
@@ -2080,17 +2114,18 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
         [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath,
+        [ValidateScript( {Test-Path $_})]
+        [string] $AssetsPath = "$PSScriptRoot\assets",
 
         # Path to license.rtf file - for the EULA
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $LicenseFilePath,
+        [ValidateScript( {Test-Path $_})]
+        [string] $LicenseFilePath = "$PSScriptRoot\assets\license.rtf",
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
@@ -2109,7 +2144,7 @@ function New-MSIPackage
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
-        throw "Wix Toolset is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311.exe"
+        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
     }
 
     ## Get the latest if multiple versions exist.
@@ -2137,7 +2172,7 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
     # These variables are used by Product.wxs in assets directory
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
+    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
@@ -2403,54 +2438,6 @@ function Clear-PSRepo
     }
 }
 
-
-# Install PowerShell modules from a git Repo such as PSL-Pester
-function Restore-GitModule
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Name,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Uri,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$CommitSha
-    )
-
-    log 'Restoring module from git repo:'
-    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
-
-    $clonePath = Join-Path -Path $Destination -ChildPath $Name
-    if(Test-Path $clonePath)
-    {
-        remove-Item -Path $clonePath -recurse -force
-    }
-
-    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
-
-    Push-location $clonePath
-    try {
-        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
-
-        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
-        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
-    }
-    finally
-    {
-        pop-location
-    }
-}
-
 # Install PowerShell modules such as PackageManagement, PowerShellGet
 function Restore-PSModule
 {
@@ -2550,7 +2537,6 @@ function Restore-PSModule
         }
     }
 }
-
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>

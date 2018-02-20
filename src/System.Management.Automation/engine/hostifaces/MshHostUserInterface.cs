@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Text;
@@ -1032,7 +1031,6 @@ namespace System.Management.Automation.Host
         internal string PromptText { get; set; }
     }
 
-
     // Holds options for PowerShell transcription
     internal class TranscriptionOption : IDisposable
     {
@@ -1292,5 +1290,4 @@ namespace System.Management.Automation.Host
         }
     }
 } // namespace System.Management.Automation.Host
-
 

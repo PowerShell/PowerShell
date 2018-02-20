@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -44,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Cn")]
         [ValidateNotNullOrEmpty]
         public string ComputerName { get; set; } = "localhost";
-
 
         /// <summary>
         /// The WMI class to use
@@ -96,7 +94,6 @@ namespace Microsoft.PowerShell.Commands
             return returnValue.ToString();
         }
         #endregion helper functions
-
 
         /// <summary>
         /// Returns the object that generates events to be monitored

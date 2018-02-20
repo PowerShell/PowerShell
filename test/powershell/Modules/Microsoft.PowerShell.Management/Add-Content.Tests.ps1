@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Add-Content cmdlet tests" -Tags "CI" {
   $file1 = "file1.txt"
   Setup -File "$file1"

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Attributes Test' -Tags "CI" {
 
     BeforeAll {
@@ -47,8 +49,6 @@ namespace Dummy
 '@
         Add-Type -TypeDefinition $dummyAttributesSource
     }
-
-
 
     Context 'Property.Instance.ValidateSet.String' {
         class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }
@@ -268,7 +268,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 }
             }
 
-
             /// Implement of test IValidateSetValuesGenerator
             public class GenValuesForParamNull : IValidateSetValuesGenerator
             {
@@ -410,6 +409,39 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 Get-TestValidateSetPS6 -Param1 "AnyTestString" -ErrorAction Stop
             } | ShouldBeErrorId "TypeNotFound"
         }
+
+        It 'IValidateSetValuesGenerator works in PowerShell module' {
+            $moduleFile = Join-Path $TestDrive -ChildPath "Test-Module-$((New-Guid).Guid).psm1"
+            $module = @'
+                class ValidateSetTest : System.Management.Automation.IValidateSetValuesGenerator
+                {
+                    [string[]] GetValidValues()
+                    {
+                        return 'Hello', 'World'
+                    }
+                }
+
+                function Test-ValidateSet
+                {
+                    [CmdletBinding()]
+                    param (
+                        [Parameter(Mandatory = $true)]
+                        [ValidateSet([ValidateSetTest])]
+                        [string[]]
+                        $Item
+                    )
+                    $Item
+                }
+'@
+            Set-Content -Path $moduleFile -Value $module -Force
+
+            try {
+                Import-Module -Name $moduleFile -Force
+                Test-ValidateSet 'Hello' | Should Be 'Hello'
+            } finally {
+                Remove-Module -Name $moduleFile -Force
+            }
+        }
     }
 
     Context 'CachedValidValuesGeneratorBase class tests' {
@@ -443,7 +475,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
                 }
             }
-
 
             function Get-TestValidateSetPS4
             {

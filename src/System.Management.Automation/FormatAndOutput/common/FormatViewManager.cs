@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -70,7 +69,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         [TraceSource("FormatViewBinding", "Format view binding")]
         private static PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
         #endregion tracer
-
 
         private static string PSObjectTypeName(PSObject so)
         {
@@ -360,7 +358,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         private static ViewGenerator SelectViewGeneratorFromViewDefinition(
                                         TerminatingErrorContext errorContext,
                                         MshExpressionFactory expressionFactory,
@@ -446,8 +443,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             viewGenerator.Initialize(errorContext, expressionFactory, so, db, parameters);
             return viewGenerator;
         }
-
-
 
         /// <summary>
         /// the view generator that produced data for a selected shape
@@ -588,7 +583,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
     }
 
-
     /// <summary>
     /// Helper class to manage the logging of errors resulting from
     /// evaluations of MshExpression instances
@@ -714,7 +708,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             return errorRecord;
         }
-
 
         private FormatErrorPolicy _formatErrorPolicy;
 

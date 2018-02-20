@@ -1,14 +1,10 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 
 using Dbg = System.Management.Automation.Diagnostics;
-
-
 
 namespace System.Management.Automation.Internal.Host
 {
@@ -22,8 +18,6 @@ namespace System.Management.Automation.Internal.Host
             _externalRawUI = externalRawUI;
             _parentHost = parentHost;
         }
-
-
 
         internal
         void
@@ -40,8 +34,6 @@ namespace System.Management.Automation.Internal.Host
                 ErrorCategory.NotImplemented);
             throw e;
         }
-
-
 
         /// <summary>
         ///
@@ -78,8 +70,6 @@ namespace System.Management.Automation.Internal.Host
                 _externalRawUI.ForegroundColor = value;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -118,8 +108,6 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -156,8 +144,6 @@ namespace System.Management.Automation.Internal.Host
                 _externalRawUI.CursorPosition = value;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -196,8 +182,6 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -234,8 +218,6 @@ namespace System.Management.Automation.Internal.Host
                 _externalRawUI.CursorSize = value;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -274,8 +256,6 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -313,8 +293,6 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -343,8 +321,6 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -372,8 +348,6 @@ namespace System.Management.Automation.Internal.Host
                 return result;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -416,8 +390,6 @@ namespace System.Management.Automation.Internal.Host
             return result;
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -439,8 +411,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalRawUI.FlushInputBuffer();
         }
-
-
 
         /// <summary>
         ///
@@ -469,8 +439,6 @@ namespace System.Management.Automation.Internal.Host
                 return result;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -509,8 +477,6 @@ namespace System.Management.Automation.Internal.Host
             }
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -533,8 +499,6 @@ namespace System.Management.Automation.Internal.Host
 
             _externalRawUI.SetBufferContents(origin, contents);
         }
-
-
 
         /// <summary>
         ///
@@ -564,8 +528,6 @@ namespace System.Management.Automation.Internal.Host
             _externalRawUI.SetBufferContents(r, fill);
         }
 
-
-
         /// <summary>
         ///
         /// See base class
@@ -589,8 +551,6 @@ namespace System.Management.Automation.Internal.Host
 
             return _externalRawUI.GetBufferContents(r);
         }
-
-
 
         /// <summary>
         ///
@@ -667,7 +627,6 @@ namespace System.Management.Automation.Internal.Host
             }
             return _externalRawUI.LengthInBufferCells(str, offset);
         }
-
 
         /// <summary>
         ///

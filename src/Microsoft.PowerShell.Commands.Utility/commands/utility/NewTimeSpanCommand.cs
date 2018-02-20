@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -39,7 +38,6 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _start;
         private bool _startSpecified;
 
-
         /// <summary>
         /// This parameter indicates the end of a time span.  It is used if two
         /// times are being compared.  If one of the times is not specified,
@@ -61,13 +59,11 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _end;
         private bool _endSpecified = false;
 
-
         /// <summary>
         /// Allows the user to override the day
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
         public int Days { get; set; } = 0;
-
 
         /// <summary>
         /// Allows the user to override the hour
@@ -75,13 +71,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Time")]
         public int Hours { get; set; } = 0;
 
-
         /// <summary>
         /// Allows the user to override the minute
         /// </summary>
         [Parameter(ParameterSetName = "Time")]
         public int Minutes { get; set; } = 0;
-
 
         /// <summary>
         /// Allows the user to override the second
@@ -133,5 +127,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     }  // NewTimeSpanCommand
 } // namespace Microsoft.PowerShell.Commands
-
 

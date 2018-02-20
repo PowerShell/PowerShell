@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (c) Microsoft Corporation. All rights reserved.
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #region Using directives
 using System;
@@ -11,7 +9,6 @@ using System.Globalization;
 using System.Management.Automation;
 using Microsoft.Management.Infrastructure.Options;
 #endregion
-
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -447,7 +446,6 @@ namespace System.Management.Automation.Internal
                 }
             }
         }
-
 
         /// <summary>
         /// Writes a set of objects to the pipe.  This could recursively

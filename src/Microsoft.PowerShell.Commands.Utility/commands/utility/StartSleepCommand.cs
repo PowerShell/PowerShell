@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -36,8 +35,6 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-
-
         #region parameters
 
         /// <summary>
@@ -47,7 +44,6 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true)]
         [ValidateRangeAttribute(0, int.MaxValue / 1000)]
         public int Seconds { get; set; }
-
 
         /// <summary>
         /// Allows sleep time to be specified in milliseconds

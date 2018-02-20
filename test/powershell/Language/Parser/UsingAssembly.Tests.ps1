@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Using assembly" -Tags "CI" {
 
@@ -90,7 +92,6 @@ public class ABC {}
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $true
-
 
             $assemblies = pwsh -noprofile -command @"
     using assembly System.Drawing

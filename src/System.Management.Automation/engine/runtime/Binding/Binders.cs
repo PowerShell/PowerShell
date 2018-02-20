@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -19,7 +18,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-
 
 namespace System.Management.Automation.Language
 {
@@ -850,7 +848,6 @@ namespace System.Management.Automation.Language
                     Expression.Block(typeof(void), Expression.Call(CachedReflectionInfo.PipelineOps_Nop)),
                     BindingRestrictions.GetInstanceRestriction(target.Expression, AutomationNull.Value))).WriteToDebugLog(this);
             }
-
 
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
             if (enumerable == null)
@@ -3746,7 +3743,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-
         internal static DynamicMetaObject ThrowNoConversion(DynamicMetaObject target, Type toType, DynamicMetaObjectBinder binder,
             int currentVersion, params DynamicMetaObject[] args)
         {
@@ -3883,7 +3879,6 @@ namespace System.Management.Automation.Language
                 }
             }
         }
-
 
         public override DynamicMetaObject FallbackGetIndex(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
         {
@@ -4643,7 +4638,6 @@ namespace System.Management.Automation.Language
                 return errorSuggestion ??
                        PSConvertBinder.ThrowNoConversion(indexes[0], typeof(int), this, _version, target, value);
             }
-
 
             var elementType = target.LimitType.GetElementType();
             var valueExpr = PSGetIndexBinder.ConvertIndex(value, elementType);
@@ -7236,7 +7230,6 @@ namespace System.Management.Automation.Language
                 }
             }
         }
-
 
         internal PSCreateInstanceBinder(CallInfo callInfo, PSMethodInvocationConstraints constraints, bool publicTypeOnly)
             : base(callInfo)

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -38,7 +37,6 @@ namespace System.Management.Automation
         End,
         ProcessBlockOnly,
     }
-
 
     internal class CompiledScriptBlockData
     {
@@ -1321,7 +1319,7 @@ namespace System.Management.Automation
                             // they can just wait on the compromised box and see the sensitive data eventually anyways.
 
                             string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotEncryptContent, textToLog, error.ToString());
-                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                                             0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
                         }
                         else
@@ -1334,12 +1332,12 @@ namespace System.Management.Automation
 
             if (scriptBlock._scriptBlockData.HasSuspiciousContent)
             {
-                PSEtwLog.LogOperationalWarning(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalWarning(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                     segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
             }
             else
             {
-                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                     segment + 1, segments, textToLog, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
             }
 
@@ -1405,7 +1403,7 @@ namespace System.Management.Automation
                         // attacker seeing potentially sensitive data. Because if they aren't detected, then
                         // they can just wait on the compromised box and see the sensitive data eventually anyways.
                         string errorMessage = StringUtil.Format(SecuritySupportStrings.CouldNotUseCertificate, error.ToString());
-                        PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                        PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                                         0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
 
                         return true;
@@ -1430,7 +1428,7 @@ namespace System.Management.Automation
                             }
 
                             string errorMessage = StringUtil.Format(SecuritySupportStrings.CertificateContainsPrivateKey, certificateForLog);
-                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysAnalytic,
+                            PSEtwLog.LogOperationalError(PSEventId.ScriptBlock_Compile_Detail, PSOpcode.Create, PSTask.ExecuteCommand, PSKeyword.UseAlwaysOperational,
                                             0, 0, errorMessage, scriptBlock.Id.ToString(), scriptBlock.File ?? String.Empty);
                         }
                     }
@@ -1794,7 +1792,7 @@ namespace System.Management.Automation
 
             if (GetScriptBlockLoggingSetting()?.EnableScriptBlockInvocationLogging == true)
             {
-                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Start_Detail, PSOpcode.Create, PSTask.CommandStart, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Start_Detail, PSOpcode.Create, PSTask.CommandStart, PSKeyword.UseAlwaysOperational,
                     scriptBlock.Id.ToString(), runspaceId.ToString());
             }
         }
@@ -1803,7 +1801,7 @@ namespace System.Management.Automation
         {
             if (GetScriptBlockLoggingSetting()?.EnableScriptBlockInvocationLogging == true)
             {
-                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Complete_Detail, PSOpcode.Create, PSTask.CommandStop, PSKeyword.UseAlwaysAnalytic,
+                PSEtwLog.LogOperationalVerbose(PSEventId.ScriptBlock_Invoke_Complete_Detail, PSOpcode.Create, PSTask.CommandStop, PSKeyword.UseAlwaysOperational,
                     scriptBlock.Id.ToString(), runspaceId.ToString());
             }
         }

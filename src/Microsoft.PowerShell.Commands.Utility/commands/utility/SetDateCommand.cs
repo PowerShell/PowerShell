@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System;
@@ -27,14 +27,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Date", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public DateTime Date { get; set; }
 
-
         /// <summary>
         /// Allows a use to specify a timespan with which to apply to the current time
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Adjust", ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         public TimeSpan Adjust { get; set; }
-
 
         /// <summary>
         /// This option determines the default output format used to display the object set-date emits
@@ -117,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         internal static class NativeMethods
         {
             [StructLayout(LayoutKind.Sequential)]
-            public class SystemTime
+            public struct SystemTime
             {
                 public UInt16 Year;
                 public UInt16 Month;
@@ -136,5 +134,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion
     } // SetDateCommand
 } // namespace Microsoft.PowerShell.Commands
-
 

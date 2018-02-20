@@ -1,4 +1,7 @@
-﻿# Utility to generate a self-signed certificate and sign a given package such as PowerShell.zip/appx/msi
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Utility to generate a self-signed certificate and sign a given package such as PowerShell.zip/appx/msi
 
 [CmdletBinding()]
 param (
@@ -112,7 +115,6 @@ function Sign-Package
 
     return $PackageFilePath
 }
-
 
 $certificate = New-SelfSignedCertificate -Verbose
 ConvertTo-Pfx -Verbose

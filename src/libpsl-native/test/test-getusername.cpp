@@ -1,5 +1,6 @@
-//! @file test-getusername.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Unit tests for GetUserName
 
 #include <gtest/gtest.h>

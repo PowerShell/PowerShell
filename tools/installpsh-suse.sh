@@ -104,13 +104,17 @@ if [[ "$SUDO" -eq "sudo" ]]; then
 fi
 
 #Collect any variation details if required for this distro
-REV=`cat /etc/SuSE-release | grep 'VERSION' | sed s/.*=\ //`
-MAJORREV=`echo $REV | sed 's/\..*//'`
+source /etc/os-release
+MAJORREV=`echo $VERSION_ID | sed 's/\..*//'`
 #END Collect any variation details if required for this distro
 
 #If there are known incompatible versions of this distro, put the test, message and script exit here:
-if [[ $MAJORREV < 42 ]]; then
+if [[ $ID == 'opensuse' && $MAJORREV < 42 ]]; then
     echo "OpenSUSE $VERSION_ID is not supported!" >&2
+    exit 2
+fi
+if [[ $ID == 'sles' && $MAJORREV < 12 ]]; then
+    echo "SLES $VERSION_ID is not supported!" >&2
     exit 2
 fi
 
