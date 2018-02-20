@@ -43,9 +43,9 @@
     <!-- Default value of Checkbox of starting PowerShell after installation -->
     <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
-    <CustomAction Id="SaveShortcutPath" Property="ShortcutPath" Value="[$ApplicationProgramsMenuShortcut]$(var.ProductSemanticVersionWithNameAndOptionalArchitecture).lnk" />
-    <CustomAction Id="FixShortcutWorkingDirectory" Script="vbscript" HideTarget="no" Impersonate="no">
-      shortcutPath = Session.Property("ShortcutPath")
+    <CustomAction Id="SaveShortcutPath" Property="FixShortcutWorkingDirectory" Value="[$ApplicationProgramsMenuShortcut]$(var.ProductSemanticVersionWithNameAndOptionalArchitecture).lnk" />
+    <CustomAction Id="FixShortcutWorkingDirectory" Script="vbscript" HideTarget="no" Impersonate="no" Execute="deferred" >
+      shortcutPath = Session.Property("CustomActionData")
       Set fso = CreateObject("Scripting.FileSystemObject")
       if (fso.FileExists(shortcutPath)) Then
         Set wshShell = CreateObject("WSCript.Shell")
@@ -203,8 +203,8 @@
       </Directory>
     </Directory>
     <InstallExecuteSequence>
-      <Custom Action="SaveShortcutPath" After="InstallFinalize" />
-      <Custom Action="FixShortcutWorkingDirectory" After="SaveShortcutPath">
+      <Custom Action="SaveShortcutPath" Before="FixShortcutWorkingDirectory" />
+      <Custom Action="FixShortcutWorkingDirectory" Before="InstallFinalize">
         NOT Installed OR NOT REMOVE OR UPGRADINGPRODUCTCODE
       </Custom>
     </InstallExecuteSequence>
