@@ -59,11 +59,11 @@ Describe "Stream writer tests" -Tags "CI" {
             $ps = [powershell]::Create()
 
             $testInfoData = @(
-                @{ Name = 'defaults'; Command = "Write-Information TestMessage";           returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Object';  Command = "Write-Information -MessageData TestMessage";   returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Message'; Command = "Write-Information -Message TestMessage";  returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Msg';     Command = "Write-Information -Msg TestMessage";      returnCount = 1; returnValue = 'TestMessage' }
-                @{ Name = '-Tag';     Command = "Write-Information TestMessage -Tag Test"; returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = 'defaults'; Command = "Write-Information TestMessage";              returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Object';  Command = "Write-Information -MessageData TestMessage"; returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Message'; Command = "Write-Information -Message TestMessage";     returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Msg';     Command = "Write-Information -Msg TestMessage";         returnCount = 1; returnValue = 'TestMessage' }
+                @{ Name = '-Tag';     Command = "Write-Information TestMessage -Tag Test";    returnCount = 1; returnValue = 'TestMessage' }
             )
         }
 
