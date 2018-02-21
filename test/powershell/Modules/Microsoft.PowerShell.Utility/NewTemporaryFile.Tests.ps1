@@ -17,14 +17,13 @@
 Describe "New-TemporaryFile" -Tags "CI" {
 
     It "creates a new temporary file" {
-            $tempFile = New-TemporaryFile
+        $tempFile = New-TemporaryFile
 
-            $tempFile | Should Exist
-            $tempFile | Should BeOfType System.IO.FileInfo
+        $tempFile | Should Exist
+        $tempFile | Should BeOfType System.IO.FileInfo
 
-            if (Test-Path $tempFile) {
-                Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
-            }
+        if (Test-Path $tempFile) {
+            Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
         }
     }
 
