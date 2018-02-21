@@ -27,16 +27,17 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     Context "Validate Set-Item Cmdlet" {
         It "Sets the new options in existing function" {
             $newOptions = "ReadOnly, AllScope"
-            (Get-Item $existingFunction).Options | Should -Be "None"
+            (Get-Item $existingFunction).Options | Should -BeExactly "None"
             Set-Item $existingFunction -Options $newOptions
-            (Get-Item $existingFunction).Options | Should -Be $newOptions
+            (Get-Item $existingFunction).Options | Should -BeExactly $newOptions
         }
 
         It "Sets the options and a value of type ScriptBlock for a new function" {
             $options = "ReadOnly"
             Set-Item $nonExistingFunction -Options $options -Value $functionValue
-            (Get-Item $nonExistingFunction).Options | Should -Be $options
-            (Get-Item $nonExistingFunction).ScriptBlock | Should -Be $functionValue
+            $getItemResult = Get-Item $nonExistingFunction
+            $getItemResult.Options | Should -BeExactly $options
+            $getItemResult.ScriptBlock | Should -BeExactly $functionValue
         }
 
         It "Removes existing function if Set-Item has no arguments beside function name" {
@@ -46,12 +47,12 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
 
         It "Sets a value of type FunctionInfo for a new function" {
             Set-Item $nonExistingFunction -Value (Get-Item $existingFunction)
-            Invoke-Expression $nonExistingFunction | Should -Be $text
+            Invoke-Expression $nonExistingFunction | Should -BeExactly $text
         }
 
         It "Sets a value of type String for a new function" {
             Set-Item $nonExistingFunction -Value "return '$text' "
-            Invoke-Expression $nonExistingFunction | Should -Be $text
+            Invoke-Expression $nonExistingFunction | Should -BeExactly $text
         }
 
         It "Throws PSArgumentException when Set-Item is called with incorrect function value" {
