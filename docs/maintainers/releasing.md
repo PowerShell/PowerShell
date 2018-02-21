@@ -175,7 +175,7 @@ Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 
 The NuGet packages for hosting PowerShell for Windows and non-Windows are being built in our release build pipeline.
 The assemblies from the individual Windows and Linux builds are consumed and packed into NuGet packages.
-These are then released to [ps-core-feed].
+These are then released to [powershell-core feed][ps-core-feed].
 
 [ps-core-feed]: https://powershell.myget.org/gallery/powershell-core
 
