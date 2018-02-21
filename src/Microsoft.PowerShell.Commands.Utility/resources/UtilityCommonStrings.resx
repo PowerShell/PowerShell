@@ -177,4 +177,10 @@
   <data name="NoZoneIdentifierFileStream" xml:space="preserve">
     <value>The file is not blocked: {0}</value>
   </data>
+  <data name="InvalidCharacterInParameter" xml:space="preserve">
+    <value>Parameter '{0}' contains at least one invalid character. Its value is: '{1}'</value>
+  </data>
+  <data name="CouldNotCreateTemporaryFilename" xml:space="preserve">
+    <value>'Could not create a temporary file name in {0}.</value>
+  </data>
 </root>
