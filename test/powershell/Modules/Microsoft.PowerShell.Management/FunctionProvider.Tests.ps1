@@ -21,7 +21,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
 
     AfterEach {
         Remove-Item $existingFunction -ErrorAction SilentlyContinue -Force
-        Remove-Item $nonexistingFunction -ErrorAction SilentlyContinue -Force
+        Remove-Item $nonExistingFunction -ErrorAction SilentlyContinue -Force
     }
 
     Context "Validate Set-Item Cmdlet" {
@@ -86,7 +86,15 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     Context "Validate Remove-Item Cmdlet" {
         It "Removes function" {
             Remove-Item $existingFunction
-            $existingFunction | Should -Not -Exist
+            { Get-Item $existingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+    }
+
+    Context "Validate Rename-Item Cmdlet" {
+        It "Renames function" {
+            Rename-Item -path $existingFunction -NewName $nonExistingFunction
+            { Get-Item $existingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item $nonExistingFunction } | Should -Not -Throw
         }
     }
 }
