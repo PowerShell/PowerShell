@@ -115,37 +115,25 @@ namespace Microsoft.PowerShell.Commands
         /// Sets Id
         /// </summary>
         /// <param name="id"></param>
-        internal void SetId(long id)
-        {
-            Id = id;
-        }
+        internal void SetId(long id) => Id = id;
 
         /// <summary>
         /// Set status
         /// </summary>
         /// <param name="status"></param>
-        internal void SetStatus(PipelineState status)
-        {
-            ExecutionStatus = status;
-        }
+        internal void SetStatus(PipelineState status) => ExecutionStatus = status;
 
         /// <summary>
         /// Set endtime
         /// </summary>
         /// <param name="endTime"></param>
-        internal void SetEndTime(DateTime endTime)
-        {
-            EndExecutionTime = endTime;
-        }
+        internal void SetEndTime(DateTime endTime) => EndExecutionTime = endTime;
 
         /// <summary>
         /// Sets command
         /// </summary>
         /// <param name="command"></param>
-        internal void SetCommand(string command)
-        {
-            CommandLine = command;
-        }
+        internal void SetCommand(string command) => CommandLine = command;
 
         /// <summary>
         /// Id of the pipeline corresponding to this history entry
