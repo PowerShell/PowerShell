@@ -22,7 +22,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "tar", "tar-arm")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "tar", "tar-arm")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -195,18 +195,18 @@ function Start-PSPackage {
         if (-not $Type) {
             $Type = if ($Environment.IsLinux) {
                 if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                    "deb"
+                    "deb", "nupkg"
                 } elseif ($Environment.IsRedHatFamily) {
-                    "rpm"
+                    "rpm", "nupkg"
                 } elseif ($Environment.IsSUSEFamily) {
-                    "rpm"
+                    "rpm", "nupkg"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
             } elseif ($Environment.IsMacOS) {
-                "osxpkg"
+                "osxpkg", "nupkg"
             } elseif ($Environment.IsWindows) {
-                "msi"
+                "msi", "nupkg"
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
@@ -270,6 +270,20 @@ function Start-PSPackage {
                     Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
                 } else {
                     Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
+                }
+            }
+            'nupkg' {
+                $Arguments = @{
+                    PackageNameSuffix = $NameSuffix
+                    PackageSourcePath = $Source
+                    PackageVersion = $Version
+                    PackageRuntime = $Runtime
+                    PackageConfiguration = $Configuration
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create NuPkg Package")) {
+                    New-NugetContentPackage @Arguments
                 }
             }
             "tar" {
@@ -1763,6 +1777,88 @@ function Publish-NugetToMyGet
     Get-ChildItem $PackagePath | ForEach-Object {
         Write-Verbose -Verbose "Pushing $_ to PowerShell Myget"
         nuget.exe push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey
+    }
+}
+
+function New-NugetContentPackage
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageName = 'powershell',
+
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageVersion,
+
+        # Runtime of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageRuntime,
+
+        # Configuration of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageConfiguration,
+
+        # Source Path to the Product Files - required to package the contents into an Zip
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageSourcePath,
+
+        [Switch]
+        $Force
+    )
+
+    log "PackageVersion: $PackageVersion"
+    $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
+    log "nugetSemanticVersion: $nugetSemanticVersion"
+
+    $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
+
+    $nuspecPackageName = $PackageName
+    if($PackageNameSuffix)
+    {
+        $nuspecPackageName += '-' + $PackageNameSuffix
+    }
+
+    # Setup staging directory so we don't change the original source directory
+    $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
+    $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
+    if ($pscmdlet.ShouldProcess("Create staging folder")) {
+        New-StagingFolder -StagingPath $contentFolder
+    }
+
+    $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'
+
+    $arguments = @('pack')
+    $arguments += @('--output',$nugetFolder)
+    $arguments += @('--configuration',$PackageConfiguration)
+    $arguments += @('--runtime',$PackageRuntime)
+    $arguments += "/p:StagingPath=$stagingRoot"
+    $arguments += "/p:RID=$PackageRuntime"
+    $arguments += "/p:SemVer=$nugetSemanticVersion"
+    $arguments += "/p:PackageName=$nuspecPackageName"
+    $arguments += $projectFolder
+
+    log "Running dotnet $arguments"
+    log "Use -verbose to see output..."
+    Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
+
+    $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
+    if (Test-Path $nupkgFile)
+    {
+        Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+    }
+    else
+    {
+        throw "Failed to create $nupkgFile"
     }
 }
 
