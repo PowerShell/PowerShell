@@ -62,24 +62,24 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
 
     Context "Validate Get-Item Cmdlet" {
         It "Gets existing functions by name" {
-            { Get-Item $existingFunction } | Should -Not -Throw
-            (Get-Item $existingFunction).Name | Should -Be $existingFunction
-            (Get-Item $existingFunction).Options | Should -Be "None"
-            (Get-Item $existingFunction).ScriptBlock | Should -Be $functionValue
+            $getItemResult = Get-Item $existingFunction
+            $getItemResult.Name | Should -Be $existingFunction
+            $getItemResult.Options | Should -Be "None"
+            $getItemResult.ScriptBlock | Should -Be $functionValue
         }
 
         It "Matches regex with stars to the function names" {
-            { Get-Item "ex*on" } | Should -Not -Throw
-            (Get-Item "ex*on").Name | Should -Be $existingFunction
+            $getItemResult = Get-Item "ex*on"
+            $getItemResult.Name | Should -Be $existingFunction
 
             # Stars representing empty string.
-            { Get-Item "*existingFunction*" } | Should -Not -Throw
-            (Get-Item "*existingFunction*").Name | Should -Be $existingFunction
+            $getItemResult = Get-Item "*existingFunction*"
+            $getItemResult.Name | Should -Be $existingFunction
 
             # Finds 2 functions that match the regex.
             Set-Item $nonExistingFunction -Value $functionValue
-            { Get-Item "*Function" } | Should -Not -Throw
-            (Get-Item "*Function*").Count | Should -Be 2
+            $getItemResults =  Get-Item "*Function"
+            $getItemResults.Count | Should -BeGreaterThan 1
         }
     }
 
