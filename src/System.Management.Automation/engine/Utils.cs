@@ -634,11 +634,17 @@ namespace System.Management.Automation
 
                         switch (propertyType)
                         {
-                            case var _ when propertyType == typeof(bool?):
+                            case var _ when propertyType == typeof(int):
                                 if (rawRegistryValue is int rawIntValue)
                                 {
-                                    if (rawIntValue == 1) { propertyValue = true; }
-                                    else if (rawIntValue == 0) { propertyValue = false; }
+                                    propertyValue = rawIntValue;
+                                }
+                                break;
+                            case var _ when propertyType == typeof(bool?):
+                                if (rawRegistryValue is int rawBoolValue)
+                                {
+                                    if (rawBoolValue == 1) { propertyValue = true; }
+                                    else if (rawBoolValue == 0) { propertyValue = false; }
                                 }
                                 break;
                             case var _ when propertyType == typeof(string):
