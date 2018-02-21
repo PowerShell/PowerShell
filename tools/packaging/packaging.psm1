@@ -1470,17 +1470,17 @@ function New-MSIPackage
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
+        [string] $ProductWxsPath = "$PSScriptRoot\..\..\assets\Product.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $AssetsPath = "$PSScriptRoot\assets",
+        [string] $AssetsPath = "$PSScriptRoot\..\..\assets",
 
         # Path to license.rtf file - for the EULA
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $LicenseFilePath = "$PSScriptRoot\assets\license.rtf",
+        [string] $LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf",
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
