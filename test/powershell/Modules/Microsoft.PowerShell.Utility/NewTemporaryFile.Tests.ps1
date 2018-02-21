@@ -17,12 +17,11 @@
 Describe "New-TemporaryFile" -Tags "CI" {
 
     It "creates a new temporary file" {
-        try {
             $tempFile = New-TemporaryFile
 
             $tempFile | Should Exist
             $tempFile | Should BeOfType System.IO.FileInfo
-        } finally {
+
             if (Test-Path $tempFile) {
                 Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
             }
