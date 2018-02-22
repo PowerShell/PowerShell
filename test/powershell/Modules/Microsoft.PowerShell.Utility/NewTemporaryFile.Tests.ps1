@@ -14,16 +14,16 @@
         A FileInfo object for the temporary file is returned.
 #>
 
-Describe "NewTemporaryFile" -Tags "CI" {
+Describe "New-TemporaryFile" -Tags "CI" {
 
     It "creates a new temporary file" {
         $tempFile = New-TemporaryFile
 
-        Test-Path $tempFile | Should be $true
+        $tempFile | Should Exist
         $tempFile | Should BeOfType System.IO.FileInfo
+        $tempFile | Should BeLikeExactly "$([System.IO.Path]::GetTempPath())*"
 
-        if(Test-Path $tempFile)
-        {
+        if (Test-Path $tempFile) {
             Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
         }
     }
