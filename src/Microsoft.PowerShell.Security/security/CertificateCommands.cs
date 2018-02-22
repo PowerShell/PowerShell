@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         /// Do not prompt for password if not given.
         /// </summary>
         [Parameter(Mandatory = false)]
-        public SwitchParameter NoPasswordPrompt { get; set; }
+        public SwitchParameter NoPromptForPassword { get; set; }
 
         //
         // list of files that were not found
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (Password == null && !NoPasswordPrompt.IsPresent) 
+                        if (Password == null && !NoPromptForPassword.IsPresent) 
                         {
                             try 
                             {
