@@ -23,7 +23,9 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         $result = Resolve-Path -LiteralPath "TestDrive:\\\\\"
         ($result.Path.TrimEnd('/\')) | Should Be "TestDrive:"
     }
-    It "Resolve-Path -Relative should return correct path on different drive" -Skip:(!$IsWindows) {
-        Resolve-Path -Path "HKCU:\Software" -Relative | Should Be "HKCU:\Software"
+    It "Resolve-Path -Relative should return correct path on different drive" {
+        $item = Join-Path "TestDrive:" "ResolvePath.relative"
+        $null = New-Item -Path $item -ItemType File -Force
+        Resolve-Path -Path $item -Relative | Should Be $item
     }
 }
