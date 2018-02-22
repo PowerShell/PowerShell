@@ -112,7 +112,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $result = $ps.Streams.Information
 
             $result.Count | Should Be $returnCount
-            (Compare-Object $result $returnValue -SyncWindow 0).length -eq 0 | Should Be $true
+            (Compare-Object $result $returnValue -SyncWindow 0).length | Should Be 0
         }
     }
 }

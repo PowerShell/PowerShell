@@ -87,11 +87,11 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
         $result = $th.ui.Streams.ConsoleOutput
 
         $result.Count | Should Be $returnCount
-        (Compare-Object $result $returnValue -SyncWindow 0).length -eq 0 | Should Be $true
+        (Compare-Object $result $returnValue -SyncWindow 0).length | Should Be 0
 
         $result = $th.ui.Streams.Information
 
         $result.Count | Should Be $returnCount
-        (Compare-Object $result $returnInfo -SyncWindow 0).length -eq 0 | Should Be $true
+        (Compare-Object $result $returnInfo -SyncWindow 0).length | Should Be 0
     }
 }
