@@ -1580,3 +1580,39 @@ function New-MSIPackage
         throw $errorMessage
     }
 }
+
+# Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
+# This function converts the above version into major.minor[.build[.revision]] format
+function Get-PackageVersionAsMajorMinorBuildRevision
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the version in the form of major.minor[.build[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+    $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
+
+    if (1 -eq $packageVersionTokens.Count) {
+        # In case the input is of the form a.b.c, add a '0' at the end for revision field
+        $packageVersion = $packageVersion + '.0'
+    } elseif (1 -lt $packageVersionTokens.Count) {
+        # We have all the four fields
+        $packageBuildTokens = ([regex]::Matches($packageVersionTokens[1], "\d+"))[0].value
+
+        if ($packageBuildTokens)
+        {
+            $packageVersion = $packageVersion + '.' + $packageBuildTokens
+        }
+        else
+        {
+            $packageVersion = $packageVersion
+        }
+    }
+
+    $packageVersion
+}
