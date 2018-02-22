@@ -7,6 +7,18 @@ function UpdateHelpFromLocalContentPath
 {
     param ([string]$ModuleName, [string]$Tag = 'CI')
 
+    # Update-Help fails if module path is Not writable, so skip tests in this situation
+    if ($moduleName -eq "Microsoft.PowerShell.Core")
+    {
+        if ($MicrosoftPowerShellCorePathIsReadOnly) { return }
+    }
+    else
+    {
+        $modulePath = (Get-Module -Name $ModuleName -ListAvailable).ModuleBase
+        $modulePathIsReadOnly = PathIsReadOnly $modulePath
+        if ($modulePathIsReadOnly) { return }
+    }
+
     if ($Tag -eq 'CI')
     {
         $helpContentPath = Join-Path $PSScriptRoot "assets"
@@ -49,7 +61,7 @@ function RunTestCase
     {
         if ($cmdletsToSkip -notcontains $cmdletName)
         {
-            It "Validate -Description and -Examples sections in help content. Run 'Get-help -name $cmdletName'" {
+            It "Validate -Description and -Examples sections in help content. Run 'Get-help -name $cmdletName'" -Skip:$MicrosoftPowerShellCorePathIsReadOnly {
 
                 $help = get-help -name $cmdletName
                 $help.Description | Out-String | Should Match $cmdletName
@@ -65,6 +77,28 @@ function RunTestCase
         }
     }
 }
+
+function PathIsReadOnly
+{
+    param ([string]$Path)
+    # attempt to write to location and catch
+    $readonly = $false
+    try
+    {
+        $filepath = Join-Path $Path "testfile-deleteme.txt"
+        "test" | Out-File $filepath
+    }
+    catch
+    {
+        $readonly = $_.Exception.GetType().Name -eq 'UnauthorizedAccessException'
+    }
+    Remove-Item -Path $filepath -ErrorAction SilentlyContinue
+
+    $readonly
+}
+
+$PsHomePathIsReadOnly = PathIsReadOnly $PSHOME
+$MicrosoftPowerShellCorePathIsReadOnly = $PsHomePathIsReadOnly
 
 Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
 
@@ -185,9 +219,19 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 }
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
+
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
-        $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+        try
+        {
+            $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force -ErrorAction Stop
+        }
+        catch
+        {
+            # $pshome is readonly-path for non-sudo on Linux, skip tests in this case
+            $skip = $_.Exception.GetType().Name -eq 'UnauthorizedAccessException'
+            if ($skip) {return}
+        }
         New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
         Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
         Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
@@ -202,26 +246,26 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 
     AfterAll {
-        Remove-Item $modulePath -Recurse -Force
+        Remove-Item $modulePath -Recurse -Force -ErrorAction SilentlyContinue
         # Remove all the help content.
         Get-ChildItem -Path $PSHOME -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:$skip {
 
         $help = Get-Help about_testhelp
         $help.count | Should Be 1
         $help | Should BeExactly "Hello"
     }
 
-    It "Get-Help for about_Variable should return only one help object" {
+    It "Get-Help for about_Variable should return only one help object" -Skip:$skip {
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
 }
 
 Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows') {
-    It "Get-Help should find help files under pshome" {
+    It "Get-Help should find help files under pshome" -Skip:$PsHomePathIsReadOnly {
         $helpFile = "about_testCase.help.txt"
         $culture = (Get-Culture).Name
         $helpFolderPath = Join-Path $PSHOME $culture
