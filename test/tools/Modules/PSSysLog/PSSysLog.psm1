@@ -543,7 +543,6 @@ function Get-PSSysLog
         [Parameter(ParameterSetName = 'After')]
         [Nullable[DateTime]] $After
     )
-    # Test-Linux
 
     [int] $maxItems = 0
     $contentParms = @{Path = $Path}
@@ -743,8 +742,6 @@ function Get-PSOsLog
 
         [Nullable[DateTime]] $After
     )
-    # Test-MacOS
-    # Test-Elevated
 
     [int] $maxItems = 0
     $contentParms = @{Path = $Path}
