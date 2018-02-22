@@ -8,6 +8,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
         $text = "Hello World!"
         $functionValue = { return $text }
         $restoreLocation = Get-Location
+        $newName = "renamedFunction"
         Set-Location Function:
     }
 
@@ -22,6 +23,7 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     AfterEach {
         Remove-Item $existingFunction -ErrorAction SilentlyContinue -Force
         Remove-Item $nonExistingFunction -ErrorAction SilentlyContinue -Force
+        Remove-Item $newName -ErrorAction SilentlyContinue -Force
     }
 
     Context "Validate Set-Item Cmdlet" {
@@ -63,18 +65,18 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
     Context "Validate Get-Item Cmdlet" {
         It "Gets existing functions by name" {
             $getItemResult = Get-Item $existingFunction
-            $getItemResult.Name | Should -Be $existingFunction
-            $getItemResult.Options | Should -Be "None"
-            $getItemResult.ScriptBlock | Should -Be $functionValue
+            $getItemResult.Name | Should -BeExactly $existingFunction
+            $getItemResult.Options | Should -BeExactly "None"
+            $getItemResult.ScriptBlock | Should -BeExactly $functionValue
         }
 
         It "Matches regex with stars to the function names" {
             $getItemResult = Get-Item "ex*on"
-            $getItemResult.Name | Should -Be $existingFunction
+            $getItemResult.Name | Should -BeExactly $existingFunction
 
             # Stars representing empty string.
             $getItemResult = Get-Item "*existingFunction*"
-            $getItemResult.Name | Should -Be $existingFunction
+            $getItemResult.Name | Should -BeExactly $existingFunction
 
             # Finds 2 functions that match the regex.
             Set-Item $nonExistingFunction -Value $functionValue
@@ -88,13 +90,38 @@ Describe "Basic Function Provider Tests" -Tags "CI" {
             Remove-Item $existingFunction
             { Get-Item $existingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
+
+        It "Fails to remove not existing function" {
+            { Remove-Item $nonExistingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+        }
     }
 
     Context "Validate Rename-Item Cmdlet" {
-        It "Renames function" {
-            Rename-Item -path $existingFunction -NewName $nonExistingFunction
+        It "Renames existing function with None options" {
+            Rename-Item $existingFunction -NewName $newName
             { Get-Item $existingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
-            { Get-Item $nonExistingFunction } | Should -Not -Throw
+            (Get-Item $newName).Count | Should -BeExactly 1
+        }
+
+        It "Fails to rename not existing function" {
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+        }
+
+        It "Fails to rename function which is Constant" {
+            Set-Item $nonExistingFunction -Options "Constant" -Value $functionValue
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | ShouldBeErrorId "CannotRenameFunction,Microsoft.PowerShell.Commands.RenameItemCommand"
+        }
+
+        It "Fails to rename function which is ReadOnly" {
+            Set-Item $nonExistingFunction -Options "ReadOnly"
+            { Rename-Item $nonExistingFunction -NewName $newName -ErrorAction Stop } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RenameItemCommand"
+        }
+
+        It "Renames ReadOnly function when -Force parameter is on" {
+            Set-Item $nonExistingFunction -Options "ReadOnly" -Value $functionValue
+            Rename-Item $nonExistingFunction -NewName $newName -Force
+            { Get-Item $nonExistingFunction -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            (Get-Item $newName).Count | Should -BeExactly 1
         }
     }
 }
