@@ -2023,15 +2023,48 @@ function script:precheck([string]$command, [string]$missedMessage) {
 
 # this function wraps native command Execution
 # for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
-function script:Start-NativeExecution([scriptblock]$sb, [switch]$IgnoreExitcode)
+function script:Start-NativeExecution
 {
+    param(
+        [scriptblock]$sb,
+        [switch]$IgnoreExitcode,
+        [switch]$LogOutputOnError
+    )
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Continue"
     try {
-        & $sb
+        if($LogOutputOnError.IsPresent)
+        {
+            $output = & $sb
+        }
+        else
+        {
+            & $sb
+        }
+
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
+            if($LogOutputOnError.IsPresent -and $Output)
+            {
+                $output | Out-String | Write-Verbose -Verbose
+            }
+
+            # Get caller location for easier debugging
+            $callerLocation = (Get-PSCallStack -ErrorAction SilentlyContinue)[1].Location
+            if($callerLocation)
+            {
+                $callerLocationParts = $callerLocation -split ":\s*line\s*"
+                $callerFile = $callerLocationParts[0]
+                $callerLine = $callerLocationParts[1]
+
+                if ($null -ne $env:CI)
+                {
+                   Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $callerFile -Line $callerLine
+                }
+
+                throw "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
+            }
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
     } finally {
