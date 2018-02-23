@@ -1567,11 +1567,11 @@ function New-MSIPackage
         $WiXCandleLog | Out-String | Write-Verbose -Verbose
         throw "$wixObjProductPath was not produced"
     }
-    
+
     log "running light..."
     # suppress ICE61, because we allow same version upgreades
-    $WiXLightLog = & $wixLightExePath -sice:ICE61 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
-
+    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
+    $WiXLightLog = & $wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
