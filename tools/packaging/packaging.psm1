@@ -1542,6 +1542,11 @@ function New-MSIPackage
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
     $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
 
+    # cleanup any garbage on the system
+    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+
     $packageName = $productSemanticVersionWithName
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
