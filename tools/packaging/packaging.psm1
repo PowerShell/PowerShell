@@ -1231,10 +1231,14 @@ function New-ZipPackage
 
 <#
 .SYNOPSIS
-Creates a NuGet package containing unix and windows runtime assemblies.
+Creates NuGet packages containing unix and windows runtime assemblies.
 
 .DESCRIPTION
 Creates a NuGet package for unix, windows runtimes for 32 bit, 64 bit and ARM.
+The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
+Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
+Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
+System.Management.Automation are created.
 
 .PARAMETER PackagePath
 Path where the package will be created.
@@ -1298,7 +1302,7 @@ function New-UnifiedNugetPackage
 
     if(-not $Environment.IsWindows)
     {
-        throw "New-NugetPackage can be only executed on Windows platform."
+        throw "New-UnifiedNugetPackage can be only executed on Windows platform."
     }
 
     $fileList = @(
@@ -1324,7 +1328,11 @@ function New-UnifiedNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
 
-        New-ReferenceAssembly -Unix64BinPath $unixBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        # This is required only for first release since the nuget package version and System.Management.Automation.dll version do not match.
+        # The nuget package for SMA is 6.0.1.1, but the assembly version is going to be 6.0.1.
+        # For future releases where NuGet version and assembly versions are going to be same, this can be removed.
+        $forceSMAAssemblyVersion = '6.0.1'
+        New-ReferenceAssembly -Unix64BinPath $unixBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
@@ -1470,6 +1478,8 @@ function New-UnifiedNugetPackage
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Threading.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Private.ServiceModel'), [tuple]::Create('version', '4.4.1'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.NETCore.Windows.ApiSets'), [tuple]::Create('version', '1.0.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
                 }
 
                 'Microsoft.PowerShell.Security' {
@@ -1497,6 +1507,7 @@ function New-UnifiedNugetPackage
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encoding.CodePages'), [tuple]::Create('version', '4.4.0'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
                 }
             }
 
@@ -1559,7 +1570,7 @@ function New-NuSpec {
 
     if(-not $Environment.IsWindows)
     {
-        throw "New-NugetPackage can be only executed on Windows platform."
+        throw "New-NuSpec can be only executed on Windows platform."
     }
 
     $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
@@ -1629,7 +1640,7 @@ function New-ReferenceAssembly
 
     if(-not $Environment.IsWindows)
     {
-        throw "New-NugetPackage can be only executed on Windows platform."
+        throw "New-ReferenceAssembly can be only executed on Windows platform."
     }
 
     $genAPIFolder = New-TempFolder
@@ -1775,21 +1786,16 @@ function New-NugetPackage
         [string] $PackageDestinationPath
     )
 
-    if(-not $Environment.IsWindows)
-    {
-        throw "New-NugetPackage can be only executed on Windows platform."
-    }
-
-    $nuget = Get-Command -Type Application nuget.exe -ErrorAction SilentlyContinue
+    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
 
     if($nuget -eq $null)
     {
-        throw 'nuget.exe is not available in PATH'
+        throw 'nuget application is not available in PATH'
     }
 
     Push-Location $NuSpecPath
 
-    nuget.exe pack . > $null
+    nuget pack . > $null
 
     if(-not (Test-Path $PackageDestinationPath))
     {

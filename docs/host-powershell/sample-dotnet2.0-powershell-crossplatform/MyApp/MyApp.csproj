@@ -10,14 +10,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="6.0.1.1" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)' != 'Linux' ">
-    <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="6.0.1.1" />
-    <PackageReference Include="Microsoft.WSMan.Management" Version="6.0.1.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(Configuration)' == 'Linux' ">
-    <PackageReference Include="libpsl" Version="6.0.0-*" />
-  </ItemGroup>
-
 </Project>
