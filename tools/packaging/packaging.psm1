@@ -1552,6 +1552,7 @@ function New-MSIPackage
         $packageName += "-$ProductNameSuffix"
     }
     $msiLocationPath = Join-Path $pwd "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $pwd "$packageName.wixpdb"
 
     if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
     {
@@ -1569,17 +1570,21 @@ function New-MSIPackage
     
     log "running light..."
     # suppress ICE61, because we allow same version upgreades
-    $WiXLightLog = & $wixLightExePath -sice:ICE61 -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
+    $WiXLightLog = & $wixLightExePath -sice:ICE61 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
-    if (Test-Path $msiLocationPath)
+    if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
+        Write-Verbose "You can find the WixPdb @ $msiPdbLocationPath" -Verbose
         Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-        $msiLocationPath
+        [pscustomobject]@{
+            msi=$msiLocationPath
+            wixpdb=$msiPdbLocationPath
+        }
     }
     else
     {
