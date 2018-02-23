@@ -158,17 +158,11 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-#if CORECLR
-                        //Start execution of pipeline in another thread
-                        // No ApartmentState/ThreadStackSize In CoreCLR
+                        // Start execution of pipeline in another thread
                         Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
-#else
-                        //Start execution of pipeline in another thread
-                        // 2004/05/02-JonN Specify maxStack parameter
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), DefaultPipelineStackSize);
-                        SetupInvokeThread(invokeThread, true);
-
+#if !CORECLR
+                        // No ApartmentState in CoreCLR
                         ApartmentState apartmentState;
 
                         if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
@@ -1197,7 +1191,7 @@ namespace System.Management.Automation.Runspaces
 #else
         internal PipelineThread(ApartmentState apartmentState)
         {
-            _worker = new Thread(WorkerProc, DefaultPipelineStackSize);
+            _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
             _workItem = null;
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
