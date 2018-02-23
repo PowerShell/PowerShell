@@ -2045,7 +2045,7 @@ function script:Start-NativeExecution
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
-            if($VerboseOutputOnError.IsPresent -and $Output)
+            if($VerboseOutputOnError.IsPresent -and $output)
             {
                 $output | Out-String | Write-Verbose -Verbose
             }
@@ -2058,12 +2058,14 @@ function script:Start-NativeExecution
                 $callerFile = $callerLocationParts[0]
                 $callerLine = $callerLocationParts[1]
 
+                $errorMessage = "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
+
                 if ($null -ne $env:CI)
                 {
                    Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $callerFile -Line $callerLine
                 }
 
-                throw "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
+                throw $errorMessage
             }
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
