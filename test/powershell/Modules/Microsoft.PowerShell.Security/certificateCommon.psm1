@@ -68,6 +68,21 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
+Function New-ProtectedCertificate
+{
+    <#
+    .SYNOPSIS
+    Return existing password-protected pfx certificate
+
+    .NOTES
+    Password: "password"
+    #>
+
+    $certLocation = ".\test\tools\Modules\WebListener\ServerCert.pfx"
+
+    return $certLocation
+}
+
 Function New-BadCertificate
 {
     $codeSigningCert = "
