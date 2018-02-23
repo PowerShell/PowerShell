@@ -218,6 +218,7 @@
                       WorkingDirectory="$(var.ProductVersionWithName)"
                       Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+            <!-- HKMU is HKLM when installing perMachine and HKCU when installing perUser-->
             <RegistryValue Root="HKMU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
         </Directory>
