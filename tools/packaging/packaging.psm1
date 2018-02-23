@@ -1559,19 +1559,16 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
-    $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v
-    # fail early if candle failed
-    if(!(Test-path -Path $wixObjProductPath))
-    {
-        $WiXCandleLog | Out-String | Write-Verbose -Verbose
-        throw "$wixObjProductPath was not produced"
-    }
+    log "running heat..."
+    Start-NativeExecution -LogOutputOnError { & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+
+    log "running candle..."
+    Start-NativeExecution -LogOutputOnError { & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
 
     log "running light..."
-    # suppress ICE61, because we allow same version upgreades
+    # suppress ICE61, because we allow same version upgrades
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    $WiXLightLog = & $wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"
+    Start-NativeExecution -LogOutputOnError {& $wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
@@ -1588,9 +1585,6 @@ function New-MSIPackage
     }
     else
     {
-        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
-        $WiXCandleLog | Out-String | Write-Verbose -Verbose
-        $WiXLightLog  | Out-String | Write-Verbose -Verbose
         $errorMessage = "Failed to create $msiLocationPath"
         if ($null -ne $env:CI)
         {
