@@ -1572,7 +1572,7 @@ function New-MSIPackage
     # suppress ICE61, because we allow same version upgreades
     $WiXLightLog = & $wixLightExePath -sice:ICE61 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
 
-    Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
+
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
