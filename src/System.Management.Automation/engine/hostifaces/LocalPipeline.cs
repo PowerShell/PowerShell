@@ -20,13 +20,12 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class LocalPipeline : PipelineBase
     {
-        // Default stack size in bytes for local pipeline threads.
-        //
-        // Each platform uses different default for the thread stack size:
+        // Each OS platform uses different default stack size for threads:
         //      - Windows 2 MB
         //      - Linux   8 Mb
         //      - MacOs   512 KB
-        // We should use the same default for all platforms to get predictable behavior.
+        // We should use the same stack size for pipeline threads on all platforms to get predictable behavior.
+        // The stack size we use for pipeline threads is 10MB, which is inherited from Windows PowerShell.
         internal const int DefaultPipelineStackSize = 10_000_000;
 
         #region constructors
