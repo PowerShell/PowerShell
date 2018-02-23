@@ -35,15 +35,6 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
         $content | Should Be $expected
     }
 
-    It "Positive File Test with Path parameter alias" {
-        $expected = "1", "2", "3"
-        $results = $expected | Tee-Object -Path $tempFile
-        $results.Length | Should be 3
-        $results | Should Be $expected
-        $content = Get-Content $tempFile
-        $content | Should Be $expected
-    }
-
     It "Positive Variable Test" {
         $expected = "1", "2", "3"
         $varName = "teeObjectTestVar"

@@ -119,12 +119,6 @@ Describe "Trace-Command" -tags "CI" {
             Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
         }
 
-        It "Trace-Command using Path parameter alias" {
-            $null = New-Item $filePath -Force
-            Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -Path $filePath -Force
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
-        }
-
         It "Trace-Command contains wildcard characters" {
             $a = Trace-Command -Name ParameterB* -Command 'get-alias'
             $a.count | Should BeGreaterThan 0
