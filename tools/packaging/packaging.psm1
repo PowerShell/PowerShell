@@ -1560,7 +1560,16 @@ function New-MSIPackage
 
     $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
     $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v
-    $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
+    # fail early if candle failed
+    if(!(Test-path -Path $wixObjProductPath))
+    {
+        $WiXCandleLog | Out-String | Write-Verbose -Verbose
+        throw "$wixObjProductPath was not produced"
+    }
+    
+    log "running light..."
+    # suppress ICE61, because we allow same version upgreades
+    $WiXLightLog = & $wixLightExePath -sice:ICE61 -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
