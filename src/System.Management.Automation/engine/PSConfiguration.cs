@@ -556,6 +556,7 @@ namespace System.Management.Automation.Configuration
         public ProtectedEventLogging ProtectedEventLogging { get; set; }
         public Transcription Transcription { get; set; }
         public UpdatableHelp UpdatableHelp { get; set; }
+        public PipelineMaxStackSize PipelineMaxStackSizeMB { get; set; }
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
@@ -614,6 +615,14 @@ namespace System.Management.Automation.Configuration
     {
         public bool? EnableConsoleSessionConfiguration { get; set; }
         public string ConsoleSessionConfigurationName { get; set; }
+    }
+
+    /// <summary>
+    /// Setting about PipelineMaxStackSize
+    /// </summary>
+    internal sealed class PipelineMaxStackSize : PolicyBase
+    {
+        public int PipelineMaxStackSizeMB { get; set; }
     }
 
     /// <summary>
