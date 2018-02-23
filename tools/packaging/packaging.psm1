@@ -1229,47 +1229,77 @@ function New-ZipPackage
     }
 }
 
+<#
+.SYNOPSIS
+Creates a NuGet package containing unix and windows runtime assemblies.
+
+.DESCRIPTION
+Creates a NuGet package for unix, windows runtimes for 32 bit, 64 bit and ARM.
+
+.PARAMETER PackagePath
+Path where the package will be created.
+
+.PARAMETER PackageVersion
+Version of the created package.
+
+.PARAMETER winx86BinPath
+Path to folder containing Windows x86 assemblies.
+
+.PARAMETER winx64BinPath
+Path to folder containing Windows x64 assemblies.
+
+.PARAMETER winArm32BinPath
+Path to folder containing Windows arm32 assemblies.
+
+.PARAMETER winArm64BinPath
+Path to folder containing Windows arm64 assemblies.
+
+.PARAMETER linuxArm32BinPath
+Path to folder containing linux arm32 assemblies.
+
+.PARAMETER unixBinPath
+Path to folder containing unix x64 assemblies.
+
+.PARAMETER GenAPIToolPath
+Path to the GenAPI.exe tool.
+#>
 function New-UnifiedNugetPackage
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param(
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $PackagePath,
+        [string] $PackagePath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $PackageVersion,
+        [string] $PackageVersion,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $winx86BinPath,
+        [string] $winx86BinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $winx64BinPath,
+        [string] $winx64BinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $winArm32BinPath,
+        [string] $winArm32BinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $winArm64BinPath,
+        [string] $winArm64BinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $linuxArm32BinPath,
+        [string] $linuxArm32BinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $unixBinPath,
+        [string] $unixBinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        $GenAPIToolPath
+        [string] $GenAPIToolPath
     )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NugetPackage can be only executed on Windows platform."
+    }
 
     $fileList = @(
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
@@ -1301,14 +1331,14 @@ function New-UnifiedNugetPackage
         {
             $tmpPackageRoot = New-TempFolder
             # Remove '.dll' at the end
-            $fileBaseName = $file.Remove($file.Length - 4)
+            $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($file)
             $filePackageFolder = New-Item (Join-Path $tmpPackageRoot $fileBaseName) -ItemType Directory -Force
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
             $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
             Copy-Item $refBinFullName -Destination $refFolder -Force
-            Write-Verbose "Copied file $refBinFullName to $refFolder"
+            log "Copied file $refBinFullName to $refFolder"
             #endregion ref
 
             #region winX86
@@ -1320,7 +1350,7 @@ function New-UnifiedNugetPackage
             }
 
             Copy-Item -Path $fullPath -Destination $winX86Path
-            Write-Verbose "Copied $file to 'win-x86'" -Verbose
+            log "Copied $file to 'win-x86'"
 
             #endregion
 
@@ -1333,7 +1363,7 @@ function New-UnifiedNugetPackage
             }
 
             Copy-Item -Path $fullPath -Destination $winX64Path
-            Write-Verbose "Copied $file to 'win-x64'" -Verbose
+            log "Copied $file to 'win-x64'"
 
             #endregion
 
@@ -1346,7 +1376,7 @@ function New-UnifiedNugetPackage
             }
 
             Copy-Item -Path $fullPath -Destination $winArm32Path
-            Write-Verbose "Copied $file to 'win-arm'" -Verbose
+            log "Copied $file to 'win-arm'"
 
             #endregion
 
@@ -1359,7 +1389,7 @@ function New-UnifiedNugetPackage
             }
 
             Copy-Item -Path $fullPath -Destination $winArm64Path
-            Write-Verbose "Copied $file to 'win-arm64'" -Verbose
+            log "Copied $file to 'win-arm64'"
 
             #endregion
 
@@ -1373,7 +1403,7 @@ function New-UnifiedNugetPackage
                 }
 
                 Copy-Item -Path $fullPath -Destination $linuxArm32Path
-                Write-Verbose "Copied $file to 'linux-arm'" -Verbose
+                log "Copied $file to 'linux-arm'"
             }
 
             #endregion
@@ -1389,7 +1419,7 @@ function New-UnifiedNugetPackage
                 }
 
                 Copy-Item -Path $fullPath -Destination $unixPath
-                Write-Verbose "Copied $file to 'unix'" -Verbose
+                log "Copied $file to 'unix'"
             }
 
             #endregion
@@ -1491,18 +1521,31 @@ function New-UnifiedNugetPackage
     }
 }
 
+<#
+.SYNOPSIS
+Creates a nuspec file.
+
+.PARAMETER PackageId
+ID of the package.
+
+.PARAMETER PackageVersion
+Version of the package.
+
+.PARAMETER Dependency
+Depedencies of the package.
+
+.PARAMETER FilePath
+Path to create the nuspec file.
+#>
 function New-NuSpec {
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $PackageId,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $PackageVersion,
 
         [Parameter(Mandatory = $false)]
-        [ValidateNotNullOrEmpty()]
         # An array of tuples of tuples to define the dependencies.
         # First tuple defines 'id' and value eg: ["id", "System.Data.SqlClient"]
         # Second tuple defines 'version' and vale eg: ["version", "4.4.2"]
@@ -1511,33 +1554,15 @@ function New-NuSpec {
         [tuple[ [tuple[string, string]], [tuple[string, string]] ] []] $Dependency,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $FilePath
     )
 
-    $nuspecTemplate = @'
-<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
-    <metadata>
-        <id>!id!</id>
-        <version>!replace_me!</version>
-        <title>PowerShellRuntime</title>
-        <authors>Microsoft</authors>
-        <owners>microsoft,powershell</owners>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>PowerShell runtime for hosting PowerShell</description>
-        <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
-        <language>en-US</language>
-        <dependencies>
-            <group targetFramework=".NETCoreApp2.0">
-            </group>
-        </dependencies>
-    </metadata>
-</package>
-'@
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NugetPackage can be only executed on Windows platform."
+    }
 
-    $nuspecTemplate = $nuspecTemplate.Replace('!id!', $PackageId)
-    $nuspecTemplate = $nuspecTemplate.Replace('!replace_me!', $PackageVersion)
+    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
     $nuspecObj = [xml] $nuspecTemplate
 
     if ($Dependency -ne $null) {
@@ -1557,36 +1582,62 @@ function New-NuSpec {
     $nuspecObj.Save($filePath)
 }
 
+<#
+.SYNOPSIS
+Create a reference assembly from System.Management.Automation.dll
+
+.DESCRIPTION
+A unix variant of System.Management.Automation.dll is converted to a reference assembly.
+GenAPI.exe generated the CS file containing the APIs.
+This file is cleaned up and then compiled into a dll.
+
+.PARAMETER Unix64BinPath
+Path to the folder containing unix 64 bit assemblies.
+
+.PARAMETER RefAssemblyDestinationPath
+Path to the folder where the reference assembly is created.
+
+.PARAMETER RefAssemblyVersion
+Version of the reference assembly.
+
+.PARAMETER GenAPIToolPath
+Path tp GenAPI.exe
+
+.PARAMETER SnkFilePath
+Path to the snk file for strong name signing.
+
+#>
+
 function New-ReferenceAssembly
 {
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $Unix64BinPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $RefAssemblyDestinationPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $RefAssemblyVersion,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $GenAPIToolPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $SnkFilePath
     )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NugetPackage can be only executed on Windows platform."
+    }
 
     $genAPIFolder = New-TempFolder
     $smaProjectFolder = New-Item -Path "$genAPIFolder/System.Management.Automation" -ItemType Directory -Force
     $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
     $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
 
-    Write-Verbose -Verbose "Working directory: $genAPIFolder."
+    log "Working directory: $genAPIFolder."
 
     #region GenAPI
 
@@ -1597,7 +1648,7 @@ function New-ReferenceAssembly
         throw "GenAPI.exe was not found at: $GenAPIToolPath"
     }
 
-    Write-Verbose -Verbose "GenAPI nuget package saved and expanded."
+    log "GenAPI nuget package saved and expanded."
 
     $unixSMAPath = Join-Path $Unix64BinPath "System.Management.Automation.dll"
 
@@ -1607,11 +1658,11 @@ function New-ReferenceAssembly
     }
 
     $genAPIArgs = "$unixSMAPath","-libPath:$Unix64BinPath"
-    Write-Verbose -Verbose "GenAPI cmd: $genAPIExe $genAPIArgsString"
+    log "GenAPI cmd: $genAPIExe $genAPIArgsString"
 
-    & $genAPIExe $genAPIArgs | Out-File $smaCs -Force
+    Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
 
-    Write-Verbose -Verbose "Reference assembly file generated at: $smaCs"
+    log "Reference assembly file generated at: $smaCs"
 
     #endregion GenAPI
 
@@ -1657,7 +1708,7 @@ function New-ReferenceAssembly
 
     Move-Item $smaCsFiltered $smaCs -Force
 
-    Write-Verbose -Verbose "Reference assembly code cleanup complete."
+    log "Reference assembly code cleanup complete."
 
     #endregion Cleanup SMA.cs
 
@@ -1665,43 +1716,11 @@ function New-ReferenceAssembly
 
     try
     {
-        Push-Location .
-        Set-Location $smaProjectFolder
+        Push-Location $smaProjectFolder
 
-        $csproj =
-@'
-<Project Sdk="Microsoft.NET.Sdk">
-<PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>!replace_version!</Version>
-    <DelaySign>true</DelaySign>
-    <AssemblyOriginatorKeyFile>!replace_snk!</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-</PropertyGroup>
+        ($packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath) | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
 
-<ItemGroup>
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha08" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.1" />
-</ItemGroup>
-</Project>
-'@
-
-        $nugetConfig =
-@'
-<configuration>
-<packageSources>
-    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <add key="dotnet-core" value="https://dotnet.myget.org/F/dotnet-core/api/v3/index.json" />
-    <add key="powershell-core" value="https://powershell.myget.org/F/powershell-core/api/v3/index.json" />
-</packageSources>
-</configuration>
-'@
-
-        $csproj = $csproj.Replace('!replace_version!', $RefAssemblyVersion).Replace('!replace_snk!', $SnkFilePath)
-        $csproj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
-
-        $nugetConfig | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
+        $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
 
         dotnet build -c Release
 
@@ -1714,7 +1733,7 @@ function New-ReferenceAssembly
 
         Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
 
-        Write-Verbose -Verbose "Reference assembly built and copied to $RefAssemblyDestinationPath"
+        log "Reference assembly built and copied to $RefAssemblyDestinationPath"
     }
     finally
     {
@@ -1729,18 +1748,37 @@ function New-ReferenceAssembly
     #endregion Build SMA ref assembly
 }
 
+<#
+.SYNOPSIS
+Create a NuGet package from a nuspec.
+
+.DESCRIPTION
+Creates a NuGet using the nuspec using at the specified folder.
+It is expected that the lib / ref / runtime folders are welformed.
+The genereated NuGet package is copied over to the $PackageDestinationPath
+
+.PARAMETER NuSpecPath
+Path to the folder containing the nuspec file.
+
+.PARAMETER PackageDestinationPath
+Path to which NuGet package should be copied. Destination is created if it does not exist.
+#>
+
 function New-NugetPackage
 {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $NuSpecPath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $PackageDestinationPath
     )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NugetPackage can be only executed on Windows platform."
+    }
 
     $nuget = Get-Command -Type Application nuget.exe -ErrorAction SilentlyContinue
 
@@ -1749,8 +1787,8 @@ function New-NugetPackage
         throw 'nuget.exe is not available in PATH'
     }
 
-    Push-Location
-    Set-Location $NuSpecPath
+    Push-Location $NuSpecPath
+
     nuget.exe pack . > $null
 
     if(-not (Test-Path $PackageDestinationPath))
@@ -1762,24 +1800,48 @@ function New-NugetPackage
     Pop-Location
 }
 
+<#
+.SYNOPSIS
+Publish the specified Nuget Package to MyGet feed/
+
+.DESCRIPTION
+The specified nuget package is published to the powershell.myget.org/powershell-core feed.
+
+.PARAMETER PackagePath
+Path to the NuGet Package/
+
+.PARAMETER ApiKey
+API key for powershell.myget.org
+#>
 function Publish-NugetToMyGet
 {
     param(
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $PackagePath,
 
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $ApiKey
     )
 
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NugetPackage can be only executed on Windows platform."
+    }
+
     Get-ChildItem $PackagePath | ForEach-Object {
-        Write-Verbose -Verbose "Pushing $_ to PowerShell Myget"
+        log "Pushing $_ to PowerShell Myget"
         nuget.exe push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey
     }
 }
 
+<#
+.SYNOPSIS
+The function creates a nuget package for daily feed.
+
+.DESCRIPTION
+The nuget package created is a content package and has all the binaries laid out in a flat structure.
+This package is used by install-powershell.ps1
+#>
 function New-NugetContentPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
