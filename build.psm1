@@ -2028,12 +2028,12 @@ function script:Start-NativeExecution
     param(
         [scriptblock]$sb,
         [switch]$IgnoreExitcode,
-        [switch]$LogOutputOnError
+        [switch]$VerboseOutputOnError
     )
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Continue"
     try {
-        if($LogOutputOnError.IsPresent)
+        if($VerboseOutputOnError.IsPresent)
         {
             $output = & $sb
         }
@@ -2045,7 +2045,7 @@ function script:Start-NativeExecution
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
-            if($LogOutputOnError.IsPresent -and $Output)
+            if($VerboseOutputOnError.IsPresent -and $Output)
             {
                 $output | Out-String | Write-Verbose -Verbose
             }
