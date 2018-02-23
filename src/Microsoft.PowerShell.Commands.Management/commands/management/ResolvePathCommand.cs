@@ -107,9 +107,18 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (PathInfo currentPath in result)
                         {
+                            // When result path and base path is on different PSDrive
+                            // (../)*path should not go beyond the root of base path
+                            if (currentPath.Drive != SessionState.Path.CurrentLocation.Drive &&
+                                !currentPath.ProviderPath.StartsWith(SessionState.Path.CurrentLocation.Drive.Root))
+                            {
+                                WriteObject(currentPath.Path, false);
+                                continue;
+                            }
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
-                            if (currentPath.Drive == SessionState.Path.CurrentLocation.Drive &&
+                            // Do not insert './' if result path is not relative
+                            if (!adjustedPath.StartsWith(currentPath.Drive.Root, StringComparison.OrdinalIgnoreCase) &&
                                 !adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
