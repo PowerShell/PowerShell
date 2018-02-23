@@ -15,7 +15,6 @@
 
 using System.Runtime.CompilerServices;
 
-
 namespace System.Management.Automation.Interpreter
 {
     internal sealed partial class DynamicInstructionN : Instruction

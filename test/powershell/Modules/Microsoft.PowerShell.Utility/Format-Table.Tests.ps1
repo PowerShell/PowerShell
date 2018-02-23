@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
 		It "Should call format table on piped input without error" {
 				{ Get-Date | Format-Table } | Should Not Throw
@@ -26,7 +28,6 @@ Describe "Format-Table" -Tags "CI" {
 
 		}
 }
-
 
 Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		It "Format-Table with not existing table with force should throw PipelineStoppedException"{
@@ -136,44 +137,23 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$result | Should Match "Jim\s+5678\s+False"
 		}
 
-		It "Format-Table with No Objects for End-To-End should work"{
-				$p = @{}
-				$result = $p|Format-Table -Property "foo","bar"|Out-String
+		It "Format-Table with '<testName>' should return `$null" -TestCases @(
+			@{ testName = "empty array"; testObject = @{}   },
+			@{ testName = "null"       ; testObject = $null }
+		) {
+			param ($testObject)
+				$result = $testObject | Format-Table -Property "foo","bar" | Out-String
 				$result | Should BeNullOrEmpty
 		}
 
-		It "Format-Table with Null Objects for End-To-End should work"{
-				$p = $null
-				$result = $p|Format-Table -Property "foo","bar"|Out-String
-				$result | Should BeNullOrEmpty
-		}
-
-		#pending on issue#900
-		It "Format-Table with single line string for End-To-End should work" -pending{
-				$p = "single line string"
-				$result = $p|Format-Table -Property "foo","bar"|Out-String
-				$result | Should BeNullOrEmpty
-		}
-
-		#pending on issue#900
-		It "Format-Table with multiple line string for End-To-End should work" -pending{
-				$p = "Line1\nLine2"
-				$result = $p|Format-Table -Property "foo","bar"|Out-String
-				$result | Should BeNullOrEmpty
-		}
-
-		#pending on issue#900
-		It "Format-Table with string sequence for End-To-End should work" -pending{
-				$p = "Line1","Line2"
-				$result = $p|Format-Table -Property "foo","bar"|Out-String
-				$result | Should BeNullOrEmpty
-		}
-
-		#pending on issue#900
-		It "Format-Table with string sequence for End-To-End should work" -pending{
-				$p = "Line1","Line2"
-				$result = $p|Format-Table -Property "foo","bar"|Out-String
-				$result | Should BeNullOrEmpty
+		It "Format-Table with '<testName>' string and -Force should output table with requested properties" -TestCases @(
+			@{ testName = "single line"; testString = "single line string" },
+			@{ testName = "multi line" ; testString = "line1`nline2"       },
+			@{ testName = "array"      ; testString = "line1","line2"      }
+		) {
+			param ($testString)
+			$result = $testString | Format-Table -Property "foo","bar" -Force | Out-String
+			$result.Replace(" ","").Replace([Environment]::NewLine,"") | Should BeExactly "foobar------"
 		}
 
 		It "Format-Table with complex object for End-To-End should work" {
@@ -209,5 +189,15 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$result3 = $mo|Format-Table -Expand Both|Out-String
 				$result3 | Should Match "name\s+sub"
 				$result3 | Should Match "this is name\s+{x 0 y 0, x 1 y 1}"
+		}
+
+		It "Format-Table should not add trailing whitespace to the header" {
+			$out = "hello" | Format-Table -Property foo -Force | Out-String
+			$out.Replace([System.Environment]::NewLine, "") | Should BeExactly "foo---"
+		}
+
+		It "Format-Table should not add trailing whitespace to rows" {
+			$out = [pscustomobject]@{a=1;b=2} | Format-Table -HideTableHeaders | Out-String
+			$out.Replace([System.Environment]::NewLine, "") | Should BeExactly "1 2"
 		}
 }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Globalization;
 using System.Xml;
@@ -145,7 +144,6 @@ namespace System.Management.Automation
                 return ExtractTextForHelpProperty(this.FullHelp, "alertset");
             }
         }
-
 
         #endregion
 

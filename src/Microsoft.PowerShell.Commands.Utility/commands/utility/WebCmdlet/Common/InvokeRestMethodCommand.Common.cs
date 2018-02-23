@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Management.Automation;
@@ -391,6 +390,11 @@ namespace Microsoft.PowerShell.Commands
                             // NOTE: Don't use ContentHelper.GetEncoding; it returns a
                             // default which bypasses checking for a meta charset value.
                             StreamHelper.TryGetEncoding(charSet, out encoding);
+                        }
+
+                        if (string.IsNullOrEmpty(charSet) && returnType == RestReturnType.Json)
+                        {
+                            encoding = Encoding.UTF8;
                         }
 
                         object obj = null;

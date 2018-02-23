@@ -1,5 +1,6 @@
-//! @file getfullyqualifiedname.cpp
-//! @author George Fleming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Implements GetFullyQualifiedName on Linux
 
 #include "getcomputername.h"

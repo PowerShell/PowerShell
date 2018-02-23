@@ -6,7 +6,7 @@ ModuleVersion = '1.1.0.0'
 
 GUID = '50cdb55f-5ab7-489f-9e94-4ec21ff51e59'
 
-Author = 'Microsoft Corporation'
+Author = 'PowerShell'
 
 CompanyName = 'Microsoft Corporation'
 

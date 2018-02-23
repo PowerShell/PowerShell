@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -98,7 +98,6 @@ namespace Microsoft.WSMan.Management
     /// the server, hence allowing the user to perform management operations that
     /// access a second hop
     /// </summary>
-
 
     [Cmdlet(VerbsLifecycle.Disable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141438")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
@@ -1005,14 +1004,7 @@ namespace Microsoft.WSMan.Management
 
         #endregion IDisposable Members
 
-
-
-
-
     }
-
-
-
 
     #endregion
 }

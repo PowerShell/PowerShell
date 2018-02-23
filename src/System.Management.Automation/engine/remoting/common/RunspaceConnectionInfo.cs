@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Net;
 using System.Net.Sockets;
@@ -246,7 +245,6 @@ namespace System.Management.Automation.Runspaces
         internal const int DefaultOpenTimeout = 3 * 60 * 1000; // 3 minutes
         internal const int DefaultTimeout = -1;
         internal const int InfiniteTimeout = 0;
-
 
         /// <summary>
         /// The duration (in ms) for which PowerShell should wait before it times out on cancel operations
@@ -713,7 +711,6 @@ namespace System.Management.Automation.Runspaces
                 _proxyCredential = value;
             }
         }
-
 
         /// <summary>
         /// When connecting over HTTPS, the client does not validate that the server

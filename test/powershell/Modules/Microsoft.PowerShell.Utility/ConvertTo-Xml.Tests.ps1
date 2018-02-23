@@ -1,4 +1,6 @@
-﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
     BeforeAll {
         class fruit {
             [string] $name;

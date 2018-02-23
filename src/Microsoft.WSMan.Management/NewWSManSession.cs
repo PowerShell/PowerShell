@@ -1,6 +1,6 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -15,8 +15,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
-
-
 namespace Microsoft.WSMan.Management
 {
     /// <summary>
@@ -27,7 +25,6 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction
     /// Connect-WSMan
     /// </summary>
-
 
     [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141449")]
     public class NewWSManSessionOptionCommand : PSCmdlet
@@ -86,7 +83,6 @@ namespace Microsoft.WSMan.Management
             }
         }
         private PSCredential _proxycredential;
-
 
         /// <summary>
         /// The following is the definition of the input parameter "SkipCACheck".
@@ -211,10 +207,6 @@ namespace Microsoft.WSMan.Management
         }
         private bool useutf16;
 
-
-
-
-
         /// <summary>
         /// BeginProcessing method.
         /// </summary>
@@ -240,8 +232,6 @@ namespace Microsoft.WSMan.Management
                 WriteError(er);
                 return;
             }
-
-
 
             //Creating the Session Object
             SessionOption objSessionOption = new SessionOption();

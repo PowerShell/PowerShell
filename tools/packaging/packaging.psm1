@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $Environment = Get-EnvironmentInformation
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
@@ -196,6 +198,8 @@ function Start-PSPackage {
                     "deb", "nupkg"
                 } elseif ($Environment.IsRedHatFamily) {
                     "rpm", "nupkg"
+                } elseif ($Environment.IsSUSEFamily) {
+                    "rpm", "nupkg"
                 } else {
                     throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
                 }
@@ -242,8 +246,8 @@ function Start-PSPackage {
                     ProductVersion = $Version
                     AssetsPath = "$PSScriptRoot\..\..\assets"
                     LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
-                    # Product Guid needs to be unique for every PowerShell version to allow SxS install
-                    ProductGuid = New-Guid
+                    # Product Code needs to be unique for every PowerShell version since it is a unique identifier for the particular product release
+                    ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                 }
@@ -576,8 +580,8 @@ function New-UnixPackage {
                 $Iteration += ".$DebDistro"
             }
             "rpm" {
-                if (!$Environment.IsRedHatFamily) {
-                    throw ($ErrorMessage -f "Redhat Family")
+                if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
+                    throw ($ErrorMessage -f "Redhat or SUSE Family")
                 }
             }
             "osxpkg" {
@@ -614,9 +618,9 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = if ($Environment.IsLinux) {
-            "/usr/bin"
+            "/usr/bin/"
         } elseif ($Environment.IsMacOS) {
-            "/usr/local/bin"
+            "/usr/local/bin/"
         }
         $linkSource = "/tmp/pwsh"
 
@@ -1038,7 +1042,7 @@ function New-AfterScripts
         $packagingStrings.RedHatAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link/pwsh" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsUbuntu -or $Environment.IsDebian) {
+    elseif ($Environment.IsUbuntu -or $Environment.IsDebian -or $Environment.IsSUSEFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link/pwsh" | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -1225,7 +1229,6 @@ function New-ZipPackage
     }
 }
 
-
 function New-NugetPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -1252,7 +1255,6 @@ function New-NugetPackage
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $PackageConfiguration,
-
 
         # Source Path to the Product Files - required to package the contents into an Zip
         [Parameter(Mandatory = $true)]
@@ -1426,4 +1428,191 @@ function Get-NugetSemanticVersion
     }
 
     $packageSemanticVersion
+}
+
+<#
+    .Synopsis
+        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
+        This only works on a Windows machine due to the usage of WiX.
+    .EXAMPLE
+        # This example shows how to produce a Debug-x64 installer for development purposes.
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+#>
+function New-MSIPackage
+{
+    [CmdletBinding()]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion,
+
+        # The ProductCode property is a unique identifier for the particular product release
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductCode,
+
+        # Source Path to the Product Files - required to package the contents into an MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductSourcePath,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $ProductWxsPath = "$PSScriptRoot\..\..\assets\Product.wxs",
+
+        # Path to Assets folder containing artifacts such as icons, images
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $AssetsPath = "$PSScriptRoot\..\..\assets",
+
+        # Path to license.rtf file - for the EULA
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf",
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        # Force overwrite of package
+        [Switch] $Force
+    )
+
+    ## AppVeyor base image might update the version for Wix. Hence, we should
+    ## not hard code version numbers.
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+
+    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
+        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
+    }
+
+    ## Get the latest if multiple versions exist.
+    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
+
+    Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
+    $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
+    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
+    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
+
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
+    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
+
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
+
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    # These variables are used by Product.wxs in assets directory
+    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+    $ProductProgFilesDir = "ProgramFiles64Folder"
+    if ($ProductTargetArchitecture -eq "x86")
+    {
+        $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
+
+    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
+    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
+    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"
+
+    if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
+    {
+        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
+    }
+
+    $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
+    $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v
+    $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
+
+    Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
+    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
+
+    if (Test-Path $msiLocationPath)
+    {
+        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+        $msiLocationPath
+    }
+    else
+    {
+        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
+        $WiXCandleLog | Out-String | Write-Verbose -Verbose
+        $WiXLightLog  | Out-String | Write-Verbose -Verbose
+        $errorMessage = "Failed to create $msiLocationPath"
+        if ($null -ne $env:CI)
+        {
+           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
+        }
+        throw $errorMessage
+    }
+}
+
+# Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
+# This function converts the above version into major.minor[.build[.revision]] format
+function Get-PackageVersionAsMajorMinorBuildRevision
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the version in the form of major.minor[.build[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+    $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
+
+    if (1 -eq $packageVersionTokens.Count) {
+        # In case the input is of the form a.b.c, add a '0' at the end for revision field
+        $packageVersion = $packageVersion + '.0'
+    } elseif (1 -lt $packageVersionTokens.Count) {
+        # We have all the four fields
+        $packageBuildTokens = ([regex]::Matches($packageVersionTokens[1], "\d+"))[0].value
+
+        if ($packageBuildTokens)
+        {
+            $packageVersion = $packageVersion + '.' + $packageBuildTokens
+        }
+        else
+        {
+            $packageVersion = $packageVersion
+        }
+    }
+
+    $packageVersion
 }

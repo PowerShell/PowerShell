@@ -1,5 +1,6 @@
-//! @file getstat.cpp
-//! @author Andrew Schwartzmeyer <andschwa@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief returns the stat of a file
 
 #include "getstat.h"

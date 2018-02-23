@@ -1,4 +1,6 @@
-﻿Describe "History cmdlet test cases" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "History cmdlet test cases" -Tags "CI" {
     Context "Simple History Tests" {
         BeforeEach {
             $setting = [system.management.automation.psinvocationsettings]::New()

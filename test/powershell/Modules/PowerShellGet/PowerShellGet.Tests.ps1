@@ -1,4 +1,7 @@
-﻿# no progress output during these tests
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
 $RepositoryName = 'INTGallery'
@@ -7,7 +10,6 @@ $RegisteredINTRepo = $false
 $ContosoServer = 'ContosoServer'
 $FabrikamServerScript = 'Fabrikam-ServerScript'
 $Initialized = $false
-
 
 #region Utility functions
 

@@ -1,10 +1,8 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56506
-
 
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
@@ -222,7 +221,6 @@ namespace System.Management.Automation.Internal
 
         #endregion Override
 
-
         /// <summary>
         /// throws if the pipeline is stopping
         /// </summary>
@@ -257,7 +255,6 @@ namespace System.Management.Automation.Internal
         #endregion
     }
 }
-
 
 namespace System.Management.Automation
 {

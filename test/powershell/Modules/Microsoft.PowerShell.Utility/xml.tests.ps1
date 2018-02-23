@@ -1,4 +1,6 @@
-﻿Describe "XML cmdlets" -Tags "Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "XML cmdlets" -Tags "Feature" {
     Context "Select-XML" {
         BeforeAll {
             $fileName = New-Item -Path 'TestDrive:\testSelectXml.xml'

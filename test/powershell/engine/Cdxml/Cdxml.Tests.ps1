@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $script:CimClassName = "PSCore_CimTest1"
 $script:CimNamespace = "root/default"
 $script:moduleDir = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath CimTest

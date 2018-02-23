@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Split-Path" -Tags "CI" {
 
     It "Should return a string object when invoked" {

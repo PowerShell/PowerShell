@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Write-Error Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1
@@ -75,14 +77,12 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.CategoryInfo.GetMessage() | Should Be 'NotSpecified: (fooTargetName:fooTargetType) [fooAct], fooReason'
     }
 
-    It "Should be able to throw" {
-    	Write-Error "test throw" -ErrorAction SilentlyContinue | Should Throw
+    It "Should be able to throw with -ErrorAction stop" {
+    	{ Write-Error "test throw" -ErrorAction Stop } | Should Throw
     }
 
     It "Should throw a non-terminating error" {
-        Write-Error "test throw" -ErrorAction SilentlyContinue
-
-        1 + 1 | Should Be 2
+        { Write-Error "test throw" -ErrorAction SilentlyContinue } | Should Not Throw
     }
 
     It "Should trip an exception using the exception switch" {
@@ -106,17 +106,17 @@ Describe "Write-Error Tests" -Tags "CI" {
         $theError = "Error: Too many input values."
         write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
 
-        $error[0]| Should Be $theError
+        [string]$error[0]| Should Be $theError
     }
 
-    It "ErrorRecord should not be truncated" {
+    It "ErrorRecord should not be truncated or have inserted newlines when redirected from another process" {
         $longtext = "0123456789"
         while ($longtext.Length -lt [console]::WindowWidth) {
             $longtext += $longtext
         }
-        pwsh -c Write-Error -Message $longtext 2>&1 > $testdrive\error.txt
-        $e = Get-Content -Path $testdrive\error.txt
-        $e.Count | Should BeExactly 4
-        $e[0] | Should Match $longtext
+        $pwsh = $pshome + "/pwsh"
+        $result = & $pwsh -c Write-Error -Message $longtext 2>&1
+        $result.Count | Should BeExactly 4
+        $result[0] | Should Match $longtext
     }
 }

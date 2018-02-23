@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # This came from monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.command.tests.ps1
 Describe "Trace-Command" -tags "CI" {
 
@@ -108,7 +111,7 @@ Describe "Trace-Command" -tags "CI" {
         It "Trace-Command fails for non-filesystem paths" {
             { Trace-Command -Name ParameterBinding -Expression {$null} -FilePath "Env:\Test" -ErrorAction Stop } | ShouldBeErrorID 'FileListenerPathResolutionFailed,Microsoft.PowerShell.Commands.TraceCommandCommand'
         }
-                
+
         It "Trace-Command to readonly file" {
             $null = New-Item $filePath -Force
             Set-ItemProperty $filePath -name IsReadOnly -value $true

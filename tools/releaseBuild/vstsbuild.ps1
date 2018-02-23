@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='Build')]
 param(
     [Parameter(ParameterSetName='packageSigned')]
@@ -69,7 +71,6 @@ End {
         $buildPackageName = Split-Path -Path $BuildPackagePath -Leaf
         $additionalFiles += $BuildPackagePath
     }
-
 
     $psReleaseBranch = 'master'
     $psReleaseFork = 'PowerShell'

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -65,9 +64,6 @@ namespace System.Management.Automation.Language
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIeq), staticFlags);
         internal static readonly MethodInfo CharOps_CompareStringIne =
             typeof(CharOps).GetMethod(nameof(CharOps.CompareStringIne), staticFlags);
-        internal static readonly MethodInfo CharOps_Range =
-            typeof(CharOps).GetMethod(nameof(CharOps.Range), staticFlags);
-
         internal static readonly MethodInfo CommandParameterInternal_CreateArgument =
             typeof(CommandParameterInternal).GetMethod(nameof(CommandParameterInternal.CreateArgument), staticFlags);
         internal static readonly MethodInfo CommandParameterInternal_CreateParameter =
@@ -248,9 +244,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo InterpreterError_NewInterpreterExceptionWithInnerException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), staticFlags);
 
-        internal static readonly MethodInfo IntOps_Range =
-            typeof(IntOps).GetMethod(nameof(IntOps.Range), staticFlags);
-
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), staticFlags);
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
@@ -292,6 +285,10 @@ namespace System.Management.Automation.Language
             typeof(ParserOps).GetMethod(nameof(ParserOps.LikeOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_MatchOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_RangeOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), staticFlags);
+        internal static readonly MethodInfo ParserOps_GetRangeEnumerator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.GetRangeEnumerator), staticFlags);
         internal static readonly MethodInfo ParserOps_ReplaceOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.ReplaceOperator), staticFlags);
         internal static readonly MethodInfo ParserOps_SplitOperator =
@@ -397,9 +394,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo PSCreateInstanceBinder_GetTargetTypeName =
             typeof(PSCreateInstanceBinder).GetMethod(nameof(PSCreateInstanceBinder.GetTargetTypeName), staticFlags);
 
-        internal static readonly ConstructorInfo RangeEnumerator_ctor =
-            typeof(RangeEnumerator).GetConstructor(new Type[] { typeof(int), typeof(int) });
-
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSAdaptedMemberSet =
             typeof(ReservedNameMembers).GetMethod(nameof(ReservedNameMembers.GeneratePSAdaptedMemberSet), staticFlags);
         internal static readonly MethodInfo ReservedNameMembers_GeneratePSBaseMemberSet =
@@ -418,8 +412,6 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo RestrictedLanguageChecker_EnsureUtilityModuleLoaded =
             typeof(RestrictedLanguageChecker).GetMethod(nameof(RestrictedLanguageChecker.EnsureUtilityModuleLoaded), staticFlags);
-
-
 
         internal static readonly ConstructorInfo ReturnException_ctor =
             typeof(ReturnException).GetConstructor(instanceFlags, null, CallingConventions.Standard, new Type[] { typeof(object) }, null);
@@ -1309,14 +1301,16 @@ namespace System.Management.Automation.Language
             // 'ValidateSet([CustomGeneratorType], IgnoreCase=$false)' is supported in scripts.
             if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is TypeExpressionAst generatorTypeAst)
             {
-                if (TypeResolver.TryResolveType(generatorTypeAst.TypeName.FullName, out Type generatorType))
+                var generatorType = TypeResolver.ResolveITypeName(generatorTypeAst.TypeName, out Exception exception);
+                if (generatorType != null)
                 {
                     result = new ValidateSetAttribute(generatorType);
                 }
                 else
                 {
-                    throw InterpreterError.NewInterpreterException(ast, typeof(RuntimeException), ast.Extent,
-                        "TypeNotFound", ParserStrings.TypeNotFound, generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
+                    throw InterpreterError.NewInterpreterExceptionWithInnerException(
+                        ast, typeof(RuntimeException), ast.Extent, "TypeNotFound", ParserStrings.TypeNotFound, exception,
+                        generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
                 }
             }
             else
@@ -4292,7 +4286,6 @@ namespace System.Management.Automation.Language
 
         private Expression GetRangeEnumerator(ExpressionAst condExpr)
         {
-            Expression result = null;
             if (condExpr != null)
             {
                 var binaryExpr = condExpr as BinaryExpressionAst;
@@ -4301,12 +4294,13 @@ namespace System.Management.Automation.Language
                     Expression lhs = Compile(binaryExpr.Left);
                     Expression rhs = Compile(binaryExpr.Right);
 
-                    result = Expression.New(CachedReflectionInfo.RangeEnumerator_ctor,
-                                            lhs.Convert(typeof(int)),
-                                            rhs.Convert(typeof(int)));
+                    return Expression.Call(CachedReflectionInfo.ParserOps_GetRangeEnumerator,
+                                           lhs.Cast(typeof(object)),
+                                           rhs.Cast(typeof(object)));
                 }
             }
-            return result;
+
+            return null;
         }
 
         public object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst)
@@ -4880,14 +4874,13 @@ namespace System.Management.Automation.Language
                     return Expression.Call(CachedReflectionInfo.TypeOps_AsOperator, lhs.Cast(typeof(object)), rhs.Convert(typeof(Type)));
 
                 case TokenKind.DotDot:
-                    if(lhs.Type == typeof(string)){
-                        return Expression.Call(CachedReflectionInfo.CharOps_Range,
-                                               lhs.Convert(typeof(char)),
-                                               rhs.Convert(typeof(char)));
-                    }
-                    return Expression.Call(CachedReflectionInfo.IntOps_Range,
-                                           lhs.Convert(typeof(int)),
-                                           rhs.Convert(typeof(int)));
+                    // We could generate faster code using Expression.Dynamic with a binder.
+                    // Currently, type checks are done in ParserOps.RangeOperator at runtime every time
+                    // a range operator is used. By replacing with Expression.Dynamic and a binder, the
+                    // type check is done only once when you repeatedly execute the same line in script.
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_RangeOperator, lhs.Cast(typeof(object)), rhs.Cast(typeof(object)));
+
                 case TokenKind.Multiply:
                     if (lhs.Type == typeof(double) && rhs.Type == typeof(double))
                     {

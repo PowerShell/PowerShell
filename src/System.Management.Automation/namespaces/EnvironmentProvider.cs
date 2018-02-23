@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using Dbg = System.Management.Automation;
@@ -68,7 +66,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion DriveCmdletProvider overrides
 
         #region protected members
-
 
         /// <summary>
         /// Gets a environment variable from session state

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'ConvertFrom-Json' -tags "CI" {
     
     BeforeAll {
@@ -6,7 +8,6 @@ Describe 'ConvertFrom-Json' -tags "CI" {
             @{ AsHashtable = $false }
         )
     }
-
 
     It 'Can convert a single-line object with AsHashtable switch set to <AsHashtable>' -TestCase $testCasesWithAndWithoutAsHashtableSwitch {
         Param($AsHashtable)

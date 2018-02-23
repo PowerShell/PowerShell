@@ -1,8 +1,7 @@
-#if !UNIX
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+#if !UNIX
 
 using System;
 using System.Management.Automation;

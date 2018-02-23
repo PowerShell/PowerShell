@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +16,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Collections;
-
 
 namespace System.Management.Automation.Remoting
 {
@@ -203,7 +201,6 @@ namespace System.Management.Automation.Remoting
 
             return result;
         }
-
 
         /// <summary>
         /// Creates the struct from initialization parameters xml.

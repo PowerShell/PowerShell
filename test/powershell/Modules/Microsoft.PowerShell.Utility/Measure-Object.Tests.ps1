@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Measure-Object" -Tags "CI" {
     BeforeAll {
         $testObject = 1,3,4

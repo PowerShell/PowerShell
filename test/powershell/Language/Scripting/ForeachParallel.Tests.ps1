@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Parallel foreach syntax" -Tags "CI" {
 
    Context 'Should be able to retrieve AST of parallel foreach, error in regular case' {

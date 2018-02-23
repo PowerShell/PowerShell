@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Security;
 using System.Runtime.InteropServices;
@@ -362,7 +361,6 @@ namespace System.Management.Automation
 #endif
             return false;
         }
-
 
         #region Versioning related methods
 
@@ -1041,7 +1039,6 @@ namespace System.Management.Automation
             }
         }
 
-
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX
@@ -1198,7 +1195,6 @@ namespace System.Management.Automation
             return assemblyName;
         }
 
-
         /// <summary>
         /// If a mutex is abandoned, in our case, it is ok to proceed
         /// </summary>
@@ -1301,7 +1297,6 @@ namespace System.Management.Automation
 
             return Encoding.ASCII;
         }
-
 
         // BigEndianUTF32 encoding is possible, but requires creation
         internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);

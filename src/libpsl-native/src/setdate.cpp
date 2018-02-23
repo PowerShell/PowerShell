@@ -1,5 +1,6 @@
-//! @file setdate.cpp
-//! @author George FLeming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief set local/system date and time
 
 #include "setdate.h"

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Validate Attributes Tests' -Tags 'CI' {
 
     Context "ValidateCount" {

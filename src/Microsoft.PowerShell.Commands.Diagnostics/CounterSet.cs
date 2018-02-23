@@ -1,6 +1,5 @@
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Licensed under the MIT License.
 
 using System;
 using System.Collections;
@@ -63,7 +62,6 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             }
         }
         private PerformanceCounterCategoryType _counterSetType;
-
 
         public string Description
         {

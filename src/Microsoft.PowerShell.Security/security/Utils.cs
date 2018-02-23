@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.IO;
@@ -157,7 +156,6 @@ namespace Microsoft.PowerShell
             return er;
         }
 
-
         /// <summary>
         /// Create an error record for 'operation not supported' condition
         /// </summary>
@@ -182,7 +180,6 @@ namespace Microsoft.PowerShell
 
             return er;
         }
-
 
         /// <summary>
         /// convert the specified provider path to a provider path

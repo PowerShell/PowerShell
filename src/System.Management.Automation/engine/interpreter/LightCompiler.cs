@@ -366,7 +366,6 @@ namespace System.Management.Automation.Interpreter
             return new Interpreter(lambdaName, _locals, GetBranchMapping(), _instructions.ToArray(), debugInfos, _compilationThreshold);
         }
 
-
         private void CompileConstantExpression(Expression expr)
         {
             var node = (ConstantExpression)expr;
@@ -1352,7 +1351,6 @@ namespace System.Management.Automation.Interpreter
             return false;
         }
 
-
         // TODO: remove (replace by true fault support)
         private void CompileAsVoidRemoveRethrow(Expression expr)
         {
@@ -1645,7 +1643,6 @@ namespace System.Management.Automation.Interpreter
                 return;
             }
 
-
             throw new System.NotImplementedException();
         }
 
@@ -1702,7 +1699,6 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-
         private void CompileDebugInfoExpression(Expression expr)
         {
             var node = (DebugInfoExpression)expr;
@@ -1731,7 +1727,6 @@ namespace System.Management.Automation.Interpreter
 
             _instructions.EmitNewRuntimeVariables(node.Variables.Count);
         }
-
 
         private void CompileLambdaExpression(Expression expr)
         {

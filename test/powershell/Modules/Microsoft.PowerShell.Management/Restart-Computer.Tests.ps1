@@ -1,9 +1,12 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # the testhook for restart-computer is the same as for stop-computer
 $restartTesthookName = "TestStopComputer"
 $restartTesthookResultName = "TestStopComputerResults"
 $DefaultResultValue = 0
 
-try 
+try
 {
     # set up for testing
     $PSDefaultParameterValues["it:skip"] = ! $IsWindows
@@ -39,23 +42,23 @@ try
             }
         }
 
-        # this requires setting a test hook, so we wrap the execution with try/finally of the 
-        # set operation. Internally, we want to suppress the progress, so 
+        # this requires setting a test hook, so we wrap the execution with try/finally of the
+        # set operation. Internally, we want to suppress the progress, so
         # that is also wrapped in try/finally
         It "Should wait for a remote system" {
             try
             {
                 Enable-Testhook -testhookname TestWaitStopComputer
                 $timeout = 3
-                try 
+                try
                 {
                     $pPref = $ProgressPreference
                     $ProgressPreference="SilentlyContinue"
-                    $duration = Measure-Command { 
-                        Restart-Computer -computer localhost -Wait -Timeout $timeout -ErrorAction stop | Should BeNullOrEmpty 
+                    $duration = Measure-Command {
+                        Restart-Computer -computer localhost -Wait -Timeout $timeout -ErrorAction stop | Should BeNullOrEmpty
                     }
                 }
-                finally 
+                finally
                 {
                     $ProgressPreference=$pPref
                 }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -25,7 +24,6 @@ using System.Security;
 using System.Security.Principal;
 using System.Security.AccessControl;
 using Dbg = System.Management.Automation;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -78,7 +76,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         #region Overrides
-
 
         private ManagementObjectSearcher _searchProcess;
 

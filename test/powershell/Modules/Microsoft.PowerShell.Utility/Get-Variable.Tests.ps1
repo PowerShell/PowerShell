@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{
@@ -145,7 +147,8 @@ Describe "Get-Variable" -Tags "CI" {
 	It "Should not be able to clear a global scope variable using the local switch" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
-	    Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue | Should Throw
+	    Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue -ErrorVariable removeGlobalAsLocal
+	    $removeGlobalAsLocal.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Should be able to get a global variable when there's one in the script scope" {

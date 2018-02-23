@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'conversion syntax' -Tags "CI" {
     # these test suite covers ([<type>]<expression>).<method>() syntax.
     # it mixes two purposes: casting and super-class method calls.
@@ -218,7 +220,6 @@ Describe 'method conversion' -Tags 'CI' {
         static [timespan] Foo([timespan] $i, [timespan] $j, [timespan] $k, [timespan] $l, [timespan] $m, [timespan] $n, [timespan] $o, [timespan] $p) {return $i}
     }
 
-
     It 'converts static method as Func does not throw' {
         {[Func[int, int]] [M]::Thrice} | Should Not Throw
     }
@@ -226,7 +227,6 @@ Describe 'method conversion' -Tags 'CI' {
     It 'converts static method as Func is non null' {
         ([Func[int, int]] [M]::Thrice) | Should Not BeNullOrEmpty
     }
-
 
     It 'calls static method as Func' {
         $f = [Func[int, int]] [M]::Thrice
