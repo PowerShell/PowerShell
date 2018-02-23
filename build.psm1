@@ -2051,10 +2051,10 @@ function script:Start-NativeExecution
             }
 
             # Get caller location for easier debugging
-            $callerLocation = (Get-PSCallStack -ErrorAction SilentlyContinue)[1].Location
-            if($callerLocation)
+            $caller = Get-PSCallStack -ErrorAction SilentlyContinue
+            if($caller)
             {
-                $callerLocationParts = $callerLocation -split ":\s*line\s*"
+                $callerLocationParts = $caller[1].Location -split ":\s*line\s*"
                 $callerFile = $callerLocationParts[0]
                 $callerLine = $callerLocationParts[1]
 
