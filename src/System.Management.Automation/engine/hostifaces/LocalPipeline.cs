@@ -20,6 +20,14 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal sealed class LocalPipeline : PipelineBase
     {
+        // Each OS platform uses different default stack size for threads:
+        //      - Windows 2 MB
+        //      - Linux   8 Mb
+        //      - MacOs   512 KB
+        // We should use the same stack size for pipeline threads on all platforms to get predictable behavior.
+        // The stack size we use for pipeline threads is 10MB, which is inherited from Windows PowerShell.
+        internal const int DefaultPipelineStackSize = 10_000_000;
+
         #region constructors
 
         /// <summary>
@@ -149,17 +157,11 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-#if CORECLR
-                        //Start execution of pipeline in another thread
-                        // No ApartmentState/ThreadStackSize In CoreCLR
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc));
+                        // Start execution of pipeline in another thread
+                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
-#else
-                        //Start execution of pipeline in another thread
-                        // 2004/05/02-JonN Specify maxStack parameter
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), MaxStack);
-                        SetupInvokeThread(invokeThread, true);
-
+#if !CORECLR
+                        // No ApartmentState in CoreCLR
                         ApartmentState apartmentState;
 
                         if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
@@ -244,55 +246,6 @@ namespace System.Management.Automation.Runspaces
                 invokeThread.Name = "Pipeline Execution Thread";
             }
         }
-
-#if !CORECLR
-        /// <summary>
-        /// Stack Reserve setting for pipeline threads
-        /// </summary>
-        internal static int MaxStack
-        {
-            get
-            {
-                int i = ReadRegistryInt("PipelineMaxStackSizeMB", 10);
-                if (i < 10)
-                    i = 10; // minimum 10MB
-                else if (i > 100)
-                    i = 100; // maximum 100MB
-                return i * 1000000;
-            }
-        }
-
-        internal static int ReadRegistryInt(string policyValueName, int defaultValue)
-        {
-            RegistryKey key;
-            try
-            {
-                key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\PowerShell\\1\\ShellIds");
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (null == key)
-                return defaultValue;
-
-            object temp;
-            try
-            {
-                temp = key.GetValue(policyValueName);
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValue;
-            }
-            if (!(temp is int))
-            {
-                return defaultValue;
-            }
-            int i = (int)temp;
-            return i;
-        }
-#endif
 
         ///<summary>
         /// Helper method for asynchronous invoke
@@ -1219,17 +1172,17 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Helper class that holds the thread used to execute pipelines when CreateThreadOptions.ReuseThread is used
+    /// Helper class that holds the thread used to execute pipelines when CreateThreadOptions.ReuseThread is used.
     /// </summary>
     internal class PipelineThread : IDisposable
     {
         /// <summary>
-        /// Creates the worker thread and waits for it to be ready
+        /// Creates the worker thread and waits for it to be ready.
         /// </summary>
 #if CORECLR
         internal PipelineThread()
         {
-            _worker = new Thread(WorkerProc);
+            _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
             _workItem = null;
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
@@ -1237,7 +1190,7 @@ namespace System.Management.Automation.Runspaces
 #else
         internal PipelineThread(ApartmentState apartmentState)
         {
-            _worker = new Thread(WorkerProc, LocalPipeline.MaxStack);
+            _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
             _workItem = null;
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
