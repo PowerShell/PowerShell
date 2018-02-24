@@ -1795,7 +1795,7 @@ function New-NugetPackage
 
     Push-Location $NuSpecPath
 
-    nuget pack . > $null
+    Start-NativeExecution { nuget pack . } > $null
 
     if(-not (Test-Path $PackageDestinationPath))
     {
@@ -1829,14 +1829,16 @@ function Publish-NugetToMyGet
         [string] $ApiKey
     )
 
-    if(-not $Environment.IsWindows)
+    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
+
+    if($nuget -eq $null)
     {
-        throw "New-NugetPackage can be only executed on Windows platform."
+        throw 'nuget application is not available in PATH'
     }
 
     Get-ChildItem $PackagePath | ForEach-Object {
         log "Pushing $_ to PowerShell Myget"
-        nuget.exe push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey
+        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
     }
 }
 
