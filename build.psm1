@@ -1684,10 +1684,14 @@ function Start-PSBootstrap {
                 $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
                 New-Item -Path "~/.rcedit" -Type Directory -Force > $null
 
-                ## need to specify TLS version 1.2 since GitHub API requires it
-                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-
-                Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
+                $originalSecProtocol = [Net.ServicePointManager]::SecurityProtocol
+                try {
+                    ## need to specify TLS version 1.2 since GitHub API requires it
+                    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                    Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
+                } finally {
+                    [Net.ServicePointManager]::SecurityProtocol = $originalSecProtocol
+                }
             }
 
             if ($BuildWindowsNative) {
