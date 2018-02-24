@@ -1430,7 +1430,7 @@ Describe "Copy-Item over remote sessions" -Tag 'CI' {
     AfterEach {
         Remove-Item -Path $localTestFilePath -Force -ErrorAction SilentlyContinue
         Remove-Item -Path $remoteTestFilePath -Force -ErrorAction SilentlyContinue
-        Remove-PSSession $session
+        Remove-PSSession $session -ErrorAction SilentlyContinue
     }
 
     It "Copy files from remote session" {
@@ -1452,7 +1452,7 @@ Describe "Copy-Item over remote sessions" -Tag 'CI' {
         Copy-Item -Path $remoteTestDirPath -Destination $localTestDirPath -FromSession $session -Recurse
         $newDirPath = Join-Path $localTestDirPath $remoteTestDir
         $newDirPath | Should Exist
-        Remove-Item -Path $newDirPath -Recurse
+        Remove-Item -Path $newDirPath -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     It "Mutually excludes parameters -FromSession and -ToSession" {
