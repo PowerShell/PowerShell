@@ -1401,3 +1401,73 @@ Describe "UNC paths" -Tags 'CI' {
         }
     }
 }
+
+Describe "Copy-Item over remote sessions" -Tag 'CI' {
+    BeforeAll {
+        $fullPath          = "C:\Users\Public\"
+        $localTestDir      = "LocalTestDir"
+        $remoteTestDir     = "RemoteTestDir"
+        $localTestDirPath  = Join-Path $fullPath $localTestDir
+        $remoteTestDirPath = Join-Path $fullPath $remoteTestDir
+        $fileName          = "TestFile.txt"
+        $fileContent       = "testContent"
+        $localTestFilePath = Join-Path $localTestDirPath $fileName
+        $remoteTestFilePath = Join-Path $remoteTestDirPath $fileName
+
+        New-Item -ItemType Directory -Path $localTestDirPath
+        New-Item -ItemType Directory -Path $remoteTestDirPath
+    }
+
+    AfterAll {
+        Remove-Item -Path $localTestDirPath -Force -Recurse -ErrorAction SilentlyContinue
+        Remove-Item -Path $remoteTestDirPath -Force -Recurse -ErrorAction SilentlyContinue
+    }
+
+    BeforeEach {
+        $session = New-PSSession -ComputerName .
+    }
+
+    AfterEach {
+        Remove-Item -Path $localTestFilePath -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $remoteTestFilePath -Force -ErrorAction SilentlyContinue
+        Remove-PSSession $session
+    }
+
+    It "Copy files from remote session" {
+        New-Item -ItemType File -Name $fileName -Path $remoteTestDirPath -Value $fileContent
+        Copy-Item -Path $remoteTestFilePath -Destination $localTestFilePath -FromSession $session
+        $localTestFilePath | Should Exist
+        Get-Content -Path $localTestFilePath | Should -BeExactly $fileContent
+    }
+
+    It "Copy files to remote session" {
+        New-Item -ItemType File -Name $fileName -Path $localTestDirPath -Value $fileContent
+        Copy-Item -Path $localTestFilePath -Destination $remoteTestDirPath -ToSession $session
+        $remoteTestFilePath | Should Exist
+        Get-Content -Path $remoteTestFilePath | Should -BeExactly $fileContent
+    }
+
+    It "Copy directory from remote session" {
+        New-Item -ItemType File -Name $fileName -Path $remoteTestDirPath -Value $fileContent
+        Copy-Item -Path $remoteTestDirPath -Destination $localTestDirPath -FromSession $session -Recurse
+        $newDirPath = Join-Path $localTestDirPath $remoteTestDir
+        $newDirPath | Should Exist
+        Remove-Item -Path $newDirPath -Recurse
+    }
+
+    It "Mutually excludes parameters -FromSession and -ToSession" {
+        $session1 = New-PSSession -ComputerName .
+        New-Item -ItemType File -Name $fileName -Path $localTestDirPath -Value $fileContent
+        { Copy-Item -Path $localTestFilePath -Destination $remoteTestDirPath -FromSession $session -ToSession $session1 -ErrorAction Stop } | ShouldBeErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
+    }
+
+    It "Fails to copy file in the same directory" {
+        New-Item -ItemType File -Name $fileName -Path $remoteTestDirPath -Value $fileContent
+        { Copy-Item -Path $remoteTestFilePath -Destination $remoteTestDirPath -FromSession $session -ErrorAction Stop } | ShouldBeErrorId "System.IO.IOException,WriteException"
+    }
+
+    It "Fails to copy directory with a -Destination parameter given as a file path" {
+        New-Item -ItemType File -Name $fileName -Path $localTestDirPath -Value $fileContent
+        { Copy-Item -Path $remoteTestDirPath -Destination $localTestFilePath -FromSession $session -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+    }
+}
