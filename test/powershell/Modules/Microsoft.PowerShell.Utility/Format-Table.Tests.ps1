@@ -200,4 +200,70 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 			$out = [pscustomobject]@{a=1;b=2} | Format-Table -HideTableHeaders | Out-String
 			$out.Replace([System.Environment]::NewLine, "") | Should BeExactly "1 2"
 		}
+
+		It "Format-Table should have correct alignment" {
+			$ps1xml = @"
+<Configuration>
+	<ViewDefinitions>
+		<View>
+			<Name>Test.Format</Name>
+			<ViewSelectedBy>
+				<TypeName>Test.Format</TypeName>
+			</ViewSelectedBy>
+
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>Left</Label>
+						<Alignment>left</Alignment>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Center</Label>
+						<Alignment>center</Alignment>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Right</Label>
+						<Alignment>right</Alignment>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>Left</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Center</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Right</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
+"@
+
+			$ps1xmlPath = "$TEMPDRIVE\test.format.ps1xml"
+			Set-Content -Path $ps1xmlPath -Value $ps1xml
+			Update-FormatData $ps1xmlPath
+			$a = [PSCustomObject]@{Left=1;Center=2;Right=3}
+			$a.PSObject.TypeNames.Insert(0,"Test.Format")
+			$output = $a | Out-String
+
+			$expectedTable = @"
+
+Left Center Right
+---- ------ -----
+1      2        3
+
+
+
+"@
+
+			$output | Should BeExactly $expectedTable
+		}
 }
