@@ -40,7 +40,7 @@ try
             # GET CERTIFICATE
             #
 
-            $tempName = "$env:TEMP\signedscript_$(Get-Random).ps1"
+            $tempName = "TESTDRIVE:\signedscript_$(Get-Random).ps1"
             "123456" > $tempName
             $cert = $null
             foreach ($thisCertificate in (Get-ChildItem cert:\ -rec -codesigning))
@@ -72,17 +72,17 @@ try
             }
 
             #
+            # Create a remote session
+            #
+
+            $session = New-RemoteSession
+
+            #
             # Set process scope execution policy to 'AllSigned'
             #
 
             $oldExecutionPolicy = Get-ExecutionPolicy -Scope Process
             Set-ExecutionPolicy AllSigned -Scope Process
-
-            #
-            # Create a remote session
-            #
-
-            $session = New-RemoteSession
         }
 
         AfterAll {
@@ -510,7 +510,8 @@ try
 
         BeforeAll {
             if ($skipTest) { return }
-            $session = New-RemoteSession
+            # remote into same powershell instance
+            $session = New-RemoteSession -ConfigurationName $endpointName
 
             function CreateTempPs1xmlFile
             {
@@ -2010,7 +2011,7 @@ try
         BeforeAll {
             # Skip tests for CoreCLR for now
             # Skip tests if .NET 2.0 and PS 2.0 are not installed on the machine
-            $skipThisTest = $skipTest -or $IsCoreCLR -or 
+            $skipThisTest = $skipTest -or $IsCoreCLR -or
                 (! (Test-Path 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v2.0.50727')) -or
                 (! (Test-Path 'HKLM:\SOFTWARE\Microsoft\PowerShell\1\PowerShellEngine'))
 

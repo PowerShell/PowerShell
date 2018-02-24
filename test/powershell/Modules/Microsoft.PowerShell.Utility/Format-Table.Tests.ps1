@@ -247,23 +247,15 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 </Configuration>
 "@
 
-			$ps1xmlPath = "$TEMPDRIVE\test.format.ps1xml"
+			$ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
 			Set-Content -Path $ps1xmlPath -Value $ps1xml
-			Update-FormatData $ps1xmlPath
+			Update-FormatData -AppendPath $ps1xmlPath
 			$a = [PSCustomObject]@{Left=1;Center=2;Right=3}
 			$a.PSObject.TypeNames.Insert(0,"Test.Format")
 			$output = $a | Out-String
 
-			$expectedTable = @"
+			$expectedTable = "`n`nLeft Center Right`n---- ------ -----`n1      2        3`n`n`n"
 
-Left Center Right
----- ------ -----
-1      2        3
-
-
-
-"@
-
-			$output | Should BeExactly $expectedTable
+			$output.Replace("`n","") | Should BeExactly $expectedTable.Replace("`n","")
 		}
 }
