@@ -293,8 +293,9 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _measureStdDeviation = value;
-                if(value == true)
+                if (value) {
                     _measureAverage = true;
+                }
             }
         }
 
@@ -841,28 +842,17 @@ namespace Microsoft.PowerShell.Commands
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
 
-                if(_measureStdDeviation && !_measureAverage) {
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        PSTraceSource.NewArgumentException("Average"),
-                        "AverageSwitchNotSet",
-                        ErrorCategory.InvalidArgument,
-                        null);
-
-                    errorRecord.ErrorDetails = new ErrorDetails(this, "MeasureObjectStrings", "AverageSwitchNotSet", "Average");
-                    WriteError(errorRecord);
-                }
-
                 if (_measureStdDeviation && _measureAverage && stat.count > 0)
                 {
                     var sumOfDerivation = 0.0;
 
                     foreach (double n in stat.stdDeviationNumbers)
                     {
-                        var m = n - (double)average;
+                        var m = n - average;
                         sumOfDerivation += m * m;
                     }
 
-                    stdDeviation = Math.Round(Math.Sqrt(sumOfDerivation / (stat.stdDeviationNumbers.Count - 1)), 4);
+                    stdDeviation = Math.Sqrt(sumOfDerivation / (stat.stdDeviationNumbers.Count - 1));
                 }
             }
 
