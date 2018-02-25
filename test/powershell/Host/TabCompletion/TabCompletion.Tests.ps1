@@ -1072,3 +1072,122 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         # TODO: move to test cases above once working
     }
 }
+Describe "ArgumentCompleterBase tab complete tests" -Tags CI {
+    BeforeAll {
+        class TestArgumentCompleterBaseCompleter : System.Management.Automation.ArgumentCompleterBase {
+            # override
+            [void] AddCompletionsFor([string] $commandName, [string] $parameterName, [Collections.IDictionary] $fakeBoundParameters) {
+                switch ("${commandName}:$parameterName") {
+                    # handle completion based on both command and parameter name
+                    "Complete-Me:Name" {
+                        $this.CompleteCompleteMeName($fakeBoundParameters)
+                        break
+                    }
+                    "Complete-MeToo:Age" {
+                        $this.CompleteCompleteMeTooAge($fakeBoundParameters)
+                        break
+                    }
+                    "Complete-MeToo:Text" {
+                        $this.CompleteCompleteMeTooText($fakeBoundParameters)
+                        break
+                    }
+                    default {
+                        # handle generic parameter completion
+                        switch ($parameterName) {
+                            "Name" {
+                                $this.CompleteName($fakeBoundParameters)
+                                break
+                            }
+                            "Age" {
+                                $this.CompleteAge($fakeBoundParameters)
+                                break
+                            }
+                            "Text" {
+                                $this.CompleteText($fakeBoundParameters)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+
+            [void] CompleteCompleteMeName([Collections.IDictionary] $fakeBoundParameter) {
+                $this.CompleteWithIfTextContainsWordToComplete("Only you complete me!", "TheOne")
+            }
+
+            [void] CompleteCompleteMeTooAge([Collections.IDictionary] $fakeBoundParameter) {
+                foreach ($i in 1..10) {
+                    $t = $i * 10 - 5
+                    $this.CompleteWithIfTextContainsWordToComplete($t)
+                }
+            }
+            [void] CompleteCompleteMeTooText([Collections.IDictionary] $fakeBoundParameter) {
+                $this.CompleteWithIfAnyContainsWordToComplete("Ada LoveLace", "Ada", "The first to recognise that the machine had applications beyond pure calculation, and published the first algorithm intended to be carried out by such a machine.")
+                $this.CompleteWithIfAnyContainsWordToComplete("Grace Hopper", "Grace", "Pioneer of computer programming who invented one of the first compiler related tools.")
+                $this.CompleteWithIfAnyContainsWordToComplete("Charles Babbage", "Charlie", "originated the concept of a digital programmable computer.")
+                $this.CompleteWithIfAnyContainsWordToComplete("Donald Knuth", "Donald", "The real Donald: Father of TeX, made Big-O a thing and wrote The Art of Computer Programming.")
+            }
+
+            [void] CompleteName([Collections.IDictionary] $fakeBoundParameter) {
+                $this.CompleteWithIfTextStartsWithWordToComplete("Ada LoveLace", "Ada", "The first to recognise that the machine had applications beyond pure calculation, and published the first algorithm intended to be carried out by such a machine.")
+                $this.CompleteWithIfTextStartsWithWordToComplete("Grace Hopper", "Grace", "Pioneer of computer programming who invented one of the first compiler related tools.")
+                $this.CompleteWithIfTextStartsWithWordToComplete("Charles Babbage", "Charlie", "originated the concept of a digital programmable computer.")
+                $this.CompleteWithIfTextStartsWithWordToComplete("Donald Knuth", "Donald", "The real Donald: Father of TeX, made Big-O a thing and wrote The Art of Computer Programming.")
+            }
+            [void] CompleteAge([Collections.IDictionary] $fakeBoundParameter) {
+                foreach ($i in 1..10) {
+                    $t = $i * 10 - 5
+                    $this.CompleteWithIfTextStartsWithWordToComplete($t)
+                }
+            }
+            [void] CompleteText([Collections.IDictionary] $fakeBoundParameter) {
+                $this.CompleteWithIfAnyContainsWordToComplete("Ada LoveLace", "Ada", "The first to recognise that the machine had applications beyond pure calculation, and published the first algorithm intended to be carried out by such a machine.")
+                $this.CompleteWithIfAnyContainsWordToComplete("Charles Babbage", "Charlie", "originated the concept of a digital programmable computer.")
+            }
+        }
+
+        function Complete-Me {
+            param(
+                [ArgumentCompleter([TestArgumentCompleterBaseCompleter])]
+                $Name,
+                [ArgumentCompleter([TestArgumentCompleterBaseCompleter])]
+                $Age,
+                [ArgumentCompleter([TestArgumentCompleterBaseCompleter])]
+                $Text
+            )
+        }
+        function Complete-MeToo {
+            param(
+                [ArgumentCompleter([TestArgumentCompleterBaseCompleter])]
+                $Name,
+                [ArgumentCompleter([TestArgumentCompleterBaseCompleter])]
+                $Age,
+                [ArgumentCompleter([TestArgumentCompleterBaseCompleter])]
+                $Text
+            )
+        }
+    }
+    It "Completes with argument completer derived from ArgumentCompleterBase" -TestCases @(
+        @{command = "Complete-Me"; parameter = "Name"; wordToComplete = ''; expected = "TheOne"}
+        @{command = "Complete-Me"; parameter = "Age"; wordToComplete = ''; expected = "5;15;25;35;45;55;65;75;85;95"}
+        @{command = "Complete-Me"; parameter = "Text"; wordToComplete = ''; expected = "Ada;Charlie"}
+        @{command = "Complete-Me"; parameter = "Name"; wordToComplete = 'T'; expected = "TheOne"}
+        @{command = "Complete-Me"; parameter = "Name"; wordToComplete = '0'; expected = ""}
+        @{command = "Complete-Me"; parameter = "Age"; wordToComplete = '5'; expected = "5;55"}
+        @{command = "Complete-Me"; parameter = "Text"; wordToComplete = 'char'; expected = "Charlie"}
+        @{command = "Complete-MeToo"; parameter = "Name"; wordToComplete = ''; expected = "Ada;Grace;Charlie;Donald"}
+        @{command = "Complete-MeToo"; parameter = "Age"; wordToComplete = '5'; expected = "5;15;25;35;45;55;65;75;85;95"}
+        @{command = "Complete-MeToo"; parameter = "Age"; wordToComplete = '4'; expected = "45"}
+        @{command = "Complete-MeToo"; parameter = "Text"; wordToComplete = 'Compu'; expected = "Grace;Charlie;Donald"}
+        @{command = "Complete-MeToo"; parameter = "Name"; wordToComplete = 'G'; expected = "Grace"}
+        @{command = "Complete-MeToo"; parameter = "Age"; wordToComplete = '5'; expected = "5;15;25;35;45;55;65;75;85;95"}
+    ) {
+        param($command, $parameter, $wordToComplete, $expected)
+
+        $script = "$command -$Parameter $wordToComplete"
+        $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $matches = $res.CompletionMatches
+        $actual = $matches.ListItemText -join ';'
+        $actual | Should -Be $expected
+    }
+}
