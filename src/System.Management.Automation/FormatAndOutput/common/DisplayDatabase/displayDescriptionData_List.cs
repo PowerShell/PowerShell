@@ -387,7 +387,7 @@ namespace System.Management.Automation
         }
 
         /// <summary></summary>
-        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionContition = null )
+        public ListEntryBuilder AddItemScriptBlock(string scriptBlock, string label = null, string format = null, DisplayEntry itemSelectionContition = null)
         {
             return AddItem(scriptBlock, label, DisplayEntryValueType.ScriptBlock, format, itemSelectionContition);
         }
@@ -395,6 +395,13 @@ namespace System.Management.Automation
         /// <summary></summary>
         public ListEntryBuilder AddItemProperty(string property, string label = null, string format = null, DisplayEntry itemSelectionContition = null)
         {
+            return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionContition);
+        }
+
+        /// <summary></summary>
+        public ListEntryBuilder AddItemPropertyIfSet(string property, string label = null, string format = null)
+        {
+            var itemSelectionContition = DisplayEntry.CreatePropertyEntry(property);
             return AddItem(property, label, DisplayEntryValueType.Property, format, itemSelectionContition);
         }
 

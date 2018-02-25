@@ -1070,11 +1070,11 @@ namespace System.Management.Automation.Runspaces
                 ListControl.Create()
                     .StartEntry()
                         .AddItemProperty(@"Count")
-                        .AddItemProperty(@"Average",  itemSelectionContition: DisplayEntry.CreatePropertyEntry("Average"))
-                        .AddItemProperty(@"Sum",      itemSelectionContition: DisplayEntry.CreatePropertyEntry("Sum"))
-                        .AddItemProperty(@"Maximum",  itemSelectionContition: DisplayEntry.CreatePropertyEntry("Maximum"))
-                        .AddItemProperty(@"Minimum",  itemSelectionContition: DisplayEntry.CreatePropertyEntry("Minimum"))
-                        .AddItemProperty(@"Property", itemSelectionContition: DisplayEntry.CreatePropertyEntry("Property"))
+                        .AddItemPropertyIfSet(@"Average")
+                        .AddItemPropertyIfSet(@"Sum")
+                        .AddItemPropertyIfSet(@"Maximum")
+                        .AddItemPropertyIfSet(@"Minimum")
+                        .AddItemPropertyIfSet(@"Property")
                     .EndEntry()
                 .EndList());
         }

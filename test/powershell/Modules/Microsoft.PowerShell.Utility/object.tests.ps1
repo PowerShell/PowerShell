@@ -100,11 +100,11 @@ Describe "Object cmdlets" -Tags "CI" {
         }
 
         It 'should only display fields that are set' {
-            $text = 1, 2, 3 | Measure-Object -sum -Average | format-list | out-string
-            $text -match "min|max" | should -BeFalse
+            $text = 1, 2, 3 | Measure-Object -sum -Average | Format-List | Out-String
+            $text -match "min|max" | Should -BeFalse
 
-            $text = 1, 2, 3 | Measure-Object -Minimum -Maximum | format-list | out-string
-            $text -match "min|max" | should -BeTrue
+            $text = 1, 2, 3 | Measure-Object -Minimum -Maximum | Format-List | Out-String
+            $text -match "min|max" | Should -BeTrue
         }
     }
 }
