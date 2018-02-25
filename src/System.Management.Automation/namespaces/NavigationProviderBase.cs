@@ -516,6 +516,7 @@ namespace System.Management.Automation.Provider
 
                 path = NormalizePath(path);
                 path = path.TrimEnd(StringLiterals.DefaultPathSeparator);
+                path = path.TrimStart(StringLiterals.DefaultPathSeparator);
                 string rootPath = String.Empty;
 
                 if (root != null)
