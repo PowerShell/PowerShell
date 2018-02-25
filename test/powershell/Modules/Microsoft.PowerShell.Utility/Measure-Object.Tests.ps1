@@ -19,13 +19,14 @@ Describe "Measure-Object" -Tags "CI" {
 
     It "Should calculate Standard Deviation" {
         $actual = ($testObject | Measure-Object -Average -StdDeviation)
-        $actual.StdDeviation | Should Be 1.5275
+        # We check this way since .StdDeviation returns a double value
+        [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
     }
 
-    It "Should throw if Standard Deviation with -Average not specified" {
-        #{$testObject | Measure-Object -StdDeviation} | Should Throw
-        $actual = $testObject | Measure-Object -StdDeviation
-        $actual.StdDeviation | Should Be 1.5275
+    It "Should calculate Standard Deviation without -Average" {
+        $actual = ($testObject | Measure-Object -StdDeviation)
+        # We check this way since .StdDeviation returns a double value
+        [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
     }
 
     It 'Should throw if Standard Deviation requested and -Average:$false' {
