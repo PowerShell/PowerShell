@@ -846,9 +846,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var sumOfDerivation = 0.0;
 
+                    var averageCasted = (double) average;
                     foreach (double n in stat.stdDeviationNumbers)
                     {
-                        var m = n - average;
+                        var m = n - averageCasted;
                         sumOfDerivation += m * m;
                     }
 
