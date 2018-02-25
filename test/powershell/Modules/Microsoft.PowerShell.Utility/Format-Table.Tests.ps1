@@ -249,13 +249,26 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 
 			$ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
 			Set-Content -Path $ps1xmlPath -Value $ps1xml
-			Update-FormatData -AppendPath $ps1xmlPath
-			$a = [PSCustomObject]@{Left=1;Center=2;Right=3}
-			$a.PSObject.TypeNames.Insert(0,"Test.Format")
-			$output = $a | Out-String
+			# run in own runspace so not affect global sessionstate
+			$ps = [powershell]::Create()
+			$ps.AddScript( {
+				param($ps1xmlPath)
+				Update-FormatData -AppendPath $ps1xmlPath
+				$a = [PSCustomObject]@{Left=1;Center=2;Right=3}
+				$a.PSObject.TypeNames.Insert(0,"Test.Format")
+				$a | Out-String
+			} ).AddArgument($ps1xmlPath) | Out-Null
+			$output = $ps.Invoke()
 
-			$expectedTable = "`n`nLeft Center Right`n---- ------ -----`n1      2        3`n`n`n"
+			$expectedTable = @"
 
-			$output.Replace("`n","") | Should BeExactly $expectedTable.Replace("`n","")
+Left Center Right
+---- ------ -----
+1      2        3
+
+
+
+"@
+			$output.Replace("`n","").Replace("`r","") | Should BeExactly $expectedTable.Replace("`n","").Replace("`r","")
 		}
 }

@@ -511,8 +511,8 @@ try
         BeforeAll {
             if ($skipTest) { return }
             # remote into same powershell instance
-            $session = New-RemoteSession -ConfigurationName $endpointName
-
+            $samesession = New-RemoteSession -ConfigurationName $endpointName
+            $session = New-RemoteSession
             function CreateTempPs1xmlFile
             {
                 do {
@@ -627,6 +627,7 @@ try
         AfterAll {
             if ($skipTest) { return }
             if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+            if ($null -ne $samesession) { Remove-PSSession $samesession -ErrorAction SilentlyContinue }
             if ($null -ne $formatFile) { Remove-Item $formatFile -Force -ErrorAction SilentlyContinue }
             if ($null -ne $typeFile) { Remove-Item $typeFile -Force -ErrorAction SilentlyContinue }
         }
@@ -639,16 +640,16 @@ try
                 $originalLocalFormatting = & $formattingScript
 
                 # Original local and remote formatting should be equal (sanity check)
-                $originalRemoteFormatting = Invoke-Command $session $formattingScript
+                $originalRemoteFormatting = Invoke-Command $samesession $formattingScript
                 $originalLocalFormatting | Should Be $originalRemoteFormatting
 
-                Invoke-Command $session { param($file) Update-FormatData $file } -ArgumentList $formatFile
+                Invoke-Command $samesession { param($file) Update-FormatData $file } -ArgumentList $formatFile
 
                 # Original remote and modified remote formatting should not be equal (sanity check)
-                $modifiedRemoteFormatting = Invoke-Command $session $formattingScript
+                $modifiedRemoteFormatting = Invoke-Command $samesession $formattingScript
                 $originalRemoteFormatting | Should Not Be $modifiedRemoteFormatting
 
-                $module = Import-PSSession -Session $session -CommandName @() -FormatTypeName * -AllowClobber
+                $module = Import-PSSession -Session $samesession -CommandName @() -FormatTypeName * -AllowClobber
             }
 
             AfterAll {
