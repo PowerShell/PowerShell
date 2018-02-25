@@ -100,7 +100,7 @@ Describe "Object cmdlets" -Tags "CI" {
         }
 
         It 'should only display fields that are set' {
-            $text = 1, 2, 3 | Measure-Object -sum -Average | Format-List | Out-String
+            $text = 1, 2, 3 | Measure-Object -Sum -Average | Format-List | Out-String
             $text -match "min|max" | Should -BeFalse
 
             $text = 1, 2, 3 | Measure-Object -Minimum -Maximum | Format-List | Out-String
