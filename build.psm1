@@ -1098,7 +1098,7 @@ Restore the module to '$Pester' by running:
             $script:inerror = $false
         }
         elseif ($trimmedline -match "\d+ms") {
-            continue
+            return
         }
         else {
             if ($script:nonewline) {
