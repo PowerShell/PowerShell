@@ -214,7 +214,6 @@ elseif($Stage -eq 'Build')
 
     if ($isFullBuild) {
         $pesterParam['Tag'] = @('CI','Feature','Scenario')
-        $pesterParam['ExcludeTag'] = @()
     } else {
         $pesterParam['Tag'] = @('CI')
         $pesterParam['ThrowOnFailure'] = $true
