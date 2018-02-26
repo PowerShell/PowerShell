@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string currentValue = s;
             int currentValueDisplayLength = dc.Length(currentValue);
 
-            if (addPadding && currentValueDisplayLength < width)
+            if (currentValueDisplayLength < width)
             {
                 // the string is shorter than the width of the column
                 // need to pad with with blanks to reach the desired width
@@ -406,14 +406,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             int padLeft = padCount / 2;
                             int padRight = padCount - padLeft;
 
-                            s = StringUtil.Padding(padLeft) + s + StringUtil.Padding(padRight);
+                            s = StringUtil.Padding(padLeft) + s;
+                            if (addPadding)
+                            {
+                                s += StringUtil.Padding(padRight);
+                            }
                         }
                         break;
 
                     default:
                         {
-                            // left align is the default
-                            s += StringUtil.Padding(padCount);
+                            if (addPadding)
+                            {
+                                // left align is the default
+                                s += StringUtil.Padding(padCount);
+                            }
                         }
                         break;
                 }
@@ -497,8 +504,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return s;
             }
-            // we have to pad
-            System.Diagnostics.Debug.Assert(finalValueDisplayLength == width - 1, "padding is not correct");
             switch (alignment)
             {
                 case TextAlignment.Right:
@@ -509,7 +514,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 case TextAlignment.Center:
                     {
-                        s += " ";
+                        if (addPadding)
+                        {
+                            s += " ";
+                        }
                     }
                     break;
 
