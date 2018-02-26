@@ -77,7 +77,7 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
     }
 }
 
-Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -88,7 +88,7 @@ Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdmin
     RunTestCase -tag "CI"
 }
 
-Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -100,7 +100,7 @@ Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tag
     RunTestCase -tag "Feature"
 }
 
-Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -184,7 +184,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
     }
 }
 
-Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $modulePath = "$pshome\Modules\Test"
         $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
@@ -220,7 +220,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     }
 }
 
-Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     It "Get-Help should find help files under pshome" {
         $helpFile = "about_testCase.help.txt"
         $culture = (Get-Culture).Name
