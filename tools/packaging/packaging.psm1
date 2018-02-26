@@ -1229,6 +1229,30 @@ function New-ZipPackage
     }
 }
 
+function CreateNugetPlatformFolder
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Platform,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageRuntimesFolder,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PlatformBinPath
+    )
+
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netstandard2.0")
+    $fullPath = Join-Path $PlatformBinPath $file
+
+    if (-not(Test-Path $fullPath)) {
+        throw "File not found: $fullPath"
+    }
+
+    Copy-Item -Path $fullPath -Destination $destPath
+    log "Copied $file to $Platform"
+}
+
 <#
 .SYNOPSIS
 Creates NuGet packages containing linux, osx and windows runtime assemblies.
@@ -1282,25 +1306,25 @@ function New-UnifiedNugetPackage
         [string] $PackageVersion,
 
         [Parameter(Mandatory = $true)]
-        [string] $winx86BinPath,
+        [string] $Winx86BinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $winx64BinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $winArm32BinPath,
+        [string] $WinArm32BinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $winArm64BinPath,
+        [string] $WinArm64BinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $linuxArm32BinPath,
+        [string] $LinuxArm32BinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $linuxBinPath,
+        [string] $LinuxBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $osxBinPath,
+        [string] $OsxBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $GenAPIToolPath
@@ -1355,104 +1379,19 @@ function New-UnifiedNugetPackage
             log "Copied file $refBinFullName to $refFolder"
             #endregion ref
 
-            #region winX86
-            $winX86Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'win-x86/lib/netstandard2.0')
-            $fullPath = Join-Path $winX86BinPath $file
+            $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
 
-            if (-not(Test-Path $fullPath)) {
-                throw "File not found: $fullPath"
+            CreateNugetPlatformFolder -Platform 'win-x86' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX86BinPath
+            CreateNugetPlatformFolder -Platform 'win-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX64BinPath
+            CreateNugetPlatformFolder -Platform 'win-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm32BinPath
+            CreateNugetPlatformFolder -Platform 'win-arm64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm64BinPath
+
+            if ($linuxExceptionList -notcontains $file )
+            {
+                CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
+                CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
+                CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
             }
-
-            Copy-Item -Path $fullPath -Destination $winX86Path
-            log "Copied $file to 'win-x86'"
-
-            #endregion
-
-            #region win-x64
-            $winX64Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'win-x64/lib/netstandard2.0')
-            $fullPath = Join-Path $winX64BinPath $file
-
-            if (-not(Test-Path $fullPath)) {
-                throw "File not found: $fullPath"
-            }
-
-            Copy-Item -Path $fullPath -Destination $winX64Path
-            log "Copied $file to 'win-x64'"
-
-            #endregion
-
-            #region win-arm32
-            $winArm32Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'win-arm/lib/netstandard2.0')
-            $fullPath = Join-Path $winArm32BinPath $file
-
-            if (-not(Test-Path $fullPath)) {
-                throw "File not found: $fullPath"
-            }
-
-            Copy-Item -Path $fullPath -Destination $winArm32Path
-            log "Copied $file to 'win-arm'"
-
-            #endregion
-
-            #region win-arm64
-            $winArm64Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'win-arm64/lib/netstandard2.0')
-            $fullPath = Join-Path $winArm64BinPath $file
-
-            if (-not(Test-Path $fullPath)) {
-                throw "File not found: $fullPath"
-            }
-
-            Copy-Item -Path $fullPath -Destination $winArm64Path
-            log "Copied $file to 'win-arm64'"
-
-            #endregion
-
-            #region linux-arm32
-            if ($linuxExceptionList -notcontains $file ) {
-                $linuxArm32Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'linux-arm/lib/netstandard2.0')
-
-                $fullPath = Join-Path $linuxArm32BinPath $file
-                if (-not(Test-Path $fullPath)) {
-                    throw "File not found: $fullPath"
-                }
-
-                Copy-Item -Path $fullPath -Destination $linuxArm32Path
-                log "Copied $file to 'linux-arm'"
-            }
-
-            #endregion
-
-            #region linux
-
-            if ($linuxExceptionList -notcontains $file ) {
-                $linuxPath = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'linux-x64/lib/netstandard2.0')
-
-                $fullPath = Join-Path $linuxBinPath $file
-                if (-not(Test-Path $fullPath)) {
-                    throw "File not found: $fullPath"
-                }
-
-                Copy-Item -Path $fullPath -Destination $linuxPath
-                log "Copied $file to 'linux'"
-            }
-
-            #endregion
-
-            #region osx
-
-            if ($linuxExceptionList -notcontains $file ) {
-                $osxPath = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'osx/lib/netstandard2.0')
-
-                $fullPath = Join-Path $osxBinPath $file
-                if (-not(Test-Path $fullPath)) {
-                    throw "File not found: $fullPath"
-                }
-
-                Copy-Item -Path $fullPath -Destination $osxPath
-                log "Copied $file to 'osx'"
-            }
-
-            #endregion
 
             #region nuspec
 
@@ -1533,12 +1472,7 @@ function New-UnifiedNugetPackage
                 }
             }
 
-            if ($deps.Count -gt 0) {
-                New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
-            } else {
-                New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
-            }
-
+            New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
             New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
         }
 
@@ -1598,7 +1532,7 @@ function New-NuSpec {
     $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
     $nuspecObj = [xml] $nuspecTemplate
 
-    if ($Dependency -ne $null) {
+    if ( ($Dependency -ne $null) -and $Dependency.Count -gt 0 ) {
 
         foreach($dep in $Dependency) {
             # Each item is [tuple[ [tuple[string, string]], [tuple[string, string]] ]

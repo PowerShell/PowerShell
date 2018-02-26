@@ -80,11 +80,11 @@ NuspecTemplate = @'
         <id>{0}</id>
         <version>{1}</version>
         <title>PowerShellRuntime</title>
-        <authors>Microsoft</authors>
+        <authors>Powershell</authors>
         <owners>microsoft,powershell</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PowerShell runtime for hosting PowerShell</description>
-        <copyright>© Microsoft Corporation.  All rights reserved.</copyright>
+        <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
         <language>en-US</language>
         <dependencies>
             <group targetFramework=".NETCoreApp2.0">
