@@ -1270,25 +1270,25 @@ Path where the package will be created.
 .PARAMETER PackageVersion
 Version of the created package.
 
-.PARAMETER winx86BinPath
+.PARAMETER Winx86BinPath
 Path to folder containing Windows x86 assemblies.
 
-.PARAMETER winx64BinPath
+.PARAMETER Winx64BinPath
 Path to folder containing Windows x64 assemblies.
 
-.PARAMETER winArm32BinPath
+.PARAMETER WinArm32BinPath
 Path to folder containing Windows arm32 assemblies.
 
-.PARAMETER winArm64BinPath
+.PARAMETER WinArm64BinPath
 Path to folder containing Windows arm64 assemblies.
 
-.PARAMETER linuxArm32BinPath
+.PARAMETER LinuxArm32BinPath
 Path to folder containing linux arm32 assemblies.
 
-.PARAMETER linuxBinPath
+.PARAMETER LinuxBinPath
 Path to folder containing linux x64 assemblies.
 
-.PARAMETER osxBinPath
+.PARAMETER OsxBinPath
 Path to folder containing osx assemblies.
 
 .PARAMETER GenAPIToolPath
@@ -1309,7 +1309,7 @@ function New-UnifiedNugetPackage
         [string] $Winx86BinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $winx64BinPath,
+        [string] $Winx64BinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $WinArm32BinPath,
@@ -1568,11 +1568,10 @@ Path to the folder where the reference assembly is created.
 Version of the reference assembly.
 
 .PARAMETER GenAPIToolPath
-Path tp GenAPI.exe
+Path to GenAPI.exe. Tool from https://www.nuget.org/packages/Microsoft.DotNet.BuildTools.GenAPI/
 
 .PARAMETER SnkFilePath
 Path to the snk file for strong name signing.
-
 #>
 
 function New-ReferenceAssembly
@@ -1766,13 +1765,13 @@ function New-NugetPackage
 
 <#
 .SYNOPSIS
-Publish the specified Nuget Package to MyGet feed/
+Publish the specified Nuget Package to MyGet feed.
 
 .DESCRIPTION
 The specified nuget package is published to the powershell.myget.org/powershell-core feed.
 
 .PARAMETER PackagePath
-Path to the NuGet Package/
+Path to the NuGet Package.
 
 .PARAMETER ApiKey
 API key for powershell.myget.org
