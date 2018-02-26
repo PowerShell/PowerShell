@@ -51,7 +51,7 @@ Describe "PSVersionTable" -Tags "CI" {
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should -BeOfType "System.String"
        $PSVersionTable.GitCommitId | Should Match $expectedGitCommitIdPattern
-       $PSVersionTable.GitCommitId | Should Not Match $unexpectectGitCommitIdPattern
+       $PSVersionTable.GitCommitId | Should -Not Match $unexpectectGitCommitIdPattern
        $PSVersionTable.GitCommitId | Should -BeExactly $rawGitCommitId
     }
 
@@ -101,7 +101,7 @@ Describe "PSVersionTable" -Tags "CI" {
         try {
             $key = Get-Item $PSScriptRoot
             $PSVersionTable.Add($key, "TEST")
-            { $PSVersionTable | Format-Table } | Should Not Throw
+            { $PSVersionTable | Format-Table } | Should -Not Throw
         } finally {
             $PSVersionTable.Remove($key)
         }

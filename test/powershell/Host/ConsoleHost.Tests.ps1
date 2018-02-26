@@ -128,7 +128,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             {
                 $a="blahblah"
                 $a | & $powershell -noprofile -out text -com { $input }
-            } | Should Not Throw
+            } | Should -Not Throw
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
@@ -154,7 +154,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match "pwsh[.exe] -Help | -? | /?" } | Should -Not BeNullOrEmpty
             }
         }
 
