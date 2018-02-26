@@ -1,5 +1,11 @@
 # Host PowerShell Core in .NET Core Applications
 
+## PowerShell Core v6.0.1 and Later
+
+The runtime assemblies for Windows, Linux and OSX are now published in NuGet package version 6.0.1.1 and above.
+
+Please see the [.NET Core Sample Application](#net-core-sample-application) section for an example that uses PowerShell Core `6.0.1.1` NuGet packages.
+
 ## PowerShell Core v6.0.0-beta.3 and Later
 
 PowerShell Core is refactored in v6.0.0-beta.3 to remove the dependency on a customized `AssemblyLoadContext`.
@@ -138,6 +144,7 @@ namespace Application.Test
   .NET Core SDK `2.0.0-preview1-005952` or higher is required.
 - [sample-dotnet2.0-powershell.beta.3](./sample-dotnet2.0-powershell.beta.3) - .NET Core `2.0.0` + PowerShell Core `beta.3` NuGet packages.
   .NET Core SDK `2.0.0-preview1-005952` or higher is required.
+- [sample-dotnet2.0-powershell-crossplatform](./sample-dotnet2.0-powershell-crossplatform) - .Net Core `2.0.0` + PowerShell Core `6.0.1.1` NuGet packages.
 
 You can find the sample application project `"MyApp"` in each of the above 3 sample folders.
 To build the sample project, run the following commands (make sure the required .NET Core SDK is in use):
@@ -146,6 +153,9 @@ To build the sample project, run the following commands (make sure the required 
 dotnet restore .\MyApp\MyApp.csproj
 dotnet publish .\MyApp -c release -r win10-x64
 ```
+
+For cross platform project there is no need to specify `-r win10-x64`.
+The runtime for the build machine's platform will automatically be selected.
 
 Then you can run `MyApp.exe` from the publish folder and see the results:
 
@@ -161,9 +171,3 @@ Evaluating '([S.M.A.ActionPreference], [S.M.A.AliasAttribute]).FullName' in PS C
 System.Management.Automation.ActionPreference
 System.Management.Automation.AliasAttribute
 ```
-
-## Remaining Issue
-
-PowerShell Core builds separately for Windows and Unix, so the assemblies are different between Windows and Unix platforms.
-Unfortunately, all PowerShell NuGet packages that have been published so far only contain PowerShell assemblies built specifically for Windows.
-The issue [#3417](https://github.com/PowerShell/PowerShell/issues/3417) was opened to track publishing PowerShell NuGet packages for Unix platforms.
