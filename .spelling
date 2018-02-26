@@ -206,6 +206,7 @@ writingpestertests.md
 WSMan
 wsmansessionoption.cs
 xUnit
+0-powershell-crossplatform
 #endregion
 
 #region ./tools/install-powershell.readme.md Overrides
