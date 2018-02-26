@@ -51,7 +51,7 @@ Describe "PSVersionTable" -Tags "CI" {
     It "GitCommitId property" {
        $PSVersionTable.GitCommitId | Should -BeOfType "System.String"
        $PSVersionTable.GitCommitId | Should -Match $expectedGitCommitIdPattern
-       $PSVersionTable.GitCommitId | Should -Not-Match $unexpectectGitCommitIdPattern
+       $PSVersionTable.GitCommitId | Should -Not -Match $unexpectectGitCommitIdPattern
        $PSVersionTable.GitCommitId | Should -BeExactly $rawGitCommitId
     }
 
