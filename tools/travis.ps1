@@ -214,7 +214,6 @@ elseif($Stage -eq 'Build')
 
     if ($isFullBuild) {
         $pesterParam['Tag'] = @('CI','Feature','Scenario')
-        $pesterParam['ExcludeTag'] = @()
     } else {
         $pesterParam['Tag'] = @('CI')
         $pesterParam['ThrowOnFailure'] = $true
@@ -235,7 +234,7 @@ elseif($Stage -eq 'Build')
     $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
 
     # Running tests, which require sudo.
-    $pesterParam['Tag'] = @('RequireSudoOnUnix')
+    $pesterParam['Tag'] += 'RequireSudoOnUnix'
     $pesterParam['ExcludeTag'] = @()
     $pesterParam['Sudo'] = $true
     $pesterParam['OutputFile'] = $testResultsSudo
