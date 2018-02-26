@@ -81,7 +81,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
             if (!$process.HasExited)
             {
-                $process.HasExited | Should -Be $true
+                $process.HasExited | Should -BeTrue
                 $process.Kill()
             }
         }
