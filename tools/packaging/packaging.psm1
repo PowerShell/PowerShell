@@ -1255,10 +1255,10 @@ function CreateNugetPlatformFolder
 
 <#
 .SYNOPSIS
-Creates NuGet packages containing linux, osx and windows runtime assemblies.
+Creates NuGet packages containing linux, osx and Windows runtime assemblies.
 
 .DESCRIPTION
-Creates a NuGet package for linux, osx, windows runtimes for 32 bit, 64 bit and ARM.
+Creates a NuGet package for linux, osx, Windows runtimes for 32 bit, 64 bit and ARM.
 The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
 Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
 Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
