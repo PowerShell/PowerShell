@@ -210,7 +210,6 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 			<ViewSelectedBy>
 				<TypeName>Test.Format</TypeName>
 			</ViewSelectedBy>
-
 			<TableControl>
 				<TableHeaders>
 					<TableColumnHeader>
@@ -270,5 +269,81 @@ Left Center Right
 
 "@
 			$output.Replace("`n","").Replace("`r","") | Should BeExactly $expectedTable.Replace("`n","").Replace("`r","")
+		}
+
+		It "Format-Table should not have trailing whitespace if there is truncation: <view>" -TestCases @(
+			# `u{2B758} is a double-byte Japanese character
+			@{view="Test.Format.Left"  ; object=[pscustomobject]@{Left="123`u{2B758}"}    ; expected="Left----1..."      },
+			@{view="Test.Format.Center"; object=[pscustomobject]@{Center="12345`u{2B758}"}; expected="Center------123..."}
+		) {
+			param($view, $object, $expected)
+
+			$ps1xml = @"
+<Configuration>
+	<ViewDefinitions>
+		<View>
+			<Name>Test.Format.Left</Name>
+			<ViewSelectedBy>
+				<TypeName>Test.Format</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>Left</Label>
+						<Alignment>left</Alignment>
+						<Width>4</Width>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>Left</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+		<View>
+			<Name>Test.Format.Center</Name>
+			<ViewSelectedBy>
+				<TypeName>Test.Format</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>Center</Label>
+						<Alignment>center</Alignment>
+						<Width>6</Width>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>Center</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
+"@
+
+			$ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+			Set-Content -Path $ps1xmlPath -Value $ps1xml
+			# run in own runspace so not affect global sessionstate
+			$ps = [powershell]::Create()
+			$ps.AddScript( {
+				param($ps1xmlPath,$view,$object)
+				Update-FormatData -AppendPath $ps1xmlPath
+				$object.PSObject.TypeNames.Insert(0,"Test.Format")
+				$object | Format-Table -View $view | Out-String
+			} ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($object) | Out-Null
+			$output = $ps.Invoke()
+			$output.Replace("`n","").Replace("`r","") | Should BeExactly $expected
 		}
 }

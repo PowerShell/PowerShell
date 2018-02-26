@@ -514,7 +514,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 case TextAlignment.Center:
                     {
-                        s += " ";
+                        if (addPadding)
+                        {
+                            s += " ";
+                        }
                     }
                     break;
 
