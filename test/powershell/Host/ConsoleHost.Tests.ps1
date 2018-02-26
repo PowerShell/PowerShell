@@ -115,7 +115,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             }
             catch
             {
-                $_.ToString() | Should-Match "wgwg-wrwrhqwrhrh35h3h3"
+                $_.ToString() | Should -Match "wgwg-wrwrhqwrhrh35h3h3"
                 $_.FullyQualifiedErrorId | Should -Be "CommandNotFoundException"
             }
             finally
@@ -536,7 +536,7 @@ foo
 
     Context "PATH environment variable" {
         It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
-            pwsh -v | Should-Match $psversiontable.GitCommitId
+            pwsh -v | Should -Match $psversiontable.GitCommitId
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
@@ -555,7 +555,7 @@ foo
             $outString = [String]::Join(",", $output)
             foreach ($expectedMatch in $expectedMatches)
             {
-                $outString | Should-Match $expectedMatch
+                $outString | Should -Match $expectedMatch
             }
         }
     }
