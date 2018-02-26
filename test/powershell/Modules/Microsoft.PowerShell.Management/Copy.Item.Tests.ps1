@@ -483,6 +483,28 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             Copy-Item -Path $filePath -FromSession $s -Destination $destinationFolderPath
             ValidateCopyItemOperationForAlternateDataStream -filePath $filePath -streamName $streamName -expectedStreamContent $streamContent
         }
+
+        It "Copy file to the same directory fails." {
+            $filePath = CreateTestFile
+            { Copy-Item -Path $filePath -Destination $sourceDirectory -FromSession $s -ErrorAction Stop } | ShouldBeErrorId "System.IO.IOException,WriteException"
+        }
+
+        It "Copy directory with a -Destination parameter given as a file path fails." {
+            $filePath = CreateTestFile
+            $folderToCopy = GetDestinationFolderPath
+            { Copy-Item -Path $folderToCopy -Destination $filePath -FromSession $s -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+        }
+
+        It "Copy-Item parameters -FromSession and -ToSession are mutually exclusive." {
+            $s1 = New-PSSession -ComputerName . -ea SilentlyContinue
+            if (-not $s1)
+            {
+                throw "Failed to create PSSession for remote copy operations."
+            }
+            $filePath = CreateTestFile
+            $destinationFolderPath = GetDestinationFolderPath
+            { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | ShouldBeErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
+        }
     }
 
     Context "Validate Copy-Item Remotely using wildcards" {
