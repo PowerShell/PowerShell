@@ -1231,10 +1231,10 @@ function New-ZipPackage
 
 <#
 .SYNOPSIS
-Creates NuGet packages containing unix and windows runtime assemblies.
+Creates NuGet packages containing linux, osx and windows runtime assemblies.
 
 .DESCRIPTION
-Creates a NuGet package for unix, windows runtimes for 32 bit, 64 bit and ARM.
+Creates a NuGet package for linux, osx, windows runtimes for 32 bit, 64 bit and ARM.
 The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
 Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
 Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
@@ -1261,8 +1261,11 @@ Path to folder containing Windows arm64 assemblies.
 .PARAMETER linuxArm32BinPath
 Path to folder containing linux arm32 assemblies.
 
-.PARAMETER unixBinPath
-Path to folder containing unix x64 assemblies.
+.PARAMETER linuxBinPath
+Path to folder containing linux x64 assemblies.
+
+.PARAMETER osxBinPath
+Path to folder containing osx assemblies.
 
 .PARAMETER GenAPIToolPath
 Path to the GenAPI.exe tool.
@@ -1294,7 +1297,10 @@ function New-UnifiedNugetPackage
         [string] $linuxArm32BinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $unixBinPath,
+        [string] $linuxBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $osxBinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $GenAPIToolPath
@@ -1332,7 +1338,7 @@ function New-UnifiedNugetPackage
         # The nuget package for SMA is 6.0.1.1, but the assembly version is going to be 6.0.1.
         # For future releases where NuGet version and assembly versions are going to be same, this can be removed.
         $forceSMAAssemblyVersion = '6.0.1'
-        New-ReferenceAssembly -Unix64BinPath $unixBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
@@ -1403,7 +1409,7 @@ function New-UnifiedNugetPackage
 
             #region linux-arm32
             if ($linuxExceptionList -notcontains $file ) {
-                $linuxArm32Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'unix-arm/lib/netstandard2.0')
+                $linuxArm32Path = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'linux-arm/lib/netstandard2.0')
 
                 $fullPath = Join-Path $linuxArm32BinPath $file
                 if (-not(Test-Path $fullPath)) {
@@ -1416,18 +1422,34 @@ function New-UnifiedNugetPackage
 
             #endregion
 
-            #region unix
+            #region linux
 
             if ($linuxExceptionList -notcontains $file ) {
-                $unixPath = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'unix-x64/lib/netstandard2.0')
+                $linuxPath = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'linux-x64/lib/netstandard2.0')
 
-                $fullPath = Join-Path $unixBinPath $file
+                $fullPath = Join-Path $linuxBinPath $file
                 if (-not(Test-Path $fullPath)) {
                     throw "File not found: $fullPath"
                 }
 
-                Copy-Item -Path $fullPath -Destination $unixPath
-                log "Copied $file to 'unix'"
+                Copy-Item -Path $fullPath -Destination $linuxPath
+                log "Copied $file to 'linux'"
+            }
+
+            #endregion
+
+            #region osx
+
+            if ($linuxExceptionList -notcontains $file ) {
+                $osxPath = New-Item -ItemType Directory -Path (Join-Path $packageRuntimesFolder.FullName 'osx/lib/netstandard2.0')
+
+                $fullPath = Join-Path $osxBinPath $file
+                if (-not(Test-Path $fullPath)) {
+                    throw "File not found: $fullPath"
+                }
+
+                Copy-Item -Path $fullPath -Destination $osxPath
+                log "Copied $file to 'osx'"
             }
 
             #endregion
@@ -1623,7 +1645,7 @@ function New-ReferenceAssembly
 {
     param(
         [Parameter(Mandatory = $true)]
-        [string] $Unix64BinPath,
+        [string] $Linux64BinPath,
 
         [Parameter(Mandatory = $true)]
         [string] $RefAssemblyDestinationPath,
@@ -1661,14 +1683,14 @@ function New-ReferenceAssembly
 
     log "GenAPI nuget package saved and expanded."
 
-    $unixSMAPath = Join-Path $Unix64BinPath "System.Management.Automation.dll"
+    $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
 
-    if(-not (Test-Path $unixSMAPath))
+    if(-not (Test-Path $linuxSMAPath))
     {
-        throw "System.Management.Automation.dll was not found at: $Unix64BinPath"
+        throw "System.Management.Automation.dll was not found at: $Linux64BinPath"
     }
 
-    $genAPIArgs = "$unixSMAPath","-libPath:$Unix64BinPath"
+    $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
     log "GenAPI cmd: $genAPIExe $genAPIArgsString"
 
     Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
@@ -1729,11 +1751,13 @@ function New-ReferenceAssembly
     {
         Push-Location $smaProjectFolder
 
-        ($packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath) | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
+        $csProj = $packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath
+
+        $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
 
         $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
 
-        dotnet build -c Release
+        Start-NativeExecution { dotnet build -c Release } > $null
 
         $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
 
