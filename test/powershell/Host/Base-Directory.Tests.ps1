@@ -57,7 +57,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         It "JIT cache should be created correctly" -Skip {
             Remove-Item -ErrorAction SilentlyContinue $expectedCache
             & $powershell -noprofile { exit }
-            $expectedCache | Should Exist
+            $expectedCache | Should -Exist
         }
 
         # The ModuleAnalysisCache cannot be forced to exist, thus we cannot test it
@@ -113,7 +113,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "StartupProfileData-NonInteractive")
             Remove-Item -ErrorAction SilentlyContinue $expected
             & $powershell -noprofile { exit }
-            $expected | Should Exist
+            $expected | Should -Exist
         }
     }
 }
