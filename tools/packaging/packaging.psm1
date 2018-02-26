@@ -283,7 +283,7 @@ function Start-PSPackage {
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create NuPkg Package")) {
-                    New-NugetPackage @Arguments
+                    New-NugetContentPackage @Arguments
                 }
             }
             "tar" {
@@ -1229,7 +1229,585 @@ function New-ZipPackage
     }
 }
 
+function CreateNugetPlatformFolder
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Platform,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageRuntimesFolder,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PlatformBinPath
+    )
+
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netstandard2.0")
+    $fullPath = Join-Path $PlatformBinPath $file
+
+    if (-not(Test-Path $fullPath)) {
+        throw "File not found: $fullPath"
+    }
+
+    Copy-Item -Path $fullPath -Destination $destPath
+    log "Copied $file to $Platform"
+}
+
+<#
+.SYNOPSIS
+Creates NuGet packages containing linux, osx and Windows runtime assemblies.
+
+.DESCRIPTION
+Creates a NuGet package for linux, osx, Windows runtimes for 32 bit, 64 bit and ARM.
+The packages for Microsoft.PowerShell.Commands.Diagnostics, Microsoft.PowerShell.Commands.Management,
+Microsoft.PowerShell.Commands.Utility, Microsoft.PowerShell.ConsoleHost, Microsoft.PowerShell.CoreCLR.Eventing,
+Microsoft.PowerShell.SDK, Microsoft.PowerShell.Security, Microsoft.WSMan.Management, Microsoft.WSMan.Runtime,
+System.Management.Automation are created.
+
+.PARAMETER PackagePath
+Path where the package will be created.
+
+.PARAMETER PackageVersion
+Version of the created package.
+
+.PARAMETER Winx86BinPath
+Path to folder containing Windows x86 assemblies.
+
+.PARAMETER Winx64BinPath
+Path to folder containing Windows x64 assemblies.
+
+.PARAMETER WinArm32BinPath
+Path to folder containing Windows arm32 assemblies.
+
+.PARAMETER WinArm64BinPath
+Path to folder containing Windows arm64 assemblies.
+
+.PARAMETER LinuxArm32BinPath
+Path to folder containing linux arm32 assemblies.
+
+.PARAMETER LinuxBinPath
+Path to folder containing linux x64 assemblies.
+
+.PARAMETER OsxBinPath
+Path to folder containing osx assemblies.
+
+.PARAMETER GenAPIToolPath
+Path to the GenAPI.exe tool.
+#>
+function New-UnifiedNugetPackage
+{
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackagePath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Winx86BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Winx64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $WinArm32BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $WinArm64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $LinuxArm32BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $LinuxBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $OsxBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $GenAPIToolPath
+    )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-UnifiedNugetPackage can be only executed on Windows platform."
+    }
+
+    $fileList = @(
+        "Microsoft.PowerShell.Commands.Diagnostics.dll",
+        "Microsoft.PowerShell.Commands.Management.dll",
+        "Microsoft.PowerShell.Commands.Utility.dll",
+        "Microsoft.PowerShell.ConsoleHost.dll",
+        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
+        "Microsoft.PowerShell.Security.dll",
+        "Microsoft.PowerShell.SDK.dll",
+        "Microsoft.WSMan.Management.dll",
+        "Microsoft.WSMan.Runtime.dll",
+        "System.Management.Automation.dll")
+
+    $linuxExceptionList = @(
+        "Microsoft.PowerShell.Commands.Diagnostics.dll",
+        "Microsoft.WSMan.Management.dll",
+        "Microsoft.WSMan.Runtime.dll")
+
+    if ($PSCmdlet.ShouldProcess("Create nuget packages at: $PackagePath"))
+    {
+
+        $refBinPath = New-TempFolder
+        $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
+
+        # This is required only for first release since the nuget package version and System.Management.Automation.dll version do not match.
+        # The nuget package for SMA is 6.0.1.1, but the assembly version is going to be 6.0.1.
+        # For future releases where NuGet version and assembly versions are going to be same, this can be removed.
+        $forceSMAAssemblyVersion = '6.0.1'
+        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
+
+        foreach ($file in $fileList)
+        {
+            $tmpPackageRoot = New-TempFolder
+            # Remove '.dll' at the end
+            $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($file)
+            $filePackageFolder = New-Item (Join-Path $tmpPackageRoot $fileBaseName) -ItemType Directory -Force
+            $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
+
+            #region ref
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
+            Copy-Item $refBinFullName -Destination $refFolder -Force
+            log "Copied file $refBinFullName to $refFolder"
+            #endregion ref
+
+            $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
+
+            CreateNugetPlatformFolder -Platform 'win-x86' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX86BinPath
+            CreateNugetPlatformFolder -Platform 'win-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winX64BinPath
+            CreateNugetPlatformFolder -Platform 'win-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm32BinPath
+            CreateNugetPlatformFolder -Platform 'win-arm64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $winArm64BinPath
+
+            if ($linuxExceptionList -notcontains $file )
+            {
+                CreateNugetPlatformFolder -Platform 'linux-arm' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxArm32BinPath
+                CreateNugetPlatformFolder -Platform 'linux-x64' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $linuxBinPath
+                CreateNugetPlatformFolder -Platform 'osx' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $osxBinPath
+            }
+
+            #region nuspec
+            # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
+            $deps = [System.Collections.ArrayList]::new()
+
+            switch ($fileBaseName) {
+                'Microsoft.PowerShell.Commands.Diagnostics' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
+                'Microsoft.PowerShell.Commands.Management' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.4.1'))) > $null
+                }
+
+                'Microsoft.PowerShell.Commands.Utility' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.CodeAnalysis.CSharp'), [tuple]::Create('version', '2.6.1'))) > $null
+                }
+
+                'Microsoft.PowerShell.ConsoleHost' {
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'Microsoft.ApplicationInsights'), [tuple]::Create('version', '2.4.0'))) > $null
+                }
+
+                'Microsoft.PowerShell.CoreCLR.Eventing' {
+                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Security.Principal.Windows'), [tuple]::Create('version', '4.4.1'))) > $null
+                }
+
+                'Microsoft.PowerShell.SDK' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Data.SqlClient'), [tuple]::Create('version', '4.4.2'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.Packaging'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Net.Http.WinHttpHandler'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Duplex'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Http'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.NetTcp'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Primitives'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceModel.Security'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encodings.Web'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Threading.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Private.ServiceModel'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.NETCore.Windows.ApiSets'), [tuple]::Create('version', '1.0.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
+                'Microsoft.PowerShell.Security' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                }
+
+                'Microsoft.WSMan.Management' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.ServiceProcess.ServiceController'), [tuple]::Create('version', '4.4.1'))) > $null
+                }
+
+                'Microsoft.WSMan.Runtime' {
+                    ## No dependencies
+                }
+
+                'System.Management.Automation' {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Win32.Registry.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Newtonsoft.Json'), [tuple]::Create('version', '10.0.3'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.IO.FileSystem.AccessControl'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.AccessControl'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Cryptography.Pkcs'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Security.Permissions'), [tuple]::Create('version', '4.4.1'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Text.Encoding.CodePages'), [tuple]::Create('version', '4.4.0'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure'), [tuple]::Create('version', '1.0.0-alpha08'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'PowerShell.Core.Instrumentation'), [tuple]::Create('version', '6.0.0-RC2'))) > $null
+                    $deps.Add([tuple]::Create([tuple]::Create('id', 'libpsl'), [tuple]::Create('version', '6.0.0-rc'))) > $null
+                }
+            }
+
+            New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
+            New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
+        }
+
+        if(Test-Path $refBinPath)
+        {
+            Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        if(Test-Path $tmpPackageRoot)
+        {
+            Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
+
+<#
+.SYNOPSIS
+Creates a nuspec file.
+
+.PARAMETER PackageId
+ID of the package.
+
+.PARAMETER PackageVersion
+Version of the package.
+
+.PARAMETER Dependency
+Depedencies of the package.
+
+.PARAMETER FilePath
+Path to create the nuspec file.
+#>
+function New-NuSpec {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $PackageId,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory = $false)]
+        # An array of tuples of tuples to define the dependencies.
+        # First tuple defines 'id' and value eg: ["id", "System.Data.SqlClient"]
+        # Second tuple defines 'version' and vale eg: ["version", "4.4.2"]
+        # Both these tuples combined together define one dependency.
+        # An array represents all the dependencies.
+        [tuple[ [tuple[string, string]], [tuple[string, string]] ] []] $Dependency,
+
+        [Parameter(Mandatory = $true)]
+        [string] $FilePath
+    )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-NuSpec can be only executed on Windows platform."
+    }
+
+    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
+    $nuspecObj = [xml] $nuspecTemplate
+
+    if ( ($Dependency -ne $null) -and $Dependency.Count -gt 0 ) {
+
+        foreach($dep in $Dependency) {
+            # Each item is [tuple[ [tuple[string, string]], [tuple[string, string]] ]
+            $d = $nuspecObj.package.metadata.dependencies.group.AppendChild($nuspecObj.CreateElement("dependency"))
+
+            # 'id' and value
+            $d.SetAttribute($dep.Item1.Item1, $dep.Item1.Item2)
+
+            # 'version' and value
+            $d.SetAttribute($dep.Item2.Item1, $dep.Item2.Item2)
+        }
+    }
+
+    $nuspecObj.Save($filePath)
+}
+
+<#
+.SYNOPSIS
+Create a reference assembly from System.Management.Automation.dll
+
+.DESCRIPTION
+A unix variant of System.Management.Automation.dll is converted to a reference assembly.
+GenAPI.exe generated the CS file containing the APIs.
+This file is cleaned up and then compiled into a dll.
+
+.PARAMETER Unix64BinPath
+Path to the folder containing unix 64 bit assemblies.
+
+.PARAMETER RefAssemblyDestinationPath
+Path to the folder where the reference assembly is created.
+
+.PARAMETER RefAssemblyVersion
+Version of the reference assembly.
+
+.PARAMETER GenAPIToolPath
+Path to GenAPI.exe. Tool from https://www.nuget.org/packages/Microsoft.DotNet.BuildTools.GenAPI/
+
+.PARAMETER SnkFilePath
+Path to the snk file for strong name signing.
+#>
+
+function New-ReferenceAssembly
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Linux64BinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $RefAssemblyDestinationPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $RefAssemblyVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $GenAPIToolPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $SnkFilePath
+    )
+
+    if(-not $Environment.IsWindows)
+    {
+        throw "New-ReferenceAssembly can be only executed on Windows platform."
+    }
+
+    $genAPIFolder = New-TempFolder
+    $smaProjectFolder = New-Item -Path "$genAPIFolder/System.Management.Automation" -ItemType Directory -Force
+    $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
+    $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
+
+    log "Working directory: $genAPIFolder."
+
+    #region GenAPI
+
+    $genAPIExe = Get-ChildItem -Path "$GenAPIToolPath/*GenAPI.exe" -Recurse
+
+    if(-not (Test-Path $genAPIExe))
+    {
+        throw "GenAPI.exe was not found at: $GenAPIToolPath"
+    }
+
+    log "GenAPI nuget package saved and expanded."
+
+    $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
+
+    if(-not (Test-Path $linuxSMAPath))
+    {
+        throw "System.Management.Automation.dll was not found at: $Linux64BinPath"
+    }
+
+    $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
+    log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+
+    Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
+
+    log "Reference assembly file generated at: $smaCs"
+
+    #endregion GenAPI
+
+    #region Cleanup SMA.cs
+
+    $patternsToRemove = @(
+        '[System.Management.Automation.ArgumentToEncodingTransformationAttribute]',
+        'typeof(System.Security.AccessControl.FileSecurity)',
+        '[System.Management.Automation.ArgumentTypeConverterAttribute',
+        '[System.Runtime.CompilerServices.IteratorStateMachineAttribute',
+        '[Microsoft.PowerShell.Commands.ArgumentToModuleTransformationAttribute]',
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToVersionTransformationAttribute]',
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ValidateVersionAttribute]',
+        '[System.Management.Automation.OutputTypeAttribute(typeof(System.Management.Automation.PSRemotingJob))]',
+        'typeof(System.Management.Automation.LanguagePrimitives.EnumMultipleTypeConverter)',
+        '[System.Management.Automation.Internal.CommonParameters.ValidateVariableName]'
+        )
+
+    $reader = [System.IO.File]::OpenText($smaCs)
+    $writer = [System.IO.File]::CreateText($smaCsFiltered)
+
+    while(($line = $reader.ReadLine()) -ne $null)
+    {
+        $match = $line | Select-String -Pattern $patternsToRemove -SimpleMatch
+
+        if($match -ne $null)
+        {
+            $writer.WriteLine("//$line")
+        }
+        else
+        {
+            $writer.WriteLine($line)
+        }
+    }
+    if($reader -ne $null)
+    {
+        $reader.Close()
+    }
+    if($writer -ne $null)
+    {
+        $writer.Close()
+    }
+
+    Move-Item $smaCsFiltered $smaCs -Force
+
+    log "Reference assembly code cleanup complete."
+
+    #endregion Cleanup SMA.cs
+
+    #region Build SMA ref assembly
+
+    try
+    {
+        Push-Location $smaProjectFolder
+
+        $csProj = $packagingStrings.RefAssemblyCsProj -f $RefAssemblyVersion,$SnkFilePath
+
+        $csProj | Out-File -FilePath "$smaProjectFolder/System.Management.Automation.csproj" -Force
+
+        $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
+
+        Start-NativeExecution { dotnet build -c Release } > $null
+
+        $refBinPath = Join-Path $smaProjectFolder 'bin/Release/netstandard2.0/System.Management.Automation.dll'
+
+        if($refBinPath -eq $null)
+        {
+            throw "Reference assembly was not built."
+        }
+
+        Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
+
+        log "Reference assembly built and copied to $RefAssemblyDestinationPath"
+    }
+    finally
+    {
+        Pop-Location
+    }
+
+    if(Test-Path $genAPIFolder)
+    {
+        Remove-Item $genAPIFolder -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    #endregion Build SMA ref assembly
+}
+
+<#
+.SYNOPSIS
+Create a NuGet package from a nuspec.
+
+.DESCRIPTION
+Creates a NuGet using the nuspec using at the specified folder.
+It is expected that the lib / ref / runtime folders are welformed.
+The genereated NuGet package is copied over to the $PackageDestinationPath
+
+.PARAMETER NuSpecPath
+Path to the folder containing the nuspec file.
+
+.PARAMETER PackageDestinationPath
+Path to which NuGet package should be copied. Destination is created if it does not exist.
+#>
+
 function New-NugetPackage
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $NuSpecPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageDestinationPath
+    )
+
+    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
+
+    if($nuget -eq $null)
+    {
+        throw 'nuget application is not available in PATH'
+    }
+
+    Push-Location $NuSpecPath
+
+    Start-NativeExecution { nuget pack . } > $null
+
+    if(-not (Test-Path $PackageDestinationPath))
+    {
+        New-Item $PackageDestinationPath -ItemType Directory -Force > $null
+    }
+
+    Copy-Item *.nupkg $PackageDestinationPath -Force -Verbose
+    Pop-Location
+}
+
+<#
+.SYNOPSIS
+Publish the specified Nuget Package to MyGet feed.
+
+.DESCRIPTION
+The specified nuget package is published to the powershell.myget.org/powershell-core feed.
+
+.PARAMETER PackagePath
+Path to the NuGet Package.
+
+.PARAMETER ApiKey
+API key for powershell.myget.org
+#>
+function Publish-NugetToMyGet
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $PackagePath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $ApiKey
+    )
+
+    $nuget = Get-Command -Type Application nuget -ErrorAction SilentlyContinue
+
+    if($nuget -eq $null)
+    {
+        throw 'nuget application is not available in PATH'
+    }
+
+    Get-ChildItem $PackagePath | ForEach-Object {
+        log "Pushing $_ to PowerShell Myget"
+        Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
+    }
+}
+
+<#
+.SYNOPSIS
+The function creates a nuget package for daily feed.
+
+.DESCRIPTION
+The nuget package created is a content package and has all the binaries laid out in a flat structure.
+This package is used by install-powershell.ps1
+#>
+function New-NugetContentPackage
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
