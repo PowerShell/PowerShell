@@ -124,11 +124,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             }
         }
 
-        It "Verify Validate Output Format As Text Explicitly Child Single Shell should works" {
-            {
-                $a="blahblah"
-                $a | & $powershell -noprofile -out text -com { $input }
-            } | Should -Not Throw
+        It "Verify Validate Output Format As Text Explicitly Child Single Shell doess not throw" {
+            "blahblah" | & $powershell -noprofile -out text -com { $input }
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
