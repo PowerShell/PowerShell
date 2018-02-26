@@ -1097,6 +1097,9 @@ Restore the module to '$Pester' by running:
             $script:nonewline = $true
             $script:inerror = $false
         }
+        elseif ($trimmedline -match "\d+ms") {
+            continue
+        }
         else {
             if ($script:nonewline) {
                 Write-Host "`n" -NoNewline
