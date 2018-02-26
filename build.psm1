@@ -671,8 +671,9 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery
+    Copy-PSGalleryModules -Destination $Destination -ModuleNames Pester
 }
+
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -2255,9 +2256,14 @@ function Copy-PSGalleryModules
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
+        [string]$Destination,
+
+        [Parameter()]
         [ValidateNotNullOrEmpty()]
-        [string]$Destination
-        )
+        [string[]]$ModuleNames
+    )
+
+    $ModulesOnlyForCI = @("Pester")
 
     if (!$Destination.EndsWith("Modules")) {
         throw "Installing to an unexpected location"
@@ -2276,6 +2282,15 @@ function Copy-PSGalleryModules
     foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
         $name = $m.Include
         $version = $m.Version
+
+        if ($null -ne $ModuleNames) {
+            # When '-ModuleNames' is specified, then we only copy those specified modules
+            if ($name -notin $ModuleNames) { continue }
+        } else {
+            # When '-ModuleNames' is NOT specified, copy all modules except the CI-only ones
+            if ($name -in $ModulesOnlyForCI) { continue }
+        }
+
         log "Name='$Name', Version='$version', Destination='$Destination'"
 
         # Remove the build revision from the src (nuget drops it).
@@ -2284,7 +2299,7 @@ function Copy-PSGalleryModules
         } else {
             $version
         }
-        #
+
         # Remove semantic version in the destination directory
         $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
             $matches[1]
@@ -2299,7 +2314,18 @@ function Copy-PSGalleryModules
         Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
         New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
         $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
-        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+
+        switch ($name)
+        {
+            "Pester" {
+                $toolsDir = Join-Path -Path $src -ChildPath "tools"
+                Copy-Item -Path $toolsDir/* -Destination $dest -Recurse -Force
+            }
+
+            default {
+                Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+            }
+        }
     }
 }
 
