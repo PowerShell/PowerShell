@@ -46,7 +46,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         It @ItArgs "PSModulePath should contain the correct path" {
             $env:PSModulePath = ""
             $actual = & $powershell -noprofile -c `$env:PSModulePath
-            $actual | Should Match ([regex]::Escape($expectedModule))
+            $actual | Should-Match ([regex]::Escape($expectedModule))
         }
 
         It @ItArgs "PSReadLine history save location should be correct" {
@@ -98,7 +98,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
             $env:XDG_DATA_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "Modules")
             $actual = & $powershell -noprofile -c `$env:PSModulePath
-            $actual | Should Match $expected
+            $actual | Should-Match $expected
         }
 
         It @ItArgs "PSReadLine history should respect XDG_DATA_HOME" {
