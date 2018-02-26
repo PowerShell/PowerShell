@@ -1394,7 +1394,7 @@ function New-UnifiedNugetPackage
             }
 
             #region nuspec
-
+            # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
             $deps = [System.Collections.ArrayList]::new()
 
             switch ($fileBaseName) {
