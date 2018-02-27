@@ -93,6 +93,7 @@ namespace System.Management.Automation
             commandName += "*";
             List<CompletionResult> commandResults = null;
 
+            var commandHelpDescr = GetCommandDescriptions(commandName);
             if (commandName.IndexOfAny(Utils.Separators.DirectoryOrDrive) == -1)
             {
                 // The name to complete is neither module qualified nor is it a relative/rooted file path.
@@ -120,11 +121,11 @@ namespace System.Management.Automation
                 {
                     // OrderBy is using stable sorting
                     var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
-                    commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote);
+                    commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote, commandHelpDescr);
                 }
                 else
                 {
-                    commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote);
+                    commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote, commandHelpDescr);
                 }
 
                 if (lastAst != null)
@@ -176,11 +177,11 @@ namespace System.Management.Automation
                     if (commandInfos != null && commandInfos.Count > 1)
                     {
                         var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
-                        commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote);
+                        commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote, commandHelpDescr);
                     }
                     else
                     {
-                        commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote);
+                        commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote, commandHelpDescr);
                     }
                 }
             }
@@ -190,7 +191,8 @@ namespace System.Management.Automation
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
             = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.InlineScript.ToString(), TokenKind.Configuration.ToString() };
-        internal static CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
+        internal static CompletionResult GetCommandNameCompletionResult(string name, object command,
+            bool addAmpersandIfNecessary, string quote, string desc = null)
         {
             string syntax = name, listItem = name;
 
@@ -241,10 +243,14 @@ namespace System.Management.Automation
             {
                 name = "& " + name;
             }
-            return new CompletionResult(name, listItem, CompletionResultType.Command, syntax);
+
+            var tooltip = string.IsNullOrEmpty(desc) ? syntax : $"\n{desc}\n{syntax}";
+            return new CompletionResult(name, listItem, CompletionResultType.Command, tooltip);
         }
 
-        internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote)
+        internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs,
+            bool includeModulePrefix, bool addAmpersandIfNecessary, string quote,
+            List<(string name, string description)> commandHelpDescr)
         {
             List<CompletionResult> results = new List<CompletionResult>();
             if (commandInfoPsObjs == null || !commandInfoPsObjs.Any())
@@ -307,6 +313,7 @@ namespace System.Management.Automation
             List<CompletionResult> endResults = null;
             foreach (var keyValuePair in commandTable)
             {
+                var (_, desc) = commandHelpDescr == null ? (null, null) : commandHelpDescr.Find(c => c.name == keyValuePair.Key);
                 var commandList = keyValuePair.Value as List<object>;
                 if (commandList != null)
                 {
@@ -331,7 +338,9 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                    results.Add(GetCommandNameCompletionResult(completionName, commandList[0], addAmpersandIfNecessary, quote));
+
+
+                    results.Add(GetCommandNameCompletionResult(completionName, commandList[0], addAmpersandIfNecessary, quote, desc));
 
                     // For the other commands that are hidden, we need to disambiguate,
                     // but put these at the end as it's less likely any of the hidden
@@ -349,7 +358,7 @@ namespace System.Management.Automation
                         else if (!string.IsNullOrEmpty(commandInfo.ModuleName))
                         {
                             var name = commandInfo.ModuleName + "\\" + commandInfo.Name;
-                            endResults.Add(GetCommandNameCompletionResult(name, commandInfo, addAmpersandIfNecessary, quote));
+                            endResults.Add(GetCommandNameCompletionResult(name, commandInfo, addAmpersandIfNecessary, quote, desc));
                         }
                     }
                 }
@@ -371,7 +380,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
-                    results.Add(GetCommandNameCompletionResult(completionName, keyValuePair.Value, addAmpersandIfNecessary, quote));
+                    results.Add(GetCommandNameCompletionResult(completionName, keyValuePair.Value, addAmpersandIfNecessary, quote, desc));
                 }
             }
 
@@ -530,15 +539,17 @@ namespace System.Management.Automation
                 return CompleteCommandArgument(context);
             }
 
+            var commandName = commandAst.CommandElements[0].ToString();
             switch (pseudoBinding.InfoType)
             {
                 case PseudoBindingInfoType.PseudoBindingFail:
                     // The command is a cmdlet or script cmdlet. Binding failed
-                    result = GetParameterCompletionResults(partialName, uint.MaxValue, pseudoBinding.UnboundParameters, withColon);
+
+                    result = GetParameterCompletionResults(commandName, partialName, uint.MaxValue, pseudoBinding.UnboundParameters, withColon);
                     break;
                 case PseudoBindingInfoType.PseudoBindingSucceed:
                     // The command is a cmdlet or script cmdlet. Binding succeeded.
-                    result = GetParameterCompletionResults(partialName, pseudoBinding, parameterAst, withColon);
+                    result = GetParameterCompletionResults(commandName, partialName, pseudoBinding, parameterAst, withColon);
                     break;
             }
 
@@ -555,12 +566,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the parameter completion results when the pseudo binding was successful
         /// </summary>
+        /// <param name="commandName">the name of the command the parameter belongs to</param>
         /// <param name="parameterName"></param>
         /// <param name="bindingInfo"></param>
         /// <param name="parameterAst"></param>
         /// <param name="withColon"></param>
         /// <returns></returns>
-        private static List<CompletionResult> GetParameterCompletionResults(string parameterName, PseudoBindingInfo bindingInfo, CommandParameterAst parameterAst, bool withColon)
+        private static List<CompletionResult> GetParameterCompletionResults(string commandName, string parameterName, PseudoBindingInfo bindingInfo, CommandParameterAst parameterAst, bool withColon)
         {
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "The pseudo binding should succeed");
             List<CompletionResult> result = new List<CompletionResult>();
@@ -568,6 +580,7 @@ namespace System.Management.Automation
             if (parameterName == string.Empty)
             {
                 result = GetParameterCompletionResults(
+                    commandName,
                     parameterName,
                     bindingInfo.ValidParameterSetsFlags,
                     bindingInfo.UnboundParameters,
@@ -590,6 +603,7 @@ namespace System.Management.Automation
                 if (bindingInfo.AmbiguousParameters.Any(pAst => parameterAst.GetHashCode() == pAst.GetHashCode()))
                 {
                     result = GetParameterCompletionResults(
+                        commandName,
                         parameterName,
                         bindingInfo.ValidParameterSetsFlags,
                         bindingInfo.UnboundParameters,
@@ -604,6 +618,7 @@ namespace System.Management.Automation
                 if (bindingInfo.DuplicateParameters.Any(pAst => parameterAst.GetHashCode() == pAst.Parameter.GetHashCode()))
                 {
                     result = GetParameterCompletionResults(
+                        commandName,
                         parameterName,
                         bindingInfo.ValidParameterSetsFlags,
                         bindingInfo.BoundParameters.Values,
@@ -685,12 +700,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the parameter completion results by using the given valid parameter sets and available parameters
         /// </summary>
+        /// <param name="commandName">the name of the command to complete</param>
         /// <param name="parameterName"></param>
         /// <param name="validParameterSetFlags"></param>
         /// <param name="parameters"></param>
         /// <param name="withColon"></param>
         /// <returns></returns>
         private static List<CompletionResult> GetParameterCompletionResults(
+            string commandName,
             string parameterName,
             uint validParameterSetFlags,
             IEnumerable<MergedCompiledCommandParameter> parameters,
@@ -702,6 +719,8 @@ namespace System.Management.Automation
             var colonSuffix = withColon ? ":" : string.Empty;
 
             bool addCommonParameters = true;
+            var propertyDescriptions = GetParameterDescriptions(commandName);
+            var tooltipBuilder = new StringBuilder(100);
             foreach (MergedCompiledCommandParameter param in parameters)
             {
                 bool inParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
@@ -737,7 +756,14 @@ namespace System.Management.Automation
                     if (showToUser)
                     {
                         string completionText = "-" + name + colonSuffix;
-                        string tooltip = type + name;
+                        var (_, desc)= propertyDescriptions.Find(c => c.name == name);
+
+                        tooltipBuilder.Append(type).Append(' ').AppendLine(name);
+                        if (desc != null)
+                            tooltipBuilder.AppendLine().Append(desc);
+
+                        var tooltip = tooltipBuilder.ToString();
+                        tooltipBuilder.Length = 0;
                         listInUse.Add(new CompletionResult(completionText, name, CompletionResultType.ParameterName,
                                                            tooltip));
                     }
@@ -760,6 +786,102 @@ namespace System.Management.Automation
                 result.AddRange(commonParamResult);
             }
             return result;
+        }
+
+        private static List<(string name, string description)> GetCommandDescriptions(string wordToComplete)
+        {
+            var context = LocalPipeline.GetExecutionContextFromTLS();
+            var helpRequest = new HelpRequest(wordToComplete, HelpCategory.Cmdlet | HelpCategory.Function)
+            {
+                ProviderContext = new ProviderContext(null, context, context.SessionState.Path)
+            };
+            var helpInfos = context.HelpSystem.GetHelp(helpRequest);
+            if (helpInfos == null)
+                return null;
+            var results = new List<(string name, string description)>(50);
+
+            foreach (var helpInfo in helpInfos)
+            {
+                results.Add((helpInfo.Name, PropertyHelpPSObjectToToolTip(helpInfo.ShortHelp?.Properties["description"]?.Value as PSObject[])));
+            }
+
+            return results;
+        }
+
+        private static List<(string name, string description)> GetParameterDescriptions(string commandName)
+        {
+            var context = LocalPipeline.GetExecutionContextFromTLS();
+            var helpRequest = new HelpRequest(commandName, HelpCategory.Cmdlet | HelpCategory.Function)
+            {
+                ProviderContext = new ProviderContext(null, context, context.SessionState.Path)
+            };
+            var helpInfo = context.HelpSystem.GetHelp(helpRequest).FirstOrDefault();
+            PSObject[] propertyHelpInfos = helpInfo?.GetParameter("*");
+            var propertyDescriptions = new List<(string name, string description)>();
+            foreach (var p in propertyHelpInfos)
+            {
+                var props = p.Properties;
+                var name = PSObject.Base(props["name"]?.Value) as string;
+                var descriptions = PSObject.Base(props["description"]?.Value) as PSObject[];
+
+                var desc = PropertyHelpPSObjectToToolTip(descriptions as PSObject[]);
+                if (name != null && desc != null)
+                    propertyDescriptions.Add((name, desc));
+            }
+
+            return propertyDescriptions;
+        }
+
+        static string PropertyHelpPSObjectToToolTip(PSObject[] description)
+        {
+            if (description == null || description.Length == 0) return "";
+            var text = description[0]?.Properties["Text"]?.Value as string;
+            var builder = new StringBuilder(text.Length + text.Length / 50);
+            int remaining = text.Length;
+            var chars = text.ToCharArray();
+            int begin = 0;
+            int NextLinebreak(int i, int above)
+            {
+                above = above + i;
+                i = text.IndexOf(' ', i);
+                var previous = i;
+                while (i != -1 && i < above)
+                {
+                    previous = i;
+                    i = text.IndexOf(' ', i + 1);
+                }
+                if (i == -1)
+                    return previous;
+
+
+                return i;
+            }
+
+            const int minLine = 60;
+            while (remaining > 0)
+            {
+                if (remaining <= minLine)
+                {
+                    builder.Append(chars, begin, remaining);
+                    break;
+                }
+                var j = NextLinebreak(begin, minLine);
+                if (j != -1)
+                {
+                    var lineLength = j - begin;
+                    builder.Append(chars, begin, lineLength);
+                    builder.AppendLine();
+                    remaining -= lineLength + 1;
+                    begin += lineLength + 1;
+                }
+                else
+                {
+                    builder.Append(chars, begin, chars.Length - begin);
+                    break;
+                }
+            }
+
+            return builder.ToString();
         }
 
         /// <summary>
