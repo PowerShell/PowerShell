@@ -688,7 +688,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    $testScript | Should -Not -throw
+                    & $testScript
                 }
             }
         }
@@ -933,7 +933,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    $testScript | Should -Not -Throw
+                    & $testScript
                 }
             }
 
@@ -1032,7 +1032,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    {& $testScript} | Should -Not -Throw
+                    {& $testScript}
                 }
             }
         }
