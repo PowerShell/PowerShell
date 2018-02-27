@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Flag to don't load compiled assembly.
+        /// Flag to compile without loading compiled assembly.
         /// </summary>
         [Parameter(ParameterSetName = "FromSource")]
         [Parameter(ParameterSetName = "FromMember")]
@@ -431,7 +431,6 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Flag to ignore warnings during compilation.
-        /// Not implemented.
         /// </summary>
         [Parameter(ParameterSetName = "FromSource")]
         [Parameter(ParameterSetName = "FromMember")]
