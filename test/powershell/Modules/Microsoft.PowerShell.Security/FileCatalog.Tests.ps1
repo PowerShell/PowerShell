@@ -60,7 +60,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             }
 
             # Validate result properties
-            $result | Should -Be $false
+            $result | Should -BeFalse
         }
 
         It "NewFileCatalogFolder" {
@@ -316,8 +316,8 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result.Status | Should -Be "ValidationFailed"
             $result.CatalogItems.Count | Should -Be 9
             $result.PathItems.Count | Should -Be 10
-            $result.CatalogItems.ContainsKey("DSCResources\NewFile.txt") | Should -Be $false
-            $result.PathItems.ContainsKey("DSCResources\NewFile.txt") | Should -Be $true
+            $result.CatalogItems.ContainsKey("DSCResources\NewFile.txt") | Should -BeFalse
+            $result.PathItems.ContainsKey("DSCResources\NewFile.txt") | Should -BeTrue
 
             # By Skipping the new added file validation will pass
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "NewFile.txt"
@@ -335,8 +335,8 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result.Status | Should -Be "ValidationFailed"
             $result.CatalogItems.Count | Should -Be 9
             $result.PathItems.Count | Should -Be 8
-            $result.CatalogItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should -Be $true
-            $result.PathItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should -Be $false
+            $result.CatalogItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should -BeTrue
+            $result.PathItems.ContainsKey("DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1") | Should -BeFalse
 
             # By Skipping the deleted file validation will pass
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "UserConfigProviderModVersion1.psm1"
@@ -356,7 +356,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $result.PathItems.Count | Should -Be 9
             $catalogHashValue = $result.CatalogItems["DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1"]
             $pathHashValue = $result.PathItems["DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1"]
-            ($catalogHashValue -eq $pathHashValue) | Should -Be $false
+            ($catalogHashValue -eq $pathHashValue) | Should -BeFalse
 
             # By Skipping the file with modifed contents validation will pass
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed -FilesToSkip "UserConfigProviderModVersion1.psm1"
