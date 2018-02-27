@@ -1124,8 +1124,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         ValidateResponse $result
 
         $result.Output.Headers.'X-Fake-Header'.Count | Should -Be 2
-        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue01') | Should -Be $True
-        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue02') | Should -Be $True
+        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue01') | Should -BeTrue
+        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue02') | Should -BeTrue
         $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue01'))
         $result.Output.RawContent | Should -Match ([regex]::Escape('X-Fake-Header: testvalue02'))
     }
