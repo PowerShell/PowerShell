@@ -110,9 +110,9 @@ Describe "TabCompletion" -Tags CI {
         Set-StrictMode -Version latest
         $cmd = 'Get-Process -Id '
         [System.Management.Automation.CommandCompletion]$res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
-        $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should -Be true
-        $res.CompletionMatches[0].ListItemText -match '^\d+ -' | Should -Be true
-        $res.CompletionMatches[0].ToolTip -match '^\d+ -' | Should -Be true
+        $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should -BeTrue
+        $res.CompletionMatches[0].ListItemText -match '^\d+ -' | Should -BeTrue
+        $res.CompletionMatches[0].ToolTip -match '^\d+ -' | Should -BeTrue
     }
 
     It 'Should complete keyword' -skip {

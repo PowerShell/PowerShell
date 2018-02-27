@@ -29,15 +29,15 @@ Describe "PSVersionTable" -Tags "CI" {
     }
 
     It "Should have the right version table entries" {
-       $PSVersionTable.ContainsKey("PSVersion")                 | Should -Be True
-       $PSVersionTable.ContainsKey("PSEdition")                 | Should -Be True
-       $PSVersionTable.ContainsKey("WSManStackVersion")         | Should -Be True
-       $PSVersionTable.ContainsKey("SerializationVersion")      | Should -Be True
-       $PSVersionTable.ContainsKey("PSCompatibleVersions")      | Should -Be True
-       $PSVersionTable.ContainsKey("PSRemotingProtocolVersion") | Should -Be True
-       $PSVersionTable.ContainsKey("GitCommitId")               | Should -Be True
-       $PSVersionTable.ContainsKey("Platform")                  | Should -Be True
-       $PSVersionTable.ContainsKey("OS")                        | Should -Be True
+       $PSVersionTable.ContainsKey("PSVersion")                 | Should -BeTrue
+       $PSVersionTable.ContainsKey("PSEdition")                 | Should -BeTrue
+       $PSVersionTable.ContainsKey("WSManStackVersion")         | Should -BeTrue
+       $PSVersionTable.ContainsKey("SerializationVersion")      | Should -BeTrue
+       $PSVersionTable.ContainsKey("PSCompatibleVersions")      | Should -BeTrue
+       $PSVersionTable.ContainsKey("PSRemotingProtocolVersion") | Should -BeTrue
+       $PSVersionTable.ContainsKey("GitCommitId")               | Should -BeTrue
+       $PSVersionTable.ContainsKey("Platform")                  | Should -BeTrue
+       $PSVersionTable.ContainsKey("OS")                        | Should -BeTrue
 
     }
 
