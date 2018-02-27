@@ -44,11 +44,11 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 
     Context "Get-Item tests" {
-        it "Should be able to get a certificate store, path: <path>" -TestCases $currentUserMyLocations {
+        it "Should be able to get a certificate store, path: <path>" -TestCases $testLocations {
             param([string] $path)
             $expectedResolvedPath = Resolve-Path -LiteralPath $path
             $result = Get-Item -LiteralPath $path
-            $result | Should -Not -BeNullOrEmpty
+            $result | should not be null
             $result | ForEach-Object {
                 $resolvedPath = Resolve-Path $_.PSPath
                 $resolvedPath.Provider | Should -Be $expectedResolvedPath.Provider
@@ -111,7 +111,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
-            $cert | Should -Not -BeNullOrEmpty
+            $cert | should not be null
             $cert.Thumbprint | Should -Be $expectedThumbprint
         }
         it "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
@@ -121,8 +121,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $expectedEncodedName = (Get-GoodCertificateObject).DnsNameList[0].Punycode
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
-            $cert | Should -Not -BeNullOrEmpty
-            $cert.DnsNameList | Should -Not -BeNullOrEmpty
+            $cert | should not be null
+            $cert.DnsNameList | should not be null
             $cert.DnsNameList.Count | Should -Be 1
             $cert.DnsNameList[0].Unicode | Should -Be $expectedName
             $cert.DnsNameList[0].Punycode | Should -Be $expectedEncodedName
@@ -133,8 +133,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $expectedOid = (Get-GoodCertificateObject).EnhancedKeyUsageList[0].ObjectId
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
-            $cert | Should -Not -BeNullOrEmpty
-            $cert.EnhancedKeyUsageList | Should -Not -BeNullOrEmpty
+            $cert | should not be null
+            $cert.EnhancedKeyUsageList | should not be null
             $cert.EnhancedKeyUsageList.Count | Should -Be 1
             $cert.EnhancedKeyUsageList[0].ObjectId.Length | Should -Not -Be 0
             $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
@@ -142,8 +142,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         it "Should filter to codesign certificates" {
             $allCerts = get-item cert:\CurrentUser\My\*
             $codeSignCerts = get-item cert:\CurrentUser\My\* -CodeSigningCert
-            $codeSignCerts | Should -Not -BeNullOrEmpty
-            $allCerts | Should -Not -BeNullOrEmpty
+            $codeSignCerts | should not be null
+            $allCerts | should not be null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
             $nonCodeSignCertCount | Should -Not -Be 0
         }
@@ -151,8 +151,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $allCerts = get-item cert:\CurrentUser\My\*
             $testThumbprint = (Get-GoodCertificateObject).Thumbprint
             $allCertsExceptOne = (Get-Item "cert:\currentuser\my\*" -Exclude $testThumbprint)
-            $allCerts | Should -Not -BeNullOrEmpty
-            $allCertsExceptOne | Should -Not -BeNullOrEmpty
+            $allCerts | should not be null
+            $allCertsExceptOne | should not be null
             $countDifference = $allCerts.Count - $allCertsExceptOne.Count
             $countDifference | Should -Be 1
         }
@@ -161,8 +161,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
         it "Should filter to codesign certificates" {
             $allCerts = get-ChildItem cert:\CurrentUser\My
             $codeSignCerts = get-ChildItem cert:\CurrentUser\My -CodeSigningCert
-            $codeSignCerts | Should -Not -BeNullOrEmpty
-            $allCerts | Should -Not -BeNullOrEmpty
+            $codeSignCerts | should not be null
+            $allCerts | should not be null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
             $nonCodeSignCertCount | Should -Not -Be 0
         }
