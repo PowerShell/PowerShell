@@ -44,7 +44,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 
     Context "Get-Item tests" {
-        it "Should be able to get a certificate store, path: <path>" -TestCases $testLocations {
+        it "Should be able to get a certificate store, path: <path>" -TestCases $testLocations -Pending {
             param([string] $path)
             $expectedResolvedPath = Resolve-Path -LiteralPath $path
             $result = Get-Item -LiteralPath $path
