@@ -126,7 +126,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 2
+        "ArtifactsExpected": 3
     },
     {
         "Name": "win-x86-package",
@@ -144,7 +144,7 @@
         ],
         "DockerImageName": "ps-winsrvcore",
         "BinaryBucket": "signed",
-        "ArtifactsExpected": 2
+        "ArtifactsExpected": 3
     },
     {
         "Name": "win-arm-package",
