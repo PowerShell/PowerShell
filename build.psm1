@@ -1025,6 +1025,20 @@ Restore the module to '$Pester' by running:
             $ExcludeTag += 'RequireAdminOnWindows'
         }
     }
+    elseif (-not $Environment.IsWindows -and (-not $Sudo.IsPresent))
+    {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
+        {
+            $ExcludeTag += 'RequireSudoOnUnix'
+        }
+    }
+    elseif (-not $Environment.IsWindows -and $Sudo.IsPresent)
+    {
+        if (-not $PSBoundParameters.ContainsKey('Tag'))
+        {
+            $Tag = 'RequireSudoOnUnix'
+        }
+    }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
