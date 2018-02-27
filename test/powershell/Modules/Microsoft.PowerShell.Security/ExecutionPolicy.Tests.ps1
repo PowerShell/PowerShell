@@ -24,7 +24,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
         It "Should succeed on Windows" -Skip:($IsLinux -Or $IsMacOS) {
             # We use the Process scope to avoid affecting the system
             # Unrestricted is assumed "safe", otherwise these tests would not be running
-            Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted
+            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | -Should -Not -Throw
         }
     }
 }
@@ -528,10 +528,10 @@ ZoneId=$FileType
 
         Context "Prereq: Validate that 'Microsoft.PowerShell.Archive' is signed" {
             It "'Microsoft.PowerShell.Archive' should have a signature" {
-                $script:archiveAllCert | Should -Not -BeNullOrEmpty
+                $script:archiveAllCert | should not be null
             }
             It "'Microsoft.PowerShell.Archive' should have a valid signature" {
-                $script:archiveCert | Should -Not -BeNullOrEmpty
+                $script:archiveCert | should not be null
             }
         }
 
@@ -688,7 +688,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    & $testScript
+                    $testScript  | Should -Not -Throw
                 }
             }
         }
@@ -773,7 +773,7 @@ ZoneId=$FileType
                     $scriptName=$testScript
 
                     $scriptResult = $null
-                    $exception    = $null
+                    $exception = $null
 
                     try
                     {
@@ -787,19 +787,19 @@ ZoneId=$FileType
                     $errorType = $null
                     if($null -ne $exception)
                     {
-                        $errorType    = $exception.exception.getType()
+                        $errorType = $exception.exception.getType()
                         $scriptResult = $null
                     }
                     $result = @{
-                        "result"    = $scriptResult
+                        "result" = $scriptResult
                         "exception" = $errorType
                     }
 
                     $actualResult = $result."result"
-                    $actualError  = $result."exception"
+                    $actualError = $result."exception"
 
                     $actualResult | Should -Be $expected
-                    $actualError  | Should -Be $error
+                    $actualError | Should -Be $error
                 }
             }
             $message = "Hello"
@@ -933,7 +933,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    & $testScript
+                    $testScript | Should Not throw
                 }
             }
 
@@ -1032,7 +1032,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    {& $testScript}
+                    {& $testScript} | Should -Not -Throw
                 }
             }
         }
