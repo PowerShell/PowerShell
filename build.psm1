@@ -1097,6 +1097,10 @@ Restore the module to '$Pester' by running:
             $script:nonewline = $true
             $script:inerror = $false
         }
+        elseif ($trimmedline -match "^\d+(\.\d+)?m?s$") {
+            # Skip the time elapse like '12ms', '1ms', '1.2s' and '12.53s'
+            return
+        }
         else {
             if ($script:nonewline) {
                 Write-Host "`n" -NoNewline
