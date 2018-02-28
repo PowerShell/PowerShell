@@ -101,7 +101,7 @@ In the AppVeyor CI, we run two different passes:
 In each case, tests are executed with appropriate privileges.
 
 Tests that need to be run with sudo **on unix systems** should be additionally marked with 'RequireSudoOnUnix' Pester tag.
-Similarly as above, the tests in Travis CI are run in two passes:
+Similarly as above, we run the tests in Travis CI in two passes:
 - with sudo and 'RequireSudoOnUnix' tag only
 - with exclusion of tests with 'RequireSudoOnUnix' tags.
 
