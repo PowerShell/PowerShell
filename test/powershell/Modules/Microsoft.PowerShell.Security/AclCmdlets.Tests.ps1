@@ -11,7 +11,7 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
         $acl = get-acl $directory
         $accessRule = [System.Security.AccessControl.FileSystemAccessRule]::New("Everyone","FullControl","ContainerInherit,ObjectInherit","None","Allow")
         $acl.AddAccessRule($accessRule)
-        { $acl | Set-Acl $directory } | Should Not -Throw
+        { $acl | Set-Acl $directory } | Should -Not -Throw
 
         $newacl = get-acl $directory
         $newrule = $newacl.Access | Where-Object { $accessrule.FileSystemRights -eq $_.FileSystemRights -and $accessrule.AccessControlType -eq $_.AccessControlType -and $accessrule.IdentityReference -eq $_.IdentityReference }

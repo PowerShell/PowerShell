@@ -24,7 +24,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
         It "Should succeed on Windows" -Skip:($IsLinux -Or $IsMacOS) {
             # We use the Process scope to avoid affecting the system
             # Unrestricted is assumed "safe", otherwise these tests would not be running
-            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | -Should -Not -Throw
+            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | Should -Not -Throw
         }
     }
 }
