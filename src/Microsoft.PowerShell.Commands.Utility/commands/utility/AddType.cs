@@ -684,6 +684,8 @@ namespace Microsoft.PowerShell.Commands
         private bool InMemory { get { return String.IsNullOrEmpty(outputAssembly); } }
 
         // These dictionaries prevent reloading already loaded and unchanged code.
+        // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
+        // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
         private static Dictionary<string, int> s_sourceTypesCache = new Dictionary<string, int>();
         private static Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
