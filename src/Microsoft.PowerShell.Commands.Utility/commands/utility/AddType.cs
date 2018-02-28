@@ -447,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
         /// Parser options:
         ///     langversion:string - language version from:
         ///                                 [enum]::GetNames([Microsoft.CodeAnalysis.CSharp.LanguageVersion])
-        ///                                 [enum]::GetNames([Microsoft.CodeAnalysis.CSharp.LanguageVersion])
+        ///                                 [enum]::GetNames([Microsoft.CodeAnalysis.VisualBasic.LanguageVersion])
         ///     define:symbol list - preprocessor symbols:
         ///                                 /define:UNIX,DEBUG      - CSharp
         ///                                 /define:UNIX=1,DEBUG=1  - VisualBasic
