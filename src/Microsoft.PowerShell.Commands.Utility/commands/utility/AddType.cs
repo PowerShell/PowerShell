@@ -969,33 +969,34 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (String.Equals(ParameterSetName, FromPathParameterSetName, StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(ParameterSetName, FromLiteralPathParameterSetName, StringComparison.OrdinalIgnoreCase))
-            {
-                foreach (string file in _paths)
-                {
-                    using (var sourceFile = new FileStream(file, FileMode.Open))
-                    {
-                        var sourceText = SourceText.From(sourceFile);
-                        _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions, file));
-                    }
-                }
-            }
-            else if (String.Equals(ParameterSetName, FromMemberParameterSetName, StringComparison.OrdinalIgnoreCase))
-            {
-                _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
+            SourceText sourceText;
 
-                var sourceText = SourceText.From(_sourceCode);
-                _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions));
-            }
-            else if (String.Equals(ParameterSetName, FromSourceParameterSetName, StringComparison.OrdinalIgnoreCase))
+            switch (ParameterSetName)
             {
-                var sourceText = SourceText.From(_sourceCode);
-                _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions));
-            }
-            else
-            {
-                Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                case FromPathParameterSetName:
+                case FromLiteralPathParameterSetName:
+                    foreach (string file in _paths)
+                    {
+                        using (var sourceFile = new FileStream(file, FileMode.Open))
+                        {
+                            sourceText = SourceText.From(sourceFile);
+                            _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions, file));
+                        }
+                    }
+                    break;
+                case FromMemberParameterSetName:
+                    _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
+
+                    sourceText = SourceText.From(_sourceCode);
+                    _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions));
+                    break;
+                case FromSourceParameterSetName:
+                    sourceText = SourceText.From(_sourceCode);
+                    _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions));
+                    break;
+                default:
+                    Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                    break;
             }
 
             if (CompileOnly)
@@ -1050,33 +1051,34 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (String.Equals(ParameterSetName, FromPathParameterSetName, StringComparison.OrdinalIgnoreCase) ||
-                String.Equals(ParameterSetName, FromLiteralPathParameterSetName, StringComparison.OrdinalIgnoreCase))
-            {
-                foreach (string file in _paths)
-                {
-                    using (var sourceFile = new FileStream(file, FileMode.Open))
-                    {
-                        var sourceText = SourceText.From(sourceFile);
-                        _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions, file));
-                    }
-                }
-            }
-            else if (String.Equals(ParameterSetName, FromMemberParameterSetName, StringComparison.OrdinalIgnoreCase))
-            {
-                _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
+            SourceText sourceText;
 
-                var sourceText = SourceText.From(_sourceCode);
-                _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions));
-            }
-            else if (String.Equals(ParameterSetName, FromSourceParameterSetName, StringComparison.OrdinalIgnoreCase))
+            switch (ParameterSetName)
             {
-                var sourceText = SourceText.From(_sourceCode);
-                _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions));
-            }
-            else
-            {
-                Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                case FromPathParameterSetName:
+                case FromLiteralPathParameterSetName:
+                    foreach (string file in _paths)
+                    {
+                        using (var sourceFile = new FileStream(file, FileMode.Open))
+                        {
+                            sourceText = SourceText.From(sourceFile);
+                            _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions, file));
+                        }
+                    }
+                    break;
+                case FromMemberParameterSetName:
+                    _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
+
+                    sourceText = SourceText.From(_sourceCode);
+                    _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions));
+                    break;
+                case FromSourceParameterSetName:
+                    sourceText = SourceText.From(_sourceCode);
+                    _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions));
+                    break;
+                default:
+                    Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                    break;
             }
 
             if (CompileOnly)
