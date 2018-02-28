@@ -4,6 +4,19 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
         (Get-Process -Id $pid -IncludeUserName).UserName | Should Match $env:USERNAME
     }
+
+    It "Should support -Module" {
+        $modules = Get-Process -Id $pid -Module
+        $modules.GetType() | Should -BeExactly "System.Object[]"
+        foreach ($module in $modules) {
+            $module.GetType() | Should -BeExactly "System.Diagnostics.ProcessModule"
+        }
+    }
+
+    It "Should support -FileVersionInfo" {
+        $pwshVersion = Get-Process -Id $pid -FileVersionInfo
+        $pwshVersion.FileVersion | Should -BeExactly $PSVersionTable.PSVersion
+    }
 }
 
 Describe "Get-Process" -Tags "CI" {
@@ -33,8 +46,8 @@ Describe "Get-Process" -Tags "CI" {
         { Get-Process -InputObject $null } | Should -Throw
     }
 
-    It "Returns empty string when process name is unavailable." {
-        (Get-Process -Id $idleProcessPid).Name | Should -BeNullOrEmpty
+    It "Should not fail to get process name even if it is unavailable." {
+        { (Get-Process -Id $idleProcessPid).Name } | Should -Not -Throw
     }
 
     It "Test for process property = Name" {
@@ -43,6 +56,18 @@ Describe "Get-Process" -Tags "CI" {
 
     It "Test for process property = Id" {
         (Get-Process -Id $pid).Id | Should -BeExactly $pid
+    }
+
+    It "Should fail to run Get-Process with -IncludeUserName without admin"  {
+        { Get-Process -IncludeUserName } | Should -Throw
+    }
+
+    It "Should fail to run Get-Process with -Module without admin" {
+        { Get-Process -Module -ErrorAction Stop } | ShouldBeErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
+    }
+
+    It "Should fail to run Get-Process with -FileVersionInfo     without admin" {
+        { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw
     }
 }
 
