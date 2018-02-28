@@ -945,7 +945,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ExtendedOptions != null)
             {
-                var arguments = CSharpDefaultParse(args: ExtendedOptions);
+                var arguments = CSharpDefaultParse(args: ExtendedOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
 
                 HandleCompilerErrors(arguments.Errors);
 
@@ -1026,7 +1026,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ExtendedOptions != null)
             {
-                var arguments = VisualBasicDefaultParse(args: ExtendedOptions);
+                var arguments = VisualBasicDefaultParse(args: ExtendedOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
 
                 HandleCompilerErrors(arguments.Errors);
 
