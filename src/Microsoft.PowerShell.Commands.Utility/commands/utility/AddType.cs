@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Commands
         private static Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
-        private static ReportDiagnostic s_generalDiagnosticOption = ReportDiagnostic.Error;
+        private const ReportDiagnostic defaultDiagnosticOption = ReportDiagnostic.Error;
         private static string[] s_writeInformationTags = new string[] { "PSHOST" };
         private EmitOptions _emitOptions;
         private CSharpCompilationOptions _csharpCompilationOptions;
@@ -954,7 +954,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (WarnAsError)
                 {
-                    _csharpCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(s_generalDiagnosticOption);
+                    _csharpCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
                 }
 
                 _emitOptions = arguments.EmitOptions;
@@ -1035,7 +1035,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (WarnAsError)
                 {
-                    _visualbasicCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(s_generalDiagnosticOption);
+                    _visualbasicCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
                 }
 
                 _emitOptions = arguments.EmitOptions;
