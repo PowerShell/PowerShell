@@ -10,6 +10,7 @@ Describe "Get-Process" -Tags "CI" {
     # These tests are no good, please replace!
     BeforeAll {
         $ps = Get-Process
+        $idleProcessPid = 0
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
         ,$ps | Should BeOfType "System.Object[]"
@@ -17,6 +18,31 @@ Describe "Get-Process" -Tags "CI" {
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {
         $ps | foreach-object { $_.Name | Should Not BeNullOrEmpty }
+    }
+
+    It "Should throw an error for non existing process id." {
+        $randomId = 123456789
+        { Get-Process -Id $randomId -ErrorAction Stop } | ShouldBeErrorId "NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand"
+    }
+
+    It "Should throw an exception when process id is null." {
+        { Get-Process -id $null } | Should -Throw
+    }
+
+    It "Should throw an exception when -InputObject parameter is null." {
+        { Get-Process -InputObject $null } | Should -Throw
+    }
+
+    It "Returns empty string when process name is unavailable." {
+        (Get-Process -Id $idleProcessPid).Name | Should -BeNullOrEmpty
+    }
+
+    It "Test for process property = Name" {
+        (Get-Process -Id $pid).Name | Should -BeExactly "pwsh"
+    }
+
+    It "Test for process property = Id" {
+        (Get-Process -Id $pid).Id | Should -BeExactly $pid
     }
 }
 
