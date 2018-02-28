@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <Import Project="..\..\PowerShell.Common.props" />
+
+  <ItemGroup>
+    <PackageReference Include="PackageManagement" Version="1.1.7.0" />
+    <PackageReference Include="PowerShellGet" Version="1.6.0" />
+    <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.1.0.0" />
+    <PackageReference Include="Pester" Version="4.3.1" />
+  </ItemGroup>
+
+</Project>
