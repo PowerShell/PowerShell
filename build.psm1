@@ -2076,12 +2076,6 @@ function script:Start-NativeExecution
                 $callerLine = $callerLocationParts[1]
 
                 $errorMessage = "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
-
-                if ($null -ne $env:CI)
-                {
-                   Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $callerFile -Line $callerLine
-                }
-
                 throw $errorMessage
             }
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
