@@ -688,7 +688,7 @@ namespace Microsoft.PowerShell.Commands
         private static Dictionary<string, int> s_sourceTypesCache = new Dictionary<string, int>();
         private static Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
-        private static readonly string s_defaultSdkDirectory = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
+        private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
         private static ReportDiagnostic s_generalDiagnosticOption = ReportDiagnostic.Error;
         private static string[] s_writeInformationTags = new string[] { "PSHOST" };
         private EmitOptions _emitOptions;
