@@ -61,7 +61,7 @@ env:
 
 # timeout uploading cache after 6 minutes (360 seconds)
 cache:
-  timeout: 1200
+  timeout: 360
   directories:
     - $HOME/.nuget
     - $HOME/.dotnet

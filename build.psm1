@@ -536,7 +536,6 @@ Fix steps:
             $RestoreArguments += "quiet"
         }
 
-        Start-NativeExecution { dotnet nuget locals all --clear }
         ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
             log "Run dotnet restore $_ $RestoreArguments"
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
