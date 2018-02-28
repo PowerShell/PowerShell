@@ -474,7 +474,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
-        [Alias("EP")]
         public string[] ExtendedOptions { get; set; }
 
         #endregion Parameters
