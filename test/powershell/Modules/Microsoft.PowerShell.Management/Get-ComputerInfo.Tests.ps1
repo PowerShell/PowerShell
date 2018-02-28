@@ -5,6 +5,7 @@
 #
 
 $computerInfoAll = $null
+$testStartTime = Get-Date
 
 function Get-ComputerInfoForTest
 {
@@ -1346,8 +1347,7 @@ try {
         }
 
         It "(special case) Test for property = OsLocalDateTime" {
-            $testStartTime = Get-Date
-            $computerInfo = Get-ComputerInfo
+            $computerInfo = Get-ComputerInfoForTest
             $testEndTime = Get-Date
             ($computerInfo.OsLocalDateTime -gt $testStartTime) | Should -Be $true
             ($computerInfo.OsLocalDateTime -lt $testEndTime) | Should -Be $true
