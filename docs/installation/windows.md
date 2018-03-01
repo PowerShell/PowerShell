@@ -10,7 +10,7 @@ Once downloaded, double-click the installer and follow the prompts.
 There is a shortcut placed in the Start Menu upon installation.
 
 * By default the package is installed to `$env:ProgramFiles\PowerShell\`
-* You can launch PowerShell via the Start Menu or `$env:ProgramFiles\PowerShell\pwsh.exe`
+* You can launch PowerShell via the Start Menu or `pwsh` from a new command prompt.
 
 ### Prerequisites
 
