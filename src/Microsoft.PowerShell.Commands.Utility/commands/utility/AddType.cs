@@ -1359,6 +1359,8 @@ namespace Microsoft.PowerShell.Commands
                 var errorLineNumber = lineSpan.StartLinePosition.Line;
                 var errorPosition = lineSpan.StartLinePosition.Character;
 
+                // This is typical Roslyn diagnostic message which contains
+                // a message number, a source context and an error position.
                 var diagnisticMessage = diagnisticRecord.ToString();
                 var errorLineString = textLines[errorLineNumber].ToString();
 
