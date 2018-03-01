@@ -35,15 +35,15 @@ Describe "Get-Process" -Tags "CI" {
 
     It "Should throw an error for non existing process id." {
         $randomId = 123456789
-        { Get-Process -Id $randomId -ErrorAction Stop } | ShouldBeErrorId "NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand"
+        { Get-Process -Id $randomId -ErrorAction Stop } | Should -Throw -ErrorId "NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should throw an exception when process id is null." {
-        { Get-Process -id $null } | Should -Throw
+        { Get-Process -id $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should throw an exception when -InputObject parameter is null." {
-        { Get-Process -InputObject $null } | Should -Throw
+        { Get-Process -InputObject $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should not fail to get process name even if it is unavailable." {
@@ -59,15 +59,15 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows)  {
-        { Get-Process -IncludeUserName } | Should -Throw
+        { Get-Process -IncludeUserName } | Should -Throw -ErrorId "IncludeUserNameRequiresElevation,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should fail to run Get-Process with -Module without admin" -Skip:(!$IsWindows) {
-        { Get-Process -Module -ErrorAction Stop } | ShouldBeErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
+        { Get-Process -Module -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
-        { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw
+        { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 }
 
