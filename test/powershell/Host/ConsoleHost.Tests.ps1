@@ -179,7 +179,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $LASTEXITCODE | Should -Be 0
         }
 
-        It "-File Should -Be default parameter" {
+        It "-File should be default parameter" {
             Set-Content -Path $testdrive/test -Value "'hello'"
             $observed = & $powershell -NoProfile $testdrive/test
             $observed | Should -Be "hello"
@@ -203,7 +203,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed[1] | Should -Be "bar"
         }
 
-        It "-File Should -Be able to pass bool string values as string to parameters: <BoolString>" -TestCases @(
+        It "-File should be able to pass bool string values as string to parameters: <BoolString>" -TestCases @(
             # validates case is preserved
             @{BoolString = '$truE'},
             @{BoolString = '$falSe'},
@@ -216,7 +216,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -Be $BoolString
         }
 
-        It "-File Should -Be able to pass bool string values as string to positional parameters: <BoolString>" -TestCases @(
+        It "-File should be able to pass bool string values as string to positional parameters: <BoolString>" -TestCases @(
             # validates case is preserved
             @{BoolString = '$tRue'},
             @{BoolString = '$falSe'},
@@ -229,7 +229,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -BeExactly $BoolString
         }
 
-        It "-File Should -Be able to pass bool string values as bool to switches: <BoolString>" -TestCases @(
+        It "-File should be able to pass bool string values as bool to switches: <BoolString>" -TestCases @(
             @{BoolString = '$tRue'; BoolValue = 'True'},
             @{BoolString = '$faLse'; BoolValue = 'False'},
             @{BoolString = 'tRue'; BoolValue = 'True'},
@@ -539,7 +539,7 @@ foo
     }
 
     Context "PATH environment variable" {
-        It "`$PSHOME Should -Be in front so that pwsh.exe starts current running PowerShell" {
+        It "`$PSHOME should be in front so that pwsh.exe starts current running PowerShell" {
             pwsh -v | Should -Match $psversiontable.GitCommitId
         }
 
