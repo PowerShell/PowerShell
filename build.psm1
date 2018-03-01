@@ -526,9 +526,7 @@ Fix steps:
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        log "Run dotnet restore"
-
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
         $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
@@ -538,7 +536,10 @@ Fix steps:
             $RestoreArguments += "quiet"
         }
 
-        ($srcProjectDirs + $testProjectDirs) | ForEach-Object { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
+        ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
+            log "Run dotnet restore $_ $RestoreArguments"
+            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+        }
     }
 
     # handle ResGen
@@ -651,17 +652,11 @@ function Restore-PSModuleToBuild
         $CI
     )
 
-    $ProgressPreference = "SilentlyContinue"
     log "Restore PowerShell modules to $publishPath"
 
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
 
-    # Restore modules from powershellgallery feed
-    Restore-PSModule -Destination $modulesDir -Name @(
-        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-        'PowerShellGet'
-        'Microsoft.PowerShell.Archive'
-    ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
+    Copy-PSGalleryModules -Destination $modulesDir
 
     if($CI.IsPresent)
     {
@@ -676,7 +671,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery
+    Copy-PSGalleryModules -Destination $Destination -ModuleNames Pester
 }
 
 function Compress-TestContent {
@@ -2081,12 +2076,6 @@ function script:Start-NativeExecution
                 $callerLine = $callerLocationParts[1]
 
                 $errorMessage = "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
-
-                if ($null -ne $env:CI)
-                {
-                   Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $callerFile -Line $callerLine
-                }
-
                 throw $errorMessage
             }
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
@@ -2309,101 +2298,80 @@ function Clear-PSRepo
 }
 
 # Install PowerShell modules such as PackageManagement, PowerShellGet
-function Restore-PSModule
+function Copy-PSGalleryModules
 {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string[]]$Name,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
         [string]$Destination,
 
-        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string[]]$ModuleNames
+    )
 
-        [string]$RequiredVersion
-        )
+    $ModulesOnlyForCI = @("Pester")
 
-    $needRegister = $true
-    $RepositoryName = "mygetpsmodule"
-
-    # Check if the PackageManagement works in the base-oS or PowerShellCore
-    $null = Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
-    $null = Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
-
-    # Get the existing registered PowerShellGet repositories
-    $psrepos = PowerShellGet\Get-PSRepository
-
-    foreach ($repo in $psrepos)
-    {
-        if(($repo.SourceLocation -eq $SourceLocation) -or ($repo.SourceLocation.TrimEnd("/") -eq $SourceLocation.TrimEnd("/")))
-        {
-            # found a registered repository that matches the source location
-            $needRegister = $false
-            $RepositoryName = $repo.Name
-            break
-        }
+    if (!$Destination.EndsWith("Modules")) {
+        throw "Installing to an unexpected location"
     }
 
-    if($needRegister)
-    {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
-        {
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
-        }
-
-        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
-        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
-        if($ev)
-        {
-            throw ("Failed to register repository '{0}'" -f $RepositoryName)
-        }
-
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
-        if(-not $regVar)
-        {
-            throw ("'{0}' is not registered" -f $RepositoryName)
-        }
+    $cache = dotnet nuget locals global-packages -l
+    if ($cache -match "info : global-packages: (.*)") {
+        $nugetCache = $matches[1]
+    }
+    else {
+        throw "Can't find nuget global cache"
     }
 
-    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
+    $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
 
-    # do not output progress
-    $ProgressPreference = "SilentlyContinue"
-    $Name | ForEach-Object {
+    foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
+        $name = $m.Include
+        $version = $m.Version
 
-        $command = @{
-                        Name=$_
-                        Path = $Destination
-                        Repository =$RepositoryName
-                    }
-
-        if($RequiredVersion)
-        {
-            $command.Add("RequiredVersion", $RequiredVersion)
+        if ($null -ne $ModuleNames) {
+            # When '-ModuleNames' is specified, then we only copy those specified modules
+            if ($name -notin $ModuleNames) { continue }
+        } else {
+            # When '-ModuleNames' is NOT specified, copy all modules except the CI-only ones
+            if ($name -in $ModulesOnlyForCI) { continue }
         }
 
-        # pull down the module
-        log "running save-module $_"
-        PowerShellGet\Save-Module @command -Force
+        log "Name='$Name', Version='$version', Destination='$Destination'"
 
-        # Remove PSGetModuleInfo.xml file
-        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
-            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
+        # Remove the build revision from the src (nuget drops it).
+        $srcVer = if ($version -match "(\d+.\d+.\d+).\d+") {
+            $matches[1]
+        } else {
+            $version
         }
-    }
 
-    # Clean up
-    if($needRegister)
-    {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
+        # Remove semantic version in the destination directory
+        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
+            $matches[1]
+        } else {
+            $version
+        }
+
+        # Nuget seems to always use lowercase in the cache
+        $src = "$nugetCache/$($name.ToLower())/$srcVer"
+        $dest = "$Destination/$name/$destVer"
+
+        Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
+        New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
+        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
+
+        switch ($name)
         {
-            log "Unregistering PSRepository with name: $RepositoryName"
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+            "Pester" {
+                $toolsDir = Join-Path -Path $src -ChildPath "tools"
+                Copy-Item -Path $toolsDir/* -Destination $dest -Recurse -Force
+            }
+
+            default {
+                Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
+            }
         }
     }
 }
