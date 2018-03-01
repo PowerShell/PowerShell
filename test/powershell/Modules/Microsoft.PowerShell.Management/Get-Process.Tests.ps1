@@ -13,7 +13,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         }
     }
 
-    It "Should support -FileVersionInfo" {
+    It "Should support -FileVersionInfo" -Skip:(!$IsWindows) {
         $pwshVersion = Get-Process -Id $pid -FileVersionInfo
         $pwshVersion.FileVersion | Should -BeExactly $PSVersionTable.PSVersion
     }
@@ -58,15 +58,15 @@ Describe "Get-Process" -Tags "CI" {
         (Get-Process -Id $pid).Id | Should -BeExactly $pid
     }
 
-    It "Should fail to run Get-Process with -IncludeUserName without admin"  {
+    It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows)  {
         { Get-Process -IncludeUserName } | Should -Throw
     }
 
-    It "Should fail to run Get-Process with -Module without admin" {
+    It "Should fail to run Get-Process with -Module without admin" -Skip:(!$IsWindows) {
         { Get-Process -Module -ErrorAction Stop } | ShouldBeErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
-    It "Should fail to run Get-Process with -FileVersionInfo     without admin" {
+    It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw
     }
 }
