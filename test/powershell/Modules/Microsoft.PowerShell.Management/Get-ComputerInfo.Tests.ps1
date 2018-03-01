@@ -1349,8 +1349,8 @@ try {
         It "(special case) Test for property = OsLocalDateTime" {
             $computerInfo = Get-ComputerInfoForTest
             $testEndTime = Get-Date
-            ($computerInfo.OsLocalDateTime -gt $testStartTime) | Should -Be $true
-            ($computerInfo.OsLocalDateTime -lt $testEndTime) | Should -Be $true
+            $computerInfo.OsLocalDateTime | Should -BeGreaterThan $testStartTime
+            $computerInfo.OsLocalDateTime | Should -BeLessThan $testEndTime
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {
