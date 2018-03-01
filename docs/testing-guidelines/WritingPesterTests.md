@@ -103,7 +103,7 @@ In each case, tests are executed with appropriate privileges.
 Tests that need to be run with sudo **on Unix systems** should be additionally marked with 'RequireSudoOnUnix' Pester tag.
 'RequireSudoOnUnix' tag is mutually exclusive to all other tags like 'CI', 'Feature' etc. (which are now ignored when 'RequireSudoOnUnix' is present) and is treated as 'CI'.
 Similarly as above, we run the tests in Travis CI in two passes:
-- With sudo and only tests with 'RequireSudoOnUnix' tag
+- With sudo only tests with 'RequireSudoOnUnix' tag
 - Without sudo all tests excluding those with 'RequireSudoOnUnix' tag.
 
 ### Selected Features
