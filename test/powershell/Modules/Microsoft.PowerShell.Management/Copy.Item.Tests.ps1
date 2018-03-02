@@ -310,7 +310,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             foreach ($file in $testObject.Files)
             {
                 $copiedFilePath = ([string]$file).Replace("SourceDirectory", "DestinationDirectory\SourceDirectory")
-
+		$copiedFilePath | Should -Exist
                 (Get-Item $copiedFilePath).Length | Should -Be (Get-Item $file).Length
             }
         }
