@@ -2,16 +2,16 @@
 # Licensed under the MIT License.
 Describe "Convert-Path tests" -Tag CI {
     It "Convert-Path should handle provider qualified paths" {
-        Convert-Path "FileSystem::${TESTDRIVE}" | should be "${TESTDRIVE}"
+        Convert-Path "FileSystem::${TESTDRIVE}" | Should -Be "${TESTDRIVE}"
     }
     It "Convert-Path should return the proper path" {
-        Convert-Path "$TESTDRIVE" | Should be "$TESTDRIVE"
+        Convert-Path "$TESTDRIVE" | Should -Be "$TESTDRIVE"
     }
     It "Convert-Path supports pipelined input" {
-        "$TESTDRIVE" | Convert-Path | Should be "$TESTDRIVE"
+        "$TESTDRIVE" | Convert-Path | Should -Be "$TESTDRIVE"
     }
     It "Convert-Path supports pipelined input by property name" {
-        get-item $TESTDRIVE | Convert-Path | Should be "$TESTDRIVE"
+        get-item $TESTDRIVE | Convert-Path | Should -Be "$TESTDRIVE"
     }
     It "Convert-Path without arguments is an error" {
         try {
@@ -20,7 +20,7 @@ Describe "Convert-Path tests" -Tag CI {
             throw "Execution should not have reached here"
         }
         catch {
-            $_.fullyqualifiederrorid | should be ParameterBindingException
+            $_.fullyqualifiederrorid | Should -Be ParameterBindingException
         }
     }
     It "Convert-Path with null path is an error" {
@@ -29,7 +29,7 @@ Describe "Convert-Path tests" -Tag CI {
             throw "Execution should not have reached here"
         }
         catch {
-            $_.fullyqualifiederrorid | should be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertPathCommand"
+            $_.fullyqualifiederrorid | Should -Be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertPathCommand"
         }
     }
     It "Convert-Path with non-existing non-filesystem path is an error" {
@@ -38,17 +38,17 @@ Describe "Convert-Path tests" -Tag CI {
             throw "Execution should not have reached here"
         }
         catch {
-            $_.fullyqualifiederrorid | should be "PathNotFound,Microsoft.PowerShell.Commands.ConvertPathCommand"
+            $_.fullyqualifiederrorid | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ConvertPathCommand"
         }
     }
     It "Convert-Path can handle multiple directories" {
         $d1 = Setup -D dir1 -pass
         $d2 = Setup -D dir2 -pass
         $result = convert-path "${TESTDRIVE}/dir?"
-        $result.count | Should be 2
-        $result -join "," | should be (@("$d1","$d2") -join ",")
+        $result.count | Should -Be 2
+        $result -join "," | Should -Be (@("$d1","$d2") -join ",")
     }
     It "Convert-Path should return something which exists" {
-        Convert-Path $TESTDRIVE | Test-Path | should be $true
+        Convert-Path $TESTDRIVE | Test-Path | Should -Be $true
     }
 }

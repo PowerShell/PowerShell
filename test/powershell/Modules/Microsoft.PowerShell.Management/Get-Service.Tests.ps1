@@ -26,7 +26,7 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
         throw 'Expected error on previous command'
       }
       catch {
-        $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
+        $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
       }
     }
   }
@@ -39,7 +39,7 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
         throw 'Expected error on previous command'
       }
       catch {
-        $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
+        $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
       }
     }
   }
@@ -58,7 +58,7 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
 
     $getservicecmd = [Microsoft.PowerShell.Commands.GetServiceCommand]::new()
     $getservicecmd.$parameter = $value
-    $getservicecmd.$parameter | Should Be $value
+    $getservicecmd.$parameter | Should -Be $value
   }
 
   It "Get-Service filtering works for '<script>'" -TestCases @(
@@ -76,9 +76,9 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
       $servicesCheck = & $expected
     }
     if ($servicesCheck -ne $null) {
-      Compare-object $services $servicesCheck | Out-String | Should BeNullOrEmpty
+      Compare-object $services $servicesCheck | Out-String | Should -BeNullOrEmpty
     } else {
-      $services | Should BeNullOrEmpty
+      $services | Should -BeNullOrEmpty
     }
   }
 

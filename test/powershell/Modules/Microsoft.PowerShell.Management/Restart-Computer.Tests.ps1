@@ -26,19 +26,19 @@ try
 
         It "Should restart the local computer" {
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-            Restart-Computer -ErrorAction Stop| Should BeNullOrEmpty
+            Restart-Computer -ErrorAction Stop| Should -BeNullOrEmpty
         }
 
         It "Should support -computer parameter" {
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
-            Restart-Computer -Computer $computerNames -ErrorAction Stop| Should BeNullOrEmpty
+            Restart-Computer -Computer $computerNames -ErrorAction Stop| Should -BeNullOrEmpty
         }
 
         It "Should support WsmanAuthentication types" {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
-                Restart-Computer -WsmanAuthentication $auth | Should BeNullOrEmpty
+                Restart-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty
             }
         }
 
@@ -55,14 +55,14 @@ try
                     $pPref = $ProgressPreference
                     $ProgressPreference="SilentlyContinue"
                     $duration = Measure-Command {
-                        Restart-Computer -computer localhost -Wait -Timeout $timeout -ErrorAction stop | Should BeNullOrEmpty
+                        Restart-Computer -computer localhost -Wait -Timeout $timeout -ErrorAction stop | Should -BeNullOrEmpty
                     }
                 }
                 finally
                 {
                     $ProgressPreference=$pPref
                 }
-                $duration.TotalSeconds | Should BeGreaterThan $timeout
+                $duration.TotalSeconds | Should -BeGreaterThan $timeout
             }
             finally
             {
@@ -74,7 +74,7 @@ try
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value 0x300000
                 Restart-Computer -ErrorVariable RestartError 2>$null
-                $RestartError.Exception.Message | Should match 0x300000
+                $RestartError.Exception.Message | Should -Match 0x300000
             }
 
             It "Should produce an error when 'Delay' is specified" {

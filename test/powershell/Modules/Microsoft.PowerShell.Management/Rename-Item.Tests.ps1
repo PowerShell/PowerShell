@@ -9,8 +9,8 @@ Describe "Rename-Item tests" -Tag "CI" {
     }
     It "Rename-Item will rename a file" {
         Rename-Item $source $target
-        test-path $source | Should be $false
-        test-path $target | Should be $true
-        "$target" | Should FileContentMatchExactly "This is content"
+        test-path $source | Should -Be $false
+        test-path $target | Should -Be $true
+        "$target" | Should -FileContentMatchExactly "This is content"
     }
 }

@@ -12,7 +12,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         $testfile = "${TESTDRIVE}\bfile.txt"
         "test" | Set-Content $testfile
         $result = Get-Content -AsByteStream -Encoding Unicode -Path $testfile -WarningVariable contentWarning *>$null
-        $contentWarning.Message | Should Match "-AsByteStream"
+        $contentWarning.Message | Should -Match "-AsByteStream"
     }
 
     Context "Set-Content should create a file if it does not exist" {
@@ -22,7 +22,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should create a file if it does not exist" {
             Set-Content -Path $filePath1 -Value "$file1"
             $result = Get-Content -Path $filePath1
-            $result| Should be "$file1"
+            $result| Should -Be "$file1"
         }
     }
     Context "Set-Content/Get-Content should set/get the content of an exisiting file" {
@@ -32,27 +32,27 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should set-Content of testdrive\$file1" {
             Set-Content -Path $filePath1 -Value "ExpectedContent"
             $result = Get-Content -Path $filePath1
-            $result| Should be "ExpectedContent"
+            $result| Should -Be "ExpectedContent"
         }
         It "should return expected string from testdrive\$file1" {
             $result = Get-Content -Path $filePath1
-            $result | Should BeExactly "ExpectedContent"
+            $result | Should -BeExactly "ExpectedContent"
         }
         It "should Set-Content to testdrive\dynamicfile.txt with dynamic parameters" {
             Set-Content -Path $testdrive\dynamicfile.txt -Value "ExpectedContent"
             $result = Get-Content -Path $testdrive\dynamicfile.txt
-            $result| Should BeExactly "ExpectedContent"
+            $result| Should -BeExactly "ExpectedContent"
         }
         It "should return expected string from testdrive\dynamicfile.txt" {
             $result = Get-Content -Path $testdrive\dynamicfile.txt
-            $result | Should BeExactly "ExpectedContent"
+            $result | Should -BeExactly "ExpectedContent"
         }
         It "should remove existing content from testdrive\$file1 when the -Value is `$null" {
             $AsItWas=Get-Content $filePath1
-            $AsItWas |Should BeExactly "ExpectedContent"
+            $AsItWas |Should -BeExactly "ExpectedContent"
             Set-Content -Path $filePath1 -Value $null -EA stop
             $AsItIs=Get-Content $filePath1
-            $AsItIs| Should Not Be $AsItWas
+            $AsItIs| Should -Not -Be $AsItWas
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$null" {
             try {
@@ -60,7 +60,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
                 Throw "Previous statement unexpectedly succeeded..."
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
             }
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
@@ -69,7 +69,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
                 Throw "Previous statement unexpectedly succeeded..."
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
             }
         }
         It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -skip:$skipRegistry {
@@ -78,16 +78,16 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
                 Throw "Previous statement unexpectedly succeeded..."
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
+                $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
             }
         }
         #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
         It "should be able to pass multiple [string]`$objects to Set-Content through the pipeline to output a dynamic Path file" {
             "hello","world"|Set-Content $testdrive\dynamicfile2.txt
             $result=Get-Content $testdrive\dynamicfile2.txt
-            $result.length |Should be 2
-            $result[0]     |Should be "hello"
-            $result[1]     |Should be "world"
+            $result.length |Should -Be 2
+            $result[0]     |Should -Be "hello"
+            $result[1]     |Should -Be "world"
         }
     }
 }
@@ -109,7 +109,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
             New-PSDrive -Name Foo -Root \\localhost\testshare -PSProvider FileSystem
             Set-Content -Path Foo:\$file1 -Value "$file1"
             $result = Get-Content -Path Foo:\$file1
-            $result| Should be "$file1"
+            $result| Should -Be "$file1"
         }
         finally
         {

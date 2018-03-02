@@ -55,41 +55,41 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
 
   Context "Clear-Content should actually clear content" {
     It "should clear-Content of testdrive:\$file1" {
-      set-content -path testdrive:\$file1 -value "ExpectedContent" -passthru | Should be "ExpectedContent"
+      set-content -path testdrive:\$file1 -value "ExpectedContent" -passthru | Should -Be "ExpectedContent"
       clear-content -Path testdrive:\$file1
     }
 
     It "shouldn't get any content from testdrive:\$file1" {
       $result = get-content -path testdrive:\$file1
-      $result | Should BeExactly $null
+      $result | Should -BeExactly $null
     }
 
     # we could suppress the WhatIf output here if we use the testhost, but it's not necessary
     It "The filesystem provider supports should process" -skip:(!$IsWindows) {
       clear-content TESTDRIVE:\$file2 -WhatIf
-      "TESTDRIVE:\$file2" | should FileContentMatch "This is content"
+      "TESTDRIVE:\$file2" | Should -FileContentMatch "This is content"
     }
 
     It "The filesystem provider should support ShouldProcess (reference ProviderSupportsShouldProcess member)" {
       $cci = ((get-command clear-content).ImplementingType)::new()
-      $cci.SupportsShouldProcess | should be $true
+      $cci.SupportsShouldProcess | Should -Be $true
     }
 
     It "Alternate streams should be cleared with clear-content" -skip:(!$IsWindows) {
       # make sure that the content is correct
       # this is here rather than BeforeAll because only windows can write to an alternate stream
       set-content -path "TESTDRIVE:/$file3" -stream $streamName -value $streamContent
-      get-content -path "TESTDRIVE:/$file3" | Should be $content2
-      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | should be $streamContent
+      get-content -path "TESTDRIVE:/$file3" | Should -Be $content2
+      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -Be $streamContent
       clear-content -PATH "TESTDRIVE:/$file3" -stream $streamName
-      get-content -Path "TESTDRIVE:/$file3" | should be $content2
-      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | should BeNullOrEmpty
+      get-content -Path "TESTDRIVE:/$file3" | Should -Be $content2
+      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -BeNullOrEmpty
     }
 
     It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {
       try {
         push-location TESTDRIVE:
-        (get-command clear-content -stream foo).parameters.keys -eq "stream" | should be "stream"
+        (get-command clear-content -stream foo).parameters.keys -eq "stream" | Should -Be "stream"
       }
       finally {
         pop-location
@@ -103,7 +103,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         throw "ExpectedExceptionNotDelivered"
       }
       catch {
-        $_.FullyQualifiedErrorId | should be "NamedParameterNotFound,Microsoft.PowerShell.Commands.GetCommandCommand"
+        $_.FullyQualifiedErrorId | Should -Be "NamedParameterNotFound,Microsoft.PowerShell.Commands.GetCommandCommand"
       }
       finally {
         pop-location
@@ -118,7 +118,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         throw "expected exception was not delivered"
       }
       catch {
-        $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
+        $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
@@ -128,7 +128,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         throw "expected exception was not delivered"
       }
       catch {
-        $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
+        $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
@@ -140,7 +140,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         throw "Expected exception was not thrown"
       }
       catch {
-        $_.FullyQualifiedErrorId | should be "NotSupported,Microsoft.PowerShell.Commands.ClearContentCommand"
+        $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
     It "should throw FileNotFound error when referencing a non-existant file" {
@@ -150,7 +150,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
         throw "ExpectedExceptionNotDelivered"
       }
       catch {
-        $_.FullyQualifiedErrorId | should be "PathNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
+        $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
     It "should throw DriveNotFound error when referencing a non-existant drive" {
@@ -160,7 +160,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
          thow "ExpectedExceptionNotDelivered"
        }
        catch {
-         $_.FullyQualifiedErrorId | Should be "DriveNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
+         $_.FullyQualifiedErrorId | Should -Be "DriveNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
        }
     }
     # we'll use a provider qualified path to produce this error
@@ -171,7 +171,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
          thow "ExpectedExceptionNotDelivered"
        }
        catch {
-         $_.FullyQualifiedErrorId | Should be "ProviderNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
+         $_.FullyQualifiedErrorId | Should -Be "ProviderNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
        }
     }
   }

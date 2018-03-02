@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
-        (Get-Process -Id $pid -IncludeUserName).UserName | Should Match $env:USERNAME
+        (Get-Process -Id $pid -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 }
 
@@ -12,11 +12,11 @@ Describe "Get-Process" -Tags "CI" {
         $ps = Get-Process
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
-        ,$ps | Should BeOfType "System.Object[]"
+        ,$ps | Should -BeOfType "System.Object[]"
     }
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {
-        $ps | foreach-object { $_.Name | Should Not BeNullOrEmpty }
+        $ps | foreach-object { $_.Name | Should -Not -BeNullOrEmpty }
     }
 }
 
@@ -28,9 +28,9 @@ Describe "Get-Process Formatting" -Tags "Feature" {
             $formatData = Get-FormatData -TypeName $type -PowerShellVersion $PSVersionTable.PSVersion
             $tableControls = $formatData.FormatViewDefinition | Where-Object {$_.Control -is "System.Management.Automation.TableControl"}
             foreach ($tableControl in $tableControls) {
-                $tableControl.Control.Headers.Label -match "Handle*" | Should BeNullOrEmpty
+                $tableControl.Control.Headers.Label -match "Handle*" | Should -BeNullOrEmpty
                 # verify that rows without headers isn't the handlecount (as PowerShell will create a header that matches the property name)
-                $tableControl.Control.Rows.Columns.DisplayEntry.Value -eq "HandleCount" | Should BeNullOrEmpty
+                $tableControl.Control.Rows.Columns.DisplayEntry.Value -eq "HandleCount" | Should -BeNullOrEmpty
             }
         }
     }
@@ -39,12 +39,12 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 Describe "Process Parent property" -Tags "CI" {
     It "Has Parent process property" {
         $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent' | Should Not be $null
+        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent' | Should -Not -Be $null
     }
 
     It "Has valid parent process ID property" {
         $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent.Id' | Should Be $pid
+        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent.Id' | Should -Be $pid
     }
 }
 
