@@ -1,7 +1,7 @@
-﻿# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
-#
+# Licensed under the MIT License.
+
+# This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell Core.
 
 try {
     #skip all tests on non-windows platform
@@ -204,7 +204,6 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
                 "CatalogTestFile2.xml" = "00B7DA28CD285F796660D36B77B2EC6054F21A44D5B329EB6BC4EC7687D70B13";
                 "TestImage.gif" = "2D938D255D0D6D547747BD21447CF7295318D34D9B4105D04C1C27487D2FF402" }
 
-
             $catalogPath = "$env:TEMP\NewFileCatalogVersion2WithMultipleFoldersAndFiles.cat"
             $catalogDataPath = @("$testDataPath\UserConfigProv\","$testDataPath\CatalogTestFile1.mof","$testDataPath\CatalogTestFile2.xml", "$testDataPath\TestImage.gif")
 
@@ -233,11 +232,14 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             try
             {
                 copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue
-                $null = New-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath -CatalogVersion 1.0
-                $result = Test-FileCatalog -Path $env:temp\UserConfigProv\ -CatalogFilePath $catalogPath
+                Push-Location "$env:TEMP\UserConfigProv"
+                # When -Path is not specified, it should use current directory
+                $null = New-FileCatalog -CatalogFilePath $catalogPath -CatalogVersion 1.0
+                $result = Test-FileCatalog -CatalogFilePath $catalogPath
             }
             finally
             {
+                Pop-Location
                 Remove-Item "$catalogPath" -Force -ErrorAction SilentlyContinue
                 Remove-Item "$env:temp\UserConfigProv\" -Force -ErrorAction SilentlyContinue -Recurse
             }

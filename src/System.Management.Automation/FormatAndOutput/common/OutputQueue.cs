@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Diagnostics;
@@ -36,7 +35,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _notificationCallBack = callBack;
             _groupingDuration = groupingDuration;
         }
-
 
         /// <summary>
         /// add an object to the cache
@@ -325,7 +323,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return retVal;
         }
-
 
         /// <summary>
         /// front end queue (if present, cache ALL, if not, bypass)

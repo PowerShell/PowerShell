@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "InitialSessionState capacity" -Tags CI {
     BeforeAll {
         $iss = [initialsessionstate]::CreateDefault()

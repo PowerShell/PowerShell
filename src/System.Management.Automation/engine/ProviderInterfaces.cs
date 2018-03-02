@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -52,7 +51,6 @@ namespace System.Management.Automation
         #endregion Constructors
 
         #region Public methods
-
 
         /// <summary>
         /// Gets the specified provider(s).

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 #Get Distro type and set distro-specific variables
 $OSname = Get-Content "/etc/os-release" |Select-String -Pattern "^Name="

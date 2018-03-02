@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Basic Job Tests' -Tags 'CI' {
     BeforeAll {
         # Make sure we do not have any jobs running
@@ -232,7 +234,6 @@ Describe 'Basic Job Tests' -Tags 'CI' {
             ValidateJobInfo -job $jobs[1] -state 'Completed' -hasMoreData $true
         }
     }
-
 
     Context 'Remove-Job tests' {
         # The test pattern used here is different from other tests since there is a scoping issue in Pester.

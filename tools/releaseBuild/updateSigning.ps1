@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 param(
     [string] $SigningXmlPath = (Join-Path -Path $PSScriptRoot  -ChildPath 'signing.xml')
 )
@@ -27,7 +29,7 @@ $signingXml.SignConfigXML.job | ForEach-Object -Process {
         {
             $newSignType = $signTypes[$signType]
             Write-Host "Updating $($_.src) to $newSignType"
-            $_.signType = $signTypes[$signType]
+            $_.signType = $newSignType
         }
     }
 }

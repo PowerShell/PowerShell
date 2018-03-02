@@ -98,6 +98,8 @@ Additional references:
 
 #### Before submitting
 
+* If your change would fix a security vulnerability,
+  first follow the [vulnerability issue reporting policy][vuln-reporting], before submitting a PR.
 * To avoid merge conflicts, make sure your branch is rebased on the `master` branch of this repository.
 * Many code changes will require new tests,
   so make sure you've added a new test if existing tests do not effectively test the code changed.
@@ -109,7 +111,7 @@ Additional references:
 
 **Always create a pull request to the `master` branch of this repository**.
 
-![Github-PR-dev.png](Images/Github-PR-dev.png)
+![GitHub-PR.png](Images/GitHub-PR.png)
 
 * It's recommended to avoid a PR with too many changes.
   A large PR not only stretches the review time, but also makes it much harder to spot issues.
@@ -129,19 +131,6 @@ Additional references:
   If the changes are related to an existing GitHub issue,
   please reference the issue in PR description (e.g. ```Fix #11```).
   See [this][closing-via-message] for more details.
-* If the change warrants a note in the [changelog](../CHANGELOG.MD)
-  either update the changelog in your pull request or
-  add a comment in the PR description saying that the change may warrant a note in the changelog.
-  New changes always go into the **Unreleased** section.
-  Keeping the changelog up-to-date simplifies the release process for Maintainers.
-  An example (with an associated PR #):
-
-  ```markdown
-  Unreleased
-  ----------
-
-  * `Update-Item` now supports `-FriendlyName` (#1234).
-  ```
 
 * Please use the present tense and imperative mood when describing your changes:
     * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
@@ -160,6 +149,29 @@ Additional references:
   While not required, we appreciate any contributors who add this label and create the issue themselves.
   Even better, all contributors are free to contribute the documentation themselves.
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
+* If your change adds a new source file, ensure the appropriate copyright and license headers is on top.
+  It is standard practice to have both a copyright and license notice for each source file.
+  * For `.h`, `.cpp`, and `.cs` files use:
+
+        // Copyright (c) Microsoft Corporation. All rights reserved.
+        // Licensed under the MIT License.
+
+  * For `.ps1` and `.psm1` files use:
+
+        # Copyright (c) Microsoft Corporation. All rights reserved.
+        # Licensed under the MIT License.
+
+* If your change adds a new module manifest (.psd1 file), ensure that:
+
+  ```powershell
+  Author = "PowerShell"
+  Company = "Microsoft Corporation"
+  Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
+  ```
+
+### Pull Request - Work in Progress
+
+* If your pull request is not ready to merge, please add the prefix `WIP:` to the beginning of the title and remove the prefix when the PR is ready.
 
 #### Pull Request - Automatic Checks
 
@@ -308,6 +320,7 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [testing-guidelines]: ../docs/testing-guidelines/testing-guidelines.md
 [running-tests-outside-of-ci]: ../docs/testing-guidelines/testing-guidelines.md#running-tests-outside-of-ci
 [issue-management]: ../docs/maintainers/issue-management.md
+[vuln-reporting]: ../docs/maintainers/issue-management.md#Security-Vulnerabilities
 [governance]: ../docs/community/governance.md
 [using-prs]: https://help.github.com/articles/using-pull-requests/
 [fork-a-repo]: https://help.github.com/articles/fork-a-repo/

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Measure-Command" -Tags "CI" {
 
     Context "Validate return types for Measure-Command" {

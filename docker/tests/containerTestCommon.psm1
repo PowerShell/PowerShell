@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 $script:forcePull = $true
 # Get docker Engine OS
 function Get-DockerEngineOs
@@ -87,7 +90,6 @@ function Get-WindowsContainer
     }
 }
 
-
 $script:repoName = 'microsoft/powershell'
 function Get-RepoName
 {
@@ -110,7 +112,27 @@ function Test-SkipWindows
 
 function Test-SkipLinux
 {
-    return !((Get-DockerEngineOs) -like 'Alpine Linux*')
+    $os = Get-DockerEngineOs
+
+    switch -wildcard ($os)
+    {
+        '*Linux*' {
+            return $false
+        }
+        '*Mac' {
+            return $false
+        }
+        # Docker for Windows means we are running the linux kernel
+        'Docker for Windows' {
+            return $false
+        }
+        'Windows*' {
+            return $true
+        }
+        default {
+            throw "Unknow docker os '$os'"
+        }
+    }
 }
 
 function Get-TestContext
@@ -202,9 +224,11 @@ function Test-PSPackage
         [Parameter(Mandatory=$true)]
         $PSPackageLocation, # e.g. Azure storage
         [string]
-        $PSVersion = "6.0.0-rc",
+        $PSVersion = "6.0.1",
         [string]
-        $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module"
+        $TestList = "/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module",
+        [string]
+        $GitLocation = "https://github.com/PowerShell/PowerShell.git"
     )
 
     $PSPackageLocation = $PSPackageLocation.TrimEnd('/','\')
@@ -230,7 +254,8 @@ function Test-PSPackage
     $testlistStubValue = $TestList
     $packageLocationStubName = 'PACKAGELOCATIONSTUB'
     $packageLocationStubValue = $PSPackageLocation
-
+    $GitLocationStubName = 'GITLOCATION'
+    $GitLocationStubValue = $GitLocation
 
     $results = @{}
     $returnValue = $true
@@ -243,6 +268,8 @@ function Test-PSPackage
         $buildArgs += "--build-arg","$versionStubName=$versionStubValue"
         $buildArgs += "--build-arg","$testlistStubName=$testlistStubValue"
         $buildArgs += "--build-arg","$packageLocationStubName=$packageLocationStubValue"
+        $buildArgs += "--build-arg","$GitLocationStubName=$GitLocationStubValue"
+        $buildArgs += "--no-cache"
         $buildArgs += $dir.FullName
 
         $dockerResult = Invoke-Docker -Command 'build' -Params $buildArgs -FailureAction warning

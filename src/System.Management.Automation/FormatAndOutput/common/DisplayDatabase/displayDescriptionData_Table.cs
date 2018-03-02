@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // this file contains the data structures for the in memory database
 // containing display and formatting information
@@ -67,7 +66,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return result;
         }
     }
-
 
     /// <summary>
     /// information about the table header

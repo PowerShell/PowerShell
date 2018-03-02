@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections;
@@ -295,7 +294,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
         private TranscriptionData _transcriptionData = null;
-
 
         private JobRepository _jobRepository;
         /// <summary>
@@ -1190,7 +1188,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-
         #endregion SessionStateProxy
 
         #region IDisposable Members
@@ -1569,7 +1566,6 @@ namespace System.Management.Automation.Runspaces
         {
         }
 
-
         /// <summary>
         /// Populates a <see cref="SerializationInfo"/> with the
         /// data needed to serialize the RunspaceOpenModuleLoadException object.
@@ -1591,7 +1587,4 @@ namespace System.Management.Automation.Runspaces
 
     #endregion Helper Class
 }
-
-
-
 

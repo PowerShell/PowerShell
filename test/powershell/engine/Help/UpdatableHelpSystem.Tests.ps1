@@ -1,4 +1,6 @@
-﻿
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # Test Settings:
 # This is the list of PowerShell Core modules for which we test update-help
 $powershellCoreModules = @(
@@ -274,7 +276,7 @@ function ValidateSaveHelp
     $expectedHelpInfoFile | Should Be $helpInfoFile
 }
 
-Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -286,7 +288,7 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module." -Ta
     RunUpdateHelpTests -tag "CI" -Pending
 }
 
-Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -298,7 +300,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules." -T
     RunUpdateHelpTests -tag "Feature"
 }
 
-Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -310,7 +312,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tag
     RunUpdateHelpTests -tag "CI" -useSourcePath
 }
 
-Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"

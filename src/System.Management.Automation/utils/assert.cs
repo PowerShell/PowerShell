@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 // The define below is only valid for this file. It allows the methods
 // defined here to call Diagnostics.Assert when only ASSERTIONS_TRACE is defined

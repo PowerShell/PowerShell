@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
@@ -193,7 +192,6 @@ namespace System.Management.Automation
         /// </summary>
         public const string Watch = "Watch";
     }//VerbsCommon
-
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates data.
@@ -496,7 +494,6 @@ namespace System.Management.Automation
         /// </summary>
         public const string Trace = "Trace";
     }//VerbsDiagnostic
-
 
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to communicate with something.

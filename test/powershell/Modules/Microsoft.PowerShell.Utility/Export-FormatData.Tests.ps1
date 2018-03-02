@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Export-FormatData DRT Unit Tests" -Tags "CI" {
     It "Test basic functionality" {
         $fd = Get-FormatData

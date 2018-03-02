@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Security.AccessControl;
@@ -25,7 +24,6 @@ namespace System.Management.Automation
                 false,
                 "This constructor should never be called. Only the constructor that takes an instance of SessionState should be called.");
         } // CmdletProviderIntrinsics private
-
 
         /// <summary>
         /// Initializes a new instance of the SecurityDescriptorCmdletProviderIntrinsics
@@ -216,7 +214,6 @@ namespace System.Management.Automation
             // Parameter validation is done in the session state object
             return _sessionState.NewSecurityDescriptorFromPath(path, includeSections);
         } // NewSecurityDescriptor
-
 
         /// <summary>
         /// Creates a new SecurityDescriptor from the specified provider and of the given type,

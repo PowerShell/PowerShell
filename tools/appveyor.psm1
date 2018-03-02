@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $ErrorActionPreference = 'Stop'
 $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
@@ -82,7 +84,6 @@ function Add-UserToGroup
 
   $groupAD.Add($userAD.AdsPath);
 }
-
 
 # tests if we should run a daily build
 # returns true if the build is scheduled
@@ -178,10 +179,10 @@ function Invoke-AppVeyorBuild
 
     if(Test-DailyBuild)
     {
-        Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -ReleaseTag $releaseTag
+        Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
 }
 
 # Implements the AppVeyor 'install' step
@@ -325,6 +326,8 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
+    $SequentialXUnitTestResultsFile = "$pwd\SequentialXUnitTestResults.xml"
+    $ParallelXUnitTestResultsFile = "$pwd\ParallelXUnitTestResults.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -358,6 +361,11 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
+    Start-PSxUnit -SequentialTestResultsFile $SequentialXUnitTestResultsFile -ParallelTestResultsFile $ParallelXUnitTestResultsFile
+    Write-Host -ForegroundColor Green 'Uploading PSxUnit test results'
+    Update-AppVeyorTestResults -resultsFile $SequentialXUnitTestResultsFile
+    Update-AppVeyorTestResults -resultsFile $ParallelXUnitTestResultsFile
+
     #
     # Fail the build, if tests failed
     @(
@@ -365,6 +373,13 @@ function Invoke-AppVeyorTest
         $testResultsAdminFile
     ) | ForEach-Object {
         Test-PSPesterResults -TestResultsFile $_
+    }
+
+    @(
+        $SequentialXUnitTestResultsFile,
+        $ParallelXUnitTestResultsFile
+    ) | ForEach-Object {
+        Test-XUnitTestResults -TestResultsFile $_
     }
 
     Set-BuildVariable -Name TestPassed -Value True
@@ -413,15 +428,6 @@ function Compress-CoverageArtifacts
     return $artifacts
 }
 
-function Get-PackageName
-{
-    $name = git describe
-    # Remove 'v' from version, prepend 'PowerShell' - to be consistent with other package names
-    $name = $name -replace 'v',''
-    $name = 'PowerShell_' + $name
-    return $name
-}
-
 function Get-ReleaseTag
 {
     $metaDataPath = Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json'
@@ -440,32 +446,17 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
+    $exitCode = 0
     try {
         $releaseTag = Get-ReleaseTag
 
-        $packageParams = @{}
-        if($env:APPVEYOR_BUILD_VERSION)
-        {
-            $packageParams += @{ReleaseTag=$releaseTag}
-        }
-
         # Build packages
-        $packages = Start-PSPackage @packageParams -SkipReleaseChecks
-
-        $name = Get-PackageName
-
-        $zipFilePath = Join-Path $pwd "$name.zip"
-
-        Add-Type -assemblyname System.IO.Compression.FileSystem
-        Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
             $null = $artifacts.Add($package)
         }
-
-        $null = $artifacts.Add($zipFilePath)
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
@@ -485,17 +476,40 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
-        # only publish to nuget feed if it is a daily build and tests passed
+        # Smoke Test MSI installer
+        Write-Verbose "Smoke-Testing MSI installer" -Verbose
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
+        $msiLog = Join-Path (Get-Location) 'msilog.txt'
+        $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
+        if ($msiExecProcess.ExitCode -ne 0)
+        {
+            Push-AppveyorArtifact msiLog.txt
+            $exitCode = $msiExecProcess.ExitCode
+            throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
+        }
+        Write-Verbose "MSI smoke test was successful" -Verbose
+
+        # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
             Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
+            $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
+            if($nugetArtifacts)
+            {
+                $artifacts.AddRange($nugetArtifacts)
+            }
         }
 
-        $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-
-        if($nugetArtifacts)
+        if (Test-DailyBuild)
         {
-            $artifacts.AddRange($nugetArtifacts)
+            # produce win-arm and win-arm64 packages if it is a daily build
+            Start-PSBuild -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
+            $artifacts.Add($arm32Package)
+
+            Start-PSBuild -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
+            $artifacts.Add($arm64Package)
         }
 
         $pushedAllArtifacts = $true
@@ -527,5 +541,14 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+    }
+    finally {
+        # A throw statement would not make the build fail. This function is AppVeyor specific
+        # and is the only command executed in 'on_finish' phase, so it's safe that we request
+        # the current runspace to exit with the specified exit code. If the exit code is non-zero,
+        # AppVeyor will fail the build.
+        # See this link for details:
+        # https://help.appveyor.com/discussions/problems/4498-powershell-exception-in-test_script-does-not-fail-build
+        $host.SetShouldExit($exitCode)
     }
 }

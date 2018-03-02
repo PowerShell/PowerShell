@@ -16,7 +16,8 @@ addons:
   artifacts:
     paths:
       - $(ls powershell*{deb,pkg,AppImage,gz} | tr "\n" ":")
-      - pester-tests.xml
+      - TestResultsSudo.xml
+      - TestResultsNoSudo.xml
 
 install:
   # Default 2.0.0 Ruby is buggy
@@ -24,6 +25,10 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       rvm install ruby-2.3.3;
       rvm --default use 2.3.3;
+    fi
+  # Ensure that libcurl+openssl is used on macOS for greater feature support.
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      export DYLD_LIBRARY_PATH=/usr/local/opt/curl/lib:/usr/local/opt/openssl/lib:${DYLD_LIBRARY_PATH};
     fi
   - pushd tools
   - ./install-powershell.sh
@@ -39,8 +44,9 @@ install:
 script:
   - pwsh -File tools/travis.ps1
   # spellcheck
+  # Ignore 'Pester' folder because it's third party
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell '**/*.md' '!powershell/**/*.md' --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
 
 after_failure:
@@ -48,3 +54,15 @@ after_failure:
 
 after_success:
   - pwsh -File tools/travis.ps1 -Stage Success
+
+# travis-ci will quit using the cache if an enviroment variable changes
+env:
+  - CACHE_VERSION=netcoreapp.2.0.5-sdk.2.1.4
+
+# timeout uploading cache after 6 minutes (360 seconds)
+cache:
+  timeout: 360
+  directories:
+    - $HOME/.nuget
+    - $HOME/.dotnet
+    - $HOME/Library/Caches/Homebrew

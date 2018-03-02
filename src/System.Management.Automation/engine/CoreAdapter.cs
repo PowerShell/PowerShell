@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -586,7 +585,6 @@ namespace System.Management.Automation
         }
         #endregion method
 
-
         #region parameterized property
         internal string BaseParameterizedPropertyType(PSParameterizedProperty property)
         {
@@ -691,9 +689,6 @@ namespace System.Management.Automation
                     property.Name, e.Message);
             }
         }
-
-
-
 
         internal string BaseParameterizedPropertyToString(PSParameterizedProperty property)
         {
@@ -877,7 +872,6 @@ namespace System.Management.Automation
                 {
                     return 1;
                 }
-
 
                 // Apply tie breaking rules, related to specificity of parameters
                 betterCount = CompareTypeSpecificity(candidate1, candidate2);
@@ -2348,6 +2342,10 @@ namespace System.Management.Automation
         internal class MethodCacheEntry
         {
             internal MethodInformation[] methodInformationStructures;
+            /// <summary>
+            /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationStructures.
+            /// </summary>
+            internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> psmethodCtor;
 
             internal MethodCacheEntry(MethodBase[] methods)
             {
@@ -2647,7 +2645,6 @@ namespace System.Management.Automation
                         Expression.Assign(Expression.Property(instance, property),
                             Expression.Convert(value, property.PropertyType)), parameter, value).Compile();
             }
-
 
             internal MemberInfo member;
 
@@ -3387,7 +3384,7 @@ namespace System.Management.Automation
                     break;
                 }
             }
-            return new PSMethod(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
+            return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
         }
 
         internal void AddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
@@ -3463,7 +3460,7 @@ namespace System.Management.Automation
                             break;
                         }
                     }
-                    members.Add(new PSMethod(name, this, obj, method, isSpecial, isHidden) as T);
+                    members.Add(PSMethod.Create(name, this, obj, method, isSpecial, isHidden) as T);
                 }
             }
         }
@@ -4351,7 +4348,6 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
@@ -4363,7 +4359,6 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
@@ -4374,7 +4369,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(false, "redirection adapter is not called for properties");
             throw PSTraceSource.NewNotSupportedException();
         }
-
 
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
@@ -4575,7 +4569,6 @@ namespace System.Management.Automation
         /// <param name="members">collection where the properties will be added</param>
         protected abstract void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo;
 
-
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
         /// the corresponding PSMemberInfo
@@ -4614,7 +4607,6 @@ namespace System.Management.Automation
             }
             return null;
         }
-
 
         /// <summary>
         /// Retrieves all the members available in the object.
@@ -4960,7 +4952,6 @@ namespace System.Management.Automation
         }
         #endregion virtual
 
-
         /// <summary>
         /// Auxiliary in GetProperty to perform case sensitive and case insensitive searches
         /// in the child nodes
@@ -5085,7 +5076,6 @@ namespace System.Management.Automation
         {
             return true;
         }
-
 
         /// <summary>
         /// Returns the value from a property coming from a previous call to DoGetProperty

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Xml;
@@ -152,7 +151,6 @@ namespace System.Management.Automation
                 return _fullHelpObject;
             }
         }
-
 
         /// <summary>
         /// Returns true if help content in help info matches the

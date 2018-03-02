@@ -2,7 +2,7 @@
 
 FROM centos:7
 
-ARG POWERSHELL_VERSION=6.0.0-rc
+ARG POWERSHELL_VERSION=6.0.1
 ARG IMAGE_NAME=microsoft/powershell:centos7
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
@@ -38,7 +38,8 @@ RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.r
 
 # Install latest powershell from Microsoft YUM Repo
 RUN yum install -y \
-        powershell
+        powershell \
+    && yum clean all
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c

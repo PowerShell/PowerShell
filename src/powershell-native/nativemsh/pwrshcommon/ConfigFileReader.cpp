@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #include <iostream>
 #include <fstream>
 #include <windef.h>
@@ -44,9 +47,12 @@ namespace NativeMsh
                 }
                 else if (*iter == L'p' || *iter == L'P')
                 {
-                    this->pathToPowerShellAssemblies = this->getValueFromLine(line, psHomeDirTag);
-                    if (this->pathToPowerShellAssemblies.size() > 0) // Found a match
+                    std::wstring psHomeDir = this->getValueFromLine(line, psHomeDirTag);
+                    HANDLE dirHandle = CreateFileW(psHomeDir.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+                    if (INVALID_HANDLE_VALUE != dirHandle)
                     {
+                        CloseHandle(dirHandle);
+                        this->pathToPowerShellAssemblies = psHomeDir;
                         std::wstring::const_iterator slashIter = this->pathToPowerShellAssemblies.end();
                         slashIter--;
                         if (*slashIter != L'\\')
@@ -59,9 +65,12 @@ namespace NativeMsh
                 }
                 else if (*iter == L'c' || *iter == L'C')
                 {
-                    this->coreClrDirectory = this->getValueFromLine(line, coreClrDirTag);
-                    if (this->coreClrDirectory.size() > 0) // Found a match
+                    std::wstring coreClrDir = this->getValueFromLine(line, coreClrDirTag);
+                    HANDLE dirHandle = CreateFileW(coreClrDir.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+                    if (INVALID_HANDLE_VALUE != dirHandle)
                     {
+                        CloseHandle(dirHandle);
+                        this->coreClrDirectory = coreClrDir;
                         std::wstring::const_iterator slashIter = this->coreClrDirectory.end();
                         slashIter--;
                         if (*slashIter != L'\\')

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Additional static method tests" -Tags "CI" {
 
     Context "Basic static member methods" {

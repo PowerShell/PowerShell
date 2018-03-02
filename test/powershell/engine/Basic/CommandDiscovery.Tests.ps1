@@ -1,4 +1,6 @@
-﻿Describe "Command Discovery tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {
         setup -f testscript.ps1 -content "'This script should not run. Running from testscript.ps1'"
@@ -90,7 +92,7 @@
 
         foreach($command in $commands)
         {
-            $command.GetType().Name | should be @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
+            $command.GetType().Name | Should BeIn @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
         }
     }
 

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
@@ -209,7 +208,6 @@ namespace System.Management.Automation.Provider
             return ConvertPath(path, filter, ref updatedPath, ref updatedFilter);
         }
 
-
         /// <summary>
         /// Gives the provider to attach additional parameters to
         /// the get-childitem -name cmdlet.
@@ -308,7 +306,6 @@ namespace System.Management.Automation.Provider
             Context = context;
             return RenameItemDynamicParameters(path, newName);
         } // RenameItemDynamicParameters
-
 
         /// <summary>
         /// Internal wrapper for the New protected method. It is called instead
@@ -455,7 +452,6 @@ namespace System.Management.Automation.Provider
             return RemoveItemDynamicParameters(path, recurse);
         } // RemoveItemDynamicParameters
 
-
         /// <summary>
         /// Internal wrapper for the HasChildItems protected method. It is called instead
         /// of the protected method that is overridden by derived classes so that the
@@ -529,7 +525,6 @@ namespace System.Management.Automation.Provider
 
             CopyItem(path, copyPath, recurse);
         } // CopyItem
-
 
         /// <summary>
         /// Gives the provider to attach additional parameters to
@@ -711,7 +706,6 @@ namespace System.Management.Automation.Provider
             }
         } // GetChildItemsDynamicParameters
 
-
         /// <summary>
         /// Gets names of the children of the specified path.
         /// </summary>
@@ -839,7 +833,6 @@ namespace System.Management.Automation.Provider
                 return null;
             }
         } // GetChildNamesDynamicParameters
-
 
         /// <summary>
         /// Renames the item at the specified path to the new name provided.
@@ -1125,7 +1118,6 @@ namespace System.Management.Automation.Provider
                         SessionStateStrings.CmdletProvider_NotSupported);
             }
         }
-
 
         /// <summary>
         /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.

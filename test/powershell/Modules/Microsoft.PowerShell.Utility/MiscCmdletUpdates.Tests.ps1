@@ -1,4 +1,6 @@
-﻿Describe "GetDateFormatUpdates" -Tags "Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "GetDateFormatUpdates" -Tags "Feature" {
 
     It "Verifies that FileDate format works" {
         $date = Get-Date

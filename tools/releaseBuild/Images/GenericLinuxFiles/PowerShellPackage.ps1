@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # PowerShell Script to build and package PowerShell from specified form and branch
 # Script is intented to use in Docker containers
 # Ensure PowerShell is available in the provided image
@@ -12,8 +15,9 @@ param (
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
-    [ValidateSet("AppImage", "tar")]
-    [string[]]$ExtraPackage
+    [switch]$AppImage,
+    [switch]$TarX64,
+    [switch]$TarArm
 )
 
 $releaseTagParam = @{}
@@ -32,10 +36,14 @@ try {
     Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
 
     Start-PSPackage @releaseTagParam
-    switch ($ExtraPackage)
-    {
-        "AppImage" { Start-PSPackage -Type AppImage @releaseTagParam }
-        "tar"      { Start-PSPackage -Type tar @releaseTagParam }
+    if ($AppImage) { Start-PSPackage -Type AppImage @releaseTagParam }
+    if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam }
+
+    if ($TarArm) {
+        ## Build 'linux-arm' and create 'tar.gz' package for it.
+        ## Note that 'linux-arm' can only be built on Ubuntu environment.
+        Start-PSBuild -Runtime linux-arm -PSModuleRestore @releaseTagParam
+        Start-PSPackage -Type tar-arm @releaseTagParam
     }
 }
 finally

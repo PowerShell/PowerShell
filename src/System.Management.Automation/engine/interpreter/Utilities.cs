@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -674,7 +673,6 @@ namespace System.Management.Automation.Interpreter
         private StorageInfo[] _stores;                                         // array of storage indexed by managed thread ID
         private static readonly StorageInfo[] s_updating = Automation.Utils.EmptyArray<StorageInfo>();   // a marker used when updating the array
         private readonly bool _refCounted;
-
 
         public ThreadLocal()
         {

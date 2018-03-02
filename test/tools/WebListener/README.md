@@ -2,9 +2,9 @@
 
 ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
 
-# Run with `dotnet`
+## Run with `dotnet`
 
-```
+```bash
 dotnet restore
 dotnet publish --output bin --configuration Release
 cd bin
@@ -13,7 +13,7 @@ dotnet WebListener.dll ServerCert.pfx password 8083 8084 8085 8086
 
 The test site can then be accessed via `http://localhost:8083/`, `https://localhost:8084/`, `https://localhost:8085/`, or `https://localhost:8086/`.
 
-The `WebListener.dll` takes 6 arguments: 
+The `WebListener.dll` takes 6 arguments:
 
 * The path to the Server Certificate
 * The Server Certificate Password
@@ -22,7 +22,7 @@ The `WebListener.dll` takes 6 arguments:
 * The TCP Port to bind on for HTTPS using TLS 1.1
 * The TCP Port to bind on for HTTPS using TLS 1.0
 
-# Run With WebListener Module
+## Run With WebListener Module
 
 ```powershell
 Import-Module .\build.psm1
@@ -30,13 +30,13 @@ Publish-PSTestTools
 $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084 -Tls11Port 8085 -TlsPort = 8086
 ```
 
-# Tests
+## Tests
 
-## / or /Home/
+### / or /Home/
 
 Returns a static HTML page containing links and descriptions of the available tests in WebListener. This can be used as a default or general test where no specific test functionality or return data is required.
 
-## /Auth/Basic/
+### /Auth/Basic/
 
 Provides a mock Basic authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
 
@@ -51,7 +51,7 @@ Invoke-RestMethod -Uri $uri -Credential $credential -SkipCertificateCheck
     "headers":{
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
         "Connection": "Keep-Alive",
-        "Authorization": "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk", 
+        "Authorization": "Basic dGVzdHVzZXI6dGVzdHBhc3N3b3Jk",
         "Host": "localhost:8084"
     },
     "origin": "127.0.0.1",
@@ -60,7 +60,7 @@ Invoke-RestMethod -Uri $uri -Credential $credential -SkipCertificateCheck
 }
 ```
 
-## /Auth/Negotiate/
+### /Auth/Negotiate/
 
 Provides a mock Negotiate authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
 
@@ -74,7 +74,7 @@ Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
     "headers":{
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
         "Connection": "Keep-Alive",
-        "Authorization": "Negotiate jjaguasgtisi7tiqkagasjjajvs", 
+        "Authorization": "Negotiate jjaguasgtisi7tiqkagasjjajvs",
         "Host": "localhost:8084"
     },
     "origin": "127.0.0.1",
@@ -83,7 +83,7 @@ Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
 }
 ```
 
-## /Auth/NTLM/
+### /Auth/NTLM/
 
 Provides a mock NTLM authentication challenge. If a basic authorization header is sent, then the same results as /Get/ are returned.
 
@@ -97,7 +97,7 @@ Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
     "headers":{
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
         "Connection": "Keep-Alive",
-        "Authorization": "NTLM jjaguasgtisi7tiqkagasjjajvs", 
+        "Authorization": "NTLM jjaguasgtisi7tiqkagasjjajvs",
         "Host": "localhost:8084"
     },
     "origin": "127.0.0.1",
@@ -106,17 +106,18 @@ Invoke-RestMethod -Uri $uri -UseDefaultCredential -SkipCertificateCheck
 }
 ```
 
-## /Cert/
+### /Cert/
 
 Returns a JSON object containing the details of the Client Certificate if one is provided in the request.
 
 ```powershell
 $certificate = Get-WebListenerClientCertificate
-$uri = Get-WebListenerUrl -Test 'Cert' -Https 
+$uri = Get-WebListenerUrl -Test 'Cert' -Https
 Invoke-RestMethod -Uri $uri -Certificate $certificate
 ```
 
 Response when certificate is provided in request:
+
 ```json
 {
   "Status": "OK",
@@ -131,13 +132,15 @@ Response when certificate is provided in request:
 ```
 
 Response when certificate is not provided in request:
+
 ```json
 {
   "Status": "FAILED"
 }
 ```
 
-## /Compression/Deflate/
+### /Compression/Deflate/
+
 Returns the same results as the Get test with deflate compression.
 
 ```powershell
@@ -157,7 +160,8 @@ Invoke-RestMethod -Uri $uri
 }
 ```
 
-## /Compression/Gzip/
+### /Compression/Gzip/
+
 Returns the same results as the Get test with gzip compression.
 
 ```powershell
@@ -177,7 +181,7 @@ Invoke-RestMethod -Uri $uri
 }
 ```
 
-## /Delay/
+### /Delay/
 
 Returns the same results as the Get test. If a number is supplied, the server will wait that many seconds before returning a response. This can be used to test timeouts.
 
@@ -191,7 +195,6 @@ After 5 Seconds:
 ```json
 {
   "args": {
-    
   },
   "origin": "127.0.0.1",
   "headers": {
@@ -202,7 +205,33 @@ After 5 Seconds:
 }
 ```
 
-## /Encoding/Utf8/
+### /Delete/
+
+Returns the same results as the Get test. Will only accept the `DELETE` request method.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Delete'
+$Body = @{id = 12345} | ConvertTo-Json -Compress
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Delete'
+```
+
+```json
+{
+  "method": "DELETE",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+    "Connection": "Keep-Alive",
+    "Host": "localhost:8083",
+    "Content-Length": "12"
+  },
+  "origin": "127.0.0.1",
+  "url": "http://localhost:8083/Delete",
+  "args": {},
+  "data": "{\"id\":12345}"
+}
+```
+
+### /Encoding/Utf8/
 
 Returns page containing UTF-8 data.
 
@@ -211,8 +240,7 @@ $uri = Get-WebListenerUrl -Test 'Encoding' -TestValue 'Utf8'
 Invoke-RestMethod -Uri $uri
 ```
 
-
-## /Get/
+### /Get/
 
 Returns a JSON object containing the Request URL, Request Headers, GET Query Fields and Values, and Origin IP. This emulates the functionality of [HttpBin's get test](https://httpbin.org/get).
 
@@ -223,25 +251,89 @@ Invoke-RestMethod -Uri $uri -Body @{TestField = 'TestValue'}
 
 ```json
 {
-  "url": "http://localhost:8083/Get/?TestField=TestValue",
+  "origin": "127.0.0.1",
+  "url": "http://localhost:8083/Get?TestField=TestValue",
+  "method": "GET",
   "args": {
     "TestField": "TestValue"
   },
   "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
     "Connection": "Keep-Alive",
-    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) WindowsPowerShell/6.0.0",
     "Host": "localhost:8083"
-  },
-  "origin": "127.0.0.1"
+  }
 }
 ```
 
-## /Multipart/
+### /Link/
 
-### GET 
+Returns Link response headers to test paginated results. The endpoint accepts 3 query items:
+
+* `linknumber` - The current link number. This determines the current page. If not supplied or less than 1, this will be set to 1.
+* `maxlinks` - The maximum number of links. This determines the last page. If not supplied or less than 1, this will be set to 3.
+* `type` - The type of link to return. When not supplied or not in the list below, `default` will be used.
+  * `default` - Does not return any special test links and returns `next` link if one is available.
+  * `norel` - Returns a Link header that does not include the `rel=` portion. Suppresses `next` link.
+  * `nourl` - Returns a Link header that does not include the URI portion. Suppresses `next` link.
+  * `malformed` - Returns a malformed Link header. Suppresses `next` link.
+  * `multiple` - Returns multiple Link headers instead of a single Link header and returns `next` link if one is available.
+
+The body will contain the same results as `/Get/` with the addition of the `type`, `linknumber`, and `maxlinks` for the current page.
+
+```powershell
+$Query = @{
+    linknumber = 1
+    maxlinks = 3
+    type = 'default'
+}
+$Uri =  Get-WebListenerUrl -Test 'Link' -Query $Query
+Invoke-RestMethod -Uri $uri -FollowRelLink -MaximumFollowRelLink 1
+```
+
+Headers:
+
+```none
+HTTP/1.1 200 OK
+Date: Sat, 06 Jan 2018 14:27:36 GMT
+Content-Type: application/json; charset=utf-8
+Server: Kestrel
+Transfer-Encoding: chunked
+Link: <http://localhost:8083/Link/?maxlinks=3&linknumber=3>; rel="last",<http://localhost:8083/Link/?maxlinks=3&linknumber=1>; rel="first",<http://localhost:8083/Link/?maxlinks=3&linknumber=1>; rel="self",<http://localhost:8083/Link/?maxlinks=3&linknumber=2>; rel="next"
+```
+
+Body:
+
+```json
+{
+    "type": "default",
+    "url": "http://localhost:8083/Link/?maxlinks=3&linknumber=1&type=default",
+    "maxlinks": 3,
+    "linknumber": 1,
+    "headers": {
+        "User-Agent": "insomnia/5.12.4",
+        "Accept": "*/*",
+        "Content-Length": "0",
+        "Host": "localhost:8083",
+        "Content-Type": "application/json"
+    },
+    "args": {
+        "linknumber": "1",
+        "maxlinks": "3",
+        "type": "default"
+    },
+    "origin": "127.0.0.1",
+    "method": "GET"
+}
+```
+
+### /Multipart/
+
+#### GET
+
 Provides an HTML form for `multipart/form-data` submission.
 
-### POST
+#### POST
+
 Accepts a `multipart/form-data` submission and returns a JSON object containing information about the submission including the items and files submitted.
 
 ```powershell
@@ -285,9 +377,118 @@ Invoke-RestMethod -Uri $uri -Body $multipartData -Method 'POST'
 }
 ```
 
-## /Redirect/
+### /Patch/
 
-Will 302 redirect to `/Get/`. If a number is supplied, redirect will occur that many times. Can be used to test maximum redirects.
+Returns the same results as the Get test. Will only accept the `PATCH` request method.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Patch'
+$Body = @{id = 12345} | ConvertTo-Json -Compress
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Patch'
+```
+
+```json
+{
+  "method": "PATCH",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+    "Connection": "Keep-Alive",
+    "Host": "localhost:8083",
+    "Content-Length": "12"
+  },
+  "origin": "127.0.0.1",
+  "url": "http://localhost:8083/Patch",
+  "args": {},
+  "data": "{\"id\":12345}"
+}
+```
+
+### /Post/
+
+Returns the same results as the Get test. Will only accept the `POST` request method. If the POST request is sent with a forms based content type the body will be interpreted as a form instead of raw data.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Post'
+$Body = @{id = 12345}
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Post'
+```
+
+```json
+{
+  "method": "POST",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+    "Connection": "Keep-Alive",
+    "Host": "localhost:8083",
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Content-Length": "8"
+  },
+  "form": {
+    "id": [
+      "12345"
+    ]
+  },
+  "origin": "127.0.0.1",
+  "url": "http://localhost:8083/Post",
+  "args": {}
+}
+```
+
+Otherwise, the body will be interpreted as raw data.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Post'
+$Body = @{id = 12345} | ConvertTo-Json -Compress
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Post' -ContentType 'application/json'
+```
+
+```json
+{
+  "method": "POST",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+    "Connection": "Keep-Alive",
+    "Host": "localhost:8083",
+    "Content-Type": "application/json",
+    "Content-Length": "12"
+  },
+  "origin": "127.0.0.1",
+  "url": "http://localhost:8083/Post",
+  "args": {},
+  "data": "{\"id\":12345}"
+}
+```
+
+### /Put/
+
+Returns the same results as the Get test. Will only accept the `PUT` request method.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Put'
+$Body = @{id = 12345} | ConvertTo-Json -Compress
+Invoke-RestMethod -Uri $uri -Body $body -Method 'Put'
+```
+
+```json
+{
+  "method": "PUT",
+  "headers": {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.15063; en-US) PowerShell/6.0.0",
+    "Connection": "Keep-Alive",
+    "Host": "localhost:8083",
+    "Content-Length": "12"
+  },
+  "origin": "127.0.0.1",
+  "url": "http://localhost:8083/Put",
+  "args": {},
+  "data": "{\"id\":12345}"
+}
+```
+
+### /Redirect/
+
+Will `302` redirect to `/Get/`. If a number is supplied, redirect will occur that many times. Can be used to test maximum redirects.
+If the `type` query field is supplied the corresponding `System.Net.HttpStatusCode` will be returned instead of `302`.
 
 ```powershell
 $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '2'
@@ -320,6 +521,7 @@ Location: /Redirect/1
 ```
 
 Request 2:
+
 ```none
 GET http://localhost:8083/Redirect/1 HTTP/1.1
 Connection: Keep-Alive
@@ -328,6 +530,7 @@ Host: localhost:8083
 ```
 
 Response 2:
+
 ```none
 HTTP/1.1 302 Found
 Date: Fri, 15 Sep 2017 10:46:41 GMT
@@ -342,13 +545,50 @@ Location: /Get/
 <p>You should be redirected automatically to target URL: <a href="/Get/">/Get/</a>.  If not click the link.
 ```
 
-## /ResponseHeaders/
+### /Response/
+
+Will return a response crafted from the query string. The following four fields are supported:
+
+* `body` - a string containing the response body
+* `statuscode` - the HTTP Status Code to return
+* `contenttype` - The `Content-Type` response header
+* `headers` - a JSON string containing response headers. `Content-Type` will be ignored in `headers`. Use `contenttype` instead.
+* `responsephrase` - the HTTP response phrase to return
+
+```powershell
+$Query = @{
+    statsucode = 200
+    responsephrase = 'OK'
+    contenttype = 'application/json'
+    body = '{"key1": "value1"}'
+    headers = @{
+        "X-Header" = "Response header value"
+    } | ConvertTo-Json
+}
+$Uri =  Get-WebListenerUrl -Test 'Response' -Query $Query
+Invoke-RestMethod -Uri $uri
+```
+
+Response headers:
+
+```none
+Content-Type: application/json
+X-Header: Response header value
+```
+
+Response Body:
+
+```json
+{"key1": "value1"}
+```
+
+### /ResponseHeaders/
 
 Will return the response headers passed in query string. The response body will be the supplied headers as a JSON object.
 
 ```powershell
 $uri = Get-WebListenerUrl -Test 'ResponseHeaders' -Query @{'Content-Type' = 'custom'; 'x-header-01' = 'value01'; 'x-header-02' = 'value02'}
-Invoke-RestMethod -Uri $uri 
+Invoke-RestMethod -Uri $uri
 ```
 
 Response Headers:

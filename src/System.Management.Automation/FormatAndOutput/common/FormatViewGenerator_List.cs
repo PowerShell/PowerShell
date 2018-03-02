@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -59,7 +58,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 FieldPropertyToken fpt = new FieldPropertyToken();
                 fpt.expression = new ExpressionToken(RemotingConstants.ComputerNameNoteProperty, false);
                 cnListItemDefinition.formatTokenList.Add(fpt);
-
 
                 _listBody.defaultEntryDefinition.itemDefinitionList.Add(cnListItemDefinition);
             }

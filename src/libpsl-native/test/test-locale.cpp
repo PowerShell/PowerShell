@@ -1,5 +1,6 @@
-//! @file test-locale.cpp
-//! @author Alex Jordan <v-alexjo@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Unit tests for linux locale
 
 #include <gtest/gtest.h>

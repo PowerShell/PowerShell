@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='Build')]
 param(
     [Parameter(ParameterSetName='packageSigned')]
@@ -58,10 +60,10 @@ End {
 
         # Use temp as destination if not running in VSTS
         $destFolder = $env:temp
-        if($env:Build_ArtifactStagingDirectory)
+        if($env:BUILD_STAGINGDIRECTORY)
         {
             # Use artifact staging if running in VSTS
-            $destFolder = $env:Build_ArtifactStagingDirectory
+            $destFolder = $env:BUILD_STAGINGDIRECTORY
         }
 
         $BuildPackagePath = New-PSSignedBuildZip -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath -DestinationFolder $destFolder
@@ -69,7 +71,6 @@ End {
         $buildPackageName = Split-Path -Path $BuildPackagePath -Leaf
         $additionalFiles += $BuildPackagePath
     }
-
 
     $psReleaseBranch = 'master'
     $psReleaseFork = 'PowerShell'
@@ -113,7 +114,7 @@ End {
             BuildPackageName = $buildPackageName
         }
 
-        Invoke-Build -RepoPath $resolvedRepoRoot  -BuildJsonPath './tools/releaseBuild/build.json' -Name $Name -Parameters $buildParameters -AdditionalFiles $AdditionalFiles
+        Invoke-Build -RepoPath $resolvedRepoRoot -BuildJsonPath './tools/releaseBuild/build.json' -Name $Name -Parameters $buildParameters -AdditionalFiles $AdditionalFiles
     }
     catch
     {

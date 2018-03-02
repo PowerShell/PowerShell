@@ -1,24 +1,17 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
-    [Collection("AssemblyLoadContext")]
     public static class SecuritySupportTests
     {
         [Fact]
         public static void TestScanContent()
         {
-            Assert.Equal(AmsiUtils.ScanContent("", ""), AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED);
-        }
-
-        [Fact]
-        public static void TestCurrentDomain_ProcessExit()
-        {
-            Assert.Throws<PlatformNotSupportedException>(delegate {
-                    AmsiUtils.CurrentDomain_ProcessExit(null, EventArgs.Empty);
-                });
+            Assert.Equal(AmsiUtils.AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED, AmsiUtils.ScanContent("", ""));
         }
 
         [Fact]

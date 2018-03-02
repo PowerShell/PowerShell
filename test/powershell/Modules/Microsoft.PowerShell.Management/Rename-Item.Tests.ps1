@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Rename-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"
@@ -9,6 +11,6 @@ Describe "Rename-Item tests" -Tag "CI" {
         Rename-Item $source $target
         test-path $source | Should be $false
         test-path $target | Should be $true
-        "$target" | Should ContainExactly "This is content"
+        "$target" | Should FileContentMatchExactly "This is content"
     }
 }

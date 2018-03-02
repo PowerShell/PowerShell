@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Acl cmdlets are available and operate properly" -Tag CI {
     It "Get-Acl returns an ACL object" -pending:(!$IsWindows) {
         $ACL = get-acl $TESTDRIVE

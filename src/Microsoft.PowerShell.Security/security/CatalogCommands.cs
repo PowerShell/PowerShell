@@ -1,8 +1,7 @@
-#if !UNIX
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+#if !UNIX
 
 using System;
 using System.Management.Automation;
@@ -95,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
                     {
-                        if (ShouldProcess(tempPath.ProviderPath))
+                        if (ShouldProcess("Including path " + tempPath.ProviderPath, "", ""))
                         {
                             paths.Add(tempPath.ProviderPath);
                         }
@@ -103,17 +102,16 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // We add 'paths.Count > 0' to support 'ShouldProcess()'
-            if (paths.Count > 0 )
+            string drive = null;
+
+            // resolve catalog destination Path
+            if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
             {
-                string drive = null;
+                catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
+            }
 
-                // resolve catalog destination Path
-                if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
-                {
-                    catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
-                }
-
+            if (ShouldProcess(catalogFilePath))
+            {
                 PerformAction(paths, catalogFilePath);
             }
         }

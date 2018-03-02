@@ -1,6 +1,6 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #define TRACE
 
 using System.Reflection;
@@ -229,7 +229,6 @@ namespace System.Management.Automation
         }
 
         #region TraceFlags.New*Exception methods/helpers
-
 
         /// <summary>
         /// Traces the Message and StackTrace properties of the exception
@@ -536,7 +535,6 @@ namespace System.Management.Automation
 
             return e;
         }
-
 
         /// <summary>
         /// Traces the Message and StackTrace properties of the exception

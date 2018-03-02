@@ -1,9 +1,9 @@
-# Docker image file that describes an fedora 25 image with PowerShell installed from Microsoft YUM Repo
+# Docker image file that describes an fedora 27 image with PowerShell installed from Microsoft YUM Repo
 
-FROM fedora:25
+FROM fedora:27
 
-ARG POWERSHELL_VERSION=6.0.0-rc
-ARG IMAGE_NAME=microsoft/powershell:fedora25
+ARG POWERSHELL_VERSION=6.0.1
+ARG IMAGE_NAME=microsoft/powershell:fedora27
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
       readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" \
@@ -37,7 +37,8 @@ RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
 
 # Install latest powershell from Microsoft YUM Repo
-RUN dnf install -y powershell
+RUN dnf install -y powershell \
+    && dnf clean all
 
 # Use array to avoid Docker prepending /bin/sh -c
 CMD [ "pwsh" ]

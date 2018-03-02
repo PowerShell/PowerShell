@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Pop-Location" -Tags "CI" {
     $startDirectory = $(Get-Location).Path
 

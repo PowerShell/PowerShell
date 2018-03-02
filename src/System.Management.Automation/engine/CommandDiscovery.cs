@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -511,7 +510,6 @@ namespace System.Management.Automation
             }
         }
 
-
         #region comment out RequiresNetFrameworkVersion feature 8/10/2010
         /*
          * The "#requires -NetFrameworkVersion" feature is CUT OFF.
@@ -537,7 +535,6 @@ namespace System.Management.Automation
         }
         */
         #endregion
-
 
         /// <summary>
         /// used to determine compatibility between the versions in the requires statement and
@@ -1004,7 +1001,6 @@ namespace System.Management.Automation
             return matchingModules;
         }
 
-
         private static CommandInfo InvokeCommandNotFoundHandler(string commandName, ExecutionContext context, string originalCommandName, CommandOrigin commandOrigin)
         {
             CommandInfo result = null;
@@ -1341,7 +1337,6 @@ namespace System.Management.Automation
         private HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-
         /// <summary>
         /// Gets a CommandPathSearch constructed with the specified patterns and
         /// using the PATH as the lookup directories
@@ -1508,7 +1503,6 @@ namespace System.Management.Automation
         private static string[] s_cachedPathExtCollection;
         private static string[] s_cachedPathExtCollectionWithPs1;
 
-
         /// <summary>
         /// Gets the cmdlet information for the specified name.
         /// </summary>
@@ -1642,59 +1636,6 @@ namespace System.Management.Automation
         }
 
         internal ExecutionContext Context { get; }
-
-        /// <summary>
-        /// Reads the path for the appropriate shellID from the registry.
-        /// </summary>
-        ///
-        /// <param name="shellID">
-        /// The ID of the shell to retrieve the path for.
-        /// </param>
-        ///
-        /// <returns>
-        /// The path to the shell represented by the shellID.
-        /// </returns>
-        ///
-        /// <remarks>
-        /// The shellID must be registered in the Windows Registry in either
-        /// the HKEY_CURRENT_USER or HKEY_LOCAL_MACHINE hive under
-        /// Software/Microsoft/MSH/&lt;ShellID&gt; and are searched in that order.
-        /// </remarks>
-        ///
-        internal static string GetShellPathFromRegistry(string shellID)
-        {
-            string result = null;
-
-#if !UNIX
-            try
-            {
-                RegistryKey shellKey = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPath(shellID));
-                if (shellKey != null)
-                {
-                    // verify the value kind as a string
-                    RegistryValueKind kind = shellKey.GetValueKind("path");
-
-                    if (kind == RegistryValueKind.ExpandString ||
-                        kind == RegistryValueKind.String)
-                    {
-                        result = shellKey.GetValue("path") as string;
-                    }
-                }
-            }
-            // Ignore these exceptions and return an empty or null result
-            catch (SecurityException)
-            {
-            }
-            catch (IOException)
-            {
-            }
-            catch (ArgumentException)
-            {
-            }
-#endif
-
-            return result;
-        }
 
         internal static PSModuleAutoLoadingPreference GetCommandDiscoveryPreference(ExecutionContext context, VariablePath variablePath, string environmentVariable)
         {
@@ -1917,5 +1858,4 @@ namespace System.Management.Automation
         public void ModuleManifestAnalysisException(string ModulePath, string Exception) { WriteEvent(12, ModulePath, Exception); }
     }
 }
-
 

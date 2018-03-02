@@ -1,9 +1,9 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.IO;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using Microsoft.PowerShell.Commands;
@@ -769,13 +769,10 @@ namespace System.Management.Automation
         {
 #if UNIX
             const string powershellExeName = "pwsh";
-            const string oldPowershellExeName = "powershell";
 #else
             const string powershellExeName = "pwsh.exe";
-            const string oldPowershellExeName = "powershell.exe";
 #endif
             const string powershellDepsName = "pwsh.deps.json";
-            const string oldPowershellDepsName = "powershell.deps.json";
 
             StringBuilder modulePathString = new StringBuilder(currentProcessModulePath.Length);
             char[] invalidPathChars = Path.GetInvalidPathChars();
@@ -796,10 +793,8 @@ namespace System.Management.Automation
                 {
                     string parentDir = Path.GetDirectoryName(trimedPath);
                     string psExePath = Path.Combine(parentDir, powershellExeName);
-                    string oldExePath = Path.Combine(parentDir, oldPowershellExeName);
                     string psDepsPath = Path.Combine(parentDir, powershellDepsName);
-                    string oldDepsPath = Path.Combine(parentDir, oldPowershellDepsName);
-                    if ((File.Exists(psExePath) && File.Exists(psDepsPath)) || (File.Exists(oldExePath) && File.Exists(oldDepsPath)))
+                    if ((File.Exists(psExePath) && File.Exists(psDepsPath)))
                     {
                         // Path is a PSHome module path from a different powershell core instance. Ignore it.
                         continue;
@@ -982,8 +977,8 @@ namespace System.Management.Automation
         internal static string SetModulePath()
         {
             string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
-            string systemWideModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.SystemWide);
-            string personalModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.CurrentUser);
+            string systemWideModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.SystemWide);
+            string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
 
             string newModulePathString = GetModulePath(currentModulePath, systemWideModulePath, personalModulePath);
 

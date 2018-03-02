@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -25,7 +27,6 @@ namespace System.Diagnostics.Eventing.Reader
         private long? _recordCount;
         private long? _oldestRecordNumber;
         private bool? _isLogFull;
-
 
         [System.Security.SecuritySafeCritical]
         internal EventLogInformation(EventLogSession session, string channelName, PathType pathType)

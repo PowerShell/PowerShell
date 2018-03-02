@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Set-Location" -Tags "CI" {
 
     BeforeAll {
@@ -39,6 +41,16 @@ Describe "Set-Location" -Tags "CI" {
     It "Should generate a pathinfo object when using the Passthru switch" {
         $result = Set-Location $target -PassThru
         $result | Should BeOfType System.Management.Automation.PathInfo
+    }
+
+    It "Should accept path containing wildcard characters" {
+        $null = New-Item -ItemType Directory -Path "$TestDrive\aa"
+        $null = New-Item -ItemType Directory -Path "$TestDrive\ba"
+        $testPath = New-Item -ItemType Directory -Path "$TestDrive\[ab]a"
+
+        Set-Location $TestDrive
+        Set-Location -Path "[ab]a"
+        $(Get-Location).Path | Should BeExactly $testPath.FullName
     }
 
     Context 'Set-Location with no arguments' {

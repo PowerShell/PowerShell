@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Globalization;
 using System.Collections.Generic;
@@ -678,7 +677,6 @@ namespace System.Management.Automation.Language
         {
             ast.Accept(_symbolResolvePostActionVisitor);
         }
-
 
         internal static string GetModuleQualifiedName(string namespaceName, string typeName)
         {

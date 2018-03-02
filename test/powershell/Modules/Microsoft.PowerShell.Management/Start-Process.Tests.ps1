@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Start-Process" -Tags @("Feature") {
 
     BeforeAll {
@@ -42,6 +44,13 @@ Describe "Start-Process" -Tags @("Feature") {
 	    $process.Length      | Should Be 1
 	    $process.Id          | Should BeGreaterThan 1
 	    # $process.ProcessName | Should Be "ping"
+    }
+
+    It "Should invoke correct path when used with Path alias argument" {
+	    $process = Start-Process -Path $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"
+
+	    $process.Length | Should Be 1
+	    $process.Id     | Should BeGreaterThan 1
     }
 
     It "Should wait for command completion if used with Wait argument" {
@@ -108,7 +117,7 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should be able to use the -WhatIf switch without performing the actual action" {
         $pingOutput = Join-Path $TestDrive "pingOutput.txt"
         { Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf -ErrorAction Stop } | Should Not Throw
-        $pingOutput | Should Not Exist 
+        $pingOutput | Should Not Exist
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {

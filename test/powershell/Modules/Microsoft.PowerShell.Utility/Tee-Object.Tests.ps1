@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Tee-Object" -Tags "CI" {
 
     Context "Validate Tee-Object is correctly forking output" {
@@ -27,6 +29,15 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
     It "Positive File Test" {
         $expected = "1", "2", "3"
         $results = $expected | Tee-Object -FilePath $tempFile
+        $results.Length | Should be 3
+        $results | Should Be $expected
+        $content = Get-Content $tempFile
+        $content | Should Be $expected
+    }
+
+    It "Positive File Test with Path parameter alias" {
+        $expected = "1", "2", "3"
+        $results = $expected | Tee-Object -Path $tempFile
         $results.Length | Should be 3
         $results | Should Be $expected
         $content = Get-Content $tempFile

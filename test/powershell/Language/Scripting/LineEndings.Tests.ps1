@@ -1,4 +1,6 @@
-﻿Describe 'Line endings' -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe 'Line endings' -Tags "CI" {
     BeforeAll {
         $lf = "`n"
         $cr = "`r"

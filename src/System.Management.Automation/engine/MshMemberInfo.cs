@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Linq;
 using System.Management.Automation.Language;
@@ -13,6 +12,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Text;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Interpreter;
 using Microsoft.PowerShell;
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 
@@ -165,7 +165,6 @@ namespace System.Management.Automation
             }
             thisAsProperty.SetAdaptedValue(setValue, false);
         }
-
 
         /// <summary>
         /// Initializes a new instance of an PSMemberInfo derived class
@@ -619,7 +618,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-
         /// <summary>
         /// Called from TypeTableUpdate before SetSetterFromTypeTable is called
         /// </summary>
@@ -859,7 +857,6 @@ namespace System.Management.Automation
                 return GetterCodeReference != null;
             }
         }
-
 
         /// <summary>
         /// Gets and Sets the value of this member
@@ -1240,7 +1237,6 @@ namespace System.Management.Automation
             return returnValue.ToString();
         }
 
-
         internal object noteValue;
 
         /// <summary>
@@ -1406,7 +1402,6 @@ namespace System.Management.Automation
             returnValue.Append(_variable.Value ?? "null");
             return returnValue.ToString();
         }
-
 
         internal PSVariable _variable;
 
@@ -2163,7 +2158,6 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         /// Used from TypeTable
         /// </summary>
@@ -2229,7 +2223,6 @@ namespace System.Management.Automation
                 return PSMemberTypes.CodeMethod;
             }
         }
-
 
         /// <summary>
         /// Invokes CodeReference method and returns its results.
@@ -2344,7 +2337,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         /// <summary>
         /// Initializes a new instance of PSScriptMethod
@@ -2520,7 +2512,7 @@ namespace System.Management.Automation
         }
 
         internal object adapterData;
-        private Adapter _adapter;
+        internal Adapter _adapter;
         internal object baseObject;
 
         /// <summary>
@@ -2642,6 +2634,403 @@ namespace System.Management.Automation
         /// True if the method is a special method like GET/SET property accessor methods.
         /// </summary>
         internal bool IsSpecial { get; private set; }
+
+        internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method)
+        {
+            return Create(name, dotNetInstanceAdapter, baseObject, method, false, false);
+        }
+
+        internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method, bool isSpecial, bool isHidden)
+        {
+            if (method.psmethodCtor == null)
+            {
+                method.psmethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
+            }
+            return method.psmethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
+        }
+
+        static Type GetMethodGroupType(MethodInfo methodInfo)
+        {
+            if (methodInfo.DeclaringType.IsGenericTypeDefinition)
+            {
+                return typeof(Func<PSNonBindableType>);
+            }
+
+            if (methodInfo.IsGenericMethodDefinition)
+            {
+                methodInfo = ReplaceGenericTypeArgumentsWithMarkerTypes(methodInfo);
+                if (methodInfo == null)
+                {
+                    // this happens when there are constraints on the generic type parameters
+                    return typeof(Func<PSNonBindableType>);
+                }
+            }
+
+            var parameterInfos = methodInfo.GetParameters();
+            if (parameterInfos.Length > 16)
+            {
+                return typeof(Func<PSNonBindableType>);
+            }
+
+            var res = new Type[parameterInfos.Length + 1];
+            for (int i = 0; i < res.Length - 1; i++)
+            {
+                var parameterInfo = parameterInfos[i];
+                var parameterType = parameterInfo.ParameterType;
+                res[i] = GetPSMethodTypeProjection(parameterType,
+                    (parameterInfo.Attributes | ParameterAttributes.Out) == ParameterAttributes.Out);
+            }
+            var returnType = GetPSMethodTypeProjection(methodInfo.ReturnType);
+            res[parameterInfos.Length] = returnType;
+
+            try
+            {
+                return DelegateHelpers.MakeDelegate(res);
+            }
+            catch (TypeLoadException)
+            {
+                return typeof(Func<PSNonBindableType>);
+            }
+        }
+
+        private static Type GetPSMethodTypeProjection(Type type, bool isOut = false)
+        {
+            if (type == typeof(void))
+            {
+                return typeof(Unit);
+            }
+            if (type == typeof(TypedReference))
+            {
+                return typeof(PSTypedReference);
+            }
+            var resType = type.IsEnum ? typeof(PSEnum<>).MakeGenericType(type) : type;
+            if (resType.HasElementType) {
+                var psMethodTypeProjection = GetPSMethodTypeProjection(resType.GetElementType());
+                if (type.IsPointer)
+                {
+                    resType = typeof(PSPointer<>).MakeGenericType(psMethodTypeProjection);
+                }
+                if (type.IsByRef)
+                {
+                    resType = isOut ? typeof(PSOutParameter<>).MakeGenericType(psMethodTypeProjection) : typeof(PSReference<>).MakeGenericType(psMethodTypeProjection);
+                }
+            }
+
+            return resType;
+        }
+
+        internal static bool MatchesPSMethodProjectedType(Type targetType, Type projectedSourceType, bool testAssignment = false, bool isOut = false)
+        {
+            var sourceType = projectedSourceType;
+            if (targetType.IsByRef || targetType.IsPointer)
+            {
+                if (!projectedSourceType.IsGenericType) return false;
+                var defType = projectedSourceType.GetGenericTypeDefinition();
+                if (targetType.IsByRef && defType == (isOut ? typeof(PSOutParameter<>) : typeof(PSReference<>))
+                    || targetType.IsPointer && defType == typeof(PSPointer<>))
+                {
+                    return MatchesPSMethodProjectedType(targetType.GetElementType(),
+                        projectedSourceType.GenericTypeArguments[0], testAssignment, isOut);
+                }
+            }
+            if (targetType.IsEnum)
+            {
+                if (sourceType.IsGenericType && sourceType.GetGenericTypeDefinition() != typeof(PSEnum<>))
+                {
+                    return false;
+                }
+                sourceType = sourceType.GenericTypeArguments[0];
+            }
+
+            if (targetType == typeof(void) && sourceType == typeof(Unit))
+            {
+                return true;
+            }
+            if (targetType == typeof(TypedReference) && sourceType == typeof(PSTypedReference))
+            {
+                return true;
+            }
+            if (testAssignment)
+            {
+                return targetType.IsAssignableFrom(sourceType);
+            }
+            return targetType == sourceType;
+        }
+
+        private static MethodInfo ReplaceGenericTypeArgumentsWithMarkerTypes(MethodInfo methodInfo)
+        {
+            if (!methodInfo.ContainsGenericParameters)
+            {
+                return methodInfo;
+            }
+
+            var genArgs = methodInfo.GetGenericArguments();
+            var concrete = new Type[genArgs.Length];
+            for (int i = 0; i < genArgs.Length; i++)
+            {
+                var genArg = genArgs[i];
+                if (genArg.GetGenericParameterConstraints().Length != 0)
+                {
+                    return null;
+                }
+                var gpa = genArg.GenericParameterAttributes;
+                concrete[i] = (gpa & GenericParameterAttributes.NotNullableValueTypeConstraint) == GenericParameterAttributes.NotNullableValueTypeConstraint
+                    ? PSGenericValueType.GetGenericType(i)
+                    : PSGenericType.GetGenericType(i);
+            }
+            return methodInfo.MakeGenericMethod(concrete);
+        }
+
+        private static Func<string, DotNetAdapter, object, object, bool, bool, PSMethod> CreatePSMethodConstructor(MethodInformation[] methods)
+        {
+            var types = new Type[methods.Length];
+            for (int i = 0; i < methods.Length; i++)
+            {
+                var mb = methods[i].method;
+
+                if (mb is MethodInfo mi)
+                {
+                    types[i] = GetMethodGroupType(mi);
+                }
+                else
+                {
+                    types[i] = typeof(Unit);
+                }
+            }
+            var methodGroupType =  CreateMethodGroup(types, 0, types.Length);
+            Type psMethodType = typeof(PSMethod<>).MakeGenericType(methodGroupType);
+            var delegateType = typeof(Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>);
+            return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>)Delegate.CreateDelegate(delegateType, psMethodType.GetMethod("Create", BindingFlags.NonPublic|BindingFlags.Static));
+        }
+
+        private static Type CreateMethodGroup(Type[] sourceTypes, int start, int count)
+        {
+            var types = sourceTypes;
+            if (count != sourceTypes.Length)
+            {
+                types = new Type[count];
+                Array.Copy(sourceTypes, start, types, 0, count);
+            }
+
+            switch (count)
+            {
+                case 1: return typeof(MethodGroup<>).MakeGenericType(types);
+                case 2: return typeof(MethodGroup<,>).MakeGenericType(types);
+                case 3: return typeof(MethodGroup<,>).MakeGenericType(types[0], CreateMethodGroup(types, 1, 2));
+                case 4: return typeof(MethodGroup<,,,>).MakeGenericType(types);
+                case int i when i < 8: return typeof(MethodGroup<,,,>).MakeGenericType(types[0], types[1], types[2], CreateMethodGroup(types, 3, i - 3));
+                case 8: return typeof(MethodGroup<,,,,,,,>).MakeGenericType(types);
+                case int i when i < 16: return typeof(MethodGroup<,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], CreateMethodGroup(types, 7, i - 7));
+                case 16: return typeof(MethodGroup<,,,,,,,,,,,,,,,>).MakeGenericType(types);
+                case int i when i < 32: return typeof(MethodGroup<,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], CreateMethodGroup(types, 15, i - 15));
+                case 32: return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types);
+                default:
+                    return typeof(MethodGroup<,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,>).MakeGenericType(types[0], types[1], types[2], types[3], types[4], types[5], types[6], types[7], types[8], types[9], types[10], types[11], types[12], types[13], types[14], types[15], types[16], types[17], types[18], types[19], types[20], types[21], types[22], types[23], types[24], types[25], types[26], types[27], types[28], types[29], types[30], CreateMethodGroup(sourceTypes, start + 31, count - 31));
+            }
+        }
+    }
+
+    class PSOutParameter<T> { private PSOutParameter() { }}
+
+    abstract class PSNonBindableType { }
+
+    abstract class PSGenericType
+    {
+        public static Type GetGenericType(int i)
+        {
+            switch (i)
+            {
+                case 0: return typeof(PSGenericType0);
+                case 1: return typeof(PSGenericType1);
+                case 2: return typeof(PSGenericType2);
+                case 3: return typeof(PSGenericType3);
+                case 4: return typeof(PSGenericType4);
+                case 5: return typeof(PSGenericType5);
+                case 6: return typeof(PSGenericType6);
+                case 7: return typeof(PSGenericType7);
+                case 8: return typeof(PSGenericType8);
+                case 9: return typeof(PSGenericType9);
+                case 10: return typeof(PSGenericType10);
+                case 11: return typeof(PSGenericType11);
+                case 12: return typeof(PSGenericType12);
+                case 13: return typeof(PSGenericType13);
+                case 14: return typeof(PSGenericType14);
+                case 15: return typeof(PSGenericType15);
+                case 16: return typeof(PSGenericType16);
+                default:
+                    return typeof(PSGenericType<>).MakeGenericType(GetGenericType(i - 1));
+            }
+        }
+    }
+
+    class PSGenericType0 : PSGenericType { internal PSGenericType0() { } }
+    class PSGenericType1 : PSGenericType { internal PSGenericType1() { } }
+    class PSGenericType2 : PSGenericType { internal PSGenericType2() { } }
+    class PSGenericType3 : PSGenericType { internal PSGenericType3() { } }
+    class PSGenericType4 : PSGenericType { internal PSGenericType4() { } }
+    class PSGenericType5 : PSGenericType { internal PSGenericType5() { } }
+    class PSGenericType6 : PSGenericType { internal PSGenericType6() { } }
+    class PSGenericType7 : PSGenericType { internal PSGenericType7() { } }
+    class PSGenericType8 : PSGenericType { internal PSGenericType8() { } }
+    class PSGenericType9 : PSGenericType { internal PSGenericType9() { } }
+    class PSGenericType10 : PSGenericType { internal PSGenericType10() { } }
+    class PSGenericType11 : PSGenericType { internal PSGenericType11() { } }
+    class PSGenericType12 : PSGenericType { internal PSGenericType12() { } }
+    class PSGenericType13 : PSGenericType { internal PSGenericType13() { } }
+    class PSGenericType14 : PSGenericType { internal PSGenericType14() { } }
+    class PSGenericType15 : PSGenericType { internal PSGenericType15() { } }
+    class PSGenericType16 : PSGenericType { internal PSGenericType16() { } }
+
+    class PSGenericType<T> : PSGenericType { internal PSGenericType() { } }
+
+    struct PSGenericValueType
+    {
+        internal static Type GetGenericType(int i)
+        {
+            switch (i)
+            {
+                case 0: return typeof(PSGenericValueType0);
+                case 1: return typeof(PSGenericValueType1);
+                case 2: return typeof(PSGenericValueType2);
+                case 3: return typeof(PSGenericValueType3);
+                case 4: return typeof(PSGenericValueType4);
+                case 5: return typeof(PSGenericValueType5);
+                case 6: return typeof(PSGenericValueType6);
+                case 7: return typeof(PSGenericValueType7);
+                case 8: return typeof(PSGenericValueType8);
+                case 9: return typeof(PSGenericValueType9);
+                case 10: return typeof(PSGenericValueType10);
+                case 11: return typeof(PSGenericValueType11);
+                case 12: return typeof(PSGenericValueType12);
+                case 13: return typeof(PSGenericValueType13);
+                case 14: return typeof(PSGenericValueType14);
+                case 15: return typeof(PSGenericValueType15);
+                case 16: return typeof(PSGenericValueType16);
+                default:
+                    return typeof(PSGenericValueType<>).MakeGenericType(GetGenericType(i - 1));
+            }
+        }
+    }
+
+    struct PSGenericValueType0 { internal int value; }
+    struct PSGenericValueType1 { internal int value; }
+    struct PSGenericValueType2 { internal int value; }
+    struct PSGenericValueType3 { internal int value; }
+    struct PSGenericValueType4 { internal int value; }
+    struct PSGenericValueType5 { internal int value; }
+    struct PSGenericValueType6 { internal int value; }
+    struct PSGenericValueType7 { internal int value; }
+    struct PSGenericValueType8 { internal int value; }
+    struct PSGenericValueType9 { internal int value; }
+    struct PSGenericValueType10 { internal int value; }
+    struct PSGenericValueType11 { internal int value; }
+    struct PSGenericValueType12 { internal int value; }
+    struct PSGenericValueType13 { internal int value; }
+    struct PSGenericValueType14 { internal int value; }
+    struct PSGenericValueType15 { internal int value; }
+    struct PSGenericValueType16 { internal int value; }
+
+    struct PSGenericValueType<T> { internal int value; }
+
+    struct PSEnum<T> { }
+
+    struct PSPointer<T> { }
+
+    struct PSTypedReference { }
+
+    internal abstract class MethodGroup { }
+    internal class MethodGroup<T1> : MethodGroup { }
+    internal class MethodGroup<T1, T2> : MethodGroup { }
+    internal class MethodGroup<T1, T2, T3, T4> : MethodGroup { }
+    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8> : MethodGroup { }
+    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup { }
+    internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32> : MethodGroup { }
+
+    class Unit
+    {
+        private Unit() { }
+    }
+
+    internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
+    {
+        private int _currentIndex;
+        private readonly Type _t;
+
+        internal PSMethodSignatureEnumerator(Type t)
+        {
+            Diagnostics.Assert(t.IsSubclassOf(typeof(PSMethod)), "Must be a PSMethod<MethodGroup<>>");
+            _t = t.GenericTypeArguments[0];
+            Current = null;
+            _currentIndex = -1;
+        }
+
+        public bool MoveNext()
+        {
+            _currentIndex++;
+            return MoveNext(_t, _currentIndex);
+        }
+
+        bool MoveNext(Type type, int index)
+        {
+            var genericTypeArguments = type.GenericTypeArguments;
+            var length = genericTypeArguments.Length;
+            if (index < length - 1)
+            {
+                Current = genericTypeArguments[index];
+                return true;
+            }
+
+            var t = genericTypeArguments[length - 1];
+            if (t.IsSubclassOf(typeof(MethodGroup)))
+            {
+                var remaining = index - (length - 1);
+                return MoveNext(t, remaining);
+            }
+            if (index >= genericTypeArguments.Length)
+            {
+                Current = null;
+                return false;
+            }
+            Current = t;
+            return true;
+        }
+
+        public void Reset()
+        {
+            _currentIndex = -1;
+            Current = null;
+        }
+
+        public Type Current { get; private set; }
+
+        object IEnumerator.Current => Current;
+
+        public void Dispose()
+        {
+        }
+    }
+
+    internal sealed class PSMethod<T> : PSMethod
+    {
+        public override PSMemberInfo Copy()
+        {
+            PSMethod member = new PSMethod<T>(this.name, this._adapter, this.baseObject, this.adapterData, this.IsSpecial, this.IsHidden);
+            CloneBaseProperties(member);
+            return member;
+        }
+
+        internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData)
+            : base(name, adapter, baseObject, adapterData) { }
+        internal PSMethod(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden)
+            : base(name, adapter, baseObject, adapterData, isSpecial, isHidden) { }
+
+        /// <summary>
+        /// Helper factory function since we cannot bind a delegate to a ConstructorInfo.
+        /// </summary>
+        internal static PSMethod<T> Create(string name, Adapter adapter, object baseObject, object adapterData, bool isSpecial, bool isHidden)
+        {
+            return new PSMethod<T>(name, adapter, baseObject, adapterData, isSpecial, isHidden);
+        }
     }
 
     /// <summary>
@@ -2662,7 +3051,6 @@ namespace System.Management.Automation
             Diagnostics.Assert((this.baseObject != null) && (this.adapter != null) && (this.adapterData != null), "it should have all these properties set");
             return this.adapter.BaseParameterizedPropertyToString(this);
         }
-
 
         internal Adapter adapter;
         internal object adapterData;
@@ -2750,7 +3138,6 @@ namespace System.Management.Automation
             }
             this.adapter.BaseParameterizedPropertySet(this, valueToSet, arguments);
         }
-
 
         /// <summary>
         /// Returns a collection of the definitions for this property
@@ -2966,7 +3353,6 @@ namespace System.Management.Automation
                 return this.inheritMembers;
             }
         }
-
 
         /// <summary>
         /// Gets the internal member collection
@@ -3499,7 +3885,6 @@ namespace System.Management.Automation
             return null;
         }
 
-
         /// <summary>
         /// Returns all members in memberList matching name and memberTypes
         /// </summary>
@@ -3641,7 +4026,6 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         internal abstract ReadOnlyPSMemberInfoCollection<T> Match(string name, PSMemberTypes memberTypes, MshMemberMatchOptions matchOptions);
 
-
         #endregion Match
 
         internal static bool IsReservedName(string name)
@@ -3654,7 +4038,6 @@ namespace System.Management.Automation
         }
 
         #region IEnumerable
-
 
         /// <summary>
         /// Gets the general enumerator for this collection
@@ -4054,7 +4437,6 @@ namespace System.Management.Automation
 
     #region CollectionEntry
 
-
     internal class CollectionEntry<T> where T : PSMemberInfo
     {
         internal delegate PSMemberInfoInternalCollection<T> GetMembersDelegate(PSObject obj);
@@ -4186,7 +4568,6 @@ namespace System.Management.Automation
 
         internal Collection<CollectionEntry<T>> Collections { get; }
 
-
         private PSObject _mshOwner;
         private PSMemberSet _memberSetOwner;
 
@@ -4268,7 +4649,6 @@ namespace System.Management.Automation
                         null,
                         ExtendedTypeSystem.CannotAddPropertyOrMethod);
                 }
-
 
                 if (_memberSetOwner != null && _memberSetOwner.IsReservedMember)
                 {
@@ -4413,7 +4793,6 @@ namespace System.Management.Automation
             _memberSetOwner.InternalMembers.Remove(name);
         }
 
-
         /// <summary>
         /// Method which checks if the <paramref name="name"/> is reserved and if so
         /// it will ensure that the particular reserved member is loaded into the
@@ -4454,7 +4833,6 @@ namespace System.Management.Automation
                 }
             }
         }
-
 
         /// <summary>
         /// Returns the name corresponding to name or null if it is not present
@@ -4535,7 +4913,6 @@ namespace System.Management.Automation
             }
         }
 
-
         private PSMemberInfoInternalCollection<T> GetIntegratedMembers(MshMemberMatchOptions matchOptions)
         {
             using (PSObject.memberResolution.TraceScope("Generating the total list of members"))
@@ -4614,7 +4991,6 @@ namespace System.Management.Automation
                 return returnValue;
             }
         }
-
 
         /// <summary>
         /// Returns all members in the collection matching name
@@ -4785,7 +5161,6 @@ namespace System.Management.Automation
                 _currentIndex = -1;
                 _current = null;
             }
-
 
             /// <summary>
             /// Not supported

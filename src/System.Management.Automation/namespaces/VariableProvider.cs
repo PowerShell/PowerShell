@@ -1,7 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using Dbg = System.Management.Automation;
@@ -68,7 +66,6 @@ namespace Microsoft.PowerShell.Commands
             drives.Add(variableDrive);
             return drives;
         } // InitializeDefaultDrives
-
 
         #endregion DriveCmdletProvider overrides
 

@@ -1,6 +1,5 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Management.Automation.Internal;
@@ -46,9 +45,11 @@ namespace System.Management.Automation.Remoting
         // actual data store(s) to store priority based data and its
         // corresponding sync objects to provide thread safety.
         private SerializedDataStream[] _dataToBeSent;
+        // array of sync objects, one for each element in _dataToBeSent
+        private object[] _dataSyncObjects;
+
         // fragmentor used to serialize & fragment objects added to this collection.
         private Fragmentor _fragmentor;
-        private object[] _syncObjects;
 
         // callbacks used if no data is available at any time.
         // these callbacks are used to notify when data becomes available under
@@ -95,11 +96,11 @@ namespace System.Management.Automation.Remoting
                 // create serialized streams using fragment size.
                 string[] names = Enum.GetNames(typeof(DataPriorityType));
                 _dataToBeSent = new SerializedDataStream[names.Length];
-                _syncObjects = new object[names.Length];
+                _dataSyncObjects = new object[names.Length];
                 for (int i = 0; i < names.Length; i++)
                 {
                     _dataToBeSent[i] = new SerializedDataStream(_fragmentor.FragmentSize);
-                    _syncObjects[i] = new object();
+                    _dataSyncObjects[i] = new object();
                 }
             }
         }
@@ -126,7 +127,7 @@ namespace System.Management.Automation.Remoting
             // make sure the only one object is fragmented and added to the collection
             // at any give time. This way the order of fragment is maintained
             // in the SendDataCollection(s).
-            lock (_syncObjects[(int)priority])
+            lock (_dataSyncObjects[(int)priority])
             {
                 _fragmentor.Fragment<T>(data, _dataToBeSent[(int)priority]);
             }
@@ -154,15 +155,33 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Clear()
         {
-            Dbg.Assert(null != _dataToBeSent, "Serialized streams are not initialized");
-            lock (_syncObjects[(int)DataPriorityType.PromptResponse])
+            /*
+                NOTE: Error paths during initialization can cause _dataSyncObjects to be null
+                causing an unhandled exception in finalize and a process crash.
+                Verify arrays and dataToBeSent objects before referencing.
+            */
+            if (null != _dataSyncObjects && null != _dataToBeSent)
             {
-                _dataToBeSent[(int)DataPriorityType.PromptResponse].Dispose();
-            }
+                int promptResponseIndex = (int)DataPriorityType.PromptResponse;
+                int defaultIndex = (int)DataPriorityType.Default;
 
-            lock (_syncObjects[(int)DataPriorityType.Default])
-            {
-                _dataToBeSent[(int)DataPriorityType.Default].Dispose();
+                lock (_dataSyncObjects[promptResponseIndex])
+                {
+                    if (null != _dataToBeSent[promptResponseIndex])
+                    {
+                        _dataToBeSent[promptResponseIndex].Dispose();
+                        _dataToBeSent[promptResponseIndex] = null;
+                    }
+                }
+
+                lock (_dataSyncObjects[defaultIndex])
+                {
+                    if (null != _dataToBeSent[defaultIndex])
+                    {
+                        _dataToBeSent[defaultIndex].Dispose();
+                        _dataToBeSent[defaultIndex] = null;
+                    }
+                }
             }
         }
 
@@ -773,7 +792,6 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-
         /// <summary>
         /// Prepares receive data streams for a reconnection
         /// </summary>
@@ -784,7 +802,6 @@ namespace System.Management.Automation.Remoting
                 _recvdData[index].PrepareForStreamConnect();
             }
         }
-
 
         /// <summary>
         /// This might be needed only for ServerCommandTransportManager case

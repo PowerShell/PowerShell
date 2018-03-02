@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Enable and Disable PSBreakpoints" -Tag "CI" {
     BeforeAll {
         $path = Setup -F testbp.ps1 -content "get-command`nget-date`nget-location" -pass

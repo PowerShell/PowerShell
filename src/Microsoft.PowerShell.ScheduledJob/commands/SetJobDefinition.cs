@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +25,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         private const string ScriptBlockParameterSet = "ScriptBlock";
         private const string FilePathParameterSet = "FilePath";
 
-
         /// <summary>
         /// Name of scheduled job definition.
         /// </summary>
@@ -44,6 +42,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// File path for script to be run in job.
         /// </summary>
         [Parameter(ParameterSetName = SetScheduledJobCommand.FilePathParameterSet)]
+        [Alias("Path")]
         [ValidateNotNullOrEmpty]
         public string FilePath
         {
