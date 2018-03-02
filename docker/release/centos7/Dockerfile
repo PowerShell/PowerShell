@@ -38,7 +38,8 @@ RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.r
 
 # Install latest powershell from Microsoft YUM Repo
 RUN yum install -y \
-        powershell
+        powershell \
+    && yum clean all
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c

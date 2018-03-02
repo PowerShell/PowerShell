@@ -31,6 +31,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         [Parameter(Position = 1, Mandatory = true,
                    ParameterSetName = RegisterScheduledJobCommand.FilePathParameterSet)]
+        [Alias("Path")]
         [ValidateNotNullOrEmpty]
         public string FilePath
         {
