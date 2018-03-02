@@ -496,14 +496,18 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         }
 
         It "Copy-Item parameters -FromSession and -ToSession are mutually exclusive." {
-            $s1 = New-PSSession -ComputerName . -ea SilentlyContinue
-            if (-not $s1)
+            try
             {
-                throw "Failed to create PSSession for remote copy operations."
+                $s1 = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
+                $s1 | Should Not BeNullOrEmpty
+                $filePath = CreateTestFile
+                $destinationFolderPath = GetDestinationFolderPath
+                { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | ShouldBeErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
             }
-            $filePath = CreateTestFile
-            $destinationFolderPath = GetDestinationFolderPath
-            { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | ShouldBeErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
+            finally
+            {
+                Remove-PSSession -Session $s1 -ErrorAction SilentlyContinue
+            }
         }
     }
 
