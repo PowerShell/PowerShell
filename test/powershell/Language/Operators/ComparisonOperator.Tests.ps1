@@ -21,7 +21,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{lhs = 0; operator = "-or"; rhs = 0; result = $false}
     ) {
         param($lhs, $operator, $rhs, $result)
-	    Invoke-Expression "$lhs $operator $rhs" | Should Be $result
+	    Invoke-Expression "$lhs $operator $rhs" | Should -Be $result
     }
 
 	It "Should be <result> for <operator> <rhs>" -TestCases @(
@@ -33,7 +33,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{operator = "!"; rhs = "0"; result = $true}
     ) {
         param($operator, $rhs, $result)
-        Invoke-Expression "$operator$rhs" | Should Be $result
+        Invoke-Expression "$operator$rhs" | Should -Be $result
     }
 
 	It "Should be <result> for <lhs> <operator> <rhs>" -TestCases @(
@@ -48,7 +48,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{lhs = "'Hello world'"; operator = "-notlike"; rhs = "'Hello*'"; result = $false}
     ) {
         param($lhs, $operator, $rhs, $result)
-        Invoke-Expression "$lhs $operator $rhs" | Should Be $result
+        Invoke-Expression "$lhs $operator $rhs" | Should -Be $result
     }
 
     It "Should return error if right hand is not a valid type: 'hello' <operator> <type>" -TestCases @(
@@ -71,7 +71,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{lhs = '"hello"'; operator = '-isnot'; rhs = "[int]"}
     ) {
         param($lhs, $operator, $rhs)
-        Invoke-Expression "$lhs $operator $rhs" | Should Be $true
+        Invoke-Expression "$lhs $operator $rhs" | Should -Be $true
     }
 
     It "Should fail in comparing type: <lhs> <operator> <rhs>" -TestCases @(
@@ -80,7 +80,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{lhs = '"hello"'; operator = '-isnot'; rhs = "[string]"}
     ) {
         param($lhs, $operator, $rhs)
-        Invoke-Expression "$lhs $operator $rhs" | Should Be $false
+        Invoke-Expression "$lhs $operator $rhs" | Should -Be $false
     }
 }
 
@@ -89,36 +89,36 @@ Describe "Bytewise Operator" -tag "CI" {
     It "Test -bor on enum with [byte] as underlying type" {
         $result = [System.Security.AccessControl.AceFlags]::ObjectInherit -bxor `
                   [System.Security.AccessControl.AceFlags]::ContainerInherit
-        $result.ToString() | Should Be "ObjectInherit, ContainerInherit"
+        $result.ToString() | Should -Be "ObjectInherit, ContainerInherit"
     }
 
     It "Test -bor on enum with [int] as underlying type" {
         $result = [System.Management.Automation.CommandTypes]::Alias -bor `
                   [System.Management.Automation.CommandTypes]::Application
-        $result.ToString() | Should Be "Alias, Application"
+        $result.ToString() | Should -Be "Alias, Application"
     }
 
     It "Test -band on enum with [byte] as underlying type" {
         $result = [System.Security.AccessControl.AceFlags]::ObjectInherit -band `
                   [System.Security.AccessControl.AceFlags]::ContainerInherit
-        $result.ToString() | Should Be "None"
+        $result.ToString() | Should -Be "None"
     }
 
     It "Test -band on enum with [int] as underlying type" {
         $result = [System.Management.Automation.CommandTypes]::Alias -band `
                   [System.Management.Automation.CommandTypes]::All
-        $result.ToString() | Should Be "Alias"
+        $result.ToString() | Should -Be "Alias"
     }
 
     It "Test -bxor on enum with [byte] as underlying type" {
         $result = [System.Security.AccessControl.AceFlags]::ObjectInherit -bxor `
                   [System.Security.AccessControl.AceFlags]::ContainerInherit
-        $result.ToString() | Should Be "ObjectInherit, ContainerInherit"
+        $result.ToString() | Should -Be "ObjectInherit, ContainerInherit"
     }
 
     It "Test -bxor on enum with [int] as underlying type" {
         $result = [System.Management.Automation.CommandTypes]::Alias -bxor `
                   [System.Management.Automation.CommandTypes]::Application
-        $result.ToString() | Should Be "Alias, Application"
+        $result.ToString() | Should -Be "Alias, Application"
     }
 }

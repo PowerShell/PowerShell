@@ -19,18 +19,18 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             }
             catch {}
 
-            It '$err.Count' { $err.Count | Should Be 1 }
-            It '$err[0] should not be $null' { $err[0] | Should Not Be $null }
-            It '$err[0].GetType().Name' { $err[0] | Should BeOfType "System.Management.Automation.ActionPreferenceStopException" }
-            It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should not BeNullOrEmpty }
-            It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should BeOfType "System.Management.Automation.ItemNotFoundException" }
+            It '$err.Count' { $err.Count | Should -Be 1 }
+            It '$err[0] should not be $null' { $err[0] | Should -Not -Be $null }
+            It '$err[0].GetType().Name' { $err[0] | Should -BeOfType "System.Management.Automation.ActionPreferenceStopException" }
+            It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should -Not -BeNullOrEmpty }
+            It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should -BeOfType "System.Management.Automation.ItemNotFoundException" }
         }
 
         It 'ActionPreference Ignore Works' {
             $errorCount = $error.Count
             Get-Process -Name asdfasdfsadfsadf -ErrorAction Ignore
 
-            $error.Count | Should Be $errorCount
+            $error.Count | Should -Be $errorCount
         }
 
         It 'action preference of Ignore cannot be set as a preference variable' {
@@ -39,7 +39,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 Get-Process -Name asdfasdfasdf
                 Throw "Exception expected, execution should not have reached here"
              } catch {
-                     $_.CategoryInfo.Reason | Should Be NotSupportedException
+                     $_.CategoryInfo.Reason | Should -Be NotSupportedException
              } finally {
                 $GLOBAL:errorActionPreference = $orgin
              }
@@ -52,7 +52,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                     Get-Process -Name asdfasdfasdf
                     Throw "Exception expected, execution should not have reached here"
                 } catch {
-                    $_.CategoryInfo.Reason | Should Be ArgumentTransformationMetadataException
+                    $_.CategoryInfo.Reason | Should -Be ArgumentTransformationMetadataException
                 }
                 finally {
                     $GLOBAL:errorActionPreference = $orgin
@@ -63,7 +63,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $errorCount = $error.Count
             Get-Process -Name asdfasdfsadfsadf -ErrorAction Ig
 
-            $error.Count | Should Be $errorCount
+            $error.Count | Should -Be $errorCount
         }
 
         It 'ErrorAction = Suspend works on Workflow' -Skip:$IsCoreCLR {
@@ -83,7 +83,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 MyHelperFunction -ErrorAction Suspend
                 Throw "Exception expected, execution should not have reached here"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,MyHelperFunction"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingFailed,MyHelperFunction"
             }
         }
 
@@ -94,7 +94,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 Throw "Exception expected, execution should not have reached here"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
             }
         }
 
@@ -105,7 +105,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 Throw "Exception expected, execution should not have reached here"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
             }
         }
 
@@ -122,11 +122,11 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                         try {
                             Write-Output @input
                             } catch {
-                                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
+                                $_.FullyQualifiedErrorId | Should -Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.WriteOutputCommand"
                                 $num++
                             }
                     }
-            $num | Should Be 2
+            $num | Should -Be 2
         }
 
         It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(
@@ -142,7 +142,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             }
             New-Item @params > $null
             $params += @{$switch=$true}
-            { New-Item @params } | Should Not Throw
+            { New-Item @params } | Should -Not -Throw
             $ErrorActionPreference = "Stop"
             { New-Item @params } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
             Remove-Item "$testdrive\test.txt" -Force

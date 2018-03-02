@@ -116,7 +116,7 @@ Describe 'Line endings' -Tags "CI" {
         $actual = iex $content
 
         # $actual should be the content string ($expected) without the begin and end quoting characters.
-        $actual | Should Be $expected
+        $actual | Should -Be $expected
     }
 
     It '<Name> in ps file' -TestCases:$testData {
@@ -135,7 +135,7 @@ Describe 'Line endings' -Tags "CI" {
         $actual = &( "TESTDRIVE:\$fileName")
 
         # $actual should be the content string ($expected) without the begin and end quoting characters.
-        $actual | Should Be $expected
+        $actual | Should -Be $expected
     }
 }
 

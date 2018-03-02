@@ -16,6 +16,6 @@ Describe "DeserializedMethods" -Tags "CI" {
         $s = [System.Management.Automation.PSSerializer]::Serialize($x)
         $d = [System.Management.Automation.PSSerializer]::Deserialize($s)
 
-        $d | Get-Member -MemberType *Method* Add | Should Be $null
+        $d | Get-Member -MemberType *Method* Add | Should -Be $null
     }
 }

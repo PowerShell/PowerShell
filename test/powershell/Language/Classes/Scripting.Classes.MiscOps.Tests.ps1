@@ -15,10 +15,10 @@ Describe 'Misc Test' -Tags "CI" {
         }
         }
         It 'Invoke Where' {
-                [C1]::new().Foo() | should be "1;2;3"
+                [C1]::new().Foo() | Should -Be "1;2;3"
         }
         It 'Pipe to where' {
-                [C1]::new().Bar() | should be "1;2;3"
+                [C1]::new().Bar() | Should -Be "1;2;3"
         }
     }
 
@@ -39,10 +39,10 @@ Describe 'Misc Test' -Tags "CI" {
         }
         }
         It 'Invoke Foreach' {
-                [C1]::new().Foo() | should be "1;2;3;"
+                [C1]::new().Foo() | Should -Be "1;2;3;"
         }
         It 'Pipe to Foreach' {
-                [C1]::new().Bar() | should be "1;2;3;"
+                [C1]::new().Bar() | Should -Be "1;2;3;"
         }
     }
 
@@ -78,7 +78,7 @@ Describe 'Misc Test' -Tags "CI" {
             function InstantiateInNewRunspace([Type]$type) {
                 try {
                     $result = $powershell.AddCommand("New-UnboundInstance").AddParameter("type", $type).Invoke()
-                    $result.Count | Should Be 1 > $null
+                    $result.Count | Should -Be 1 > $null
                     return $result[0]
                 } finally {
                     $powershell.Commands.Clear()
@@ -88,7 +88,7 @@ Describe 'Misc Test' -Tags "CI" {
             function RunFooInNewRunspace($instance) {
                 try {
                     $result = $powershell.AddCommand("Run-Foo").AddParameter("C1Instance", $instance).Invoke()
-                    $result.Count | Should Be 1 > $null
+                    $result.Count | Should -Be 1 > $null
                     return $result[0]
                 } finally {
                     $powershell.Commands.Clear()
@@ -104,16 +104,16 @@ Describe 'Misc Test' -Tags "CI" {
             $instance = [C1]::new()
             ## For a bound class instance, the execution of an instance method is
             ## done in the Runspace/SessionState the instance is bound to.
-            $instance.Foo() | Should Be $ExpectedTextFromBoundInstance
-            RunFooInNewRunspace $instance | Should Be $ExpectedTextFromBoundInstance
+            $instance.Foo() | Should -Be $ExpectedTextFromBoundInstance
+            RunFooInNewRunspace $instance | Should -Be $ExpectedTextFromBoundInstance
         }
 
         It "Create instance that is NOT bound to a SessionState" {
             $instance = InstantiateInNewRunspace ([C1])
             ## For an unbound class instance, the execution of an instance method is done in
             ## the Runspace/SessionState where the call to the instance method is made.
-            $instance.Foo() | Should Be $ExpectedTextFromBoundInstance
-            RunFooInNewRunspace $instance | Should Be $ExpectedTextFromUnboundInstance
+            $instance.Foo() | Should -Be $ExpectedTextFromBoundInstance
+            RunFooInNewRunspace $instance | Should -Be $ExpectedTextFromUnboundInstance
         }
     }
 }

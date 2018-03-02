@@ -8,8 +8,8 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         class C2a : C1 {}
         class C2b:C1 {}
 
-        [C2a]::new().GetType().BaseType.Name | Should Be "C1"
-        [C2b].BaseType.Name | Should Be "C1"
+        [C2a]::new().GetType().BaseType.Name | Should -Be "C1"
+        [C2b].BaseType.Name | Should -Be "C1"
     }
 
     It 'inheritance from abstract base class with no abstract methods and protected ctor' {
@@ -43,13 +43,13 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 }
             }
 
-        [C2a].GetInterface("System.IDisposable") | Should Not Be $null
-        [C2b].GetInterface("System.IDisposable") | Should Not Be $null
+        [C2a].GetInterface("System.IDisposable") | Should -Not -Be $null
+        [C2b].GetInterface("System.IDisposable") | Should -Not -Be $null
     }
 
     It 'can subclass .NET type' {
         class MyIntList : system.collections.generic.list[int] {}
-        [MyIntList]::new().GetType().BaseType.FullName.StartsWith('System.Collections.Generic.List') | Should Be $true
+        [MyIntList]::new().GetType().BaseType.FullName.StartsWith('System.Collections.Generic.List') | Should -Be $true
     }
 
     It 'can implement .NET interface' {
@@ -60,7 +60,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 return 0;
             }
         }
-        [MyComparable].GetInterface("System.IComparable") | Should Not Be $null
+        [MyComparable].GetInterface("System.IComparable") | Should -Not -Be $null
     }
 
     It 'allows use of defined later type as a property type' {
@@ -71,7 +71,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
             [A]::b = "bla"
             throw "No Exception!"
         } catch {
-            $_.Exception | Should BeOfType 'System.Management.Automation.SetValueInvocationException'
+            $_.Exception | Should -BeOfType 'System.Management.Automation.SetValueInvocationException'
         }
     }
 }
@@ -123,7 +123,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
                 [int]foo() {return 100500}
             }
             class baz : bar {}
-            [baz]::new().foo() | Should Be 100500
+            [baz]::new().foo() | Should -Be 100500
         }
 
         It 'can call static method on base class' {
@@ -132,7 +132,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
                 static [int]foo() {return 100500}
             }
             class baz : bar {}
-            [baz]::foo() | Should Be 100500
+            [baz]::foo() | Should -Be 100500
         }
 
         It 'can access static and instance base class property' {
@@ -151,8 +151,8 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             }
             $b = [B]::new()
             $b.foo()
-            [A]::si | Should Be 1001
-            ($b.i) | Should Be 1003
+            [A]::si | Should -Be 1001
+            ($b.i) | Should -Be 1003
         }
 
         It 'works with .NET types' {
@@ -160,9 +160,9 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             $intList = [MyIntList]::new()
             $intList.Add(100501)
             $intList.Add(100502)
-            $intList.Count | Should Be 2
-            $intList[0] | Should Be 100501
-            $intList[1] | Should Be 100502
+            $intList.Count | Should -Be 2
+            $intList[0] | Should -Be 100501
+            $intList[1] | Should -Be 100502
         }
 
         It 'overrides instance method' {
@@ -174,7 +174,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             {
                 [int]foo() {return 200600}
             }
-            [baz]::new().foo() | Should Be 200600
+            [baz]::new().foo() | Should -Be 200600
         }
 
         It 'allows base class method call and doesn''t fall into recursion' {
@@ -196,7 +196,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             }
 
             $res = [baz]::new().foo()
-            $res | Should Be 3003
+            $res | Should -Be 3003
         }
 
         It 'case insensitive for base class method calls' {
@@ -218,7 +218,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             }
 
             $res = [baz]::new().foo()
-            $res | Should Be 2002
+            $res | Should -Be 2002
         }
 
         It 'allows any call from the inheritance hierarchy' {
@@ -240,11 +240,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             }
             $d = [D]::new()
 
-            ([A]$d).GetName() | Should Be "A"
-            ([B]$d).GetName() | Should Be "B"
-            ([C]$d).GetName() | Should Be "C"
-            ([D]$d).GetName() | Should Be "D"
-            $d.GetName() | Should Be "D"
+            ([A]$d).GetName() | Should -Be "A"
+            ([B]$d).GetName() | Should -Be "B"
+            ([C]$d).GetName() | Should -Be "C"
+            ([D]$d).GetName() | Should -Be "D"
+            $d.GetName() | Should -Be "D"
         }
 
         It 'can call base method with params' {
@@ -257,8 +257,8 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
                 [string]ToStr([int]$a) {return "B" + $a}
             }
             $b = [B]::new()
-            ([A]$b).ToStr(101) | Should Be "A101"
-            $b.ToStr(100) | Should Be "B100"
+            ([A]$b).ToStr(101) | Should -Be "A101"
+            $b.ToStr(100) | Should -Be "B100"
         }
 
         It 'can call base method with many params' {
@@ -289,8 +289,8 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             # we don't really care about methods results, we only checks that calls doesn't throw
 
             # 14 args is a limit
-            $b.ToStr(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) | Should Be 'B'
-            ([A]$b).ToStr(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) | Should Be 'A'
+            $b.ToStr(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) | Should -Be 'B'
+            ([A]$b).ToStr(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) | Should -Be 'A'
 
             # 14 args is a limit
             $b.Noop(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
@@ -311,13 +311,13 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             }
             $b = [B]::new()
             ([A]$b).SetStr(101)
-            $script:voidOverrideVar | Should Be "A101"
+            $script:voidOverrideVar | Should -Be "A101"
             $b.SetStr(100)
-            $script:voidOverrideVar | Should Be "B100"
+            $script:voidOverrideVar | Should -Be "B100"
             ([A]$b).SetStr()
-            $script:voidOverrideVar | Should Be "A"
+            $script:voidOverrideVar | Should -Be "A"
             $b.SetStr()
-            $script:voidOverrideVar | Should Be "B"
+            $script:voidOverrideVar | Should -Be "B"
         }
 
         It 'hides final .NET method' {
@@ -332,8 +332,8 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 
             $intList = [MyIntList]::new()
             $intList.Add(100201)
-            $intList.Count | Should Be 1
-            $intList[0] | Should Be 200402
+            $intList.Count | Should -Be 1
+            $intList[0] | Should -Be 200402
         }
     }
 
@@ -352,11 +352,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         # MSFT:1911652
         # MSFT:2973835
         It 'doesn''t affect static method call on type' -Skip {
-            ([A]$b)::ToStr(101) | Should Be "A101"
+            ([A]$b)::ToStr(101) | Should -Be "A101"
         }
 
         It 'overrides static method call on instance' {
-            $b::ToStr(100) | Should Be "B100"
+            $b::ToStr(100) | Should -Be "B100"
         }
     }
 }
@@ -393,7 +393,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
         }
 
         $b = [B]::new(101)
-        $b.a | Should Be 202
+        $b.a | Should -Be 202
     }
 
     # TODO: can we detect it in the parse time?
@@ -415,7 +415,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
             [B]::new(101)
             throw "No Exception!"
         } catch {
-            $_.Exception | Should BeOfType "System.Management.Automation.MethodException"
+            $_.Exception | Should -BeOfType "System.Management.Automation.MethodException"
         }
     }
 
@@ -439,8 +439,8 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
 
         $b = [B]::new()
         $c = [C]::new()
-        $b.a | Should Be 1007
-        $c.a | Should Be 1007
+        $b.a | Should -Be 1007
+        $c.a | Should -Be 1007
     }
 
     It 'doesn''t allow base ctor as an explicit method call' {
@@ -449,11 +449,11 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
             # we should not allow direct .ctor call.
             $o.{.ctor}()
         } catch {
-            $_.FullyQualifiedErrorId | Should Be MethodNotFound
+            $_.FullyQualifiedErrorId | Should -Be MethodNotFound
             return
         }
         # Fail
-        '' | Should Be "Exception expected"
+        '' | Should -Be "Exception expected"
     }
 
     It 'allow use conversion [string -> int] in base ctor call' {
@@ -471,7 +471,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
         }
 
         $b = [B]::new()
-        $b.a | Should Be 103
+        $b.a | Should -Be 103
     }
 
     It 'resolves ctor call based on argument type' {
@@ -495,8 +495,8 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
 
         $b1 = [B]::new("foo")
         $b2 = [B]::new(1001)
-        $b1.s | Should Be "foo"
-        $b2.i | Should Be 1001
+        $b1.s | Should -Be "foo"
+        $b2.i | Should -Be 1001
     }
 }
 
@@ -515,7 +515,7 @@ class Derived : Base
 
 [Derived]::new().foo()
 '@)
-        $sb.Invoke() | Should Be 200
-        $sb.Invoke() | Should Be 200
+        $sb.Invoke() | Should -Be 200
+        $sb.Invoke() | Should -Be 200
     }
 }

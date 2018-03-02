@@ -107,9 +107,9 @@ function Test-Completions
                 foreach ($expected in $test.ExpectedResults)
                 {
                     $skip = $false
-                    if ( $expected.CompletionText -match "System.Management.Automation.PerformanceData|System.Management.Automation.Security" ) { $skip = $true }
+                    if ( $expected.CompletionText -Match "System.Management.Automation.PerformanceData|System.Management.Automation.Security" ) { $skip = $true }
                     It ($expected.CompletionText) -skip:$skip {
-                        $expected.Found | Should Be $true
+                        $expected.Found | Should -Be $true
                     }
                 }
 
@@ -118,7 +118,7 @@ function Test-Completions
                     It "Not expected: $notExpected" {
                         foreach ($result in $results.CompletionMatches)
                         {
-                            ($result.CompletionText -ceq $notExpected) | Should Be $False
+                            ($result.CompletionText -ceq $notExpected) | Should -Be $False
                         }
                     }
                 }
@@ -237,7 +237,7 @@ Describe "Test completion of parameters for native commands" -Tags "CI" {
 
         @("-dir", "-verbose", "-help", "-version") |
         Where-Object {
-            $_ -match "$wordToComplete*"
+            $_ -Match "$wordToComplete*"
         } |
         ForEach-Object {
             [CompletionResult]::new($_, $_, [CompletionResultType]::ParameterName, $_)
@@ -436,9 +436,9 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
 
         $line = "$cmdletName -Alpha val"
         $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
-        $res.CompletionMatches.Count | Should Be 3
-        $res.CompletionMatches.CompletionText -join " " | Should Be "value1 value2 value3"
-        { TestArgumentCompletionsAttribute -Alpha unExpectedValue } | Should Not Throw
+        $res.CompletionMatches.Count | Should -Be 3
+        $res.CompletionMatches.CompletionText -join " " | Should -Be "value1 value2 value3"
+        { TestArgumentCompletionsAttribute -Alpha unExpectedValue } | Should -Not -Throw
     }
 
     It "<attributeName> works in C#" -TestCases $testCasesCSharp {
@@ -446,8 +446,8 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
 
         $line = "$cmdletName -Param1 val"
         $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
-        $res.CompletionMatches.Count | Should Be 3
-        $res.CompletionMatches.CompletionText -join " " | Should Be "value1 value2 value3"
-        { TestArgumentCompletionsAttribute -Param1 unExpectedValue } | Should Not Throw
+        $res.CompletionMatches.Count | Should -Be 3
+        $res.CompletionMatches.CompletionText -join " " | Should -Be "value1 value2 value3"
+        { TestArgumentCompletionsAttribute -Param1 unExpectedValue } | Should -Not -Throw
     }
 }

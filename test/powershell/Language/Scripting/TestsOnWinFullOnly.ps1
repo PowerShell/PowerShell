@@ -12,7 +12,7 @@ function Run-TestOnWinFull
 
             $r = TestErrorActionSuspend -ErrorAction Suspend
 
-            $r | Should Be Hello
+            $r | Should -Be Hello
             break;   }
 
         "ForeachParallel:ASTOfParallelForeachOnWorkflow" {
@@ -20,8 +20,8 @@ function Run-TestOnWinFull
             $errors = @()
             $ast = [System.Management.Automation.Language.Parser]::ParseInput(
         'workflow foo { foreach -parallel ($foo in $bar) {} }', [ref] $null, [ref] $errors)
-            $errors.Count | Should Be 0
-            $ast.EndBlock.Statements[0].Body.EndBlock.Statements[0].Flags | Should Be 'Parallel'
+            $errors.Count | Should -Be 0
+            $ast.EndBlock.Statements[0].Body.EndBlock.Statements[0].Flags | Should -Be 'Parallel'
             break;
             }
         default {
