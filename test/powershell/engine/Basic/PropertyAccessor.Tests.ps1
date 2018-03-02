@@ -68,7 +68,7 @@ try {
         It "Verify Queries to Missing File Return Default Value" {
             Remove-Item $userPropertiesFile -Force
 
-            Get-ExecutionPolicy -Scope CurrentUser | Should Be "Undefined"
+            Get-ExecutionPolicy -Scope CurrentUser | Should -Be "Undefined"
 
             # Verify the file was not created during the test
             try {
@@ -76,7 +76,7 @@ try {
                 throw "Properties file genererated during read operation"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+                $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
             }
         }
 
@@ -84,20 +84,20 @@ try {
             # Create a valid file with no values
             Set-Content -Path $userPropertiesFile -Value "{}"
 
-            Get-ExecutionPolicy -Scope CurrentUser | Should Be "Undefined"
+            Get-ExecutionPolicy -Scope CurrentUser | Should -Be "Undefined"
         }
 
         It "Verify Writes Update Properties" {
-            Get-Content -Path $userPropertiesFile | Should Be '{"Microsoft.PowerShell:ExecutionPolicy":"RemoteSigned"}'
+            Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"RemoteSigned"}'
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
-            Get-Content -Path $userPropertiesFile | Should Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
+            Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
         }
 
         It "Verify Writes Create the File if Not Present" {
             Remove-Item $userPropertiesFile -Force
-            Test-Path $userPropertiesFile | Should Be $false
+            Test-Path $userPropertiesFile | Should -Be $false
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
-            Get-Content -Path $userPropertiesFile | Should Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
+            Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
         }
     }
 }

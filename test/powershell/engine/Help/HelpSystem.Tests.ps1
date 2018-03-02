@@ -52,8 +52,8 @@ function RunTestCase
             It "Validate -Description and -Examples sections in help content. Run 'Get-help -name $cmdletName'" {
 
                 $help = get-help -name $cmdletName
-                $help.Description | Out-String | Should Match $cmdletName
-                $help.Examples | Out-String | Should Match $cmdletName
+                $help.Description | Out-String | Should -Match $cmdletName
+                $help.Examples | Out-String | Should -Match $cmdletName
             }
 
             if ($tag -eq "CI")
@@ -71,9 +71,9 @@ Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @(
     It "Get-Help returns information about the help system." {
 
         $help = Get-Help
-        $help.Name | Should Be "default"
-        $help.Category | Should Be "HelpFile"
-        $help.Synopsis | Should Match "SHORT DESCRIPTION"
+        $help.Name | Should -Be "default"
+        $help.Category | Should -Be "HelpFile"
+        $help.Synopsis | Should -Match "SHORT DESCRIPTION"
     }
 }
 
@@ -169,7 +169,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
         It -Pending:$pending "Shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name $verb-$noun -Path $path)" {
 
             # Path should exist or else Get-Help will fallback to default help text
-            $path | Should Exist
+            $path | Should -Exist
 
             $xpath = "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath$helpContext/command:command/command:details[command:verb='$verb' and command:noun='$noun']"
             $helpXmlNode = Select-Xml -Path $helpFile -XPath $xpath -Namespace $namespaces | Select-Object -ExpandProperty Node
@@ -179,7 +179,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 
             # System.Management.Automation.ProviderContext.GetProviderSpecificHelpInfo ignores extra whitespace, line breaks and
             # comments when loading help XML, but Select-Xml can not; use BeLikeExactly operator to omit trailing line breaks:
-            $helpXmlNode.description.para -clike "$expected*" | Should Be $true
+            $helpXmlNode.description.para -clike "$expected*" | Should -Be $true
         }
     }
 }
@@ -210,13 +210,13 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
     It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
 
         $help = Get-Help about_testhelp
-        $help.count | Should Be 1
-        $help | Should BeExactly "Hello"
+        $help.count | Should -Be 1
+        $help | Should -BeExactly "Hello"
     }
 
     It "Get-Help for about_Variable should return only one help object" {
         $help = Get-Help about_Variables
-        $help.count | Should Be 1
+        $help.count | Should -Be 1
     }
 }
 
@@ -236,7 +236,7 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
         {
             $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
             $helpContent = Get-Help about_testCase
-            $helpContent | Should Match "about_test"
+            $helpContent | Should -Match "about_test"
         }
         finally
         {
@@ -282,7 +282,7 @@ Describe "Get-Help should find pattern help files" -Tags "CI" {
             $command,
             $result
         )
-        $command.Invoke() | Should Be $result
+        $command.Invoke() | Should -Be $result
     }
 }
 
@@ -293,36 +293,36 @@ Describe "Get-Help should find pattern alias" -Tags "CI" {
     }
 
     It "Get-Help should find alias as command" {
-       (Get-Help where).Name | Should BeExactly "Where-Object"
+       (Get-Help where).Name | Should -BeExactly "Where-Object"
     }
 
     It "Get-Help should find alias with ? pattern" {
        $help = Get-Help wher?
-       $help.Category | Should BeExactly "Alias"
-       $help.Synopsis | Should BeExactly "Where-Object"
+       $help.Category | Should -BeExactly "Alias"
+       $help.Synopsis | Should -BeExactly "Where-Object"
     }
 
     It "Get-Help should find alias with * pattern" {
        Set-Alias -Name testAlias1 -Value Where-Object
        $help = Get-Help testAlias1*
-       $help.Category | Should BeExactly "Alias"
-       $help.Synopsis | Should BeExactly "Where-Object"
+       $help.Category | Should -BeExactly "Alias"
+       $help.Synopsis | Should -BeExactly "Where-Object"
     }
 }
 
 Describe "help function uses full view by default" -Tags "CI" {
     It "help should return full view without -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process)
-        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should return full view even with -Full switch" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Full)
-        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should Not BeNullOrEmpty
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -Not -BeNullOrEmpty
     }
 
     It "help should not append -Full when not using AllUsersView parameter set" {
         $gpsHelp = (help Microsoft.PowerShell.Management\Get-Process -Parameter Name)
-        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should BeNullOrEmpty
+        $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
     }
 }

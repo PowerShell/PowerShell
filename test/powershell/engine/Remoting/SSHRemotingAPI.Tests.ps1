@@ -41,7 +41,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
             }
             catch
             {
-                $_.Exception.InnerException.InnerException | Should BeOfType "System.IO.FileNotFoundException"
+                $_.Exception.InnerException.InnerException | Should -BeOfType "System.IO.FileNotFoundException"
             }
         }
 
@@ -67,7 +67,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
                     $expectedArgumentException = $_.Exception.InnerException
                 }
 
-                $expectedArgumentException | Should BeOfType "System.ArgumentException"
+                $expectedArgumentException | Should -BeOfType "System.ArgumentException"
             }
         }
     }
