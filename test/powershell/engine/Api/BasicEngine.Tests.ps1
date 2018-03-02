@@ -3,7 +3,7 @@
 Describe 'Basic engine APIs' -Tags "CI" {
     Context 'powershell::Create' {
         It 'can create default instance' {
-            [powershell]::Create() | Should Not Be $null
+            [powershell]::Create() | Should -Not -Be $null
         }
 
         It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
@@ -11,15 +11,15 @@ Describe 'Basic engine APIs' -Tags "CI" {
             $ps.AddScript("Get-Command -Name Test-WSMan") > $null
 
             $result = $ps.Invoke()
-            $result.Count | Should Be 1
-            $result[0].Source | Should Be "Microsoft.WSMan.Management"
+            $result.Count | Should -Be 1
+            $result[0].Source | Should -Be "Microsoft.WSMan.Management"
         }
     }
 
     Context 'executioncontext' {
         It 'args are passed correctly' {
             $result = $ExecutionContext.SessionState.InvokeCommand.InvokeScript('"`$args:($args); `$input:($input)"', 1, 2, 3)
-            $result | Should BeExactly '$args:(1 2 3); $input:()'
+            $result | Should -BeExactly '$args:(1 2 3); $input:()'
         }
     }
 }
@@ -41,9 +41,9 @@ exit
         $expect = "powershell process exits in 5 seconds"
         if (-not $process.HasExited) {
             Stop-Process -InputObject $process -Force -ErrorAction SilentlyContinue
-            "powershell process doesn't exit in 5 seconds" | Should Be $expect
+            "powershell process doesn't exit in 5 seconds" | Should -Be $expect
         } else {
-            $expect | Should Be $expect
+            $expect | Should -Be $expect
         }
     }
 }

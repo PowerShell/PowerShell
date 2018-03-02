@@ -29,59 +29,59 @@ Describe "Adapter Tests" -tags "CI" {
         It "Can get a Dotnet parameterized property" {
             $col  = $pso.psobject.Properties.Match("*")
             $prop = $col.psobject.Members["Item"]
-            $prop | Should Not BeNullOrEmpty
-            $prop.IsGettable | Should Be $true
-            $prop.IsSettable | Should Be $false
-            $prop.TypeNameOfValue | Should Be "System.Management.Automation.PSPropertyInfo"
-            $prop.Invoke("ProcessName").Value | Should Be $processName
+            $prop | Should -Not -BeNullOrEmpty
+            $prop.IsGettable | Should -Be $true
+            $prop.IsSettable | Should -Be $false
+            $prop.TypeNameOfValue | Should -Be "System.Management.Automation.PSPropertyInfo"
+            $prop.Invoke("ProcessName").Value | Should -Be $processName
         }
 
         It "Can get a property" {
-            $pso.psobject.Properties["ProcessName"] | Should Not BeNullOrEmpty
+            $pso.psobject.Properties["ProcessName"] | Should -Not -BeNullOrEmpty
         }
 
         It "Can access all properties" {
             $props = $pso.psobject.Properties.Match("*")
-            $props | Should Not BeNullOrEmpty
-            $props["ProcessName"].Value | Should Be $processName
+            $props | Should -Not -BeNullOrEmpty
+            $props["ProcessName"].Value | Should -Be $processName
         }
 
         It "Can invoke a method" {
             $method = $pso.psobject.Methods["ToString"]
-            $method.Invoke() | Should Be ($pso.ToString())
+            $method.Invoke() | Should -Be ($pso.ToString())
         }
 
         It "Access a Method via MemberSet adapter" {
             $prop = $psmemberset.psobject.Members["TestCodeMethod"]
-            $prop.Invoke(2) | Should Be 1
+            $prop.Invoke(2) | Should -Be 1
         }
 
         It "Access misc properties via MemberSet adapter" {
             $prop  = $psmemberset.psobject.Properties["NoteName"]
-            $prop | Should Not BeNullOrEmpty
-            $prop.IsGettable | Should Be $true
-            $prop.IsSettable | Should Be $true
-            $prop.TypeNameOfValue | Should Be "System.Int32"
+            $prop | Should -Not -BeNullOrEmpty
+            $prop.IsGettable | Should -Be $true
+            $prop.IsSettable | Should -Be $true
+            $prop.TypeNameOfValue | Should -Be "System.Int32"
         }
 
         It "Access all the properties via XmlAdapter" {
             $col  = $doc.psobject.Properties.Match("*")
-            $col.Count | Should Not Be 0
+            $col.Count | Should -Not -Be 0
             $prop = $col["price"]
-            $prop | Should Not BeNullOrEmpty
+            $prop | Should -Not -BeNullOrEmpty
         }
 
         It "Access all the properties via XmlAdapter" {
             $prop  = $doc.psobject.Properties["price"]
-            $prop.Value | Should Be "19.95"
-            $prop.IsGettable | Should Not BeNullOrEmpty
-            $prop.IsSettable | Should Not BeNullOrEmpty
-            $prop.TypeNameOfValue | Should Be "System.String"
+            $prop.Value | Should -Be "19.95"
+            $prop.IsGettable | Should -Not -BeNullOrEmpty
+            $prop.IsSettable | Should -Not -BeNullOrEmpty
+            $prop.TypeNameOfValue | Should -Be "System.String"
         }
 
         It "Call to string on a XmlNode object" {
             $val  = $doc.ToString()
-            $val | Should Be "book"
+            $val | Should -Be "book"
         }
 
         It "Calls CodeMethod with void result" {
@@ -106,11 +106,11 @@ Describe "Adapter Tests" -tags "CI" {
             Update-TypeData -Force -TypeName TestCodeMethodInvokationWithVoidReturn -MemberType CodeMethod -MemberName VoidMethod -Value ([TestCodeMethodInvokationWithVoidReturn]::GetMethodInfo('VoidMethodCM'))
             try {
                 $o = [TestCodeMethodInvokationWithVoidReturn]::new()
-                $o.CallCounter | Should Be 0
+                $o.CallCounter | Should -Be 0
                 $o.VoidMethod()
-                $o.CallCounter | Should Be 1
+                $o.CallCounter | Should -Be 1
 
-                $o.IntMethod() | Should Be 1
+                $o.IntMethod() | Should -Be 1
             }
             finally {
                 Remove-TypeData TestCodeMethodInvokationWithVoidReturn
@@ -120,41 +120,41 @@ Describe "Adapter Tests" -tags "CI" {
         It "Count and length property works for singletons" {
             # Return magic Count and Length property if it absent.
             $x = 5
-            $x.Count | Should Be 1
-            $x.Length | Should Be 1
+            $x.Count | Should -Be 1
+            $x.Length | Should -Be 1
 
-            $null.Count | Should Be 0
-            $null.Length | Should Be 0
+            $null.Count | Should -Be 0
+            $null.Length | Should -Be 0
 
-            (10).Count | Should Be 1
-            (10).Length | Should Be 1
+            (10).Count | Should -Be 1
+            (10).Length | Should -Be 1
 
-            ("a").Count | Should Be 1
+            ("a").Count | Should -Be 1
             # The Length property exists in String type, so here we check that we don't break strings.
-            ("a").Length | Should Be 1
-            ("aa").Length | Should Be 2
+            ("a").Length | Should -Be 1
+            ("aa").Length | Should -Be 2
 
-            ([psobject] @{ foo = 'bar' }).Count | Should Be 1
-            ([psobject] @{ foo = 'bar' }).Length | Should Be 1
+            ([psobject] @{ foo = 'bar' }).Count | Should -Be 1
+            ([psobject] @{ foo = 'bar' }).Length | Should -Be 1
 
-            ([pscustomobject] @{ foo = 'bar' }).Count | Should Be 1
-            ([pscustomobject] @{ foo = 'bar' }).Length | Should Be 1
+            ([pscustomobject] @{ foo = 'bar' }).Count | Should -Be 1
+            ([pscustomobject] @{ foo = 'bar' }).Length | Should -Be 1
 
             # Return real Count and Length property if it present.
-            ([pscustomobject] @{ foo = 'bar'; count = 5 }).Count | Should Be 5
-            ([pscustomobject] @{ foo = 'bar'; length = 5 }).Length | Should Be 5
+            ([pscustomobject] @{ foo = 'bar'; count = 5 }).Count | Should -Be 5
+            ([pscustomobject] @{ foo = 'bar'; length = 5 }).Length | Should -Be 5
         }
     }
 
     Context "Null Magic Method Adapter Tests" {
         It "ForEach and Where works for Null" {
             $res = $null.ForEach({1})
-            $res.Count | Should Be 0
-            $res.GetType().Name | Should BeExactly "Collection``1"
+            $res.Count | Should -Be 0
+            $res.GetType().Name | Should -BeExactly "Collection``1"
 
             $null.Where({$true})
-            $res.Count | Should Be 0
-            $res.GetType().Name | Should BeExactly "Collection``1"
+            $res.Count | Should -Be 0
+            $res.GetType().Name | Should -BeExactly "Collection``1"
         }
     }
 
@@ -164,20 +164,20 @@ Describe "Adapter Tests" -tags "CI" {
 
         It "ForEach magic method works for singletions" {
             $x = 5
-            $x.ForEach({$_}) | Should Be 5
-            (5).ForEach({$_}) | Should Be 5
-            ("a").ForEach({$_}) | Should BeExactly "a"
+            $x.ForEach({$_}) | Should -Be 5
+            (5).ForEach({$_}) | Should -Be 5
+            ("a").ForEach({$_}) | Should -BeExactly "a"
 
-            ([pscustomobject]@{ foo = 'bar' }).ForEach({1}) | Should Be 1
+            ([pscustomobject]@{ foo = 'bar' }).ForEach({1}) | Should -Be 1
 
             $x = ([pscustomobject]@{ foo = 'bar' }).ForEach({$_})
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
 
             $x = ([pscustomobject]@{ foo = 'bar' }).Foreach({$_ | Add-Member -NotePropertyName "foo2" -NotePropertyValue "bar2" -PassThru})
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
-            $x[0].foo2 | Should BeExactly "bar2"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
+            $x[0].foo2 | Should -BeExactly "bar2"
 
             # We call ForEach method defined in an object if it is present (not magic ForEach method).
             $x = [pscustomobject]@{ foo = 'bar' }
@@ -185,7 +185,7 @@ Describe "Adapter Tests" -tags "CI" {
                 param ( [int]$param1 )
                    $param1*2
                 } -PassThru -Force
-            $x.ForEach(5) | Should Be 10
+            $x.ForEach(5) | Should -Be 10
         }
     }
 
@@ -195,29 +195,29 @@ Describe "Adapter Tests" -tags "CI" {
 
         It "Where magic method works for singletions" {
             $x = 5
-            $x.Where({$true}) | Should Be 5
-            (5).Where({$true}) | Should Be 5
-            ("a").Where({$true}) | Should Be "a"
+            $x.Where({$true}) | Should -Be 5
+            (5).Where({$true}) | Should -Be 5
+            ("a").Where({$true}) | Should -Be "a"
 
             $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true})
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
 
             $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, 0)
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
 
             $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, "Default")
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
 
             $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, "Default", 0)
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
 
             $x = ([pscustomobject] @{ foo = 'bar' }).Where({$true}, "Default", "0")
-            $x.Count | Should Be 1
-            $x[0].foo | Should BeExactly "bar"
+            $x.Count | Should -Be 1
+            $x[0].foo | Should -BeExactly "bar"
 
             # We call Where method defined in an object if it is present (not magic Where method).
             $x = [pscustomobject]@{ foo = 'bar' }
@@ -225,7 +225,7 @@ Describe "Adapter Tests" -tags "CI" {
                 param ( [int]$param1 )
                    $param1*2
                 } -PassThru -Force
-            $x.Where(5) | Should Be 10
+            $x.Where(5) | Should -Be 10
         }
     }
 }
@@ -251,8 +251,8 @@ Describe "Adapter XML Tests" -tags "CI" {
             # rval will be implicitly converted to 'string' type
             param($rval)
             {
-                { $x.root.data = $rval } | Should Not Throw
-                $x.root.data | Should Be [System.Management.Automation.LanguagePrimitives]::ConvertTo($rval, [string])
+                { $x.root.data = $rval } | Should -Not -Throw
+                $x.root.data | Should -Be [System.Management.Automation.LanguagePrimitives]::ConvertTo($rval, [string])
             }
         }
     }
@@ -280,19 +280,19 @@ Describe "DataRow and DataRowView Adapter tests" -tags "CI" {
 
         It "Should be able to access data columns" {
             $row = $dataTable.Rows[0]
-            $row.Id | Should Be 1
-            $row.FirstName | Should Be "joseph"
-            $row.LastName | Should Be "smith"
-            $row.YearsInMS | Should Be 15
+            $row.Id | Should -Be 1
+            $row.FirstName | Should -Be "joseph"
+            $row.LastName | Should -Be "smith"
+            $row.YearsInMS | Should -Be 15
         }
 
         It "DataTable should be enumerable in PowerShell" {
             ## Get the third entry in the data table
             $row = $dataTable | Select-Object -Skip 2 -First 1
-            $row.Id | Should Be 3
-            $row.FirstName | Should Be "mary jo"
-            $row.LastName | Should Be "soe"
-            $row.YearsInMS | Should Be 5
+            $row.Id | Should -Be 3
+            $row.FirstName | Should -Be "mary jo"
+            $row.LastName | Should -Be "soe"
+            $row.YearsInMS | Should -Be 5
         }
     }
 
@@ -300,18 +300,18 @@ Describe "DataRow and DataRowView Adapter tests" -tags "CI" {
 
         It "Should be able to access data columns" {
             $rowView = $dataTable.DefaultView[1]
-            $rowView.Id | Should Be 2
-            $rowView.FirstName | Should Be "paul"
-            $rowView.LastName | Should Be "smith"
-            $rowView.YearsInMS | Should Be 15
+            $rowView.Id | Should -Be 2
+            $rowView.FirstName | Should -Be "paul"
+            $rowView.LastName | Should -Be "smith"
+            $rowView.YearsInMS | Should -Be 15
         }
 
         It "DataView should be enumerable" {
             $rowView = $dataTable.DefaultView | Select-Object -Last 1
-            $rowView.Id | Should Be 4
-            $rowView.FirstName | Should Be "edmund`todd `n"
-            $rowView.LastName | Should Be "bush"
-            $rowView.YearsInMS | Should Be 9
+            $rowView.Id | Should -Be 4
+            $rowView.FirstName | Should -Be "edmund`todd `n"
+            $rowView.LastName | Should -Be "bush"
+            $rowView.YearsInMS | Should -Be 9
         }
     }
 }

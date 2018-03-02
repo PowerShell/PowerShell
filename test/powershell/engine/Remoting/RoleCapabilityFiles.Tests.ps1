@@ -55,7 +55,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             {
                 $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
             }
-            $fullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
+            $fullyQualifiedErrorId | Should -Be 'CouldNotFindRoleCapabilityFile'
         }
     }
 
@@ -78,7 +78,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             {
                 $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
             }
-            $fullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
+            $fullyQualifiedErrorId | Should -Be 'InvalidRoleCapabilityFileExtension'
         }
     }
 
@@ -105,7 +105,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             {
                 $exceptionTypeName = $_.Exception.InnerException.GetType().FullName
             }
-            $exceptionTypeName | Should Be 'System.Management.Automation.CommandNotFoundException'
+            $exceptionTypeName | Should -Be 'System.Management.Automation.CommandNotFoundException'
         }
 
         $ps.Dispose()
