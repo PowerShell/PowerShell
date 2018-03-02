@@ -48,10 +48,10 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
         $paths = $defaultModulePath -split [System.IO.Path]::PathSeparator
 
-        $paths.Count | Should Be 3
-        $paths[0].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should Be $expectedUserPath
-        $paths[1].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should Be $expectedSharedPath
-        $paths[2].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should Be $expectedSystemPath
+        $paths.Count | Should -Be 3
+        $paths[0].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedUserPath
+        $paths[1].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSharedPath
+        $paths[2].TrimEnd([System.IO.Path]::DirectorySeparatorChar) | Should -Be $expectedSystemPath
     }
 
     It "ignore pshome module path derived from a different powershell core instance" -Skip:(!$IsCoreCLR) {
@@ -68,10 +68,10 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
             $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
             $paths = $newModulePath -split [System.IO.Path]::PathSeparator
 
-            $paths.Count | Should Be 3
-            $paths[0] | Should Be $expectedUserPath
-            $paths[1] | Should Be $expectedSharedPath
-            $paths[2] | Should Be $expectedSystemPath
+            $paths.Count | Should -Be 3
+            $paths[0] | Should -Be $expectedUserPath
+            $paths[1] | Should -Be $expectedSharedPath
+            $paths[2] | Should -Be $expectedSystemPath
 
         } finally {
 
@@ -89,9 +89,9 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $newModulePath = & $powershell -nopro -c '$env:PSModulePath'
         $paths = $newModulePath -split [System.IO.Path]::PathSeparator
 
-        $paths.Count | Should Be 5
-        $paths -contains $fakePSHomeModuleDir | Should Be $true
-        $paths -contains $customeModules | Should Be $true
+        $paths.Count | Should -Be 5
+        $paths -contains $fakePSHomeModuleDir | Should -Be $true
+        $paths -contains $customeModules | Should -Be $true
     }
 
 }

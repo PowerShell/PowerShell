@@ -156,11 +156,11 @@ function ValidateInstalledHelpContent
 
     $helpFilesInstalled = @(GetFiles -path $testCases[$moduleName].HelpInstallationPath | ForEach-Object {Split-Path $_ -Leaf})
     $expectedHelpFiles = @($testCases[$moduleName].HelpFiles)
-    $helpFilesInstalled.Count | Should Be $expectedHelpFiles.Count
+    $helpFilesInstalled.Count | Should -Be $expectedHelpFiles.Count
 
     foreach ($fileName in $expectedHelpFiles)
     {
-        $helpFilesInstalled -contains $fileName | Should Be $true
+        $helpFilesInstalled -contains $fileName | Should -Be $true
     }
 }
 
@@ -269,11 +269,11 @@ function ValidateSaveHelp
 
     $compressedFile = GetFiles -fileType "*$extension" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedCompressedFile = $testCases[$moduleName].CompressedFiles
-    $expectedCompressedFile | Should Be $compressedFile
+    $expectedCompressedFile | Should -Be $compressedFile
 
     $helpInfoFile = GetFiles -fileType "*HelpInfo.xml" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedHelpInfoFile = $testCases[$moduleName].HelpInfoFiles
-    $expectedHelpInfoFile | Should Be $helpInfoFile
+    $expectedHelpInfoFile | Should -Be $helpInfoFile
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
