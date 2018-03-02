@@ -668,26 +668,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             else
             {
                 // DSC SxS scenario
-                //var psAssembly = Assembly.GetEntryAssembly();
                 var configSystemPath = Utils.DefaultPowerShellAppBase;
                 var systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
-                //var inboxModulePath = "Modules\\PSDesiredStateConfiguration";
-                ExecutionContext context = null;
-                CommandInfo commandInfo = new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand), null, null, context);
-                System.Management.Automation.Runspaces.Command getModuleCommand = new System.Management.Automation.Runspaces.Command(commandInfo);
-                var psDesiredStateConfigurationModule = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace)
-                .AddCommand(getModuleCommand)
-                    .AddParameter("List", true)
-                    .AddParameter("Name", "PSDesiredStateConfiguration")
-                    .AddParameter("ErrorAction", ActionPreference.Ignore)
-                    .AddParameter("WarningAction", ActionPreference.Ignore)
-                    .AddParameter("InformationAction", ActionPreference.Ignore)
-                    .AddParameter("Verbose", false)
-                    .AddParameter("Debug", false)
-                    .Invoke<PSModuleInfo>();
-                var inboxModulePath = psDesiredStateConfigurationModule[0].Path;
+                var inboxModulePath = "Modules\\PSDesiredStateConfiguration";
 
-                if(!Directory.Exists(systemResourceRoot))
+                if (!Directory.Exists(systemResourceRoot))
                 {
                      configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
                      systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
