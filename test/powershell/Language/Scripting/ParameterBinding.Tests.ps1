@@ -521,6 +521,6 @@ Describe "Tests for parameter binding" -Tags "CI" {
         & { } $b
 
         #The position of the enumerator shouldn't be modified
-        $b.current |Should -Be 1
+        $b.current | Should -Be 1
     }
 }

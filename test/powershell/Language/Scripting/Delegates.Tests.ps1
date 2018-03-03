@@ -24,7 +24,7 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
 
                 $argumentTypes.Value += $type;
 
-                if((-Not $hasReturn) -or ($j -lt $num ) )  {
+                if((-not $hasReturn) -or ($j -lt $num ) )  {
                     $parameters.Value  += Get-Value($type)
                 }
             }
