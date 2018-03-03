@@ -13,7 +13,7 @@ Try {
             # we can't use equals here as on windows cimclassname
             # is win32_computersystem, but that's not likely to be the
             # case on non-Windows systems
-            $instance.cimClass.CimClassName | should match _computersystem
+            $instance.cimClass.CimClassName | Should -Match _computersystem
         }
         It "Property access should be case insensitive" {
             foreach($property in $instance.psobject.properties.name) {
@@ -21,11 +21,11 @@ Try {
                 $pLower = $property.ToLower()
                 [string]$pLowerValue = $pinstance.$pLower -join ","
                 [string]$pUpperValue = $pinstance.$pUpper -join ","
-                $pLowerValue | should be $pUpperValue
+                $pLowerValue | Should -Be $pUpperValue
             }
         }
         It "GetCimSessionInstanceId method invocation should return data" {
-           $instance.GetCimSessionInstanceId() | Should BeOfType "Guid"
+           $instance.GetCimSessionInstanceId() | Should -BeOfType "Guid"
         }
         It "should produce an error for a non-existing classname" {
             try {
@@ -33,7 +33,7 @@ Try {
                 throw "expected error did not occur"
             }
             catch {
-                $_.FullyQualifiedErrorId | should be "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
+                $_.FullyQualifiedErrorId | Should -Be "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
             }
         }
     }
