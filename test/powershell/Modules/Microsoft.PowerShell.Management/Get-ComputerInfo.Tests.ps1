@@ -5,6 +5,7 @@
 #
 
 $computerInfoAll = $null
+$testStartTime = Get-Date
 
 function Get-ComputerInfoForTest
 {
@@ -1345,9 +1346,12 @@ try {
             ($observed.OsFreeVirtualMemory -gt 0) | Should -Be $true
         }
 
-        It "(special case) Test for property = OsLocalDateTime" -Pending:$true {
-            $computerInfo = Get-ComputerInfo
-            $computerInfo | Should -BeOfType "ComputerInfo"
+
+        It "(special case) Test for property = OsLocalDateTime" {
+            $computerInfo = Get-ComputerInfoForTest
+            $testEndTime = Get-Date
+            $computerInfo.OsLocalDateTime | Should -BeGreaterThan $testStartTime
+            $computerInfo.OsLocalDateTime | Should -BeLessThan $testEndTime
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {

@@ -95,6 +95,13 @@ Describe "Get-ChildItem" -Tags "CI" {
             (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 5
         }
 
+        It "Should return items recursively when using 'Include' or 'Exclude' parameters with -LiteralPath" {
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should Be 0
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+        }
+        
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
             param($Parameters, $ExpectedCount)
 
