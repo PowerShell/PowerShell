@@ -8,6 +8,7 @@ Describe "Move-Item tests" -Tag "CI" {
         $target = "$TESTDRIVE/ItemWhichHasBeenMoved.txt"
         Setup -f "``[original``]file.txt" -content "This is not content"
         $sourceSp = "$TESTDRIVE/``[original``]file.txt"
+        $targetSpName = "$TESTDRIVE/ItemWhichHasBeen[Moved].txt"
         $targetSp = "$TESTDRIVE/ItemWhichHasBeen``[Moved``].txt"
     }
     It "Move-Item will move a file" {
@@ -17,10 +18,10 @@ Describe "Move-Item tests" -Tag "CI" {
         "$target" | Should FileContentMatchExactly "This is content"
     }
     It "Move-Item will move a file when path contains special char" {
-        Move-Item $sourceSp $targetSp
-        test-path $sourceSp | Should be $false
-        test-path $targetSp | Should be $true
-        "$targetSp" | Should FileContentMatchExactly "This is not content"
+        Move-Item $sourceSp $targetSpName
+        $sourceSp | Should Not Exist
+        $targetSp | Should Exist
+        $targetSp | Should FileContentMatchExactly "This is not content"
     }
 
     Context "Move-Item with filters" {
