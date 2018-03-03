@@ -220,13 +220,13 @@ Describe "Members of System.Type" -Tags "CI" {
 
 Describe "WildcardPattern" -Tags "CI" {
     It "Unescaping escaped string should get the original" -TestCases (
-        @{inputval = '*This'},
-        @{inputval = 'Is?'},
-        @{inputval = 'Real[ly]'},
-        @{inputval = 'Ba`sic'},
-        @{inputval = 'Test `[more`]?'}
+        @{inputStr = '*This'},
+        @{inputStr = 'Is?'},
+        @{inputStr = 'Real[ly]'},
+        @{inputStr = 'Ba`sic'},
+        @{inputStr = 'Test `[more`]?'}
     ) {
-        param($inputval)
-        [WildcardPattern]::Unescape([WildcardPattern]::Escape($inputval)) | Should Be $inputval
+        param($inputStr)
+        [WildcardPattern]::Unescape([WildcardPattern]::Escape($inputStr)) | Should BeExactly $inputStr
     }
 }

@@ -19,11 +19,11 @@ function Clean-State
 Describe "New-Item" -Tags "CI" {
     $tmpDirectory         = $TestDrive
     $testfile             = "testfile.txt"
-    $testfile2            = "``[test``]file.txt"
+    $testfileSp           = "``[test``]file.txt"
     $testfolder           = "newDirectory"
     $testlink             = "testlink"
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
-    $FullyQualifiedFile2  = Join-Path -Path $tmpDirectory -ChildPath $testfile2
+    $FullyQualifiedFileSp = Join-Path -Path $tmpDirectory -ChildPath $testfileSp
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
 
@@ -87,9 +87,9 @@ Describe "New-Item" -Tags "CI" {
     }
 
     It "Should create a file with correct name when Name switch is not used and Path contains special char" {
-        New-Item -Path $FullyQualifiedFile2 -ItemType file
+        New-Item -Path $FullyQualifiedFileSp -ItemType file
 
-        Test-Path $FullyQualifiedFile2 | Should Be $true
+        Test-Path $FullyQualifiedFileSp | Should Be $true
     }
 
     It "Should be able to create a multiple items in different directories" {
