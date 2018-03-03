@@ -145,8 +145,16 @@ $jsonFile = "$outputBaseFolder\CC.json"
 
 try
 {
+    ## Github needs TLS1.2 whereas the defaults for Invoke-WebRequest do not have TLS1.2
+    $prevSecProtocol = [System.Net.ServicePointManager]::SecurityProtocol
+
+    [System.Net.ServicePointManager]::SecurityProtocol =
+        [System.Net.ServicePointManager]::SecurityProtocol -bor
+        [System.Security.Authentication.SslProtocols]::Tls12 -bor
+        [System.Security.Authentication.SslProtocols]::Tls11
+
     # first thing to do is to be sure that no processes are running which will cause us issues
-    Get-Process pwsh | Stop-Process -Force -ErrorAction Stop
+    Get-Process pwsh -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction Stop
 
     ## This is required so we do not keep on merging coverage reports.
     if(Test-Path $outputLog)
@@ -337,6 +345,9 @@ catch
 }
 finally
 {
+    ## reset TLS1.2 settings.
+    [System.Net.ServicePointManager]::SecurityProtocol = $prevSecProtocol
+
     # the powershell execution should be done, be sure that there are no PowerShell test executables running because
     # they will cause subsequent coverage runs to behave poorly. Make sure that the path is properly formatted, and
     # we need to use like rather than match because on Windows, there will be "\" as path separators which would need
