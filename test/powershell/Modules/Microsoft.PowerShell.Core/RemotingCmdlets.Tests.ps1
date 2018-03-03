@@ -11,7 +11,7 @@ Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.EnterPSSessionCommand"
+            $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.EnterPSSessionCommand"
         }
     }
 
@@ -24,7 +24,7 @@ Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+            $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.NewPSSessionCommand"
         }
     }
 
@@ -37,7 +37,7 @@ Describe "SSH Remoting Cmdlet Tests" -Tags "Feature" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.InvokeCommandCommand"
+            $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.InvokeCommandCommand"
         }
     }
 }

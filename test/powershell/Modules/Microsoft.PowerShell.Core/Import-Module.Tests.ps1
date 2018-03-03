@@ -17,34 +17,34 @@ Describe "Import-Module" -Tags "CI" {
 
     BeforeEach {
         Remove-Module -Name $moduleName -Force
-        (Get-Module -Name $moduleName).Name | Should BeNullOrEmpty
+        (Get-Module -Name $moduleName).Name | Should -BeNullOrEmpty
     }
 
     AfterEach {
         Import-Module -Name $moduleName -Force
-        (Get-Module -Name $moduleName).Name | Should Be $moduleName
+        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
     }
 
     It "should be able to add a module with using Name switch" {
-        { Import-Module -Name $moduleName } | Should Not Throw
-        (Get-Module -Name $moduleName).Name | Should Be $moduleName
+        { Import-Module -Name $moduleName } | Should -Not -Throw
+        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
     }
 
     It "should be able to add a module with using ModuleInfo switch" {
         $a = Get-Module -ListAvailable $moduleName
-        { Import-Module -ModuleInfo $a } | Should Not Throw
-        (Get-Module -Name $moduleName).Name | Should Be $moduleName
+        { Import-Module -ModuleInfo $a } | Should -Not -Throw
+        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
     }
 
     It "should be able to load an already loaded module" {
         Import-Module $moduleName
-        { $script:module = Import-Module $moduleName -PassThru -ErrorAction Stop } | Should Not Throw
-        Get-Module -Name $moduleName | Should Be $script:module
+        { $script:module = Import-Module $moduleName -PassThru -ErrorAction Stop } | Should -Not -Throw
+        Get-Module -Name $moduleName | Should -Be $script:module
     }
 
     It "should only load the specified version" {
         Import-Module TestModule -RequiredVersion 1.1
-        (Get-Module TestModule).Version | Should BeIn "1.1"
+        (Get-Module TestModule).Version | Should -BeIn "1.1"
     }
 }
 
@@ -85,7 +85,7 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
     It "Verify ScriptsToProcess are executed <TestNameSuffix>" -TestCases $testCases {
         param($TestNameSuffix,$ipmoParms,$Expected)
         Import-Module @ipmoParms
-        Get-Content out.txt | Should Be $Expected
+        Get-Content out.txt | Should -Be $Expected
     }
 }
 
@@ -109,7 +109,7 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
         It "Load PSScheduledJob from Windows Powershell Modules folder" -Skip:(-not $IsWindows) {
             $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
             Import-Module $modulePath
-            (Get-Command New-JobTrigger).Name | Should Be 'New-JobTrigger'
+            (Get-Command New-JobTrigger).Name | Should -Be 'New-JobTrigger'
         }
     }
 }
@@ -138,8 +138,8 @@ namespace ModuleCmdlets
 
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
-    $results[0] | Should Be $path
-    $results[1] | Should BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
+    $results[0] | Should -Be $path
+    $results[1] | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
 
     It "PS should try to load the assembly from assembly name if file path doesn't exist" {
@@ -150,9 +150,9 @@ namespace ModuleCmdlets
         try
         {
             $module = Import-Module $psdFile -PassThru
-            $module.NestedModules | Should Not BeNullOrEmpty
+            $module.NestedModules | Should -Not -BeNullOrEmpty
             $assemblyLocation = [Microsoft.PowerShell.Commands.AddTypeCommand].Assembly.Location
-            $module.NestedModules.ImplementingAssembly.Location | Should Be $assemblyLocation
+            $module.NestedModules.ImplementingAssembly.Location | Should -Be $assemblyLocation
         }
         finally
         {
@@ -193,10 +193,10 @@ Describe "Import-Module should be case insensitive" -Tags 'CI' {
         Set-Content -Path "$modulesPath/$modulePath/TESTMODULE.psm1" -Value "function mytest { 'hello' }"
         Import-Module testMODULE
         $m = Get-Module TESTmodule
-        $m | Should BeOfType "System.Management.Automation.PSModuleInfo"
-        $m.Name | Should BeIn "TESTMODULE"
-        mytest | Should BeExactly "hello"
+        $m | Should -BeOfType "System.Management.Automation.PSModuleInfo"
+        $m.Name | Should -BeIn "TESTMODULE"
+        mytest | Should -BeExactly "hello"
         Remove-Module TestModule
-        Get-Module tESTmODULE | Should BeNullOrEmpty
+        Get-Module tESTmODULE | Should -BeNullOrEmpty
     }
 }

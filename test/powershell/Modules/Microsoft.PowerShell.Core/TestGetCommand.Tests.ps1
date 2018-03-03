@@ -150,14 +150,14 @@ Describe "Get-Command Tests" -Tags "CI" {
             foreach($paramName in $parameterNames)
             {
                 $foundParam = GetDynamicParameter -cmdlet $cmdlet -parameterName $paramName
-                $foundParam.Name | Should Be $paramName
+                $foundParam.Name | Should -Be $paramName
             }
         }
 
         function VerifyParameterType($cmdlet, $parameterName, $ParameterType)
         {
             $foundParam = GetDynamicParameter -cmdlet $cmdlet -parameterName $parameterName
-            $foundParam.ParameterType | Should Be $ParameterType
+            $foundParam.ParameterType | Should -Be $ParameterType
         }
     }
 
@@ -174,7 +174,7 @@ Describe "Get-Command Tests" -Tags "CI" {
         $dynamicParameter = "Wait", "Encoding", "Delimiter"
         foreach ($dynamicPara in $dynamicParameter)
         {
-            $results[0].ParameterSets.Parameters.Name -contains $dynamicPara | Should be $false
+            $results[0].ParameterSets.Parameters.Name -contains $dynamicPara | Should -Be $false
         }
     }
 
@@ -216,9 +216,9 @@ Describe "Get-Command Tests" -Tags "CI" {
 
     It "Verify Single Cmdlet Using Verb&Noun ParameterSet With Usage" {
         $results =  Get-Command -Verb get -Noun content -Encoding Unicode -Syntax
-        $results.ToString() | Should Match "-Encoding"
-        $results.ToString() | Should Match "-Wait"
-        $results.ToString() | Should Match "-Delimiter"
+        $results.ToString() | Should -Match "-Encoding"
+        $results.ToString() | Should -Match "-Wait"
+        $results.ToString() | Should -Match "-Delimiter"
     }
 
     It "Test Script Lookup Positive Script Info" {
@@ -227,8 +227,8 @@ Describe "Get-Command Tests" -Tags "CI" {
         "$a = dir" > $fullPath
         $results = Get-Command $fullPath
 
-        $results.Name | Should Be $tempFile
-        $results.Definition | Should Be $fullPath
+        $results.Name | Should -Be $tempFile
+        $results.Definition | Should -Be $fullPath
     }
 
     It "Two dynamic parameters are created properly" {
@@ -247,7 +247,7 @@ Describe "Get-Command Tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "GetCommandMetadataError,Microsoft.PowerShell.Commands.GetCommandCommand"
+            $_.FullyQualifiedErrorId | Should -Be "GetCommandMetadataError,Microsoft.PowerShell.Commands.GetCommandCommand"
         }
     }
 
