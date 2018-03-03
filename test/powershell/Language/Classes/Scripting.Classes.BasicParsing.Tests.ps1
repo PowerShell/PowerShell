@@ -257,7 +257,6 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class foo {} class foo {}' MemberAlreadyDefined 13
     ShouldBeParseError 'class foo { $x; $x; }' MemberAlreadyDefined 16 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class foo { [int][string]$x; }' TooManyTypes 17
-    ShouldBeParseError 'class foo { [int][string]$x; }' TooManyTypes 17
     ShouldBeParseError 'class foo { static static $x; }' DuplicateQualifier 19
     ShouldBeParseError 'class foo { [zz]$x; }' TypeNotFound 13
     ShouldBeParseError 'class foo { [zz]f() { return 0 } }' TypeNotFound 13
@@ -285,11 +284,6 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class foo { bar() { switch (@()) { default { $aa = 42 } } $aa } }' VariableNotLocal 58
     ShouldBeParseError 'class C { $x; static bar() { $this.x = 1 } }' NonStaticMemberAccessInStaticMember 29
     ShouldBeParseError 'class C { $x; static $y = $this.x }' NonStaticMemberAccessInStaticMember 26
-
-    ShouldBeParseError 'class C { $x; static bar() { $this.x = 1 } }' NonStaticMemberAccessInStaticMember 29
-    ShouldBeParseError 'class C { $x; static $y = $this.x }' NonStaticMemberAccessInStaticMember 26
-    ShouldBeParseError 'class C { $x; static bar() { $This.x = 1 } }' NonStaticMemberAccessInStaticMember 29
-    ShouldBeParseError 'class C { $x; static $y = $This.x }' NonStaticMemberAccessInStaticMember 26
 
     ShouldBeParseError 'class C { [void]foo() { try { throw "foo"} finally { return } } }' ControlLeavingFinally 53
     ShouldBeParseError 'class C { [int]foo() { return; return 1 } }' NonVoidMethodMissingReturnValue 23
@@ -371,20 +365,20 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     [System.Management.Automation.Cmdlet("Get", "Thing")]class C{}
     $t = [C].GetCustomAttributes($false)
 
-    It "Should have one attribute" {$t.Count | should be 1}
-    It "Should have instance of CmdletAttribute" {$t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
+    It "Should have one attribute (class C)" {$t.Count | should be 1}
+    It "Should have instance of CmdletAttribute (class C)" {$t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
 
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
-    It "Verb should be Get" {$c.VerbName | should be 'Get'}
-    It "Noun should be Thing" {$c.NounName | should be 'Thing'}
+    It "Verb should be Get (class C)" {$c.VerbName | should be 'Get'}
+    It "Noun should be Thing (class C)" {$c.NounName | should be 'Thing'}
 
     [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, SupportsPaging = $true)]class C2{}
     $t = [C2].GetCustomAttributes($false)
-    It "Should have one attribute" { $t.Count | should be 1 }
-    It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
+    It "Should have one attribute (class C2)" { $t.Count | should be 1 }
+    It "Should have instance of CmdletAttribute (class C2)" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
-    It "Verb should be Get" {$c.VerbName | should be 'Get'}
-    It "Noun should be Thing" {$c.NounName | should be 'Thing'}
+    It "Verb should be Get (class C2)" {$c.VerbName | should be 'Get'}
+    It "Noun should be Thing (class C2)" {$c.NounName | should be 'Thing'}
 
     It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | should be $true }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | should be $true }
@@ -433,7 +427,7 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
             Print() { Write-Host "[`$x=$($this.x) `$y=$($this.y)]" }
             Set($x, $y) { $this.x = $x; $this.y = $y }
         }
-        It  "[Point]::Add works" {
+        It  "[Point]::Add works construction via ::new" {
             $point = [Point]::new(100,200)
             $point2 = [Point]::new(1,2)
             $point.Add($point2)
@@ -442,7 +436,7 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
             $point.y | should be 202
         }
 
-        It  "[Point]::Add works" {
+        It  "[Point]::Add works construction via new-object" {
             $point = New-Object Point 100,200
             $point2 = New-Object Point 1,2
             $point.Add($point2)
@@ -517,8 +511,8 @@ $ctorAssignments
 
     `$inst = [Foo]::new($methodArguments)
     `$sum = $addUpProperties
-    It "ExpectedTotal" { `$sum | should be $expectedTotal }
-    It "ExpectedTotal"{ `$inst.DoSomething($methodArguments) | should be $expectedTotal }
+    It "ExpectedTotal: Sum should be $expectedTotal" { `$sum | should be $expectedTotal }
+    It "ExpectedTotal: Invocation should return $expectedTotal" { `$inst.DoSomething($methodArguments) | should be $expectedTotal }
 "@
 
             Invoke-Expression $class
