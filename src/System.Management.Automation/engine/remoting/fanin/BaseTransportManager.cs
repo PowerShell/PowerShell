@@ -1,6 +1,6 @@
-/********************************************************************++
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * --********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 /*
  * Common file that contains interface definitions for generic server and client
  * transport managers.
@@ -1209,7 +1209,6 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 }
-
 
 namespace System.Management.Automation.Remoting.Server
 {

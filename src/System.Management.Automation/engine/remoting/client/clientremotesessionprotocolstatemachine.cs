@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Threading;
 using System.Collections.Generic;
@@ -441,7 +440,6 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeySent, (int)RemoteSessionEvent.KeyReceiveFailed] += SetStateToClosedHandler; //
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler;
 
-
             //TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
             // should atleast put a dbg assert in this handler
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
@@ -609,7 +607,6 @@ namespace System.Management.Automation.Remoting
                 }
             }
         }
-
 
         /// <summary>
         /// This is the handler for ConnectSession event of the FSM. This is the beginning of everything

@@ -1,7 +1,5 @@
-/*============================================================================
- * Copyright (c) Microsoft Corporation. All rights reserved.
- *============================================================================
- */
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #region Using directives
 using System;
@@ -803,7 +801,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// class name session set name
         /// </summary>
         internal const string ClassNameSessionSet = "ClassNameSessionSet";
-
 
         /// <summary>
         /// resource Uri session set name

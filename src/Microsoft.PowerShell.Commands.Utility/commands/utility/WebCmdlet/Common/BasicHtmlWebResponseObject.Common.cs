@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -166,6 +165,12 @@ namespace Microsoft.PowerShell.Commands
                 Encoding encoding = null;
                 // fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+
+                if (String.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
+                {
+                    characterSet = Encoding.UTF8.HeaderName;
+                }
+
                 this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
                 this.Encoding = encoding;
             }

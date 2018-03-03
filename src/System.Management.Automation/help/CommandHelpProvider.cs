@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.IO;
 using System.Collections;
@@ -891,7 +890,6 @@ namespace System.Management.Automation
                         Microsoft.PowerShell.Commands.ModuleCmdletBase.RemovePrefixFromCommandName(cmdInfo.Name, cmdInfo.Prefix),
                         cmdInfo.HelpCategory) as MamlCommandHelpInfo;
 
-
             if (null != originalHelpInfo)
             {
                 result = originalHelpInfo.Copy();
@@ -1329,7 +1327,6 @@ namespace System.Management.Automation
                         SearchResolutionOptions.CommandNameIsPattern,
                         CommandTypes.Cmdlet,
                         context);
-
 
             return searcher;
         }

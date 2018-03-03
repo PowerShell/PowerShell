@@ -1,6 +1,5 @@
-﻿/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +11,6 @@ using System.Reflection;
 using System.Text;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
-
 
 namespace System.Management.Automation.Language
 {
@@ -264,7 +262,6 @@ namespace System.Management.Automation.Language
             }
             return string.Join(", ", propertyNames);
         }
-
 
         public override AstVisitAction VisitParameter(ParameterAst parameterAst)
         {
@@ -1251,7 +1248,6 @@ namespace System.Management.Automation.Language
 
             return AstVisitAction.Continue;
         }
-
 
         public override AstVisitAction VisitPropertyMember(PropertyMemberAst propertyMemberAst)
         {

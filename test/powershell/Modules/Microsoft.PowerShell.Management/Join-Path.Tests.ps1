@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Join-Path cmdlet tests" -Tags "CI" {
   $SepChar=[io.path]::DirectorySeparatorChar
   BeforeAll {

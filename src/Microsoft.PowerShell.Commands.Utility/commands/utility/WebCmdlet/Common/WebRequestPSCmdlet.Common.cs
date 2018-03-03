@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -554,7 +553,6 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.UseDefaultCredentials = true;
             }
 
-
             if (null != CertificateThumbprint)
             {
                 X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
@@ -947,7 +945,6 @@ namespace Microsoft.PowerShell.Commands
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
 
-
             HttpClient httpClient = new HttpClient(handler);
 
             // check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
@@ -1176,7 +1173,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var entry in WebSession.ContentHeaders)
                 {
-                    request.Content.Headers.Add(entry.Key, entry.Value);
+                    if (SkipHeaderValidation)
+                    {
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
+                    }
                 }
             }
         }
@@ -1476,16 +1489,29 @@ namespace Microsoft.PowerShell.Commands
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
-                var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
-                if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
+                try
                 {
-                    try
+                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
                     }
-                    catch (ArgumentException ex)
+                }
+                catch (FormatException ex)
+                {
+                    if (!SkipHeaderValidation)
                     {
-                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletEncodingException", ErrorCategory.InvalidArgument, ContentType);
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    if (!SkipHeaderValidation)
+                    {
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }

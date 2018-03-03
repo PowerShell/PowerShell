@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 	It "Set-Alias Invalid Scope Name should throw PSArgumentException"{

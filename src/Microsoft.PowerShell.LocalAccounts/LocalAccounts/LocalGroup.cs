@@ -1,4 +1,7 @@
-﻿using System;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
 
 using Microsoft.PowerShell.LocalAccounts;
 
@@ -46,7 +49,6 @@ namespace Microsoft.PowerShell.Commands
             Description = other.Description;
         }
         #endregion Construction
-
 
         #region Public Methods
         /// <summary>

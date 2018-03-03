@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Diagnostics
 
 Describe "Invoke-Item basic tests" -Tags "Feature" {
@@ -51,7 +53,8 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
     }
 
     It "Should invoke an executable file without error" {
-        $ping = Get-Command "ping" -CommandType Application | ForEach-Object Source
+        # In case there is a couple of ping executables, we take the first one.
+        $ping = (Get-Command "ping" -CommandType Application | Select-Object -First 1).Source
         $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
 
         if ($IsWindows) {

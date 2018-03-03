@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -1035,7 +1034,6 @@ namespace System.Management.Automation
             return BoolToObject(!rType.IsInstanceOfType(lval));
         }
 
-
         /// <summary>
         /// Implementation of the PowerShell -like operator
         /// </summary>
@@ -1395,9 +1393,6 @@ namespace System.Management.Automation
             }
             return mshObj.InternalTypeNames[0];
         }
-
-
-
 
         /// <summary>
         /// Launch a method on an object. This will handle .NET native methods, COM

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     It "Get-Date with all parameters returns proper results" {
         $date = [datetime]::Now + ([timespan]::new(0,0,30))
@@ -84,9 +86,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Remove-Item -Path $pathString -Force -Recurse
     }
 
-
 }
-
 
 Describe "Get-Date" -Tags "CI" {
     It "-Format FileDate works" {

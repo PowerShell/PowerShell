@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -1245,7 +1244,6 @@ namespace System.Management.Automation
         #endregion IDispose
     }
 
-
     /// <summary>
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
     /// (i.e. when the script block has undeclared variables or more than one statement)
@@ -1299,7 +1297,6 @@ namespace System.Management.Automation
         {
             this.SetErrorId(errorId);
         }
-
 
         #region Serialization
         /// <summary>

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Testing of script internationalization' -Tags "CI" {
     BeforeAll {
         $dir=$PSScriptRoot
@@ -11,7 +13,6 @@ Describe 'Testing of script internationalization' -Tags "CI" {
     AfterAll {
         $global:PSDefaultParameterValues = $defaultParamValues
     }
-
 
     It 'convertFromString-Data should work with data statement.' {
 
@@ -147,7 +148,6 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 
         $exception | Should Match $Expected
     }
-
 
     it 'Check alternate syntax that also supports complex variable names' {
 

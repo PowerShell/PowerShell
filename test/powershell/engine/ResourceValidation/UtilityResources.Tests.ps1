@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 . "$psscriptroot/TestRunner.ps1"
 $AssemblyName = "Microsoft.PowerShell.Commands.Utility"
 

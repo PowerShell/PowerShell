@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -140,7 +139,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public SessionStateEntryVisibility Visibility { get; set; }
     }
-
 
     /// <summary>
     /// Command class so that all the commands can derive off this one.
@@ -450,7 +448,6 @@ namespace System.Management.Automation.Runspaces
             CommandType = CommandTypes.Cmdlet;
         }
 
-
         /// <summary>
         ///
         /// </summary>
@@ -513,7 +510,6 @@ namespace System.Management.Automation.Runspaces
             ImplementingType = implementingType;
             HelpFileName = helpFileName;
         }
-
 
         /// <summary>
         /// Shallow-clone this object...
@@ -975,7 +971,6 @@ namespace System.Management.Automation.Runspaces
         private Collection<Attribute> _attributes;
     }
 
-
     /// <summary>
     ///
     /// </summary>
@@ -1157,7 +1152,6 @@ namespace System.Management.Automation.Runspaces
                 _internalCollection.Clear();
             }
         }
-
 
         /// <summary>
         /// This overload exists so that we can remove items based on the item name, rather than
@@ -1596,7 +1590,6 @@ namespace System.Management.Automation.Runspaces
             return ss.Clone();
         }
 
-
         /// <summary>
         /// Creates the default PowerShell one with default cmdlets, provider etc.
         /// The default cmdlets, provider, etc are loaded via Modules
@@ -1719,7 +1712,6 @@ namespace System.Management.Automation.Runspaces
 
             return ss;
         }
-
 
         /// <summary>
         /// Want to get away from SnapIn and console file. Have modules and assemblies instead.
@@ -4764,7 +4756,8 @@ $OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or 
 
 # Respect PAGER, use more on Windows, and use less on Linux
 if (Test-Path env:PAGER) {
-    $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
+    $pager,$moreArgs = $env:PAGER -split '\s+'
+    $moreCommand = (Get-Command -CommandType Application $pager | Select-Object -First 1).Definition
 } elseif ($IsWindows) {
     $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
 } else {
@@ -4773,9 +4766,9 @@ if (Test-Path env:PAGER) {
 
 if($paths) {
     foreach ($file in $paths) {
-        Get-Content $file | & $moreCommand
+        Get-Content $file | & $moreCommand $moreArgs
     }
-} else { $input | & $moreCommand }
+} else { $input | & $moreCommand $moreArgs }
 ";
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
@@ -4889,7 +4882,6 @@ if($paths) {
                                                                                              { "Microsoft.WSMan.Management", "Microsoft.WSMan.Management"},
                                                                                          };
 
-
         // The list of engine modules that we will not allow users to remove
         internal static HashSet<string> ConstantEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                                                             {
@@ -4901,7 +4893,6 @@ if($paths) {
                                                             {
                                                                 "System.Management.Automation",
                                                             };
-
 
         internal static string GetNestedModuleDllName(string moduleName)
         {

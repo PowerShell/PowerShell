@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "ConvertFrom-StringData DRT Unit Tests" -Tags "CI" {
     It "Should able to throw error when convert invalid line" {
         $str =@"

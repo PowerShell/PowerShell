@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 param(
     [ValidateSet('Bootstrap','Build','Failure','Success')]
     [String]$Stage = 'Build'
@@ -5,7 +7,6 @@ param(
 
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
-
 
 function Send-DailyWebHook
 {
@@ -148,7 +149,6 @@ function Set-DailyBuildBadge
     }
 }
 
-
 # https://docs.travis-ci.com/user/environment-variables/
 # TRAVIS_EVENT_TYPE: Indicates how the build was triggered.
 # One of push, pull_request, api, cron.
@@ -165,7 +165,6 @@ else
 {
     $commitMessage = $env:TRAVIS_COMMIT_MESSAGE
 }
-
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
@@ -201,15 +200,20 @@ elseif($Stage -eq 'Build')
         $ProgressPreference = $originalProgressPreference
     }
 
+    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
+    $testResultsSudo = "$pwd/TestResultsSudo.xml"
+
     $pesterParam = @{
-        'binDir'   = $output
-        'PassThru' = $true
-        'Terse'    = $true
+        'binDir'     = $output
+        'PassThru'   = $true
+        'Terse'      = $true
+        'Tag'        = @()
+        'ExcludeTag' = @('RequireSudoOnUnix')
+        'OutputFile' = $testResultsNoSudo
     }
 
     if ($isFullBuild) {
         $pesterParam['Tag'] = @('CI','Feature','Scenario')
-        $pesterParam['ExcludeTag'] = @()
     } else {
         $pesterParam['Tag'] = @('CI')
         $pesterParam['ThrowOnFailure'] = $true
@@ -226,12 +230,20 @@ elseif($Stage -eq 'Build')
         Remove-Item -force ${telemetrySemaphoreFilepath}
     }
 
-    $pesterPassThruObject = Start-PSPester @pesterParam
+    # Running tests which do not require sudo.
+    $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
+
+    # Running tests, which require sudo.
+    $pesterParam['Tag'] = @('RequireSudoOnUnix')
+    $pesterParam['ExcludeTag'] = @()
+    $pesterParam['Sudo'] = $true
+    $pesterParam['OutputFile'] = $testResultsSudo
+    $pesterPassThruSudoObject = Start-PSPester @pesterParam
 
     # Determine whether the build passed
     try {
         # this throws if there was an error
-        Test-PSPesterResults -ResultObject $pesterPassThruObject
+        @($pesterPassThruNoSudoObject, $pesterPassThruSudoObject) | ForEach-Object { Test-PSPesterResults -ResultObject $_ }
         $result = "PASS"
     }
     catch {

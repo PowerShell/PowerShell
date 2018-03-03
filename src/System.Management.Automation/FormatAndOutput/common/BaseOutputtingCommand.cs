@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Specialized;
@@ -119,7 +118,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         private bool ProcessObject(PSObject so)
         {
             object o = _formatObjectDeserializer.Deserialize(so);
@@ -214,7 +212,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         /// <summary>
         /// enum describing the state for the output finite state machine
         /// </summary>
@@ -241,13 +238,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private FormattingState _currentFormattingState = FormattingState.Reset;
 
-
         /// <summary>
         /// instance of a command wrapper to execute the
         /// default formatter when needed
         /// </summary>
         private CommandWrapper _command;
-
 
         /// <summary>
         /// enumeration to drive the preprocessing stage
@@ -471,7 +466,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //Console.WriteLine("ProcessGroupStart");
             GroupOutputContext goc = (GroupOutputContext)c;
 
-
             if (goc.Data.groupingEntry != null)
             {
                 _lo.WriteLine("");
@@ -613,7 +607,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         /// <summary>
         /// retrieve the active FormatOutputContext on the stack
         /// by walking up to the top of the stack
@@ -633,7 +626,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
         }
-
 
         /// <summary>
         /// context manager instance to guide the message traversal
@@ -792,7 +784,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private FormatObjectDeserializer _formatObjectDeserializer;
 
-
         /// <summary>
         /// context for the outer scope of the format sequence
         /// </summary>
@@ -861,7 +852,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// retrieve the format data in the context
             /// </summary>
             internal GroupStartData Data { get; } = null;
-
 
             protected OutCommandInner InnerCommand { get; }
         }
@@ -1082,7 +1072,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return retVal;
             }
 
-
             /// <summary>
             /// write the headers
             /// </summary>
@@ -1228,7 +1217,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _buffer.Reset();
             }
 
-
             /// <summary>
             /// helper class to accumulate the display values so that when the end
             /// of a line is reached, a full line can be composed
@@ -1319,7 +1307,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _writer.Initialize(this.InnerCommand._lo,
                                     this.InnerCommand._lo.ColumnNumber);
             }
-
 
             /// <summary>
             /// write a row into the list

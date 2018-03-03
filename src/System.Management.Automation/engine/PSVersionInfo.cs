@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Diagnostics;
 using System.Reflection;
@@ -225,7 +224,6 @@ namespace System.Management.Automation
                 return "3";
             }
         }
-
 
         internal static string GetRegistryVersionKeyForSnapinDiscovery(string majorVersion)
         {

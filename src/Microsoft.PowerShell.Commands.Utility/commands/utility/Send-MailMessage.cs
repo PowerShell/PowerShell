@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -8,7 +7,6 @@ using System.Globalization;
 using System.Net.Mail;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -208,7 +206,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private String _subject;
 
-
         /// <summary>
         /// Specifies the To address for this e-mail message.
         /// </summary>
@@ -272,9 +269,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
-
         #region private variables and methods
-
 
         // Instantiate a new instance of MailMessage
         private MailMessage _mMailMessage = new MailMessage();
@@ -361,8 +356,6 @@ namespace Microsoft.PowerShell.Commands
                 AddAddressesToMailMessage(_cc, "cc");
             }
 
-
-
             //set the delivery notification
             _mMailMessage.DeliveryNotificationOptions = _deliverynotification;
 
@@ -381,7 +374,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Set the priority of the mail message to normal
             _mMailMessage.Priority = _priority;
-
 
             //get the PowerShell environment variable
             //globalEmailServer might be null if it is deleted by: PS> del variable:PSEmailServer

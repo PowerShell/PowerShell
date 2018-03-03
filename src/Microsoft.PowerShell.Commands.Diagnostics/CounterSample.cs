@@ -1,7 +1,5 @@
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
-//
-
+// Licensed under the MIT License.
 
 using System;
 using System.Reflection;
@@ -12,7 +10,6 @@ using System.Resources;
 using Microsoft.Powershell.Commands.GetCounter.PdhNative;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
-
 
 namespace Microsoft.PowerShell.Commands.GetCounter
 {
@@ -56,14 +53,12 @@ namespace Microsoft.PowerShell.Commands.GetCounter
         }
         private string _path = "";
 
-
         public string InstanceName
         {
             get { return _instanceName; }
             set { _instanceName = value; }
         }
         private string _instanceName = "";
-
 
         public double CookedValue
         {
@@ -106,7 +101,6 @@ namespace Microsoft.PowerShell.Commands.GetCounter
             set { _timeStamp = value; }
         }
         private DateTime _timeStamp = DateTime.MinValue;
-
 
         public UInt64 Timestamp100NSec
         {

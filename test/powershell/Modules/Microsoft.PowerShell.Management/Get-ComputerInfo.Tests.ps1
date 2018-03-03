@@ -1,8 +1,11 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
 # TEST SPECIFIC HELPER METHODS FOR TESTING Get-ComputerInfo cmdlet
 #
 
 $computerInfoAll = $null
+$testStartTime = Get-Date
 
 function Get-ComputerInfoForTest
 {
@@ -396,7 +399,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             $connectionStatus = 13 # default NetConnectionStatus.Other
             if ($adapter.NetConnectionStatus) { $connectionStatus = $adapter.NetConnectionStatus}
 
-
             $config =$configHash.Item([string]$adapter.Index)
 
             $dHCPEnabled = $null
@@ -443,7 +445,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                     'Description'=$processor.Description;
                     'Architecture'=$processor.Architecture;
                     'AddressWidth'=$processor.AddressWidth;
-
 
                     'Availability'=$processor.Availability;
                     'CpuStatus'=$processor.CpuStatus;
@@ -1337,7 +1338,6 @@ try {
             ($observed.OsFreePhysicalMemory -gt 0) | Should Be $true
         }
 
-
         It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT -or !$IsWindows) {
             ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true
         }
@@ -1346,9 +1346,11 @@ try {
             ($observed.OsFreeVirtualMemory -gt 0) | Should Be $true
         }
 
-        It "(special case) Test for property = OsLocalDateTime" -Pending:$true {
-            $computerInfo = Get-ComputerInfo
-            $computerInfo | Should BeOfType "ComputerInfo"
+        It "(special case) Test for property = OsLocalDateTime" {
+            $computerInfo = Get-ComputerInfoForTest
+            $testEndTime = Get-Date
+            $computerInfo.OsLocalDateTime | Should -BeGreaterThan $testStartTime
+            $computerInfo.OsLocalDateTime | Should -BeLessThan $testEndTime
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {

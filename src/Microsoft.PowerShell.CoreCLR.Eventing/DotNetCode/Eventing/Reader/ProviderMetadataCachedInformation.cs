@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 /*============================================================
 **
@@ -128,7 +130,6 @@ namespace System.Diagnostics.Eventing.Reader
 
             value.ProviderMetadata.Dispose();
         }
-
 
         private void AddCacheEntry(ProviderMetadataId key, ProviderMetadata pm)
         {

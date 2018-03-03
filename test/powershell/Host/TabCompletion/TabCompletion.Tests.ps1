@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "TabCompletion" -Tags CI {
     BeforeAll {
         $separator = [System.IO.Path]::DirectorySeparatorChar
@@ -44,7 +46,6 @@ Describe "TabCompletion" -Tags CI {
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' ' | Should Be 'Alignment Expression FormatString Label Width'
     }
-
 
     It 'Should complete format-* hashtable on GroupBy: <cmd>' -TestCases (
         @{cmd = 'Format-Table'},

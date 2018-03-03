@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{

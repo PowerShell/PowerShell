@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
@@ -523,9 +526,7 @@ Fix steps:
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        log "Run dotnet restore"
-
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
         $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
@@ -535,7 +536,10 @@ Fix steps:
             $RestoreArguments += "quiet"
         }
 
-        ($srcProjectDirs + $testProjectDirs) | ForEach-Object { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
+        ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
+            log "Run dotnet restore $_ $RestoreArguments"
+            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+        }
     }
 
     # handle ResGen
@@ -648,17 +652,11 @@ function Restore-PSModuleToBuild
         $CI
     )
 
-    $ProgressPreference = "SilentlyContinue"
     log "Restore PowerShell modules to $publishPath"
 
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
 
-    # Restore modules from powershellgallery feed
-    Restore-PSModule -Destination $modulesDir -Name @(
-        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-        'PowerShellGet'
-        'Microsoft.PowerShell.Archive'
-    ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
+    Copy-PSGalleryModules -Destination $modulesDir
 
     if($CI.IsPresent)
     {
@@ -873,7 +871,6 @@ function Get-PSOutput {
     }
 }
 
-
 function Get-PesterTag {
     param ( [Parameter(Position=0)][string]$testbase = "$PSScriptRoot/test/powershell" )
     $alltags = @{}
@@ -896,7 +893,7 @@ function Get-PesterTag {
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
                     $values | ForEach-Object {
-                        if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
+                        if (@('REQUIREADMINONWINDOWS', 'REQUIRESUDOONUNIX', 'SLOW') -contains $_) {
                             # These are valid tags also, but they are not the priority tags
                         }
                         elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
@@ -978,6 +975,8 @@ function Start-PSPester {
         [switch]$Terse,
         [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru,
+        [Parameter(ParameterSetName='PassThru',HelpMessage='Run commands on Linux with sudo.')]
+        [switch]$Sudo,
         [switch]$IncludeFailingTest
     )
 
@@ -1021,57 +1020,71 @@ Restore the module to '$Pester' by running:
             $ExcludeTag += 'RequireAdminOnWindows'
         }
     }
+    elseif (-not $Environment.IsWindows -and (-not $Sudo.IsPresent))
+    {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
+        {
+            $ExcludeTag += 'RequireSudoOnUnix'
+        }
+    }
+    elseif (-not $Environment.IsWindows -and $Sudo.IsPresent)
+    {
+        if (-not $PSBoundParameters.ContainsKey('Tag'))
+        {
+            $Tag = 'RequireSudoOnUnix'
+        }
+    }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $Command = ""
+    $command = ""
     if ($Terse)
     {
-        $Command += "`$ProgressPreference = 'silentlyContinue'; "
+        $command += "`$ProgressPreference = 'silentlyContinue'; "
     }
 
     # Autoload (in subprocess) temporary modules used in our tests
-    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
+    $command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($Environment.IsWindows) {
-        $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
+        $command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
 
-    $Command += "Import-Module '$Pester'; "
+    $command += "Import-Module '$Pester'; "
 
     if ($Unelevate)
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
 
-    $Command += "Invoke-Pester "
+    $command += "Invoke-Pester "
 
-    $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
+    $command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
     if ($ExcludeTag -and ($ExcludeTag -ne "")) {
-        $Command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
+        $command += "-ExcludeTag @('" + (${ExcludeTag} -join "','") + "') "
     }
     if ($Tag) {
-        $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+        $command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
     # sometimes we need to eliminate Pester output, especially when we're
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
-        $Command += "-Quiet "
+        $command += "-Quiet "
     }
     if ( $PassThru ) {
-        $Command += "-PassThru "
+        $command += "-PassThru "
     }
 
-    $Command += "'" + ($Path -join "','") + "'"
+    $command += "'" + ($Path -join "','") + "'"
     if ($Unelevate)
     {
-        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+        $command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
     }
 
-    Write-Verbose $Command
+    Write-Verbose $command
 
     $script:nonewline = $true
     $script:inerror = $false
@@ -1092,6 +1105,10 @@ Restore the module to '$Pester' by running:
             Write-Host "!" -NoNewline -ForegroundColor Gray
             $script:nonewline = $true
             $script:inerror = $false
+        }
+        elseif ($trimmedline -match "^\d+(\.\d+)?m?s$") {
+            # Skip the time elapse like '12ms', '1ms', '1.2s' and '12.53s'
+            return
         }
         else {
             if ($script:nonewline) {
@@ -1160,31 +1177,36 @@ Restore the module to '$Pester' by running:
                 $passThruFile = [System.IO.Path]::GetTempFileName()
                 try
                 {
-                    $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    $command += "|Export-Clixml -Path '$passThruFile' -Force"
+
+                    $passThruCommand = {& $powershell -noprofile -c $command }
+                    if ($Sudo.IsPresent) {
+                        $passThruCommand =  {& sudo $powershell -noprofile -c $command }
+                    }
+
+                    $writeCommand = { Write-Host $_ }
                     if ($Terse)
                     {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse $_}
+                        $writeCommand = { Write-Terse $_ }
                     }
-                    else
-                    {
-                        Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
-                    }
+
+                    Start-NativeExecution -sb $passThruCommand | ForEach-Object $writeCommand
                     Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
                 {
-                    Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                    Remove-Item $passThruFile -ErrorAction SilentlyContinue -Force
                 }
             }
             else
             {
                 if ($Terse)
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Terse -line $_ }
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command} | ForEach-Object { Write-Terse -line $_ }
                 }
                 else
                 {
-                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $command}
                 }
             }
         }
@@ -1362,7 +1384,6 @@ function Test-PSPesterResults
     }
 }
 
-
 function Start-PSxUnit {
     [CmdletBinding()]param(
         [string] $SequentialTestResultsFile = "SequentialXUnitResults.xml",
@@ -1429,7 +1450,6 @@ function Start-PSxUnit {
         Pop-Location
     }
 }
-
 
 function Install-Dotnet {
     [CmdletBinding()]
@@ -1676,6 +1696,10 @@ function Start-PSBootstrap {
                 log "Install RCEdit for modifying exe resources"
                 $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
                 New-Item -Path "~/.rcedit" -Type Directory -Force > $null
+
+                ## need to specify TLS version 1.2 since GitHub API requires it
+                [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
                 Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
             }
 
@@ -1914,7 +1938,6 @@ function Start-ResGen
     }
 }
 
-
 function Find-Dotnet() {
     $originalPath = $env:PATH
     $dotnetPath = if ($Environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -1972,7 +1995,6 @@ function Convert-TxtResourceToXml
     }
 }
 
-
 function script:Use-MSBuild {
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
@@ -1990,7 +2012,6 @@ function script:Use-MSBuild {
 
     Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
-
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
@@ -2019,206 +2040,48 @@ function script:precheck([string]$command, [string]$missedMessage) {
 
 # this function wraps native command Execution
 # for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
-function script:Start-NativeExecution([scriptblock]$sb, [switch]$IgnoreExitcode)
+function script:Start-NativeExecution
 {
+    param(
+        [scriptblock]$sb,
+        [switch]$IgnoreExitcode,
+        [switch]$VerboseOutputOnError
+    )
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Continue"
     try {
-        & $sb
+        if($VerboseOutputOnError.IsPresent)
+        {
+            $output = & $sb
+        }
+        else
+        {
+            & $sb
+        }
+
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
+            if($VerboseOutputOnError.IsPresent -and $output)
+            {
+                $output | Out-String | Write-Verbose -Verbose
+            }
+
+            # Get caller location for easier debugging
+            $caller = Get-PSCallStack -ErrorAction SilentlyContinue
+            if($caller)
+            {
+                $callerLocationParts = $caller[1].Location -split ":\s*line\s*"
+                $callerFile = $callerLocationParts[0]
+                $callerLine = $callerLocationParts[1]
+
+                $errorMessage = "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
+                throw $errorMessage
+            }
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
     } finally {
         $script:ErrorActionPreference = $backupEAP
-    }
-}
-
-# Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
-# This function converts the above version into major.minor[.build[.revision]] format
-function Get-PackageVersionAsMajorMinorBuildRevision
-{
-    [CmdletBinding()]
-    param (
-        # Version of the Package
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $Version
-        )
-
-    Write-Verbose "Extract the version in the form of major.minor[.build[.revision]] for $Version"
-    $packageVersionTokens = $Version.Split('-')
-    $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
-
-    if (1 -eq $packageVersionTokens.Count) {
-        # In case the input is of the form a.b.c, add a '0' at the end for revision field
-        $packageVersion = $packageVersion + '.0'
-    } elseif (1 -lt $packageVersionTokens.Count) {
-        # We have all the four fields
-        $packageBuildTokens = ([regex]::Matches($packageVersionTokens[1], "\d+"))[0].value
-
-        if ($packageBuildTokens)
-        {
-            $packageVersion = $packageVersion + '.' + $packageBuildTokens
-        }
-        else
-        {
-            $packageVersion = $packageVersion
-        }
-    }
-
-    $packageVersion
-}
-
-<#
-    .Synopsis
-        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
-        This only works on a Windows machine due to the usage of WiX.
-    .EXAMPLE
-        # This example shows how to produce a Debug-x64 installer for development purposes.
-        cd $RootPathOfPowerShellRepo
-        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
-#>
-function New-MSIPackage
-{
-    [CmdletBinding()]
-    param (
-
-        # Name of the Product
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell',
-
-        # Suffix of the Name
-        [string] $ProductNameSuffix,
-
-        # Version of the Product
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductVersion,
-
-        # The ProductCode property is a unique identifier for the particular product release
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductCode,
-
-        # Source Path to the Product Files - required to package the contents into an MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductSourcePath,
-
-        # File describing the MSI Package creation semantics
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
-
-        # Path to Assets folder containing artifacts such as icons, images
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $AssetsPath = "$PSScriptRoot\assets",
-
-        # Path to license.rtf file - for the EULA
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $LicenseFilePath = "$PSScriptRoot\assets\license.rtf",
-
-        # Architecture to use when creating the MSI
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture,
-
-        # Force overwrite of package
-        [Switch] $Force
-    )
-
-    ## AppVeyor base image might update the version for Wix. Hence, we should
-    ## not hard code version numbers.
-    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
-
-    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
-    if (-not (Test-Path $wixToolsetBinPath))
-    {
-        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
-    }
-
-    ## Get the latest if multiple versions exist.
-    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
-
-    Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
-    $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
-    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
-    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
-
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
-
-    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
-    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
-
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
-    Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
-
-    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
-    # These variables are used by Product.wxs in assets directory
-    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
-    $ProductProgFilesDir = "ProgramFiles64Folder"
-    if ($ProductTargetArchitecture -eq "x86")
-    {
-        $ProductProgFilesDir = "ProgramFilesFolder"
-    }
-    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
-
-    $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
-    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
-
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-    $msiLocationPath = Join-Path $pwd "$packageName.msi"
-
-    if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
-    {
-        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
-    }
-
-    $WiXHeatLog = & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v
-    $WiXCandleLog = & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v
-    $WiXLightLog = & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v
-
-    Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
-
-    if (Test-Path $msiLocationPath)
-    {
-        Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
-        $msiLocationPath
-    }
-    else
-    {
-        $WiXHeatLog   | Out-String | Write-Verbose -Verbose
-        $WiXCandleLog | Out-String | Write-Verbose -Verbose
-        $WiXLightLog  | Out-String | Write-Verbose -Verbose
-        $errorMessage = "Failed to create $msiLocationPath"
-        if ($null -ne $env:CI)
-        {
-           Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
-        }
-        throw $errorMessage
     }
 }
 
@@ -2435,105 +2298,57 @@ function Clear-PSRepo
 }
 
 # Install PowerShell modules such as PackageManagement, PowerShellGet
-function Restore-PSModule
+function Copy-PSGalleryModules
 {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string[]]$Name,
+        [string]$Destination
+    )
 
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
-
-        [string]$RequiredVersion
-        )
-
-    $needRegister = $true
-    $RepositoryName = "mygetpsmodule"
-
-    # Check if the PackageManagement works in the base-oS or PowerShellCore
-    $null = Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
-    $null = Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
-
-    # Get the existing registered PowerShellGet repositories
-    $psrepos = PowerShellGet\Get-PSRepository
-
-    foreach ($repo in $psrepos)
-    {
-        if(($repo.SourceLocation -eq $SourceLocation) -or ($repo.SourceLocation.TrimEnd("/") -eq $SourceLocation.TrimEnd("/")))
-        {
-            # found a registered repository that matches the source location
-            $needRegister = $false
-            $RepositoryName = $repo.Name
-            break
-        }
+    if (!$Destination.EndsWith("Modules")) {
+        throw "Installing to an unexpected location"
     }
 
-    if($needRegister)
-    {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
-        {
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
-        }
-
-        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
-        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
-        if($ev)
-        {
-            throw ("Failed to register repository '{0}'" -f $RepositoryName)
-        }
-
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
-        if(-not $regVar)
-        {
-            throw ("'{0}' is not registered" -f $RepositoryName)
-        }
+    $cache = dotnet nuget locals global-packages -l
+    if ($cache -match "info : global-packages: (.*)") {
+        $nugetCache = $matches[1]
+    }
+    else {
+        throw "Can't find nuget global cache"
     }
 
-    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
+    $psGalleryProj = [xml](Get-Content -Raw $PSScriptRoot\src\Modules\PSGalleryModules.csproj)
 
-    # do not output progress
-    $ProgressPreference = "SilentlyContinue"
-    $Name | ForEach-Object {
+    foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
+        $name = $m.Include
+        $version = $m.Version
+        log "Name='$Name', Version='$version', Destination='$Destination'"
 
-        $command = @{
-                        Name=$_
-                        Path = $Destination
-                        Repository =$RepositoryName
-                    }
-
-        if($RequiredVersion)
-        {
-            $command.Add("RequiredVersion", $RequiredVersion)
+        # Remove the build revision from the src (nuget drops it).
+        $srcVer = if ($version -match "(\d+.\d+.\d+).\d+") {
+            $matches[1]
+        } else {
+            $version
         }
 
-        # pull down the module
-        log "running save-module $_"
-        PowerShellGet\Save-Module @command -Force
-
-        # Remove PSGetModuleInfo.xml file
-        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
-            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
+        # Remove semantic version in the destination directory
+        $destVer = if ($version -match "(\d+.\d+.\d+)-.+") {
+            $matches[1]
+        } else {
+            $version
         }
-    }
 
-    # Clean up
-    if($needRegister)
-    {
-        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
-        if($regVar)
-        {
-            log "Unregistering PSRepository with name: $RepositoryName"
-            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
-        }
+        # Nuget seems to always use lowercase in the cache
+        $src = "$nugetCache/$($name.ToLower())/$srcVer"
+        $dest = "$Destination/$name/$destVer"
+
+        Remove-Item -Force -ErrorAction Ignore -Recurse "$Destination/$name"
+        New-Item -Path $dest -ItemType Directory -Force -ErrorAction Stop > $null
+        $dontCopy = '*.nupkg', '*.nupkg.sha512', '*.nuspec', 'System.Runtime.InteropServices.RuntimeInformation.dll'
+        Copy-Item -Exclude $dontCopy -Recurse $src/* $dest
     }
 }
-
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>

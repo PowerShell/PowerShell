@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 Describe "Test constrained language mode" -Tags "CI" {
     It "dynamic invocation on non-PowerShell thread should work" {

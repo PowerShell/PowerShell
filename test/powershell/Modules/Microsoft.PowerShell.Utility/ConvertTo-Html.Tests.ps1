@@ -1,4 +1,6 @@
-﻿Describe "ConvertTo-Html Tests" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "ConvertTo-Html Tests" -Tags "CI" {
 
     BeforeAll {
         $customObject = [pscustomobject]@{"Name" = "John Doe"; "Age" = 42; "Friends" = ("Jack", "Jill")}

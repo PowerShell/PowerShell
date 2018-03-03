@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.Serialization;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -104,8 +103,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the Id of the activity for which this record is a subordinate.
@@ -145,8 +142,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the description of the activity for which progress is being reported.
@@ -177,8 +172,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged."
@@ -203,8 +196,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the current operation of the many required to accomplish the activity (such as "copying foo.txt"). Normally displayed
@@ -228,8 +219,6 @@ namespace System.Management.Automation
                 currentOperation = value;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -261,8 +250,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the estimate of time remaining until this activity is completed.  This can be based upon a measurement of time since
@@ -293,8 +280,6 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///
         /// Gets and sets the type of record represented by this instance.
@@ -319,8 +304,6 @@ namespace System.Management.Automation
                 type = value;
             }
         }
-
-
 
         /// <summary>
         ///
@@ -497,7 +480,6 @@ namespace System.Management.Automation
 
         #region Serialization / deserialization for remoting
 
-
         /// <summary>
         /// Creates a ProgressRecord object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
@@ -558,8 +540,6 @@ namespace System.Management.Automation
 
         #endregion
     } //ProgressRecord
-
-
 
     /// <summary>
     ///
