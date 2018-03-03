@@ -105,7 +105,7 @@ try
                     function CreateTestConfigFile {
 
                         $TestConfigFileLoc = join-path $TestDrive "Remoting"
-                        if(-Not (Test-path $TestConfigFileLoc))
+                        if(-not (Test-path $TestConfigFileLoc))
                         {
                             $null = New-Item -Path $TestConfigFileLoc -ItemType Directory -Force -ErrorAction Stop
                         }
@@ -270,7 +270,7 @@ try
                             $Result.Error = $_.Exception
                         }
 
-                        if(-Not $Result.Error)
+                        if(-not $Result.Error)
                         {
                             $ValidEndpoints = [PSObject]@(Get-PSSessionConfiguration)
 
@@ -398,7 +398,7 @@ Export-ModuleMember IsTestModuleImported
 "@
                         $TestModuleFileLoc = $script:TestDir
 
-                        if(-Not (Test-path $TestModuleFileLoc))
+                        if(-not (Test-path $TestModuleFileLoc))
                         {
                             $null = New-Item -Path $TestModuleFileLoc -ItemType Directory -Force -ErrorAction Stop
                         }
@@ -442,13 +442,13 @@ namespace PowershellTestConfigNamespace
                     }
 
                     $script:TestDir = join-path $TestDrive "Remoting"
-                    if(-Not (Test-Path $script:TestDir))
+                    if(-not (Test-Path $script:TestDir))
                     {
                         $null = New-Item -path $script:TestDir -ItemType Directory
                     }
 
                     $script:TestAssemblyDir = [System.IO.Path]::GetTempPath()
-                    if(-Not (Test-Path $script:TestAssemblyDir))
+                    if(-not (Test-Path $script:TestAssemblyDir))
                     {
                         $null = New-Item -path $script:TestAssemblyDir -ItemType Directory
                     }
