@@ -135,6 +135,10 @@ try {
         $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
+        # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
+        # aborted: Could not create SSL/TLS secure channel. error.
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
