@@ -104,7 +104,7 @@ if [[ "$SUDO" -eq "sudo" && ! ("'$*'" =~ skip-sudo-check) ]]; then
 fi
 
 #Collect any variation details if required for this distro
-REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | awk -F=  '{ print $2 }'`
+REV=`cat /etc/lsb-release | grep '^DISTRIB_RELEASE' | sed 's/^[^"]*"//;s/\..*$//'`
 #END Collect any variation details if required for this distro
 
 #If there are known incompatible versions of this distro, put the test, message and script exit here:
@@ -126,7 +126,15 @@ echo "*** Setting up PowerShell Core repo..."
 # Import the public repository GPG keys
 curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 #Add the Repo
-curl https://packages.microsoft.com/config/ubuntu/$REV/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
+case $REV in
+    8) $SUDO sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-jessie-prod jessie main" > /etc/apt/sources.list.d/microsoft.list' ;;
+    9) $SUDO sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/microsoft.list' ;;
+    *)
+        echo "ERROR: unsupported Debian version ($REV). Only versions 8 and 9 are supported." >&2
+        exit 1
+    ;;
+esac
+
 # Update apt-get
 $SUDO apt-get update
 # Install PowerShell
