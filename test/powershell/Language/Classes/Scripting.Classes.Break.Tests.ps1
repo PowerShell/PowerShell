@@ -22,7 +22,7 @@ class A
 }
 '@
             $errors.Count | Should -Be 1
-            $errors[0].ErrorId | Should -Be 'LabelNotFound'
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
 
         It 'reports parse error for break outside of loop' {
@@ -37,7 +37,7 @@ class A
 }
 '@
             $errors.Count | Should -Be 1
-            $errors[0].ErrorId | Should -Be 'LabelNotFound'
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
 
         It 'work fine, when break is legit' {
@@ -68,7 +68,7 @@ class A
 }
 '@
             $errors.Count | Should -Be 1
-            $errors[0].ErrorId | Should -Be 'LabelNotFound'
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
     }
 

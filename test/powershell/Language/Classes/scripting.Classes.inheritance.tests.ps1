@@ -49,7 +49,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
 
     It 'can subclass .NET type' {
         class MyIntList : system.collections.generic.list[int] {}
-        [MyIntList]::new().GetType().BaseType.FullName.StartsWith('System.Collections.Generic.List') | Should -Be $true
+        [MyIntList]::new().GetType().BaseType.FullName.StartsWith('System.Collections.Generic.List') | Should -BeTrue
     }
 
     It 'can implement .NET interface' {

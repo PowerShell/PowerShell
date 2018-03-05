@@ -179,12 +179,12 @@ Describe "Protected Member Access - w/ non-default ctor" -Tags "CI" {
 
 Describe "Protected Member Access - members not visible outside class" -Tags "CI" {
     Set-StrictMode -v 3
-    It "Invalid protected field Get Access" { { $derived1.Field } | Should -Throw }
-    It "Invalid protected property Get Access" { { $derived1.Property } | Should -Throw }
-    It "Invalid protected field Set Access" { { $derived1.Field = 1 } | Should -Throw }
-    It "Invalid protected property Set Access" { { $derived1.Property = 1 } | Should -Throw }
+    It "Invalid protected field Get Access" { { $derived1.Field } | Should -Throw -ErrorId "PropertyNotFoundStrict" }
+    It "Invalid protected property Get Access" { { $derived1.Property } | Should -Throw -ErrorId "PropertyNotFoundStrict" }
+    It "Invalid protected field Set Access" { { $derived1.Field = 1 } | Should -Throw -ErrorId "PropertyAssignmentException"}
+    It "Invalid protected property Set Access" { { $derived1.Property = 1 } | Should -Throw -ErrorId "PropertyAssignmentException" }
 
-    It "Invalid protected constructor Access" { { [Base]::new() } | Should -Throw }
-    It "Invalid protected method Access" { { $derived1.Method() } | Should -Throw }
+    It "Invalid protected constructor Access" { { [Base]::new() } | Should -Throw -ErrorId "MethodCountCouldNotFindBest" }
+    It "Invalid protected method Access" { { $derived1.Method() } | Should -Throw -ErrorId "MethodNotFound" }
 }
 

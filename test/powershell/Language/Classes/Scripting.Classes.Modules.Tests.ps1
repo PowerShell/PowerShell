@@ -93,23 +93,24 @@ function Get-PassedArgsNoRoot { $passedArgs }
 
     It "Class execution reflects changes in module reloading with '-Force'" {
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
-        Get-PassedArgsRoot | Should -Be $Arg_Hello
-        Get-PassedArgsNoRoot | Should -Be $Arg_Hello
+        Get-PassedArgsRoot | Should -BeExactly $Arg_Hello
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_Hello
 
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World -Force
-        Get-PassedArgsRoot | Should -Be $Arg_World
-        Get-PassedArgsNoRoot | Should -Be $Arg_World
+        Get-PassedArgsRoot | Should -BeExactly $Arg_World
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_World
     }
 
     It "Class execution reflects changes in module reloading with 'Remove-Module' and 'Import-Module'" {
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
-        Get-PassedArgsRoot | Should -Be $Arg_Hello
-        Get-PassedArgsNoRoot | Should -Be $Arg_Hello
+        Get-PassedArgsRoot | Should -BeExactly $Arg_Hello
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_Hello
+
 
         Remove-Module TestModule
 
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World
-        Get-PassedArgsRoot | Should -Be $Arg_World
-        Get-PassedArgsNoRoot | Should -Be $Arg_World
+        Get-PassedArgsRoot | Should -BeExactly $Arg_World
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_World
     }
 }

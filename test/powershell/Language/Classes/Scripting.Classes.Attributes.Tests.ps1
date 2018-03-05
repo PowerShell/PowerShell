@@ -63,7 +63,7 @@ namespace Dummy
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -Be 'ExceptionWhenSetting'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ExceptionWhenSetting'
             }
         }
     }
@@ -78,7 +78,7 @@ namespace Dummy
                 throw "Exception expected"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be 'ExceptionWhenSetting'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ExceptionWhenSetting'
             }
         }
     }
@@ -94,7 +94,7 @@ namespace Dummy
                 throw "Exception expected"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be 'ExceptionWhenSetting'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ExceptionWhenSetting'
             }
         }
     }
@@ -109,7 +109,7 @@ namespace Dummy
                 throw "Exception expected"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be 'ExceptionWhenSetting'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ExceptionWhenSetting'
             }
         }
     }
@@ -125,7 +125,7 @@ namespace Dummy
                 throw "Exception expected"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be 'ExceptionWhenSetting'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ExceptionWhenSetting'
             }
         }
     }
@@ -146,7 +146,7 @@ namespace Dummy
         }
         It 'Implicitly Transform to foo' {
             $c.arg = "foo"
-            $c.arg | Should -Be "foofoo"
+            $c.arg | Should -BeExactly "foofoo"
         }
     }
 
@@ -154,7 +154,7 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()][string]$arg }; [C1]::new()').Invoke()[0]
         It 'set to foo' {
             $c.arg = "foo"
-            $c.arg | Should -Be "foofoo"
+            $c.arg | Should -BeExactly "foofoo"
         }
     }
 
@@ -162,7 +162,7 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]
         It 'arg should be 200' {
             $c.arg = 100
-            $c.arg | Should -Be 200
+            $c.arg | Should -BeExactly 200
         }
         It 'Set to string should fail with ExceptionWhenSetting' {
             try {
@@ -170,7 +170,7 @@ namespace Dummy
                 throw "Exception expected"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be 'ExceptionWhenSetting'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ExceptionWhenSetting'
             }
         }
     }
@@ -192,7 +192,7 @@ namespace Dummy
 
         It 'arg should be foo___foo___g' {
             $c.arg = "foo"
-            $c.arg | Should -Be "foo___foo___"
+            $c.arg | Should -BeExactly "foo___foo___"
         }
     }
 }
@@ -211,7 +211,7 @@ Describe 'Type resolution with attributes' -Tag "CI" {
                 [void] OnEvent([string]$Message) {}
             }
 
-            [MyEventSource]::new() | Should -Not -Be $null
+            [MyEventSource]::new() | Should -Not -BeNullOrEmpty
 
         }
     }
@@ -437,7 +437,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
             try {
                 Import-Module -Name $moduleFile -Force
-                Test-ValidateSet 'Hello' | Should -Be 'Hello'
+                Test-ValidateSet 'Hello' | Should -BeExactly 'Hello'
             } finally {
                 Remove-Module -Name $moduleFile -Force
             }

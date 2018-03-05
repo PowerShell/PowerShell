@@ -242,7 +242,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
                 $this.h = [ordered] @{}
             }
         }
-        [A]::new().h.GetType().Name | Should -Be 'OrderedDictionary'
+        [A]::new().h.GetType().Name | Should -BeExactly 'OrderedDictionary'
     }
 }
 
@@ -372,19 +372,19 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     $t = [C].GetCustomAttributes($false)
 
     It "Should have one attribute" {$t.Count | Should -Be 1}
-    It "Should have instance of CmdletAttribute" {$t[0].GetType().FullName | Should -Be System.Management.Automation.CmdletAttribute }
+    It "Should have instance of CmdletAttribute" {$t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute }
 
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
-    It "Verb should be Get" {$c.VerbName | Should -Be 'Get'}
-    It "Noun should be Thing" {$c.NounName | Should -Be 'Thing'}
+    It "Verb should be Get" {$c.VerbName | Should -BeExactly 'Get'}
+    It "Noun should be Thing" {$c.NounName | Should -BeExactly 'Thing'}
 
     [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, SupportsPaging = $true)]class C2{}
     $t = [C2].GetCustomAttributes($false)
     It "Should have one attribute" { $t.Count | Should -Be 1 }
-    It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | Should -Be System.Management.Automation.CmdletAttribute }
+    It "Should have instance of CmdletAttribute" { $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute }
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
-    It "Verb should be Get" {$c.VerbName | Should -Be 'Get'}
-    It "Noun should be Thing" {$c.NounName | Should -Be 'Thing'}
+    It "Verb should be Get" {$c.VerbName | Should -BeExactly 'Get'}
+    It "Noun should be Thing" {$c.NounName | Should -BeExactly 'Thing'}
 
     It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -BeTrue }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -BeTrue }
@@ -393,9 +393,9 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
             [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
             It "Should have one attribute" { $t.Count | Should -Be 1 }
-            It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | Should -Be System.Management.Automation.CmdletAttribute }
+            It "Should have instance of CmdletAttribute" { $t[0] | Should -BeExactly System.Management.Automation.CmdletAttribute }
             [System.Management.Automation.CmdletAttribute]$c = $t[0]
-            $c.ConfirmImpact | Should -Be 'High'
+            $c.ConfirmImpact | Should -BeExactly 'High'
 
         }
     }
@@ -466,7 +466,7 @@ Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
         }
         $f = [ReturnObjectFromMemberFunctionTest]::new()
         $z = $f.CreateInstance() # Line 13
-        It "CreateInstance works" { $z.SayHello() | Should -Be 'Hello1' }
+        It "CreateInstance works" { $z.SayHello() | Should -BeExactly 'Hello1' }
 }
 
 Describe 'TestMultipleArguments Test' -Tags "CI" {
@@ -556,7 +556,7 @@ Describe 'ScriptScopeAccessFromClassMethod' -Tags "CI" {
         try
         {
             $c = Get-MSFT_778492
-            It "Method should have found variable in module scope" { $c.F() | Should -Be 'MSFT_778492 script scope'}
+            It "Method should have found variable in module scope" { $c.F() | Should -BeExactly 'MSFT_778492 script scope'}
         }
         finally
         {
@@ -585,11 +585,11 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 
         # Get-Member should not include hidden members by default
         $member = $instance | Get-Member hiddenZ
-        it "Get-Member should not find hidden member w/o -Force" { $member | Should -Be $null }
+        it "Get-Member should not find hidden member w/o -Force" { $member | Should -BeNullOrEmpty }
 
         # Get-Member should include hidden members with -Force
         $member = $instance | Get-Member hiddenZ -Force
-        It "Get-Member should find hidden member w/ -Force" { $member | Should -Not -Be $null }
+        It "Get-Member should find hidden member w/ -Force" { $member | Should -Not -BeNullOrEmpty }
 
         # Tab completion should not return a hidden member
         $line = 'class C2 { hidden [int]$hiddenZ } [C2]::new().h'
@@ -598,9 +598,9 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 }
 
 Describe 'BaseMethodCall Test ' -Tags "CI" {
-        It "Derived class method call" {"abc".ToString() | Should -Be "abc" }
+        It "Derived class method call" {"abc".ToString() | Should -BeExactly "abc" }
         # call [object] ToString() method as a base class method.
-        It "Base class method call" {([object]"abc").ToString() | Should -Be "System.String" }
+        It "Base class method call" {([object]"abc").ToString() | Should -BeExactly "System.String" }
 }
 
 Describe 'Scoped Types Test' -Tags "CI" {
@@ -620,14 +620,14 @@ Describe 'Scoped Types Test' -Tags "CI" {
             return (new-object C1).GetContext()
         }
 
-        It "New-Object at test scope" { (new-object C1).GetContext() | Should -Be "Test scope" }
-        It "[C1]::new() at test scope" { [C1]::new().GetContext() | Should -Be "Test scope" }
+        It "New-Object at test scope" { (new-object C1).GetContext() | Should -BeExactly "Test scope" }
+        It "[C1]::new() at test scope" { [C1]::new().GetContext() | Should -BeExactly "Test scope" }
 
-        It "[C1]::new() in nested scope" { (f1) | Should -Be "f1 scope" }
-        It "'new-object C1' in nested scope" { (f2) | Should -Be "f2 scope" }
+        It "[C1]::new() in nested scope" { (f1) | Should -BeExactly "f1 scope" }
+        It "'new-object C1' in nested scope" { (f2) | Should -BeExactly "f2 scope" }
 
-        It "[C1]::new() in nested scope (in pipeline)" { (1 | f1 | f2 | f1) | Should -Be "f1 scope" }
-        It "'new-object C1' in nested scope (in pipeline)" { (1 | f2 | f1 | f2) | Should -Be "f2 scope" }
+        It "[C1]::new() in nested scope (in pipeline)" { (1 | f1 | f2 | f1) | Should -BeExactly "f1 scope" }
+        It "'new-object C1' in nested scope (in pipeline)" { (1 | f2 | f1 | f2) | Should -BeExactly "f2 scope" }
 }
 
 Describe 'ParameterOfClassTypeInModule Test' -Tags "CI" {
@@ -700,16 +700,16 @@ class Derived : Base
 
         $ps = [powershell]::Create($iss)
         $ps.AddCommand("foo").Invoke() | Should -Be 200
-        $ps.Streams.Error | Should -Be $null
+        $ps.Streams.Error | Should -BeNullOrEmpty
 
         $ps1 = [powershell]::Create($iss)
         $ps1.AddCommand("foo").Invoke() | Should -Be 200
-        $ps1.Streams.Error | Should -Be $null
+        $ps1.Streams.Error | Should -BeNullOrEmpty
 
         $ps.Commands.Clear()
         $ps.Streams.Error.Clear()
         $ps.AddScript(". foo").Invoke() | Should -Be 200
-        $ps.Streams.Error | Should -Be $null
+        $ps.Streams.Error | Should -BeNullOrEmpty
     }
 }
 
@@ -730,11 +730,11 @@ class B
 '@).Invoke()[0]
 
         It 'can do type lookup by name' {
-            $b.getA1() | Should -Be 'A'
+            $b.getA1() | Should -BeExactly 'A'
         }
 
         It 'can do type lookup by [type]' {
-            $b.getA2() | Should -Be 'A'
+            $b.getA2() | Should -BeExactly 'A'
         }
     }
 }
@@ -774,13 +774,13 @@ class A
         try {
             $a.SetX($bar, 42)
         } catch {
-            $_.FullyQualifiedErrorId | Should -Be PropertyAssignmentException
+            $_.FullyQualifiedErrorId | Should -BeExactly PropertyAssignmentException
             $throwCount++
         }
         try {
             $a.GetX($bar)
         } catch {
-            $_.FullyQualifiedErrorId | Should -Be PropertyNotFoundStrict
+            $_.FullyQualifiedErrorId | Should -BeExactly PropertyNotFoundStrict
             $throwCount++
         }
         $throwCount | Should -Be 2
@@ -808,11 +808,11 @@ return [A]::new()
 
         $ps = [powershell]::Create($iss)
         $a = $ps.AddCommand("foo").Invoke()[0]
-        $ps.Streams.Error | Should -Be $null
+        $ps.Streams.Error | Should -BeNullOrEmpty
 
         $ps1 = [powershell]::Create($iss)
         $a1 = $ps1.AddCommand("foo").Invoke()[0]
-        $ps1.Streams.Error | Should -Be $null
+        $ps1.Streams.Error | Should -BeNullOrEmpty
 
         $a.SetX(101)
         $a1.SetX(103)
@@ -835,6 +835,6 @@ Describe 'variable analysis' -Tags "CI" {
             }
         }
 
-        [B]::getA().getFoo() | Should -Be 'foo'
+        [B]::getA().getFoo() | Should -BeExactly 'foo'
     }
 }
