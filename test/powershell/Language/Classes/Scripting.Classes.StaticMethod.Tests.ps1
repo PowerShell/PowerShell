@@ -13,7 +13,7 @@ Describe "Additional static method tests" -Tags "CI" {
                 static Foo() { [Foo]::Name = Get-Name }
             }
 
-            [Foo]::Name | Should -BeExactly "Yes"
+            [Foo]::Name | Should -Be "Yes"
         }
 
         It "test basic static method" {
@@ -21,7 +21,7 @@ Describe "Additional static method tests" -Tags "CI" {
                 static [string] GetName() { return (Get-Name) }
             }
 
-            [Foo]::GetName() | Should -BeExactly "Yes"
+            [Foo]::GetName() | Should -Be "Yes"
         }
     }
 
