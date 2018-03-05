@@ -109,7 +109,7 @@ function Test-Completions
                     $skip = $false
                     if ( $expected.CompletionText -Match "System.Management.Automation.PerformanceData|System.Management.Automation.Security" ) { $skip = $true }
                     It ($expected.CompletionText) -skip:$skip {
-                        $expected.Found | Should -Be $true
+                        $expected.Found | Should -BeTrue
                     }
                 }
 

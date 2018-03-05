@@ -170,7 +170,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 	It "Throws an CommandNotFoundException exception if using a label in front of an if statement is not allowed. (line 225)"{
         $PowerShell.Streams.Error.Clear()
         ExecuteCommand ":foo if ($x -eq 3) { 1 }"
-		$PowerShell.HadErrors | Should -Be $true
+		$PowerShell.HadErrors | Should -BeTrue
         $PowerShell.Streams.Error.FullyQualifiedErrorId | Should -Be "CommandNotFoundException"
     }
 
@@ -819,7 +819,7 @@ foo``u{2195}abc
 	It 'Tests accessing using null as index. (line 2648)'{
         $PowerShell.Streams.Error.Clear()
 		ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[$NONEXISTING_VARIABLE];'
-        $PowerShell.HadErrors | Should -Be $true
+        $PowerShell.HadErrors | Should -BeTrue
         $PowerShell.Streams.Error.FullyQualifiedErrorId | Should -Be "NullArrayIndex"
     }
 

@@ -295,10 +295,10 @@ Describe 'get-help other tests' -Tags "CI" {
         $x = get-help $tempFile
 
         It '$x.Synopsis' { $x.Synopsis | Should -Be "Changes Admin passwords across all KDE servers." }
-        It '$x.parameters.parameter[0].required' { $x.parameters.parameter[0].required | Should -Be $true}
-        It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should -Be $true}
-        It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should -Be $true}
-        It 'Common parameters should not be appear in the syntax' { $x.Syntax -like "*verbose*" | Should -Be $false }
+        It '$x.parameters.parameter[0].required' { $x.parameters.parameter[0].required | Should -BeTrue}
+        It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should -BeTrue}
+        It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should -BeTrue}
+        It 'Common parameters should not be appear in the syntax' { $x.Syntax -like "*verbose*" | Should -BeFalse }
         It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should -Be 1}
         It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should -Be 2}
     }

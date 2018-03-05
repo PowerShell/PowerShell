@@ -6,8 +6,8 @@ Describe 'conversion syntax' -Tags "CI" {
 
     It 'converts array of single enum to bool' {
         # This test relies on the fact that [ConsoleColor]::Black is 0 and all other values are non-zero
-        [bool]@([ConsoleColor]::Black) | Should -Be $false
-        [bool]@([ConsoleColor]::Yellow) | Should -Be $true
+        [bool]@([ConsoleColor]::Black) | Should -BeFalse
+        [bool]@([ConsoleColor]::Yellow) | Should -BeTrue
     }
 
     It 'calls virtual method non-virtually' {
@@ -15,7 +15,7 @@ Describe 'conversion syntax' -Tags "CI" {
 
         # generate random string to avoid JIT optimization
         $r = [guid]::NewGuid().Guid
-        ([object]($r + "a")).Equals(($r + "a")) | Should -Be $false
+        ([object]($r + "a")).Equals(($r + "a")) | Should -BeFalse
     }
 
     It 'calls method on a super-type, when conversion syntax used' {

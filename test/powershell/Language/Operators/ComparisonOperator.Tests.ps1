@@ -71,7 +71,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{lhs = '"hello"'; operator = '-isnot'; rhs = "[int]"}
     ) {
         param($lhs, $operator, $rhs)
-        Invoke-Expression "$lhs $operator $rhs" | Should -Be $true
+        Invoke-Expression "$lhs $operator $rhs" | Should -BeTrue
     }
 
     It "Should fail in comparing type: <lhs> <operator> <rhs>" -TestCases @(
@@ -80,7 +80,7 @@ Describe "ComparisonOperator" -tag "CI" {
         @{lhs = '"hello"'; operator = '-isnot'; rhs = "[string]"}
     ) {
         param($lhs, $operator, $rhs)
-        Invoke-Expression "$lhs $operator $rhs" | Should -Be $false
+        Invoke-Expression "$lhs $operator $rhs" | Should -BeFalse
     }
 }
 

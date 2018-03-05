@@ -268,7 +268,7 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         foreach ($breakpoint in $actual)
         {
 	        It "Expected script breakpoints" {
-		        ($expected -contains $breakpoint) | Should -Be $true
+		        ($expected -contains $breakpoint) | Should -BeTrue
 	        }
         }
     }

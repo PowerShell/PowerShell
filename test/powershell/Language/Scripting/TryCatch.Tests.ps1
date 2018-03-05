@@ -86,7 +86,7 @@ Describe "Test try/catch" -Tags "CI" {
         {
         }
 
-        $true | Should -Be $true # we only verify that there is no parsing error. This line contains a dummy Should to make pester happy.
+        $true | Should -BeTrue # we only verify that there is no parsing error. This line contains a dummy Should to make pester happy.
     }
 
     Context "Basic exception handling" {
@@ -565,7 +565,7 @@ Describe "Test try/catch" -Tags "CI" {
             }
 
             AssertArraysEqual $a ("inner catch", "outer catch")
-            ($ex_inner.Exception -eq $ex_outer.Exception) | Should -Be $true
+            ($ex_inner.Exception -eq $ex_outer.Exception) | Should -BeTrue
         }
 
         It "throw; outside catch threw wrong object" {
@@ -587,7 +587,7 @@ Describe "Test try/catch" -Tags "CI" {
               }
             }
 
-            ($a -eq "test passed") | Should -Be $true
+            ($a -eq "test passed") | Should -BeTrue
         }
     }
 

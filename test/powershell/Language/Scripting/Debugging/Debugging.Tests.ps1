@@ -67,13 +67,13 @@ Describe "It should be possible to reset runspace debugging" -tag "Feature" {
         $breakpoints.Count | Should -Be 2
     }
     It "The breakpoint Should have been hit" {
-        $completed | Should -Be $true
+        $completed | Should -BeTrue
     }
     It "The reset debugger should not be in a breakpoint" {
-        $rs.Debugger.InBreakPoint | Should -Be $false
+        $rs.Debugger.InBreakPoint | Should -BeFalse
     }
     It "The reset debugger should not be active" {
-        $rs.Debugger.IsActive | Should -Be $false
+        $rs.Debugger.IsActive | Should -BeFalse
     }
     It "The reset debugger mode should be set to 'Default'" {
         $rs.Debugger.DebugMode | Should -Be "Default"

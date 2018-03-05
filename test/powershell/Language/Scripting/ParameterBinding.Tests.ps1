@@ -326,8 +326,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         $x = get-foo 'a','b'
-        $x[0] | Should -Be $true
-        $x[1] | Should -Be $true
+        $x[0] | Should -BeTrue
+        $x[1] | Should -BeTrue
     }
 
     Context 'Default value conversion tests' {

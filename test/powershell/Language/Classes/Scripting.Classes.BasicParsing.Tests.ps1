@@ -115,7 +115,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         It "Expected a C9a[] returned" { $c9a.GetType().Name | Should -Be C9a[] }
         class C9b { [System.Collections.Generic.List[C9b]] f() { return [C9b]::new() } }
         $c9b = [C9b]::new().f()
-        It "Expected a System.Collections.Generic.List[C9b] returned" {  $c9b -is [System.Collections.Generic.List[C9b]] | Should -Be $true }
+        It "Expected a System.Collections.Generic.List[C9b] returned" {  $c9b -is [System.Collections.Generic.List[C9b]] | Should -BeTrue }
     }
 
     It 'Positive ParseProperty Attributes Test' {
@@ -386,8 +386,8 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     It "Verb should be Get" {$c.VerbName | Should -Be 'Get'}
     It "Noun should be Thing" {$c.NounName | Should -Be 'Thing'}
 
-    It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -Be $true }
-    It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -Be $true }
+    It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -BeTrue }
+    It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -BeTrue }
     Context "Support ConfirmImpact as an attribute" {
         It  "ConfirmImpact should be high" -pending {
             [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
@@ -579,9 +579,9 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 
         # Formatting should not include hidden members by default
         $tableOutput = $instance | Format-Table -HideTableHeaders -AutoSize | Out-String
-        It "Table formatting should not have included hidden member hiddenZ - should contain 10" { $tableOutput.Contains(10) | Should -Be $true}
-        It "Table formatting should not have included hidden member hiddenZ- should contain 12" { $tableOutput.Contains(12) | Should -Be $true}
-        It "Table formatting should not have included hidden member hiddenZ - should not contain 42" { $tableOutput.Contains(42) | Should -Be $false}
+        It "Table formatting should not have included hidden member hiddenZ - should contain 10" { $tableOutput.Contains(10) | Should -BeTrue}
+        It "Table formatting should not have included hidden member hiddenZ- should contain 12" { $tableOutput.Contains(12) | Should -BeTrue}
+        It "Table formatting should not have included hidden member hiddenZ - should not contain 42" { $tableOutput.Contains(42) | Should -BeFalse}
 
         # Get-Member should not include hidden members by default
         $member = $instance | Get-Member hiddenZ
@@ -653,7 +653,7 @@ Describe 'Type building' -Tags "CI" {
         1..10 | ForEach-Object {
             class C {}
             if ($a) {
-                $a -eq [C] | Should -Be $true
+	         $a -eq [C] | Should -BeTrue
             }
             $a = [C]
         }

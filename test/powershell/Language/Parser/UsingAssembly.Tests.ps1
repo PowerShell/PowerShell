@@ -46,25 +46,25 @@ public class ABC {}
 
         It "parse does not load the assembly" -pending {
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -Be $false
+            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
 
             $err = $null
             $ast = [System.Management.Automation.Language.Parser]::ParseInput("using assembly .\UsingAssemblyTest$guid.dll", [ref]$null, [ref]$err)
 
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -Be $false
+            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
             $err.Count | Should -Be 0
 
             $ast = [System.Management.Automation.Language.Parser]::ParseInput("using assembly '$PSScriptRoot\UsingAssemblyTest$guid.dll'", [ref]$null, [ref]$err)
 
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -Be $false
+            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
             $err.Count | Should -Be 0
 
             $ast = [System.Management.Automation.Language.Parser]::ParseInput("using assembly `"$PSScriptRoot\UsingAssemblyTest$guid.dll`"", [ref]$null, [ref]$err)
 
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -Be $false
+            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeFalse
             $err.Count | Should -Be 0
         }
 
@@ -77,7 +77,7 @@ public class ABC {}
                 $_.FullyQualifiedErrorId | Should -Be 'ParseException'
                 $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be 'ErrorLoadingAssembly'
             }
-            $failed | Should -Be $true
+            $failed | Should -BeTrue
         }
 #>
         It "Assembly loaded at runtime" -pending {
@@ -85,25 +85,25 @@ public class ABC {}
     using assembly .\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -Be $true
+            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeTrue
 
             $assemblies = pwsh -noprofile -command @"
     using assembly $PSScriptRoot\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
-            $assemblies -contains "UsingAssemblyTest$guid" | Should -Be $true
+            $assemblies -contains "UsingAssemblyTest$guid" | Should -BeTrue
 
             $assemblies = pwsh -noprofile -command @"
     using assembly System.Drawing
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
-            $assemblies -contains "System.Drawing" | Should -Be $true
+            $assemblies -contains "System.Drawing" | Should -BeTrue
 
             $assemblies = pwsh -noprofile -command @"
     using assembly 'System.Drawing, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
 "@
-            $assemblies -contains "System.Drawing" | Should -Be $true
+            $assemblies -contains "System.Drawing" | Should -BeTrue
         }
     }
     finally

@@ -113,7 +113,7 @@ function Test-Completions
                         {
                             It "Checking for duplicates of: $($expected.CompletionText)" {
                                 # We should only find 1 of each expected result
-                                $expected.Found | Should -Be $false
+                                $expected.Found | Should -BeFalse
                             }
                             $expected.Found = $true
                         }
@@ -123,7 +123,7 @@ function Test-Completions
                 foreach ($expected in $test.ExpectedResults)
                 {
                     It "Checking for presence of expected result: $($expected.CompletionText)" {
-                        $expected.Found | Should -Be $true
+                        $expected.Found | Should -BeTrue
                     }
                 }
 
@@ -132,7 +132,7 @@ function Test-Completions
                     foreach ($result in $results.CompletionMatches)
                     {
                         It "Checking for results that should not be found: $notExpected" {
-                            $result.CompletionText -cne $notExpected | Should -Be $true
+                            $result.CompletionText -cne $notExpected | Should -BeTrue
                         }
                     }
                 }

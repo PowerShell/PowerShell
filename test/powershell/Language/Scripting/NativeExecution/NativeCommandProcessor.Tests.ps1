@@ -27,7 +27,7 @@ Describe 'native commands with pipeline' -tags 'Feature' {
 
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI
-        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should -Be $true
+        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should -BeTrue
 
         $ps.Stop()
         $rs.ResetRunspaceState()
@@ -116,7 +116,7 @@ Describe "Native Command Processor" -tags "Feature" {
             $newNotepad | Should -Not -Be $null
             $newNotepad | Stop-Process
 
-            $async.IsCompleted | Should -Be $true
+            $async.IsCompleted | Should -BeTrue
             $ps.EndInvoke($async) | Should -Be "ran notepad"
         }
         finally

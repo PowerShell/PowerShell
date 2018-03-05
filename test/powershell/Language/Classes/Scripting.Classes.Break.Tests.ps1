@@ -93,7 +93,7 @@ class A
                 [C]::getInt() | Should -Be 123
                 $canary = $true
             } finally {
-                $canary | Should -Be $true
+                $canary | Should -BeTrue
             }
         }
 
@@ -124,7 +124,7 @@ class A
                 [C]::getInt() | Should -Be (123 + 4*4)
                 $canary = $true
             } finally {
-                $canary | Should -Be $true
+                $canary | Should -BeTrue
             }
         }
     }
