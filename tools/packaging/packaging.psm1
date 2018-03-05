@@ -1975,8 +1975,6 @@ function Get-LinuxPackageSemanticVersion
     } elseif ($packageVersionTokens.Count -ge 2) {
         $packageRevisionTokens = ($packageVersionTokens[1..($packageVersionTokens.Count-1)] -join '-')
         $packageSemanticVersion = ('{0}~{1}' -f  $packageVersionTokens[0], $packageRevisionTokens)
-    } else {
-        throw "Cannot create Semantic Version from the string $Version containing 4 or more tokens"
     }
 
     $packageSemanticVersion
