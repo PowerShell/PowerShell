@@ -8,11 +8,11 @@
   <?define ProductCode = "$(env.ProductCode)" ?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
   <?if $(sys.BUILDARCH)=x64?>
-    <?define UpgradeCode = "31ab5147-9a97-4452-8443-d9709f0516e1" ?>
+    <?define UpgradeCode = "$(env.UpgradeCodeX64)" ?>
     <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion)"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.ProductSemanticVersion)"?>
   <?else?>
-    <?define UpgradeCode = "1d00683b-0f84-4db8-a64f-2f98ad42fe06" ?>
+    <?define UpgradeCode = "$(env.UpgradeCodeX86)" ?>
     <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
   <?endif?>
@@ -162,7 +162,7 @@
             </Component>
             <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
-            <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}">
+            <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}" KeyPath="yes">
               <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)">
