@@ -3668,7 +3668,9 @@ namespace Microsoft.PowerShell.Commands
             bool isCurrentLocationOrAncestor = false;
             try
             {
-                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(_path, currentContext);
+                string path = Path;
+                if (!base.SuppressWildcardExpansion) { path = WildcardPattern.Unescape(Path); }
+                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(path, currentContext);
             }
             catch (PSNotSupportedException notSupported)
             {
