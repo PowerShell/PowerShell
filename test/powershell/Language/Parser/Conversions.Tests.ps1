@@ -251,149 +251,149 @@ Describe 'method conversion' -Tags 'CI' {
     }
     It "can call all overloads of M::Foo" {
         [Func[char, char]] $f1 = [M]::Foo
-        $f1.Invoke(10) | Should -BE 10
+        $f1.Invoke(10) | Should -Be 10
         [Func[char, char, char]] $f2 = [M]::Foo
-        $f2.Invoke(10, 1) | Should -BE 10
+        $f2.Invoke(10, 1) | Should -Be 10
         [Func[char, char, char, char]] $f3 = [M]::Foo
-        $f3.Invoke(10, 1, 2) | Should -BE 10
+        $f3.Invoke(10, 1, 2) | Should -Be 10
         [Func[char, char, char, char, char]] $f4 = [M]::Foo
-        $f4.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f4.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[char, char, char, char, char, char]] $f5 = [M]::Foo
-        $f5.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f5.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[char, char, char, char, char, char, char]] $f6 = [M]::Foo
-        $f6.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f6.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[char, char, char, char, char, char, char, char]] $f7 = [M]::Foo
-        $f7.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f7.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[char, char, char, char, char, char, char, char, char]] $f8 = [M]::Foo
-        $f8.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f8.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[int16, int16]] $f9 = [M]::Foo
-        $f9.Invoke(10) | Should -BE 10
+        $f9.Invoke(10) | Should -Be 10
         [Func[int16, int16, int16]] $f10 = [M]::Foo
-        $f10.Invoke(10, 1) | Should -BE 10
+        $f10.Invoke(10, 1) | Should -Be 10
         [Func[int16, int16, int16, int16]] $f11 = [M]::Foo
-        $f11.Invoke(10, 1, 2) | Should -BE 10
+        $f11.Invoke(10, 1, 2) | Should -Be 10
         [Func[int16, int16, int16, int16, int16]] $f12 = [M]::Foo
-        $f12.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f12.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[int16, int16, int16, int16, int16, int16]] $f13 = [M]::Foo
-        $f13.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f13.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[int16, int16, int16, int16, int16, int16, int16]] $f14 = [M]::Foo
-        $f14.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f14.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[int16, int16, int16, int16, int16, int16, int16, int16]] $f15 = [M]::Foo
-        $f15.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f15.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[int16, int16, int16, int16, int16, int16, int16, int16, int16]] $f16 = [M]::Foo
-        $f16.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f16.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[int, int]] $f17 = [M]::Foo
-        $f17.Invoke(10) | Should -BE 10
+        $f17.Invoke(10) | Should -Be 10
         [Func[int, int, int]] $f18 = [M]::Foo
-        $f18.Invoke(10, 1) | Should -BE 10
+        $f18.Invoke(10, 1) | Should -Be 10
         [Func[int, int, int, int]] $f19 = [M]::Foo
-        $f19.Invoke(10, 1, 2) | Should -BE 10
+        $f19.Invoke(10, 1, 2) | Should -Be 10
         [Func[int, int, int, int, int]] $f20 = [M]::Foo
-        $f20.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f20.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[int, int, int, int, int, int]] $f21 = [M]::Foo
-        $f21.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f21.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[int, int, int, int, int, int, int]] $f22 = [M]::Foo
-        $f22.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f22.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[int, int, int, int, int, int, int, int]] $f23 = [M]::Foo
-        $f23.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f23.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[int, int, int, int, int, int, int, int, int]] $f24 = [M]::Foo
-        $f24.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f24.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[UInt32, UInt32]] $f25 = [M]::Foo
-        $f25.Invoke(10) | Should -BE 10
+        $f25.Invoke(10) | Should -Be 10
         [Func[UInt32, UInt32, UInt32]] $f26 = [M]::Foo
-        $f26.Invoke(10, 1) | Should -BE 10
+        $f26.Invoke(10, 1) | Should -Be 10
         [Func[UInt32, UInt32, UInt32, UInt32]] $f27 = [M]::Foo
-        $f27.Invoke(10, 1, 2) | Should -BE 10
+        $f27.Invoke(10, 1, 2) | Should -Be 10
         [Func[UInt32, UInt32, UInt32, UInt32, UInt32]] $f28 = [M]::Foo
-        $f28.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f28.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f29 = [M]::Foo
-        $f29.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f29.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f30 = [M]::Foo
-        $f30.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f30.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f31 = [M]::Foo
-        $f31.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f31.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32, UInt32]] $f32 = [M]::Foo
-        $f32.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f32.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[UInt64, UInt64]] $f33 = [M]::Foo
-        $f33.Invoke(10) | Should -BE 10
+        $f33.Invoke(10) | Should -Be 10
         [Func[UInt64, UInt64, UInt64]] $f34 = [M]::Foo
-        $f34.Invoke(10, 1) | Should -BE 10
+        $f34.Invoke(10, 1) | Should -Be 10
         [Func[UInt64, UInt64, UInt64, UInt64]] $f35 = [M]::Foo
-        $f35.Invoke(10, 1, 2) | Should -BE 10
+        $f35.Invoke(10, 1, 2) | Should -Be 10
         [Func[UInt64, UInt64, UInt64, UInt64, UInt64]] $f36 = [M]::Foo
-        $f36.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f36.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f37 = [M]::Foo
-        $f37.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f37.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f38 = [M]::Foo
-        $f38.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f38.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f39 = [M]::Foo
-        $f39.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f39.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64, UInt64]] $f40 = [M]::Foo
-        $f40.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f40.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[float, float]] $f41 = [M]::Foo
-        $f41.Invoke(10) | Should -BE 10
+        $f41.Invoke(10) | Should -Be 10
         [Func[float, float, float]] $f42 = [M]::Foo
-        $f42.Invoke(10, 1) | Should -BE 10
+        $f42.Invoke(10, 1) | Should -Be 10
         [Func[float, float, float, float]] $f43 = [M]::Foo
-        $f43.Invoke(10, 1, 2) | Should -BE 10
+        $f43.Invoke(10, 1, 2) | Should -Be 10
         [Func[float, float, float, float, float]] $f44 = [M]::Foo
-        $f44.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f44.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[float, float, float, float, float, float]] $f45 = [M]::Foo
-        $f45.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f45.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[float, float, float, float, float, float, float]] $f46 = [M]::Foo
-        $f46.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f46.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[float, float, float, float, float, float, float, float]] $f47 = [M]::Foo
-        $f47.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f47.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[float, float, float, float, float, float, float, float, float]] $f48 = [M]::Foo
-        $f48.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f48.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[double, double]] $f49 = [M]::Foo
-        $f49.Invoke(10) | Should -BE 10
+        $f49.Invoke(10) | Should -Be 10
         [Func[double, double, double]] $f50 = [M]::Foo
-        $f50.Invoke(10, 1) | Should -BE 10
+        $f50.Invoke(10, 1) | Should -Be 10
         [Func[double, double, double, double]] $f51 = [M]::Foo
-        $f51.Invoke(10, 1, 2) | Should -BE 10
+        $f51.Invoke(10, 1, 2) | Should -Be 10
         [Func[double, double, double, double, double]] $f52 = [M]::Foo
-        $f52.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f52.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[double, double, double, double, double, double]] $f53 = [M]::Foo
-        $f53.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f53.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[double, double, double, double, double, double, double]] $f54 = [M]::Foo
-        $f54.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f54.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[double, double, double, double, double, double, double, double]] $f55 = [M]::Foo
-        $f55.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f55.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[double, double, double, double, double, double, double, double, double]] $f56 = [M]::Foo
-        $f56.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f56.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         [Func[IntPtr, IntPtr]] $f57 = [M]::Foo
-        $f57.Invoke(10) | Should -BE 10
+        $f57.Invoke(10) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr]] $f58 = [M]::Foo
-        $f58.Invoke(10, 1) | Should -BE 10
+        $f58.Invoke(10, 1) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr, IntPtr]] $f59 = [M]::Foo
-        $f59.Invoke(10, 1, 2) | Should -BE 10
+        $f59.Invoke(10, 1, 2) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f60 = [M]::Foo
-        $f60.Invoke(10, 1, 2, 3) | Should -BE 10
+        $f60.Invoke(10, 1, 2, 3) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f61 = [M]::Foo
-        $f61.Invoke(10, 1, 2, 3, 4) | Should -BE 10
+        $f61.Invoke(10, 1, 2, 3, 4) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f62 = [M]::Foo
-        $f62.Invoke(10, 1, 2, 3, 4, 5) | Should -BE 10
+        $f62.Invoke(10, 1, 2, 3, 4, 5) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f63 = [M]::Foo
-        $f63.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -BE 10
+        $f63.Invoke(10, 1, 2, 3, 4, 5, 6) | Should -Be 10
         [Func[IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr, IntPtr]] $f64 = [M]::Foo
-        $f64.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -BE 10
+        $f64.Invoke(10, 1, 2, 3, 4, 5, 6, 7) | Should -Be 10
         $timespan = [timespan]::FromMinutes(62)
         [Func[timespan, timespan]] $f65 = [M]::Foo
-        $f65.Invoke($timeSpan) | Should -BE $timeSpan
+        $f65.Invoke($timeSpan) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan]] $f66 = [M]::Foo
-        $f66.Invoke($timeSpan, [Timespan]::Zero) | Should -BE $timeSpan
+        $f66.Invoke($timeSpan, [Timespan]::Zero) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan, timespan]] $f67 = [M]::Foo
-        $f67.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero) | Should -BE $timeSpan
+        $f67.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan, timespan, timespan]] $f68 = [M]::Foo
-        $f68.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -BE $timeSpan
+        $f68.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan, timespan, timespan, timespan]] $f69 = [M]::Foo
-        $f69.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -BE $timeSpan
+        $f69.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f70 = [M]::Foo
-        $f70.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -BE $timeSpan
+        $f70.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f71 = [M]::Foo
-        $f71.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -BE $timeSpan
+        $f71.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
         [Func[timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan, timespan]] $f72 = [M]::Foo
-        $f72.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -BE $timeSpan
+        $f72.Invoke($timeSpan, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero, [Timespan]::Zero) | Should -Be $timeSpan
     }
 }
