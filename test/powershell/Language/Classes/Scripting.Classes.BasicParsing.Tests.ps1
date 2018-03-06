@@ -393,7 +393,7 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
             [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
             It "Should have one attribute" { $t.Count | Should -Be 1 }
-            It "Should have instance of CmdletAttribute" { $t[0] | Should -BeExactly System.Management.Automation.CmdletAttribute }
+            It "Should have instance of CmdletAttribute" { $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute }
             [System.Management.Automation.CmdletAttribute]$c = $t[0]
             $c.ConfirmImpact | Should -BeExactly 'High'
 
