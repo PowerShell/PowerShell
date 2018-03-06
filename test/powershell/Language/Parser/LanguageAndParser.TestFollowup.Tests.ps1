@@ -97,13 +97,13 @@ Describe "Hashtable key property syntax" -Tags "CI" {
     It "In current process" {
         # Run in current process, but something that ran earlier could influence
         # the result
-        Invoke-Expression $script | Should -BeExactly Hello
+        Invoke-Expression $script | Should -BeExactly 'Hello'
     }
 
     It "In different process" {
         # So also run in a fresh process
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
-        & $powershellexe -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should -BeExactly Hello
+        & $powershellexe -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should -BeExactly 'Hello'
     }
 }
 
@@ -138,8 +138,8 @@ Describe "Assign automatic variables" -Tags "CI" {
         & { [object]$input = 1; $input } | Should -Be 1
         # Can't test PSCmdlet or PSBoundParameters, they use an internal type
         & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should -Match Automation.InvocationInfo
-        & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should -BeExactly abc
-        & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should -BeExactly abc
+        & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should -BeExactly 'abc'
+        & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should -BeExactly 'abc'
     }
 }
 

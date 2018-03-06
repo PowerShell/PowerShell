@@ -12,7 +12,7 @@ function Run-TestOnWinFull
 
             $r = TestErrorActionSuspend -ErrorAction Suspend
 
-            $r | Should -BeExactly Hello
+            $r | Should -BeExactly 'Hello'
             break;   }
 
         "ForeachParallel:ASTOfParallelForeachOnWorkflow" {

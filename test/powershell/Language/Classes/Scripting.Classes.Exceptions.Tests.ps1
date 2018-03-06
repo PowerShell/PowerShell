@@ -302,7 +302,7 @@ Describe "Exception from initializer" -Tags "CI" {
         catch
         {
             $e = $_
-            $e.FullyQualifiedErrorId | Should -BeExactly InvalidCastFromStringToInteger
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
             $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
@@ -315,7 +315,7 @@ Describe "Exception from initializer" -Tags "CI" {
         catch
         {
             $e = $_
-            $e.FullyQualifiedErrorId | Should -BeExactly InvalidCastFromStringToInteger
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
             $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
@@ -329,7 +329,7 @@ Describe "Exception from initializer" -Tags "CI" {
         {
             $_.Exception | Should -BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should -BeExactly InvalidCastFromStringToInteger
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
             $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }
@@ -343,7 +343,7 @@ Describe "Exception from initializer" -Tags "CI" {
         {
             $_.Exception | Should -BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
-            $e.FullyQualifiedErrorId | Should -BeExactly InvalidCastFromStringToInteger
+            $e.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
             $e.InvocationInfo.Line | Should -Match 'a = "zz"'
         }
     }

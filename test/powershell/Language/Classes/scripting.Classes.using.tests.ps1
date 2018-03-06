@@ -173,7 +173,7 @@ using module Foo
 #using module Foo
 [Foo]::new()
 "@
-        $err.FullyQualifiedErrorId | Should -BeExactly TypeNotFound
+        $err.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFound'
     }
 
     It "can use class from another module in New-Object by short name" {
@@ -302,7 +302,7 @@ using module Foo
 using module FooWithManifest
 [Foo]
 "@
-            $err.FullyQualifiedErrorId | Should -BeExactly AmbiguousTypeReference
+            $err.FullyQualifiedErrorId | Should -BeExactly 'AmbiguousTypeReference'
         }
 
         It "cannot use in New-Object" {
@@ -320,7 +320,7 @@ using module Foo
 using module FooWithManifest
 [type]"Foo"
 "@
-            $err.FullyQualifiedErrorId | Should -BeExactly AmbiguousTypeReference
+            $err.FullyQualifiedErrorId | Should -BeExactly 'AmbiguousTypeReference'
         }
     }
 
@@ -421,16 +421,16 @@ function foo()
             $iss.StartupScripts.Add($scriptToProcessPath)
 
             $ps = [powershell]::Create($iss)
-            $ps.AddCommand("foo").Invoke() | Should -BeExactly Foo
+            $ps.AddCommand("foo").Invoke() | Should -BeExactly 'Foo'
             $ps.Streams.Error | Should -BeNullOrEmpty
 
             $ps1 = [powershell]::Create($iss)
-            $ps1.AddCommand("foo").Invoke() | Should -BeExactly Foo
+            $ps1.AddCommand("foo").Invoke() | Should -BeExactly 'Foo'
             $ps1.Streams.Error | Should -BeNullOrEmpty
 
             $ps.Commands.Clear()
             $ps.Streams.Error.Clear()
-            $ps.AddScript(". foo").Invoke() | Should -BeExactly Foo
+            $ps.AddScript(". foo").Invoke() | Should -BeExactly 'Foo'
             $ps.Streams.Error | Should -BeNullOrEmpty
         }
     }
@@ -467,7 +467,7 @@ class Bar : Foo {}
 
         It "cannot be accessed by relative path without .\ from a script" {
             $err = Get-RuntimeError '& TestDrive:\FooRelativeConsumerErr.ps1'
-            $err.FullyQualifiedErrorId | Should -BeExactly ModuleNotFoundDuringParse
+            $err.FullyQualifiedErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
         }
 
         It "can be accessed by absolute path" {
@@ -497,7 +497,7 @@ using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 using module .\FooForPaths
 [Foo]::new()
 "@
-            $err.FullyQualifiedErrorId | Should -BeExactly ModuleNotFoundDuringParse
+            $err.FullyQualifiedErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
 
             Push-Location TestDrive:\modules
             try {
@@ -518,7 +518,7 @@ using module .\FooForPaths
 using module FooForPaths
 [Foo]::new()
 "@
-                $err.FullyQualifiedErrorId | Should -BeExactly ModuleNotFoundDuringParse
+                $err.FullyQualifiedErrorId | Should -BeExactly 'ModuleNotFoundDuringParse'
             } finally {
                 Pop-Location
             }

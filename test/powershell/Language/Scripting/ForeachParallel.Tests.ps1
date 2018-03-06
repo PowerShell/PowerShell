@@ -28,7 +28,7 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -bogus ($input in $bar) { }', [ref]$null, [ref]$errors)
         It '$errors.Count' { $errors.Count | Should -Be 1 }
-        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly InvalidForeachFlag }
+        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly 'InvalidForeachFlag' }
     }
 
     Context 'Generate an error on -parallel that is not a workflow' {
@@ -36,6 +36,6 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -parallel ($input in $bar) { }', [ref]$null, [ref]$errors)
         It '$errors.Count' { $errors.Count | Should -Be 1 }
-        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly ParallelNotSupported }
+        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly 'ParallelNotSupported' }
     }
 }

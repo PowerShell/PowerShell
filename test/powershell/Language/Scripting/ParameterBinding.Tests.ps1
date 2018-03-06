@@ -57,8 +57,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo a | Should -BeExactly a
-        get-foo -a b | Should -BeExactly b
+        get-foo a | Should -BeExactly 'a'
+        get-foo -a b | Should -BeExactly 'b'
     }
 
     It 'Positional parameters when only one position specified: position = 1' {
@@ -68,7 +68,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo b | Should -BeExactly b
+        get-foo b | Should -BeExactly 'b'
     }
 
     It 'Positional parameters when only position specified: position = 2' {
@@ -78,7 +78,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo b | Should -BeExactly b
+        get-foo b | Should -BeExactly 'b'
     }
 
     It 'Multiple positional parameters case 1' {
@@ -181,7 +181,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         $x,$y,$z=get-foo a b c d
-        $x | Should -BeExactly a
+        $x | Should -BeExactly 'a'
         $y | Should -BeNullOrEmpty
         $z -join ',' | Should -BeExactly 'b,c,d'
     }
@@ -215,7 +215,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
 
     It 'Invoking with script block' {
         $foo = . { param([Parameter(position=2)] $a, [Parameter(position=1)]$b); $a; $b} a b
-        $foo[0] | Should -BeExactly b
+        $foo[0] | Should -BeExactly 'b'
     }
 
     It 'Normal functions' {

@@ -774,13 +774,13 @@ class A
         try {
             $a.SetX($bar, 42)
         } catch {
-            $_.FullyQualifiedErrorId | Should -BeExactly PropertyAssignmentException
+            $_.FullyQualifiedErrorId | Should -BeExactly 'PropertyAssignmentException'
             $throwCount++
         }
         try {
             $a.GetX($bar)
         } catch {
-            $_.FullyQualifiedErrorId | Should -BeExactly PropertyNotFoundStrict
+            $_.FullyQualifiedErrorId | Should -BeExactly 'PropertyNotFoundStrict'
             $throwCount++
         }
         $throwCount | Should -Be 2

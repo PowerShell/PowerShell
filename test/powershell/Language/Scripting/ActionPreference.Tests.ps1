@@ -39,7 +39,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                 Get-Process -Name asdfasdfasdf
                 Throw "Exception expected, execution should not have reached here"
              } catch {
-                     $_.CategoryInfo.Reason | Should -BeExactly NotSupportedException
+                     $_.CategoryInfo.Reason | Should -BeExactly 'NotSupportedException'
              } finally {
                 $GLOBAL:errorActionPreference = $orgin
              }
@@ -52,7 +52,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                     Get-Process -Name asdfasdfasdf
                     Throw "Exception expected, execution should not have reached here"
                 } catch {
-                    $_.CategoryInfo.Reason | Should -BeExactly ArgumentTransformationMetadataException
+                    $_.CategoryInfo.Reason | Should -BeExactly 'ArgumentTransformationMetadataException'
                 }
                 finally {
                     $GLOBAL:errorActionPreference = $orgin
