@@ -113,7 +113,7 @@ Describe "Native Command Processor" -tags "Feature" {
 
             # Stop the new instance of notepad
             $newNotepad = FindNewNotepad
-            $newNotepad | Should -Not -Be $null
+            $newNotepad | Should -Not -BeNullOrEmpty
             $newNotepad | Stop-Process
 
             $async.IsCompleted | Should -BeTrue
@@ -198,7 +198,7 @@ Categories=Application;
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
             $afterCount | Should -Be ($beforeCount + 1)
-            $title | Should -Be $expectedTitle
+            $title | Should -BeExactly $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
         }
@@ -207,7 +207,7 @@ Categories=Application;
             & $TestFile
             # It may take time for handler to start
             Wait-FileToBePresent -File "$HOME/nativeCommandProcessor.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-            Get-Content $HOME/nativeCommandProcessor.Success | Should -Be $TestFile
+            Get-Content $HOME/nativeCommandProcessor.Success | Should -BeExactly $TestFile
         }
         else {
             & $TestFile

@@ -18,7 +18,7 @@ Describe "NativeLinuxCommands" -tags "CI" {
     }
 
     It "Should pipe to grep and get result" {
-        "hello world" | grep hello | Should -Be "hello world"
+        "hello world" | grep hello | Should -BeExactly "hello world"
     }
 
     It "Should find Application touch" {
@@ -63,10 +63,10 @@ Describe "Scripts with extensions" -tags "CI" {
     }
 
     It "Should run a script with its full name" {
-        testScript.ps1 | Should -Be $data
+        testScript.ps1 | Should -BeExactly $data
     }
 
     It "Should run a script with its short name" {
-        testScript | Should -Be $data
+        testScript | Should -BeExactly $data
     }
 }
