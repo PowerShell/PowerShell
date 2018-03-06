@@ -14,6 +14,7 @@
     <?define UpgradeCode = "1d00683b-0f84-4db8-a64f-2f98ad42fe06" ?>
     <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
   <?endif?>
+  <?define ProductDirectoryName = "$(env.ProductDirectoryName)" ?>
   <?define ProductVersion = "$(env.ProductVersion)" ?>
   <?define ProductSemanticVersion = "$(env.ProductSemanticVersion)" ?>
   <?define ProductVersionWithName = "$(var.ProductName)_$(var.ProductVersion)"?>
@@ -36,7 +37,7 @@
     <WixVariable Id="WixUIInfoIco" Value="assets\WixUIInfoIco.bmp" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
-    <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
+    <Property Id="WixShellExecTarget" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
@@ -75,7 +76,7 @@
     <UIRef Id="WixUI_InstallDir" />
     <!-- Features are mandatory.  Need At Least One. -->
     <Feature Id="ProductFeature" Title="PowerShell" Level="1">
-      <ComponentGroupRef Id="$(var.ProductVersionWithName)"/>
+      <ComponentGroupRef Id="$(var.ProductDirectoryName)"/>
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
       <ComponentRef Id="RegistryEntries"/>
@@ -106,7 +107,7 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
         <Directory Id="INSTALLFOLDER" Name="PowerShell">
-          <Directory Id="$(var.ProductVersionWithName)" Name="$(var.ProductSemanticVersion)">
+          <Directory Id="$(var.ProductDirectoryName)" Name="$(var.ProductSemanticVersion)">
             <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">
               <CreateFolder/>
             </Component>
@@ -118,7 +119,7 @@
                 </RegistryKey>
                 <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
+                    <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
                 </RegistryKey>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
@@ -134,8 +135,8 @@
             <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
                       Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" 
                       Description="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" 
-                      Target="[$(var.ProductVersionWithName)]pwsh.exe" 
-                      WorkingDirectory="$(var.ProductVersionWithName)"
+                      Target="[$(var.ProductDirectoryName)]pwsh.exe" 
+                      WorkingDirectory="$(var.ProductDirectoryName)"
                       Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
             <!-- HKMU is HKLM when installing perMachine and HKCU when installing perUser-->
