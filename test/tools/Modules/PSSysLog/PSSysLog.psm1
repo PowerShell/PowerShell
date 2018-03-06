@@ -236,7 +236,7 @@ class PSLogItem
         [DateTime]$time = [DateTime]::Parse($parts[[SysLogIds]::Time], [System.Globalization.CultureInfo]::InvariantCulture)
         $time = [DateTime]::new($year, $month, $day, $time.Hour, $time.Minute, $time.Second)
 
-        if ($after -ne $null -and $time -ge $after)
+        if ($after -ne $null -and $time -lt $after)
         {
             return $null
         }
@@ -367,7 +367,7 @@ class PSLogItem
                 break
             }
 
-            if ($after -ne $null -and $time -ge $after)
+            if ($after -ne $null -and $time -lt $after)
             {
                 $result = $null
                 break
@@ -448,7 +448,7 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($content, $id, $after)
+            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
             if ($item -ne $null)
             {
                 $totalWritten++
@@ -668,7 +668,7 @@ function ConvertFrom-OSLog
     {
         foreach ($line in $Content)
         {
-            [object] $item = [PSLogItem]::ConvertOsLog($content, $id, $after)
+            [object] $item = [PSLogItem]::ConvertOsLog($line, $id, $after)
 
             # os_log entries can span multiple lines when new lines are
             # included in the entry''s message text.

@@ -114,7 +114,7 @@ function WriteLogSettings
 
 Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
     BeforeAll {
-        [bool] $IsSupportedEnvironment = ($IsLinux -and (Test-Elevated))
+        [bool] $IsSupportedEnvironment = $IsLinux
         [string] $SysLogFile = [string]::Empty
 
         if ($IsSupportedEnvironment)
@@ -133,14 +133,13 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
                 Write-Warning -Message 'Unsupported Linux syslog configuration.'
                 $IsSupportedEnvironment = $false
             }
+            [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
         }
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
     }
 
     BeforeEach {
         # generate a unique log application id
         [string] $logId = [Guid]::NewGuid().ToString('N')
-        [DateTime] $now = [DateTime]::Now
     }
 
     It 'Verifies basic logging with no customizations' -Skip:(!$IsSupportedEnvironment) {
@@ -148,13 +147,14 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
         # Get log entries from the last 100 that match our id and are after the time we launched Powershell
-        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -After $now -Tail 100 -Verbose -TotalCount 3
+        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -Verbose -TotalCount 3
 
-        $items.Count | Should BeGreaterThan 1
+        $items | Should Not Be $null
+        $items.Length | Should BeGreaterThan 1
         $items[0].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
         $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
-        if ($items.Count -gt 2)
+        if ($items.Length -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
             $items[2] | Should be $null
@@ -167,14 +167,14 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
 
         # by default, only informational events are logged. With Level = Warning, nothing should
         # have been logged.
-        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -After $now -Tail 100 -TotalCount 1
+        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -TotalCount 1
         $items | Should Be $null
     }
 }
 
 Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
     BeforeAll {
-        [bool] $IsSupportedEnvironment = ($IsMacOS -and (Test-Elevated))
+        [bool] $IsSupportedEnvironment = $IsMacOS
         [bool] $persistenceEnabled = $false
 
         if ($IsSupportedEnvironment)
@@ -193,13 +193,16 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
     }
 
     BeforeEach {
-        # generate a unique log application id
-        [string] $logId = [Guid]::NewGuid().ToString('N')
-        # Generate a working directory and content file for Export-OSLog
-        [string] $workingDirectory = Join-Path -Path $PSDrive -ChildPath $logId
-        [string] $contentFile = Join-Path -Path $PSDrive -ChildPath ($logId + 'txt')
-        # get log items after current time.
-        [DateTime] $now = [DateTime]::Now
+        if ($IsSupportedEnvironment)
+        {
+            # generate a unique log application id
+            [string] $logId = [Guid]::NewGuid().ToString('N')
+            # Generate a working directory and content file for Export-OSLog
+            [string] $workingDirectory = Join-Path -Path $PSDrive -ChildPath $logId
+            [string] $contentFile = Join-Path -Path $PSDrive -ChildPath ($logId + 'txt')
+            # get log items after current time.
+            [DateTime] $now = [DateTime]::Now
+        }
     }
 
 
@@ -216,13 +219,14 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
         Export-OsLog -WorkingDirectory $workingDirectory -After $now | Set-Content -Path $contentFile
-        $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
+        $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
 
-        $items.Count | Should BeGreaterThan 1
+        $items | Should Not Be $null
+        $items.Length | Should BeGreaterThan 1
         $items[0].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
         $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
-        if ($items.Count -gt 2)
+        if ($items.Length -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
             $items[2] | Should be $null
