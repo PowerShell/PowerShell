@@ -132,7 +132,7 @@ function Test-Completions
                     foreach ($result in $results.CompletionMatches)
                     {
                         It "Checking for results that should not be found: $notExpected" {
-                            $result.CompletionText -cne $notExpected | Should -BeTrue
+                            $result.CompletionText | Should -Not -Be $notExpected
                         }
                     }
                 }
