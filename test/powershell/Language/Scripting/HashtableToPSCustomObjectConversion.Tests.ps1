@@ -52,7 +52,7 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
                                     if ($p -eq 0)
                                     {
                                         $p++;
-                                        $_.Name | Should -Be 'one'
+                                        $_.Name | Should -BeExactly  'one'
                                      }
                                 }
     }
@@ -69,7 +69,7 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
                                     if ($p -eq 0)
                                     {
                                         $p++;
-                                        $_.Name | Should -Be 'one'
+                                        $_.Name | Should -BeExactly  'one'
                                      }
                                 }
     }
@@ -107,36 +107,36 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
 
            if($InnerException)
            {
-                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be $ErrorID
+                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly  $ErrorID
            }
            else {
-                $_.FullyQualifiedErrorId | Should -Be $ErrorID
+                $_.FullyQualifiedErrorId | Should -BeExactly  $ErrorID
            }
        }
     }
 
     It  'Creating an object of an existing type from hashtable should succeed' {
         $result = [System.Management.Automation.Host.Coordinates]@{X=10;Y=33}
-        $result.X | Should -Be 10
+        $result.X | Should -BeExactly  10
     }
 
     It 'Creating an object of an existing type from hashtable should call the constructor taking a hashtable if such a constructor exists in the type' {
 
        $x = [SampleClass5]@{a=10;b=5}
-       $x.a | Should -Be '100'
+       $x.a | Should -BeExactly  '100'
     }
 
     It 'Add a new type name to PSTypeNames property' {
 
 	    $obj = [PSCustomObject] @{pstypename = 'Mytype'}
-	    $obj.PSTypeNames[0] | Should -Be 'Mytype'
+	    $obj.PSTypeNames[0] | Should -BeExactly  'Mytype'
     }
 
     It 'Add an existing type name to PSTypeNames property' {
 
 	    $obj = [PSCustomObject] @{pstypename = 'System.Object'}
-	    $obj.PSTypeNames.Count | Should -Be 3
-	    $obj.PSTypeNames[0] | Should -Be 'System.Object'
+	    $obj.PSTypeNames.Count | Should -BeExactly  3
+	    $obj.PSTypeNames[0] | Should -BeExactly  'System.Object'
     }
     It "new-object should fail to create object for System.Management.Automation.PSCustomObject" {
 
@@ -151,8 +151,8 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
         {
             $errorObj = $_
         }
-        $obj | Should -Be $null
-        $errorObj.FullyQualifiedErrorId | Should -Be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $obj | Should -BeNullOrEmpty
+        $errorObj.FullyQualifiedErrorId | Should -BeExactly  "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 }
 

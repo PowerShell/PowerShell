@@ -66,14 +66,14 @@ Describe "Tests OutVariable only" -Tags "CI" {
             & $Command -OutVariable $OutVariable > $null
         }
         $a = Get-Variable -ValueOnly $OutVariable
-        $a | Should -Be $Expected
+        $a | Should -BeExactly   $Expected
     }
 
     It 'Nested OutVariable' {
 
         get-bar -outVariable b > $null
-        $script:a | Should -Be 'foo'
-        $b | Should -Be @("bar", "foo")
+        $script:a | Should -BeExactly   'foo'
+        $b | Should -BeExactly   @("bar", "foo")
     }
 }
 
@@ -137,7 +137,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
 
         }
         $a = (Get-Variable -ValueOnly $ErrorVariable) | ForEach-Object {$_.ToString()}
-        $a | Should -Be $Expected
+        $a | Should -BeExactly   $Expected
     }
 
     It 'Appending ErrorVariable Case 2: $pscmdlet.writeerror' {
@@ -146,24 +146,24 @@ Describe "Test ErrorVariable only" -Tags "CI" {
 
         get-foo2 -errorVariable +a 2> $null
 
-        $a.count | Should -Be 3
-        $a| ForEach-Object {$_.ToString()} | Should -Be @('a', 'b', 'foo')
+        $a.count | Should -BeExactly  3
+        $a| ForEach-Object {$_.ToString()} | Should -BeExactly   @('a', 'b', 'foo')
     }
 
     It 'Nested ErrorVariable' {
 
         get-bar -errorVariable b 2> $null
 
-        $script:a | Should -Be 'foo'
-        $b | Should -Be @("bar","foo")
+        $script:a | Should -BeExactly   'foo'
+        $b | Should -BeExactly   @("bar","foo")
     }
 
     It 'Nested ErrorVariable with redirection' {
 
         get-bar -errorVariable b 2>&1 > $null
 
-        $script:a | Should -Be 'foo'
-        $b | Should -Be @("bar", "foo")
+        $script:a | Should -BeExactly   'foo'
+        $b | Should -BeExactly   @("bar", "foo")
     }
 
 }
@@ -231,19 +231,19 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         get-foo3 -OutVariable out -errorVariable err 2> $null > $null
 
-        $out | Should -Be @("foo-output-0", "foo-output-1")
-        $err | Should -Be "foo-error"
+        $out | Should -BeExactly   @("foo-output-0", "foo-output-1")
+        $err | Should -BeExactly   "foo-error"
     }
 
     It 'Update OutVariable and ErrorVariable' {
 
         get-bar2 -OutVariable script:bar_out -errorVariable script:bar_err 2> $null > $null
 
-        $foo_out | Should -Be @("foo-output-0", "foo-output-1")
-        $foo_err | Should -Be 'foo-error'
+        $foo_out | Should -BeExactly   @("foo-output-0", "foo-output-1")
+        $foo_err | Should -BeExactly   'foo-error'
 
-        $bar_out | Should -Be @("bar-output-0", "bar-output-1", "foo-output-0", "foo-output-1")
-        $bar_err | Should -Be @("bar-error", "foo-error")
+        $bar_out | Should -BeExactly   @("bar-output-0", "bar-output-1", "foo-output-0", "foo-output-1")
+        $bar_err | Should -BeExactly   @("bar-error", "foo-error")
     }
 
     It 'Verify that exceptions are added to the ErrorVariable' {
@@ -264,7 +264,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         get-foo4 -errorVariable err 2> $null
 
-        $err | Should -Be @("foo-error", "foo-exception")
+        $err | Should -BeExactly   @("foo-error", "foo-exception")
     }
 
     It 'Error variable in multi-command pipeline' {
@@ -282,12 +282,12 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         (get-foo5 "foo-message" -ev foo_err1 -ov foo_out1 | get-foo5 -ev foo_err2 -ov foo_out2 | get-foo5 -ev foo_err3 -ov foo_out3) 2>&1 > $null
 
-        $foo_out1 | Should -Be "foo-message"
-        $foo_out2 | Should -Be "foo-message"
-        $foo_out3 | Should -Be "foo-message"
-        $foo_err1 | Should -Be "foo-message"
-        $foo_err2 | Should -Be "foo-message"
-        $foo_err3 | Should -Be "foo-message"
+        $foo_out1 | Should -BeExactly   "foo-message"
+        $foo_out2 | Should -BeExactly   "foo-message"
+        $foo_out3 | Should -BeExactly   "foo-message"
+        $foo_err1 | Should -BeExactly   "foo-message"
+        $foo_err2 | Should -BeExactly   "foo-message"
+        $foo_err3 | Should -BeExactly   "foo-message"
     }
 
     Context 'Error variable in multi-command pipeline (with native cmdlet)' {
@@ -297,11 +297,11 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         }
 
         It '$foo_err should be "foo-error"' {
-            $foo_err | Should -Be "foo-error"
+            $foo_err | Should -BeExactly   "foo-error"
         }
 
         It '$get_item_err.count and $get_item_err[0].exception' {
-            $get_item_err.count | Should -Be 1
+            $get_item_err.count | Should -BeExactly  1
             $get_item_err[0].exception | Should -Not -BeNullOrEmpty
             $get_item_err[0].exception | Should -BeOftype 'System.Management.Automation.ItemNotFoundException'
         }
@@ -321,8 +321,8 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         (get-foo -errorVariable foo_err | get-bar3 -errorVariable bar_err) 2>&1 > $null
 
-        $foo_err | Should -Be 'foo-error'
-        $bar_err | Should -Be @("bar-error", "foo-error")
+        $foo_err | Should -BeExactly   'foo-error'
+        $bar_err | Should -BeExactly   @("bar-error", "foo-error")
     }
 
     It 'multi-command pipeline with nested commands' {
@@ -347,9 +347,9 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         get-bar4 -errorVariable script:bar_err 2>&1 > $null
 
-        $script:foo_err1 | Should -Be "foo-error"
-        $script:foo_err2 | Should -Be "foo-error"
-        $script:bar_err | Should -Be @("bar-error", "foo-error")
+        $script:foo_err1 | Should -BeExactly   "foo-error"
+        $script:foo_err2 | Should -BeExactly   "foo-error"
+        $script:bar_err | Should -BeExactly   @("bar-error", "foo-error")
     }
 
     It 'Nested output variables' {
@@ -375,20 +375,20 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
         get-bar5 -ev script:bar_err -ov script:bar_out 2>&1 > $null
 
-        $script:foo_out1 | Should -Be "foo-output"
-        $script:foo_err1 | Should -Be "foo-error"
+        $script:foo_out1 | Should -BeExactly   "foo-output"
+        $script:foo_err1 | Should -BeExactly   "foo-error"
 
-        $script:foo_out2 | Should -Be "foo-output"
-        $script:foo_err2 | Should -Be "foo-error"
+        $script:foo_out2 | Should -BeExactly   "foo-output"
+        $script:foo_err2 | Should -BeExactly   "foo-error"
 
-        $script:foo_out3 | Should -Be "foo-output"
-        $script:foo_err3 | Should -Be "foo-error"
+        $script:foo_out3 | Should -BeExactly   "foo-output"
+        $script:foo_err3 | Should -BeExactly   "foo-error"
 
-        $script:foo_out4 | Should -Be "foo-output"
-        $script:foo_err4 | Should -Be "foo-error"
+        $script:foo_out4 | Should -BeExactly   "foo-output"
+        $script:foo_err4 | Should -BeExactly   "foo-error"
 
-        $script:bar_out | Should -Be @("bar-output", "foo-output", "foo-output")
-        $script:bar_err | Should -Be @("bar-error", "foo-error", "foo-error")
+        $script:bar_out | Should -BeExactly   @("bar-output", "foo-output", "foo-output")
+        $script:bar_err | Should -BeExactly   @("bar-error", "foo-error", "foo-error")
     }
 }
 
