@@ -116,4 +116,31 @@ Describe "Get-Item" -Tags "CI" {
             ${result} | Should BeOfType "Microsoft.Win32.RegistryKey"
         }
     }
+
+    Context "Environment provider" -tag "CI" {
+        BeforeAll {
+            $env:testvar="b"
+            $env:testVar="a"
+        }
+
+        AfterAll {
+            Clear-Item -Path env:testvar -ErrorAction SilentlyContinue
+            Clear-Item -Path env:testVar -ErrorAction SilentlyContinue
+        }
+
+        It "get-item testVar" {
+            $env:testVar | should -BeExactly "a"
+        }
+
+        It "get-item is case-sensitive/insensitive as appropriate" {
+            $expectedValue = "b"
+            if($IsWindows)
+            {
+                $expectedValue = "a"
+            }
+
+            $env:testvar | should -BeExactly $expectedValue
+        }
+
+    }
 }
