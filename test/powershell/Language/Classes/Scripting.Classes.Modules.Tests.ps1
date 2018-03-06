@@ -106,7 +106,6 @@ function Get-PassedArgsNoRoot { $passedArgs }
         Get-PassedArgsRoot | Should -BeExactly $Arg_Hello
         Get-PassedArgsNoRoot | Should -BeExactly $Arg_Hello
 
-
         Remove-Module TestModule
 
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World
