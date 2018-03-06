@@ -70,7 +70,7 @@ Describe 'Argument transformation attribute on optional argument with explicit $
     }
 
     It "There was no error importing the in-memory module" {
-        $ErrorImportingModule | Should -Be $null
+        $ErrorImportingModule | Should -BeNullOrEmpty
     }
 
     It "Script function takes object" {

@@ -118,7 +118,7 @@ function Test-Completions
                     It "Not expected: $notExpected" {
                         foreach ($result in $results.CompletionMatches)
                         {
-                            ($result.CompletionText -ceq $notExpected) | Should -Be $False
+                            $result.CompletionText | Should -Not -Be $notExpected
                         }
                     }
                 }
@@ -437,7 +437,7 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
         $line = "$cmdletName -Alpha val"
         $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
         $res.CompletionMatches.Count | Should -Be 3
-        $res.CompletionMatches.CompletionText -join " " | Should -Be "value1 value2 value3"
+        $res.CompletionMatches.CompletionText -join " " | Should -BeExactly "value1 value2 value3"
         { TestArgumentCompletionsAttribute -Alpha unExpectedValue } | Should -Not -Throw
     }
 
@@ -447,7 +447,7 @@ Describe "ArgumentCompletionsAttribute tests" -Tags "CI" {
         $line = "$cmdletName -Param1 val"
         $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
         $res.CompletionMatches.Count | Should -Be 3
-        $res.CompletionMatches.CompletionText -join " " | Should -Be "value1 value2 value3"
+        $res.CompletionMatches.CompletionText -join " " | Should -BeExactly "value1 value2 value3"
         { TestArgumentCompletionsAttribute -Param1 unExpectedValue } | Should -Not -Throw
     }
 }

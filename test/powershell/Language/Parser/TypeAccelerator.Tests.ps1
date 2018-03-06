@@ -438,7 +438,7 @@ Describe "Type accelerators" -Tags "CI" {
         It "Can remove type accelerator" {
             $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should -Be ([int])
             $TypeAcceleratorsType::Remove('userDefinedAcceleratorTypeToRemove')
-            $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should -Be $null
+            $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should -BeNullOrEmpty
         }
     }
 }

@@ -25,7 +25,7 @@ Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
             throw "No Exception!"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperationException"
+            $_.FullyQualifiedErrorId | Should -BeExactly "InvalidOperationException"
             $_.ToString() | Should -Match '\$a'
         }
     }
@@ -35,7 +35,7 @@ Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
             throw "No Exception!"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperationException"
+            $_.FullyQualifiedErrorId | Should -BeExactly "InvalidOperationException"
         }
     }
 

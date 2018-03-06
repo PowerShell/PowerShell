@@ -231,44 +231,44 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 	It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
         $result = ExecuteCommand "set-location $TestDrive; get-childitem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
 		$result.Count | Should -Be 2
-		$result[0].Name | Should -Be "testdirfile1.txt"
-		$result[1].Name | Should -Be "testdirfile2.txt"
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test will check that the parser can handle a mix of forward slashes and back slashes in the path (line 417)" {
         $result = ExecuteCommand "get-childitem $TestDrive/dir1/./.\.\../dir1/.\dir2\../..\dir1\.\dir2"
 		$result.Count | Should -Be 2
-		$result[0].Name | Should -Be "testdirfile1.txt"
-		$result[1].Name | Should -Be "testdirfile2.txt"
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test checks that the asterisk globs as expected. (line 545)" {
         $result = ExecuteCommand "get-childitem $TestDrive/dir1\dir2\*.txt"
 		$result.Count | Should -Be 2
-		$result[0].Name | Should -Be "testdirfile1.txt"
-		$result[1].Name | Should -Be "testdirfile2.txt"
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test checks that we can use a range for globbing: [1-2] (line 557)" {
         $result = ExecuteCommand "get-childitem $TestDrive/dir1\dir2\testdirfile[1-2].txt"
 		$result.Count | Should -Be 2
-		$result[0].Name | Should -Be "testdirfile1.txt"
-		$result[1].Name | Should -Be "testdirfile2.txt"
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test will check that escaping the $ sigil inside single quotes simply returns the $ character. (line 583)" {
         $result = ExecuteCommand "'`$'"
-		$result | Should -Be "`$"
+		$result | Should -BeExactly "`$"
     }
 
 	It "Test that escaping a space just returns that space. (line 593)" {
         $result = ExecuteCommand '"foo` bar"'
-		$result | Should -Be "foo bar"
+		$result | Should -BeExactly "foo bar"
     }
 
     It "Test that escaping the character 'e' returns the ESC character (0x1b)." {
         $result = ExecuteCommand '"`e"'
-        $result | Should -Be ([char]0x1b)
+        $result | Should -BeExactly ([char]0x1b)
     }
 
     Context "Test Unicode escape sequences." {
@@ -281,33 +281,33 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 
         It 'Test that the bracketed Unicode escape sequence `u{10FFFF} returns maximum surrogate char pair.' {
             $result = ExecuteCommand '"`u{10FFFF}"'
-            [int]$result[0] | Should -Be 0xDBFF # max value for high surrogate of surrogate pair
-            [int]$result[1] | Should -Be 0xDFFF # max value for low surrogate of surrogate pair
+            [int]$result[0] | Should -BeExactly 0xDBFF # max value for high surrogate of surrogate pair
+            [int]$result[1] | Should -BeExactly 0xDFFF # max value for low surrogate of surrogate pair
         }
 
         It 'Test that the bracketed Unicode escape sequence `u{a9} returns the © character.' {
             $result = ExecuteCommand '"`u{a9}"'
-            $result | Should -Be '©'
+            $result | Should -BeExactly '©'
         }
 
         It 'Test that Unicode escape sequence `u{2195} in string returns the ↕ character.' {
             $result = ExecuteCommand '"foo`u{2195}abc"'
-            $result | Should -Be "foo↕abc"
+            $result | Should -BeExactly "foo↕abc"
         }
 
         It 'Test that the bracketed Unicode escape sequence `u{1f44d} returns surrogate pair for emoji 👍 character.' {
             $result = ExecuteCommand '"`u{1f44d}"'
-            $result | Should -Be "👍"
+            $result | Should -BeExactly "👍"
         }
 
         It 'Test that Unicode escape sequence `u{2195} in here string returns the ↕ character.' {
             $result = ExecuteCommand ("@`"`n`n" + 'foo`u{2195}abc' + "`n`n`"@")
-            $result | Should -Be "`nfoo↕abc`n"
+            $result | Should -BeExactly "`nfoo↕abc`n"
         }
 
         It 'Test that Unicode escape sequence in single quoted is not processed.' {
             $result = ExecuteCommand '''foo`u{2195}abc'''
-            $result | Should -Be 'foo`u{2195}abc'
+            $result | Should -BeExactly 'foo`u{2195}abc'
         }
 
         It 'Test that Unicode escape sequence in single quoted here string is not processed.' {
@@ -330,7 +330,7 @@ foo``u{2195}abc
             function xyzzy`u{2195}($p) {$p}
             $cmd = Get-Command xyzzy`u{2195} -ErrorAction SilentlyContinue
             $cmd | Should -Not -BeNullOrEmpty
-            $cmd.Name | Should -Be 'xyzzy↕'
+            $cmd.Name | Should -BeExactly 'xyzzy↕'
             xyzzy`u{2195} 42 | Should -Be 42
         }
 
@@ -338,18 +338,18 @@ foo``u{2195}abc
             ${fooxyzzy`u{2195}} = 42
             $var = Get-Variable -Name fooxyzzy* -ErrorAction SilentlyContinue
             $var | Should -Not -BeNullOrEmpty
-            $var.Name | Should -Be "fooxyzzy↕"
+            $var.Name | Should -BeExactly "fooxyzzy↕"
             $var.Value | Should -Be 42
         }
 
         It "Test that a Unicode escape sequence can be used in an argument." {
-            Write-Output `u{a9}` Acme` Inc | Should -Be "© Acme Inc"
+            Write-Output `u{a9}` Acme` Inc | Should -BeExactly "© Acme Inc"
         }
     }
 
 	It "Test that escaping any character with no special meaning just returns that char. (line 602)" {
         $result = ExecuteCommand '"fo`obar"'
-		$result | Should -Be "foobar"
+		$result | Should -BeExactly "foobar"
     }
 
 	Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
@@ -371,13 +371,13 @@ foo``u{2195}abc
 		It "C# escape sequence <sequence> is supported using `` instead of \. (line 613)" -TestCases $tests {
 			param ( $sequence, $expected )
 			$result = ExecuteCommand $sequence
-			$result | Should -Be $expected
+			$result | Should -BeExactly $expected
 		}
     }
 
 	It "This test checks that array substitution occurs inside double quotes. (line 646)" {
         $result = ExecuteCommand '$MyArray = "a","b";"Hello $MyArray"'
-		$result | Should -Be "Hello a b"
+		$result | Should -BeExactly "Hello a b"
     }
 
 	It "This tests declaring an array in nested variable tables. (line 761)" {
@@ -399,11 +399,11 @@ foo``u{2195}abc
 		ExecuteCommand "`$var = 'global'"
         $result = ExecuteCommand "$testfile"
 		$result.Count | Should -Be 5
-		$result[0] | Should -Be "script"
-		$result[1] | Should -Be "local"
-		$result[2] | Should -Be "script"
-		$result[3] | Should -Be "global"
-		$result[4] | Should -Be "script"
+		$result[0] | Should -BeExactly "script"
+		$result[1] | Should -BeExactly "local"
+		$result[2] | Should -BeExactly "script"
+		$result[3] | Should -BeExactly "global"
+		$result[4] | Should -BeExactly "script"
     }
 
 	It "Use break inside of a loop that is inside another loop. (line 945)" {
@@ -731,7 +731,7 @@ foo``u{2195}abc
         $result = ExecuteCommand "1,2,3 | $testfile"
 		$result -join "" | Should -Be (1, 2, 3 -join "")
 		$result = ExecuteCommand "$testfile 4 -5 6 -blah -- foo -bar"
-		$result | Should -Be "4", "-5", "6", "-blah", "foo", "-bar"
+		$result | Should -BeExactly "4", "-5", "6", "-blah", "foo", "-bar"
     }
 
 	Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {

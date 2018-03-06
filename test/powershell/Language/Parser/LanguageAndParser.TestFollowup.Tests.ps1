@@ -24,10 +24,10 @@ Describe "Set fields through PSMemberInfo" -Tags "CI" {
 "@
 
     It "via cast" {
-        ([AStruct]@{s = "abc" }).s | Should -Be "abc"
+        ([AStruct]@{s = "abc" }).s | Should -BeExactly "abc"
     }
     It "via new-object" {
-        (new-object AStruct -prop @{s="abc"}).s | Should -Be "abc"
+        (new-object AStruct -prop @{s="abc"}).s | Should -BeExactly "abc"
     }
     It "via PSObject" {
         $x = [AStruct]::new()
@@ -71,14 +71,14 @@ Describe "ScriptBlockAst.GetScriptBlock throws on error" -Tags "CI" {
 
     It "with parse error" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput('function ', [ref]$null, [ref]$e)
-        { $ast.GetScriptBlock() } | Should -Throw
+        { $ast.GetScriptBlock() } | Should -Throw -ErrorId "PSInvalidOperationException"
     }
 
     It "with semantic errors" {
         $ast = [System.Management.Automation.Language.Parser]::ParseInput('function foo{param()begin{}end{[ref][ref]1}dynamicparam{}}', [ref]$null, [ref]$e)
 
-        { $ast.GetScriptBlock() } | Should -Throw
-        { $ast.EndBlock.Statements[0].Body.GetScriptBlock() } | Should -Throw
+        { $ast.GetScriptBlock() } | Should -Throw -ErrorId "PSInvalidOperationException"
+        { $ast.EndBlock.Statements[0].Body.GetScriptBlock() } | Should -Throw -ErrorId "PSInvalidOperationException"
     }
 }
 
@@ -97,13 +97,13 @@ Describe "Hashtable key property syntax" -Tags "CI" {
     It "In current process" {
         # Run in current process, but something that ran earlier could influence
         # the result
-        Invoke-Expression $script | Should -Be Hello
+        Invoke-Expression $script | Should -BeExactly Hello
     }
 
     It "In different process" {
         # So also run in a fresh process
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($script)
-        & $powershellexe -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should -Be Hello
+        & $powershellexe -noprofile -encodedCommand ([Convert]::ToBase64String($bytes)) | Should -BeExactly Hello
     }
 }
 
@@ -138,8 +138,8 @@ Describe "Assign automatic variables" -Tags "CI" {
         & { [object]$input = 1; $input } | Should -Be 1
         # Can't test PSCmdlet or PSBoundParameters, they use an internal type
         & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should -Match Automation.InvocationInfo
-        & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should -Be abc
-        & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should -Be abc
+        & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should -BeExactly abc
+        & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should -BeExactly abc
     }
 }
 
@@ -153,8 +153,8 @@ Describe "Assign readonly/constant variables" -Tags "CI" {
 
     It "Assign readonly/constant variables w/o type constraint - '<name>'" -TestCases $testCase {
         param($sb_wo_conversion)
-        { & $sb_wo_conversion } | Should -Throw
-        { . $sb_wo_conversion } | Should -Throw
+        { & $sb_wo_conversion } | Should -Throw -ErrorId "VariableNotWritable"
+        { . $sb_wo_conversion } | Should -Throw -ErrorId "VariableNotWritable"
     }
 
     $testCase = @(
@@ -165,8 +165,8 @@ Describe "Assign readonly/constant variables" -Tags "CI" {
 
     It "Assign readonly/constant variables w/ type constraint - '<name>'" -TestCases $testCase {
         param($sb_w_conversion)
-        { & $sb_w_conversion } | Should -Throw
-        { . $sb_w_conversion } | Should -Throw
+        { & $sb_w_conversion } | Should -Throw -ErrorId "VariableNotWritable"
+        { . $sb_w_conversion } | Should -Throw -ErrorId "VariableNotWritable"
     }
 }
 
