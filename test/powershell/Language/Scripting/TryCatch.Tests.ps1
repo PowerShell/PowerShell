@@ -12,9 +12,9 @@ Describe "Test try/catch" -Tags "CI" {
     BeforeAll {
         function AssertArraysEqual ($result, $expected)
         {
-            $result.Count | Should -BeExactly  $expected.Count
+            $result.Count | Should -BeExactly $expected.Count
             for ($i = 0; $i -lt $result.Count; $i++) {
-                $result[$i] | Should -BeExactly  $expected[$i]
+                $result[$i] | Should -BeExactly $expected[$i]
             }
         }
     }
@@ -515,7 +515,7 @@ Describe "Test try/catch" -Tags "CI" {
               }
             }
 
-            [int]$a.ToString() | Should -BeExactly  42
+            [int]$a.ToString() | Should -BeExactly 42
         }
     }
 
@@ -601,9 +601,9 @@ Describe "Test try/catch" -Tags "CI" {
                     $exception = $_.Exception.GetType().FullName
                     "ActionPreferenceStopException Caught"
                  }
-            $a | Should -BeExactly  "ActionPreferenceStopException Caught"
+            $a | Should -BeExactly "ActionPreferenceStopException Caught"
             ## Many legacy scripts from PSv2 catch 'ActionPreferenceStopException' and then check '$_.Exception' to do the real handling
-            $exception | Should -BeExactly  "System.Management.Automation.ItemNotFoundException"
+            $exception | Should -BeExactly "System.Management.Automation.ItemNotFoundException"
         }
 
         It "Catch CmdletInvocationException" {
@@ -614,8 +614,8 @@ Describe "Test try/catch" -Tags "CI" {
                     $exception = $_.Exception.GetType().FullName
                     "CmdletInvocationException Caught"
                  }
-            $a | Should -BeExactly  "CmdletInvocationException Caught"
-            $exception | Should -BeExactly  "System.Management.Automation.ParameterBindingException"
+            $a | Should -BeExactly "CmdletInvocationException Caught"
+            $exception | Should -BeExactly "System.Management.Automation.ParameterBindingException"
         }
 
         It "Choose 'ItemNotFoundException' over 'Exception' when searching handler" {
@@ -626,7 +626,7 @@ Describe "Test try/catch" -Tags "CI" {
                  } catch [System.Exception] {
                     "System.Exception caught"
                  }
-            $a | Should -BeExactly  "ItemNotFoundException caught"
+            $a | Should -BeExactly "ItemNotFoundException caught"
         }
 
         It "Choose 'ItemNotFoundException' over 'RuntimeException' when searching handler" {
@@ -639,7 +639,7 @@ Describe "Test try/catch" -Tags "CI" {
                  } catch [System.Exception] {
                     "System.Exception caught"
                  }
-            $a | Should -BeExactly  "ItemNotFoundException caught"
+            $a | Should -BeExactly "ItemNotFoundException caught"
         }
 
         It "Choose 'ItemNotFoundException' over 'RuntimeException' and 'Exception' when throw ItemNotFoundException directly" {
@@ -652,7 +652,7 @@ Describe "Test try/catch" -Tags "CI" {
                  } catch [System.Exception] {
                     "System.Exception caught"
                  }
-            $a | Should -BeExactly  "ItemNotFoundException caught"
+            $a | Should -BeExactly "ItemNotFoundException caught"
         }
     }
 }

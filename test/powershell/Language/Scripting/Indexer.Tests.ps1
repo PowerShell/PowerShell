@@ -4,7 +4,7 @@ Describe 'Tests for indexers' -Tags "CI" {
     It 'Indexer in dictionary' {
 
         $hashtable = @{ "Hello"="There" }
-        $hashtable["Hello"] | Should -BeExactly   "There"
+        $hashtable["Hello"] | Should -BeExactly "There"
     }
 
     It 'Accessing a Indexed property of a dictionary that does not exist should return $NULL' {
@@ -16,7 +16,7 @@ Describe 'Tests for indexers' -Tags "CI" {
 
         $service = Get-WmiObject -List -Amended Win32_Service
 
-        $service.Properties["DisplayName"].Name | Should -BeExactly   'DisplayName'
+        $service.Properties["DisplayName"].Name | Should -BeExactly 'DisplayName'
     }
 
     It 'Accessing a Indexed property of a wmi object that does not exist should return $NULL' -skip:$IsCoreCLR {

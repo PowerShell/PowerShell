@@ -17,8 +17,8 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         $arraylist = [System.Collections.ArrayList]::new()
         [void]$arraylist.Add(1) | ForEach-Object { "YES" } | Should -BeNullOrEmpty
         ## $arraylist.Add(1) should be executed
-        $arraylist.Count | Should -BeExactly  1
-        $arraylist[0] | Should -BeExactly  1
+        $arraylist.Count | Should -BeExactly 1
+        $arraylist[0] | Should -BeExactly 1
     }
 
     ## void method call
@@ -27,6 +27,6 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         $arraylist.Add(1) > $null
         $arraylist.Clear() | ForEach-Object { "YES" } | Should -BeNullOrEmpty
         ## $arraylist.Clear() should be executed
-        $arraylist.Count | Should -BeExactly  0
+        $arraylist.Count | Should -BeExactly 0
     }
 }

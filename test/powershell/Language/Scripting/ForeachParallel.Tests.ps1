@@ -6,8 +6,8 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -parallel ($foo in $bar) {}', [ref] $null, [ref] $errors)
-        It '$errors.Count' { $errors.Count | Should -BeExactly  1 }
-        It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly  'Parallel' }
+        It '$errors.Count' { $errors.Count | Should -BeExactly 1 }
+        It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly 'Parallel' }
     }
 
     It 'Should be able to retrieve AST of parallel foreach, works in JobDefinition case' -Skip:$IsCoreCLR {
@@ -19,23 +19,23 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             "foreach `n-parallel `n(`$foo in `$bar) {}", [ref] $null, [ref] $null)
-        It '$errors.Count' { $errors.Count | Should -BeExactly  0 }
-        It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly  'Parallel' }
+        It '$errors.Count' { $errors.Count | Should -BeExactly 0 }
+        It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly 'Parallel' }
     }
 
     Context 'Generates an error on invalid parameter' {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -bogus ($input in $bar) { }', [ref]$null, [ref]$errors)
-        It '$errors.Count' { $errors.Count | Should -BeExactly  1 }
-        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly  InvalidForeachFlag }
+        It '$errors.Count' { $errors.Count | Should -BeExactly 1 }
+        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly InvalidForeachFlag }
     }
 
     Context 'Generate an error on -parallel that is not a workflow' {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -parallel ($input in $bar) { }', [ref]$null, [ref]$errors)
-        It '$errors.Count' { $errors.Count | Should -BeExactly  1 }
-        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly  ParallelNotSupported }
+        It '$errors.Count' { $errors.Count | Should -BeExactly 1 }
+        It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly ParallelNotSupported }
     }
 }

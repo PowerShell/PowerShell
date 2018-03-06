@@ -33,7 +33,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -BeExactly  'ParseException'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ParseException'
             }
 
         }
@@ -62,7 +62,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -BeExactly  'ParseException'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ParseException'
             }
         }
 
@@ -75,7 +75,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -BeExactly  'ParseException'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ParseException'
             }
         }
 
@@ -98,7 +98,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -BeExactly  'MethodNotFound'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'MethodNotFound'
             }
         }
 

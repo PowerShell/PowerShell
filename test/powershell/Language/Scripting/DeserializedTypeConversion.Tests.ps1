@@ -151,7 +151,7 @@ Describe "Tests conversion of deserialized types to original type using object p
                 Throw "Exception expected, execution should not have reached here"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly  'InvalidCastConstructorException'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastConstructorException'
             }
         }
 
@@ -173,7 +173,7 @@ Describe "Tests conversion of deserialized types to original type using object p
                 Throw "Exception expected, execution should not have reached here"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -BeExactly  'ParameterArgumentTransformationError,test-3'
+                $_.FullyQualifiedErrorId | Should -BeExactly 'ParameterArgumentTransformationError,test-3'
             }
         }
     }

@@ -15,7 +15,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
     It 'New-Object - Property Parameter Must take IDictionary' {
         $a = new-object psobject -property ([ordered]@{one=1;two=2})
         $a | Should -Not -BeNullOrEmpty
-        $a.one | Should -BeExactly  1
+        $a.one | Should -BeExactly 1
     }
 
     Context 'Select-Xml cmdlet - Namespace parameter must take IDictionary' {
@@ -53,7 +53,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
                         VariableValue="testvalu234e";
                         UserName="<SYSTEM>"}) } | Should -Not -Throw
         $script:a | Should -Not -BeNullOrEmpty
-        $script:a.Name | Should -BeExactly  "TestWmiInstance"
+        $script:a.Name | Should -BeExactly "TestWmiInstance"
     }
 
     Context 'Select-Object cmdlet - Property parameter (Calculated properties) must take IDictionary' {
