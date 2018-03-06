@@ -39,10 +39,10 @@ Describe 'Misc Test' -Tags "CI" {
         }
         }
         It 'Invoke Foreach' {
-                [C1]::new().Foo() | Should -BeExactly "1;2;3;"
+                [C1]::new().Foo() | Should -Be "1;2;3;"
         }
         It 'Pipe to Foreach' {
-                [C1]::new().Bar() | Should -BeExactly "1;2;3;"
+                [C1]::new().Bar() | Should -Be "1;2;3;"
         }
     }
 
