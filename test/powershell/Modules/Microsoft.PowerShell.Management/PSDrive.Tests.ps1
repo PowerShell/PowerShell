@@ -42,8 +42,8 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 
         It "Verify 'Used' and 'Free' script properties" {
             $drive = Get-PSDrive -Name $psDriveName
-            $null -eq $drive.Used | Should -BeFalse
-            $null -eq $drive.Free | Should -BeFalse
+            $drive.Used | Should -Not -BeNullOrEmpty
+            $drive.Free | Should -Not -BeNullOrEmpty
         }
     }
 }
@@ -62,7 +62,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verify Description" {
             $result = New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -Description "Test PSDrive to remove"
-            $result.Description | Should -Be "Test PSDrive to remove"
+            $result.Description | Should -BeExactly "Test PSDrive to remove"
         }
 
         It "Verify Confirm can be bypassed" {

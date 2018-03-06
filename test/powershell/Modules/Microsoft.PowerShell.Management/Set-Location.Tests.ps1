@@ -31,7 +31,7 @@ Describe "Set-Location" -Tags "CI" {
     It "Should have the correct current location when using the set-location cmdlet" {
         Set-Location $startDirectory
 
-        $(Get-Location).Path | Should -Be $startDirectory.Path
+        $(Get-Location).Path | Should -BeExactly $startDirectory.Path
     }
 
     It "Should be able to use the Path switch" {
@@ -58,13 +58,13 @@ Describe "Set-Location" -Tags "CI" {
         It 'Should go to $env:HOME when Set-Location run with no arguments from FileSystem provider' {
             Set-Location 'TestDrive:\'
             Set-Location
-            (Get-Location).Path | Should -Be (Get-PSProvider FileSystem).Home
+            (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
         }
 
         It 'Should go to $env:HOME when Set-Location run with no arguments from Env: provider' {
             Set-Location 'Env:'
             Set-Location
-            (Get-Location).Path | Should -Be (Get-PSProvider FileSystem).Home
+            (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
         }
     }
 }

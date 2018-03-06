@@ -95,7 +95,7 @@ Describe "Test-Path" -Tags "CI" {
     }
 
     It "Should throw on paths containing spaces when the path is not surrounded in quotes" {
-	{ Test-Path -Path /a path/without quotes/around/it -IsValid } | Should -Throw
+	{ Test-Path -Path /a path/without quotes/around/it -IsValid } | Should -Throw -ErrorId "PositionalParameterNotFound,Microsoft.PowerShell.Commands.TestPathCommand"
     }
 
     It "Should return true if a directory leads or trails with a space when surrounded by quotes" {

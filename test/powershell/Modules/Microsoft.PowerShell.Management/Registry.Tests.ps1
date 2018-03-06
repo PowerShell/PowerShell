@@ -80,19 +80,19 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         It "Verify New-Item" {
             $newKey = New-Item -Path "NewItemTest"
             Test-Path "NewItemTest" | Should -BeTrue
-            Split-Path $newKey.Name -Leaf | Should -Be "NewItemTest"
+            Split-Path $newKey.Name -Leaf | Should -BeExactly "NewItemTest"
         }
 
         It "Verify Copy-Item" {
             $copyKey = Copy-Item -Path $testKey -Destination "CopiedKey" -PassThru
             Test-Path "CopiedKey" | Should -BeTrue
-            Split-Path $copyKey.Name -Leaf | Should -Be "CopiedKey"
+            Split-Path $copyKey.Name -Leaf | Should -BeExactly "CopiedKey"
         }
 
         It "Verify Move-Item" {
             $movedKey = Move-Item -Path $testKey -Destination "MovedKey" -PassThru
             Test-Path "MovedKey" | Should -BeTrue
-            Split-Path $movedKey.Name -Leaf | Should -Be "MovedKey"
+            Split-Path $movedKey.Name -Leaf | Should -BeExactly "MovedKey"
         }
 
         It "Verify Rename-Item" {
@@ -102,7 +102,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $existBefore | Should -BeTrue
             $existAfter | Should -BeFalse
             Test-Path "RenamedKey" | Should -BeTrue
-            Split-Path $renamedKey.Name -Leaf | Should -Be "RenamedKey"
+            Split-Path $renamedKey.Name -Leaf | Should -BeExactly "RenamedKey"
         }
     }
 
@@ -111,7 +111,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             New-ItemProperty -Path $testKey -Name "NewTestEntry" -Value 99 > $null
             $property = Get-ItemProperty -Path $testKey -Name "NewTestEntry"
             $property.NewTestEntry | Should -Be 99
-            $property.PSChildName | Should -Be $testKey
+            $property.PSChildName | Should -BeExactly $testKey
         }
 
         It "Verify Set-ItemProperty" {
@@ -142,9 +142,9 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             Copy-ItemProperty -Path $testKey -Name $testPropertyName -Destination $testKey2
             $property1 = Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2 = Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction SilentlyContinue
-            $property2."$testPropertyName" | Should -Be $property1."$testPropertyName"
-            $property1.PSChildName | Should -Be $testKey
-            $property2.PSChildName | Should -Be $testKey2
+            $property2."$testPropertyName" | Should -BeExactly $property1."$testPropertyName"
+            $property1.PSChildName | Should -BeExactly $testKey
+            $property2.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify Move-ItemProperty" {
@@ -152,8 +152,8 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $property1 = Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2 = Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction SilentlyContinue
             $property1 | Should -BeNullOrEmpty
-            $property2."$testPropertyName" | Should -Be $testPropertyValue
-            $property2.PSChildName | Should -Be $testKey2
+            $property2."$testPropertyName" | Should -BeExactly $testPropertyValue
+            $property2.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify Rename-ItemProperty" {
@@ -161,8 +161,8 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $property1 = Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2 = Get-ItemProperty -Path $testKey -Name "RenamedProperty" -ErrorAction SilentlyContinue
             $property1 | Should -BeNullOrEmpty
-            $property2.RenamedProperty | Should -Be $testPropertyValue
-            $property2.PSChildName | Should -Be $testKey
+            $property2.RenamedProperty | Should -BeExactly $testPropertyValue
+            $property2.PSChildName | Should -BeExactly $testKey
         }
 
         It "Verify Clear-ItemProperty" {
@@ -254,19 +254,19 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         It "Verify Include" {
             $result = New-ItemProperty -Path ".\*" -Include "*2" -Name $testPropertyName -Value $testPropertyValue
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey2
+            $result.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify Exclude" {
             $result = New-ItemProperty -Path ".\*" -Exclude "*2" -Name $testPropertyName -Value $testPropertyValue
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey
+            $result.PSChildName | Should -BeExactly $testKey
         }
 
         It "Verify Confirm can be bypassed" {
             $result = New-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue -force -Confirm:$false
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey
+            $result.PSChildName | Should -BeExactly $testKey
         }
 
         It "Verify WhatIf" {
@@ -279,13 +279,13 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         It "Verify Name" {
             $result = Get-ItemProperty -Path $testKey -Name $testPropertyName
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey
+            $result.PSChildName | Should -BeExactly $testKey
         }
 
         It "Verify Path but no Name" {
             $result = Get-ItemProperty -Path $testKey
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey
+            $result.PSChildName | Should -BeExactly $testKey
         }
 
         It "Verify Filter" {
@@ -299,13 +299,13 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         It "Verify Include" {
             $result = Get-ItemProperty -Path ".\*" -Include "*2"
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey2
+            $result.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify Exclude" {
             $result = Get-ItemProperty -Path ".\*" -Exclude "*2"
             $result."$testPropertyName" | Should -Be $testPropertyValue
-            $result.PSChildName | Should -Be $testKey
+            $result.PSChildName | Should -BeExactly $testKey
         }
     }
 
@@ -363,8 +363,8 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $property1 = Copy-ItemProperty -Path $testKey -Name $testPropertyName -Destination $testKey2 -PassThru
             $property2 = Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2."$testPropertyName" | Should -Be $property1."$testPropertyName"
-            $property1.PSChildName | Should -Be $testKey
-            $property2.PSChildName | Should -Be $testKey2
+            $property1.PSChildName | Should -BeExactly $testKey
+            $property2.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify Confirm can be bypassed" {
@@ -372,8 +372,8 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $property1 = Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2 = Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2."$testPropertyName" | Should -Be $property1."$testPropertyName"
-            $property1.PSChildName | Should -Be $testKey
-            $property2.PSChildName | Should -Be $testKey2
+            $property1.PSChildName | Should -BeExactly $testKey
+            $property2.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify WhatIf" {
@@ -397,7 +397,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $property1 = Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction SilentlyContinue
             $property1 | Should -BeNullOrEmpty
             $property2."$testPropertyName" | Should -Be $testPropertyValue
-            $property2.PSChildName | Should -Be $testKey2
+            $property2.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify Confirm can be bypassed" {
@@ -406,7 +406,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $property2 = Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction SilentlyContinue
             $property1 | Should -BeNullOrEmpty
             $property2."$testPropertyName" | Should -Be $testPropertyValue
-            $property2.PSChildName | Should -Be $testKey2
+            $property2.PSChildName | Should -BeExactly $testKey2
         }
 
         It "Verify WhatIf" {
@@ -414,7 +414,7 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $property1 = Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction SilentlyContinue
             $property2 = Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction SilentlyContinue
             $property1."$testPropertyName" | Should -Be $testPropertyValue
-            $property1.PSChildName | Should -Be $testKey
+            $property1.PSChildName | Should -BeExactly $testKey
             $property2 | Should -BeNullOrEmpty
         }
     }

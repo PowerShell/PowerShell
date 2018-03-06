@@ -45,7 +45,7 @@ Describe "Test-Push-Location" -Tags "CI" {
 	Push-Location ..
 	$cmdletDirectory = $(Get-Location).Path
 
-	$aliasDirectory | Should -Be $cmdletDirectory
+	$aliasDirectory | Should -BeExactly $cmdletDirectory
     }
 
     It "Should produce a pathinfo object when the passthru parameter is used" {

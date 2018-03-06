@@ -24,19 +24,19 @@ Describe "Split-Path" -Tags "CI" {
     }
 
     It "Should return the path when the noqualifier switch is used" {
-	Split-Path env:PATH -NoQualifier | Should -Be "PATH"
+	Split-Path env:PATH -NoQualifier | Should -BeExactly "PATH"
     }
 
     It "Should return the base name when the leaf switch is used" {
-	Split-Path -Leaf /usr/bin                  | Should -Be "bin"
-	Split-Path -Leaf fs:/usr/local/bin         | Should -Be "bin"
-	Split-Path -Leaf usr/bin                   | Should -Be "bin"
-	Split-Path -Leaf ./bin                     | Should -Be "bin"
-	Split-Path -Leaf bin                       | Should -Be "bin"
-	Split-Path -Leaf "C:\Temp\Folder1"         | Should -Be "Folder1"
-	Split-Path -Leaf "C:\Temp"                 | Should -Be "Temp"
-	Split-Path -Leaf "\\server1\share1\folder" | Should -Be "folder"
-	Split-Path -Leaf "\\server1\share1"        | Should -Be "share1"
+	Split-Path -Leaf /usr/bin                  | Should -BeExactly "bin"
+	Split-Path -Leaf fs:/usr/local/bin         | Should -BeExactly "bin"
+	Split-Path -Leaf usr/bin                   | Should -BeExactly "bin"
+	Split-Path -Leaf ./bin                     | Should -BeExactly "bin"
+	Split-Path -Leaf bin                       | Should -BeExactly "bin"
+	Split-Path -Leaf "C:\Temp\Folder1"         | Should -BeExactly "Folder1"
+	Split-Path -Leaf "C:\Temp"                 | Should -BeExactly "Temp"
+	Split-Path -Leaf "\\server1\share1\folder" | Should -BeExactly "folder"
+	Split-Path -Leaf "\\server1\share1"        | Should -BeExactly "share1"
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
@@ -53,8 +53,8 @@ Describe "Split-Path" -Tags "CI" {
 
         $actual = ( Split-Path (Join-Path -Path $testDir -ChildPath "testfile*.ps1") -Leaf -Resolve ) | Sort-Object
         $actual.Count                   | Should -Be 2
-        $actual[0]                      | Should -Be $testFile1
-        $actual[1]                      | Should -Be $testFile2
+        $actual[0]                      | Should -BeExactly $testFile1
+        $actual[1]                      | Should -BeExactly $testFile2
         ,$actual                        | Should -BeOfType "System.Array"
     }
 
@@ -76,14 +76,14 @@ Describe "Split-Path" -Tags "CI" {
 
     It "Should return the path up to the parent of the directory when Parent switch is used" {
         $dirSep = [string]([System.IO.Path]::DirectorySeparatorChar)
-	Split-Path -Parent "fs:/usr/bin"             | Should -Be "fs:${dirSep}usr"
-	Split-Path -Parent "/usr/bin"                | Should -Be "${dirSep}usr"
-	Split-Path -Parent "/usr/local/bin"          | Should -Be "${dirSep}usr${dirSep}local"
-	Split-Path -Parent "usr/local/bin"           | Should -Be "usr${dirSep}local"
-	Split-Path -Parent "C:\Temp\Folder1"         | Should -Be "C:${dirSep}Temp"
-	Split-Path -Parent "C:\Temp"                 | Should -Be "C:${dirSep}"
-	Split-Path -Parent "\\server1\share1\folder" | Should -Be "${dirSep}${dirSep}server1${dirSep}share1"
-	Split-Path -Parent "\\server1\share1"        | Should -Be "${dirSep}${dirSep}server1"
+	Split-Path -Parent "fs:/usr/bin"             | Should -BeExactly "fs:${dirSep}usr"
+	Split-Path -Parent "/usr/bin"                | Should -BeExactly "${dirSep}usr"
+	Split-Path -Parent "/usr/local/bin"          | Should -BeExactly "${dirSep}usr${dirSep}local"
+	Split-Path -Parent "usr/local/bin"           | Should -BeExactly "usr${dirSep}local"
+	Split-Path -Parent "C:\Temp\Folder1"         | Should -BeExactly "C:${dirSep}Temp"
+	Split-Path -Parent "C:\Temp"                 | Should -BeExactly "C:${dirSep}"
+	Split-Path -Parent "\\server1\share1\folder" | Should -BeExactly "${dirSep}${dirSep}server1${dirSep}share1"
+	Split-Path -Parent "\\server1\share1"        | Should -BeExactly "${dirSep}${dirSep}server1"
     }
 
     It 'Does not split a drive leter'{

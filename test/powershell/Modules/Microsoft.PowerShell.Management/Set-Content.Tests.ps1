@@ -85,9 +85,9 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should be able to pass multiple [string]`$objects to Set-Content through the pipeline to output a dynamic Path file" {
             "hello","world"|Set-Content $testdrive\dynamicfile2.txt
             $result=Get-Content $testdrive\dynamicfile2.txt
-            $result.length |Should -Be 2
-            $result[0]     |Should -Be "hello"
-            $result[1]     |Should -Be "world"
+            $result.length | Should -Be 2
+            $result[0]     | Should -BeExactly "hello"
+            $result[1]     | Should -BeExactly "world"
         }
     }
 }
@@ -109,7 +109,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
             New-PSDrive -Name Foo -Root \\localhost\testshare -PSProvider FileSystem
             Set-Content -Path Foo:\$file1 -Value "$file1"
             $result = Get-Content -Path Foo:\$file1
-            $result| Should -Be "$file1"
+            $result| Should -BeExactly "$file1"
         }
         finally
         {
