@@ -189,7 +189,7 @@ New-Object Foo
 class Foo {}
 New-Object Foo
 "@).Invoke()
-        $foo | Should -Not -Be $null
+        $foo | Should -Not -BeNullOrEmpty
     }
 
     # Pending reason:

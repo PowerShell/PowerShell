@@ -43,8 +43,8 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 }
             }
 
-        [C2a].GetInterface("System.IDisposable") | Should -Not -Be $null
-        [C2b].GetInterface("System.IDisposable") | Should -Not -Be $null
+        [C2a].GetInterface("System.IDisposable") | Should -Not -BeNullOrEmpty
+        [C2b].GetInterface("System.IDisposable") | Should -Not -BeNullOrEmpty
     }
 
     It 'can subclass .NET type' {
@@ -60,7 +60,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 return 0;
             }
         }
-        [MyComparable].GetInterface("System.IComparable") | Should -Not -Be $null
+        [MyComparable].GetInterface("System.IComparable") | Should -Not -BeNullOrEmpty
     }
 
     It 'allows use of defined later type as a property type' {
