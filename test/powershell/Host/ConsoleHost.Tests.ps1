@@ -125,7 +125,9 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Verify Validate Output Format As Text Explicitly Child Single Shell does not throw" {
-            "blahblah" | & $powershell -noprofile -out text -com { $input }
+            {
+                "blahblah" | & $powershell -noprofile -out text -com { $input }
+            } | Should -Not -Throw
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {

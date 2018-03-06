@@ -101,7 +101,7 @@ Describe "PSVersionTable" -Tags "CI" {
         try {
             $key = Get-Item $PSScriptRoot
             $PSVersionTable.Add($key, "TEST")
-            $PSVersionTable | Format-Table
+            { $PSVersionTable | Format-Table } | Should -Not -Throw
         } finally {
             $PSVersionTable.Remove($key)
         }
