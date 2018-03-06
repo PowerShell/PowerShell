@@ -10,17 +10,20 @@ There are no public APIs on MacOS for consuming os_log data or
 collecting log output in real-time. To get log data in a programmatically consumable
 format, the data must first be extracted then converted to a raw text format.
 
-Extraction requires three steps:
+Extraction requires the following steps:
 
 1: Snapshot the current time
 
-2: Run powershell to generate the expected log output
+2: Enable persistence of PowerShell log entries
+   See Set-OsLogPersistence
 
-3: Run 'log collect' to retrieve log records after a specific timestamp
+3: Run powershell to generate the expected log output
+
+4: Run 'log collect' to retrieve log records after a specific timestamp
 from the system logs.
 Note that the extracted data is still not directly consumable.
 
-4: Run 'log show' to convert the extracted data to text and redirect it
+5: Run 'log show' to convert the extracted data to text and redirect it
 to a file.
 The --predicate can be used at this point to filter extracted records.
 The typical filter is 'process == "pwsh"'
@@ -33,11 +36,11 @@ sudo log collect --start "2018-02-07 14:33:30" --output ./system.logarchive
 log show ./system.logarchive/ --info --predicate 'process == "pwsh"' >pwsh.log.txt
 
 Parsing Notes:
-1: Sample contains 6.0.1 content (which is out of date) revise with 6.1.0 preview
-2: Ensure analytic data is considered when parsing; specifically Provider_Lifecycle:ProviderStart.Method.Informational
-3: Multi-line output is expected. Parsing needs to detect the timestamp at the begining
-of a line and append subsequent lines to the message until the next 'log' like is found.
-4: Header lines need to be skipped.
+* Sample contains 6.0.1 content (which is out of date) revise with 6.1.0 preview
+* Ensure analytic data is considered when parsing; specifically Provider_Lifecycle:ProviderStart.Method.Informational
+* Multi-line output is expected. Parsing needs to detect the timestamp at the begining
+of a line and append subsequent lines to the message until the next 'log' line is found.
+* Header lines need to be skipped.
 
 Sample output from 'log show' illustrating one single-line entry and one multi-line entry.
 Analytic log items are often multi-line because the message text contains newline characters.
@@ -715,16 +718,16 @@ function ConvertFrom-OSLog
     Returns items on or after the specified DateTime
 
 .EXAMPLE
-    PS> Import-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Export-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
     PS> Get-PSOsLog -logPath "$PSDrive/mytest.txt"
 
     Gets all log entries from a given timestamp.
 
 .EXAMPLE
-    PS> Import-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Export-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
     PS> Get-PSOsLog -id 'mypwsh' -logPath "$PSDrive/mytest.txt" -TotalCount 200
 
-    Gets upto 200 log entries from a given timestamp with the log identity of 'mypwsh'
+    Gets up to 200 log entries from a given timestamp with the log identity of 'mypwsh'
 #>
 function Get-PSOsLog
 {
@@ -764,7 +767,7 @@ function Get-PSOsLog
 
 <#
 .SYNOPSIS
-    Import PowerShell os_log content as text.
+    Export PowerShell os_log content as text.
 
 .PARAMETER WorkingDirectory
     The fully qualified path to the working directory to use.
@@ -778,17 +781,17 @@ function Get-PSOsLog
 .EXAMPLE
     PS> $timestamp = [DateTime]::Now
     PS> # perform some work...
-    PS> $content = (Get-Import -WorkingDirectory $PSDrive -After $timestamp)
+    PS> $content = (Export-OSLog -WorkingDirectory $PSDrive -After $timestamp)
 
 .EXAMPLE
     PS> $timestamp = [DateTime]::Now
     PS> # perform some work...
-    PS> Import-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Export-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
 
 .NOTES
     This function must be run as elevated (sudo) on MacOS
 #>
-function Import-OSLog
+function Export-OSLog
 {
     param
     (
@@ -837,30 +840,33 @@ function Import-OSLog
 
 <#
 .SYNOPSIS
-    Enables or disables persistence of PowerShell logging
+    Enables persistence of PowerShell logging
 
 .PARAMETER Enable
-    Enables persistence. When not specified, disable
-
+    true to enable persistence of PowerShell log items; otherwise, false to revert to it's default state.
 .EXAMPLE
-    Set-OsLogPersistence -Enable
+    Set-OsLogPersistence -Enable $true
     Enables persistence of PowerShell log entries
 
 .EXAMPLE
-    Set-OsLogPersistence
+    Set-OsLogPersistence -Enable $false
     Reverts persistence to the default state.
+
+.NOTES
+    See Get-OsLogPersistence to query the current setting.
 #>
 function Set-OsLogPersistence
 {
     [CmdletBinding()]
     param
     (
+        [Parameter(Mandatory, Position = 0)]
         [switch] $Enable
     )
     Test-MacOS
     Test-Elevated
 
-    if ($PSBoundParameters.ContainsKey('Enable') -and $PSBoundParameters['Enable'].IsPresent)
+    if ($Enable -eq $true)
     {
         Write-Verbose -Message "Enabling log persistence"
         Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode="persist:info,level:info" }
@@ -878,6 +884,9 @@ function Set-OsLogPersistence
 #>
 function Get-OsLogPersistence
 {
+    Test-MacOS
+    Test-Elevated
+
     $result = Start-NativeExecution -command {log config --status --subsystem com.microsoft.powershell}
     $parts = $result.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
 
@@ -901,4 +910,4 @@ function Get-OsLogPersistence
 
 #region os_log support
 
-Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Import-OSLog, Get-OsLogPersistence, Set-OsLogPersistence
+Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Export-OSLog, Get-OsLogPersistence, Set-OsLogPersistence
