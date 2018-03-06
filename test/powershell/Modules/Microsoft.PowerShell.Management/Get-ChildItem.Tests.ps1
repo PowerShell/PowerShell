@@ -65,22 +65,22 @@ Describe "Get-ChildItem" -Tags "CI" {
 
         It "Should list hidden files as well when 'Force' parameter is used" {
             $files = Get-ChildItem -path $TestDrive -Force
-            $files | Should -Not -Be $null
+            $files | Should -Not -BeNullOrEmpty
             $files.Count | Should -Be 6
-            $files.Name.Contains($item_F) | Should -Be $true
+            $files.Name.Contains($item_F) | Should -BeTrue
         }
 
         It "Should list only hidden files when 'Hidden' parameter is used" {
             $files = Get-ChildItem -path $TestDrive -Hidden
-            $files | Should -Not -Be $null
+            $files | Should -Not -BeNullOrEmpty
             $files.Count | Should -Be 1
-            $files[0].Name | Should -Be $item_F
+            $files[0].Name | Should -BeExactly $item_F
         }
         It "Should find the hidden file if specified with hidden switch" {
             $file = Get-ChildItem -Path (Join-Path $TestDrive $item_F) -Hidden
             $file | Should -Not -BeNullOrEmpty
             $file.Count | Should -Be 1
-            $file.Name | Should -Be $item_F
+            $file.Name | Should -BeExactly $item_F
         }
 
         It "Should list items in current directory only with depth set to 0" {

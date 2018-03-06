@@ -115,7 +115,7 @@ Describe "New-Item" -Tags "CI" {
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should -BeNullOrEmpty
-        $fileInfo.LinkType | Should -Be "HardLink"
+        $fileInfo.LinkType | Should -BeExactly "HardLink"
     }
 }
 
@@ -147,8 +147,8 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should -Match ([regex]::Escape($FullyQualifiedFile))
-        $fileInfo.LinkType | Should -Be "SymbolicLink"
-        $fileInfo.Attributes -band $DirLinkMask | Should -Be $SymLinkMask
+        $fileInfo.LinkType | Should -BeExactly "SymbolicLink"
+        $fileInfo.Attributes -band $DirLinkMask | Should -BeExactly $SymLinkMask
     }
 
     It "Should create a symbolic link to a non-existing file without error" {
@@ -159,8 +159,8 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should -Be $target
         Test-Path $fileInfo.Target | Should -BeFalse
-        $fileInfo.LinkType | Should -Be "SymbolicLink"
-        $fileInfo.Attributes -band $DirLinkMask | Should -Be $SymLinkMask
+        $fileInfo.LinkType | Should -BeExactly "SymbolicLink"
+        $fileInfo.Attributes -band $DirLinkMask | Should -BeExactly $SymLinkMask
     }
 
     It "Should create a symbolic link to directory without error" {
@@ -172,7 +172,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
         $fileInfo = Get-Item $FullyQualifiedLink
         $fileInfo.Target | Should -Match ([regex]::Escape($FullyQualifiedFolder))
-        $fileInfo.LinkType | Should -Be "SymbolicLink"
+        $fileInfo.LinkType | Should -BeExactly "SymbolicLink"
         $fileInfo.Attributes -band $DirLinkMask | Should -Be $DirLinkMask
 
         # Remove the link explicitly to avoid broken symlink issue

@@ -1008,7 +1008,7 @@ try {
 
         It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
-            $computerInfo | Should -BeOfType Microsoft.PowerShell.Commands.ComputerInfo
+            $computerInfo | Should -BeOfType 'Microsoft.PowerShell.Commands.ComputerInfo'
         }
     }
 

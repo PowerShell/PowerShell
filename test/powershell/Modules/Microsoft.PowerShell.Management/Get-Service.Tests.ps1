@@ -58,7 +58,7 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
 
     $getservicecmd = [Microsoft.PowerShell.Commands.GetServiceCommand]::new()
     $getservicecmd.$parameter = $value
-    $getservicecmd.$parameter | Should -Be $value
+    $getservicecmd.$parameter | Should -BeExactly $value
   }
 
   It "Get-Service filtering works for '<script>'" -TestCases @(

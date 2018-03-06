@@ -10,9 +10,9 @@ Describe "Get-PSProvider" -Tags "CI" {
 
 	$actual = Get-PSProvider FileSystem
 
-	$actual.Name | Should -Be "FileSystem"
+	$actual.Name | Should -BeExactly "FileSystem"
 
-	$actual.Capabilities | Should -Be "Filter, ShouldProcess, Credentials"
+	$actual.Capabilities | Should -BeExactly "Filter, ShouldProcess, Credentials"
     }
 
     It "Should be able to call a provider with a wildcard expression" {

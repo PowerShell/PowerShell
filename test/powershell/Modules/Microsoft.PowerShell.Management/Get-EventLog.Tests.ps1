@@ -16,7 +16,7 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       {$result=Get-EventLog -AsString -ea stop}    | Should -Not -Throw
       $result | Should -Not -BeNullOrEmpty
       ,$result                                     | Should -BeOfType "System.Array"
-      $result -eq "Application"                    | Should -Be "Application"
+      $result                                      | Should -BeExactly "Application"
       $result.Count -ge 3                          | Should -BeTrue
     }
     It "should return a list of eventlog objects when called with -List parameter" -Pending:($True) {
@@ -24,11 +24,11 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       $result | Should -Not -BeNullOrEmpty
       ,$result                                     | Should -BeOfType "System.Array"
       {$logs=$result | Select-Object -ExpandProperty Log}   | Should -Not -Throw
-      $logs -eq "System"                           | Should -Be "System"
+      $logs                                        | Should -BeExactly "System"
       $logs.Count -ge 3                            | Should -BeTrue
     }
     It "should be able to Get-EventLog -LogName Application -Newest 100" -Pending:($True) {
-      {$result=get-eventlog -LogName Application -Newest 100 -ea stop} | Should -Not -Throw
+      {$result=get-eventlog -LogName Application -Newest 100 -ErrorAction stop} | Should -Not -Throw
       $result                                      | Should -Not -BeNullOrEmpty
       $result.Length -le 100                       | Should -BeTrue
       $result[0]                                   | Should -BeOfType "EventLogEntry"
@@ -40,7 +40,7 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
     It "should be able to Get-EventLog -LogName * with multiple matches" -Pending:($True) {
       {$result=get-eventlog -LogName *  -ea stop}  | Should -Not -Throw
       $result                                      | Should -Not -BeNullOrEmpty
-      $result -eq "Security"                       | Should -Be "Security"
+      $result                                      | Should -BeExactly "Security"
       $result.Count -ge 3                          | Should -BeTrue
     }
     It "should throw 'InvalidOperationException' when asked to get a log that does not exist" -Pending:($True) {

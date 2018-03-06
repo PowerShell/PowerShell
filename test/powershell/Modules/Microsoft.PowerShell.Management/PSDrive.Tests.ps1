@@ -19,8 +19,8 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
         It "Create a new PSDrive" {
             try {
                 $newDrive = New-PSDrive -Name "NewDifferentPSDrive" -PSProvider FileSystem -Root $psDriveRoot
-                $newDrive.Name | Should -Be "NewDifferentPSDrive"
-                $newDrive.Root | Should -Be (Convert-Path $psDriveRoot)
+                $newDrive.Name | Should -BeExactly "NewDifferentPSDrive"
+                $newDrive.Root | Should -BeExactly (Convert-Path $psDriveRoot)
             }
             finally {
                 Remove-PSDrive -Name "NewDifferentPSDrive" -Force -ErrorAction SilentlyContinue
@@ -29,7 +29,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 
         It "Read data from a PSDrive" {
             $driveProp = Get-ItemProperty ${psDriveName}:
-            $driveProp.PSDrive.Name | Should -Be $psDriveName
+            $driveProp.PSDrive.Name | Should -BeExactly $psDriveName
         }
 
         It "Remove the PSDrive" {
@@ -67,7 +67,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verify Confirm can be bypassed" {
             $result = New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -Confirm:$false
-            $result.Name | Should -Be $psDriveName
+            $result.Name | Should -BeExactly $psDriveName
         }
 
         It "Verify WhatIf" {
@@ -88,7 +88,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
             catch { $foundGlobal = $false }
             $localDrive = Get-PSDrive -Name $psDriveName -Scope Local
             $foundGlobal | Should -BeFalse
-            $localDrive.Name | Should -Be $psDriveName
+            $localDrive.Name | Should -BeExactly $psDriveName
         }
     }
 
@@ -103,12 +103,12 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verify Name" {
             $result = Get-PSDrive -Name $psDriveName
-            $result.Name | Should -Be $psDriveName
+            $result.Name | Should -BeExactly $psDriveName
         }
 
         It "Verify PSProvider" {
             $result = Get-PSDrive -PSProvider "Alias"
-            $result.Name | Should -Be "Alias"
+            $result.Name | Should -BeExactly "Alias"
         }
 
         It "Verify Scope" {

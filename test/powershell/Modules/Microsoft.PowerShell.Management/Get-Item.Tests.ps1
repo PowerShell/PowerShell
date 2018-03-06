@@ -17,7 +17,7 @@ Describe "Get-Item" -Tags "CI" {
     It "Should return the name of the current working directory when a dot is used" {
         $item = Get-Item $PSScriptRoot
         $item | Should -BeOfType 'System.IO.DirectoryInfo'
-        $item.Name | Should -Be (Split-Path $PSScriptRoot -Leaf)
+        $item.Name | Should -BeExactly (Split-Path $PSScriptRoot -Leaf)
     }
 
     It "Should return the proper Name and BaseType for directory objects vs file system objects" {
@@ -33,7 +33,7 @@ Describe "Get-Item" -Tags "CI" {
         # if literalpath is not correct we would see filea.txt
         $item = Get-Item -literalpath "$TESTDRIVE/file[abc].txt"
         @($item).Count | Should -Be 1
-        $item.Name | Should -Be 'file[abc].txt'
+        $item.Name | Should -BeExactly 'file[abc].txt'
     }
 
     It "Should have mode flags set" {
@@ -49,7 +49,7 @@ Describe "Get-Item" -Tags "CI" {
         ${result} = Get-Item "${hiddenFile}" -ErrorAction SilentlyContinue
         ${result} | Should -BeNullOrEmpty
         ${result} = Get-Item -force "${hiddenFile}" -ErrorAction SilentlyContinue
-        ${result}.FullName | Should -Be ${item}.FullName
+        ${result}.FullName | Should -BeExactly ${item}.FullName
     }
 
     Context "Test for Include, Exclude, and Filter" {
@@ -62,22 +62,22 @@ Describe "Get-Item" -Tags "CI" {
         It "Should respect -Exclude" {
             $result = Get-Item "${testBaseDir}/*" -Exclude "file2.txt"
             ($result).Count | Should -Be 1
-            $result.Name | Should -Be "file1.txt"
+            $result.Name | Should -BeExactly "file1.txt"
         }
         It "Should respect -Include" {
             $result = Get-Item "${testBaseDir}/*" -Include "file2.txt"
             ($result).Count | Should -Be 1
-            $result.Name | Should -Be "file2.txt"
+            $result.Name | Should -BeExactly "file2.txt"
         }
         It "Should respect -Filter" {
             $result = Get-Item "${testBaseDir}/*" -Filter "*2*"
             ($result).Count | Should -Be 1
-            $result.Name | Should -Be "file2.txt"
+            $result.Name | Should -BeExactly "file2.txt"
         }
         It "Should respect combinations of filter, include, and exclude" {
             $result = get-item "${testBaseDir}/*" -filter *.txt -include "file[12].txt" -exclude file2.txt
             ($result).Count | Should -Be 1
-            $result.Name | Should -Be "file1.txt"
+            $result.Name | Should -BeExactly "file1.txt"
         }
     }
 

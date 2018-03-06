@@ -36,7 +36,7 @@ Describe "Get-Content" -Tags "CI" {
 
     It "Should return an Object when listing only a single line and the correct information from a file" {
         $content = (Get-Content -Path $testPath)
-        $content | Should -Be $testString
+        $content | Should -BeExactly $testString
         $content.Count | Should -Be 1
         $content | Should -BeOfType "System.String"
     }
@@ -48,40 +48,40 @@ Describe "Get-Content" -Tags "CI" {
     }
 
     It "Should be able to return a specific line from a file" {
-        (Get-Content -Path $testPath2)[1] | Should -Be $secondline
+        (Get-Content -Path $testPath2)[1] | Should -BeExactly $secondline
     }
 
     It "Should be able to specify the number of lines to get the content of using the TotalCount switch" {
         $returnArray    = (Get-Content -Path $testPath2 -TotalCount 2)
-        $returnArray[0] | Should -Be $firstline
-        $returnArray[1] | Should -Be $secondline
+        $returnArray[0] | Should -BeExactly $firstline
+        $returnArray[1] | Should -BeExactly $secondline
     }
 
     It "Should be able to specify the number of lines to get the content of using the Head switch" {
         $returnArray    = (Get-Content -Path $testPath2 -Head 2)
-        $returnArray[0] | Should -Be $firstline
-        $returnArray[1] | Should -Be $secondline
+        $returnArray[0] | Should -BeExactly $firstline
+        $returnArray[1] | Should -BeExactly $secondline
     }
 
     It "Should be able to specify the number of lines to get the content of using the First switch" {
         $returnArray    = (Get-Content -Path $testPath2 -First 2)
-        $returnArray[0] | Should -Be $firstline
-        $returnArray[1] | Should -Be $secondline
+        $returnArray[0] | Should -BeExactly $firstline
+        $returnArray[1] | Should -BeExactly $secondline
     }
 
     It "Should return the last line of a file using the Tail switch" {
-        Get-Content -Path $testPath -Tail 1 | Should -Be $testString
+        Get-Content -Path $testPath -Tail 1 | Should -BeExactly $testString
     }
 
     It "Should return the last lines of a file using the Last alias" {
-        Get-Content -Path $testPath2 -Last 1 | Should -Be $fifthline
+        Get-Content -Path $testPath2 -Last 1 | Should -BeExactly $fifthline
     }
 
     It "Should be able to get content within a different drive" {
         Push-Location env:
         $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
         { Get-Content PATH } | Should -Not -Throw
-        Get-Content PATH     | Should -Be $expectedoutput
+        Get-Content PATH     | Should -BeExactly $expectedoutput
         Pop-Location
     }
 
@@ -124,9 +124,9 @@ baz
         $expected = 'foo'
 
         $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encodingName
-        $actual.GetType() | Should -Be "System.Object[]"
+        $actual | Should -BeOfType "[string]"
         $actual.Length | Should -Be $tailCount
-        $actual[0] | Should -Be $expected
+        $actual[0] | Should -BeExactly $expected
     }
 
     It "should Get-Content with a variety of -Tail and -ReadCount: <test>" -TestCases @(
@@ -226,11 +226,11 @@ baz
 
     It "Should support NTFS streams using -Stream" -Skip:(!$IsWindows) {
         Set-Content -Path $testPath -Stream hello -Value World
-        Get-Content -Path $testPath | Should -Be $testString
-        Get-Content -Path $testPath -Stream hello | Should -Be "World"
+        Get-Content -Path $testPath | Should -BeExactly $testString
+        Get-Content -Path $testPath -Stream hello | Should -BeExactly "World"
         $item = Get-Item -Path $testPath -Stream hello
-        $item | Should -BeOfType System.Management.Automation.Internal.AlternateStreamData
-        $item.Stream | Should -Be "hello"
+        $item | Should -BeOfType 'System.Management.Automation.Internal.AlternateStreamData'
+        $item.Stream | Should -BeExactly "hello"
         Clear-Content -Path $testPath -Stream hello
         Get-Content -Path $testPath -Stream hello | Should -BeNullOrEmpty
         Remove-Item -Path $testPath -Stream hello

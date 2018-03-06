@@ -11,11 +11,11 @@ Describe "Get-ItemProperty" -Tags "CI" {
     New-Item $testfile -ItemType file -Force
 
     It "Should be able to be called on in the current directory" {
-	$(Get-ItemProperty $PSScriptRoot).Name | Should -Be $currentDirectory
+	$(Get-ItemProperty $PSScriptRoot).Name | Should -BeExactly $currentDirectory
     }
 
     It "Should be able to be called on a parent directory" {
-	(Get-ItemProperty $PSScriptRoot/..).Name | Should -Be $parentDirectory
+	(Get-ItemProperty $PSScriptRoot/..).Name | Should -BeExactly $parentDirectory
     }
 
     It "Should be able to be called on a directory using the path switch" {
