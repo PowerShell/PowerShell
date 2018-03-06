@@ -30,11 +30,18 @@ namespace mvc.Controllers
                 url = $"{url}/Redirect/{nextHop}";
             }
 
-            if (Request.Query.TryGetValue("type", out StringValues type) && Enum.TryParse(type.FirstOrDefault(), out HttpStatusCode status))
+            var typeIsPresent = Request.Query.TryGetValue("type", out StringValues type);
+
+            if (typeIsPresent && Enum.TryParse(type.FirstOrDefault(), out HttpStatusCode status))
             {
                 Response.StatusCode = (int)status;
                 url = $"{url}?type={type.FirstOrDefault()}";
                 Response.Headers.Add("Location", url);
+            }
+            else if (typeIsPresent && String.Equals(type.FirstOrDefault(), "relative", StringComparison.InvariantCultureIgnoreCase))
+            {
+                url = new Uri($"{url}?type={type.FirstOrDefault()}").PathAndQuery;
+                Response.Redirect(url, false);
             }
             else
             {
