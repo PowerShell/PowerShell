@@ -48,8 +48,8 @@ Describe "Split-Path" -Tags "CI" {
 
         New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
 
-        Test-Path $testFilePath1 | Should -Be $true
-        Test-Path $testFilePath2 | Should -Be $true
+        Test-Path $testFilePath1 | Should -BeTrue
+        Test-Path $testFilePath2 | Should -BeTrue
 
         $actual = ( Split-Path (Join-Path -Path $testDir -ChildPath "testfile*.ps1") -Leaf -Resolve ) | Sort-Object
         $actual.Count                   | Should -Be 2
@@ -59,15 +59,15 @@ Describe "Split-Path" -Tags "CI" {
     }
 
     It "Should be able to tell if a given path is an absolute path" {
-	Split-Path -IsAbsolute fs:/usr/bin | Should -Be $true
-	Split-Path -IsAbsolute ..          | Should -Be $false
+	Split-Path -IsAbsolute fs:/usr/bin | Should -BeTrue
+	Split-Path -IsAbsolute ..          | Should -BeFalse
 	Split-Path -IsAbsolute /usr/..     | Should -Be (!$IsWindows)
-	Split-Path -IsAbsolute fs:/usr/../ | Should -Be $true
-	Split-Path -IsAbsolute ../         | Should -Be $false
-	Split-Path -IsAbsolute .           | Should -Be $false
-	Split-Path -IsAbsolute ~/          | Should -Be $false
-	Split-Path -IsAbsolute ~/..        | Should -Be $false
-	Split-Path -IsAbsolute ~/../..     | Should -Be $false
+	Split-Path -IsAbsolute fs:/usr/../ | Should -BeTrue
+	Split-Path -IsAbsolute ../         | Should -BeFalse
+	Split-Path -IsAbsolute .           | Should -BeFalse
+	Split-Path -IsAbsolute ~/          | Should -BeFalse
+	Split-Path -IsAbsolute ~/..        | Should -BeFalse
+	Split-Path -IsAbsolute ~/../..     | Should -BeFalse
     }
 
     It "Should support piping" {

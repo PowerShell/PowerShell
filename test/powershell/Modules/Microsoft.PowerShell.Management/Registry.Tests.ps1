@@ -50,8 +50,8 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
 
     Context "Validate basic registry provider Cmdlets" {
         It "Verify Test-Path" {
-            Test-Path -IsValid Registry::HKCU/Software | Should -Be $true
-            Test-Path -IsValid Registry::foo/Softare | Should -Be $false
+            Test-Path -IsValid Registry::HKCU/Software | Should -BeTrue
+            Test-Path -IsValid Registry::foo/Softare | Should -BeFalse
         }
 
         It "Verify Get-Item" {
@@ -66,32 +66,32 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         It "Verify Get-ChildItem" {
             $items = Get-ChildItem
             $items.Count | Should -BeExactly 2
-            $Items.PSChildName -contains $testKey | Should -Be $true
-            $Items.PSChildName -contains $testKey2 | Should -Be $true
+            $Items.PSChildName -contains $testKey | Should -BeTrue
+            $Items.PSChildName -contains $testKey2 | Should -BeTrue
         }
 
         It "Verify Get-ChildItem can get subkey names" {
             $items = Get-ChildItem -Name
             $items.Count | Should -BeExactly 2
-            $items -contains $testKey | Should -Be $true
-            $items -contains $testKey2 | Should -Be $true
+            $items -contains $testKey | Should -BeTrue
+            $items -contains $testKey2 | Should -BeTrue
         }
 
         It "Verify New-Item" {
             $newKey = New-Item -Path "NewItemTest"
-            Test-Path "NewItemTest" | Should -Be $true
+            Test-Path "NewItemTest" | Should -BeTrue
             Split-Path $newKey.Name -Leaf | Should -Be "NewItemTest"
         }
 
         It "Verify Copy-Item" {
             $copyKey = Copy-Item -Path $testKey -Destination "CopiedKey" -PassThru
-            Test-Path "CopiedKey" | Should -Be $true
+            Test-Path "CopiedKey" | Should -BeTrue
             Split-Path $copyKey.Name -Leaf | Should -Be "CopiedKey"
         }
 
         It "Verify Move-Item" {
             $movedKey = Move-Item -Path $testKey -Destination "MovedKey" -PassThru
-            Test-Path "MovedKey" | Should -Be $true
+            Test-Path "MovedKey" | Should -BeTrue
             Split-Path $movedKey.Name -Leaf | Should -Be "MovedKey"
         }
 
@@ -99,9 +99,9 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $existBefore = Test-Path $testKey
             $renamedKey = Rename-Item -path $testKey -NewName "RenamedKey" -PassThru
             $existAfter = Test-Path $testKey
-            $existBefore | Should -Be $true
-            $existAfter | Should -Be $false
-            Test-Path "RenamedKey" | Should -Be $true
+            $existBefore | Should -BeTrue
+            $existAfter | Should -BeFalse
+            Test-Path "RenamedKey" | Should -BeTrue
             Split-Path $renamedKey.Name -Leaf | Should -Be "RenamedKey"
         }
     }

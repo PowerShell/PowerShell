@@ -36,14 +36,14 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
             $existsBefore = Test-Path "${psDriveName}:\"
             Remove-PSDrive -Name ${psDriveName} -ErrorAction SilentlyContinue
             $existsAfter = Test-Path "${psDriveName}:\"
-            $existsBefore | Should -Be $true
-            $existsAfter | Should -Be $false
+            $existsBefore | Should -BeTrue
+            $existsAfter | Should -BeFalse
         }
 
         It "Verify 'Used' and 'Free' script properties" {
             $drive = Get-PSDrive -Name $psDriveName
-            $null -eq $drive.Used | Should -Be $false
-            $null -eq $drive.Free | Should -Be $false
+            $null -eq $drive.Used | Should -BeFalse
+            $null -eq $drive.Free | Should -BeFalse
         }
     }
 }
@@ -87,7 +87,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
             }
             catch { $foundGlobal = $false }
             $localDrive = Get-PSDrive -Name $psDriveName -Scope Local
-            $foundGlobal | Should -Be $false
+            $foundGlobal | Should -BeFalse
             $localDrive.Name | Should -Be $psDriveName
         }
     }
@@ -113,7 +113,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verify Scope" {
             $result = Get-PSDrive -Scope 1 #scope 1 because drive was created in BeforeAll
-            $result.Name -contains $psDriveName | Should -Be $true
+            $result.Name -contains $psDriveName | Should -BeTrue
         }
     }
 
@@ -129,13 +129,13 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
         It "Verify Confirm can be bypassed" {
             Remove-PSDrive $psDriveName -Confirm:$false
             $exists = Test-Path -Path $psDriveName
-            $exists | Should -Be $false
+            $exists | Should -BeFalse
         }
 
         It "Verify WhatIf" {
             Remove-PSDrive $psDriveName -WhatIf
             $exists = Test-Path -Path "${psDriveName}:"
-            $exists | Should -Be $true
+            $exists | Should -BeTrue
         }
     }
 }

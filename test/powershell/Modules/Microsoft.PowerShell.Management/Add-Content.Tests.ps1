@@ -7,7 +7,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
   Context "Add-Content should actually add content" {
     It "should Add-Content to testdrive:\$file1" {
       $result=add-content -path testdrive:\$file1 -value "ExpectedContent" -passthru
-      $result| Should -Be "ExpectedContent"
+      $result| Should -BeExactly "ExpectedContent"
     }
     It "should return expected string from testdrive:\$file1" {
       $result = get-content -path testdrive:\$file1
@@ -37,7 +37,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'NotSupportedException' when you add-content to an unsupported provider" -Skip:($IsLinux -Or $IsMacOS) {
-      Try {add-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop; Throw "Previous statement unexpectedly succeeded..."
+      Try {add-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction stop; Throw "Previous statement unexpectedly succeeded..."
       } Catch {$_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.AddContentCommand"}
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
@@ -45,8 +45,8 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       "hello","world"|add-content testdrive:\dynamicfile2.txt
       $result=get-content testdrive:\dynamicfile2.txt
       $result.length | Should -Be 2
-      $result[0]     | Should -Be "hello"
-      $result[1]     | Should -Be "world"
+      $result[0]     | Should -BeExactly "hello"
+      $result[1]     | Should -BeExactly "world"
     }
   }
 }

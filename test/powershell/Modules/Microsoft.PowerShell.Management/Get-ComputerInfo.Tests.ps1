@@ -1275,12 +1275,12 @@ try {
             if (-not (HasDeviceGuardLicense))
             {
                 $observed.DeviceGuardSmartStatus | Should -Be 0
-                $observed.DeviceGuardRequiredSecurityProperties | Should -Be $null
-                $observed.DeviceGuardAvailableSecurityProperties | Should -Be $null
-                $observed.DeviceGuardSecurityServicesConfigured | Should -Be $null
-                $observed.DeviceGuardSecurityServicesRunning | Should -Be $null
-                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should -Be $null
-                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should -Be $null
+                $observed.DeviceGuardRequiredSecurityProperties | Should -BeNullOrEmpty
+                $observed.DeviceGuardAvailableSecurityProperties | Should -BeNullOrEmpty
+                $observed.DeviceGuardSecurityServicesConfigured | Should -BeNullOrEmpty
+                $observed.DeviceGuardSecurityServicesRunning | Should -BeNullOrEmpty
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should -BeNullOrEmpty
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should -BeNullOrEmpty
             }
             else
             {
@@ -1335,15 +1335,15 @@ try {
         #
 
         It "(special case) Test for property = OsFreePhysicalMemory" {
-            ($observed.OsFreePhysicalMemory -gt 0) | Should -Be $true
+            ($observed.OsFreePhysicalMemory -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT -or !$IsWindows) {
-            ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should -Be $true
+            ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsFreeVirtualMemory" {
-            ($observed.OsFreeVirtualMemory -gt 0) | Should -Be $true
+            ($observed.OsFreeVirtualMemory -gt 0) | Should -BeTrue
         }
 
 
@@ -1355,19 +1355,19 @@ try {
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {
-            ($observed.OsMaxNumberOfProcesses -gt 0) | Should -Be $true
+            ($observed.OsMaxNumberOfProcesses -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsNumberOfProcesses" {
-            ($observed.OsNumberOfProcesses -gt 0) | Should -Be $true
+            ($observed.OsNumberOfProcesses -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsUptime" {
-            ($observed.OsUptime.Ticks -gt 0) | Should -Be $true
+            ($observed.OsUptime.Ticks -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsInUseVirtualMemory" {
-            ($observed.OsInUseVirtualMemory -gt 0) | Should -Be $true
+            ($observed.OsInUseVirtualMemory -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {

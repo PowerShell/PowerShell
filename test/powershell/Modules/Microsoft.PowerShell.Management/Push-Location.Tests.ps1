@@ -19,7 +19,7 @@ Describe "Test-Push-Location" -Tags "CI" {
     }
 
     It "Should be able to use relative path to grandparent" {
-	Test-Path ../.. | Should -Be $true
+	Test-Path ../.. | Should -BeTrue
 
 	{ Push-Location ../.. } | Should -Not -Throw
     }

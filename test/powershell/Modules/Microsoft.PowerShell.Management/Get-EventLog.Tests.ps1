@@ -17,7 +17,7 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       $result | Should -Not -BeNullOrEmpty
       ,$result                                     | Should -BeOfType "System.Array"
       $result -eq "Application"                    | Should -Be "Application"
-      $result.Count -ge 3                          | Should -Be $true
+      $result.Count -ge 3                          | Should -BeTrue
     }
     It "should return a list of eventlog objects when called with -List parameter" -Pending:($True) {
       {$result=Get-EventLog -List -ea stop}        | Should -Not -Throw
@@ -25,12 +25,12 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       ,$result                                     | Should -BeOfType "System.Array"
       {$logs=$result | Select-Object -ExpandProperty Log}   | Should -Not -Throw
       $logs -eq "System"                           | Should -Be "System"
-      $logs.Count -ge 3                            | Should -Be $true
+      $logs.Count -ge 3                            | Should -BeTrue
     }
     It "should be able to Get-EventLog -LogName Application -Newest 100" -Pending:($True) {
       {$result=get-eventlog -LogName Application -Newest 100 -ea stop} | Should -Not -Throw
       $result                                      | Should -Not -BeNullOrEmpty
-      $result.Length -le 100                       | Should -Be $true
+      $result.Length -le 100                       | Should -BeTrue
       $result[0]                                   | Should -BeOfType "EventLogEntry"
     }
     It "should throw 'AmbiguousParameterSetException' when called with both -LogName and -List parameters" -Pending:($True) {
@@ -41,7 +41,7 @@ Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       {$result=get-eventlog -LogName *  -ea stop}  | Should -Not -Throw
       $result                                      | Should -Not -BeNullOrEmpty
       $result -eq "Security"                       | Should -Be "Security"
-      $result.Count -ge 3                          | Should -Be $true
+      $result.Count -ge 3                          | Should -BeTrue
     }
     It "should throw 'InvalidOperationException' when asked to get a log that does not exist" -Pending:($True) {
       try {Get-EventLog  -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."

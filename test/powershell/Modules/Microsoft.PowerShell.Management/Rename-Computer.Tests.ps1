@@ -29,7 +29,7 @@ try
             Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
             $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue
-            $result.HasSucceeded | Should -Be $true
+            $result.HasSucceeded | Should -BeTrue
             $result.NewComputerName | Should -Be $newname
         }
 
@@ -47,7 +47,7 @@ try
             Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
             $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar -Restart
-            $result.HasSucceeded | Should -Be $true
+            $result.HasSucceeded | Should -BeTrue
             $result.NewComputerName | Should -Be $newname
             $WarnVar | Should -BeNullOrEmpty
         }

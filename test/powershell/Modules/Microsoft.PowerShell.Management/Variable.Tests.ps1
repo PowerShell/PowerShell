@@ -48,8 +48,8 @@ Describe "Validate basic Variable provider cmdlets" -Tags "CI" {
         $existsBefore = Test-Path "Variable:${testVarName}"
         Remove-Item -Path "Variable:${testVarName}"
         $existsAfter = Test-Path "Variable:${testVarName}"
-        $existsBefore | Should -Be $true
-        $existsAfter | Should -Be $false
+        $existsBefore | Should -BeTrue
+        $existsAfter | Should -BeFalse
     }
 
     It "Verify Rename-Item" {
@@ -57,8 +57,8 @@ Describe "Validate basic Variable provider cmdlets" -Tags "CI" {
         Rename-Item -Path "Variable:${testVarName}" -NewName "${testVarName}_Rename"
         $existsAfter = Test-Path "Variable:${testVarName}"
         $result = Get-Item "Variable:${testVarName}_Rename"
-        $existsBefore | Should -Be $true
-        $existsAfter | Should -Be $false
+        $existsBefore | Should -BeTrue
+        $existsAfter | Should -BeFalse
         $result.Name | Should -Be "${testVarName}_Rename"
         $result.Value | Should -Be $testVarValue
     }

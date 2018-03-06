@@ -55,13 +55,13 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
 
   Context "Clear-Content should actually clear content" {
     It "should clear-Content of testdrive:\$file1" {
-      set-content -path testdrive:\$file1 -value "ExpectedContent" -passthru | Should -Be "ExpectedContent"
+      set-content -path testdrive:\$file1 -value "ExpectedContent" -passthru | Should -BeExactly "ExpectedContent"
       clear-content -Path testdrive:\$file1
     }
 
     It "shouldn't get any content from testdrive:\$file1" {
       $result = get-content -path testdrive:\$file1
-      $result | Should -BeExactly $null
+      $result | Should -BeNullOrEmpty
     }
 
     # we could suppress the WhatIf output here if we use the testhost, but it's not necessary
@@ -72,24 +72,24 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
 
     It "The filesystem provider should support ShouldProcess (reference ProviderSupportsShouldProcess member)" {
       $cci = ((get-command clear-content).ImplementingType)::new()
-      $cci.SupportsShouldProcess | Should -Be $true
+      $cci.SupportsShouldProcess | Should -BeTrue
     }
 
     It "Alternate streams should be cleared with clear-content" -skip:(!$IsWindows) {
       # make sure that the content is correct
       # this is here rather than BeforeAll because only windows can write to an alternate stream
       set-content -path "TESTDRIVE:/$file3" -stream $streamName -value $streamContent
-      get-content -path "TESTDRIVE:/$file3" | Should -Be $content2
-      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -Be $streamContent
+      get-content -path "TESTDRIVE:/$file3" | Should -BeExactly $content2
+      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -BeExactly $streamContent
       clear-content -PATH "TESTDRIVE:/$file3" -stream $streamName
-      get-content -Path "TESTDRIVE:/$file3" | Should -Be $content2
+      get-content -Path "TESTDRIVE:/$file3" | Should -BeExactly $content2
       get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -BeNullOrEmpty
     }
 
     It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {
       try {
         push-location TESTDRIVE:
-        (get-command clear-content -stream foo).parameters.keys -eq "stream" | Should -Be "stream"
+        (get-command clear-content -stream foo).parameters.keys | Should -Be "stream"
       }
       finally {
         pop-location

@@ -256,11 +256,11 @@ baz
     }
  
     It "Should return no content when an empty path is used with -Raw switch" {
-        Get-ChildItem $TestDrive -Filter "*.raw" | Get-Content -Raw | Should -Be $null
+        Get-ChildItem $TestDrive -Filter "*.raw" | Get-Content -Raw | Should -BeNullOrEmpty
     }
 
     It "Should return no content when -TotalCount value is 0" {
-        Get-Content -Path $testPath -TotalCount 0 | Should -Be $null
+        Get-Content -Path $testPath -TotalCount 0 | Should -BeNullOrEmpty
     }
 
     It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {

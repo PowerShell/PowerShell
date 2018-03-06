@@ -90,7 +90,7 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 Describe "Process Parent property" -Tags "CI" {
     It "Has Parent process property" {
         $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent' | Should -Not -Be $null
+        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent' | Should -Not -BeNullOrEmpty
     }
 
     It "Has valid parent process ID property" {

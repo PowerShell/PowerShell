@@ -38,36 +38,36 @@ Describe "New-Item" -Tags "CI" {
     It "Should create a file without error" {
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file
 
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
 
         $fileInfo = Get-ChildItem $FullyQualifiedFile
-        $fileInfo.Target | Should -Be $null
-        $fileInfo.LinkType | Should -Be $null
+        $fileInfo.Target | Should -BeNullOrEmpty
+        $fileInfo.LinkType | Should -BeNullOrEmpty
     }
 
     It "Should create a folder without an error" {
         New-Item -Name newDirectory -Path $tmpDirectory -ItemType directory
 
-        Test-Path $FullyQualifiedFolder | Should -Be $true
+        Test-Path $FullyQualifiedFolder | Should -BeTrue
     }
 
     It "Should create a file using the ni alias" {
         ni -Name $testfile -Path $tmpDirectory -ItemType file
 
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
     }
 
     It "Should create a file using the Type alias instead of ItemType" {
         New-Item -Name $testfile -Path $tmpDirectory -Type file
 
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
     }
 
     It "Should create a file with sample text inside the file using the Value switch" {
         $expected = "This is test string"
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Value $expected
 
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
 
         Get-Content $FullyQualifiedFile | Should -Be $expected
     }
@@ -76,22 +76,22 @@ Describe "New-Item" -Tags "CI" {
         #errorAction used because permissions issue in Windows
         New-Item -Path $tmpDirectory -ItemType file -ErrorAction SilentlyContinue
 
-        Test-Path $FullyQualifiedFile | Should -Be $false
+        Test-Path $FullyQualifiedFile | Should -BeFalse
 
     }
 
     It "Should create a file when the Name switch is not used but a fully qualified path is specified" {
         New-Item -Path $FullyQualifiedFile -ItemType file
 
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
     }
 
     It "Should be able to create a multiple items in different directories" {
         $FullyQualifiedFile2 = Join-Path -Path $tmpDirectory -ChildPath test2.txt
         New-Item -ItemType file -Path $FullyQualifiedFile, $FullyQualifiedFile2
 
-        Test-Path $FullyQualifiedFile  | Should -Be $true
-        Test-Path $FullyQualifiedFile2 | Should -Be $true
+        Test-Path $FullyQualifiedFile  | Should -BeTrue
+        Test-Path $FullyQualifiedFile2 | Should -BeTrue
 
         Remove-Item $FullyQualifiedFile2
     }
@@ -103,18 +103,18 @@ Describe "New-Item" -Tags "CI" {
     It "Should not create a new file when the whatif switch is used" {
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file -WhatIf
 
-        Test-Path $FullyQualifiedFile | Should -Be $false
+        Test-Path $FullyQualifiedFile | Should -BeFalse
     }
 
     It "Should create a hard link of a file without error" {
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
 
         New-Item -ItemType HardLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
-        Test-Path $FullyQualifiedLink | Should -Be $true
+        Test-Path $FullyQualifiedLink | Should -BeTrue
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
-        $fileInfo.Target | Should -Be $null
+        $fileInfo.Target | Should -BeNullOrEmpty
         $fileInfo.LinkType | Should -Be "HardLink"
     }
 }
@@ -140,10 +140,10 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
     It "Should create a symbolic link of a file without error" {
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file
-        Test-Path $FullyQualifiedFile | Should -Be $true
+        Test-Path $FullyQualifiedFile | Should -BeTrue
 
         New-Item -ItemType SymbolicLink -Target $FullyQualifiedFile -Name $testlink -Path $tmpDirectory
-        Test-Path $FullyQualifiedLink | Should -Be $true
+        Test-Path $FullyQualifiedLink | Should -BeTrue
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should -Match ([regex]::Escape($FullyQualifiedFile))
@@ -154,21 +154,21 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should create a symbolic link to a non-existing file without error" {
         $target = Join-Path $tmpDirectory "totallyBogusFile"
         New-Item -ItemType SymbolicLink -Target $target -Name $testlink -Path $tmpDirectory
-        Test-Path $FullyQualifiedLink | Should -Be $true
+        Test-Path $FullyQualifiedLink | Should -BeTrue
 
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should -Be $target
-        Test-Path $fileInfo.Target | Should -Be $false
+        Test-Path $fileInfo.Target | Should -BeFalse
         $fileInfo.LinkType | Should -Be "SymbolicLink"
         $fileInfo.Attributes -band $DirLinkMask | Should -Be $SymLinkMask
     }
 
     It "Should create a symbolic link to directory without error" {
         New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
-        Test-Path $FullyQualifiedFolder | Should -Be $true
+        Test-Path $FullyQualifiedFolder | Should -BeTrue
 
         New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
-        Test-Path $FullyQualifiedLink | Should -Be $true
+        Test-Path $FullyQualifiedLink | Should -BeTrue
 
         $fileInfo = Get-Item $FullyQualifiedLink
         $fileInfo.Target | Should -Match ([regex]::Escape($FullyQualifiedFolder))
@@ -192,6 +192,6 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {
         $folderName = [System.IO.Path]::GetRandomFileName()            
         $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
-        $symbolicLinkPath | Should -Not -Be $null
+        $symbolicLinkPath | Should -Not -BeNullOrEmpty
     }
 }

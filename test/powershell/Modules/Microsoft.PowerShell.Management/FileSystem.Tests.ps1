@@ -40,31 +40,31 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         It "Verify New-Item for directory" {
             $newDir = New-Item -Path $newTestDir -ItemType Directory
             $directoryExists = Test-Path $newTestDir
-            $directoryExists | Should -Be $true
-            $newDir.Name | Should -Be $newTestDir
+            $directoryExists | Should -BeTrue
+            $newDir.Name | Should -BeExactly $newTestDir
         }
 
         It "Verify New-Item for file" {
             $newFile = New-Item -Path $newTestFile -ItemType File
             $fileExists = Test-Path $newTestFile
-            $fileExists | Should -Be $true
-            $newFile.Name | Should -Be $newTestFile
+            $fileExists | Should -BeTrue
+            $newFile.Name | Should -BeExactly $newTestFile
         }
 
         It "Verify Remove-Item for directory" {
             $existsBefore = Test-Path $testDir
             Remove-Item -Path $testDir -Recurse -Force
             $existsAfter = Test-Path $testDir
-            $existsBefore | Should -Be $true
-            $existsAfter | Should -Be $false
+            $existsBefore | Should -BeTrue
+            $existsAfter | Should -BeFalse
         }
 
         It "Verify Remove-Item for file" {
             $existsBefore = Test-Path $testFile
             Remove-Item -Path $testFile -Force
             $existsAfter = Test-Path $testFile
-            $existsBefore | Should -Be $true
-            $existsAfter | Should -Be $false
+            $existsBefore | Should -BeTrue
+            $existsAfter | Should -BeFalse
         }
 
         It "Verify Rename-Item for file" {
@@ -88,8 +88,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         It "Verify Copy-Item" {
             $newFile = Copy-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
-            $fileExists | Should -Be $true
-            $newFile.Name | Should -Be $newTestFile
+            $fileExists | Should -BeTrue
+            $newFile.Name | Should -BeExactly $newTestFile
         }
 
         It "Verify Move-Item for file" {
@@ -117,7 +117,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         It "Verify Move-Item as substitute for Rename-Item" {
             $newFile = Move-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
-            $fileExists | Should -Be $true
+            $fileExists | Should -BeTrue
             $newFile.Name | Should -Be $newTestFile
         }
 
@@ -180,7 +180,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
              foreach ($deviceName in $reservedNames)
              {
                 Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -Be $true
+                Test-Path $deviceName | Should -BeTrue
              }
          }
 
@@ -188,7 +188,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
              foreach ($deviceName in $reservedNames)
              {
                 Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -Be $true
+                Test-Path $deviceName | Should -BeTrue
                 New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
@@ -197,7 +197,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
              foreach ($deviceName in $reservedNames)
              {
                 Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
-                Test-Path $deviceName | Should -Be $true
+                Test-Path $deviceName | Should -BeTrue
                 New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
@@ -212,7 +212,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 New-Item -Path "$testdrive$path" -ItemType Directory > $null
                 Set-Location "$testdrive"
                 Set-Location ".$path"
-                (Get-Location).Path | Should -Be "$testdrive/$($path.Substring(1,$path.Length-1))"
+                (Get-Location).Path | Should -BeExactly "$testdrive/$($path.Substring(1,$path.Length-1))"
             }
             finally {
                 Remove-Item -Path "$testdrive$path" -ErrorAction SilentlyContinue
@@ -300,9 +300,9 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $level1Loc = Get-Location
             Set-Location $level2_0
             $level2Loc = Get-Location
-            $currentLoc.Path | Should -Be $root
-            $level1Loc.Path | Should -Be $level1_0Full
-            $level2Loc.Path | Should -Be $level2_0Full
+            $currentLoc.Path | Should -BeExactly $root
+            $level1Loc.Path | Should -BeExactly $level1_0Full
+            $level2Loc.Path | Should -BeExactly $level2_0Full
         }
 
         It "Verify Push-Location and Pop-Location" {
@@ -327,16 +327,16 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             Pop-Location
             $pop2 = Get-Location
 
-            $pop0.Path | Should -Be $push2.Path
-            $pop1.Path | Should -Be $push1.Path
-            $pop2.Path | Should -Be $push0.Path
+            $pop0.Path | Should -BeExactly $push2.Path
+            $pop1.Path | Should -BeExactly $push1.Path
+            $pop2.Path | Should -BeExactly $push0.Path
         }
     }
 
     Context "Validate Basic Path Cmdlets" {
         It "Verify Convert-Path" {
             $result = Convert-Path "."
-            ($result.TrimEnd('/\')) | Should -Be "$TESTDRIVE"
+            ($result.TrimEnd('/\')) | Should -BeExactly "$TESTDRIVE"
         }
 
         It "Verify Join-Path" {
@@ -358,13 +358,13 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify Test-Path" {
             $result = Test-Path $HOME
-            $result | Should -Be $true
+            $result | Should -BeTrue
         }
 
         It "Verify HOME" {
             $homePath = $HOME
             $tildePath = (Resolve-Path -Path ~).Path
-            $homePath | Should -Be $tildePath
+            $homePath | Should -BeExactly $tildePath
         }
     }
 }
@@ -387,26 +387,26 @@ Describe "Handling of globbing patterns" -Tags "CI" {
 
         It "Rename-Item -LiteralPath can rename a file with Unix globbing characters" {
             Rename-Item -LiteralPath $file.FullName -NewName $newPath
-            Test-Path -LiteralPath $file.FullName | Should -Be $false
-            Test-Path -LiteralPath $newPath | Should -Be $true
+            Test-Path -LiteralPath $file.FullName | Should -BeFalse
+            Test-Path -LiteralPath $newPath | Should -BeTrue
         }
 
         It "Remove-Item -LiteralPath can delete a file with Unix globbing characters" {
             Remove-Item -LiteralPath $file.FullName
-            Test-Path -LiteralPath $file.FullName | Should -Be $false
+            Test-Path -LiteralPath $file.FullName | Should -BeFalse
         }
 
         It "Move-Item -LiteralPath can move a file with Unix globbing characters" {
             $dir = New-Item -ItemType Directory -Path $dirPath
             Move-Item -LiteralPath $file.FullName -Destination $dir.FullName
-            Test-Path -LiteralPath $file.FullName | Should -Be $false
+            Test-Path -LiteralPath $file.FullName | Should -BeFalse
             $newPath = Join-Path $dir.FullName $file.Name
-            Test-Path -LiteralPath $newPath | Should -Be $true
+            Test-Path -LiteralPath $newPath | Should -BeTrue
         }
 
         It "Copy-Item -LiteralPath can copy a file with Unix globbing characters" {
             Copy-Item -LiteralPath $file.FullName -Destination $newPath
-            Test-Path -LiteralPath $newPath | Should -Be $true
+            Test-Path -LiteralPath $newPath | Should -BeTrue
         }
     }
 
@@ -420,12 +420,12 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             $testPath2 = "$testdrive\foo*2"
             New-Item -Path $testPath -ItemType File
             New-Item -Path $testPath2 -ItemType File
-            Test-Path -LiteralPath $testPath | Should -Be $true
-            Test-Path -LiteralPath $testPath2 | Should -Be $true
+            Test-Path -LiteralPath $testPath | Should -BeTrue
+            Test-Path -LiteralPath $testPath2 | Should -BeTrue
             { Remove-Item -LiteralPath $testPath } | Should -Not -Throw
-            Test-Path -LiteralPath $testPath | Should -Be $false
+            Test-Path -LiteralPath $testPath | Should -BeFalse
             # make sure wildcard wasn't applied so this file should still exist
-            Test-Path -LiteralPath $testPath2 | Should -Be $true
+            Test-Path -LiteralPath $testPath2 | Should -BeTrue
         }
     }
 }
@@ -464,14 +464,14 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
     Context "New-Item and hard/symbolic links" {
         It "New-Item can create a hard link to a file" {
             New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile
-            Test-Path $hardLinkToFile | Should -Be $true
+            Test-Path $hardLinkToFile | Should -BeTrue
             $link = Get-Item -Path $hardLinkToFile
             $link.LinkType | Should -BeExactly "HardLink"
             Get-Content -Path $hardLinkToFile | Should -Be $fileContent
         }
         It "New-Item can create symbolic link to file" {
             New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile
-            Test-Path $symLinkToFile | Should -Be $true
+            Test-Path $symLinkToFile | Should -BeTrue
             $real = Get-Item -Path $realFile
             $link = Get-Item -Path $symLinkToFile
             $link.LinkType | Should -BeExactly "SymbolicLink"
@@ -480,7 +480,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         }
         It "New-Item can create a symbolic link to nothing" {
             New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile
-            Test-Path $symLinkToNothing | Should -Be $true
+            Test-Path $symLinkToNothing | Should -BeTrue
             $link = Get-Item -Path $symLinkToNothing
             $link.LinkType | Should -BeExactly "SymbolicLink"
             $link.Target | Should -Be $nonFile
@@ -490,7 +490,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         }
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
-            Test-Path $symLinkToDir | Should -Be $true
+            Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link.LinkType | Should -BeExactly "SymbolicLink"
@@ -498,16 +498,16 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         }
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
-            Test-Path $symLinkToDir | Should -Be $true
+            Test-Path $symLinkToDir | Should -BeTrue
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link | Should -BeOfType System.IO.DirectoryInfo
             $link.LinkType | Should -BeExactly "SymbolicLink"
-            $link.Target | Should -Be $real.FullName
+            $link.Target | Should -BeExactly $real.FullName
         }
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
             New-Item -ItemType Junction -Path $junctionToDir -Value $realDir
-            Test-Path $junctionToDir | Should -Be $true
+            Test-Path $junctionToDir | Should -BeTrue
         }
     }
 
@@ -622,8 +622,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
                 )
 
                 Remove-Item -Path $Link -ErrorAction SilentlyContinue >$null
-                Test-Path -Path $Link | Should -Be $false
-                Test-Path -Path $Target | Should -Be $true
+                Test-Path -Path $Link | Should -BeFalse
+                Test-Path -Path $Target | Should -BeTrue
             }
         }
 
@@ -728,14 +728,14 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         It "Copy-Item can copy to file name differing only by case" {
             if ($isCaseSensitive)
             {
-                Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction SilentlyContinue | Should -Be $null
-                Test-Path -Path $destinationPath | Should -Be $true
+                Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
+                Test-Path -Path $destinationPath | Should -BeTrue
             }
             else
             {
                 { Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
                 $Error[0].Exception | Should -BeOfType System.IO.IOException
-                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -Be $null
+                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
         }
     }
@@ -798,7 +798,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
 
                 { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
                 $Error[0].Exception | Should -BeOfType System.IO.IOException
-                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -Be $null
+                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
         }
 
@@ -861,7 +861,7 @@ Describe "Handling long paths" -Tags "CI" {
         $fileName | Should -Exist
     }
     It "Can use Test-Path to check for a file via a long path" {
-        Test-Path $longFilePath | Should -Be $true
+        Test-Path $longFilePath | Should -BeTrue
     }
 }
 
@@ -908,47 +908,47 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Directory + Confirm bypass" {
             $result = New-Item -Path . -ItemType Directory -Name $testDir -Confirm:$false
-            $result.Name | Should -Be $testDir
+            $result.Name | Should -BeExactly $testDir
         }
 
         It "Verify Directory + Force" {
             New-Item -Path . -ItemType Directory -Name $testDir > $null
             $result = New-Item -Path . -ItemType Directory -Name $testDir -Force #would normally fail without force
-            $result.Name | Should -Be $testDir
+            $result.Name | Should -BeExactly $testDir
         }
 
         It "Verify File + Value" {
             $result = New-Item -Path . -ItemType File -Name $testFile -Value "Some String"
             $content = Get-Content -Path $testFile
-            $result.Name | Should -Be $testFile
-            $content | Should -Be "Some String"
+            $result.Name | Should -BeExactly $testFile
+            $content | Should -BeExactly "Some String"
         }
     }
 
     Context "Valdiate Get-Item parameters" {
         It "Verify Force" {
             $result = Get-Item -Path $testFile -Force
-            $result.Name | Should -Be $testFile
+            $result.Name | Should -BeExactly $testFile
         }
 
         It "Verify Path Wildcard" {
             $result = Get-Item -Path "*2.txt"
-            $result.Name | Should -Be $testFile2
+            $result.Name | Should -BeExactly $testFile2
         }
 
         It "Verify Include" {
             $result = Get-Item -Path "TestDrive:\*" -Include "*2.txt"
-            $result.Name | Should -Be $testFile2
+            $result.Name | Should -BeExactly $testFile2
         }
 
         It "Verify Include and Exclude Intersection" {
             $result = Get-Item -Path "TestDrive:\*" -Include "*.txt" -Exclude "*2*"
-            $result.Name | Should -Be $testFile
+            $result.Name | Should -BeExactly $testFile
         }
 
         It "Verify Filter" {
             $result = Get-Item -Path "TestDrive:\*" -filter "*2.txt"
-            $result.Name | Should -Be $testFile2
+            $result.Name | Should -BeExactly $testFile2
         }
 
         It "Verify -LiteralPath with wildcard fails for file that doesn't exist" {
@@ -991,7 +991,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file1 = Get-Item "TestDrive:\dest\$testFile2" -ErrorAction SilentlyContinue
             $file2 = Get-Item "TestDrive:\dest\$testFile" -ErrorAction SilentlyContinue
             $file1 | Should -BeNullOrEmpty
-            $file2.Name | Should -Be $testFile
+            $file2.Name | Should -BeExactly $testFile
         }
 
         It "Verify Filter" {
@@ -999,7 +999,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file1 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file2 = Get-Item $altTestFile -ErrorAction SilentlyContinue
             $file1 | Should -BeNullOrEmpty
-            $file2.Name | Should -Be $altTestFile
+            $file2.Name | Should -BeExactly $altTestFile
         }
     }
 
@@ -1022,7 +1022,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file1 = Get-Item -Path $testFile -ErrorAction SilentlyContinue
             $file2 = Get-Item -Path $newFile -ErrorAction SilentlyContinue
             $file1 | Should -BeNullOrEmpty
-            $file2.Name | Should -Be $newFile
+            $file2.Name | Should -BeExactly $newFile
         }
     }
 
@@ -1030,7 +1030,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         It "Verify WhatIf" {
             Remove-Item $testFile -WhatIf
             $result = Get-Item $testFile
-            $result.Name | Should -Be $testFile
+            $result.Name | Should -BeExactly $testFile
         }
 
         It "Verify Confirm can be bypassed" {
@@ -1071,7 +1071,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $file1 = Get-Item $testFile -ErrorAction SilentlyContinue
             $file2 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file1 | Should -BeNullOrEmpty
-            $file2.Name | Should -Be $testFile2
+            $file2.Name | Should -BeExactly $testFile2
         }
 
         It "Verify Path can accept wildcard" {
@@ -1095,20 +1095,20 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             Set-Content -Path @($testFile,$testFile2) -Value @($testContent,$testContent2)
             $content1 = Get-Content $testFile
             $content2 = Get-Content $testFile2
-            $content1 | Should -Be $content2
-            ($content1[0] + $content1[1]) | Should -Be ($testContent + $testContent2)
+            $content1 | Should -BeExactly $content2
+            ($content1[0] + $content1[1]) | Should -BeExactly ($testContent + $testContent2)
         }
 
         It "Validate LiteralPath" {
             Set-Content -LiteralPath "TestDrive:\$testFile" -Value $testContent
             $content = Get-Content $testFile
-            $content | Should -Be $testContent
+            $content | Should -BeExactly $testContent
         }
 
         It "Validate Confirm can be bypassed" {
             Set-Content -Path $testFile -Value $testContent -Confirm:$false
             $content = Get-Content $testFile
-            $content | Should -Be $testContent
+            $content | Should -BeExactly $testContent
         }
 
         It "Validate WhatIf" {
@@ -1122,14 +1122,14 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $content1 = Get-Content $testFile
             $content2 = Get-Content $testFile2
             $content1 | Should -BeNullOrEmpty
-            $content2 | Should -Be $testContent
+            $content2 | Should -BeExactly $testContent
         }
 
         It "Validate Exclude" {
             Set-Content -Path "TestDrive:\*" -Value $testContent -Exclude "*2.txt"
             $content1 = Get-Content $testFile
             $content2 = Get-Content $testFile2
-            $content1 | Should -Be $testContent
+            $content1 | Should -BeExactly $testContent
             $content2 | Should -BeNullOrEmpty
         }
 
@@ -1138,7 +1138,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
             $content1 = Get-Content $testFile
             $content2 = Get-Content $testFile2
             $content1 | Should -BeNullOrEmpty
-            $content2 | Should -Be $testContent
+            $content2 | Should -BeExactly $testContent
         }
     }
 
@@ -1150,51 +1150,51 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Validate Array Input for Path" {
             $result = Get-Content -Path @($testFile,$testFile2)
-            $result[0] | Should -Be $testContent
-            $result[1] | Should -Be $testContent2
+            $result[0] | Should -BeExactly $testContent
+            $result[1] | Should -BeExactly $testContent2
         }
 
         It "Validate Include" {
             $result = Get-Content -Path "TestDrive:\*" -Include "*2.txt"
-            $result | Should -Be $testContent2
+            $result | Should -BeExactly $testContent2
         }
 
         It "Validate Exclude" {
             $result = Get-Content -Path "TestDrive:\*" -Exclude "*2.txt"
-            $result | Should -Be $testContent
+            $result | Should -BeExactly $testContent
         }
 
         It "Validate Filter" {
             $result = Get-Content -Path "TestDrive:\*" -Filter "*2.txt"
-            $result | Should -Be $testContent2
+            $result | Should -BeExactly $testContent2
         }
 
         It "Validate ReadCount" {
             Set-Content -Path $testFile -Value "Test Line 1`nTest Line 2`nTest Line 3`nTest Line 4`nTest Line 5`nTest Line 6"
             $result = (Get-Content -Path $testFile -ReadCount 2)
-            $result[0][0] | Should -Be "Test Line 1"
-            $result[0][1] | Should -Be "Test Line 2"
-            $result[1][0] | Should -Be "Test Line 3"
-            $result[1][1] | Should -Be "Test Line 4"
-            $result[2][0] | Should -Be "Test Line 5"
-            $result[2][1] | Should -Be "Test Line 6"
+            $result[0][0] | Should -BeExactly "Test Line 1"
+            $result[0][1] | Should -BeExactly "Test Line 2"
+            $result[1][0] | Should -BeExactly "Test Line 3"
+            $result[1][1] | Should -BeExactly "Test Line 4"
+            $result[2][0] | Should -BeExactly "Test Line 5"
+            $result[2][1] | Should -BeExactly "Test Line 6"
         }
 
         It "Validate TotalCount" {
             Set-Content -Path $testFile -Value "Test Line 1`nTest Line 2`nTest Line 3`nTest Line 4`nTest Line 5`nTest Line 6"
             $result = Get-Content -Path $testFile -TotalCount 4
-            $result[0] | Should -Be "Test Line 1"
-            $result[1] | Should -Be "Test Line 2"
-            $result[2] | Should -Be "Test Line 3"
-            $result[3] | Should -Be "Test Line 4"
+            $result[0] | Should -BeExactly "Test Line 1"
+            $result[1] | Should -BeExactly "Test Line 2"
+            $result[2] | Should -BeExactly "Test Line 3"
+            $result[3] | Should -BeExactly "Test Line 4"
             $result[4] | Should -BeNullOrEmpty
         }
 
         It "Validate Tail" {
             Set-Content -Path $testFile -Value "Test Line 1`nTest Line 2`nTest Line 3`nTest Line 4`nTest Line 5`nTest Line 6"
             $result = Get-Content -Path $testFile -Tail 2
-            $result[0] | Should -Be "Test Line 5"
-            $result[1] | Should -Be "Test Line 6"
+            $result[0] | Should -BeExactly "Test Line 5"
+            $result[1] | Should -BeExactly "Test Line 6"
             $result[2] | Should -BeNullOrEmpty
         }
     }
@@ -1236,12 +1236,12 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
     Context "Validate Resolve-Path Cmdlet Parameters" {
         It "Verify LiteralPath" {
             $result = Resolve-Path -LiteralPath "TestDrive:\"
-            ($result.Path.TrimEnd('/\')) | Should -Be "TestDrive:"
+            ($result.Path.TrimEnd('/\')) | Should -BeExactly "TestDrive:"
         }
 
         It "Verify relative" {
             $relativePath = Resolve-Path -Path . -Relative
-            $relativePath | Should -Be (Join-Path "." "")
+            $relativePath | Should -BeExactly (Join-Path "." "")
         }
     }
 
@@ -1260,44 +1260,44 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
     Context "Validate Split-Path Cmdlet Parameters" {
         It "Validate Parent" {
             $result = Split-Path -Path $level1_0Full -Parent -Resolve
-            ($result.TrimEnd('/\')) | Should -Be "TestDrive:"
+            ($result.TrimEnd('/\')) | Should -BeExactly "TestDrive:"
         }
 
         It "Validate IsAbsolute" {
             $resolved = Split-Path -Path . -Resolve -IsAbsolute
             $unresolved = Split-Path -Path . -IsAbsolute
-            $resolved | Should -Be $true
-            $unresolved | Should -Be $false
+            $resolved | Should -BeTrue
+            $unresolved | Should -BeFalse
         }
 
         It "Validate Leaf" {
             $result = Split-Path -Path $level1_0Full -Leaf
-            $result | Should -Be $level1_0
+            $result | Should -BeExactly $level1_0
         }
 
         It 'Validate LeafBase' {
             $result = Split-Path -Path "$level2_1Full$fileExt" -LeafBase
-            $result | Should -Be $level2_1
+            $result | Should -BeExactly $level2_1
         }
         It 'Validate LeafBase is not over-zealous' {
 
             $result = Split-Path -Path "$level2_1Full$fileExt$fileExt" -LeafBase
-            $result | Should -Be "$level2_1$fileExt"
+            $result | Should -BeExactly "$level2_1$fileExt"
         }
 
         It 'Validate LeafBase' {
             $result = Split-Path -Path "$level2_1Full$fileExt" -Extension
-            $result | Should -Be $fileExt
+            $result | Should -BeExactly $fileExt
         }
 
         It "Validate NoQualifier" {
             $result = Split-Path -Path $level1_0Full -NoQualifier
-            ($result.TrimStart('/\')) | Should -Be $level1_0
+            ($result.TrimStart('/\')) | Should -BeExactly $level1_0
         }
 
         It "Validate Qualifier" {
             $result = Split-Path -Path $level1_0Full -Qualifier
-            $result | Should -Be "TestDrive:"
+            $result | Should -BeExactly "TestDrive:"
         }
     }
 
@@ -1309,14 +1309,14 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
 
         It "By LiteralPath" {
             $result = Set-Location -LiteralPath $level1_0Full -PassThru
-            $result.Path | Should -Be $level1_0Full
+            $result.Path | Should -BeExactly $level1_0Full
         }
 
         It "To Default Location Stack Does Nothing" {
             $beforeLoc = Get-Location
             Set-Location -StackName ""
             $afterLoc = Get-Location
-            $beforeLoc.Path | Should -Be $afterLoc.Path
+            $beforeLoc.Path | Should -BeExactly $afterLoc.Path
         }
 
         It "WhatIf is Not Supported" {
@@ -1338,9 +1338,9 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
             Pop-Location
             $location3 = Get-Location
 
-            $location1.Path | Should -Be $level2_0Full
-            $location2.Path | Should -Be $level1_0Full
-            $location3.Path | Should -Be $root
+            $location1.Path | Should -BeExactly $level2_0Full
+            $location2.Path | Should -BeExactly $level1_0Full
+            $location3.Path | Should -BeExactly $root
         }
 
         It "Verify Push + PassThru" {
@@ -1352,9 +1352,9 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
             Set-Location $level2_0
             $location3 = Get-Location
 
-            $location1.Path | Should -Be $passThru1.Path
-            $location2.Path | Should -Be $passThru2.Path
-            $location3.Path | Should -Be $level2_0Full
+            $location1.Path | Should -BeExactly $passThru1.Path
+            $location2.Path | Should -BeExactly $passThru2.Path
+            $location3.Path | Should -BeExactly $level2_0Full
         }
 
         It "Verify Push + LiteralPath" {
@@ -1366,9 +1366,9 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
             Pop-Location
             $location3 = Get-Location
 
-            $location1.Path | Should -Be $level2_0Full
-            $location2.Path | Should -Be $level1_0Full
-            $location3.Path | Should -Be $root
+            $location1.Path | Should -BeExactly $level2_0Full
+            $location2.Path | Should -BeExactly $level1_0Full
+            $location3.Path | Should -BeExactly $root
         }
 
         It "Verify Pop + Invalid Stack Name" {

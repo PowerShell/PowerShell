@@ -105,7 +105,7 @@ Describe "Start-Process" -Tags @("Feature") {
         $process = Start-Process cmd.exe -ArgumentList "/c echo abc > $fileToWrite" -Verb open -WindowStyle Minimized -PassThru
         $process.Name | Should -Be "cmd"
         $process.WaitForExit()
-        Test-Path $fileToWrite | Should -Be $true
+        Test-Path $fileToWrite | Should -BeTrue
     }
 
     It "Should start notepad.exe with ShellExecute" -Skip:(!$isFullWin) {
@@ -121,7 +121,7 @@ Describe "Start-Process" -Tags @("Feature") {
     }
 
     It "Should return null when using -WhatIf switch with -PassThru" {
-        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -Be $null
+        Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
    }
 }
 
