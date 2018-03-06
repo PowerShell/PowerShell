@@ -19,7 +19,7 @@ Describe "Get-PSDrive" -Tags "CI" {
 
     It "Should be the same output between Get-PSDrive and gdr" {
 	$alias  = gdr
-	$actual = "Get-PSDrive"
+	$actual = Get-PSDrive
 
 
 	$alias | Should -BeExactly $actual
