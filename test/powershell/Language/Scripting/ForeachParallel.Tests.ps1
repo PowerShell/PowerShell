@@ -6,7 +6,7 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -parallel ($foo in $bar) {}', [ref] $null, [ref] $errors)
-        It '$errors.Count' { $errors.Count | Should -BeExactly 1 }
+        It '$errors.Count' { $errors.Count | Should -Be 1 }
         It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly 'Parallel' }
     }
 
@@ -19,7 +19,7 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             "foreach `n-parallel `n(`$foo in `$bar) {}", [ref] $null, [ref] $null)
-        It '$errors.Count' { $errors.Count | Should -BeExactly 0 }
+        It '$errors.Count' { $errors.Count | Should -Be 0 }
         It '$ast.EndBlock.Statements[0].Flags' { $ast.EndBlock.Statements[0].Flags | Should -BeExactly 'Parallel' }
     }
 
@@ -27,7 +27,7 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -bogus ($input in $bar) { }', [ref]$null, [ref]$errors)
-        It '$errors.Count' { $errors.Count | Should -BeExactly 1 }
+        It '$errors.Count' { $errors.Count | Should -Be 1 }
         It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly InvalidForeachFlag }
     }
 
@@ -35,7 +35,7 @@ Describe "Parallel foreach syntax" -Tags "CI" {
         $errors = @()
         $ast = [System.Management.Automation.Language.Parser]::ParseInput(
             'foreach -parallel ($input in $bar) { }', [ref]$null, [ref]$errors)
-        It '$errors.Count' { $errors.Count | Should -BeExactly 1 }
+        It '$errors.Count' { $errors.Count | Should -Be 1 }
         It '$errors[0].ErrorId' { $errors[0].ErrorId | Should -BeExactly ParallelNotSupported }
     }
 }

@@ -10,40 +10,40 @@ Describe "Generics support" -Tags "CI" {
         $x = [list[int]]::New()
         $x.Add(42)
         $x.Add(40)
-        $x.count | Should -BeExactly 2
+        $x.count | Should -Be 2
     }
 
     It 'Type stack[Int] works properly' {
         $x = [stack[int]]::New()
         $x.Push(42)
         $x.Push(40)
-        $x.count | Should -BeExactly 2
+        $x.count | Should -Be 2
     }
 
     It 'Type dictionary[string, Int] works properly' {
         $x = [dictionary[string, int]]::New()
         $x.foo = 42
-        $x.foo | Should -BeExactly 42
+        $x.foo | Should -Be 42
     }
 
     It 'Type list[[Int]] works properly' {
         $x = [list[[int]]]::New()
         $x.Add(42)
         $x.Add(40)
-        $x.count | Should -BeExactly 2
+        $x.count | Should -Be 2
     }
 
     It 'Type stack[[Int]] works properly' {
         $x = [stack[[int]]]::New()
         $x.Push(42)
         $x.Push(40)
-        $x.count | Should -BeExactly 2
+        $x.count | Should -Be 2
     }
 
     It 'Type dictionary[[string], [Int]] works properly' {
         $x = [dictionary[[string], [int]]]::New()
         $x.foo = 42
-        $x.foo | Should -BeExactly 42
+        $x.foo | Should -Be 42
     }
 
     It 'Type dictionary[dictionary[list[int],string], stack[double]] works properly' {
@@ -93,7 +93,7 @@ Describe "Generics support" -Tags "CI" {
         $x = [TestClass]::New("default1", 90, "1...5")
         $x.scriptText = "1...4"
         $x.name | Should -BeExactly 'default1'
-        $x.port | Should -BeExactly 90
+        $x.port | Should -Be 90
         $x.scriptText | Should -BeExactly "1...4"
    }
 }

@@ -162,7 +162,7 @@ namespace Dummy
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]
         It 'arg should be 200' {
             $c.arg = 100
-            $c.arg | Should -BeExactly 200
+            $c.arg | Should -Be 200
         }
         It 'Set to string should fail with ExceptionWhenSetting' {
             try {

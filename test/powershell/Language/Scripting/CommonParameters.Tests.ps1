@@ -33,7 +33,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $output = $ps.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.Streams.Debug.Count | Should -BeExactly 0
+            $ps.Streams.Debug.Count | Should -Be 0
         }
 
         It 'get-foo -debug' {
@@ -68,7 +68,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $output = $ps.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.streams.verbose.Count | Should -BeExactly 0
+            $ps.streams.verbose.Count | Should -Be 0
         }
 
         It 'get-foo -verbose' {
@@ -127,7 +127,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $output = $ps.EndInvoke($asyncResult)
 
             $output[0] | Should -BeExactly "output foo"
-            $ps.streams.error.count | Should -BeExactly 0
+            $ps.streams.error.count | Should -Be 0
         }
 
         It 'erroraction Stop' {
@@ -198,7 +198,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -BeExactly 1 # the host does not implement it.
+            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
             $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
@@ -267,7 +267,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -BeExactly 1  # the host does not implement it.
+            $ps.Streams.Error.Count | Should -Be 1  # the host does not implement it.
             $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
@@ -303,7 +303,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -BeExactly 1  # the host does not implement it.
+            $ps.Streams.Error.Count | Should -Be 1  # the host does not implement it.
             $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
@@ -329,7 +329,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -BeExactly 1 # the host does not implement it.
+            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
             $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
 
@@ -339,7 +339,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -BeExactly 1 # the host does not implement it.
+            $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
             $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }
@@ -366,7 +366,7 @@ Describe "Common parameters support for script cmdlets" -Tags "CI" {
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
 
-            $ps.Streams.Error.Count | Should -BeExactly 1   # the host does not implement it.
+            $ps.Streams.Error.Count | Should -Be 1   # the host does not implement it.
             $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
         }
     }

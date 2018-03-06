@@ -15,7 +15,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
     It 'New-Object - Property Parameter Must take IDictionary' {
         $a = new-object psobject -property ([ordered]@{one=1;two=2})
         $a | Should -Not -BeNullOrEmpty
-        $a.one | Should -BeExactly 1
+        $a.one | Should -Be 1
     }
 
     Context 'Select-Xml cmdlet - Namespace parameter must take IDictionary' {

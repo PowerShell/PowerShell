@@ -154,14 +154,14 @@ Describe 'Testing of script internationalization' -Tags "CI" {
        & {
             $script:mydata = data { 123 }
          }
-        $mydata | Should -BeExactly 123
+        $mydata | Should -Be 123
 
         $mydata = data { 456 }
         & {
             # This import should not clobber the one at script scope
             import-localizedData mydata -uiculture en-US
         }
-        $mydata | Should -BeExactly 456
+        $mydata | Should -Be 456
 
         & {
             # This import should clobber the one at script scope
@@ -176,6 +176,6 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 
         import-localizeddata local:mydata -uiculture fr-ca -filename I18n.Tests_fallback.psd1 -SupportedCommand MyConvertFrom-StringData
         $mydata[0].string1 | Should -BeExactly 'fallback string1 for en-US'
-        $mydata[1] | Should -BeExactly 42
+        $mydata[1] | Should -Be 42
     }
 }

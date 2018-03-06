@@ -515,7 +515,7 @@ Describe "Test try/catch" -Tags "CI" {
               }
             }
 
-            [int]$a.ToString() | Should -BeExactly 42
+            [int]$a.ToString() | Should -Be 42
         }
     }
 

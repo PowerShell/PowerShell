@@ -18,7 +18,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $asyncResult = $ps.BeginInvoke()
                 $ps.EndInvoke($asyncResult)
 
-                $ps.Streams.Error.Count | Should -BeExactly 1 # the host does not implement it.
+                $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
                 $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
             } finally {
                 $ps.Dispose()
@@ -293,7 +293,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        42 | get-foo | Should -BeExactly 42
+        42 | get-foo | Should -Be 42
     }
 
     It 'Parameter binding failure on Parameter1 should not cause parameter binding failure on Length' {
@@ -304,7 +304,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
           process  { $Length }
         }
 
-        'abc' | get-foo | Should -BeExactly 3
+        'abc' | get-foo | Should -Be 3
     }
 
     It 'Binding array of string to array of bool should fail (cmdletbinding)' {
@@ -379,7 +379,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-fooe| Should -BeExactly 55
+            get-fooe| Should -Be 55
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set on the parameter" {
@@ -390,7 +390,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-foof| Should -BeExactly 55
+            get-foof| Should -Be 55
         }
 
         It "Validation attributes should not run on default values" {
@@ -521,6 +521,6 @@ Describe "Tests for parameter binding" -Tags "CI" {
         & { } $b
 
         #The position of the enumerator shouldn't be modified
-        $b.current | Should -BeExactly 1
+        $b.current | Should -Be 1
     }
 }

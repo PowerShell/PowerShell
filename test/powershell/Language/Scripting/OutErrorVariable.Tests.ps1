@@ -146,7 +146,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
 
         get-foo2 -errorVariable +a 2> $null
 
-        $a.count | Should -BeExactly 3
+        $a.count | Should -Be 3
         $a| ForEach-Object {$_.ToString()} | Should -BeExactly @('a', 'b', 'foo')
     }
 
@@ -301,7 +301,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         }
 
         It '$get_item_err.count and $get_item_err[0].exception' {
-            $get_item_err.count | Should -BeExactly 1
+            $get_item_err.count | Should -Be 1
             $get_item_err[0].exception | Should -Not -BeNullOrEmpty
             $get_item_err[0].exception | Should -BeOftype 'System.Management.Automation.ItemNotFoundException'
         }

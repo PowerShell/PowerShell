@@ -117,7 +117,7 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
 
     It  'Creating an object of an existing type from hashtable should succeed' {
         $result = [System.Management.Automation.Host.Coordinates]@{X=10;Y=33}
-        $result.X | Should -BeExactly 10
+        $result.X | Should -Be 10
     }
 
     It 'Creating an object of an existing type from hashtable should call the constructor taking a hashtable if such a constructor exists in the type' {
@@ -135,7 +135,7 @@ Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     It 'Add an existing type name to PSTypeNames property' {
 
 	    $obj = [PSCustomObject] @{pstypename = 'System.Object'}
-	    $obj.PSTypeNames.Count | Should -BeExactly 3
+	    $obj.PSTypeNames.Count | Should -Be 3
 	    $obj.PSTypeNames[0] | Should -BeExactly 'System.Object'
     }
     It "new-object should fail to create object for System.Management.Automation.PSCustomObject" {

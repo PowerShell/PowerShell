@@ -19,7 +19,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             }
             catch {}
 
-            It '$err.Count' { $err.Count | Should -BeExactly 1 }
+            It '$err.Count' { $err.Count | Should -Be 1 }
             It '$err[0] should not be $null' { $err[0] | Should -Not -BeNullOrEmpty }
             It '$err[0].GetType().Name' { $err[0] | Should -BeOfType "System.Management.Automation.ActionPreferenceStopException" }
             It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should -Not -BeNullOrEmpty }
@@ -126,7 +126,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
                                 $num++
                             }
                     }
-            $num | Should -BeExactly 2
+            $num | Should -Be 2
         }
 
         It '<switch> does not take precedence over $ErrorActionPreference' -TestCases @(

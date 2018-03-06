@@ -95,7 +95,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     Context 'get-help helpFunc1 -component Something' {
         $x = get-help helpFunc1 -component Something -ea SilentlyContinue -ev e
         TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -BeExactly 0 }
+        It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
     Context 'get-help helpFunc1 -role blah' {
@@ -106,7 +106,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     Context 'get-help helpFunc1 -role CrazyUser' {
         $x = get-help helpFunc1 -role CrazyUser -ea SilentlyContinue -ev e
         TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -BeExactly 0 }
+        It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 
     Context '$x = get-help helpFunc1 -functionality blah' {
@@ -117,7 +117,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     Context '$x = get-help helpFunc1 -functionality Useless' {
         $x = get-help helpFunc1 -functionality Useless -ea SilentlyContinue -ev e
         TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should -BeExactly 0 }
+        It '$e should be empty' { $e.Count | Should -Be 0 }
     }
 }
 
@@ -299,8 +299,8 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should -BeTrue}
         It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should -BeTrue}
         It 'Common parameters should not be appear in the syntax' { $x.Syntax -like "*verbose*" | Should -BeFalse }
-        It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should -BeExactly 1}
-        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should -BeExactly 2}
+        It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should -Be 1}
+        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should -Be 2}
     }
 
     It 'helpFunc3 -?' {
@@ -527,11 +527,11 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.examples.example[0].introduction[0].text' { $x.examples.example[0].introduction[0].text | Should -BeExactly 'PS>' }
         It '$x.examples.example[0].code' { $x.examples.example[0].code | Should -BeExactly 'helpFunc12 -Name foo' }
         It '$x.examples.example[0].remarks[0].text' { $x.examples.example[0].remarks[0].text | Should -BeExactly 'Adds .txt to foo' }
-        It '$x.examples.example[0].remarks.length' { $x.examples.example[0].remarks.length | Should -BeExactly 5 }
+        It '$x.examples.example[0].remarks.length' { $x.examples.example[0].remarks.length | Should -Be 5 }
         It '$x.examples.example[1].introduction[0].text' { $x.examples.example[1].introduction[0].text | Should -BeExactly 'C:\PS>' }
         It '$x.examples.example[1].code' { $x.examples.example[1].code | Should -BeExactly 'helpFunc12 bar txt' }
         It '$x.examples.example[1].remarks[0].text' { $x.examples.example[1].remarks[0].text | Should -BeExactly 'Adds .txt to bar' }
-        It '$x.examples.example[1].remarks.length' { $x.examples.example[1].remarks.length | Should -BeExactly 5 }
+        It '$x.examples.example[1].remarks.length' { $x.examples.example[1].remarks.length | Should -Be 5 }
     }
 
     Context 'get-help helpFunc12' {

@@ -60,7 +60,7 @@ Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     }
 
     It "The dynamic parameter is enabled and bound" {
-        foo-bar -path abc -dp1 42 | Should -BeExactly 42
+        foo-bar -path abc -dp1 42 | Should -Be 42
     }
 
     It "When the dynamic parameter is not available, and raises an error when specified" {

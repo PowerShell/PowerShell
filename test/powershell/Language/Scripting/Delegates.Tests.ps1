@@ -42,7 +42,7 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
 
     #0 arg, no return
     It 'System.Action' {
-        ([System.Action]{ $script:gl=lineno; $args.Length | Should -BeExactly 0 }).Invoke()
+        ([System.Action]{ $script:gl=lineno; $args.Length | Should -Be 0 }).Invoke()
         ($gl + 1) | Should -BeExactly (lineno)
     }
     # multiple args, no return
@@ -66,7 +66,7 @@ Describe 'Test for conversion b/w script block and delegate' -Tags "CI" {
 
     #0 arg with return value
     It 'System.Func[Int32]' {
-        ([System.Func[Int32]]{ $script:gl=lineno; $args.Length }).Invoke() | Should -BeExactly 0
+        ([System.Func[Int32]]{ $script:gl=lineno; $args.Length }).Invoke() | Should -Be 0
         ($gl + 1) | Should -BeExactly (lineno)
     }
 
