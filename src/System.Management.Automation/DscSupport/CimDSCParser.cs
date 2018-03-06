@@ -667,7 +667,18 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else
             {
-                var systemResourceRoot = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.System), "Configuration");
+                // DSC SxS scenario
+                var configSystemPath = Utils.DefaultPowerShellAppBase;
+                var systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                var inboxModulePath = "Modules\\PSDesiredStateConfiguration";
+
+                if (!Directory.Exists(systemResourceRoot))
+                {
+                     configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
+                     systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
+                     inboxModulePath = InboxDscResourceModulePath;
+                }
+
                 var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
                 Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
@@ -708,7 +719,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 List<string> modulePaths = new List<string>();
                 if (modulePathList == null || modulePathList.Count == 0)
                 {
-                    modulePaths.Add(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.System), InboxDscResourceModulePath));
+                    modulePaths.Add(Path.Combine(configSystemPath, inboxModulePath));
                     isInboxResource = true;
                 }
                 else
