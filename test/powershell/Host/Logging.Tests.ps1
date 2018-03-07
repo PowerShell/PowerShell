@@ -180,12 +180,12 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         if ($IsSupportedEnvironment)
         {
             # Check the current state.
-            $persistenceEnabled = Get-OsLogPersistence
-
+            $persistenceEnabled  = (Get-OSLogPersistence).Enabled
             if (!$persistenceEnabled)
             {
                 # enable powershell log persistence to support exporting log entries
                 # for each test
+                Write-Verbose -Message 'Enabling pwsh log persistence'
                 Set-OsLogPersistence -Enable $true
             }
         }
@@ -197,19 +197,22 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         {
             # generate a unique log application id
             [string] $logId = [Guid]::NewGuid().ToString('N')
+
             # Generate a working directory and content file for Export-OSLog
-            [string] $workingDirectory = Join-Path -Path $PSDrive -ChildPath $logId
-            [string] $contentFile = Join-Path -Path $PSDrive -ChildPath ($logId + 'txt')
+            [string] $workingDirectory = Join-Path -Path $TestDrive -ChildPath $logId
+            $null = New-Item -Path $workingDirectory -ItemType Directory -ErrorAction Stop
+
+            [string] $contentFile = Join-Path -Path $workingDirectory -ChildPath ('pwsh.log.txt')
             # get log items after current time.
-            [DateTime] $now = [DateTime]::Now
+            [DateTime] $after = [DateTime]::Now
         }
     }
-
 
     AfterAll {
         if ($IsSupportedEnvironment -and !$persistenceEnabled)
         {
             # disable persistence if it wasn't enabled
+            Write-Verbose -Message 'Disabling pwsh log persistence'
             Set-OsLogPersistence -Enable $false
         }
     }
@@ -218,7 +221,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        Export-OsLog -WorkingDirectory $workingDirectory -After $now | Set-Content -Path $contentFile
+        Export-OsLog -WorkingDirectory $workingDirectory -After $after -Verbose | Set-Content -Path $contentFile
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
 
         $items | Should Not Be $null
@@ -237,7 +240,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        Export-OsLog -WorkingDirectory $workingDirectory -After $now | Set-Content -Path $contentFile
+        Export-OsLog -WorkingDirectory $workingDirectory -After $after -Verbose | Set-Content -Path $contentFile
         # by default, powershell startup should only log informational events are logged.
         # With Level = Warning, nothing should
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3

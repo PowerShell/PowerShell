@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 <#
 os_log notes:
@@ -99,6 +100,7 @@ function Test-Linux
 
 function Start-NativeExecution
 {
+    [CmdletBinding()]
     param
     (
         [Parameter(Mandatory)]
@@ -110,6 +112,7 @@ function Start-NativeExecution
 
     try
     {
+        Write-Verbose -Message "Executing $command"
         & $command
         if ($LASTEXITCODE -ne 0)
         {
@@ -793,6 +796,7 @@ function Get-PSOsLog
 #>
 function Export-OSLog
 {
+    [CmdletBinding()]
     param
     (
         [Parameter(Mandatory)]
@@ -810,30 +814,36 @@ function Export-OSLog
     {
         throw "WorkingDirectory must exist: $WorkingDirectory"
     }
-    $generatedName = [Guid]::new().ToString('N') + '.logarchive'
-    $generatedDir = Join-Path -Path $WorkingDirectory -ChildPath $generatedName
+    # Generate a directory under the working directory for
+    # the log command to use.
+    $exportDir = Join-Path -Path $WorkingDirectory -ChildPath 'pwsh.logarchive'
+
+    # NOTE: The log command expects this directory to NOT exist
+    if (Test-Path -Path $exportDir)
+    {
+        Remove-Item -Path $exportDir -Force -Recurse -ErrorAction SilentlyContinue
+    }
 
     try
     {
-        $null = New-Item -Path $generatedDir -ItemType Directory -ErrorAction Stop
-
         if ($After -ne $null)
         {
             [string] $startTime = $After.ToString("yyyy-MM-dd HH:mm:ss")
-            Start-NativeExecution -command {log collect --start $startTime --output $generatedDir}
+            Start-NativeExecution -command {log collect --start $startTime --output $exportDir}
         }
         else
         {
-            Start-NativeExecution -command {log collect --output $generatedDir}
+            Start-NativeExecution -command {log collect --output $exportDir}
         }
 
-        Start-NativeExecution -command {log show $generatedDir --info --predicate 'process == "pwsh"'}
+        Start-NativeExecution -command {log show $exportDir --info --predicate 'process == "pwsh"'}
     }
     finally
     {
-        if (Test-Path -Path $generatedDir)
+        # clean up
+        if (Test-Path -Path $exportDir)
         {
-            Remove-Item -Path $generatedDir -Force -Recurse -ErrorAction SilentlyContinue
+            Remove-Item -Path $exportDir -Force -Recurse -ErrorAction SilentlyContinue
         }
     }
 }
@@ -861,7 +871,7 @@ function Set-OsLogPersistence
     param
     (
         [Parameter(Mandatory, Position = 0)]
-        [switch] $Enable
+        [bool] $Enable
     )
     Test-MacOS
     Test-Elevated
@@ -884,6 +894,11 @@ function Set-OsLogPersistence
 #>
 function Get-OsLogPersistence
 {
+    [CmdletBinding()]
+    param
+    (
+
+    )
     Test-MacOS
     Test-Elevated
 
@@ -896,6 +911,7 @@ function Get-OsLogPersistence
         $result = new-object PSObject -Property @{
             Level = 'DEFAULT'
             Persist = 'DEFAULT'
+            Enabled = $false
         }
     }
     else
@@ -903,6 +919,7 @@ function Get-OsLogPersistence
         $result = new-object PSObject -Property @{
             Level = $parts[$parts.Length - 2]
             Persist = $parts[$parts.Length -1]
+            Enabled = $true
         }
     }
     return $result

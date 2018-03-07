@@ -6,5 +6,5 @@ CompanyName = 'Microsoft Corporation'
 Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 Description = 'Provides a reader for powershell syslog and os_log entries'
 RootModule = 'PSSysLog.psm1'
-FunctionsToExport = @('Get-PSSysLog', 'Get-PSOsLog', 'Import-OSLog', 'Get-OsLogPersistence', 'Set-OsLogPersistence')
+FunctionsToExport = @('Get-PSSysLog', 'Get-PSOsLog', 'Export-OSLog', 'Get-OsLogPersistence', 'Set-OsLogPersistence')
 }
