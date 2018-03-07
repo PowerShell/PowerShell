@@ -22,17 +22,13 @@ Describe "New-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
     #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
     It "should be able to Remove-EventLog -LogName <string> -ComputerName <string>" -Pending:($True) {
       {Remove-EventLog -LogName TestLog -ComputerName $env:COMPUTERNAME -ErrorAction Stop}              | Should -Not -Throw
-      try {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should -Be "Microsoft.PowerShell.Commands.WriteEventLogCommand"}
-      try {Get-EventLog -LogName TestLog -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should -Be "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"}
+      { Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ErrorAction Stop } | Should -Throw -ErrorId "Microsoft.PowerShell.Commands.WriteEventLogCommand"
+      { Get-EventLog -LogName TestLog -ErrorAction Stop } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"
     }
     #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
     It "should be able to Remove-EventLog -Source <string> -ComputerName <string>"  -Pending:($True) {
       {Remove-EventLog -Source TestSource -ComputerName $env:COMPUTERNAME -ErrorAction Stop} | Should -Not -Throw
-      try {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should -Be "Microsoft.PowerShell.Commands.WriteEventLogCommand"}
-      try {Get-EventLog -LogName TestLog -ErrorAction Stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId             | Should -Be "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"}
+      { Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ErrorAction Stop } | Should -Throw -ErrorId "Microsoft.PowerShell.Commands.WriteEventLogCommand"
+      { Get-EventLog -LogName TestLog -ErrorAction Stop; } | Should -Throw -ErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"
     }
 }
