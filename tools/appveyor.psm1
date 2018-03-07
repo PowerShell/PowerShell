@@ -450,6 +450,9 @@ function Invoke-AppveyorFinish
     try {
         $releaseTag = Get-ReleaseTag
 
+        # Build clean before backing to remove files from testing
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
 
