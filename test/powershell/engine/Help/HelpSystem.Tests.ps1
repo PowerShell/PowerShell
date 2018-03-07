@@ -326,3 +326,49 @@ Describe "help function uses full view by default" -Tags "CI" {
         $gpsHelp | Where-Object {$_ -cmatch '^PARAMETERS'} | Should -BeNullOrEmpty
     }
 }
+
+Describe 'help can be found from $home directory' -Tags 'Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix' {
+    BeforeAll {
+        ## Clear all help from user scope.
+        Remove-Item "$HOME\PowerShellHelp" -Force -ErrorAction SilentlyContinue -Recurse
+        Update-Help -Module 'Microsoft.PowerShell.Core' -Scope User -Force
+        Update-Help -Module 'Microsoft.PowerShell.Management' -Scope User -Force
+        Update-Help -Module 'PSReadLine' -Scope User -Force
+        Update-Help -Module 'PackageManagement' -Scope User -Force
+
+        ## Delete help from global scope if it exists.
+        $currentCulture = (Get-Culture).Name
+
+        $managementHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.Commands.Management.dll-Help.xml'
+        if(Test-Path $managementHelpFilePath)
+        {
+            Remove-Item $managementHelpFilePath -Force -ErrorAction SilentlyContinue
+        }
+
+        $coreHelpFilePath = Join-Path $PSHOME -ChildPath $currentCulture -AdditionalChildPath 'System.Management.Automation.dll-Help.xml'
+        if(Test-Path $coreHelpFilePath)
+        {
+            Remove-Item $coreHelpFilePath -Force -ErrorAction SilentlyContinue
+        }
+
+        $psreadlineHelpFilePath = Join-Path (Get-Module PSReadLine -ListAvailable).ModuleBase -ChildPath $currentCulture -AdditionalChildPath 'Microsoft.PowerShell.PSReadLine.dll-Help.xml'
+        if(Test-Path $psreadlineHelpFilePath)
+        {
+            Remove-Item $psreadlineHelpFilePath -Force -ErrorAction SilentlyContinue
+        }
+
+        $TestCases = @(
+            @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
+            @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineKeyHandler' }
+            @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
+        )
+    }
+
+    It 'help in user scope be found for <TestName>' -TestCases $TestCases {
+        param($CmdletName)
+
+        $helpObj = Get-Help -Name $CmdletName -Full
+        $helpObj.description | Out-String | Should Match $CmdletName
+    }
+}

@@ -375,7 +375,42 @@ namespace Microsoft.PowerShell.Commands
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();
 
-                        destPaths.Add(module.ModuleBase);
+                        if(this.Scope == UpdateHelpScope.User)
+                        {
+                            string homeFolder = HelpUtils.GetUserHomeHelpSearchPath();
+                            string destPathToAdd = null;
+
+                            string parentModuleBase = Directory.GetParent(module.ModuleBase).Name;
+
+                            // In case of inbox modules, the help is put under $PSHOME/<current_culture>,
+                            // since the dlls are not published under individual module folders, but under $PSHome
+                            // In case of other modules, the help in under module.ModuleBase/<current_culture>
+                            if(module.ModuleBase.EndsWith(module.ModuleName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                destPathToAdd = Path.Combine(homeFolder, module.ModuleName);
+                            }
+                            else if(String.Compare(parentModuleBase, module.ModuleName, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                //This module has version folder.
+                                var moduleVersion = (new DirectoryInfo(module.ModuleBase)).Name;
+                                destPathToAdd = Path.Combine(homeFolder,module.ModuleName, moduleVersion);
+                            }
+                            else
+                            {
+                                destPathToAdd = homeFolder;
+                            }
+
+                            if(!Directory.Exists(destPathToAdd))
+                            {
+                                Directory.CreateDirectory(destPathToAdd);
+                            }
+
+                            destPaths.Add(destPathToAdd);
+                        }
+                        else
+                        {
+                            destPaths.Add(module.ModuleBase);
+                        }
 
 #if !CORECLR // Side-By-Side directories are not present in OneCore environments.
                         if (IsSystemModule(module.ModuleName) && Environment.Is64BitOperatingSystem)
