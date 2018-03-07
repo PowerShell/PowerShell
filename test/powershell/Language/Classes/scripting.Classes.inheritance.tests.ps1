@@ -67,7 +67,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         class A { static [B]$b }
         class B : A {}
         [A]::b = [B]::new()
-        { [A]::b = "bla" } | Should -Throw -ErrorId 'System.Management.Automation.SetValueInvocationException'
+        { [A]::b = "bla" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
     }
 }
 
@@ -406,7 +406,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
             B([int]$a) : base($a * 2, 100) {}
         }
 
-        { [B]::new(101) } | Should -Throw -ErrorId "System.Management.Automation.MethodException"
+        { [B]::new(101) } | Should -Throw -ErrorId "MethodCountCouldNotFindBest"
     }
 
     It 'call default base ctor implicitly' {

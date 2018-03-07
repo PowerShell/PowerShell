@@ -56,7 +56,7 @@ namespace Dummy
         [C1]::new().Ensure = "Present"
 
         It 'Error when ValidateSet should be ExceptionWhenSetting' {
-            [C1]::new().Ensure = "foo" | Should -Throw -ErrorId 'ExceptionWhenSetting'
+            { [C1]::new().Ensure = "foo" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -65,7 +65,7 @@ namespace Dummy
         # This call should not throw exception
         [C1]::Ensure = "Present"
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            { [C1]::Ensure = "foo"} | Should -Throw -ErrorId 'ExceptionWhenSetting'
+            { [C1]::Ensure = "foo" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -76,7 +76,6 @@ namespace Dummy
         [C1]::new().f = 1
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
             { [C1]::new().f = 20 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
-            }
         }
     }
 
