@@ -733,6 +733,28 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["self"] | Should -BeExactly "${baseUri}?maxlinks=5&linknumber=2&type=multiple"
     }
 
+
+    It "Validate Invoke-WebRequest RelationLink keys are treated case-insensitively" {
+        $uri = Get-WebListenerUrl -Test 'Link' -Query @{maxlinks = 5; linknumber = 2; type = 'multiple'}
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.RelationLink["next"] | Should -Not -BeNullOrEmpty
+        $result.Output.RelationLink["next"] | Should -BeExactly $result.Output.RelationLink["Next"]
+
+        $result.Output.RelationLink["last"] | Should -Not -BeNullOrEmpty
+        $result.Output.RelationLink["last"] | Should -BeExactly $result.Output.RelationLink["LAST"]
+
+        $result.Output.RelationLink["prev"] | Should -Not -BeNullOrEmpty
+        $result.Output.RelationLink["prev"] | Should -BeExactly $result.Output.RelationLink["preV"]
+
+        $result.Output.RelationLink["first"] | Should -Not -BeNullOrEmpty
+        $result.Output.RelationLink["first"] | Should -BeExactly $result.Output.RelationLink["FiRsT"]
+
+        $result.Output.RelationLink["self"] | Should -Not -BeNullOrEmpty
+        $result.Output.RelationLink["self"] | Should -BeExactly $result.Output.RelationLink["self"]
+    }
+
     It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property: <type>" -TestCases @(
         @{ type = "noUrl" }
         @{ type = "malformed" }
