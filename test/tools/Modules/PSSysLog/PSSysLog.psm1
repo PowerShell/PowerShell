@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 Set-StrictMode -Version Latest
-$ErrorActionPreference = 'Stop'
 
 <#
 os_log notes:
@@ -100,7 +99,6 @@ function Test-Linux
 
 function Start-NativeExecution
 {
-    [CmdletBinding()]
     param
     (
         [Parameter(Mandatory)]
@@ -112,7 +110,6 @@ function Start-NativeExecution
 
     try
     {
-        Write-Verbose -Message "Executing $command"
         & $command
         if ($LASTEXITCODE -ne 0)
         {
@@ -840,7 +837,6 @@ function Export-OSLog
     }
     finally
     {
-        # clean up
         if (Test-Path -Path $exportDir)
         {
             Remove-Item -Path $exportDir -Force -Recurse -ErrorAction SilentlyContinue
@@ -894,11 +890,6 @@ function Set-OsLogPersistence
 #>
 function Get-OsLogPersistence
 {
-    [CmdletBinding()]
-    param
-    (
-
-    )
     Test-MacOS
     Test-Elevated
 
