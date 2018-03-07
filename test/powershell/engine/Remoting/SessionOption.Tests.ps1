@@ -14,11 +14,11 @@ try {
         }
         It "The SessionOption type has the proper properties when created with the default constructor" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
-            $result.SkipCACheck         | should -Be $False
-            $result.SkipCNCheck         | should -Be $False
-            $result.SkipRevocationCheck | should -Be $False
-            $result.UseEncryption       | should -Be $True
-            $result.UseUtf16            | should -Be $False
+            $result.SkipCACheck         | should -BeFalse
+            $result.SkipCNCheck         | should -BeFalse
+            $result.SkipRevocationCheck | should -BeFalse
+            $result.UseEncryption       | should -BeTrue
+            $result.UseUtf16            | should -BeFalse
             $result.ProxyAuthentication | should -Be 0
             $result.SPNPort             | should -Be 0
             $result.OperationTimeout    | should -Be 0
@@ -38,11 +38,11 @@ try {
             $result.ProxyAccessType = "ProxyAutoDetect"
             $result.ProxyCredential = [System.Net.NetworkCredential]::new("user","pass")
 
-            $result.SkipCACheck         | should -Be $true
-            $result.SkipCNCheck         | should -Be $true
-            $result.SkipRevocationCheck | should -Be $true
-            $result.UseEncryption       | should -Be $False
-            $result.UseUtf16            | should -Be $True
+            $result.SkipCACheck         | should -BeTrue
+            $result.SkipCNCheck         | should -BeTrue
+            $result.SkipRevocationCheck | should -BeTrue
+            $result.UseEncryption       | should -BeFalse
+            $result.UseUtf16            | should -BeTrue
             $result.ProxyAuthentication | should -Be "Negotiate"
             $result.SPNPort             | should -Be 10
             $result.OperationTimeout    | should -Be 10

@@ -116,7 +116,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         }
 
         $result = test-singleswitchparameter
-        $result | Should -Be $false
+        $result | Should -BeFalse
     }
 
     It "Verify that a bool parameter returns proper value" {
@@ -132,10 +132,10 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         }
 
         $result1 = test-singleboolparameter
-        $result1 | Should -Be $false
+        $result1 | Should -BeFalse
 
         $result2 = test-singleboolparameter -Parameter1:1
-        $result2 | Should -Be $true
+        $result2 | Should -BeTrue
     }
 
     It "Should throw a exception when passing a string that can't be parsed by Int" {

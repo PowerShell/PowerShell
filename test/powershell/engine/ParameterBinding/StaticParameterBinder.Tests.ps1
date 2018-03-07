@@ -89,8 +89,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 0
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should -Be $true
-                    $result.BoundParameters.Recurse.ConstantValue | Should -Be $true
+                    $result.BoundParameters.Name.ConstantValue | Should -BeTrue
+                    $result.BoundParameters.Recurse.ConstantValue | Should -BeTrue
                     $result.BoundParameters.Path.ConstantValue | Should -Be 'abc'
                 }
             },
@@ -101,7 +101,7 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 1
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should -Be $true
+                    $result.BoundParameters.Name.ConstantValue | Should -BeTrue
                     $result.BindingExceptions.f.CommandElement.Extent.Text | Should -Be '-f'
                     $result.BindingExceptions.f.BindingException.ErrorId | Should -Be 'AmbiguousParameter'
                 }

@@ -95,7 +95,7 @@ try {
 
         It "Verify Writes Create the File if Not Present" {
             Remove-Item $userPropertiesFile -Force
-            Test-Path $userPropertiesFile | Should -Be $false
+            Test-Path $userPropertiesFile | Should -BeFalse
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Bypass
             Get-Content -Path $userPropertiesFile | Should -Be '{"Microsoft.PowerShell:ExecutionPolicy":"Bypass"}'
         }

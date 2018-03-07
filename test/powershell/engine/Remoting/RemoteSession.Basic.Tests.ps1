@@ -82,7 +82,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
             # Invoke the script block in a different PowerShell instance so that when TestDrive tries to delete $RoleCapDirectory,
             # the transcription has finished and the files are not locked.
             $helpContent = [powershell]::Create().AddScript($scriptBlock).Invoke()
-            $helpContent | Should -Not -Be $null
+            $helpContent | Should -Not -BeNullOrEmpty
         }
         finally
         {

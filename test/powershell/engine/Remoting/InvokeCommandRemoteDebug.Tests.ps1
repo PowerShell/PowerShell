@@ -207,7 +207,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
     It "Verifies the debugger 'CancelDebuggerProcessing' API method" {
 
         $rs.Debugger.CancelDebuggerProcessing()
-        $testDebugger.RunspaceDebugProcessCancelled | Should -Be $true
+        $testDebugger.RunspaceDebugProcessCancelled | Should -BeTrue
     }
 
     It "Verifies that 'Invoke-Command -RemoteDebug' running in a runspace without PSHost is ignored" {

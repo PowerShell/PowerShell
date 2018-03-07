@@ -90,8 +90,8 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths = $newModulePath -split [System.IO.Path]::PathSeparator
 
         $paths.Count | Should -Be 5
-        $paths -contains $fakePSHomeModuleDir | Should -Be $true
-        $paths -contains $customeModules | Should -Be $true
+        $paths -contains $fakePSHomeModuleDir | Should -BeTrue
+        $paths -contains $customeModules | Should -BeTrue
     }
 
 }

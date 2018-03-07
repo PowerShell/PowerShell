@@ -30,8 +30,8 @@ Describe "Adapter Tests" -tags "CI" {
             $col  = $pso.psobject.Properties.Match("*")
             $prop = $col.psobject.Members["Item"]
             $prop | Should -Not -BeNullOrEmpty
-            $prop.IsGettable | Should -Be $true
-            $prop.IsSettable | Should -Be $false
+            $prop.IsGettable | Should -BeTrue
+            $prop.IsSettable | Should -BeFalse
             $prop.TypeNameOfValue | Should -Be "System.Management.Automation.PSPropertyInfo"
             $prop.Invoke("ProcessName").Value | Should -Be $processName
         }
@@ -59,8 +59,8 @@ Describe "Adapter Tests" -tags "CI" {
         It "Access misc properties via MemberSet adapter" {
             $prop  = $psmemberset.psobject.Properties["NoteName"]
             $prop | Should -Not -BeNullOrEmpty
-            $prop.IsGettable | Should -Be $true
-            $prop.IsSettable | Should -Be $true
+            $prop.IsGettable | Should -BeTrue
+            $prop.IsSettable | Should -BeTrue
             $prop.TypeNameOfValue | Should -Be "System.Int32"
         }
 

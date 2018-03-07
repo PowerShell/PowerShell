@@ -3,7 +3,7 @@
 Describe 'Basic engine APIs' -Tags "CI" {
     Context 'powershell::Create' {
         It 'can create default instance' {
-            [powershell]::Create() | Should -Not -Be $null
+            [powershell]::Create() | Should -Not -BeNullOrEmpty
         }
 
         It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
@@ -12,7 +12,7 @@ Describe 'Basic engine APIs' -Tags "CI" {
 
             $result = $ps.Invoke()
             $result.Count | Should -Be 1
-            $result[0].Source | Should -Be "Microsoft.WSMan.Management"
+            $result[0].Source | Should -BeExactly "Microsoft.WSMan.Management"
         }
     }
 

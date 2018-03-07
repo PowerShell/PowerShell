@@ -43,7 +43,7 @@ Describe "Tests for paths of submodules in module manifest" -tags "CI" {
     
         New-ModuleManifest $moduleFilePath -NestedModules @($SubModulePath)
         Import-Module $moduleFilePath
-        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -Be $true
+        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -BeTrue
     }
 
     It "Test if RootModule path is <SubModulePath>" -TestCases $testCases {
@@ -51,6 +51,6 @@ Describe "Tests for paths of submodules in module manifest" -tags "CI" {
     
         New-ModuleManifest $moduleFilePath -RootModule $SubModulePath
         Import-Module $moduleFilePath
-        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -Be $true
+        (Get-Module $moduleName).ExportedCommands.Keys.Contains('TestModuleFunction') | Should -BeTrue
     }
 }

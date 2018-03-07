@@ -18,7 +18,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-ModuleManifest -NestedModules $fileList -RootModule foo\bar.psm1 -RequiredAssemblies $fileList -Path $testModulePath -TypesToProcess $fileList -FormatsToProcess $fileList -ScriptsToProcess $fileList -FileList $fileList -ModuleList $fileList
 
-        Test-Path $testModulePath | Should -Be $true
+        Test-Path $testModulePath | Should -BeTrue
 
         # use -ErrorAction Stop to cause test to fail if Test-ModuleManifest writes to error stream
         Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should -BeOfType System.Management.Automation.PSModuleInfo

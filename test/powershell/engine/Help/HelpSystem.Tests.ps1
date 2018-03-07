@@ -179,7 +179,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 
             # System.Management.Automation.ProviderContext.GetProviderSpecificHelpInfo ignores extra whitespace, line breaks and
             # comments when loading help XML, but Select-Xml can not; use BeLikeExactly operator to omit trailing line breaks:
-            $helpXmlNode.description.para -clike "$expected*" | Should -Be $true
+            $helpXmlNode.description.para -clike "$expected*" | Should -BeTrue
         }
     }
 }

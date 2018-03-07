@@ -74,7 +74,7 @@ Describe 'Basic Job Tests' -Tags 'CI' {
                 $nativeJob = Start-job { pwsh -c 1+1 }
                 $nativeJob | Wait-Job
                 $nativeJob.State | Should -BeExactly "Completed"
-                $nativeJob.HasMoreData | Should -Be $true
+                $nativeJob.HasMoreData | Should -BeTrue
                 Receive-Job $nativeJob | Should -BeExactly 2
                 Remove-Job $nativeJob
                 { Get-Job $nativeJob -ErrorAction Stop } | ShouldBeErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"

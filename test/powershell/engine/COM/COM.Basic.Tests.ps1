@@ -45,7 +45,7 @@ try {
             ## $element should be the first drive from the enumeration. It shouldn't be the same as $drives,
             ## but it should be the same as '$drives.Item($element.DriveLetter)'
             $element = $drives | Select-Object -First 1
-            [System.Object]::ReferenceEquals($element, $drives) | Should -Be $false
+            [System.Object]::ReferenceEquals($element, $drives) | Should -BeFalse
             $element | Should -Be $drives.Item($element.DriveLetter)
         }
     }

@@ -115,37 +115,37 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
         }
 
         It "Build meta should be ignored" {
-            $v1_0_0_beta -eq $v1_0_0_betaBuild | Should -Be $true
-            $v1_0_0_betaBuild -lt $v1_0_0_beta | Should -Be $false
-            $v1_0_0_beta -lt $v1_0_0_betaBuild | Should -Be $false
+            $v1_0_0_beta -eq $v1_0_0_betaBuild | Should -BeTrue
+            $v1_0_0_betaBuild -lt $v1_0_0_beta | Should -BeFalse
+            $v1_0_0_beta -lt $v1_0_0_betaBuild | Should -BeFalse
         }
 
         It "<lhs> less than <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
-            $lhs -lt $rhs | Should -Be $true
-            $rhs -lt $lhs | Should -Be $false
+            $lhs -lt $rhs | Should -BeTrue
+            $rhs -lt $lhs | Should -BeFalse
         }
 
         It "<lhs> less than or equal <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
-            $lhs -le $rhs | Should -Be $true
-            $rhs -le $lhs | Should -Be $false
-            $lhs -le $lhs | Should -Be $true
-            $rhs -le $rhs | Should -Be $true
+            $lhs -le $rhs | Should -BeTrue
+            $rhs -le $lhs | Should -BeFalse
+            $lhs -le $lhs | Should -BeTrue
+            $rhs -le $rhs | Should -BeTrue
         }
 
         It "<lhs> greater than <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
-            $lhs -gt $rhs | Should -Be $false
-            $rhs -gt $lhs | Should -Be $true
+            $lhs -gt $rhs | Should -BeFalse
+            $rhs -gt $lhs | Should -BeTrue
         }
 
         It "<lhs> greater than or equal <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
-            $lhs -ge $rhs | Should -Be $false
-            $rhs -ge $lhs | Should -Be $true
-            $lhs -ge $lhs | Should -Be $true
-            $rhs -ge $rhs | Should -Be $true
+            $lhs -ge $rhs | Should -BeFalse
+            $rhs -ge $lhs | Should -BeTrue
+            $lhs -ge $lhs | Should -BeTrue
+            $rhs -ge $rhs | Should -BeTrue
         }
 
         It "Equality <operand>" -TestCases @(
@@ -153,23 +153,23 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ operand = $v1_0_0_alpha }
         ) {
             param($operand)
-            $operand -eq $operand | Should -Be $true
-            $operand -ne $operand | Should -Be $false
-            $null -eq $operand | Should -Be $false
-            $operand -eq $null | Should -Be $false
-            $null -ne $operand | Should -Be $true
-            $operand -ne $null | Should -Be $true
+            $operand -eq $operand | Should -BeTrue
+            $operand -ne $operand | Should -BeFalse
+            $null -eq $operand | Should -BeFalse
+            $operand -eq $null | Should -BeFalse
+            $null -ne $operand | Should -BeTrue
+            $operand -ne $null | Should -BeTrue
         }
 
         It "comparisons with null" {
-            $v1_0_0 -lt $null | Should -Be $false
-            $null -lt $v1_0_0 | Should -Be $true
-            $v1_0_0 -le $null | Should -Be $false
-            $null -le $v1_0_0 | Should -Be $true
-            $v1_0_0 -gt $null | Should -Be $true
-            $null -gt $v1_0_0 | Should -Be $false
-            $v1_0_0 -ge $null | Should -Be $true
-            $null -ge $v1_0_0 | Should -Be $false
+            $v1_0_0 -lt $null | Should -BeFalse
+            $null -lt $v1_0_0 | Should -BeTrue
+            $v1_0_0 -le $null | Should -BeFalse
+            $null -le $v1_0_0 | Should -BeTrue
+            $v1_0_0 -gt $null | Should -BeTrue
+            $null -gt $v1_0_0 | Should -BeFalse
+            $v1_0_0 -ge $null | Should -BeTrue
+            $null -ge $v1_0_0 | Should -BeFalse
         }
     }
 
@@ -212,7 +212,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             }
             $semVer = $null
             [SemanticVersion]::TryParse($_, [ref]$semVer) | Should -Be $expectedResult
-            $semVer | Should -Be $null
+            $semVer | Should -BeNullOrEmpty
         }
 
         It "Negative version arguments" {

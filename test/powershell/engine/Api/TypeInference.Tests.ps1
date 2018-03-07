@@ -263,7 +263,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers type from where-object of integer" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | Where-Object {$_ -gt 10} }.Ast)
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -Be $true
+            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
         }
     }
 
@@ -271,7 +271,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object {$_ * 10} }.Ast)
         $res.Count | Should -Be 2
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -Be $true
+            $r.Name -In 'System.Int32', 'System.Int32[]' | Should -BeTrue
         }
     }
 
@@ -288,7 +288,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         foreach ($r in $res) {
             $r.Name -In 'Microsoft.Management.Infrastructure.CimInstance#root/CIMV2/Win32_Bios',
-            'Microsoft.Management.Infrastructure.CimInstance' | Should -Be $true
+            'Microsoft.Management.Infrastructure.CimInstance' | Should -BeTrue
         }
     }
 
@@ -296,7 +296,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { [int[]] $i = 1..20; $i | ForEach-Object -Begin {"Hi"} {$_ * 10} -End {[int]} }.Ast)
         $res.Count | Should -Be 4
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -Be $true
+            $r.Name -In 'System.Int32', 'System.Int32[]', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -357,7 +357,7 @@ Describe "Type inference Tests" -tags "CI" {
         $gpsOutput = [Microsoft.PowerShell.Commands.GetProcessCommand].GetCustomAttributes([System.Management.Automation.OutputTypeAttribute], $false).Type
         $names = $gpsOutput.Name
         foreach ($r in $res) {
-            $r.Name -In $names | Should -Be $true
+            $r.Name -In $names | Should -BeTrue
         }
     }
 
@@ -404,7 +404,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 2
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -419,7 +419,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -434,7 +434,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -449,7 +449,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -464,7 +464,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -479,7 +479,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -494,7 +494,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -507,7 +507,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -Be $true
+            $r.Name -In 'System.Type', 'System.Int32', 'System.String' | Should -BeTrue
         }
     }
 
@@ -667,7 +667,7 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be 3
         foreach ($r in $res) {
-            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -Be $true
+            $r.Name -In 'System.Int32', 'System.String', 'System.Type' | Should -BeTrue
         }
     }
 
@@ -756,7 +756,7 @@ Describe "Type inference Tests" -tags "CI" {
 
             $res.Count | Should -Be 2
             foreach ($r in $res) {
-                $r.Name -In 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should -Be $true
+                $r.Name -In 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should -BeTrue
             }
         }
 
@@ -767,7 +767,7 @@ Describe "Type inference Tests" -tags "CI" {
 
             $res.Count | Should -Be 2
             foreach ($r in $res) {
-                $r.Name -In 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should -Be $true
+                $r.Name -In 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should -BeTrue
             }
         }
     }

@@ -45,10 +45,10 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
     It "Test that a nullable boolean is accepted for a boolean parameter." {
         [System.Nullable[System.Int32]] $nullBoolVar = $false
         $result = ParserTestBoolCmdlet2 $nullBoolVar
-        $result | should -Be $false
+        $result | should -BeFalse
         $result = ParserTestBoolCmdlet2 -First:$nullBoolVar
-        $result | should -Be $false
+        $result | should -BeFalse
         $result = ParserTestBoolCmdlet2 -First $nullBoolVar
-        $result | should -Be $false
+        $result | should -BeFalse
     }
 }

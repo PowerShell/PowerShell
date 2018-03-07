@@ -368,7 +368,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
         It "'ValidateNotNull' should throw on null element of a collection argument" {
             ## Should throw on null element
-            { NotNullFunc -Value @("string", $null, 2) } | Should -Throw
+            { NotNullFunc -Value @("string", $null, 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullFunc"
             ## Should not throw on empty string element
             { NotNullFunc -Value @("string", "", 2) } | Should -Not -Throw
             ## Should not throw on an empty collection
@@ -376,16 +376,16 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
         }
 
         It "'ValidateNotNullOrEmpty' should throw on null element of a collection argument or empty collection/dictionary" {
-            { NotNullOrEmptyFunc -Value @("string", $null, 2) } | Should -Throw
-            { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should -Throw
-            { NotNullOrEmptyFunc -Value @() } | Should -Throw
-            { NotNullOrEmptyFunc -Value @{} } | Should -Throw
+            { NotNullOrEmptyFunc -Value @("string", $null, 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
         }
 
         It "Mandatory parameter should throw on empty collection" {
-            { MandatoryFunc -ByteArray ([byte[]]@()) } | Should -Throw
-            { MandatoryFunc -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should -Throw
-            { MandatoryFunc -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should -Throw
+            { MandatoryFunc -ByteArray ([byte[]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyArrayNotAllowed,MandatoryFunc"
+            { MandatoryFunc -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyCollectionNotAllowed,MandatoryFunc"
+            { MandatoryFunc -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyCollectionNotAllowed,MandatoryFunc"
         }
     }
 }
