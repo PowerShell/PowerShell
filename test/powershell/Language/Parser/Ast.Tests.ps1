@@ -20,10 +20,10 @@ Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     }
     It "The proper error is returned when a variable is referenced" {
         $ast = { $a }.Ast.Find({$args[0] -is "VariableExpressionAst"},$true)
-        { $ast.SafeGetValue() } | Should -BeExactly "InvalidOperationException"
+        { $ast.SafeGetValue() } | Should -Throw -ErrorId "InvalidOperationException"
     }
     It "A ScriptBlock AST fails with the proper error" {
-        { { 1 }.Ast.SafeGetValue() } | Should -BeExactly "InvalidOperationException"
+        { { 1 }.Ast.SafeGetValue() } | Should -Throw -ErrorId "InvalidOperationException"
     }
 
 }
