@@ -1106,6 +1106,10 @@ Restore the module to '$Pester' by running:
             $script:nonewline = $true
             $script:inerror = $false
         }
+        elseif ($trimmedline.StartsWith("Executing script ")) {
+            # Skip lines where Pester reports that is executing a test script
+            return
+        }
         elseif ($trimmedline -match "^\d+(\.\d+)?m?s$") {
             # Skip the time elapse like '12ms', '1ms', '1.2s' and '12.53s'
             return
