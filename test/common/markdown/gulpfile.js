@@ -1,3 +1,4 @@
+"use strict";
 var gulp = require("gulp");
 var concat = require("gulp-concat");
 var through2 = require("through2");
