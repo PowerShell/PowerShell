@@ -481,7 +481,7 @@ function Invoke-AppveyorFinish
 
         # Smoke Test MSI installer
         Write-Verbose "Smoke-Testing MSI installer" -Verbose
-        $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
+        $msi = $artifacts | Where-Object { $_ -is [pscustomobject] -and $_.msi.EndsWith(".msi") }
         $msiLog = Join-Path (Get-Location) 'msilog.txt'
         $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
         if ($msiExecProcess.ExitCode -ne 0)
