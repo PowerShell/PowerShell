@@ -503,7 +503,7 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish","/property:GenerateFullPaths=true")
+    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
     if ($Output) {
         $Arguments += "--output", $Output
     }
@@ -945,7 +945,7 @@ function Publish-PSTestTools {
     {
         Push-Location $tool.Path
         try {
-            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            dotnet publish --no-restore --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
             if ( $env:PATH -notcontains $toolPath ) {
