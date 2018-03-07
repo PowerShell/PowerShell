@@ -165,7 +165,7 @@ baz
         Set-Content -Path $testPath $testContent
         $result = Get-Content @GetContentParams
         $result.Length | Should -Be $expectedLength
-        $result -eq $expectedContent
+        $result | Should -BeExactly $expectedContent
     }
 
     It "should Get-Content with a variety of -Delimiter and -Tail: <test>" -TestCases @(

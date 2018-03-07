@@ -9,13 +9,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         $result.providerpath | Should -BeExactly "$TESTDRIVE"
     }
     It "Resolve-Path provides proper error on invalid location" {
-        try {
-            Resolve-Path $TESTDRIVE/this.directory.is.invalid -ErrorAction Stop
-            throw "execution OK"
-        }
-        catch {
-            $_.fullyqualifiederrorid | Should -BeExactly "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
-        }
+        { Resolve-Path $TESTDRIVE/this.directory.is.invalid -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
     }
     It "Resolve-Path -Path should return correct drive path" {
         $result = Resolve-Path -Path "TestDrive:\\\\\"

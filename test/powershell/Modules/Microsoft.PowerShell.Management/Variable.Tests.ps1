@@ -80,35 +80,19 @@ Describe "Validate basic negative test cases for Variable provider cmdlets" -Tag
     }
 
     It "Verify Negative New-Item" {
-        try {
-            New-Item -Name $testVarName -Value 5 -Path "Variable:" -ErrorAction Stop
-            throw "Expected exception not thrown"
-        }
-        catch { $_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.NewItemCommand" }
+        { New-Item -Name $testVarName -Value 5 -Path "Variable:" -ErrorAction Stop } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.NewItemCommand"
     }
 
     It "Verify Negative Move-Item" {
         $alreadyExistsVar = 2
-        try {
-            Move-Item -Path "Variable:${testVarName}" -Destination "Variable:alreadyExistsVar" -ErrorAction Stop
-            throw "Expected exception not thrown"
-        }
-        catch { $_.FullyQualifiedErrorId | Should -Be "GetDynamicParametersException,Microsoft.PowerShell.Commands.MoveItemCommand" }
+        { Move-Item -Path "Variable:${testVarName}" -Destination "Variable:alreadyExistsVar" -ErrorAction Stop } | Should -Throw -ErrorId "GetDynamicParametersException,Microsoft.PowerShell.Commands.MoveItemCommand"
     }
 
     It "Verify Negative Invoke-Item" {
-        try {
-            Invoke-Item -Path "Variable:${testVarName}" -ErrorAction Stop
-            throw "Expected exception not thrown"
-        }
-        catch { $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.InvokeItemCommand" }
+        { Invoke-Item -Path "Variable:${testVarName}" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.InvokeItemCommand"
     }
 
     It "Verify Negative Get-ItemPropertyValue" {
-        try {
-            Get-ItemPropertyValue -Path "Variable:" -Name $testVarName -ErrorAction Stop
-            throw "Expected exception not thrown"
-        }
-        catch { $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.GetItemPropertyValueCommand" }
+        { Get-ItemPropertyValue -Path "Variable:" -Name $testVarName -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.GetItemPropertyValueCommand"
     }
 }

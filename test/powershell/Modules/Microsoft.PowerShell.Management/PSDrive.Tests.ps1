@@ -72,22 +72,14 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verify WhatIf" {
             New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -WhatIf > $null
-            try {
-                Get-PSDrive -Name $psDriveName -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should -Be "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand" }
+            { Get-PSDrive -Name $psDriveName -ErrorAction Stop } | Should -Throw -ErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
         }
 
         It "Verify Scope" {
             New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -Description "Test PSDrive to remove" -Scope Local > $null
             $foundGlobal = $true
-            try {
-               $globalDrive = Get-PSDrive -Name $psDriveName -Scope Global -ErrorAction Stop
-            }
-            catch { $foundGlobal = $false }
+            { $globalDrive = Get-PSDrive -Name $psDriveName -Scope Global -ErrorAction Stop } | Should -Throw -ErrorId "GetDriveNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
             $localDrive = Get-PSDrive -Name $psDriveName -Scope Local
-            $foundGlobal | Should -BeFalse
             $localDrive.Name | Should -BeExactly $psDriveName
         }
     }

@@ -181,12 +181,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
     It "Should error correctly when failing to create a symbolic link" -Skip:($IsWindows -or $IsElevated) {
         # This test expects that /sbin exists but is not writable by the user
-        try {
-            New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop
-            throw "Execution OK"
-        } catch {
-            $_.FullyQualifiedErrorId | Should -Be "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
-        }
+        { New-Item -ItemType SymbolicLink -Path "/sbin/powershell-test" -Target $FullyQualifiedFolder -ErrorAction Stop } | Should -Throw -ErrorId "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
     }
 
     It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {

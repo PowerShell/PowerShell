@@ -172,13 +172,7 @@ try {
         }
 
         It "Call Set-TimeZone with invalid Id" {
-            try {
-                Set-TimeZone -Id "zzInvalidID"
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorID | Should -Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
-            }
+            { Set-TimeZone -Id "zzInvalidID" } | Should -Throw -ErrorId "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
         }
 
         It "Call Set-TimeZone by Name" {
@@ -197,13 +191,7 @@ try {
         }
 
         It "Call Set-TimeZone with invalid Name" {
-            try {
-                Set-TimeZone -Name "zzINVALID_Name"
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorID | Should -Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
-            }
+            { Set-TimeZone -Name "zzINVALID_Name" } | Should -Throw -ErrorId "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
         }
 
         It "Call Set-TimeZone from pipeline input object of type TimeZoneInfo" {

@@ -55,31 +55,13 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $AsItIs| Should -Not -Be $AsItWas
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$null" {
-            try {
-                Set-Content -Path $null -Value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop
-                Throw "Previous statement unexpectedly succeeded..."
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
-            }
+            { Set-Content -Path $null -Value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
-            try {
-                Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop
-                Throw "Previous statement unexpectedly succeeded..."
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
-            }
+            { Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -skip:$skipRegistry {
-            try {
-                Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop
-                Throw "Previous statement unexpectedly succeeded..."
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
-            }
+            { Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
         It "should be able to pass multiple [string]`$objects to Set-Content through the pipeline to output a dynamic Path file" {
