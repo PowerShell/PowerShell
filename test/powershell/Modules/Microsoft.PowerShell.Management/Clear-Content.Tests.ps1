@@ -114,7 +114,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
   Context "Proper errors should be delivered when bad locations are specified" {
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$null" {
       try {
-        clear-content -path $null -ea stop
+        clear-content -path $null -ErrorAction Stop
         throw "expected exception was not delivered"
       }
       catch {
@@ -124,7 +124,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$()" {
       try {
-        clear-content -path $() -ea stop
+        clear-content -path $() -ErrorAction Stop
         throw "expected exception was not delivered"
       }
       catch {
@@ -136,7 +136,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       $functionName = Get-NonExistantFunctionName
       $null = new-item function:$functionName -Value { 1 }
       try {
-        clear-content -path function:$functionName -ea Stop
+        clear-content -path function:$functionName -ErrorAction Stop
         throw "Expected exception was not thrown"
       }
       catch {
@@ -146,7 +146,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     It "should throw FileNotFound error when referencing a non-existant file" {
       try {
         $badFile = "TESTDRIVE:/badfilename.txt"
-        clear-content -path $badFile -ea Stop
+        clear-content -path $badFile -ErrorAction Stop
         throw "ExpectedExceptionNotDelivered"
       }
       catch {
@@ -156,7 +156,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     It "should throw DriveNotFound error when referencing a non-existant drive" {
        try {
          $badDrive = "{0}:/file.txt" -f (Get-NonExistantDriveName)
-         clear-content -path $badDrive -ea Stop
+         clear-content -path $badDrive -ErrorAction Stop
          thow "ExpectedExceptionNotDelivered"
        }
        catch {
@@ -167,7 +167,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     It "should throw ProviderNotFound error when referencing a non-existant provider" {
        try {
          $badProviderPath = "{0}::C:/file.txt" -f (Get-NonExistantProviderName)
-         clear-content -path $badProviderPath -ea Stop
+         clear-content -path $badProviderPath -ErrorAction Stop
          thow "ExpectedExceptionNotDelivered"
        }
        catch {

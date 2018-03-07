@@ -50,13 +50,13 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should remove existing content from testdrive\$file1 when the -Value is `$null" {
             $AsItWas=Get-Content $filePath1
             $AsItWas |Should -BeExactly "ExpectedContent"
-            Set-Content -Path $filePath1 -Value $null -EA stop
+            Set-Content -Path $filePath1 -Value $null -ErrorAction Stop
             $AsItIs=Get-Content $filePath1
             $AsItIs| Should -Not -Be $AsItWas
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$null" {
             try {
-                Set-Content -Path $null -Value "ShouldNotWorkBecausePathIsNull" -EA stop
+                Set-Content -Path $null -Value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop
                 Throw "Previous statement unexpectedly succeeded..."
             }
             catch {
@@ -65,7 +65,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
             try {
-                Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -EA stop
+                Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop
                 Throw "Previous statement unexpectedly succeeded..."
             }
             catch {
@@ -74,7 +74,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         }
         It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -skip:$skipRegistry {
             try {
-                Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -EA stop
+                Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop
                 Throw "Previous statement unexpectedly succeeded..."
             }
             catch {

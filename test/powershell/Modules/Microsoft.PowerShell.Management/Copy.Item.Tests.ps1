@@ -709,7 +709,7 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
             # FromSession
             try
             {
-                Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ea Stop
+                Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ErrorAction Stop
                 throw "CodeExecuted"
             }
             catch
@@ -720,7 +720,7 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
             # ToSession
             try
             {
-                Copy-Item -Path $testFilePath -ToSession $session -Destination $destination -Force -Verbose -ea Stop
+                Copy-Item -Path $testFilePath -ToSession $session -Destination $destination -Force -Verbose -ErrorAction Stop
                 throw "CodeExecuted"
             }
             catch

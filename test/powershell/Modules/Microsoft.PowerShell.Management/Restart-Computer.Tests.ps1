@@ -55,7 +55,7 @@ try
                     $pPref = $ProgressPreference
                     $ProgressPreference="SilentlyContinue"
                     $duration = Measure-Command {
-                        Restart-Computer -computer localhost -Wait -Timeout $timeout -ErrorAction stop | Should -BeNullOrEmpty
+                        Restart-Computer -computer localhost -Wait -Timeout $timeout -ErrorAction Stop | Should -BeNullOrEmpty
                     }
                 }
                 finally

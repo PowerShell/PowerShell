@@ -14,32 +14,14 @@ Describe "Convert-Path tests" -Tag CI {
         get-item $TESTDRIVE | Convert-Path | Should -BeExactly "$TESTDRIVE"
     }
     It "Convert-Path without arguments is an error" {
-        try {
-            $ps = [powershell]::Create()
-            $ps.AddCommand("Convert-Path").Invoke()
-            throw "Execution should not have reached here"
-        }
-        catch {
-            $_.fullyqualifiederrorid | Should -Be ParameterBindingException
-        }
+        $ps = [powershell]::Create()
+        { $ps.AddCommand("Convert-Path").Invoke() } | Should -Throw -ErrorId "ParameterBindingException"
     }
     It "Convert-Path with null path is an error" {
-        try {
-            Convert-Path -path ""
-            throw "Execution should not have reached here"
-        }
-        catch {
-            $_.fullyqualifiederrorid | Should -Be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertPathCommand"
-        }
+        { Convert-Path -path "" } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertPathCommand"
     }
     It "Convert-Path with non-existing non-filesystem path is an error" {
-        try {
-            Convert-Path -path "env:thisvariableshouldnotexist" -ea stop
-            throw "Execution should not have reached here"
-        }
-        catch {
-            $_.fullyqualifiederrorid | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ConvertPathCommand"
-        }
+        { Convert-Path -path "env:thisvariableshouldnotexist" -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.ConvertPathCommand"
     }
     It "Convert-Path can handle multiple directories" {
         $d1 = Setup -D dir1 -pass

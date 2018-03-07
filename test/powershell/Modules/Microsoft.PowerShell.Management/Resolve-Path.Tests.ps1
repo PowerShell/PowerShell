@@ -10,7 +10,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
     }
     It "Resolve-Path provides proper error on invalid location" {
         try {
-            Resolve-Path $TESTDRIVE/this.directory.is.invalid -ea stop
+            Resolve-Path $TESTDRIVE/this.directory.is.invalid -ErrorAction Stop
             throw "execution OK"
         }
         catch {
