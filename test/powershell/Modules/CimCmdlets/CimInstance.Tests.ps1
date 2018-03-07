@@ -21,7 +21,7 @@ Try {
                 $pLower = $property.ToLower()
                 [string]$pLowerValue = $pinstance.$pLower -join ","
                 [string]$pUpperValue = $pinstance.$pUpper -join ","
-                $pLowerValue | Should -Be $pUpperValue
+                $pLowerValue | Should -BeExactly $pUpperValue
             }
         }
         It "GetCimSessionInstanceId method invocation should return data" {
