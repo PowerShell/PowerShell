@@ -19,7 +19,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
     }
     It "Resolve-Path -Path should return correct drive path" {
         $result = Resolve-Path -Path "TestDrive:\\\\\"
-        ($result.Path.TrimEnd('/\')) | Should -BeiExactly "TestDrive:"
+        ($result.Path.TrimEnd('/\')) | Should -BeExactly "TestDrive:"
     }
     It "Resolve-Path -LiteralPath should return correct drive path" {
         $result = Resolve-Path -LiteralPath "TestDrive:\\\\\"
