@@ -389,11 +389,11 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | Should -BeTrue }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | Should -BeTrue }
     Context "Support ConfirmImpact as an attribute" {
-        It  "ConfirmImpact should be high" -pending {
+        It  "ConfirmImpact should be high" {
             [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
-            It "Should have one attribute" { $t.Count | Should -Be 1 }
-            It "Should have instance of CmdletAttribute" { $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute }
+            $t.Count | Should -Be 1
+            $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute
             [System.Management.Automation.CmdletAttribute]$c = $t[0]
             $c.ConfirmImpact | Should -BeExactly 'High'
 
@@ -751,7 +751,7 @@ namespace Foo
 }
 '@
 
-     It 'doesn''t allow protected methods access outside of inheritance chain' -pending {
+     It 'doesn''t allow protected methods access outside of inheritance chain' {
         $a = [scriptblock]::Create(@'
 class A
 {
@@ -770,20 +770,8 @@ class A
 
 '@).Invoke()
         $bar = [Foo.Bar]::new()
-        $throwCount = 0
-        try {
-            $a.SetX($bar, 42)
-        } catch {
-            $_.FullyQualifiedErrorId | Should -BeExactly 'PropertyAssignmentException'
-            $throwCount++
-        }
-        try {
-            $a.GetX($bar)
-        } catch {
-            $_.FullyQualifiedErrorId | Should -BeExactly 'PropertyNotFoundStrict'
-            $throwCount++
-        }
-        $throwCount | Should -Be 2
+        { $a.SetX($bar, 42) } | Should -Throw -ErrorId 'PropertyAssignmentException'
+        { $a.GetX($bar) } | Should -Throw -ErrorId 'PropertyNotFoundStrict'
      }
 
      It 'can call protected methods sequentially from two different contexts' {
