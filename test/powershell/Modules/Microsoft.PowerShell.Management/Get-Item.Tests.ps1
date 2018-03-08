@@ -129,7 +129,7 @@ Describe "Get-Item" -Tags "CI" {
         }
 
         It "get-item testVar" {
-            $env:testVar | should -BeExactly "a"
+            $env:testVar | Should -BeExactly "a"
         }
 
         It "get-item is case-sensitive/insensitive as appropriate" {
@@ -139,8 +139,7 @@ Describe "Get-Item" -Tags "CI" {
                 $expectedValue = "a"
             }
 
-            $env:testvar | should -BeExactly $expectedValue
+            $env:testvar | Should -BeExactly $expectedValue
         }
-
     }
 }
