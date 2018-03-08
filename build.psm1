@@ -945,7 +945,7 @@ function Publish-PSTestTools {
     {
         Push-Location $tool.Path
         try {
-            dotnet publish --no-restore --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
             if ( $env:PATH -notcontains $toolPath ) {
