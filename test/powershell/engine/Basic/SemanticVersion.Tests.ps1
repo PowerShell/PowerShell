@@ -72,7 +72,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
         It "Can covert to 'Version' type" {
             $v1 = [SemanticVersion]::new(3, 2, 1, "prerelease", "meta")
             $v2 = [Version]$v1
-            $v2.GetType() | Should -BeExactly "Version"
+            $v2.GetType() | Should -BeExactly "version"
             $v2.PSobject.TypeNames[0] | Should -Be "System.Version#IncludeLabel"
             $v2.Major | Should -Be 3
             $v2.Minor | Should -Be 2
