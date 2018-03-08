@@ -93,7 +93,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         [powershell] $ps = [powershell]::Create($iss)
         $null = $ps.AddCommand('Get-Service')
 
-        { $ps.Invoke() } | Should -Throw -ErrorId 'System.Management.Automation.CommandNotFoundException'
+        { $ps.Invoke() } | Should -Throw -ErrorId 'CommandNotFoundException'
 
         $ps.Dispose()
     }
