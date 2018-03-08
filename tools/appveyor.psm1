@@ -489,7 +489,7 @@ function Invoke-AppveyorFinish
         }
 
         # Smoke Test MSI installer
-        log "Smoke-Testing MSI installer"
+        Write-Log "Smoke-Testing MSI installer"
         $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
         $msiLog = Join-Path (Get-Location) 'msilog.txt'
         $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
@@ -500,7 +500,7 @@ function Invoke-AppveyorFinish
             throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
 
-        log "MSI smoke test was successful"
+        Write-Log "MSI smoke test was successful"
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
