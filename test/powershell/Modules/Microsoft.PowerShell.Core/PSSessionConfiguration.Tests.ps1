@@ -136,7 +136,7 @@ try
 
                     $Result = Get-PSSessionConfiguration -Name $endpointName
 
-                    $Result.Name | Should -Be $endpointName
+                    $Result.Name | Should -BeExactly $endpointName
                     $Result.PSVersion | Should -BeExactly $expectedPSVersion
                 }
 
