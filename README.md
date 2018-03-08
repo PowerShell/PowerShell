@@ -79,24 +79,24 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-raspbian]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.1/powershell-6.0.1-linux-arm32.tar.gz
 
 [in-windows]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows#msi
-[in-ubuntu14]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#ubuntu-1404
-[in-ubuntu16]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#ubuntu-1604
-[in-ubuntu17]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#ubuntu-1704
-[in-deb8]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#debian-8
-[in-deb9]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#debian-9
-[in-centos]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#centos-7
-[in-rhel7]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#red-hat-enterprise-linux-rhel-7
-[in-opensuse422]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#opensuse-422
-[in-fedora25]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#fedora-25
-[in-fedora26]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#fedora-26
-[in-archlinux]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#arch-linux
-[in-appimage]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#linux-appimage
+[in-ubuntu14]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#ubuntu-1404
+[in-ubuntu16]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#ubuntu-1604
+[in-ubuntu17]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#ubuntu-1704
+[in-deb8]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#debian-8
+[in-deb9]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#debian-9
+[in-centos]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#centos-7
+[in-rhel7]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#red-hat-enterprise-linux-rhel-7
+[in-opensuse422]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#opensuse-422
+[in-fedora25]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#fedora-25
+[in-fedora26]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#fedora-26
+[in-archlinux]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#arch-linux
+[in-appimage]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#linux-appimage
 [in-macos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/macos.md
 [in-docker]: https://github.com/PowerShell/PowerShell/tree/master/docker
-[in-kali]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#kali
+[in-kali]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#kali
 [in-windows-zip]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows#zip
-[in-tar]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#binary-archives
-[in-raspbian]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux.md#raspbian
+[in-tar]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#binary-archives
+[in-raspbian]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#raspbian
 [corefx-win]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#windows
 [corefx-linux]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#linux
 [corefx-macos]:https://github.com/dotnet/core/blob/master/release-notes/2.0/2.0-supported-os.md#macos
