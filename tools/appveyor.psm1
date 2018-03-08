@@ -454,8 +454,6 @@ function Invoke-AppveyorFinish
 
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
-        $msiObject = $packages | Where-Object { $_ -is [pscustomobject] -and $_.msi }
-        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -499,7 +497,6 @@ function Invoke-AppveyorFinish
             $exitCode = $msiExecProcess.ExitCode
             throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
-
         Write-Log "MSI smoke test was successful"
 
         # only publish assembly nuget packages if it is a daily build and tests passed
