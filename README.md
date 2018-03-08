@@ -91,7 +91,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [in-fedora26]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#fedora-26
 [in-archlinux]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#arch-linux
 [in-appimage]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#linux-appimage
-[in-macos]: https://github.com/PowerShell/PowerShell/tree/master/docs/installation/macos.md
+[in-macos]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#macos-1012
 [in-docker]: https://github.com/PowerShell/PowerShell/tree/master/docker
 [in-kali]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos-and-linux#kali
 [in-windows-zip]: https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows#zip
