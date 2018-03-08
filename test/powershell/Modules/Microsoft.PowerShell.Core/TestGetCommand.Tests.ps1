@@ -240,15 +240,8 @@ Describe "Get-Command Tests" -Tags "CI" {
     }
 
     It "Throw an Exception when set TestToRun to 'returnduplicateparameter'" {
-        try
-        {
-            Get-Command TestGetCommand-DynamicParametersDCR -TestToRun returnduplicateparameter -ErrorAction Stop
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "GetCommandMetadataError,Microsoft.PowerShell.Commands.GetCommandCommand"
-        }
+        { Get-Command TestGetCommand-DynamicParametersDCR -TestToRun returnduplicateparameter -ErrorAction Stop } |
+            Should -Throw -ErrorId "GetCommandMetadataError,Microsoft.PowerShell.Commands.GetCommandCommand"
     }
 
     It "verify if get the proper dynamic parameter type skipped by issue #1430" -Pending {
