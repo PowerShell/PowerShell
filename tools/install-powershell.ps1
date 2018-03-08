@@ -137,7 +137,7 @@ try {
 
         # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
         # aborted: Could not create SSL/TLS secure channel. error.
-        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
