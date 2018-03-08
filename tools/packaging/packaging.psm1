@@ -555,6 +555,7 @@ function New-UnixPackage {
         $ErrorMessage = "Must be on {0} to build '$Type' packages!"
         switch ($Type) {
             "deb" {
+                $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
                     throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
@@ -580,11 +581,13 @@ function New-UnixPackage {
                 $Iteration += ".$DebDistro"
             }
             "rpm" {
+                $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
                     throw ($ErrorMessage -f "Redhat or SUSE Family")
                 }
             }
             "osxpkg" {
+                $packageVersion = $Version
                 if (!$Environment.IsMacOS) {
                     throw ($ErrorMessage -f "macOS")
                 }
@@ -600,7 +603,7 @@ function New-UnixPackage {
         $Suffix = $Name -replace "^powershell"
         if (!$Suffix) {
             Write-Verbose "Suffix not given, building primary PowerShell package!"
-            $Suffix = $Version
+            $Suffix = $packageVersion
         }
 
         # Setup staging directory so we don't change the original source directory
@@ -677,7 +680,7 @@ function New-UnixPackage {
 
         $Arguments = Get-FpmArguments `
             -Name $Name `
-            -Version $Version `
+            -Version $packageVersion `
             -Iteration $Iteration `
             -Description $Description `
             -Type $Type `
@@ -790,7 +793,7 @@ function New-MacOsDistributionPackage
     # 1 - version
     # 2 - package path
     # 2 - minimum os version
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $Version", $Version, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
     log "Applying distribution.xml to package..."
     Push-Location $tempDir
@@ -1950,6 +1953,33 @@ function Get-PackageSemanticVersion
     $packageSemanticVersion
 }
 
+# Builds coming out of this project can have version number as 'M.m.p-previewName[Number]' OR 'M.m.p'
+# This function converts the above version into semantic version major.minor.patch[~previewName[Number]] format
+function Get-LinuxPackageSemanticVersion
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidatePattern("^\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+
+    if ($packageVersionTokens.Count -eq 1) {
+        # In case the input is of the form a.b.c, we use the same form
+        $packageSemanticVersion = $Version
+    } elseif ($packageVersionTokens.Count -ge 2) {
+        $packageRevisionTokens = ($packageVersionTokens[1..($packageVersionTokens.Count-1)] -join '-')
+        $packageSemanticVersion = ('{0}~{1}' -f  $packageVersionTokens[0], $packageRevisionTokens)
+    }
+
+    $packageSemanticVersion
+}
+
 # Builds coming out of this project can have version number as 'a.b.c-stringf.d-e-f' OR 'a.b.c.d-e-f'
 # This function converts the above version into semantic version major.minor[.build-quality[-revision]] format needed for nuget
 function Get-NugetSemanticVersion
@@ -2248,6 +2278,18 @@ function Test-FileWxs
 
     if(!$passed)
     {
+        if($env:appveyor)
+        {
+            try
+            {
+                Push-AppveyorArtifact $HeatFilesWxsPath
+            }
+            catch
+            {
+                #ignore any error pushing the artifact
+            }
+        }
+
         throw "Current files to not match  {$FilesWxsPath}"
     }
 }
