@@ -449,8 +449,6 @@ function Invoke-AppveyorFinish
 
         # Build packages
         $packages = Start-PSPackage @packageParams -SkipReleaseChecks
-        $msiObject = $packages | Where-Object { $_ -is [pscustomobject] -and $_.msi }
-        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
 
         $name = Get-PackageName
 
