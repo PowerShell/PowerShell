@@ -455,10 +455,20 @@ function Invoke-AppveyorFinish
 
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
+        $msiObject = $packages | Where-Object { $_ -is [pscustomobject] -and $_.msi }
+        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            $null = $artifacts.Add($package)
+            if($package -is [string])
+            {
+                $null = $artifacts.Add($package)
+            }
+            elseif($package -is [pscustomobject] -and $package.msi)
+            {
+                $null = $artifacts.Add($package.msi)
+                $null = $artifacts.Add($package.wixpdb)
+            }
         }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
@@ -481,8 +491,7 @@ function Invoke-AppveyorFinish
 
         # Smoke Test MSI installer
         log "Smoke-Testing MSI installer"
-        $msiObject = $artifacts | Where-Object { $_ -is [pscustomobject] -and $_.msi }
-        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
         $msiLog = Join-Path (Get-Location) 'msilog.txt'
         $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
         if ($msiExecProcess.ExitCode -ne 0)
