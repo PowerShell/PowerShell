@@ -115,16 +115,7 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
         It "Verifies that shared TypeTable is not allowed in ISS" {
 
             # Process TypeTable types from ISS.
-            $errorId = ""
-            try
-            {
-                $rs.Open()
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be "ErrorsUpdatingTypes"
-            }
+            { $rs.Open() } | Should -Throw -ErrorId "RuntimeException"
         }
     }
 }

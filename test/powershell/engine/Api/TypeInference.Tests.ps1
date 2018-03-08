@@ -93,7 +93,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( $ast )
 
         $res.Count | Should -Be 1
-        $res.Name | Should -Be System.DateTime
+        $res.Name | Should -BeExactly 'System.DateTime'
     }
 
     It "Infers type from ScriptblockExpresssion" {
