@@ -128,7 +128,7 @@ try
 
                     $Result = Get-PSSessionConfiguration
 
-                    $Result.Name -contains $endpointName | Should -Be $true
+                    $Result.Name -contains $endpointName | Should -BeTrue
                     $Result.PSVersion | Should -BeExactly $expectedPSVersion
                 }
 
@@ -146,7 +146,7 @@ try
 
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
-                    $Result.Name -contains $endpointName | Should -Be $true
+                    $Result.Name -contains $endpointName | Should -BeTrue
                     $Result.PSVersion | Should -BeExactly $expectedPSVersion
                 }
 
@@ -495,7 +495,7 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.Name | Should -Be $TestSessionConfigName
                     $Result.Session.SessionType | Should -Be "Default"
                     $Result.Session.PSVersion | Should -BeExactly $expectedPSVersion
-                    $Result.Session.Enabled | Should -Be $true
+                    $Result.Session.Enabled | Should -BeTrue
                     $Result.Session.lang | Should -Be $Result.Culture
                     $Result.Session.pssessionthreadoptions | Should -Be $pssessionthreadoptions
                     $Result.Session.psmaximumreceivedobjectsizemb | Should -Be $psmaximumreceivedobjectsizemb
@@ -571,7 +571,7 @@ namespace PowershellTestConfigNamespace
 
                     $Result.Session.Name | Should -Be $TestSessionConfigName
                     $Result.Session.PSVersion | Should -BeExactly $expectedPSVersion
-                    $Result.Session.Enabled | Should -Be $true
+                    $Result.Session.Enabled | Should -BeTrue
                     $Result.Session.lang | Should -Be $result.Culture
                     $Result.Session.pssessionthreadoptions | Should -Be $pssessionthreadoptions
                     $Result.Session.psmaximumreceivedobjectsizemb | Should -Be $psmaximumreceivedobjectsizemb
@@ -646,7 +646,7 @@ namespace PowershellTestConfigNamespace
 
             # The default created hashtable in the session configuration file would have the
             # following keys which we are validating below.
-            $resultContent.ContainsKey("SessionType") -and $resultContent.ContainsKey("SchemaVersion") -and $resultContent.ContainsKey("Guid") -and $resultContent.ContainsKey("Author") | Should -Be $true
+            $resultContent.ContainsKey("SessionType") -and $resultContent.ContainsKey("SchemaVersion") -and $resultContent.ContainsKey("Guid") -and $resultContent.ContainsKey("Author") | Should -BeTrue
         }
     }
 
@@ -783,7 +783,7 @@ namespace PowershellTestConfigNamespace
             $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
             "InvalidData" | Out-File $configFilePath
 
-            Test-PSSessionConfigurationFile $configFilePath -Verbose -ErrorAction Stop | Should -Be $false
+            Test-PSSessionConfigurationFile $configFilePath -Verbose -ErrorAction Stop | Should -BeFalse
         }
 
         It "Test case verifies that the generated config file passes validation" {
@@ -862,7 +862,7 @@ namespace PowershellTestConfigNamespace
                 }
             }
 
-            $result | Should -Be $true
+            $result | Should -BeTrue
         }
     }
 }

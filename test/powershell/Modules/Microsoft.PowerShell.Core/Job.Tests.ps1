@@ -130,7 +130,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         It "Receive-Job will retrieve partial output" {
             $result1 = GetResults $j 5 $false
             $result2 = GetResults $j 5 $false
-            CheckContent ($result1 + $result2) | Should -Be $true
+            CheckContent ($result1 + $result2) | Should -BeTrue
         }
         It "Receive-Job will retrieve partial output, including -Keep results" {
             $result1 = GetResults $j 5 $true

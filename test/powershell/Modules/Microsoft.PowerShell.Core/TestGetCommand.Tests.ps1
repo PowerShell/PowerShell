@@ -174,7 +174,7 @@ Describe "Get-Command Tests" -Tags "CI" {
         $dynamicParameter = "Wait", "Encoding", "Delimiter"
         foreach ($dynamicPara in $dynamicParameter)
         {
-            $results[0].ParameterSets.Parameters.Name -contains $dynamicPara | Should -Be $false
+            $results[0].ParameterSets.Parameters.Name -contains $dynamicPara | Should -BeFalse
         }
     }
 
