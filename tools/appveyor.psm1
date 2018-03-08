@@ -450,12 +450,25 @@ function Invoke-AppveyorFinish
     try {
         $releaseTag = Get-ReleaseTag
 
+        # Build clean before backing to remove files from testing
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
+        $msiObject = $packages | Where-Object { $_ -is [pscustomobject] -and $_.msi }
+        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            $null = $artifacts.Add($package)
+            if($package -is [string])
+            {
+                $null = $artifacts.Add($package)
+            }
+            elseif($package -is [pscustomobject] -and $package.msi)
+            {
+                $null = $artifacts.Add($package.msi)
+                $null = $artifacts.Add($package.wixpdb)
+            }
         }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
@@ -477,8 +490,8 @@ function Invoke-AppveyorFinish
         }
 
         # Smoke Test MSI installer
-        Write-Verbose "Smoke-Testing MSI installer" -Verbose
-        $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
+        log "Smoke-Testing MSI installer"
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
         $msiLog = Join-Path (Get-Location) 'msilog.txt'
         $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
         if ($msiExecProcess.ExitCode -ne 0)
@@ -487,7 +500,8 @@ function Invoke-AppveyorFinish
             $exitCode = $msiExecProcess.ExitCode
             throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
-        Write-Verbose "MSI smoke test was successful" -Verbose
+
+        log "MSI smoke test was successful"
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
@@ -530,7 +544,7 @@ function Invoke-AppveyorFinish
 
             if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
-                log "pushing $_ to $env:NUGET_URL"
+                Write-Log "pushing $_ to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
