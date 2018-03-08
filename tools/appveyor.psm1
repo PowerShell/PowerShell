@@ -555,6 +555,7 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
+        throw $_
     }
     finally {
         # A throw statement would not make the build fail. This function is AppVeyor specific
