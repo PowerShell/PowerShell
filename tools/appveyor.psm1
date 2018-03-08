@@ -444,8 +444,13 @@ function Invoke-AppveyorFinish
             $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
         }
 
+        # Build clean before backing to remove files from testing
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
+
         # Build packages
         $packages = Start-PSPackage @packageParams -SkipReleaseChecks
+        $msiObject = $packages | Where-Object { $_ -is [pscustomobject] -and $_.msi }
+        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
 
         $name = Get-PackageName
 
@@ -457,7 +462,15 @@ function Invoke-AppveyorFinish
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            $null = $artifacts.Add($package)
+            if($package -is [string])
+            {
+                $null = $artifacts.Add($package)
+            }
+            elseif($package -is [pscustomobject] -and $package.msi)
+            {
+                $null = $artifacts.Add($package.msi)
+                $null = $artifacts.Add($package.wixpdb)
+            }
         }
 
         $null = $artifacts.Add($zipFilePath)

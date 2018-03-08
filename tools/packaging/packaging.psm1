@@ -1656,6 +1656,18 @@ function Test-FileWxs
 
     if(!$passed)
     {
+        if($env:appveyor)
+        {
+            try
+            {
+                Push-AppveyorArtifact $HeatFilesWxsPath
+            }
+            catch
+            {
+                #ignore any error pushing the artifact
+            }
+        }
+
         throw "Current files to not match  {$FilesWxsPath}"
     }
 }
