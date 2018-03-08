@@ -151,16 +151,7 @@ try
                 }
 
                 It "Get-PSSessionConfiguration -Name with Non-Existent session configuration" {
-
-                    try
-                    {
-                        Get-PSSessionConfiguration -Name "NonExistantSessionConfiguration" -ErrorAction Stop
-                        throw "No Exception!"
-                    }
-                    catch
-                    {
-                        $_.FullyQualifiedErrorId | Should -Be "Microsoft.PowerShell.Commands.WriteErrorException"
-                    }
+                    { Get-PSSessionConfiguration -Name "NonExistantSessionConfiguration" -ErrorAction Stop } | Should -Throw -ErrorId "Microsoft.PowerShell.Commands.WriteErrorException"
                 }
             }
 
@@ -653,17 +644,8 @@ namespace PowershellTestConfigNamespace
     Describe "Feature tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
 
         It "Validate FullyQualifiedErrorId from New-PSSessionConfigurationFile when invalid path is provided as input" {
-
-            try
-            {
-                $filePath = "cert:\foo.pssc"
-                New-PSSessionConfigurationFile $filePath
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "InvalidPSSessionConfigurationFilePath,Microsoft.PowerShell.Commands.NewPSSessionConfigurationFileCommand"
-            }
+	    $filePath = "cert:\foo.pssc"
+            { New-PSSessionConfigurationFile $filePath } | Should -Throw -ErrorId "InvalidPSSessionConfigurationFilePath,Microsoft.PowerShell.Commands.NewPSSessionConfigurationFileCommand"
         }
     }
 
@@ -766,16 +748,7 @@ namespace PowershellTestConfigNamespace
         }
 
         It "Validate FullyQualifiedErrorId from Test-PSSessionConfigurationFile when invalid path is provided as input" {
-
-            try
-            {
-                Test-PSSessionConfigurationFile "cert:\foo.pssc" -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "PSSessionConfigurationFileNotFound,Microsoft.PowerShell.Commands.TestPSSessionConfigurationFileCommand"
-            }
+            { Test-PSSessionConfigurationFile "cert:\foo.pssc" -ErrorAction Stop } | Should -Throw -ErrorId "PSSessionConfigurationFileNotFound,Microsoft.PowerShell.Commands.TestPSSessionConfigurationFileCommand"
         }
 
         It "Validate FullyQualifiedErrorId from Test-PSSessionConfigurationFile when an invalid pssc file is provided as input and -Verbose parameter is specified" {
