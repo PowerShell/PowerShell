@@ -44,7 +44,7 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
       }
       $spooler.Status | Should -BeExactly "Running"
       $spooler = Stop-Service Spooler -PassThru
-      $spooler.Status | Should -BeExaclty "Stopped"
+      $spooler.Status | Should -BeExactly "Stopped"
       (Get-Service Spooler).Status | Should -BeExactly "Stopped"
       $spooler = Start-Service Spooler -PassThru
       $spooler.Status | Should -BeExactly "Running"
