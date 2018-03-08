@@ -503,7 +503,7 @@ Fix steps:
     }
 
     # setup arguments
-    $Arguments = @("publish","/property:GenerateFullPaths=true")
+    $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true")
     if ($Output) {
         $Arguments += "--output", $Output
     }
