@@ -5,7 +5,7 @@ Describe "Remove-Module" -Tags "CI" {
 
     BeforeEach {
         Import-Module -Name $moduleName -Force
-        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
     It "should be able to remove a module with using Name switch" {

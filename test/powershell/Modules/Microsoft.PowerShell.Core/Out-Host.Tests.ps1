@@ -22,6 +22,6 @@ Describe "Out-Host Tests" -tag CI {
         $stringExpected = "::$($stringToWrite):NewLine"
         $result = $ps.AddScript("Out-Host -inputobject '$stringToWrite'").Invoke()
         $th.UI.Streams.ConsoleOutput.Count | Should -Be 1
-        $th.UI.Streams.ConsoleOutput[0] | Should -Be $stringExpected
+        $th.UI.Streams.ConsoleOutput[0] | Should -BeExactly $stringExpected
     }
 }

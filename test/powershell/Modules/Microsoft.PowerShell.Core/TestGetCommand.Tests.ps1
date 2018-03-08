@@ -150,7 +150,7 @@ Describe "Get-Command Tests" -Tags "CI" {
             foreach($paramName in $parameterNames)
             {
                 $foundParam = GetDynamicParameter -cmdlet $cmdlet -parameterName $paramName
-                $foundParam.Name | Should -Be $paramName
+                $foundParam.Name | Should -BeExactly $paramName
             }
         }
 
@@ -227,8 +227,8 @@ Describe "Get-Command Tests" -Tags "CI" {
         "$a = dir" > $fullPath
         $results = Get-Command $fullPath
 
-        $results.Name | Should -Be $tempFile
-        $results.Definition | Should -Be $fullPath
+        $results.Name | Should -BeExactly $tempFile
+        $results.Definition | Should -BeExactly $fullPath
     }
 
     It "Two dynamic parameters are created properly" {

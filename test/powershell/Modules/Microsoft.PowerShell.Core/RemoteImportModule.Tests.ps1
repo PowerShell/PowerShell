@@ -72,9 +72,9 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
         if ($parameter -eq "FullyQualifiedName") {
             $importModuleCommand.FullyQualifiedName.Count | Should -BeExactly 2
             $importModuleCommand.FullyQualifiedName | Should -BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
-            $importModuleCommand.FullyQualifiedName[0].Name | Should -Be "foo"
+            $importModuleCommand.FullyQualifiedName[0].Name | Should -BeExactly "foo"
             $importModuleCommand.FullyQualifiedName[0].RequiredVersion | Should -Be "0.0"
-            $importModuleCommand.FullyQualifiedName[1].Name | Should -Be "bar"
+            $importModuleCommand.FullyQualifiedName[1].Name | Should -BeExactly "bar"
             $importModuleCommand.FullyQualifiedName[1].RequiredVersion | Should -Be "1.1"
         } else {
             $importModuleCommand.$parameter | Should -BeExactly $value

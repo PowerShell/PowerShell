@@ -22,9 +22,9 @@ Describe "History cmdlet test cases" -Tags "CI" {
             # for this case, we'll *not* add to history
             $result = $ps.AddCommand("Get-History").Invoke()
             $result.Count | Should -Be 3
-            $result[0].CommandLine | Should -Be "Get-Date"
+            $result[0].CommandLine | Should -BeExactly "Get-Date"
             $result[1].CommandLine | Should -Be "1+1"
-            $result[2].CommandLine | Should -Be "Get-Location"
+            $result[2].CommandLine | Should -BeExactly "Get-Location"
         }
         It "Invoke-History invokes proper command" {
             $result = $ps.AddScript("Invoke-History 2").Invoke()

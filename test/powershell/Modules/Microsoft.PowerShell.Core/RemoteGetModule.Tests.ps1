@@ -65,7 +65,7 @@ Describe "Remote module tests" -Tags 'Feature','RequireAdminOnWindows' {
         $getModuleCommand.$parameter = $value
         if ($parameter -eq "FullyQualifiedName") {
             $getModuleCommand.FullyQualifiedName | Should -BeOfType "Microsoft.PowerShell.Commands.ModuleSpecification"
-            $getModuleCommand.FullyQualifiedName.Name | Should -Be "foo"
+            $getModuleCommand.FullyQualifiedName.Name | Should -BeExactly "foo"
             $getModuleCommand.FullyQualifiedName.Version | Should -Be "1.2.3"
         } else {
             $getModuleCommand.$parameter | Should -Be $value
