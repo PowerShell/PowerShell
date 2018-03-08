@@ -53,7 +53,7 @@ function Start-PSPackage {
     End {
         $IncludeSymbols = $null
         if ($PSBoundParameters.ContainsKey('IncludeSymbols')) {
-            log 'setting IncludeSymbols'
+            Write-Log 'setting IncludeSymbols'
             $IncludeSymbols = $PSBoundParameters['IncludeSymbols']
         }
 
@@ -76,7 +76,7 @@ function Start-PSPackage {
             }
         }
 
-        log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
+        Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
         $Script:Options = Get-PSOptions
 
@@ -189,7 +189,7 @@ function Start-PSPackage {
             }
         }
 
-        log "Packaging Source: '$Source'"
+        Write-Log "Packaging Source: '$Source'"
 
         # Decide package output type
         if (-not $Type) {
@@ -210,7 +210,7 @@ function Start-PSPackage {
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
-        log "Packaging Type: $Type"
+        Write-Log "Packaging Type: $Type"
 
         # Add the symbols to the suffix
         # if symbols are specified to be included
@@ -405,7 +405,7 @@ function New-TarballPackage {
             }
 
             if (Test-Path -Path $packagePath) {
-                log "You can find the tarball package at $packagePath"
+                Write-Log "You can find the tarball package at $packagePath"
                 return $packagePath
             } else {
                 throw "Failed to create $packageName"
@@ -447,7 +447,7 @@ function New-PSSignedBuildZip
     Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
         $relativePath = $_.Replace($signedFilesPath,'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
-        log "replacing $destination with $_"
+        Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
     }
 
@@ -463,7 +463,7 @@ function New-PSSignedBuildZip
     if ($VstsVariableName)
     {
         # set VSTS variable with path to package files
-        log "Setting $VstsVariableName to $zipLocationPath"
+        Write-Log "Setting $VstsVariableName to $zipLocationPath"
         Write-Host "##vso[task.setvariable variable=$VstsVariableName]$zipLocationPath"
     }
     else
@@ -795,7 +795,7 @@ function New-MacOsDistributionPackage
     # 2 - minimum os version
     $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
-    log "Applying distribution.xml to package..."
+    Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
     try
     {
@@ -1217,7 +1217,7 @@ function New-ZipPackage
 
         if (Test-Path $zipLocationPath)
         {
-            log "You can find the Zip @ $zipLocationPath"
+            Write-Log "You can find the Zip @ $zipLocationPath"
             $zipLocationPath
         }
         else
@@ -1253,7 +1253,7 @@ function CreateNugetPlatformFolder
     }
 
     Copy-Item -Path $fullPath -Destination $destPath
-    log "Copied $file to $Platform"
+    Write-Log "Copied $file to $Platform"
 }
 
 <#
@@ -1379,7 +1379,7 @@ function New-UnifiedNugetPackage
             #region ref
             $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
             Copy-Item $refBinFullName -Destination $refFolder -Force
-            log "Copied file $refBinFullName to $refFolder"
+            Write-Log "Copied file $refBinFullName to $refFolder"
             #endregion ref
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -1606,7 +1606,7 @@ function New-ReferenceAssembly
     $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
     $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
 
-    log "Working directory: $genAPIFolder."
+    Write-Log "Working directory: $genAPIFolder."
 
     #region GenAPI
 
@@ -1617,7 +1617,7 @@ function New-ReferenceAssembly
         throw "GenAPI.exe was not found at: $GenAPIToolPath"
     }
 
-    log "GenAPI nuget package saved and expanded."
+    Write-Log "GenAPI nuget package saved and expanded."
 
     $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
 
@@ -1627,11 +1627,11 @@ function New-ReferenceAssembly
     }
 
     $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
-    log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+    Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
 
     Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
 
-    log "Reference assembly file generated at: $smaCs"
+    Write-Log "Reference assembly file generated at: $smaCs"
 
     #endregion GenAPI
 
@@ -1677,7 +1677,7 @@ function New-ReferenceAssembly
 
     Move-Item $smaCsFiltered $smaCs -Force
 
-    log "Reference assembly code cleanup complete."
+    Write-Log "Reference assembly code cleanup complete."
 
     #endregion Cleanup SMA.cs
 
@@ -1704,7 +1704,7 @@ function New-ReferenceAssembly
 
         Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
 
-        log "Reference assembly built and copied to $RefAssemblyDestinationPath"
+        Write-Log "Reference assembly built and copied to $RefAssemblyDestinationPath"
     }
     finally
     {
@@ -1797,7 +1797,7 @@ function Publish-NugetToMyGet
     }
 
     Get-ChildItem $PackagePath | ForEach-Object {
-        log "Pushing $_ to PowerShell Myget"
+        Write-Log "Pushing $_ to PowerShell Myget"
         Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
     }
 }
@@ -1846,9 +1846,9 @@ function New-NugetContentPackage
         $Force
     )
 
-    log "PackageVersion: $PackageVersion"
+    Write-Log "PackageVersion: $PackageVersion"
     $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
-    log "nugetSemanticVersion: $nugetSemanticVersion"
+    Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
 
     $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
 
@@ -1877,8 +1877,8 @@ function New-NugetContentPackage
     $arguments += "/p:PackageName=$nuspecPackageName"
     $arguments += $projectFolder
 
-    log "Running dotnet $arguments"
-    log "Use -verbose to see output..."
+    Write-Log "Running dotnet $arguments"
+    Write-Log "Use -verbose to see output..."
     Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
 
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
@@ -2186,14 +2186,14 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    log "verifying no new files have been added or removed..."
+    Write-Log "verifying no new files have been added or removed..."
     Start-NativeExecution -VerboseOutputOnError { & $wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
 
-    log "running candle..."
+    Write-Log "running candle..."
     Start-NativeExecution -VerboseOutputOnError { & $wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
 
-    log "running light..."
+    Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
     Start-NativeExecution -VerboseOutputOnError {& $wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
