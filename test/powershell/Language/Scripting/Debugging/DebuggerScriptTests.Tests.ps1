@@ -261,13 +261,13 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     {
         $actual = @(& $command)
 
-	    It "Script breakpoint count" {
+	    It "Script breakpoint count '${command}'|${expected}" {
 		    $actual.Count | Should -Be $expected.Count
 	    }
 
         foreach ($breakpoint in $actual)
         {
-	        It "Expected script breakpoints" {
+	        It "Expected script breakpoints '${command}|${breakpoint}'" {
 		        ($expected -contains $breakpoint) | Should -BeTrue
 	        }
         }
@@ -286,7 +286,7 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         }
         catch
         {
-            It "Script failed expected exception" {
+            It "Script failed expected exception '${command}'" {
                 $_.Exception.GetType().Name | Should -Be $exception
             }
         }
