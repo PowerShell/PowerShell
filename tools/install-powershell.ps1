@@ -141,11 +141,16 @@ try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
-        Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-        $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
-        # Restore original value
-        [Net.ServicePointManager]::SecurityProtocol = $originalValue
+        try {
+            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
+        }
+        finally {
+            # Restore original value
+            [Net.ServicePointManager]::SecurityProtocol = $originalValue
+        }
+
+        $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
         New-Item -ItemType Directory -Path $contentPath > $null
         if ($IsWinEnv) {
