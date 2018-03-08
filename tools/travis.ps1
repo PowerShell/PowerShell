@@ -18,7 +18,7 @@ function Send-DailyWebHook
     # Varible should be set in Travis-CI.org settings
     if ($env:WebHookUrl)
     {
-        log "Sending DailyWebHook with result '$result'."
+        Write-Log "Sending DailyWebHook with result '$result'."
         $webhook = $env:WebHookUrl
 
         $Body = @{
@@ -41,7 +41,7 @@ OS Type: $($PSVersionTable.OS) </br>
     }
     else
     {
-        log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
+        Write-Log "Skipping DailyWebHook.  WebHookUrl environment variable not present."
     }
 }
 
@@ -284,7 +284,7 @@ elseif($Stage -eq 'Build')
             # 3 - it's a nupkg file
             if($isDailyBuild -and $env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
             {
-                log "pushing $package to $env:NUGET_URL"
+                Write-Log "pushing $package to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
@@ -317,7 +317,7 @@ elseif($Stage -in 'Failure', 'Success')
                 write-warning "Could not retrieve $result badge"
             }
             else {
-                log "Setting status badge to '$result'"
+                Write-Log "Setting status badge to '$result'"
                 Set-DailyBuildBadge -content $svgData
             }
         }
@@ -333,7 +333,7 @@ elseif($Stage -in 'Failure', 'Success')
         }
     }
     else {
-        log 'We only send bagde or webhook update for Cron builds'
+        Write-Log 'We only send bagde or webhook update for Cron builds'
     }
 
 }

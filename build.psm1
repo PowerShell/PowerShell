@@ -228,7 +228,7 @@ function Start-BuildNativeWindowsBinaries {
         throw "Could not find Visual Studio vcvarsall.bat at $vcvarsallbatPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
     }
 
-    log "Start building native Windows binaries"
+    Write-Log "Start building native Windows binaries"
 
     if ($Clean) {
         git clean -fdx
@@ -263,7 +263,7 @@ function Start-BuildNativeWindowsBinaries {
                 $command = @"
 cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$currentLocation\$nativeResourcesFolder" -r "$currentLocation\$nativeResourcesFolder"
 "@
-                log "  Executing mc.exe Command: $command"
+                Write-Log "  Executing mc.exe Command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
             }
         }
@@ -276,7 +276,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" mc.exe -
         $command = @"
 cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$currentLocation" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
-        log "  Executing Build Command: $command"
+        Write-Log "  Executing Build Command: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
 
         # Copy the binaries from the local build directory to the packaging directory
@@ -285,7 +285,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakeP
         $FilesToCopy | ForEach-Object {
             $srcPath = [IO.Path]::Combine((Get-Location), "bin", $Configuration, "CoreClr/$_")
 
-            log "  Copying $srcPath to $dstPath"
+            Write-Log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
         }
 
@@ -300,7 +300,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakeP
         $command = @"
 cmd.exe /C cd /d "$location" "&" "$vcvarsallbatPath" "$Arch" "&" "$cmakePath" "$overrideFlags" -DBUILD_ONECORE=ON -DBUILD_TARGET_ARCH=$cmakeArch -G "$cmakeGenerator" $cmakeGeneratorPlatform "$location" "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$Configuration"
 "@
-        log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
+        Write-Log "  Executing Build Command for PowerShell.Core.Instrumentation: $command"
         Start-NativeExecution { Invoke-Expression -Command:$command }
 
         # Copy the binary to the packaging directory
@@ -354,7 +354,7 @@ function Start-BuildNativeUnixBinaries {
 
     $Native = "$PSScriptRoot/src/libpsl-native"
     $Lib = "$PSScriptRoot/src/powershell-unix/libpsl-native.$Ext"
-    log "Start building $Lib"
+    Write-Log "Start building $Lib"
 
     git clean -qfdX $Native
 
@@ -439,7 +439,7 @@ function Start-PSBuild {
     }
 
     if ($Clean) {
-        log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
+        Write-Log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
         Push-Location $PSScriptRoot
         try {
             git clean -fdX
@@ -537,7 +537,7 @@ Fix steps:
         }
 
         ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
-            log "Run dotnet restore $_ $RestoreArguments"
+            Write-Log "Run dotnet restore $_ $RestoreArguments"
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
         }
     }
@@ -545,7 +545,7 @@ Fix steps:
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
     if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
-        log "Run ResGen (generating C# bindings for resx files)"
+        Write-Log "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
     }
 
@@ -553,7 +553,7 @@ Fix steps:
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
     $incFileName = "powershell_$($Options.Runtime).inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
-        log "Run TypeGen (generating CorePsTypeCatalog.cs)"
+        Write-Log "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
     }
 
@@ -562,14 +562,14 @@ Fix steps:
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
-        log "Run dotnet $Arguments from $pwd"
+        Write-Log "Run dotnet $Arguments from $pwd"
         Start-NativeExecution { dotnet $Arguments }
 
         if ($CrossGen) {
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-            log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
+            Write-Log "pwsh.exe with ngen binaries is available at: $($Options.Output)"
         } else {
-            log "PowerShell output: $($Options.Output)"
+            Write-Log "PowerShell output: $($Options.Output)"
         }
     } finally {
         Pop-Location
@@ -652,7 +652,7 @@ function Restore-PSModuleToBuild
         $CI
     )
 
-    log "Restore PowerShell modules to $publishPath"
+    Write-Log "Restore PowerShell modules to $publishPath"
 
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
 
@@ -1106,6 +1106,10 @@ Restore the module to '$Pester' by running:
             $script:nonewline = $true
             $script:inerror = $false
         }
+        elseif ($trimmedline.StartsWith("Executing script ")) {
+            # Skip lines where Pester reports that is executing a test script
+            return
+        }
         elseif ($trimmedline -match "^\d+(\.\d+)?m?s$") {
             # Skip the time elapse like '12ms', '1ms', '1.2s' and '12.53s'
             return
@@ -1267,12 +1271,12 @@ function Show-PSPesterError
         throw 'Unknown Show-PSPester parameter set'
     }
 
-    logerror ("Description: " + $description)
-    logerror ("Name:        " + $name)
-    logerror "message:"
-    logerror $message
-    logerror "stack-trace:"
-    logerror $stackTrace
+    Write-Log -Error ("Description: " + $description)
+    Write-Log -Error ("Name:        " + $name)
+    Write-Log -Error "message:"
+    Write-Log -Error $message
+    Write-Log -Error "stack-trace:"
+    Write-Log -Error $stackTrace
 
 }
 
@@ -1312,12 +1316,12 @@ function Test-XUnitTestResults
         $message = $failure.test.failure.message.'#cdata-section'
         $stackTrace = $failure.test.failure.'stack-trace'.'#cdata-section'
 
-        logerror ("Description: " + $description)
-        logerror ("Name:        " + $name)
-        logerror "message:"
-        logerror $message
-        logerror "stack-trace:"
-        logerror $stackTrace
+        Write-Log -Error ("Description: " + $description)
+        Write-Log -Error ("Name:        " + $name)
+        Write-Log -Error "message:"
+        Write-Log -Error $message
+        Write-Log -Error "stack-trace:"
+        Write-Log -Error $stackTrace
     }
 
     throw "$($failedTests.failed) tests failed"
@@ -1348,7 +1352,7 @@ function Test-PSPesterResults
         $x = [xml](Get-Content -raw $testResultsFile)
         if ([int]$x.'test-results'.failures -gt 0)
         {
-            logerror "TEST FAILURES"
+            Write-Log -Error "TEST FAILURES"
             # switch between methods, SelectNode is not available on dotnet core
             if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] )
             {
@@ -1373,7 +1377,7 @@ function Test-PSPesterResults
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
-            logerror 'TEST FAILURES'
+            Write-Log -Error 'TEST FAILURES'
 
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
                 Show-PSPesterError -testFailureObject $_
@@ -1531,7 +1535,7 @@ function Start-PSBootstrap {
         [switch]$Force
     )
 
-    log "Installing PowerShell build dependencies"
+    Write-Log "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
 
@@ -1664,20 +1668,20 @@ function Start-PSBootstrap {
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
             if($Force.IsPresent) {
-                log "Installing dotnet due to -Force."
+                Write-Log "Installing dotnet due to -Force."
             }
             elseif(!$dotNetExistis) {
-                log "dotnet not present.  Installing dotnet."
+                Write-Log "dotnet not present.  Installing dotnet."
             }
             else {
-                log "dotnet out of date ($dotNetVersion).  Updating dotnet."
+                Write-Log "dotnet out of date ($dotNetVersion).  Updating dotnet."
             }
 
             $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
             Install-Dotnet @DotnetArguments
         }
         else {
-            log "dotnet is already installed.  Skipping installation."
+            Write-Log "dotnet is already installed.  Skipping installation."
         }
 
         # Install Windows dependencies if `-Package` or `-BuildWindowsNative` is specified
@@ -1685,7 +1689,7 @@ function Start-PSBootstrap {
             ## The VSCode build task requires 'pwsh.exe' to be found in Path
             if (-not (Get-Command -Name pwsh.exe -CommandType Application -ErrorAction SilentlyContinue))
             {
-                log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
+                Write-Log "pwsh.exe not found. Install latest PowerShell Core release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
                 & $psInstallFile -AddToPath
             }
@@ -1693,7 +1697,7 @@ function Start-PSBootstrap {
             ## need RCEdit to modify the binaries embedded resources
             if (-not (Test-Path "~/.rcedit/rcedit-x64.exe"))
             {
-                log "Install RCEdit for modifying exe resources"
+                Write-Log "Install RCEdit for modifying exe resources"
                 $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
                 New-Item -Path "~/.rcedit" -Type Directory -Force > $null
 
@@ -1704,7 +1708,7 @@ function Start-PSBootstrap {
             }
 
             if ($BuildWindowsNative) {
-                log "Install Windows dependencies for building PSRP plugin"
+                Write-Log "Install Windows dependencies for building PSRP plugin"
 
                 $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
                 $newMachineEnvironmentPath = $machinePath
@@ -1716,40 +1720,40 @@ function Start-PSBootstrap {
                 $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
 
                 if(precheck 'choco' $null) {
-                    log "Chocolatey is already installed. Skipping installation."
+                    Write-Log "Chocolatey is already installed. Skipping installation."
                 }
                 elseif(($cmakePresent -eq $false) -or ($sdkPresent -eq $false)) {
-                    log "Chocolatey not present. Installing chocolatey."
+                    Write-Log "Chocolatey not present. Installing chocolatey."
                     if ($Force -or $PSCmdlet.ShouldProcess("Install chocolatey via https://chocolatey.org/install.ps1")) {
                         Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
                         if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower()))) {
-                            log "Adding $chocolateyPath to Path environment variable"
+                            Write-Log "Adding $chocolateyPath to Path environment variable"
                             $env:Path += ";$chocolateyPath"
                             $newMachineEnvironmentPath += ";$chocolateyPath"
                         } else {
-                            log "$chocolateyPath already present in Path environment variable"
+                            Write-Log "$chocolateyPath already present in Path environment variable"
                         }
                     } else {
                         Write-Error "Chocolatey is required to install missing dependencies. Please install it from https://chocolatey.org/ manually. Alternatively, install cmake and Windows 10 SDK."
                         return
                     }
                 } else {
-                    log "Skipping installation of chocolatey, cause both cmake and Win 10 SDK are present."
+                    Write-Log "Skipping installation of chocolatey, cause both cmake and Win 10 SDK are present."
                 }
 
                 # Install cmake
                 $cmakePath = "${env:ProgramFiles}\CMake\bin"
                 if($cmakePresent -and !($force.IsPresent)) {
-                    log "Cmake is already installed. Skipping installation."
+                    Write-Log "Cmake is already installed. Skipping installation."
                 } else {
-                    log "Cmake not present or -Force used. Installing cmake."
+                    Write-Log "Cmake not present or -Force used. Installing cmake."
                     Start-NativeExecution { choco install cmake -y --version 3.10.0 }
                     if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
-                        log "Adding $cmakePath to Path environment variable"
+                        Write-Log "Adding $cmakePath to Path environment variable"
                         $env:Path += ";$cmakePath"
                         $newMachineEnvironmentPath = "$cmakePath;$newMachineEnvironmentPath"
                     } else {
-                        log "$cmakePath already present in Path environment variable"
+                        Write-Log "$cmakePath already present in Path environment variable"
                     }
                 }
 
@@ -1757,15 +1761,15 @@ function Start-PSBootstrap {
                 $packageName = "windows-sdk-10.0"
 
                 if (-not $sdkPresent) {
-                    log "Windows 10 SDK not present. Installing $packageName."
+                    Write-Log "Windows 10 SDK not present. Installing $packageName."
                     Start-NativeExecution { choco install windows-sdk-10.0 -y }
                 } else {
-                    log "Windows 10 SDK present. Skipping installation."
+                    Write-Log "Windows 10 SDK present. Skipping installation."
                 }
 
                 # Update path machine environment variable
                 if ($newMachineEnvironmentPath -ne $machinePath) {
-                    log "Updating Path machine environment variable"
+                    Write-Log "Updating Path machine environment variable"
                     if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable to $newMachineEnvironmentPath")) {
                         [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')
                     }
@@ -2013,18 +2017,27 @@ function script:Use-MSBuild {
     Set-Alias msbuild $frameworkMsBuildLocation -Scope Script
 }
 
-function script:log([string]$message) {
-    Write-Host -Foreground Green $message
+function script:Write-Log
+{
+    param
+    (
+        [Parameter(Position=0, Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string] $message,
+
+        [switch] $error
+    )
+    if ($error)
+    {
+        Write-Host -Foreground Red $message
+    }
+    else
+    {
+        Write-Host -Foreground Green $message
+    }
     #reset colors for older package to at return to default after error message on a compilation error
     [console]::ResetColor()
 }
-
-function script:logerror([string]$message) {
-    Write-Host -Foreground Red $message
-    #reset colors for older package to at return to default after error message on a compilation error
-    [console]::ResetColor()
-}
-
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
@@ -2323,7 +2336,7 @@ function Copy-PSGalleryModules
     foreach ($m in $psGalleryProj.Project.ItemGroup.PackageReference) {
         $name = $m.Include
         $version = $m.Version
-        log "Name='$Name', Version='$version', Destination='$Destination'"
+        Write-Log "Name='$Name', Version='$version', Destination='$Destination'"
 
         # Remove the build revision from the src (nuget drops it).
         $srcVer = if ($version -match "(\d+.\d+.\d+).\d+") {
