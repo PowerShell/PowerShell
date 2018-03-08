@@ -633,7 +633,7 @@ namespace PowershellTestConfigNamespace
             }
 
             $resultContent = invoke-expression ($result)
-            $resultContent.GetType().ToString() | Should -Be "System.Collections.Hashtable"
+            $resultContent | Should -BeOfType "System.Collections.Hashtable"
 
             # The default created hashtable in the session configuration file would have the
             # following keys which we are validating below.
