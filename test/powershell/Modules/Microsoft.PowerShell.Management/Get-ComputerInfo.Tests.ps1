@@ -1063,7 +1063,7 @@ try {
                 $expectedProperties = @("BiosBIOSVersion")
                 $propertyFilter = "BiosBIOSVersion"
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 1
                 $computerInfoWithProp.$propertyFilter | Should -Be $expected.$propertyFilter
             }
@@ -1076,7 +1076,7 @@ try {
                 $expectedProperties = @("BiosBIOSVersion","BiosBuildNumber","BiosCaption")
                 $propertyFilter = @("BiosBIOSVersion","BiosBuildNumber","BiosCaption")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 3
                 foreach($property in $propertyFilter) {
                     $ComputerInfoWithProp.$property | Should -Be $Expected.$property
@@ -1091,7 +1091,7 @@ try {
                 $expectedProperties = $null
                 $propertyFilter = @("BiosBIOSVersionXXX")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
 
@@ -1103,7 +1103,7 @@ try {
                 $expectedProperties = $null
                 $propertyFilter = @("BiosBIOSVersionXXX","InvalidProperty1","InvalidProperty2","InvalidProperty3")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
 
@@ -1115,7 +1115,7 @@ try {
                 $expectedProperties = @("BiosCodeSet","BiosCurrentLanguage","BiosDescription")
                 $propertyFilter = @("InvalidProperty1","BiosCodeSet","BiosCurrentLanguage","BiosDescription")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 $realProperties  = $propertyFilter | Where-Object { $_ -notmatch "^InvalidProperty[0-9]+" }
                 @($computerInfoWithProp.psobject.properties).count | Should -Be $realProperties.Count
                 foreach ( $property in $realProperties )
@@ -1132,7 +1132,7 @@ try {
                 $expectedProperties = @("BiosCodeSet","BiosCurrentLanguage","BiosDescription")
                 $propertyFilter = @("BiosCodeSet","InvalidProperty1","BiosCurrentLanguage","BiosDescription","InvalidProperty2")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 $realProperties  = $propertyFilter | Where-Object { $_ -notmatch "^InvalidProperty[0-9]+" }
                 @($computerInfoWithProp.psobject.properties).count | Should -Be $realProperties.Count
                 foreach ( $property in $realProperties )
@@ -1149,7 +1149,7 @@ try {
                 $expectedProperties = @("BiosCaption","BiosCharacteristics","BiosCodeSet","BiosCurrentLanguage")
                 $propertyFilter = @("BiosC*")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be $expectedProperties.Count
                 foreach ( $property in $expectedProperties )
                 {
@@ -1165,7 +1165,7 @@ try {
                 $expectedProperties = @("BiosCaption","BiosCharacteristics","BiosCodeSet","BiosCurrentLanguage","CsCaption")
                 $propertyFilter = @("BiosC*","CsCaption")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be $expectedProperties.Count
                 foreach ( $property in $expectedProperties )
                 {
@@ -1181,7 +1181,7 @@ try {
                 $expectedProperties = @("BiosCaption","BiosCharacteristics","BiosCodeSet","BiosCurrentLanguage","CsCaption")
                 $propertyFilter = @("CsCaption","InvalidProperty1","BiosC*")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be $expectedProperties.Count
                 foreach ( $property in $expectedProperties )
                 {
@@ -1197,7 +1197,7 @@ try {
                 $expectedProperties = $null
                 $propertyFilter = @("BiosBIOSVersionX*")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | Should -Beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
         }

@@ -87,6 +87,6 @@ Describe "Split-Path" -Tags "CI" {
     }
 
     It 'Does not split a drive leter'{
-    Split-Path -Path 'C:\' | Should -Be ''
+    Split-Path -Path 'C:\' | Should -BeNullOrEmpty
     }
 }

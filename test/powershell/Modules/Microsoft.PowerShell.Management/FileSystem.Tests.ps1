@@ -551,7 +551,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $filenamePattern = "AlphaFile[12]\.txt"
             New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
             $ci = Get-ChildItem $alphaLink
-            $ci.Count | Should -BeExactly 3
+            $ci.Count | Should -Be 3
             $ci[1].Name | Should -MatchExactly $filenamePattern
             $ci[2].Name | Should -MatchExactly $filenamePattern
         }

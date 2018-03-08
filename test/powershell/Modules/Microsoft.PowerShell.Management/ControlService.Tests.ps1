@@ -42,18 +42,18 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
         $wasStopped = $true
         $spooler = Start-Service Spooler -PassThru
       }
-      $spooler.Status | Should -Be "Running"
+      $spooler.Status | Should -BeExactly "Running"
       $spooler = Stop-Service Spooler -PassThru
-      $spooler.Status | Should -Be "Stopped"
-      (Get-Service Spooler).Status | Should -Be "Stopped"
+      $spooler.Status | Should -BeExaclty "Stopped"
+      (Get-Service Spooler).Status | Should -BeExactly "Stopped"
       $spooler = Start-Service Spooler -PassThru
-      $spooler.Status | Should -Be "Running"
-      (Get-Service Spooler).Status | Should -Be "Running"
+      $spooler.Status | Should -BeExactly "Running"
+      (Get-Service Spooler).Status | Should -BeExactly "Running"
       Stop-Service Spooler
-      (Get-Service Spooler).Status | Should -Be "Stopped"
+      (Get-Service Spooler).Status | Should -BeExactly "Stopped"
       $spooler = Restart-Service Spooler -PassThru
-      $spooler.Status | Should -Be "Running"
-      (Get-Service Spooler).Status | Should -Be "Running"
+      $spooler.Status | Should -BeExactly "Running"
+      (Get-Service Spooler).Status | Should -BeExactly "Running"
     } finally {
       if ($wasStopped) {
         Stop-Service Spooler
@@ -72,9 +72,9 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
       }
       $service | Should -Not -BeNullOrEmpty
       Suspend-Service $serviceName
-      (Get-Service $serviceName).Status | Should -Be "Paused"
+      (Get-Service $serviceName).Status | Should -BeExactly "Paused"
       Resume-Service $serviceName
-      (Get-Service $serviceName).Status | Should -Be "Running"
+      (Get-Service $serviceName).Status | Should -BeExactly "Running"
     } finally {
       Set-Service $serviceName -Status $originalState
     }

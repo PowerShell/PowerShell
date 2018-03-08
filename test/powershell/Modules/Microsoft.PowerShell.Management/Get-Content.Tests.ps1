@@ -124,7 +124,7 @@ baz
         $expected = 'foo'
 
         $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encodingName
-        $actual | Should -BeOfType "[string]"
+        $actual | Should -BeOfType [string]
         $actual.Length | Should -Be $tailCount
         $actual[0] | Should -BeExactly $expected
     }
