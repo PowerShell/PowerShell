@@ -544,7 +544,7 @@ function Invoke-AppveyorFinish
 
             if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
-                log "pushing $_ to $env:NUGET_URL"
+                Write-Log "pushing $_ to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
