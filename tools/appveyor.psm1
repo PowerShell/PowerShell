@@ -446,7 +446,6 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
-    $exitCode = 0
     try {
         $releaseTag = Get-ReleaseTag
 
@@ -556,14 +555,5 @@ function Invoke-AppveyorFinish
     catch {
         Write-Host -Foreground Red $_
         throw $_
-    }
-    finally {
-        # A throw statement would not make the build fail. This function is AppVeyor specific
-        # and is the only command executed in 'on_finish' phase, so it's safe that we request
-        # the current runspace to exit with the specified exit code. If the exit code is non-zero,
-        # AppVeyor will fail the build.
-        # See this link for details:
-        # https://help.appveyor.com/discussions/problems/4498-powershell-exception-in-test_script-does-not-fail-build
-        $host.SetShouldExit($exitCode)
     }
 }
