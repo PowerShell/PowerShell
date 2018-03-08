@@ -44,7 +44,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
             $result = $ps.AddCommand("Get-History").Invoke()
             $result.Count | Should -Be 8
             for($i = 0; $i -lt 4; $i++) {
-                $result[$i+4].CommandLine | Should -Be $result[$i].CommandLine
+                $result[$i+4].CommandLine | Should -BeExactly $result[$i].CommandLine
             }
         }
     }
@@ -108,6 +108,6 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $errorResult = $ps.Streams.Error[0].FullyQualifiedErrorId
         $ps.Dispose()
 
-        $errorResult | Should -Be CommandNotFoundException
+        $errorResult | Should -BeExactly 'CommandNotFoundException'
     }
 }

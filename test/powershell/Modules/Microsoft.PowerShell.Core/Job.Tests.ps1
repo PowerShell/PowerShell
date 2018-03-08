@@ -10,7 +10,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Start-Job produces a job object" {
             $j | Should -BeOfType "System.Management.Automation.Job"
-            $j.Name | Should -Be "My Job"
+            $j.Name | Should -BeExactly "My Job"
         }
         It "Get-Job retrieves a job object" {
             (Get-Job -Id $j.Id) | Should -BeOfType "System.Management.Automation.Job"
@@ -52,15 +52,15 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         It "Wait-Job will wait for a job" {
             $result = Wait-Job $j
             $result | Should -Be $j
-            $j.State | Should -Be "Completed"
+            $j.State | Should -BeExactly "Completed"
         }
         It "Wait-Job will timeout waiting for a job" {
             $result = Wait-Job -Timeout 2 $j
-            $result | Should -Be $null
+            $result | Should -BeNullOrEmpty
         }
         It "Stop-Job will stop a job" {
             Stop-Job -Id $j.Id
-            $j.State | Should -Be "Stopped"
+            $j.State | Should -BeExactly "Stopped"
         }
         It "Remove-Job will not remove a running job" {
             $id = $j.Id
@@ -72,7 +72,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             $id = $j.Id
             Remove-Job $j -Force
             $job = Get-Job -Id $id -ErrorAction SilentlyContinue
-            $job | Should -Be $null
+            $job | Should -BeNullOrEmpty
         }
     }
     Context "Retrieving partial output from jobs" {
@@ -135,7 +135,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         It "Receive-Job will retrieve partial output, including -Keep results" {
             $result1 = GetResults $j 5 $true
             $result2 = GetResults $j ($result1.Count + 5) $false
-            Compare-Object -SyncWindow 0 -PassThru $result1 $result2[0..($result1.Count-1)] | Should -Be $null
+            Compare-Object -SyncWindow 0 -PassThru $result1 $result2[0..($result1.Count-1)] | Should -BeNullOrEmpty
             $result2[$result1.Count - 1] + 1 | Should -Be $result2[$result1.Count]
         }
     }
@@ -210,12 +210,12 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
-            Receive-Job -Wait $j | Should -Be $null
+            Receive-Job -Wait $j | Should -BeNullOrEmpty
             Get-Content $TESTDRIVE/hello.txt | Should -BeExactly "hello"
         }
         It "Test that error redirection is done in the background job" {
             $j = Write-Error MyError 2> $TESTDRIVE/myerror.txt &
-            Receive-Job -Wait $j | Should -Be $null
+            Receive-Job -Wait $j | Should -BeNullOrEmpty
             Get-Content -Raw $TESTDRIVE/myerror.txt | Should -Match "MyError"
         }
     }

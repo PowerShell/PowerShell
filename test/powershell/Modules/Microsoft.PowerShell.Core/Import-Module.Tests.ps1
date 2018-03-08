@@ -22,24 +22,24 @@ Describe "Import-Module" -Tags "CI" {
 
     AfterEach {
         Import-Module -Name $moduleName -Force
-        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
     It "should be able to add a module with using Name switch" {
         { Import-Module -Name $moduleName } | Should -Not -Throw
-        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
     It "should be able to add a module with using ModuleInfo switch" {
         $a = Get-Module -ListAvailable $moduleName
         { Import-Module -ModuleInfo $a } | Should -Not -Throw
-        (Get-Module -Name $moduleName).Name | Should -Be $moduleName
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
     It "should be able to load an already loaded module" {
         Import-Module $moduleName
         { $script:module = Import-Module $moduleName -PassThru -ErrorAction Stop } | Should -Not -Throw
-        Get-Module -Name $moduleName | Should -Be $script:module
+        Get-Module -Name $moduleName | Should -BeExactly $script:module
     }
 
     It "should only load the specified version" {
@@ -85,7 +85,7 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
     It "Verify ScriptsToProcess are executed <TestNameSuffix>" -TestCases $testCases {
         param($TestNameSuffix,$ipmoParms,$Expected)
         Import-Module @ipmoParms
-        Get-Content out.txt | Should -Be $Expected
+        Get-Content out.txt | Should -BeExactly $Expected
     }
 }
 
@@ -109,7 +109,7 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
         It "Load PSScheduledJob from Windows Powershell Modules folder" -Skip:(-not $IsWindows) {
             $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
             Import-Module $modulePath
-            (Get-Command New-JobTrigger).Name | Should -Be 'New-JobTrigger'
+            (Get-Command New-JobTrigger).Name | Should -BeExactly 'New-JobTrigger'
         }
     }
 }
@@ -138,7 +138,7 @@ namespace ModuleCmdlets
 
     #Ignore slash format difference under windows/Unix
     $path = (Get-ChildItem $TESTDRIVE\System.dll).FullName
-    $results[0] | Should -Be $path
+    $results[0] | Should -BeExactly $path
     $results[1] | Should -BeExactly "BinaryModuleCmdlet1 exported by the ModuleCmdlets module."
     }
 

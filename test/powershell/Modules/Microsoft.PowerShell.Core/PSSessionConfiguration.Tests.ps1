@@ -366,7 +366,7 @@ try
                             }
                         }
                         $Result.Output | Should -Be $ExpectedOutput
-                        $Result.Error | Should -Be $null
+                        $Result.Error | Should -BeNullOrEmpty
                     }
 
                     # Create Test Startup Script
