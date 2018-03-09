@@ -2286,7 +2286,7 @@ function Test-FileWxs
             }
             catch
             {
-                #ignore any error pushing the artifact
+                Write-Warning -Message "Pushing MSI File fragment failed."
             }
         }
 

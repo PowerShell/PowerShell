@@ -526,17 +526,16 @@ Fix steps:
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
-        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
 
-        $RestoreArguments = @("--verbosity")
+        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
         }
 
-        ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
+        $srcProjectDirs | ForEach-Object {
             Write-Log "Run dotnet restore $_ $RestoreArguments"
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
         }

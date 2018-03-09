@@ -446,7 +446,6 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
-    $exitCode = 0
     try {
         $releaseTag = Get-ReleaseTag
 
@@ -455,8 +454,6 @@ function Invoke-AppveyorFinish
 
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
-        $msiObject = $packages | Where-Object { $_ -is [pscustomobject] -and $_.msi }
-        $msi = $msiObject | Where-Object { $_.msi.EndsWith(".msi") } | Select-Object -ExpandProperty msi
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -490,7 +487,7 @@ function Invoke-AppveyorFinish
         }
 
         # Smoke Test MSI installer
-        log "Smoke-Testing MSI installer"
+        Write-Log "Smoke-Testing MSI installer"
         $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
         $msiLog = Join-Path (Get-Location) 'msilog.txt'
         $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
@@ -500,8 +497,7 @@ function Invoke-AppveyorFinish
             $exitCode = $msiExecProcess.ExitCode
             throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
-
-        log "MSI smoke test was successful"
+        Write-Log "MSI smoke test was successful"
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
@@ -555,14 +551,6 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
-    }
-    finally {
-        # A throw statement would not make the build fail. This function is AppVeyor specific
-        # and is the only command executed in 'on_finish' phase, so it's safe that we request
-        # the current runspace to exit with the specified exit code. If the exit code is non-zero,
-        # AppVeyor will fail the build.
-        # See this link for details:
-        # https://help.appveyor.com/discussions/problems/4498-powershell-exception-in-test_script-does-not-fail-build
-        $host.SetShouldExit($exitCode)
+        throw $_
     }
 }
