@@ -131,7 +131,7 @@ function RunTest($testCase)
         $errVar = $null
         $sb = [scriptblock]::Create($cmd)
         $result = &$sb
-        $errVar | Should BeNullOrEmpty
+        $errVar | Should -BeNullOrEmpty
 
         if ($testCase.ContainsKey("Script"))
         {
@@ -222,11 +222,11 @@ function RunExpectedFailureTest($testCase)
             {
                 if ($testCase.ExpectedErrorId)
                 {
-                    $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
+                    $_.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
                 }
                 if ($testCase.ExpectedErrorCategory)
                 {
-                    $_.CategoryInfo.Category | Should Be $testCase.ExpectedErrorCategory
+                    $_.CategoryInfo.Category | Should -Be $testCase.ExpectedErrorCategory
                 }
             }
         }
@@ -244,7 +244,7 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
             Name = "Can import all samples from known sample sets"
             UseKnownSamples = $true
             Script = {
-                $result.Length | Should Be 25
+                $result.Length | Should -Be 25
             }
         }
         @{
@@ -252,9 +252,9 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
             UseKnownSamples = $true
             Parameters = "-Summary"
             Script = {
-                $result.SampleCount | Should Be 25
-                $result.OldestRecord | Should Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 46 -Second 30 -Millisecond 874)
-                $result.NewestRecord | Should Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 47 -Second 42 -Millisecond 983)
+                $result.SampleCount | Should -Be 25
+                $result.OldestRecord | Should -Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 46 -Second 30 -Millisecond 874)
+                $result.NewestRecord | Should -Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 47 -Second 42 -Millisecond 983)
             }
         }
     )
@@ -365,12 +365,12 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
         It "Multiple errors when BLG file contains bad sample data" -Skip:$(SkipCounterTests) {
             $errVar = $null
             $result = Import-Counter $badSamplesBlgPath -ErrorVariable errVar -ErrorAction SilentlyContinue
-            $result.Length | Should Be 275
-            $errVar.Count | Should Be 5
+            $result.Length | Should -Be 275
+            $errVar.Count | Should -Be 5
             foreach ($err in $errVar)
             {
-                $err.CategoryInfo.Category | Should Be "InvalidResult"
-                $err.FullyQualifiedErrorId | SHould Be "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                $err.CategoryInfo.Category | Should -Be "InvalidResult"
+                $err.FullyQualifiedErrorId | SHould -Be "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
         }
     }
@@ -404,8 +404,8 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                 UseKnownSamples = $true
                 Parameters = "-ListSet $($setNames.Memory)"
                 Script = {
-                    $result.Length | Should Be 1
-                    $result[0].CounterSetName | Should Be $setNames.Memory
+                    $result.Length | Should -Be 1
+                    $result[0].CounterSetName | Should -Be $setNames.Memory
                 }
             }
             @{
@@ -413,14 +413,14 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                 UseKnownSamples = $true
                 Parameters = "-ListSet $(TranslateCounterName 'memory'), $(TranslateCounterName 'processor')"
                 Script = {
-                    $result.Length | Should Be 2
+                    $result.Length | Should -Be 2
                     $names = @()
                     foreach ($set in $result)
                     {
                         $names = $names + $set.CounterSetName
                     }
-                    $names -Contains $setNames.Memory | Should Be $true
-                    $names -Contains $setNames.Processor | Should Be $true
+                    $names -Contains $setNames.Memory | Should -Be $true
+                    $names -Contains $setNames.Processor | Should -Be $true
                 }
             }
             @{
@@ -433,14 +433,14 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                 UseKnownSamples = $true
                 Parameters = "-ListSet p*"
                 Script = {
-                    $result.Length | Should BeGreaterThan 1
+                    $result.Length | Should -BeGreaterThan 1
                     $names = @()
                     foreach ($set in $result)
                     {
                         $names = $names + $set.CounterSetName
                     }
-                    $names -Contains "physicaldisk" | Should Be $true
-                    $names -Contains "processor" | Should Be $true
+                    $names -Contains "physicaldisk" | Should -Be $true
+                    $names -Contains "processor" | Should -Be $true
                 }
             }
             @{
@@ -453,12 +453,12 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                 UseKnownSamples = $true
                 Parameters = "-ListSet memory, p*"
                 Script = {
-                    $result.Length | Should BeGreaterThan 2
+                    $result.Length | Should -BeGreaterThan 2
                     $names = @()
                     foreach ($set in $result) { $names = $names + $set.CounterSetName }
-                    $names -Contains "memory" | Should Be $true
-                    $names -Contains "processor" | Should Be $true
-                    $names -Contains "physicaldisk" | Should Be $true
+                    $names -Contains "memory" | Should -Be $true
+                    $names -Contains "processor" | Should -Be $true
+                    $names -Contains "physicaldisk" | Should -Be $true
                 }
             }
         )
@@ -481,7 +481,7 @@ Describe "Import-Counter cmdlet does not run on IoT" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
+            $_.FullyQualifiedErrorId | should -be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
         }
     }
 }

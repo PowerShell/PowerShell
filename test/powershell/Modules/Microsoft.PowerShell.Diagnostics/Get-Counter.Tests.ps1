@@ -45,7 +45,7 @@ function ValidateParameters($testCase)
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
+            $_.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
         }
     }
 }
@@ -55,15 +55,15 @@ Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
     It "Get-Counter with no parameters returns data for a default set of counters" -Skip:$(SkipCounterTests) {
         $counterData = Get-Counter
         # At the very least we should get processor and memory
-        $counterData.CounterSamples.Length | should BeGreaterThan 1
+        $counterData.CounterSamples.Length | should -BeGreaterThan 1
     }
 
     It "Can retrieve the specified counter" -Skip:$(SkipCounterTests) {
         $counterPath = $counterPaths.MemoryBytes
         $counterData = Get-Counter -Counter $counterPath
-        $counterData.Length | Should Be 1
+        $counterData.Length | Should -Be 1
         $retrievedPath = RemoveMachineName $counterData[0].CounterSamples[0].Path
-        [string]::Compare($retrievedPath, $counterPath, $true) | Should Be 0
+        [string]::Compare($retrievedPath, $counterPath, $true) | Should -Be 0
     }
 }
 
@@ -178,7 +178,7 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $counterPath = $counterPaths.MemoryBytes
             $counterCount = 5
             $counterData = Get-Counter -Counter $counterPath -MaxSamples $counterCount
-            $counterData.Length | Should Be $counterCount
+            $counterData.Length | Should -Be $counterCount
         }
 
         It "Can specify the sample interval" -Skip:$(SkipCounterTests) {
@@ -188,15 +188,15 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $startTime = Get-Date
             $counterData = Get-Counter -Counter $counterPath -SampleInterval $sampleInterval -MaxSamples $counterCount
             $endTime = Get-Date
-            $counterData.Length | Should Be $counterCount
-            ($endTime - $startTime).TotalSeconds | Should Not BeLessThan ($counterCount * $sampleInterval)
+            $counterData.Length | Should -Be $counterCount
+            ($endTime - $startTime).TotalSeconds | Should -Not -BeLessThan ($counterCount * $sampleInterval)
         }
 
         It "Can process array of counter names" -Skip:$(SkipCounterTests) {
             $counterPaths = @((TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"),
                               (TranslateCounterPath "\Memory\Available bytes"))
             $counterData = Get-Counter -Counter $counterPaths
-            $counterData.CounterSamples.Length | Should Be $counterPaths.Length
+            $counterData.CounterSamples.Length | Should -Be $counterPaths.Length
         }
     }
 
@@ -204,16 +204,16 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
         It "Can retrieve specified counter set" -Skip:$(SkipCounterTests) {
             $counterSetName = "Memory"
             $counterSet = Get-Counter -ListSet $counterSetName
-            $counterSet.Length | Should Be 1
-            $counterSet.CounterSetName | Should Be $counterSetName
+            $counterSet.Length | Should -Be 1
+            $counterSet.CounterSetName | Should -Be $counterSetName
         }
 
         It "Can process an array of counter set names" -Skip:$(SkipCounterTests) {
             $counterSetNames = @("Memory", "Processor")
             $counterSets = Get-Counter -ListSet $counterSetNames
-            $counterSets.Length | Should Be 2
-            $counterSets[0].CounterSetName | Should Be $counterSetNames[0]
-            $counterSets[1].CounterSetName | Should Be $counterSetNames[1]
+            $counterSets.Length | Should -Be 2
+            $counterSets[0].CounterSetName | Should -Be $counterSetNames[0]
+            $counterSets[1].CounterSetName | Should -Be $counterSetNames[1]
         }
 
         # This test will be skipped for non-English languages, since
@@ -224,10 +224,10 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $wildcardBase = "roc"
             $counterSetName = "*$wildcardBase*"
             $counterSets = Get-Counter -ListSet $counterSetName
-            $counterSets.Length | Should BeGreaterThan 1    # should get at least "Processor" and "Process"
+            $counterSets.Length | Should -BeGreaterThan 1    # should get at least "Processor" and "Process"
             foreach ($counterSet in $counterSets)
             {
-                $counterSet.CounterSetName.ToLower().Contains($wildcardBase.ToLower()) | Should Be $true
+                $counterSet.CounterSetName.ToLower().Contains($wildcardBase.ToLower()) | Should -Be $true
             }
         }
 
@@ -239,11 +239,11 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $wildcardBases = @("Memory", "roc")
             $counterSetNames = @($wildcardBases[0], ("*" + $wildcardBases[1] + "*"))
             $counterSets = Get-Counter -ListSet $counterSetNames
-            $counterSets.Length | Should BeGreaterThan 2    # should get at least "Memory", "Processor" and "Process"
+            $counterSets.Length | Should -BeGreaterThan 2    # should get at least "Memory", "Processor" and "Process"
             foreach ($counterSet in $counterSets)
             {
                 ($counterSet.CounterSetName.ToLower().Contains($wildcardBases[0].ToLower()) -Or
-                 $counterSet.CounterSetName.ToLower().Contains($wildcardBases[1].ToLower())) | Should Be $true
+                 $counterSet.CounterSetName.ToLower().Contains($wildcardBases[1].ToLower())) | Should -Be $true
             }
         }
     }
@@ -260,7 +260,7 @@ Describe "Get-Counter cmdlet does not run on IoT" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
+            $_.FullyQualifiedErrorId | should -be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
         }
     }
 }

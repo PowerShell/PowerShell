@@ -29,7 +29,7 @@ $counterValues = $null
 # counters and comparing the two sets
 function CheckExportResults
 {
-    Test-Path $filePath | Should Be $true
+    Test-Path $filePath | Should -Be $true
     $importedCounterValues = Import-Counter $filePath
 
     CompareCounterSets $counterValues $importedCounterValues
@@ -106,7 +106,7 @@ function RunTest($testCase)
                 }
                 catch
                 {
-                    $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
+                    $_.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
                 }
             }
         }
@@ -202,7 +202,7 @@ Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
             @{
                 Name = "Can force overwriting existing file"
                 Parameters = "-Force"
-                Script = { Test-Path $filePath | Should Be $true }
+                Script = { Test-Path $filePath | Should -Be $true }
             }
             @{
                 Name = "Can export BLG format"
