@@ -91,6 +91,11 @@ $architecture = if (-not $IsWinEnv) {
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 New-Item -ItemType Directory -Path $tempDir -Force > $null
 try {
+    # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
+    # aborted: Could not create SSL/TLS secure channel. error.
+    $originalValue = [Net.ServicePointManager]::SecurityProtocol
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
     if ($Daily) {
         if (-not (Get-Module -Name PackageManagement -ListAvailable)) {
             throw "PackageManagement module is required to install daily PowerShell Core."
@@ -135,20 +140,9 @@ try {
         $downloadURL = "https://github.com/PowerShell/PowerShell/releases/download/v${release}/${packageName}"
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
-        # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
-        # aborted: Could not create SSL/TLS secure channel. error.
-        $originalValue = [Net.ServicePointManager]::SecurityProtocol
-        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
 
-        try {
-            Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-        }
-        finally {
-            # Restore original value
-            [Net.ServicePointManager]::SecurityProtocol = $originalValue
-        }
+        Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
 
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
@@ -240,5 +234,8 @@ try {
         Write-Host "Please restart pwsh" -ForegroundColor Magenta
     }
 } finally {
+    # Restore original value
+    [Net.ServicePointManager]::SecurityProtocol = $originalValue
+
     Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
 }
