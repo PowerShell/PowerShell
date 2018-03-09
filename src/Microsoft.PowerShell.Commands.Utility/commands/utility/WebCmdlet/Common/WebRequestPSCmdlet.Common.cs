@@ -1257,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // recreate the HttpClient with redirection enabled since the first call suppressed redirection
                 using (client = GetHttpClient(false))
-                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, stripAuthorization:true))
+                using (HttpRequestMessage redirectRequest = GetRequest(new Uri(request.RequestUri, response.Headers.Location), stripAuthorization:true))
                 {
                     FillRequestStream(redirectRequest);
                     _cancelToken = new CancellationTokenSource();

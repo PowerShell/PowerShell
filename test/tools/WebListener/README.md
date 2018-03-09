@@ -489,6 +489,7 @@ Invoke-RestMethod -Uri $uri -Body $body -Method 'Put'
 
 Will `302` redirect to `/Get/`. If a number is supplied, redirect will occur that many times. Can be used to test maximum redirects.
 If the `type` query field is supplied the corresponding `System.Net.HttpStatusCode` will be returned instead of `302`.
+If `type` is `relative`, the redirect URI will be relative instead of absolute.
 
 ```powershell
 $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '2'

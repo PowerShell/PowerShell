@@ -363,6 +363,8 @@ $redirectTests = @(
 
     @{redirectType = 'TemporaryRedirect'; redirectedMethod = 'GET'}
     @{redirectType = 'RedirectKeepVerb'; redirectedMethod = 'GET'} # Synonym for TemporaryRedirect
+
+    @{redirectType = 'relative'; redirectedMethod = 'GET'}
 )
 
 $PendingCertificateTest = $false
