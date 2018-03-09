@@ -846,16 +846,21 @@ function Export-OSLog
 
 <#
 .SYNOPSIS
-    Enables persistence of PowerShell logging
+    Enables or disables persistence of PowerShell logging
 
 .PARAMETER Enable
-    true to enable persistence of PowerShell log items; otherwise, false to revert to it's default state.
+    Enable persistence of PowerShell log items
+
+.PARAMETER Disable
+    Disables persistent of PowerShell log items.
+    This reverts persistence to the system default.
+
 .EXAMPLE
-    Set-OsLogPersistence -Enable $true
+    Set-OsLogPersistence -Enable
     Enables persistence of PowerShell log entries
 
 .EXAMPLE
-    Set-OsLogPersistence -Enable $false
+    Set-OsLogPersistence -Disable
     Reverts persistence to the default state.
 
 .NOTES
@@ -866,11 +871,12 @@ function Set-OsLogPersistence
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory, Position = 0)]
-        [bool] $Enable
+        [Parameter(Mandatory, ParameterSetName='Enable')]
+        [switch] $Enable,
+
+        [Parameter(Mandatory, ParameterSetName='Disable')]
+        [switch] $Disable
     )
-    Test-MacOS
-    Test-Elevated
 
     if ($Enable -eq $true)
     {
