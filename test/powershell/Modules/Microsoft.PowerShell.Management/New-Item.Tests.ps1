@@ -165,7 +165,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
     It "Should create a symbolic link to directory without error" {
         New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
-        Test-Path $FullyQualifiedFolder | Should -BeTrue
+        $FullyQualifiedFolder | Should -Exist
 
         New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
         Test-Path $FullyQualifiedLink | Should -BeTrue

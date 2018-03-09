@@ -31,6 +31,6 @@ Describe "Convert-Path tests" -Tag CI {
         $result -join "," | Should -BeExactly (@("$d1","$d2") -join ",")
     }
     It "Convert-Path should return something which exists" {
-        Convert-Path $TESTDRIVE | Test-Path | Should -BeTrue
+        Convert-Path $TESTDRIVE | Should -Exist
     }
 }

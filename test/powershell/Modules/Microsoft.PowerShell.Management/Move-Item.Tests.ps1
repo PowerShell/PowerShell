@@ -9,8 +9,8 @@ Describe "Move-Item tests" -Tag "CI" {
     }
     It "Move-Item will move a file" {
         Move-Item $source $target
-        test-path $source | Should -BeFalse
-        test-path $target | Should -BeTrue
+        $source | Should -Not -Exist
+        $target | Should -Exist
         "$target" | Should -FileContentMatchExactly "This is content"
     }
 

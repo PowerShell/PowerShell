@@ -46,8 +46,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify New-Item for file" {
             $newFile = New-Item -Path $newTestFile -ItemType File
-            $fileExists = Test-Path $newTestFile
-            $fileExists | Should -BeTrue
+            $newTestFile | Should -Exist
             $newFile.Name | Should -BeExactly $newTestFile
         }
 
