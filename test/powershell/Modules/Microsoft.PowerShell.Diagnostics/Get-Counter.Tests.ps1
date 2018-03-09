@@ -21,7 +21,7 @@ $counterPaths = @{
     Bad = $badName
 }
 
-$nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
+$nonEnglishCulture = (-Not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
 
 function ValidateParameters($testCase)
 {
@@ -55,7 +55,7 @@ Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
     It "Get-Counter with no parameters returns data for a default set of counters" -Skip:$(SkipCounterTests) {
         $counterData = Get-Counter
         # At the very least we should get processor and memory
-        $counterData.CounterSamples.Length | should -BeGreaterThan 1
+        $counterData.CounterSamples.Length | Should -BeGreaterThan 1
     }
 
     It "Can retrieve the specified counter" -Skip:$(SkipCounterTests) {
@@ -227,7 +227,7 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $counterSets.Length | Should -BeGreaterThan 1    # should get at least "Processor" and "Process"
             foreach ($counterSet in $counterSets)
             {
-                $counterSet.CounterSetName.ToLower().Contains($wildcardBase.ToLower()) | Should -Be $true
+                $counterSet.CounterSetName.ToLower().Contains($wildcardBase.ToLower()) | Should -BeTrue
             }
         }
 
@@ -243,7 +243,7 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             foreach ($counterSet in $counterSets)
             {
                 ($counterSet.CounterSetName.ToLower().Contains($wildcardBases[0].ToLower()) -Or
-                 $counterSet.CounterSetName.ToLower().Contains($wildcardBases[1].ToLower())) | Should -Be $true
+                 $counterSet.CounterSetName.ToLower().Contains($wildcardBases[1].ToLower())) | Should -BeTrue
             }
         }
     }
@@ -251,7 +251,7 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
 
 Describe "Get-Counter cmdlet does not run on IoT" -Tags "CI" {
 
-    It "Get-Counter throws PlatformNotSupportedException" -Skip:$(-not [System.Management.Automation.Platform]::IsIoT)  {
+    It "Get-Counter throws PlatformNotSupportedException" -Skip:$(-Not [System.Management.Automation.Platform]::IsIoT)  {
 
         try
         {
@@ -260,7 +260,7 @@ Describe "Get-Counter cmdlet does not run on IoT" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should -be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
+            $_.FullyQualifiedErrorId | Should -Be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
         }
     }
 }

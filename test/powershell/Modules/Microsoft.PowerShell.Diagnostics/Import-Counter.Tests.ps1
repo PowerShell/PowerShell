@@ -419,8 +419,8 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                     {
                         $names = $names + $set.CounterSetName
                     }
-                    $names -Contains $setNames.Memory | Should -Be $true
-                    $names -Contains $setNames.Processor | Should -Be $true
+                    $names -Contains $setNames.Memory | Should -BeTrue
+                    $names -Contains $setNames.Processor | Should -BeTrue
                 }
             }
             @{
@@ -439,8 +439,8 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                     {
                         $names = $names + $set.CounterSetName
                     }
-                    $names -Contains "physicaldisk" | Should -Be $true
-                    $names -Contains "processor" | Should -Be $true
+                    $names -Contains "physicaldisk" | Should -BeTrue
+                    $names -Contains "processor" | Should -BeTrue
                 }
             }
             @{
@@ -456,9 +456,9 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                     $result.Length | Should -BeGreaterThan 2
                     $names = @()
                     foreach ($set in $result) { $names = $names + $set.CounterSetName }
-                    $names -Contains "memory" | Should -Be $true
-                    $names -Contains "processor" | Should -Be $true
-                    $names -Contains "physicaldisk" | Should -Be $true
+                    $names -Contains "memory" | Should -BeTrue
+                    $names -Contains "processor" | Should -BeTrue
+                    $names -Contains "physicaldisk" | Should -BeTrue
                 }
             }
         )
@@ -481,7 +481,7 @@ Describe "Import-Counter cmdlet does not run on IoT" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | should -be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
+            $_.FullyQualifiedErrorId | Should -Be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
         }
     }
 }
