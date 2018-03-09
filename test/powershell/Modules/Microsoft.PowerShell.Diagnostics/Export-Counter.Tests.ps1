@@ -98,16 +98,8 @@ function RunTest($testCase)
             else
             {
                 # Here we expect and want the command to fail
-                try
-                {
-                    $sb = [ScriptBlock]::Create($cmd)
-                    &$sb
-                    throw "Did not throw expected exception"
-                }
-                catch
-                {
-                    $_.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
-                }
+                $sb = [ScriptBlock]::Create($cmd)
+                { &$sb } | Should -Throw -ErrorId $testCase.ExpectedErrorId
             }
         }
         finally

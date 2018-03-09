@@ -37,16 +37,8 @@ function ValidateParameters($testCase)
         # Use $cmd to debug a test failure
         # Write-Host "Command to run: $cmd"
 
-        try
-        {
-            $sb = [scriptblock]::Create($cmd)
-            &$sb
-            throw "Did not throw expected exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
-        }
+        $sb = [scriptblock]::Create($cmd)
+        { &$sb } Should -Throw -ErrorId $testCase.ExpectedErrorId
     }
 }
 
@@ -252,15 +244,6 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
 Describe "Get-Counter cmdlet does not run on IoT" -Tags "CI" {
 
     It "Get-Counter throws PlatformNotSupportedException" -Skip:$(-Not [System.Management.Automation.Platform]::IsIoT)  {
-
-        try
-        {
-            Get-Counter
-            throw "'Get-Counter' on IoT is expected to throw a PlatformNotSupportedException, and it did not."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
-        }
+        { Get-Counter } | Should -Throw -ErrorId "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
     }
 }

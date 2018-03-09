@@ -212,22 +212,15 @@ function RunExpectedFailureTest($testCase)
         else
         {
             # Here we expect and want the command to fail
-            try
+            $sb = [ScriptBlock]::Create($cmd)
+            $e = { &$sb }
+            if ($testCase.ExpectedErrorId)
             {
-                $sb = [ScriptBlock]::Create($cmd)
-                &$sb
-                throw "Did not throw expected exception"
+                $e.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
             }
-            catch
+            if ($testCase.ExpectedErrorCategory)
             {
-                if ($testCase.ExpectedErrorId)
-                {
-                    $_.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
-                }
-                if ($testCase.ExpectedErrorCategory)
-                {
-                    $_.CategoryInfo.Category | Should -Be $testCase.ExpectedErrorCategory
-                }
+                $e.CategoryInfo.Category | Should -Be $testCase.ExpectedErrorCategory
             }
         }
     }
@@ -473,15 +466,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
 Describe "Import-Counter cmdlet does not run on IoT" -Tags "CI" {
 
     It "Import-Counter throws PlatformNotSupportedException" -Skip:$(-not [System.Management.Automation.Platform]::IsIoT)  {
-
-        try
-        {
-            Import-Counter -Path "$testDrive\ProcessorData.blg"
-            throw "'Import-Counter -Path $testDrive\ProcessorData.blg' on IoT is expected to throw a PlatformNotSupportedException, and it did not."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
-        }
+        { Import-Counter -Path "$testDrive\ProcessorData.blg" } |
+	    Should -Throw -ErrorId "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
     }
 }
