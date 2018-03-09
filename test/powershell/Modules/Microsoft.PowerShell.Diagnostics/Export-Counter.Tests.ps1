@@ -80,7 +80,7 @@ function RunTest($testCase)
 
         if ($testCase.CreateFileFirst)
         {
-            if (-Not (Test-Path $filePath))
+            if (-not (Test-Path $filePath))
             {
                 New-Item $filePath -ItemType file
             }

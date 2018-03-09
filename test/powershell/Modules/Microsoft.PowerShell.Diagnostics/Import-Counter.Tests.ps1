@@ -213,7 +213,7 @@ function RunExpectedFailureTest($testCase)
         {
             # Here we expect and want the command to fail
             $sb = [ScriptBlock]::Create($cmd)
-            $e = { &$sb }
+            $e = { &$sb } | Should -Throw
             if ($testCase.ExpectedErrorId)
             {
                 $e.FullyQualifiedErrorId | Should -BeExactly $testCase.ExpectedErrorId

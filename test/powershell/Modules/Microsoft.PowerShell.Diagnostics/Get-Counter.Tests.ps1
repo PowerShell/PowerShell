@@ -21,7 +21,7 @@ $counterPaths = @{
     Bad = $badName
 }
 
-$nonEnglishCulture = (-Not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
+$nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
 
 function ValidateParameters($testCase)
 {
