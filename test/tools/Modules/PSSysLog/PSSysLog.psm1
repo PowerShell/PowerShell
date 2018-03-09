@@ -875,12 +875,12 @@ function Set-OsLogPersistence
     if ($Enable -eq $true)
     {
         Write-Verbose -Message "Enabling log persistence"
-        Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode="persist:info,level:info" }
+        Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode=persist:info,level:info }
     }
     else
     {
         Write-Verbose -Message "Reverting log persistence to the default"
-        Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode="persist:default,level:default" }
+        Start-NativeExecution -command {log config --subsystem com.microsoft.powershell --mode=persist:default,level:default }
     }
 }
 
@@ -899,14 +899,18 @@ function Get-OsLogPersistence
     if ($parts[$parts.Length - 1] -eq 'PERSIST_DEFAULT')
     {
         # Not configured
+        # Expecting a format like the following:
+        # Mode for 'com.microsoft.powershell'  PERSIST_DEFAULT
         $result = new-object PSObject -Property @{
             Level = 'DEFAULT'
-            Persist = 'DEFAULT'
+            Persist = $parts[$parts.Length- 1]
             Enabled = $false
         }
     }
     else
     {
+        # Expecting a format like the following:
+        # Mode for 'com.microsoft.powershell'  INFO PERSIST_INFO
         $result = new-object PSObject -Property @{
             Level = $parts[$parts.Length - 2]
             Persist = $parts[$parts.Length -1]

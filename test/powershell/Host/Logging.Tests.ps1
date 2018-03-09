@@ -189,6 +189,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
             }
         }
         [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        # Disabling all tests until log presistence is working. Using
+        # log config appears to update state but log items are not persisted.
+        $IsSupportedEnvironment = $false
     }
 
     BeforeEach {
