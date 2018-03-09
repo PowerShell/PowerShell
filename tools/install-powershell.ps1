@@ -141,9 +141,7 @@ try {
         Write-Verbose "About to download package from '$downloadURL'" -Verbose
 
         $packagePath = Join-Path -Path $tempDir -ChildPath $packageName
-
         Invoke-WebRequest -Uri $downloadURL -OutFile $packagePath
-
         $contentPath = Join-Path -Path $tempDir -ChildPath "new"
 
         New-Item -ItemType Directory -Path $contentPath > $null
