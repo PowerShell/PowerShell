@@ -185,7 +185,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
             {
                 # enable powershell log persistence to support exporting log entries
                 # for each test
-                 Set-OsLogPersistence -Enable $true
+                 Set-OsLogPersistence -Enable
             }
         }
         [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
@@ -214,7 +214,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         if ($IsSupportedEnvironment -and !$persistenceEnabled)
         {
             # disable persistence if it wasn't enabled
-             Set-OsLogPersistence -Enable $false
+             Set-OsLogPersistence -Disable
         }
     }
 
