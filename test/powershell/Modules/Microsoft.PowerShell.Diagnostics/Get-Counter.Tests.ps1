@@ -38,7 +38,7 @@ function ValidateParameters($testCase)
         # Write-Host "Command to run: $cmd"
 
         $sb = [scriptblock]::Create($cmd)
-        { &$sb } Should -Throw -ErrorId $testCase.ExpectedErrorId
+        { &$sb } | Should -Throw -ErrorId $testCase.ExpectedErrorId
     }
 }
 
