@@ -84,6 +84,7 @@ Describe "Split-Path" -Tags "CI" {
 	Split-Path -Parent "C:\Temp"                 | Should be "C:${dirSep}"
 	Split-Path -Parent "\\server1\share1\folder" | Should be "${dirSep}${dirSep}server1${dirSep}share1"
 	Split-Path -Parent "\\server1\share1"        | Should be "${dirSep}${dirSep}server1"
+	Split-Path -Parent "\usr"                    | Should be "${dirSep}"
     }
 
     It 'Does not split a drive leter'{
