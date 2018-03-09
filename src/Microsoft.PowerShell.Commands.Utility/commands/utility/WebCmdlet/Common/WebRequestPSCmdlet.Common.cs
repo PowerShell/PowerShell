@@ -1616,7 +1616,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_relationLink == null)
             {
-                _relationLink = new Dictionary<string, string>();
+                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             }
             else
             {
