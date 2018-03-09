@@ -197,15 +197,15 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             $counterSetName = "Memory"
             $counterSet = Get-Counter -ListSet $counterSetName
             $counterSet.Length | Should -Be 1
-            $counterSet.CounterSetName | Should -Be $counterSetName
+            $counterSet.CounterSetName | Should -BeExactly $counterSetName
         }
 
         It "Can process an array of counter set names" -Skip:$(SkipCounterTests) {
             $counterSetNames = @("Memory", "Processor")
             $counterSets = Get-Counter -ListSet $counterSetNames
             $counterSets.Length | Should -Be 2
-            $counterSets[0].CounterSetName | Should -Be $counterSetNames[0]
-            $counterSets[1].CounterSetName | Should -Be $counterSetNames[1]
+            $counterSets[0].CounterSetName | Should -BeExactly $counterSetNames[0]
+            $counterSets[1].CounterSetName | Should -BeExactly $counterSetNames[1]
         }
 
         # This test will be skipped for non-English languages, since

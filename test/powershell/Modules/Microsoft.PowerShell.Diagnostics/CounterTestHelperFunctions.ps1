@@ -275,13 +275,13 @@ function CompareCounterSets
         $setA[$i].CounterSamples.Length | Should -Be $setB[$i].CounterSamples.Length
         $samplesA = ($setA[$i].CounterSamples | sort -Property Path)
         $samplesB = ($setB[$i].CounterSamples | sort -Property Path)
-        (DateTimesAreEqualish $setA[$i].TimeStamp $setB[$i].TimeStamp) | Should -Be $true
+        (DateTimesAreEqualish $setA[$i].TimeStamp $setB[$i].TimeStamp) | Should -BeTrue
         for ($j = 0; $j -lt $samplesA.Length; $j++)
         {
             $sampleA = $samplesA[$j]
             $sampleB = $samplesB[$j]
-            (DateTimesAreEqualish $sampleA.TimeStamp $sampleB.TimeStamp) | Should -Be $true
-            $sampleA.Path | Should -Be $sampleB.Path
+            (DateTimesAreEqualish $sampleA.TimeStamp $sampleB.TimeStamp) | Should -BeTrue
+            $sampleA.Path | Should -BeExactly $sampleB.Path
             $sampleA.CookedValue | Should -Be $sampleB.CookedValue
         }
     }

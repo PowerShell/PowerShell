@@ -216,11 +216,11 @@ function RunExpectedFailureTest($testCase)
             $e = { &$sb }
             if ($testCase.ExpectedErrorId)
             {
-                $e.FullyQualifiedErrorId | Should -Be $testCase.ExpectedErrorId
+                $e.FullyQualifiedErrorId | Should -BeExactly $testCase.ExpectedErrorId
             }
             if ($testCase.ExpectedErrorCategory)
             {
-                $e.CategoryInfo.Category | Should -Be $testCase.ExpectedErrorCategory
+                $e.CategoryInfo.Category | Should -BeExactly $testCase.ExpectedErrorCategory
             }
         }
     }
@@ -362,8 +362,8 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
             $errVar.Count | Should -Be 5
             foreach ($err in $errVar)
             {
-                $err.CategoryInfo.Category | Should -Be "InvalidResult"
-                $err.FullyQualifiedErrorId | SHould -Be "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                $err.CategoryInfo.Category | Should -BeExactly "InvalidResult"
+                $err.FullyQualifiedErrorId | SHould -BeExactly "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
         }
     }
@@ -398,7 +398,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
                 Parameters = "-ListSet $($setNames.Memory)"
                 Script = {
                     $result.Length | Should -Be 1
-                    $result[0].CounterSetName | Should -Be $setNames.Memory
+                    $result[0].CounterSetName | Should -BeExactly $setNames.Memory
                 }
             }
             @{
