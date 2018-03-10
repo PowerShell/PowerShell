@@ -492,7 +492,7 @@ function Expand-PSSignedBuild
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
-    $psOptionsPath = (Join-Path $buildPath -ChildPath 'psoptions.json')
+    $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
     $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
 
     # Remove PSOptions.
