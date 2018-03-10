@@ -496,7 +496,7 @@ function Expand-PSSignedBuild
     $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
 
     # Remove PSOptions.
-    # The file is only used to verify that we have expanded the correct build.
+    # The file is only used to set the PSOptions.
     Remove-Item -Path $psOptionsPath
 
     $options.PSModuleRestore = $true
