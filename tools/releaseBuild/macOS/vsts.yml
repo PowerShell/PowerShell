@@ -1,0 +1,26 @@
+steps:
+- task: ShellScript@2
+  inputs:
+    scriptPath: 'tools/releaseBuild/setReleaseTag.sh'
+    args: '-ReleaseTag $(ReleaseTagVar) -Variable "ReleaseTagVar"'
+  displayName: 'Calculate Release Tag'
+- task: ShellScript@2
+  inputs:
+    scriptPath: 'tools/installpsh-osx.sh'
+  displayName: 'Install pwsh'
+- task: ShellScript@2
+  inputs:
+    scriptPath: 'tools/releaseBuild/macOS/createPowerShell.sh'
+  displayName: 'Create /PowerShell'
+- task: ShellScript@2
+  inputs:
+    scriptPath: 'tools/releaseBuild/macOS/PowerShellPackageVsts.sh'
+    args: '-location $(Build.SourcesDirectory) -BootStrap'
+  displayName: 'Bootstrap VM'
+- task: ShellScript@2
+  inputs:
+    scriptPath: 'tools/releaseBuild/macOS/PowerShellPackageVsts.sh'
+    args: '-ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -ExtraPackage "zip","tar" -location $(Build.SourcesDirectory) -Build'
+    disableAutoCwd: true
+    cwd: 'tools/releaseBuild/macOS'
+  displayName: 'Build and Package'
