@@ -688,7 +688,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    $testScript | Should -Not -Throw
+                    {& $testScript} | Should -Not -Throw
                 }
             }
         }
@@ -933,7 +933,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    $testScript | Should Not throw
+                    {& $testScript} | Should -Not -Throw
                 }
             }
 
