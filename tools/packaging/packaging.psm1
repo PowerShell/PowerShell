@@ -492,7 +492,13 @@ function Expand-PSSignedBuild
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
-    $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+    $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
+    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+
+    # Remove PSOptions.
+    # The file is only used to set the PSOptions.
+    Remove-Item -Path $psOptionsPath
+
     $options.PSModuleRestore = $true
 
     if(Test-Path -Path $windowsExecutablePath)
