@@ -1,4 +1,23 @@
 Describe "Resolve-Path returns proper path" -Tag "CI" {
+    BeforeAll {
+        $driveName = "RvpaTest"
+        $root = Join-Path $TestDrive "fakeroot"
+        $file = Join-Path $root "file.txt"
+        $null = New-Item -Path $root -ItemType Directory -Force
+        $null = New-Item -Path $file -ItemType File -Force
+        $null = New-PSDrive -Name $driveName -PSProvider FileSystem -Root $root
+
+        $testRoot = Join-Path $TestDrive ""
+        $fakeRoot = Join-Path "$driveName`:" ""
+
+        $relCases = @(
+            @{ wd = $fakeRoot; target = $testRoot; expected = $testRoot }
+            @{ wd = $testRoot; target = Join-Path $fakeRoot "file.txt"; expected = Join-Path "." "fakeroot" "file.txt" }
+        )
+    }
+    AfterAll {
+        Remove-PSDrive -Name $driveName -PSProvider FileSystem
+    }
     It "Resolve-Path returns resolved paths" {
         Resolve-Path $TESTDRIVE | Should be "$TESTDRIVE"
     }
@@ -23,28 +42,11 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         $result = Resolve-Path -LiteralPath "TestDrive:\\\\\"
         ($result.Path.TrimEnd('/\')) | Should Be "TestDrive:"
     }
-    It "Resolve-Path -Relative should return correct path on different drive" {
-        $base = Join-Path $TestDrive "ResolvePath.relative"
-        $root = Join-Path $base "fakeroot"
-        $file = Join-Path $root "file.txt"
-        $expectedFilePath = Join-Path "." "fakeroot" "file.txt"
-        $driveName = "RvpaTest"
-        $null = New-Item -Path $base -ItemType Directory -Force
-        $null = New-Item -Path $root -ItemType Directory -Force
-        $null = New-Item -Path $file -ItemType File -Force
-        $null = New-PSDrive -Name $driveName -PSProvider FileSystem -Root $root
-        $driveRoot = Join-Path "$driveName`:" ""
-        $driveFile = Join-Path "$driveName`:" "file.txt"
+    It "Resolve-Path -Relative should return correct path on different drive" -TestCases $relCases {
+        param($wd, $target, $expected)
         try {
-            Push-Location -Path $driveRoot
-            Resolve-Path -Path $base -Relative | Should BeExactly $base
-        }
-        finally {
-            Pop-Location
-        }
-        try {
-            Push-Location -Path $base
-            Resolve-Path -Path $driveFile -Relative | Should BeExactly $expectedFilePath
+            Push-Location -Path $wd
+            Resolve-Path -Path $target -Relative | Should BeExactly $expected
         }
         finally {
             Pop-Location
