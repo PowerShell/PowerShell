@@ -78,15 +78,15 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     It "Does not include type information by default" {
         $result = $testObject | ConvertTo-Csv
 
-        $result | Should Not Match ([regex]::Escape('System.Management.Automation.PSCustomObject'))
-        $result | Should Not Match ([regex]::Escape('#TYPE'))
+        $result | Should -Not -Match ([regex]::Escape('System.Management.Automation.PSCustomObject'))
+        $result | Should -Not -Match ([regex]::Escape('#TYPE'))
     }
 
     It "Does not include type information with -NoTypeInformation" {
         $result = $testObject | ConvertTo-Csv -NoTypeInformation
 
-        $result | Should Not Match ([regex]::Escape('System.Management.Automation.PSCustomObject'))
-        $result | Should Not Match ([regex]::Escape('#TYPE'))
+        $result | Should -Not -Match ([regex]::Escape('System.Management.Automation.PSCustomObject'))
+        $result | Should -Not -Match ([regex]::Escape('#TYPE'))
     }
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {

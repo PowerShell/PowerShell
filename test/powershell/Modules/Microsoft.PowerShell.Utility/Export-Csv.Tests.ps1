@@ -50,15 +50,15 @@ Describe "Export-Csv" -Tags "CI" {
     It "Does not include type information by default" {
         $testObject | Export-Csv -Path $testCsv
 
-        $(Get-Content $testCsv)[0] | Should Not Match ([regex]::Escape("System.String"))
-        $(Get-Content $testCsv)[0] | Should Not Match ([regex]::Escape("#TYPE"))
+        $(Get-Content $testCsv)[0] | Should -Not -Match ([regex]::Escape("System.String"))
+        $(Get-Content $testCsv)[0] | Should -Not -Match ([regex]::Escape("#TYPE"))
     }
 
     It "Does not include type information with -NoTypeInformation" {
         $testObject | Export-Csv -Path $testCsv -NoTypeInformation
 
-        $(Get-Content $testCsv)[0] | Should Not Match ([regex]::Escape("System.String"))
-        $(Get-Content $testCsv)[0] | Should Not Match ([regex]::Escape("#TYPE"))
+        $(Get-Content $testCsv)[0] | Should -Not -Match ([regex]::Escape("System.String"))
+        $(Get-Content $testCsv)[0] | Should -Not -Match ([regex]::Escape("#TYPE"))
     }
 
     It "Includes type information when -IncludeTypeInformation is supplied" {

@@ -20,7 +20,7 @@ Describe "Format-Custom" -Tags "CI" {
 
         It "Should be able to use the Property flag to select properties" {
             $CommandName = Get-Command | Format-Custom -Property "Name"
-            $CommandName               | Should Not Match "Source"
+            $CommandName               | Should -Not -Match "Source"
         }
 
     }

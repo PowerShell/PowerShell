@@ -56,9 +56,9 @@ Describe "Format-List" -Tags "CI" {
     It "Should not show anything other than the requested props" {
         $output = Get-Command | Select-Object -First 5 | Format-List -Property Name | Out-String
 
-        $output | Should Not Match "CommandType :"
-        $output | Should Not Match "Source :"
-        $output | Should Not Match "Module :"
+        $output | Should -Not -Match "CommandType :"
+        $output | Should -Not -Match "Source :"
+        $output | Should -Not -Match "Module :"
     }
 
     It "Should be able to take input without piping objects to it" {
