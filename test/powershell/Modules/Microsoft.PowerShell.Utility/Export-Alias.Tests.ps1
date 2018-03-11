@@ -103,7 +103,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 	It "Export-Alias for Force Test"{
 		Export-Alias $fulltestpath abcd01
 		Export-Alias $fulltestpath abcd02 -force
-		$fulltestpath| Should Not FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
 		$fulltestpath| Should FileContentMatchExactly '"abcd02","efgh02","","None"'
     }
 
@@ -126,8 +126,8 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 		Export-Alias $fulltestpath abcd03 -force
-		$fulltestpath| Should Not FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should Not FileContentMatchExactly '"abcd02","efgh02","","None"'
+		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd02","efgh02","","None"'
 		$fulltestpath| Should FileContentMatchExactly '"abcd03","efgh03","","None"'
 
 		if ( $IsWindows )

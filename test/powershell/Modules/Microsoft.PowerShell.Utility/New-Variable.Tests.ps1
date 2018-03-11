@@ -100,7 +100,7 @@ Describe "New-Variable" -Tags "CI" {
 	New-Variable var1 -Value 2 -Force
 
 	$var1 | Should Be 2
-	$var1 | Should Not Be 1
+	$var1 | Should -Not -Be 1
 
     }
 
@@ -143,7 +143,7 @@ Describe "New-Variable" -Tags "CI" {
 
 		Set-Variable -Name var1 -Value 2 -ErrorAction SilentlyContinue
 
-		$var1 | Should Not Be 2
+		$var1 | Should -Not -Be 2
 	}
 
 	It "Should be able to set a new variable to constant" {
@@ -171,7 +171,7 @@ Describe "New-Variable" -Tags "CI" {
 
 		Set-Variable -Name var1 -Value 2  -ErrorAction SilentlyContinue
 
-		$var1 | Should Not Be 2
+		$var1 | Should -Not -Be 2
 	}
 
 	It "Should be able to create a variable as private without error" {

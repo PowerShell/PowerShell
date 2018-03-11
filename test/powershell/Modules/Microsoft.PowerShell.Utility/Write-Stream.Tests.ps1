@@ -79,7 +79,7 @@ Describe "Stream writer tests" -Tags "CI" {
        It "Write-Information outputs an information object" {
             # redirect the streams is sufficient
             $result = Write-Information "Test Message" *>&1
-            $result.NativeThreadId | Should Not Be 0
+            $result.NativeThreadId | Should -Not -Be 0
             $result.ProcessId | Should -Be $pid
             $result | Should BeOfType System.Management.Automation.InformationRecord
 

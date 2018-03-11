@@ -186,7 +186,7 @@ Describe "CliXml test" -Tags "CI" {
 
             $testPath = "testdrive:\Bug161470NonExistPath.txt"
             Export-Clixml -Path $testPath -InputObject "string" -WhatIf
-            $testPath | Should Not Exist
+            $testPath | Should -Not -Exist
         }
     }
 }

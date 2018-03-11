@@ -177,7 +177,7 @@ Describe "Set-Variable" -Tags "CI" {
     It "Should change the value of an already existing variable" {
 	$testVar=1
 
-	$testVar | Should Not Be 2
+	$testVar | Should -Not -Be 2
 
 	Set-Variable testVar -Value 2
 

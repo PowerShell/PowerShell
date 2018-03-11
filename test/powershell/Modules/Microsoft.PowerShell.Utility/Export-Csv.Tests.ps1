@@ -108,7 +108,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
 
         $results.P2 | Should be "second"
         $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | should not be P1
+        $property | Should -Not -be P1
     }
 
     It "Test export-csv with a useculture flag" {

@@ -205,7 +205,7 @@ try
                 Invoke-Command $session { Set-Alias BrokenAlias NonExistantCommand }
                 $module = Import-PSSession $session -CommandName:BrokenAlias -CommandType:All -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
 
-                $expectedError | Should Not Be NullOrEmpty
+                $expectedError | Should -Not -Be NullOrEmpty
                 $expectedError[0].ToString().Contains("BrokenAlias") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
@@ -349,7 +349,7 @@ try
                 Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file -EA SilentlyContinue -ErrorVariable expectedError
             } catch { }
 
-            $expectedError | Should Not Be NullOrEmpty
+            $expectedError | Should -Not -Be NullOrEmpty
             # Error contains reference to the directory that already exists
             ([string]($expectedError[0]) -like "*$file*") | Should -BeTrue
         }
@@ -382,7 +382,7 @@ try
 
 	        It "Verfies Remove-Module doesn't remove user's runspace" {
                 Remove-Module $module -Force -ErrorAction SilentlyContinue
-                (Get-PSSession -InstanceId $session.InstanceId) | Should Not Be NullOrEmpty
+                (Get-PSSession -InstanceId $session.InstanceId) | Should -Not -Be NullOrEmpty
             }
         }
     }
@@ -769,11 +769,11 @@ try
         }
 
         It "Import-PSSession should return a PSModuleInfo object" {
-            $module | Should Not Be NullOrEmpty
+            $module | Should -Not -Be NullOrEmpty
         }
 
         It "Import-PSSession should return a PSModuleInfo object" {
-            ($module -as [System.Management.Automation.PSModuleInfo]) | Should Not Be NullOrEmpty
+            ($module -as [System.Management.Automation.PSModuleInfo]) | Should -Not -Be NullOrEmpty
         }
 
         It "Helper functions should not be imported" {
@@ -1338,7 +1338,7 @@ try
                 try {
                     $job = Get-Variable -Name PID -AsJob
 
-                    $job | Should Not Be NullOrEmpty
+                    $job | Should -Not -Be NullOrEmpty
                     ($job -is [System.Management.Automation.Job]) | Should -BeTrue
                     ($job.Finished.WaitOne([TimeSpan]::FromSeconds(10), $false)) | Should -BeTrue
                     $job.JobStateInfo.State | Should Be 'Completed'
@@ -1652,7 +1652,7 @@ try
             try {
                 Invoke-Command $session { function attack(${foo="$(calc)"}){echo "It is done."}}
                 $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
-                $expectedError | Should Not Be NullOrEmpty
+                $expectedError | Should -Not -Be NullOrEmpty
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -1664,7 +1664,7 @@ try
                 Invoke-Command $session { function Get-Command { write-error blah } }
                 $module = Import-PSSession -Session $session -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
 
-                $expectedError | Should Not Be NullOrEmpty
+                $expectedError | Should -Not -Be NullOrEmpty
 
                 $msg = [string]($expectedError[0])
                 $msg.Contains("blah") | Should -BeTrue
@@ -1680,7 +1680,7 @@ try
                 Invoke-Command $session { function notRequested { "notRequested" }; function Get-Command { Microsoft.PowerShell.Core\Get-Command Get-Variable,notRequested } }
                 $module = Import-PSSession -Session $session Get-Variable -AllowClobber -ErrorAction SilentlyContinue -ErrorVariable expectedError
 
-                $expectedError | Should Not Be NullOrEmpty
+                $expectedError | Should -Not -Be NullOrEmpty
 
                 $msg = [string]($expectedError[0])
                 $msg.Contains("notRequested") | Should -BeTrue
@@ -1759,7 +1759,7 @@ try
                     $module = $ps.Invoke() | Select-Object -First 1
 
                     $ps.Streams.Error.Count | Should Be 0
-                    $ps.Streams.Warning.Count | Should Not Be 0
+                    $ps.Streams.Warning.Count | Should -Not -Be 0
                 } finally {
                     if ($null -ne $module) {
                         $ps.Commands.Clear()
@@ -2001,7 +2001,7 @@ try
 
         It "Select -First should work with implicit remoting" {
             $bar = foo | Select-Object -First 2
-            $bar | Should Not Be NullOrEmpty
+            $bar | Should -Not -Be NullOrEmpty
             $bar.Count | Should Be 2
             $bar[0] | Should Be "a"
             $bar[1] | Should Be "b"
@@ -2038,7 +2038,7 @@ try
             try {
                 $results = Export-PSSession -Session $session -OutputModule tempTest -CommandName Get-Process `
                                             -AllowClobber -FormatTypeName * -Force -ErrorAction Stop
-                $results.Count | Should Not Be 0
+                $results.Count | Should -Not -Be 0
             } finally {
                 if ($results.Count -gt 0) {
                     Remove-Item -Path $results[0].DirectoryName -Recurse -Force -ErrorAction SilentlyContinue

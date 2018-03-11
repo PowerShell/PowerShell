@@ -9,7 +9,7 @@ Describe "New-Guid" -Tags "CI" {
 
     It "should not be all zeros" {
         $guid = New-Guid
-        $guid.ToString() | Should Not Be "00000000-0000-0000-0000-000000000000"
+        $guid.ToString() | Should -Not -Be "00000000-0000-0000-0000-000000000000"
     }
 
     It "should return different guids with each call" {

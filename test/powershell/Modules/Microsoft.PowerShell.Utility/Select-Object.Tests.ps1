@@ -234,7 +234,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 	It "Select-Object with Start-Time In Idle Process should work"{
 		$results = Get-Process i* | Select-Object ProcessName
-		$results.Count | Should Not Be 0
+		$results.Count | Should -Not -Be 0
 	}
 
 	It "Select-Object with Skip should work"{
