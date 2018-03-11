@@ -29,7 +29,7 @@ Describe "Remove-Variable" -Tags "CI" {
     }
 
     It "Should throw error when used with Name field, and named variable does not exist" {
-	{ Remove-Variable -Name nonexistentVariable -ErrorAction Stop } | Should Throw
+	{ Remove-Variable -Name nonexistentVariable -ErrorAction Stop } | Should -Throw
     }
 
     It "Should be able to remove a set of variables using wildcard characters" {
@@ -91,7 +91,7 @@ Describe "Remove-Variable" -Tags "CI" {
     It "Should throw an error when attempting to remove a read-only variable and the Force switch is not used" {
 	New-Variable -Name var1 -Value 2 -Option ReadOnly
 
-	{ Remove-Variable -Name var1 -ErrorAction Stop } | Should Throw
+	{ Remove-Variable -Name var1 -ErrorAction Stop } | Should -Throw
 
 	$var1 | Should Be 2
 
@@ -118,7 +118,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should not be able to clear a global variable using the local switch" {
 	    New-Variable -Name var1 -Value "context" -Scope global
 
-	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should Throw
+	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
 	    $var1 | Should Be "context"
 
@@ -129,7 +129,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should not be able to clear a global variable using the script switch" {
 	    New-Variable -Name var1 -Value "context" -Scope global
 
-	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should Throw
+	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
 	    $var1 | Should Be "context"
 
@@ -140,7 +140,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should be able to remove an item locally using the local switch" {
 	    New-Variable -Name var1 -Value "context" -Scope local
 
-	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should Throw
+	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
 	    $var1 | Should Be context
 	}
@@ -148,7 +148,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should be able to remove an item locally using the global switch" {
 	    New-Variable -Name var1 -Value "context" -Scope local
 
-	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should Throw
+	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should -Throw
 
 	    $var1 | Should Be "context"
 
@@ -159,7 +159,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should be able to remove a local variable using the script scope switch" {
 	    New-Variable -Name var1 -Value "context" -Scope local
 
-	    { Remove-Variable -Name var1 -Scope script -ErrorAction Stop } | Should Throw
+	    { Remove-Variable -Name var1 -Scope script -ErrorAction Stop } | Should -Throw
 
 	    $var1 | Should Be "context"
 
@@ -178,7 +178,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should not be able to remove a global script variable that was created using the script scope switch" {
 	    New-Variable -Name var1 -Value "context" -Scope script
 
-	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should Throw
+	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should -Throw
 
 	    $var1 | Should Be "context"
 	}

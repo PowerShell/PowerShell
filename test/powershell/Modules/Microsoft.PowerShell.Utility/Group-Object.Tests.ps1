@@ -99,7 +99,7 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should throw when attempting to use AsString without AsHashTable" {
-        { $testObject | Group-Object -AsString } | Should Throw
+        { $testObject | Group-Object -AsString } | Should -Throw
     }
 
     It "Should not throw error when using AsString when the AsHashTable was added" {

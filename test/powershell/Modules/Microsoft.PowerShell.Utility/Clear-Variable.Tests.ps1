@@ -166,7 +166,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		It "Should not clear environment variables" {
 	$env:TEMPVARIABLE = "test data"
 
-	{Clear-Variable -Name env:TEMPVARIABLE -ErrorAction Stop} | Should Throw
+	{Clear-Variable -Name env:TEMPVARIABLE -ErrorAction Stop} | Should -Throw
 		}
 
 		It "Should clear variable even if it is read-only using the Force parameter" {
@@ -214,13 +214,13 @@ Describe "Clear-Variable" -Tags "CI" {
 	It "Should not be able to clear a global scope variable using the local switch" {
 			New-Variable globalVar -Value 1 -Scope global -Force
 
-			{Clear-Variable -Name globalVar -Scope local -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name globalVar -Scope local -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should not be able to clear a global variable using the script scope switch" {
 			New-Variable globalVar -Value 1 -Scope global -Force
 
-			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should be able to clear an item locally using the local switch" {
@@ -230,19 +230,19 @@ Describe "Clear-Variable" -Tags "CI" {
 
 			$localVar | Should -BeNullOrEmpty
 
-			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should not be able to clear an item locally using the global switch" {
 			New-Variable localVar -Value 2 -Scope local -Force
 
-			{Clear-Variable -Name localVar -Scope global -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope global -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should not be able to clear a local variable using the script scope switch" {
 			New-Variable localVar -Value 2 -Scope local -Force
 
-			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should be able to clear a script variable created using the script switch" {

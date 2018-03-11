@@ -57,8 +57,8 @@ public class AttributeTest$guid {}
 
     It "Can compile C# files" {
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should Throw
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should Throw
+        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Throw
+        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Throw
 
         Add-Type -Path $codeFile1,$codeFile2
 

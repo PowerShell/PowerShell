@@ -38,7 +38,7 @@ Describe "Format-Wide" -Tags "CI" {
     }
 
     It "Should throw and suggest proper input when view is used with invalid input without the property switch" {
-        { Format-Wide -InputObject $(Get-Process) -View aoeu } | Should Throw
+        { Format-Wide -InputObject $(Get-Process) -View aoeu } | Should -Throw
     }
 }
 

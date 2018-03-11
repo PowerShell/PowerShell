@@ -69,11 +69,11 @@ Describe "Compare-Object" -Tags "CI" {
     }
 
     It "Should throw when reference set is null" {
-	{ Compare-Object -ReferenceObject $anonexistentvariable -DifferenceObject $(Get-Content $file4) } | Should Throw
+	{ Compare-Object -ReferenceObject $anonexistentvariable -DifferenceObject $(Get-Content $file4) } | Should -Throw
     }
 
     It "Should throw when difference set is null" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $anonexistentvariable } | Should Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $anonexistentvariable } | Should -Throw
     }
 
     It "Should give a 0 array when using excludedifferent switch without also using the includeequal switch" {

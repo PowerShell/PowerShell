@@ -170,7 +170,7 @@ set-psbreakpoint -command foo
         $ErrorActionPreference = "Stop"
         {
             Set-PSBreakpoint -Script $tempFile -Line 1
-        } | Should Throw
+        } | Should -Throw
         $ErrorActionPreference = "SilentlyContinue"
         Remove-Item $tempFile -Force
     }
@@ -180,7 +180,7 @@ set-psbreakpoint -command foo
         ${script.ps1} = 10
         {
             Set-PSBreakpoint -Script variable:\script.ps1 -Line 1
-        } | Should Throw
+        } | Should -Throw
         $ErrorActionPreference = "SilentlyContinue"
     }
 
@@ -207,7 +207,7 @@ Describe "Set-PSBreakpoint" -Tags "CI" {
             $lineNumber = "one"
             Set-PSBreakpoint -Line $lineNumber -Script $testScript
 
-        } | Should Throw
+        } | Should -Throw
     }
 
     It "Should be able to set a psbreakpoint on a Command" {

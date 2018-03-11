@@ -78,7 +78,7 @@ Describe "Write-Error Tests" -Tags "CI" {
     }
 
     It "Should be able to throw with -ErrorAction stop" {
-    	{ Write-Error "test throw" -ErrorAction Stop } | Should Throw
+    	{ Write-Error "test throw" -ErrorAction Stop } | Should -Throw
     }
 
     It "Should throw a non-terminating error" {
