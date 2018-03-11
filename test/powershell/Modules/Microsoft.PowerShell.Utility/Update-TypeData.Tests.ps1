@@ -81,7 +81,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Invoke()
         $ps.Commands.Clear()
         $null = $ps.AddScript("'string'.TestNote")
-        $ps.Invoke()| Should BeNullOrEmpty
+        $ps.Invoke()| Should -BeNullOrEmpty
 	}
 
     It "Update-TypeData with Valid Dynamic Type AliasProperty with Force should work"{

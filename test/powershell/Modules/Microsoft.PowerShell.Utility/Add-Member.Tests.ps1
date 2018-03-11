@@ -159,7 +159,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
     It "Empty Member Set Null Value1" {
         $results = add-member -InputObject a -MemberType MemberSet -Name Name -Value $null -passthru
         $results.Length | Should Be 1
-        $results.Name.a | Should BeNullOrEmpty
+        $results.Name.a | Should -BeNullOrEmpty
     }
 
     It "Member Set With 1 Member" {
@@ -244,7 +244,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         add-member -InputObject $obj $hash
         $obj.Name | Should Be 'Name'
         $obj.TestInt | Should Be 1
-        $obj.TestNull | Should BeNullOrEmpty
+        $obj.TestNull | Should -BeNullOrEmpty
     }
 
     It "Add Multiple Note With TypeName" {

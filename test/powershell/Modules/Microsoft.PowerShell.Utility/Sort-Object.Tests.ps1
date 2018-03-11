@@ -36,7 +36,7 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$results[0].YearsInMS | Should Be -2
 
 		$results[1].FirstName | Should Be "Eight"
-		$results[1].YearsInMS | Should BeNullOrEmpty
+		$results[1].YearsInMS | Should -BeNullOrEmpty
 
 		$results[2].FirstName | Should Be "One"
 		$results[2].LastName | Should Be "One"
@@ -145,7 +145,7 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 
 		$results[0] | Should Be $employees[2]
 		$results[1] | Should Be $employees[1]
-		$results[2] | Should BeNullOrEmpty
+		$results[2] | Should -BeNullOrEmpty
 	}
 
 	It "Sort-Object with Case-Sensitive Unique should work"{

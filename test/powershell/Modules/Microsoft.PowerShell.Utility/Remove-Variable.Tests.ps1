@@ -103,7 +103,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable -Name var1 -Force
 
-	$var1 | Should BeNullOrEmpty
+	$var1 | Should -BeNullOrEmpty
     }
 
     Context "Scope Tests" {
@@ -112,7 +112,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    Remove-Variable -Name var1 -Scope global
 
-	    $var1 | Should BeNullOrEmpty
+	    $var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should not be able to clear a global variable using the local switch" {
@@ -123,7 +123,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope global
-	    $var1 | Should BeNullOrEmpty
+	    $var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should not be able to clear a global variable using the script switch" {
@@ -134,7 +134,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope global
-	    $var1 | Should BeNullOrEmpty
+	    $var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should be able to remove an item locally using the local switch" {
@@ -153,7 +153,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope local
-	    $var1 | Should BeNullOrEmpty
+	    $var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should be able to remove a local variable using the script scope switch" {
@@ -164,7 +164,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	    $var1 | Should Be "context"
 
 	    Remove-Variable -Name var1 -Scope local
-	    $var1 | Should BeNullOrEmpty
+	    $var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should be able to remove a script variable created using the script switch" {
@@ -172,7 +172,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope script } | Should -Not -Throw
 
-	    $var1 | Should BeNullOrEmpty
+	    $var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should not be able to remove a global script variable that was created using the script scope switch" {
@@ -190,7 +190,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		New-Variable foo bar
 		Remove-Variable foo
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
-		$var1 | Should BeNullOrEmpty
+		$var1 | Should -BeNullOrEmpty
 	}
 
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException"{
@@ -221,7 +221,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		}
 		Remove-Variable foo -Force
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
-		$var1 | Should BeNullOrEmpty
+		$var1 | Should -BeNullOrEmpty
 	}
 
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException and force remove should also throw exception"{

@@ -9,26 +9,26 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.Exception | Should BeOfType 'Microsoft.PowerShell.Commands.WriteErrorException'
         $e.Exception.Message | Should Be 'myerrortext'
         $e.Exception.Data.Count | Should Be 0
-        $e.Exception.InnerException | Should BeNullOrEmpty
+        $e.Exception.InnerException | Should -BeNullOrEmpty
 
         #ErrorCategoryInfo verification
         $e.CategoryInfo | Should -Not -BeNullOrEmpty
         $e.CategoryInfo.Category | Should Be 'NotSpecified'
         $e.CategoryInfo.Activity | Should Be 'Write-Error'
         $e.CategoryInfo.Reason | Should Be 'WriteErrorException'
-        $e.CategoryInfo.TargetName | Should BeNullOrEmpty
-        $e.CategoryInfo.TargetType | Should BeNullOrEmpty
+        $e.CategoryInfo.TargetName | Should -BeNullOrEmpty
+        $e.CategoryInfo.TargetType | Should -BeNullOrEmpty
         $e.CategoryInfo.GetMessage() | Should Be 'NotSpecified: (:) [Write-Error], WriteErrorException'
 
         #ErrorDetails verification
-        $e.ErrorDetails | Should BeNullOrEmpty
+        $e.ErrorDetails | Should -BeNullOrEmpty
 
         #FullyQualifiedErrorId verification
         $e.FullyQualifiedErrorId | Should Be 'Microsoft.PowerShell.Commands.WriteErrorException'
 
         #InvocationInfo verification
         $e.InvocationInfo | Should -Not -BeNullOrEmpty
-        $e.InvocationInfo.MyCommand.Name | Should BeNullOrEmpty
+        $e.InvocationInfo.MyCommand.Name | Should -BeNullOrEmpty
     }
 
     It "Should be works with all parameters" {
@@ -41,7 +41,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.Exception | Should BeOfType 'System.ArgumentNullException'
         $e.Exception.ParamName | Should Be 'paramname'
         $e.Exception.Data.Count | Should Be 0
-        $e.Exception.InnerException | Should BeNullOrEmpty
+        $e.Exception.InnerException | Should -BeNullOrEmpty
 
         #TargetObject verification
         $e.TargetObject | Should Be 'TargetObject'
@@ -65,7 +65,7 @@ Describe "Write-Error Tests" -Tags "CI" {
 
         #InvocationInfo verification
         $e.InvocationInfo | Should -Not -BeNullOrEmpty
-        $e.InvocationInfo.MyCommand.Name | Should BeNullOrEmpty
+        $e.InvocationInfo.MyCommand.Name | Should -BeNullOrEmpty
     }
 
     It "Should be works with all parameters" {

@@ -54,13 +54,13 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 	It "Format-Wide with No Objects for End-To-End should work"{
 		$p = @{}
 		$result = $p | Format-Wide | Out-String
-		$result | Should BeNullOrEmpty
+		$result | Should -BeNullOrEmpty
 	}
 
 	It "Format-Wide with Null Objects for End-To-End should work"{
 		$p = $null
 		$result = $p | Format-Wide | Out-String
-		$result | Should BeNullOrEmpty
+		$result | Should -BeNullOrEmpty
 	}
 
 	It "Format-Wide with single line string for End-To-End should work"{

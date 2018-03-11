@@ -82,7 +82,7 @@ Describe "Group-Object" -Tags "CI" {
     It "Should be able to omit members of a group using the NoElement switch without error" {
         { $testObject | Group-Object -NoElement } | Should -Not -Throw
 
-        ($testObject | Group-Object -NoElement).Group | Should BeNullOrEmpty
+        ($testObject | Group-Object -NoElement).Group | Should -BeNullOrEmpty
     }
 
     It "Should be able to output a hashtable datatype" {

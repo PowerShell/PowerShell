@@ -134,7 +134,7 @@ Describe "Get-Random" -Tags "CI" {
 	$randomNumber[0] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
 	$randomNumber[1] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
 	$randomNumber[2] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[3] | Should BeNullOrEmpty
+	$randomNumber[3] | Should -BeNullOrEmpty
     }
 
     It "Should return all the numbers for array of 1,2,3,5,8,13 in no particular order" {
@@ -145,7 +145,7 @@ Describe "Get-Random" -Tags "CI" {
 	$randomNumber[3] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
 	$randomNumber[4] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
 	$randomNumber[5] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[6] | Should BeNullOrEmpty
+	$randomNumber[6] | Should -BeNullOrEmpty
     }
 
     It "Should return for a string collection " {

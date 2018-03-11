@@ -8,7 +8,7 @@ Describe "Write-Verbose" -Tags "CI" {
     It "Should not display verbose output by default" {
 	$VerbosePreference | Should Be SilentlyContinue
 
-	Write-Verbose -Message "test" | Should BeNullOrEmpty
+	Write-Verbose -Message "test" | Should -BeNullOrEmpty
     }
 
     It "Should be able to set verbose output to display by changing the `$VerbosePreference automatic variable" {

@@ -101,7 +101,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$deserialized_one.Value | Should Be 1
 		$deserialized_one.two.Value | Should Be 2
 		$deserialized_one.two.Three | Should -Not -BeNullOrEmpty
-		$deserialized_one.two.three.num | Should BeNullOrEmpty
+		$deserialized_one.two.three.num | Should -BeNullOrEmpty
 	}
 
 	It "Import-Clixml should work with XML serialization from pwsh.exe" {

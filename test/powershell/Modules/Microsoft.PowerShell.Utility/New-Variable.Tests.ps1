@@ -189,7 +189,7 @@ Describe "New-Variable" -Tags "CI" {
 	It "Should not be able to see the value of a private variable when out of scope" {
 		{New-Variable -Name var1 -Value 1 -Option Private}| Should -Not -Throw
 
-		$var1 | Should BeNullOrEmpty
+		$var1 | Should -BeNullOrEmpty
 	}
 
 	It "Should be able to use the AllScope switch without error" {
@@ -231,7 +231,7 @@ Describe "New-Variable" -Tags "CI" {
         get-variable -Scope global -name globalVar1 -ValueOnly | Should be 1
     }
     It "Should be able to create a local scope variable using the local switch" {
-        Get-Variable -scope local -name localvar -ValueOnly -ea silentlycontinue | should BeNullOrEmpty
+        Get-Variable -scope local -name localvar -ValueOnly -ea silentlycontinue | Should -BeNullOrEmpty
         New-Variable -Scope local -Name localVar -value 10
         get-variable -scope local -name localvar -ValueOnly | Should be 10
     }

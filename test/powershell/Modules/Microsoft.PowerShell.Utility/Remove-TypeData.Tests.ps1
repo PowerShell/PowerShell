@@ -71,7 +71,7 @@ Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
         $ps.Commands.Clear()
         $null = $ps.AddScript("Remove-TypeData -Path $XMLFile1").Invoke()
         $ps.Commands.Clear()
-        $ps.AddScript('$a.Yada').Invoke() | Should BeNullOrEmpty
+        $ps.AddScript('$a.Yada').Invoke() | Should -BeNullOrEmpty
         $ps.Commands.Clear()
         $ps.AddScript('$a.Yoda').Invoke() | Should Be 3
         $ps.Commands.Clear()

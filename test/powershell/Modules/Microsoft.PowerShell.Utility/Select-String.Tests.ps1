@@ -52,7 +52,7 @@ Describe "Select-String" -Tags "CI" {
     }
 
 	it "Should return null or empty when the input object switch is used on a collection and the pattern does not exist" {
-	    Select-String -InputObject "some stuff", "other stuff" -Pattern "neither" | Should BeNullOrEmpty
+	    Select-String -InputObject "some stuff", "other stuff" -Pattern "neither" | Should -BeNullOrEmpty
 	}
 
     it "Should return a bool type when the quiet switch is used" {
@@ -64,7 +64,7 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should be empty when select string does not return a result when the quiet switch is used" {
-	    $testinputtwo | Select-String -Quiet "goodbye"  | Should BeNullOrEmpty
+	    $testinputtwo | Select-String -Quiet "goodbye"  | Should -BeNullOrEmpty
 	}
 
 	it "Should return an array of non matching strings when the switch of NotMatch is used and the string do not match" {
@@ -125,11 +125,11 @@ Describe "Select-String" -Tags "CI" {
 	    (Select-String in $testInputFile)[1].Line | Should Be $expected2
 	    (Select-String in $testInputFile)[2].Line | Should Be $expected3
 	    (Select-String in $testInputFile)[3].Line | Should Be $expected4
-	    (Select-String in $testInputFile)[4].Line | Should BeNullOrEmpty
+	    (Select-String in $testInputFile)[4].Line | Should -BeNullOrEmpty
 	}
 
 	It "Should return empty because 'for' is not found in testfile1 " {
-	    Select-String for $testInputFile | Should BeNullOrEmpty
+	    Select-String for $testInputFile | Should -BeNullOrEmpty
 	}
 
 	It "Should return the third line in testfile1 and the lines above and below it " {

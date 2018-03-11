@@ -162,7 +162,7 @@ set-psbreakpoint -command foo
         & $ps -noprofile $scriptFileNameBug
 
         $breakpoint = Get-PSBreakpoint -Script $scriptFileNameBug
-        $breakpoint | Should BeNullOrEmpty
+        $breakpoint | Should -BeNullOrEmpty
     }
 
     It "Fail to set psbreakpoints when script is a file of wrong type" {

@@ -143,7 +143,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		) {
 			param ($testObject)
 				$result = $testObject | Format-Table -Property "foo","bar" | Out-String
-				$result | Should BeNullOrEmpty
+				$result | Should -BeNullOrEmpty
 		}
 
 		It "Format-Table with '<testName>' string and -Force should output table with requested properties" -TestCases @(

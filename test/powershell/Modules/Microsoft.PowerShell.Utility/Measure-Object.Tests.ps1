@@ -204,10 +204,10 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         $testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
         $result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
         $result.Count   | Should Be 4
-        $result.Sum     | Should BeNullOrEmpty
-        $result.Average | Should BeNullOrEmpty
-        $result.Max     | Should BeNullOrEmpty
-        $result.Min     | Should BeNullOrEmpty
+        $result.Sum     | Should -BeNullOrEmpty
+        $result.Average | Should -BeNullOrEmpty
+        $result.Max     | Should -BeNullOrEmpty
+        $result.Min     | Should -BeNullOrEmpty
         for ($i = 1; $i -lt 8 * 2; $i++)
         {
             $flags = [TestMeasureGeneric]$i
@@ -224,7 +224,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Sum | Should BeNullOrEmpty
+                $result.Sum | Should -BeNullOrEmpty
             }
 
             if($testAverage)
@@ -233,7 +233,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Average | Should BeNullOrEmpty
+                $result.Average | Should -BeNullOrEmpty
             }
 
             if($testMax)
@@ -242,7 +242,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Maximum | Should BeNullOrEmpty
+                $result.Maximum | Should -BeNullOrEmpty
             }
 
             if($testMin)
@@ -251,7 +251,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Minimum | Should BeNullOrEmpty
+                $result.Minimum | Should -BeNullOrEmpty
             }
         }
     }
@@ -280,7 +280,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Characters | Should BeNullOrEmpty
+                $result.Characters | Should -BeNullOrEmpty
             }
 
             if($testWord)
@@ -289,7 +289,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Words | Should BeNullOrEmpty
+                $result.Words | Should -BeNullOrEmpty
             }
 
             if($testLine)
@@ -298,7 +298,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             }
             else
             {
-                $result.Lines | Should BeNullOrEmpty
+                $result.Lines | Should -BeNullOrEmpty
             }
         }
     }

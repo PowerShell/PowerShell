@@ -30,7 +30,7 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should filter using the Verb parameter" {
-        Get-Verb -Verb fakeVerbNeverExists | Should BeNullOrEmpty
+        Get-Verb -Verb fakeVerbNeverExists | Should -BeNullOrEmpty
     }
 
     It "Should not accept Groups that are not in the validate set" {
@@ -55,16 +55,16 @@ Describe "Get-Verb" -Tags "CI" {
 
     It "Should not have verbs without descriptions" {
         $noDescVerbs = (Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.Description) }).Verb -join ", "
-        $noDescVerbs | Should BeNullOrEmpty
+        $noDescVerbs | Should -BeNullOrEmpty
     }
 
     It "Should not have verbs without alias prefixes" {
         $noPrefixVerbs = (Get-Verb | Where-Object { [string]::IsNullOrEmpty($_.AliasPrefix) }).Verb -join ", "
-        $noPrefixVerbs | Should BeNullOrEmpty
+        $noPrefixVerbs | Should -BeNullOrEmpty
     }
 
     It "Should not have duplicate alias prefixes" {
         $dupPrefixVerbs = ((Get-Verb | Group-Object -Property AliasPrefix | Where-Object Count -gt 1).Group).Verb -join ", "
-        $dupPrefixVerbs | Should BeNullOrEmpty
+        $dupPrefixVerbs | Should -BeNullOrEmpty
     }
 }

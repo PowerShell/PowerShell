@@ -76,7 +76,7 @@ Describe "Select-Object" -Tags "CI" {
 	$result.Length  | Should Be $dirObject.Length
 	$result[0].Name | Should Be $dirObject[0].Name
 	$result[0].Size | Should Be $dirObject[0].Size
-	$result[0].Mode | Should BeNullOrEmpty
+	$result[0].Mode | Should -BeNullOrEmpty
     }
 
     It "Should send output to pipe properly" {

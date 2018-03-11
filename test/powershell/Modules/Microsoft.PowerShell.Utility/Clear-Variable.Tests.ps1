@@ -106,13 +106,13 @@ Describe "Clear-Variable" -Tags "CI" {
 
 		It "Should be able to clear a variable using the Name switch" {
 	Clear-Variable -Name var1
-	$var1 | Should BeNullOrEmpty
+	$var1 | Should -BeNullOrEmpty
 	{ Get-Variable var1 } | Should -Not -Throw
 		}
 
 		It "Should be able to clear a variable without using the Name switch" {
 	Clear-Variable var1
-	$var1 | Should BeNullOrEmpty
+	$var1 | Should -BeNullOrEmpty
 	{ Get-Variable var1 } | Should -Not -Throw
 		}
 
@@ -127,10 +127,10 @@ Describe "Clear-Variable" -Tags "CI" {
 
 	Clear-Variable -Name w, vari* -Include w, vari*
 
-	$variable1 | Should BeNullOrEmpty
-	$variable2 | Should BeNullOrEmpty
-	$variable3 | Should BeNullOrEmpty
-	$w         | Should BeNullOrEmpty
+	$variable1 | Should -BeNullOrEmpty
+	$variable2 | Should -BeNullOrEmpty
+	$variable3 | Should -BeNullOrEmpty
+	$w         | Should -BeNullOrEmpty
 
 	$var1 | Should -Not -BeNullOrEmpty
 	$var2 | Should -Not -BeNullOrEmpty
@@ -156,7 +156,7 @@ Describe "Clear-Variable" -Tags "CI" {
 	$var2      | Should -Not -BeNullOrEmpty
 	$var3      | Should -Not -BeNullOrEmpty
 
-	$w         | Should BeNullOrEmpty
+	$w         | Should -BeNullOrEmpty
 		}
 
 		It "Should be able to pass the cleared object through the pipeline using the passthru switch" {
@@ -177,8 +177,8 @@ Describe "Clear-Variable" -Tags "CI" {
 		Clear-Variable -Name var1
 		Clear-Variable -Name var2 -Force
 
-		$var1 | Should BeNullOrEmpty
-		$var2 | Should BeNullOrEmpty
+		$var1 | Should -BeNullOrEmpty
+		$var2 | Should -BeNullOrEmpty
 	}
 	finally
 	{
@@ -208,7 +208,7 @@ Describe "Clear-Variable" -Tags "CI" {
 
 			Clear-Variable -Name globalVar -Scope global
 
-			$globalVar | Should BeNullOrEmpty
+			$globalVar | Should -BeNullOrEmpty
 	}
 
 	It "Should not be able to clear a global scope variable using the local switch" {
@@ -228,7 +228,7 @@ Describe "Clear-Variable" -Tags "CI" {
 
 			Clear-Variable -Name localVar -Scope local
 
-			$localVar | Should BeNullOrEmpty
+			$localVar | Should -BeNullOrEmpty
 
 			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
 	}

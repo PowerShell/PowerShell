@@ -228,6 +228,6 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
             Start-Sleep -Milliseconds 500
         }
 
-        $calcProc | Should BeNullOrEmpty
+        $calcProc | Should -BeNullOrEmpty
     }
 }

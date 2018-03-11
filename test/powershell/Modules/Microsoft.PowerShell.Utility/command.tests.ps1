@@ -52,7 +52,7 @@ Describe "Trace-Command" -tags "Feature" {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption None -FilePath $actualLogfile
             Trace-Command -name * -Expression {write-output Foo} -FilePath $logfile
 
-            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should BeNullOrEmpty
+            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should -BeNullOrEmpty
         }
 
         It "ThreadID works" {

@@ -20,7 +20,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
         param ($str, $ReturnHashTable)
         $errRecord = $null
         [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord)
-        $errRecord | Should BeNullOrEmpty
+        $errRecord | Should -BeNullOrEmpty
     }
 
     It 'Throw ArgumentException for invalid string ''<name>'' with -ReturnHashTable:$<ReturnHashTable>' -TestCase @(
@@ -34,7 +34,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
         { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, $ReturnHashTable, [ref]$errRecord) } | ShouldBeErrorId "ArgumentException"
     }
 
-    Context 'Empty key name' {    
+    Context 'Empty key name' {
         It 'Throw InvalidOperationException when json contains empty key name' {
             $errorRecord = $null
             [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, [ref]$errorRecord)
@@ -51,7 +51,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
     }
 
     Context 'Keys with different casing ' {
-        
+
         It 'Throw InvalidOperationException when json contains key with different casing' {
             $errorRecord = $null
             [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonContainingKeysWithDifferentCasing, [ref]$errorRecord)

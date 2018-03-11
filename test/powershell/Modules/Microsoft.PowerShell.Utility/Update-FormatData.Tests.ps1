@@ -96,7 +96,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
             $ps.Streams.Error.Clear()
             $ps.Invoke()
-            $ps.Streams.Error | Should BeNullOrEmpty
+            $ps.Streams.Error | Should -BeNullOrEmpty
 
         }
         It "Resources in CorePS syntax should be loaded successfully" {
@@ -105,7 +105,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
             $ps.Streams.Error.Clear()
             $ps.Invoke()
-            $ps.Streams.Error | Should BeNullOrEmpty
+            $ps.Streams.Error | Should -BeNullOrEmpty
         }
         It "Verify assembly path in error message when resource is Not found" {
             $format = Get-Content -Path $templatePath -Raw

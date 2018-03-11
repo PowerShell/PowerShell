@@ -2097,7 +2097,7 @@ try
                 if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
-            $errorVariable | Should BeNullOrEmpty
+            $errorVariable | Should -BeNullOrEmpty
         }
     }
 }

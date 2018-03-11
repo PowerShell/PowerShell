@@ -94,7 +94,7 @@ Describe "Compare-Object" -Tags "CI" {
 
     It "Should be able to specify the property of two objects to compare" {
 	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $TestDrive -Property Length
-	$actualOutput[0].Length | Should BeNullOrEmpty
+	$actualOutput[0].Length | Should -BeNullOrEmpty
 	$actualOutput[1].Length | Should BeGreaterThan 0
 	$actualOutput[0].Length | Should Not Be $actualOutput[1].Length
     }
@@ -442,7 +442,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 
 	It "Compare-Object with no ReferenceObject nor DifferenceObject: output nothing, no error and should work"{
 		$result = Compare-Object @() @()
-		$result | Should BeNullOrEmpty
+		$result | Should -BeNullOrEmpty
 	}
 
 	It "Compare-Object with no DifferenceObject should work"{

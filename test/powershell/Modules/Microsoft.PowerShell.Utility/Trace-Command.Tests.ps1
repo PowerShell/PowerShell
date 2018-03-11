@@ -56,7 +56,7 @@ Describe "Trace-Command" -tags "CI" {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption None -FilePath $actualLogfile
             Trace-Command -name * -Expression {echo Foo} -FilePath $logfile
 
-            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should BeNullOrEmpty
+            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should -BeNullOrEmpty
         }
 
         It "ThreadID works" {

@@ -81,31 +81,31 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
 	It "Format-List with No Objects for End-To-End should work"{
 		$p = @{}
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
-		$result.Trim() | Should BeNullOrEmpty
+		$result.Trim() | Should -BeNullOrEmpty
 	}
 
 	It "Format-List with Null Objects for End-To-End should work"{
 		$p = $null
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
-		$result.Trim() | Should BeNullOrEmpty
+		$result.Trim() | Should -BeNullOrEmpty
 	}
 
 	It "Format-List with single line string for End-To-End should work"{
 		$p = "single line string"
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
-		$result.Trim() | Should BeNullOrEmpty
+		$result.Trim() | Should -BeNullOrEmpty
 	}
 
 	It "Format-List with multiple line string for End-To-End should work"{
 		$p = "Line1\nLine2"
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
-		$result.Trim() | Should BeNullOrEmpty
+		$result.Trim() | Should -BeNullOrEmpty
 	}
 
 	It "Format-List with string sequence for End-To-End should work"{
 		$p = "Line1","Line2"
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
-		$result.Trim() | Should BeNullOrEmpty
+		$result.Trim() | Should -BeNullOrEmpty
 	}
 
     It "Format-List with complex object for End-To-End should work" {
