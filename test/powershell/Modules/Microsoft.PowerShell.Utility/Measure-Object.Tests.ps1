@@ -6,11 +6,11 @@ Describe "Measure-Object" -Tags "CI" {
     }
 
     It "Should be able to be called without error" {
-        { Measure-Object | Out-Null } | Should Not Throw
+        { Measure-Object | Out-Null } | Should -Not -Throw
     }
 
     It "Should be able to call on piped input" {
-        { $testObject | Measure-Object } | Should Not Throw
+        { $testObject | Measure-Object } | Should -Not -Throw
     }
 
     It "Should be able to count the number of objects input to it" {

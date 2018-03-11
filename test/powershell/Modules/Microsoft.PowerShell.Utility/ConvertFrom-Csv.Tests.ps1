@@ -20,11 +20,11 @@ a,b,c
     }
 
     It "Should be able to be called" {
-        { ConvertFrom-Csv -InputObject $testObject } | Should Not Throw
+        { ConvertFrom-Csv -InputObject $testObject } | Should -Not -Throw
     }
 
     It "Should be able to pipe" {
-        { $testObject | ConvertFrom-Csv } | Should Not Throw
+        { $testObject | ConvertFrom-Csv } | Should -Not -Throw
     }
 
     It "Should have expected results when using piped inputs" {
@@ -39,7 +39,7 @@ a,b,c
     }
 
     It "Should be able to set a delimiter" {
-        { $testcsv | ConvertFrom-Csv -Delimiter ";" } | Should Not Throw
+        { $testcsv | ConvertFrom-Csv -Delimiter ";" } | Should -Not -Throw
     }
 
     It "Should actually delimit the output" {

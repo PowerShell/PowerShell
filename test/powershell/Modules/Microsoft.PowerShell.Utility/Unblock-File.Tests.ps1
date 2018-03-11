@@ -51,7 +51,7 @@ Describe "Unblock-File" -Tags "CI" {
         Test-UnblockFile | Should Be $true
 
         # If a file is not blocked we silently return without an error.
-        { Unblock-File -Path $testfilepath -ErrorAction Stop } | Should Not Throw
+        { Unblock-File -Path $testfilepath -ErrorAction Stop } | Should -Not -Throw
     }
 
     It "With '-LiteralPath': file exist" {

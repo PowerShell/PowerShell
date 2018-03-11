@@ -40,7 +40,7 @@ Describe "Add-Type" -Tags "CI" {
     }
 
     It "Should not throw given a simple class definition" {
-        { Add-Type -TypeDefinition "public static class foo { }" } | Should Not Throw
+        { Add-Type -TypeDefinition "public static class foo { }" } | Should -Not -Throw
     }
 
     It "Can use System.Management.Automation.CmdletAttribute" {
@@ -62,7 +62,7 @@ public class AttributeTest$guid {}
 
         Add-Type -Path $codeFile1,$codeFile2
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should Not Throw
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should Not Throw
+        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Not -Throw
+        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Not -Throw
     }
 }

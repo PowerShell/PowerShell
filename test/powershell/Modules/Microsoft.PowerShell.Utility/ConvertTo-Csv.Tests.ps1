@@ -42,7 +42,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     $testObject = New-Object psobject -Property @{ FirstColumn = $Name; SecondColumn = $Data }
 
     It "Should Be able to be called without error" {
-	{ $testObject | ConvertTo-Csv } | Should Not Throw
+	{ $testObject | ConvertTo-Csv } | Should -Not -Throw
     }
 
     It "Should output an array of objects" {
@@ -76,7 +76,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     }
 
     It "Does not include type information by default" {
-        $result = $testObject | ConvertTo-Csv 
+        $result = $testObject | ConvertTo-Csv
 
         $result | Should Not Match ([regex]::Escape('System.Management.Automation.PSCustomObject'))
         $result | Should Not Match ([regex]::Escape('#TYPE'))
@@ -90,7 +90,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     }
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
-        { $testObject | ConvertTo-Csv -IncludeTypeInformation -NoTypeInformation } | 
+        { $testObject | ConvertTo-Csv -IncludeTypeInformation -NoTypeInformation } |
             ShouldBeErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ConvertToCsvCommand"
     }
 

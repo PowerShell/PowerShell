@@ -9,7 +9,7 @@ Describe "Select-Object" -Tags "CI" {
     }
 
     It "Handle piped input without error" {
-	{ $dirObject | Select-Object } | Should Not Throw
+	{ $dirObject | Select-Object } | Should -Not -Throw
     }
 
     It "Should treat input as a single object with the inputObject parameter" {
@@ -20,7 +20,7 @@ Describe "Select-Object" -Tags "CI" {
     }
 
     It "Should be able to use the alias" {
-	{ $dirObject | select } | Should Not Throw
+	{ $dirObject | select } | Should -Not -Throw
     }
 
     It "Should have same result when using alias" {
@@ -80,7 +80,7 @@ Describe "Select-Object" -Tags "CI" {
     }
 
     It "Should send output to pipe properly" {
-	{$dirObject | Select-Object -Unique | pipelineConsume} | Should Not Throw
+	{$dirObject | Select-Object -Unique | pipelineConsume} | Should -Not -Throw
     }
 
     It "Should select array indices with Index parameter" {

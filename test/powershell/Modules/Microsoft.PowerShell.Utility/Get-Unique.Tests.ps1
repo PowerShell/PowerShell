@@ -29,7 +29,7 @@ Describe "Get-Unique" -Tags "CI" {
     }
 
     It "Should be able to use the Get-Unique cmdlet without error with inputObject switch" {
-        { Get-Unique -InputObject $sortedList1 } | Should Not Throw
+        { Get-Unique -InputObject $sortedList1 } | Should -Not -Throw
     }
 
     It "Should output an array" {
@@ -44,7 +44,7 @@ Describe "Get-Unique" -Tags "CI" {
     }
 
     It "Should accept piped input" {
-        { $actualOutput = $sortedList1 | Get-Unique } | Should Not Throw
+        { $actualOutput = $sortedList1 | Get-Unique } | Should -Not -Throw
     }
 
     It "Should have the expected output when piped input is used" {

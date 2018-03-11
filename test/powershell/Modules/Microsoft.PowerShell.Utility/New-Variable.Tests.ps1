@@ -61,11 +61,11 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 
 Describe "New-Variable" -Tags "CI" {
     It "Should create a new variable with no parameters" {
-	{ New-Variable var1 } | Should Not Throw
+	{ New-Variable var1 } | Should -Not -Throw
     }
 
     It "Should be able to set variable name using the Name parameter" {
-	{ New-Variable -Name var1 } | Should Not Throw
+	{ New-Variable -Name var1 } | Should -Not -Throw
     }
 
     It "Should be able to assign a value to a variable using the value switch" {
@@ -127,7 +127,7 @@ Describe "New-Variable" -Tags "CI" {
 
     Context "Option tests" {
 	It "Should be able to use the options switch without error" {
-		{ New-Variable -Name var1 -Value 2 -Option Unspecified } | Should Not Throw
+		{ New-Variable -Name var1 -Value 2 -Option Unspecified } | Should -Not -Throw
 	}
 
 	It "Should default to none as the value for options" {
@@ -135,7 +135,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should be able to set ReadOnly option" {
-		{ New-Variable -Name var1 -Value 2 -Option ReadOnly } | Should Not Throw
+		{ New-Variable -Name var1 -Value 2 -Option ReadOnly } | Should -Not -Throw
 	}
 
 	It "Should not be able to change variable created using the ReadOnly option when the Force switch is not used" {
@@ -147,7 +147,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should be able to set a new variable to constant" {
-		{ New-Variable -Name var1 -Option Constant } | Should Not Throw
+		{ New-Variable -Name var1 -Option Constant } | Should -Not -Throw
 	}
 
 	It "Should not be able to change an existing variable to constant" {
@@ -175,7 +175,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should be able to create a variable as private without error" {
-		{ New-Variable -Name var1 -Option Private } | Should Not Throw
+		{ New-Variable -Name var1 -Option Private } | Should -Not -Throw
 	}
 
 	It "Should be able to see the value of a private variable when within scope" {
@@ -187,13 +187,13 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should not be able to see the value of a private variable when out of scope" {
-		{New-Variable -Name var1 -Value 1 -Option Private}| Should Not Throw
+		{New-Variable -Name var1 -Value 1 -Option Private}| Should -Not -Throw
 
 		$var1 | Should BeNullOrEmpty
 	}
 
 	It "Should be able to use the AllScope switch without error" {
-	    { New-Variable -Name var1 -Option AllScope } | Should Not Throw
+	    { New-Variable -Name var1 -Option AllScope } | Should -Not -Throw
 	}
 
 	It "Should be able to see variable created using the AllScope switch in a child scope" {

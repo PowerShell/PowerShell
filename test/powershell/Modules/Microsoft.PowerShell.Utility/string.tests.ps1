@@ -33,11 +33,11 @@ Describe "String cmdlets" -Tags "CI" {
         }
 
         It "Select-String does not throw on subdirectory (path without wildcard)" {
-            { select-string -Path  $pathWithoutWildcard "noExists" -ErrorAction Stop } | Should Not Throw
+            { select-string -Path  $pathWithoutWildcard "noExists" -ErrorAction Stop } | Should -Not -Throw
         }
 
         It "Select-String does not throw on subdirectory (path with wildcard)" {
-            { select-string -Path  $pathWithWildcard "noExists" -ErrorAction Stop } | Should Not Throw
+            { select-string -Path  $pathWithWildcard "noExists" -ErrorAction Stop } | Should -Not -Throw
         }
 
         It "LiteralPath with relative path" {

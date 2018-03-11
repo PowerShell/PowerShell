@@ -26,7 +26,7 @@ Describe "Export-FormatData" -Tags "CI" {
 
     Context "Check Export-FormatData can be called validly." {
 	    It "Should be able to be called without error" {
-	        { Get-FormatData | Export-FormatData -Path $testOutput } | Should Not Throw
+	        { Get-FormatData | Export-FormatData -Path $testOutput } | Should -Not -Throw
 	    }
     }
 

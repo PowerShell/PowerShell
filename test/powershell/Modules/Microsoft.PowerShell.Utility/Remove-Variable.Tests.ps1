@@ -170,7 +170,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	It "Should be able to remove a script variable created using the script switch" {
 	    New-Variable -Name var1 -Value "context" -Scope script
 
-	    { Remove-Variable -Name var1 -Scope script } | Should Not Throw
+	    { Remove-Variable -Name var1 -Scope script } | Should -Not -Throw
 
 	    $var1 | Should BeNullOrEmpty
 	}

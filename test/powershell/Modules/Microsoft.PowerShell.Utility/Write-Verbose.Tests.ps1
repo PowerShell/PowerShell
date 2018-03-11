@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 Describe "Write-Verbose" -Tags "CI" {
     It "Should be able to call cmdlet without error" {
-	{ Write-Verbose -Message "test" -ErrorAction SilentlyContinue } | Should Not Throw
+	{ Write-Verbose -Message "test" -ErrorAction SilentlyContinue } | Should -Not -Throw
     }
 
     It "Should not display verbose output by default" {
@@ -24,7 +24,7 @@ Describe "Write-Verbose" -Tags "CI" {
     }
 
     It "Should be able to set verbose switch using a colon and boolean" {
-	{ Write-Verbose -Message "test" -Verbose:$false } | Should Not Throw
+	{ Write-Verbose -Message "test" -Verbose:$false } | Should -Not -Throw
 
 	$(Write-Verbose -Message "test" -Verbose:$true) 4>&1 | Should Be "test"
     }

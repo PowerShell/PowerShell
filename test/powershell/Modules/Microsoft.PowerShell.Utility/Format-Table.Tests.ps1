@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
 		It "Should call format table on piped input without error" {
-				{ Get-Date | Format-Table } | Should Not Throw
+				{ Get-Date | Format-Table } | Should -Not -Throw
 
-				{ Get-Date | ft } | Should Not Throw
+				{ Get-Date | ft } | Should -Not -Throw
 		}
 
 		It "Should return a format object data type" {

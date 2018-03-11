@@ -18,7 +18,7 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
 
     It "Works with NoEnumerate switch" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
-        [string]$s = Write-Output $objectWritten -NoEnumerate 6>&1 
+        [string]$s = Write-Output $objectWritten -NoEnumerate 6>&1
         $s | Should be  '1 2.2 System.Object[] abc'
     }
 }
@@ -27,7 +27,7 @@ Describe "Write-Output" -Tags "CI" {
     $testString = $testString
     Context "Input Tests" {
 	It "Should allow piped input" {
-	    { $testString | Write-Output } | Should Not Throw
+	    { $testString | Write-Output } | Should -Not -Throw
 	}
 
 	It "Should write output to the output stream when using piped input" {
@@ -35,7 +35,7 @@ Describe "Write-Output" -Tags "CI" {
 	}
 
 	It "Should use inputobject switch" {
-	    { Write-Output -InputObject $testString } | Should Not Throw
+	    { Write-Output -InputObject $testString } | Should -Not -Throw
 	}
 
 	It "Should write output to the output stream when using inputobject switch" {

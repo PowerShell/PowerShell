@@ -3,7 +3,7 @@
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
-        { 1 | Out-File -PSPath $tempFile } | Should Not Throw
+        { 1 | Out-File -PSPath $tempFile } | Should -Not -Throw
         $fileContents = Get-Content $tempFile
         $fileContents | Should be 1
         Remove-Item $tempFile -Force
@@ -11,8 +11,8 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
 
     It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "outfileAppendTest.txt"
-        { 'This is first line.' | out-file $tempFile } | Should Not Throw
-        { 'This is second line.' | out-file -append $tempFile } | Should Not Throw
+        { 'This is first line.' | out-file $tempFile } | Should -Not -Throw
+        { 'This is second line.' | out-file -append $tempFile } | Should -Not -Throw
         $tempFile |Should FileContentMatch "first"
         $tempFile |Should FileContentMatch "second"
         Remove-Item $tempFile -Force
@@ -31,11 +31,11 @@ Describe "Out-File" -Tags "CI" {
     }
 
     It "Should be able to be called without error" {
-        { Out-File -FilePath $testfile }   | Should Not Throw
+        { Out-File -FilePath $testfile }   | Should -Not -Throw
     }
 
     It "Should be able to accept string input via piping" {
-        { $expectedContent | Out-File -FilePath $testfile } | Should Not Throw
+        { $expectedContent | Out-File -FilePath $testfile } | Should -Not -Throw
 
         $actual = Get-Content $testfile
 
@@ -43,7 +43,7 @@ Describe "Out-File" -Tags "CI" {
     }
 
     It "Should be able to accept string input via the InputObject switch" {
-        { Out-File -FilePath $testfile -InputObject $expectedContent } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $expectedContent } | Should -Not -Throw
 
         $actual = Get-Content $testfile
 
@@ -51,9 +51,9 @@ Describe "Out-File" -Tags "CI" {
     }
 
     It "Should be able to accept object input" {
-        { $inObject | Out-File -FilePath $testfile } | Should Not Throw
+        { $inObject | Out-File -FilePath $testfile } | Should -Not -Throw
 
-        { Out-File -FilePath $testfile -InputObject $inObject } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inObject } | Should -Not -Throw
     }
 
     It "Should not overwrite when the noclobber switch is used" {
@@ -72,8 +72,8 @@ Describe "Out-File" -Tags "CI" {
     }
 
     It "Should Append a new line when the append switch is used" {
-        { Out-File -FilePath $testfile -InputObject $inObject }         | Should Not Throw
-        { Out-File -FilePath $testfile -InputObject $inObject -Append } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inObject }         | Should -Not -Throw
+        { Out-File -FilePath $testfile -InputObject $inObject -Append } | Should -Not -Throw
 
         $actual = Get-Content $testfile
 
@@ -105,11 +105,11 @@ Describe "Out-File" -Tags "CI" {
 
     It "Should allow the cmdlet to overwrite an existing read-only file" {
         # create a read-only text file
-        { Out-File -FilePath $testfile -InputObject $inObject }                | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inObject }                | Should -Not -Throw
         Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $true
 
         # write information to the RO file
-        { Out-File -FilePath $testfile -InputObject $inObject -Append -Force } | Should Not Throw
+        { Out-File -FilePath $testfile -InputObject $inObject -Append -Force } | Should -Not -Throw
 
         $actual = Get-Content $testfile
 
@@ -131,7 +131,7 @@ Describe "Out-File" -Tags "CI" {
     }
 
     It "Should be able to use the 'Path' alias for the 'FilePath' parameter" {
-        { Out-File -Path $testfile } | Should Not Throw
+        { Out-File -Path $testfile } | Should -Not -Throw
     }
 }
 

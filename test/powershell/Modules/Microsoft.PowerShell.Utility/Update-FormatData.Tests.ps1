@@ -17,7 +17,7 @@ Describe "Update-FormatData" -Tags "CI" {
     Context "Validate Update-FormatData update correctly" {
 
         It "Should not throw upon reloading previous formatting file" {
-            { Update-FormatData } | Should Not throw
+            { Update-FormatData } | Should -Not -Throw
         }
 
         It "Should validly load formatting data" {
@@ -55,8 +55,8 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 
     It "Update-FormatData with WhatIf should work"{
 
-        { Update-FormatData -Append $testfile -WhatIf } | Should Not Throw
-        { Update-FormatData -Prepend $testfile -WhatIf } | Should Not Throw
+        { Update-FormatData -Append $testfile -WhatIf } | Should -Not -Throw
+        { Update-FormatData -Prepend $testfile -WhatIf } | Should -Not -Throw
     }
 
     It "Update with invalid format xml should fail" -Pending {

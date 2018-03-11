@@ -36,7 +36,7 @@ Describe "Environment-Variables" -Tags "CI" {
 
     It "Should be able to set the environment variables" {
 	$expected = "this is a test environment variable"
-	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should Not Throw
+	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should -Not -Throw
 
 	$ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
 	$ENV:TESTENVIRONMENTVARIABLE | Should Be $expected

@@ -10,19 +10,19 @@ Describe "Format-Wide" -Tags "CI" {
     }
 
     It "Should be able to specify the columns in output using the column switch" {
-        { Get-ChildItem | Format-Wide -Column 3 } | Should Not Throw
+        { Get-ChildItem | Format-Wide -Column 3 } | Should -Not -Throw
     }
 
     It "Should be able to use the autosize switch" {
-        { Get-ChildItem | Format-Wide -Autosize } | Should Not Throw
+        { Get-ChildItem | Format-Wide -Autosize } | Should -Not -Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {
-        { Format-Wide -InputObject $(Get-ChildItem) } | Should Not Throw
+        { Format-Wide -InputObject $(Get-ChildItem) } | Should -Not -Throw
     }
 
     It "Should be able to use the property switch" {
-        { Format-Wide -InputObject $(Get-ChildItem) -Property Mode } | Should Not Throw
+        { Format-Wide -InputObject $(Get-ChildItem) -Property Mode } | Should -Not -Throw
     }
 
     It "Should throw an error when property switch and view switch are used together" {

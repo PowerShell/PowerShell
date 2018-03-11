@@ -8,7 +8,7 @@ Describe "Select-String" -Tags "CI" {
 	$testinputtwo = "hello","Hello"
 
 	it "Should be called without errors" {
-	    { $testinputone | Select-String -Pattern "hello" } | Should Not Throw
+	    { $testinputone | Select-String -Pattern "hello" } | Should -Not -Throw
 	}
 
         it "Should return an array data type when multiple matches are found" {
@@ -27,7 +27,7 @@ Describe "Select-String" -Tags "CI" {
     }
 
 	it "Should be called without an error using ca for casesensitive " {
-	    {$testinputone | Select-String -Pattern "hello" -ca } | Should Not Throw
+	    {$testinputone | Select-String -Pattern "hello" -ca } | Should -Not -Throw
 	}
 
 	it "Should use the ca alias for casesensitive" {
@@ -43,7 +43,7 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should accept a collection of strings from the input object" {
-	    { Select-String -InputObject "some stuff", "other stuff" -Pattern "other" } | Should Not Throw
+	    { Select-String -InputObject "some stuff", "other stuff" -Pattern "other" } | Should -Not -Throw
 	}
 
     it "Should return system.object when the input object switch is used on a collection" {

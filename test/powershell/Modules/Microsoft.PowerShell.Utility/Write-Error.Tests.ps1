@@ -82,7 +82,7 @@ Describe "Write-Error Tests" -Tags "CI" {
     }
 
     It "Should throw a non-terminating error" {
-        { Write-Error "test throw" -ErrorAction SilentlyContinue } | Should Not Throw
+        { Write-Error "test throw" -ErrorAction SilentlyContinue } | Should -Not -Throw
     }
 
     It "Should trip an exception using the exception switch" {

@@ -20,11 +20,11 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be called using an object as piped without error with no switches" {
-        {$testObject | Group-Object } | Should Not Throw
+        {$testObject | Group-Object } | Should -Not -Throw
     }
 
     It "Should be called using the InputObject without error with no other switches" {
-        { Group-Object -InputObject $testObject } | Should Not Throw
+        { Group-Object -InputObject $testObject } | Should -Not -Throw
     }
 
     It "Should return three columns- count, name, and group" {
@@ -36,7 +36,7 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should use the group alias" {
-        { Group-Object -InputObject $testObject } | Should Not Throw
+        { Group-Object -InputObject $testObject } | Should -Not -Throw
     }
 
     It "Should create a collection when the inputObject parameter is used" {
@@ -64,7 +64,7 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be able to use the property switch without error" {
-        { $testObject | Group-Object -Property Attributes } | Should Not Throw
+        { $testObject | Group-Object -Property Attributes } | Should -Not -Throw
 
         $actual = $testObject | Group-Object -Property Attributes
 
@@ -80,7 +80,7 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be able to omit members of a group using the NoElement switch without error" {
-        { $testObject | Group-Object -NoElement } | Should Not Throw
+        { $testObject | Group-Object -NoElement } | Should -Not -Throw
 
         ($testObject | Group-Object -NoElement).Group | Should BeNullOrEmpty
     }
@@ -103,7 +103,7 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should not throw error when using AsString when the AsHashTable was added" {
-        { $testObject | Group-Object -AsHashTable -AsString } | Should Not Throw
+        { $testObject | Group-Object -AsHashTable -AsString } | Should -Not -Throw
     }
 }
 
@@ -124,7 +124,7 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
             $testCulture = "ru-RU"
         }
 
-        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+        {$testObject | Group-Object -Culture $testCulture } | Should -Not -Throw
     }
 
     It "Should accept a culture by hex string LCID" {
@@ -136,7 +136,7 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
             $testCulture = "0x419"
         }
 
-        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+        {$testObject | Group-Object -Culture $testCulture } | Should -Not -Throw
     }
 
     It "Should accept a culture by int string LCID" {
@@ -148,6 +148,6 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
             $testCulture = "1049"
         }
 
-        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+        {$testObject | Group-Object -Culture $testCulture } | Should -Not -Throw
     }
 }

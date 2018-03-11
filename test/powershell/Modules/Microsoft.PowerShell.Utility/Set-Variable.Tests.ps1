@@ -165,7 +165,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 
 Describe "Set-Variable" -Tags "CI" {
     It "Should create a new variable with no parameters" {
-	{ Set-Variable testVar } | Should Not Throw
+	{ Set-Variable testVar } | Should -Not -Throw
     }
 
     It "Should assign a value to a variable it has to create" {
@@ -231,15 +231,15 @@ Describe "Set-Variable" -Tags "CI" {
 
     Context "Scope Tests" {
 	It "Should be able to set a global scope variable using the global switch" {
-	    { Set-Variable globalVar -Value 1 -Scope global -Force } | Should Not Throw
+	    { Set-Variable globalVar -Value 1 -Scope global -Force } | Should -Not -Throw
 	}
 
 	It "Should be able to set a global variable using the script scope switch" {
-	    { Set-Variable globalVar -Value 1 -Scope script -Force } | Should Not Throw
+	    { Set-Variable globalVar -Value 1 -Scope script -Force } | Should -Not -Throw
 	}
 
 	It "Should be able to set an item locally using the local switch" {
-	    { Set-Variable globalVar -Value 1 -Scope local -Force } | Should Not Throw
+	    { Set-Variable globalVar -Value 1 -Scope local -Force } | Should -Not -Throw
 	}
     }
 }

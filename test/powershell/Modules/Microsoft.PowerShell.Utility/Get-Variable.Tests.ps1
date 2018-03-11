@@ -56,7 +56,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 
 Describe "Get-Variable" -Tags "CI" {
     It "Should be able to call with no parameters without error" {
-		{ Get-Variable } | Should Not Throw
+		{ Get-Variable } | Should -Not -Throw
     }
 
     It "Should return environment variables when called with no parameters" {
@@ -76,7 +76,7 @@ Describe "Get-Variable" -Tags "CI" {
     It "Should be able to call using the Name switch" {
 		New-Variable -Name var1 -Value 4
 
-		{ Get-Variable -Name var1 } | Should Not Throw
+		{ Get-Variable -Name var1 } | Should -Not -Throw
 
 		(Get-Variable -Name var1).Value | Should Be 4
 
@@ -163,7 +163,7 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable localVar -Value 1 -Scope local -Force
 
 		Get-Variable -Name localVar -Scope local
-	    } | Should Not Throw
+	    } | Should -Not -Throw
 	}
 
 	It "Should be able to get a variable created in the global scope when there's one in local scope" {
@@ -179,7 +179,7 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable scriptVar -Value 1 -Scope script -Force
 
 		Get-Variable -Name scriptVar -Scope script
-	    } | Should Not Throw
+	    } | Should -Not -Throw
 	}
 
 	It "Should be able to clear a global script variable that was created using the script scope switch" {
@@ -187,7 +187,7 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable scriptVar -Value 1 -Scope script -Force
 
 		Get-Variable -Name scriptVar -Scope script
-	    } | Should Not Throw
+	    } | Should -Not -Throw
 	}
     }
 }

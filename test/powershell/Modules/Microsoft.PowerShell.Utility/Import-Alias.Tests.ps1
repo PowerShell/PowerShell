@@ -36,7 +36,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException" {
 			$ErrorActionPreference = "Stop"
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
+		{Export-Alias  $fulltestpath abcd*}| Should -Not -Throw
 		try {
 			Import-Alias $fulltestpath
 			Throw "Execution OK"
@@ -47,7 +47,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Import-Alias Into Invalid Scope should throw PSArgumentException"{
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
+		{Export-Alias  $fulltestpath abcd*}| Should -Not -Throw
 		try {
 			Import-Alias $fulltestpath -scope bogus
 			Throw "Execution OK"
@@ -58,8 +58,8 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist using force should not throw"{
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
-		{Import-Alias $fulltestpath  -Force}| Should Not Throw
+		{Export-Alias  $fulltestpath abcd*}| Should -Not -Throw
+		{Import-Alias $fulltestpath  -Force}| Should -Not -Throw
     }
 }
 
@@ -84,11 +84,11 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file successfully" {
-	    { Import-Alias $pesteraliasfile } | Should Not throw
+	    { Import-Alias $pesteraliasfile } | Should -Not -Throw
 	}
 
 	It "Should be able to import file via the Import-Alias alias of ipal" {
-	    { ipal $pesteraliasfile } | Should Not throw
+	    { ipal $pesteraliasfile } | Should -Not -Throw
 	}
 
 	It "Should be able to import an alias file and perform imported aliased echo cmd" {

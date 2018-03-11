@@ -43,7 +43,7 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 
 Describe "New-Alias" -Tags "CI" {
     It "Should be able to be called using the name and value parameters without error" {
-	{ New-Alias -Name testAlias -Value 100 } | Should Not Throw
+	{ New-Alias -Name testAlias -Value 100 } | Should -Not -Throw
     }
 
     It "Should have the same output between the alias and the original cmdlet" {
@@ -58,7 +58,7 @@ Describe "New-Alias" -Tags "CI" {
     }
 
     It "Should be able to call the New-Alias cmdlet using the nal alias without error" {
-	{ nal -Name testAlias -Value 100 } | Should Not Throw
+	{ nal -Name testAlias -Value 100 } | Should -Not -Throw
     }
 
     It "Should have the same output between the nal alias and the New-Alias cmdlet" {

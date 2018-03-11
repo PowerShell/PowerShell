@@ -107,13 +107,13 @@ Describe "Clear-Variable" -Tags "CI" {
 		It "Should be able to clear a variable using the Name switch" {
 	Clear-Variable -Name var1
 	$var1 | Should BeNullOrEmpty
-	{ Get-Variable var1 } | Should Not Throw
+	{ Get-Variable var1 } | Should -Not -Throw
 		}
 
 		It "Should be able to clear a variable without using the Name switch" {
 	Clear-Variable var1
 	$var1 | Should BeNullOrEmpty
-	{ Get-Variable var1 } | Should Not Throw
+	{ Get-Variable var1 } | Should -Not -Throw
 		}
 
 		It "Should be able to include a set of variables to clear" {
@@ -160,7 +160,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		}
 
 		It "Should be able to pass the cleared object through the pipeline using the passthru switch" {
-	{ Clear-Variable -Name var1 -PassThru | Format-Wide -Property Value } | Should Not Throw
+	{ Clear-Variable -Name var1 -PassThru | Format-Wide -Property Value } | Should -Not -Throw
 		}
 
 		It "Should not clear environment variables" {
@@ -250,7 +250,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		New-Variable -Name derp2 -Value 3 -Scope script -Force
 
 		Clear-Variable -Name derp2 -Scope script
-			}| Should Not Throw
+			}| Should -Not -Throw
 	}
 
 	It "Should be able to clear a global script variable that was created using the script scope switch" {
@@ -258,7 +258,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		New-Variable -Name derpx -Value 4 -Scope script -Force
 
 		Clear-Variable -Name derpx -Scope script
-			} | Should Not Throw
+			} | Should -Not -Throw
 	}
 		}
 }

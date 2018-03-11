@@ -11,7 +11,7 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Should be able to be called without error" {
-        { $testObject | Export-Csv $testCsv -ErrorAction Stop } | Should Not Throw
+        { $testObject | Export-Csv $testCsv -ErrorAction Stop } | Should -Not -Throw
     }
 
     It "Should throw if an output file isn't specified" {
@@ -29,9 +29,9 @@ Describe "Export-Csv" -Tags "CI" {
     It "Should be an object when exporting via the inputObject switch" {
         Export-Csv -InputObject $testObject -Path $testCsv -IncludeTypeInformation
 
-        $switch = Get-Content $testCsv 
+        $switch = Get-Content $testCsv
 
-        $switch[0] | Should BeExactly "#TYPE System.Object[]" 
+        $switch[0] | Should BeExactly "#TYPE System.Object[]"
     }
 
     It "Should output a csv file containing a string of all the lengths of each element when piped input is used" {
@@ -68,7 +68,7 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
-        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } | 
+        { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } |
             ShouldBeErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 }

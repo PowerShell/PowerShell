@@ -49,7 +49,7 @@ Describe "Get-Verb" -Tags "CI" {
             Select-Object -Property @{Name='VerbGroup';Expression={$_.Name.Substring(5)}}).VerbGroup
         ForEach($group in $groups)
         {
-            {Get-Verb -Group $group} | Should Not Throw
+            {Get-Verb -Group $group} | Should -Not -Throw
         }
     }
 

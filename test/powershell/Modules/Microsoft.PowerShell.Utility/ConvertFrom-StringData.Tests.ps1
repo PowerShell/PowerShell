@@ -28,7 +28,7 @@ bazz = 2
 '@
 
     It "Should not throw when called with just the stringdata switch" {
-	{ ConvertFrom-StringData -StringData 'a=b' } | Should Not Throw
+	{ ConvertFrom-StringData -StringData 'a=b' } | Should -Not -Throw
     }
 
     It "Should return a hashtable" {
@@ -65,7 +65,7 @@ bazz = 2
     }
 
     It "Should work for multiple lines" {
-	{ ConvertFrom-StringData -StringData $sampleData } | Should Not Throw
+	{ ConvertFrom-StringData -StringData $sampleData } | Should -Not -Throw
 
     # keys are not order guaranteed
 	$(ConvertFrom-StringData -StringData $sampleData).Keys   | Should BeIn @("foo", "bar", "bazz")

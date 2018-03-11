@@ -21,15 +21,15 @@ Describe "Compare-Object" -Tags "CI" {
 	}
 
     It "Should be able to compare the same object using the referenceObject and differenceObject switches" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should Not Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should -Not -Throw
     }
 
     It "Should not throw when referenceobject switch is not used" {
-	{ Compare-Object $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should Not Throw
+	{ Compare-Object $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should -Not -Throw
     }
 
     It "Should not throw when differenceobject switch is not used" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file1) $(Get-Content $file2) } | Should Not Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file1) $(Get-Content $file2) } | Should -Not -Throw
     }
 
     It "Should indicate data that exists only in the reference dataset" {
@@ -53,7 +53,7 @@ Describe "Compare-Object" -Tags "CI" {
     }
 
     It "Should be able to use the casesensitive switch" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -CaseSensitive } | Should Not Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -CaseSensitive } | Should -Not -Throw
     }
 
     It "Should correctly indicate that different cases are different when the casesensitive switch is used" {
@@ -89,7 +89,7 @@ Describe "Compare-Object" -Tags "CI" {
     }
 
     It "Should be able to pass objects to pipeline using the passthru switch" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -Passthru | Format-Wide } | Should Not Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -Passthru | Format-Wide } | Should -Not -Throw
     }
 
     It "Should be able to specify the property of two objects to compare" {
@@ -100,8 +100,8 @@ Describe "Compare-Object" -Tags "CI" {
     }
 
     It "Should be able to specify the syncwindow without error" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -syncWindow 5 } | Should Not Throw
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -syncWindow 8 } | Should Not Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -syncWindow 5 } | Should -Not -Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -syncWindow 8 } | Should -Not -Throw
     }
 
     It "Should have the expected output when changing the syncwindow" {
