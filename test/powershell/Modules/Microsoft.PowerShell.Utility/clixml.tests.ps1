@@ -159,7 +159,7 @@ Describe "CliXml test" -Tags "CI" {
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should -Not -BeNullOrEmpty
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
@@ -173,7 +173,7 @@ Describe "CliXml test" -Tags "CI" {
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should -Not -BeNullOrEmpty
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should -Not -BeNullOrEmpty

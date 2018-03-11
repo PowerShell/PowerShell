@@ -3,7 +3,7 @@
 Describe "Get-Verb" -Tags "CI" {
 
     It "Should get a list of Verbs" {
-        Get-Verb | Should not be $null
+        Get-Verb | Should -Not -BeNullOrEmpty
     }
 
     It "Should get a specific verb" {

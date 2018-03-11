@@ -154,7 +154,7 @@ Describe "Alias tests" -Tags "CI" {
             # Verify that the alias was imported
             $definedAlias = Get-Alias myuh
 
-            $definedAlias | Should Not Be $null
+            $definedAlias | Should -Not -BeNullOrEmpty
             $definedAlias.Name | Should Be "myuh"
             $definedAlias.Definition | Should Be "update-help"
         }

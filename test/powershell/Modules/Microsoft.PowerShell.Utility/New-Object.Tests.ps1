@@ -199,7 +199,7 @@ try
         It "Should be able to create <Name> with property <Property> of Type <Type>" -TestCases $testCases {
             param($Name, $Property, $Type)
             $comObject = New-Object -ComObject $name
-            $comObject.$Property | should not be $null
+            $comObject.$Property | Should -Not -BeNullOrEmpty
             $comObject.$Property | should beoftype $Type
         }
 

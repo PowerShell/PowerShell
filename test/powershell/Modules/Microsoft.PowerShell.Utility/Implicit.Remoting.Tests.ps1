@@ -100,7 +100,7 @@ try
         It "Verifies that Import-PSSession works in AllSigned if Certificate is used" -Skip:($skipTest -or $skipThisTest) {
             try {
                 $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -Certificate $cert -AllowClobber
-    	        $importedModule | Should Not Be $null
+    	        $importedModule | Should -Not -BeNullOrEmpty
             } finally {
                 $importedModule | Remove-Module -Force -ErrorAction SilentlyContinue
             }
@@ -1502,7 +1502,7 @@ try
                 -Force
 
             $session = New-RemoteSession -ConfigurationName $myConfiguration.Name
-            $session | Should Not Be $null
+            $session | Should -Not -BeNullOrEmpty
         }
 
         AfterAll {
@@ -1782,7 +1782,7 @@ try
                     Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                     ## BadVerb-Variable should be a function, not an alias (1)
-                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Not Be $null
+                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
                     ## BadVerb-Variable should be a function, not an alias (2)
                     Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
@@ -1822,7 +1822,7 @@ try
                     Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                     ## BadVerb-Variable should be a function, not an alias (1)
-                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Not Be $null
+                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
                     ## BadVerb-Variable should be a function, not an alias (2)
                     Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
@@ -1873,7 +1873,7 @@ try
                     Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                     ## BadVerb-Variable should be an alias, not a function (2)
-                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Not Be $null
+                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
                     (BadVerb-Variable -Name pid).Value | Should Be $remotePid
                 } finally {
