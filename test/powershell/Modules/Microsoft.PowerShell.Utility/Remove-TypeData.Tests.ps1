@@ -53,7 +53,7 @@ Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
         $ps.AddScript("(Get-TypeData System.Int32).TypeName").Invoke() | Should Be System.Int32
         $ps.Commands.Clear()
         $null = $ps.AddScript("'int' | Remove-TypeData").Invoke()
-        $ps.HadErrors | Should be $false
+        $ps.HadErrors | Should -BeFalse
     }
 
     It "Remove Type File In Initial Session State" {

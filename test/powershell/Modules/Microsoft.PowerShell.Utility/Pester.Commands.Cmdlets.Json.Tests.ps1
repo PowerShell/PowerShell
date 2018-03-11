@@ -21,7 +21,7 @@ Describe "Json Tests" -Tags "Feature" {
             $result.SampleString | Should Match "stringVal"
             $result.SampleArray.Count | Should Be 2
             $result.SampleTrue | Should -BeTrue
-            $result.SampleFalse | Should Be $false
+            $result.SampleFalse | Should -BeFalse
             $result.SampleNull | Should Be $null
             $result.SampleFloat | Should Be 9.8765E+43
 

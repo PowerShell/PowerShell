@@ -122,7 +122,7 @@ Describe "Get-Date" -Tags "CI" {
         (Get-Date -Format G).Contains("/") -and (Get-Date -Format G).Contains(":") | Should -BeTrue
         (Get-Date -Format m).Contains(",") -or `
         (Get-Date -Format m).Contains(":")  -or `
-        (Get-Date -Format m).Contains("/") | Should be $false
+        (Get-Date -Format m).Contains("/") | Should -BeFalse
     }
 
     It "Should check that Get-Date can return the correct datetime from the system time" {

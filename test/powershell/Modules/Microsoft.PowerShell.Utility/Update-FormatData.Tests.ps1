@@ -24,7 +24,7 @@ Describe "Update-FormatData" -Tags "CI" {
             Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
             $ps.Invoke()
-            $ps.HadErrors | Should be $false
+            $ps.HadErrors | Should -BeFalse
         }
     }
 }

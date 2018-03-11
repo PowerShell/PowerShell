@@ -20,7 +20,7 @@ Describe "New-Object" -Tags "CI" {
         $val.BaseType       | Should Not BeNullOrEmpty
 
         $val.IsPublic       | Should -BeTrue
-        $val.IsSerializable | Should Be $false
+        $val.IsSerializable | Should -BeFalse
         $val.Name           | Should Be 'PSCustomObject'
         $val.BaseType       | Should Be 'System.Object'
     }

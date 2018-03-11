@@ -51,6 +51,6 @@ Describe "GetRandomMiscTests" -Tags "Feature" {
             $hadError = $true
         }
 
-        $hadError | Should be $false
+        $hadError | Should -BeFalse
     }
 }
