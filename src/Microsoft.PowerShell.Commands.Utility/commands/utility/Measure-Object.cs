@@ -73,9 +73,7 @@ namespace Microsoft.PowerShell.Commands
         public double? Minimum { get; set; }
 
         /// <summary>
-        ///
         /// The Standard Deviation of property values
-        ///
         /// </summary>
         public double? StdDeviation { get; set; }
     }
@@ -137,9 +135,7 @@ namespace Microsoft.PowerShell.Commands
         public object Minimum { get; set; }
 
         /// <summary>
-        ///
         /// The Standard Deviation of property values
-        ///
         /// </summary>
         public double? StdDeviation { get; set; }
     }
@@ -239,8 +235,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Generic/Numeric statistics
             internal double sum = 0.0;
+            internal double sumPrevious = 0.0;
             internal double stdDeviation = 0.0;
-            internal List<double> stdDeviationNumbers = new List<double>();
             internal object max = null;
             internal object min = null;
 
@@ -293,9 +289,6 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _measureStdDeviation = value;
-                if (value) {
-                    _measureAverage = true;
-                }
             }
         }
 
@@ -563,7 +556,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeString(strValue, stat);
             }
 
-            if (_measureAverage || _measureSum)
+            if (_measureAverage || _measureSum || _measureStdDeviation)
             {
                 double numValue = 0.0;
                 if (!LanguagePrimitives.TryConvertTo(objValue, out numValue))
@@ -746,10 +739,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AnalyzeNumber(double numValue, Statistics stat)
         {
-            if (_measureSum || _measureAverage)
+            if (_measureSum || _measureAverage || _measureStdDeviation)
+            {
+                stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
+            }
             if (_measureStdDeviation)
-                stat.stdDeviationNumbers.Add(numValue);
+            {
+                double countMinusOne = stat.count - 1;
+                double avgPrevious = (countMinusOne == 0) ? 0 : (stat.sumPrevious / countMinusOne);
+                double avg = stat.sum / stat.count;
+                stat.stdDeviation *= countMinusOne;
+                stat.stdDeviation += (numValue - avgPrevious) * (numValue - avg);
+                stat.stdDeviation /= stat.count;
+            }
         }
 
         /// <summary>
@@ -842,18 +845,9 @@ namespace Microsoft.PowerShell.Commands
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
 
-                if (_measureStdDeviation && _measureAverage && stat.count > 0)
+                if (_measureStdDeviation)
                 {
-                    var sumOfDerivation = 0.0;
-
-                    var averageCasted = (double) average;
-                    foreach (double n in stat.stdDeviationNumbers)
-                    {
-                        var m = n - averageCasted;
-                        sumOfDerivation += m * m;
-                    }
-
-                    stdDeviation = Math.Sqrt(sumOfDerivation / (stat.stdDeviationNumbers.Count - 1));
+                    stdDeviation = stat.stdDeviation;
                 }
             }
 
@@ -944,7 +938,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Whether or not a numeric conversion error occurred.
-        /// If true, then average/sum will not be output.
+        /// If true, then average/sum/standard deviation will not be output.
         /// </summary>
         private bool _nonNumericError = false;
 
