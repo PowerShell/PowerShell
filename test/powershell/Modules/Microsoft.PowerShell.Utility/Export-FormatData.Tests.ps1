@@ -8,10 +8,10 @@ Describe "Export-FormatData DRT Unit Tests" -Tags "CI" {
         $content = Get-Content $tempFile
         $formatViewDefinition = $fd[0].FormatViewDefinition
         $typeName = $fd[0].TypeName
-        $content.Contains($typeName) | Should Be $true
+        $content.Contains($typeName) | Should -BeTrue
         for ($i = 0; $i -lt $formatViewDefinition.Count;$i++)
         {
-            $content.Contains($formatViewDefinition[$i].Name) | Should Be $true
+            $content.Contains($formatViewDefinition[$i].Name) | Should -BeTrue
         }
     }
 }

@@ -206,7 +206,7 @@ try
                 $module = Import-PSSession $session -CommandName:BrokenAlias -CommandType:All -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
 
                 $expectedError | Should Not Be NullOrEmpty
-                $expectedError[0].ToString().Contains("BrokenAlias") | Should Be $true
+                $expectedError[0].ToString().Contains("BrokenAlias") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { Remove-Item alias:BrokenAlias }
@@ -231,7 +231,7 @@ try
                 ($results[1]).Value | Should Not Be $PID  # Verifies that returned PID is not for this session
 
                 $errorString = $results[0] | Out-String   # Verifies error message for variable blah
-                ($errorString -like "*VariableNotFound*") | Should Be $true
+                ($errorString -like "*VariableNotFound*") | Should -BeTrue
             }
 
             It "Test terminating error" {
@@ -240,7 +240,7 @@ try
                 $results.Count | Should Be 1              # Verifies that remote session pid is not returned
 
                 $errorString = $results[0] | Out-String   # Verifes error message for incorrect Scope parameter argument
-                ($errorString -like "*Argument*") | Should Be $true
+                ($errorString -like "*Argument*") | Should -BeTrue
             }
         }
 
@@ -333,15 +333,15 @@ try
         }
 
         It "Verifies Export-PSSession creates a psd1 file" {
-            ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
+            ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should -BeTrue
         }
 
         It "Verifies Export-PSSession creates a psm1 file" {
-            ($results | Where-Object { $_.Name -like "*.psm1" }) | Should Be $true
+            ($results | Where-Object { $_.Name -like "*.psm1" }) | Should -BeTrue
         }
 
         It "Verifies Export-PSSession creates a ps1xml file" {
-            ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should Be $true
+            ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should -BeTrue
         }
 
         It "Verifies that Export-PSSession fails when a module directory already exists" {
@@ -351,7 +351,7 @@ try
 
             $expectedError | Should Not Be NullOrEmpty
             # Error contains reference to the directory that already exists
-            ([string]($expectedError[0]) -like "*$file*") | Should Be $true
+            ([string]($expectedError[0]) -like "*$file*") | Should -BeTrue
         }
 
         It "Verifies that overwriting an existing directory succeeds with -Force" {
@@ -1339,8 +1339,8 @@ try
                     $job = Get-Variable -Name PID -AsJob
 
                     $job | Should Not Be NullOrEmpty
-                    ($job -is [System.Management.Automation.Job]) | Should Be $true
-                    ($job.Finished.WaitOne([TimeSpan]::FromSeconds(10), $false)) | Should Be $true
+                    ($job -is [System.Management.Automation.Job]) | Should -BeTrue
+                    ($job.Finished.WaitOne([TimeSpan]::FromSeconds(10), $false)) | Should -BeTrue
                     $job.JobStateInfo.State | Should Be 'Completed'
 
                     $childJob = $job.ChildJobs[0]
@@ -1578,15 +1578,15 @@ try
             }
 
             It "PSModuleInfo.Name shouldn't contain a psd1 extension" {
-                ($module.Name -notlike '*.psd1') | Should Be $true
+                ($module.Name -notlike '*.psd1') | Should -BeTrue
             }
 
             It "PSModuleInfo.Name shouldn't contain a psm1 extension" {
-                ($module.Name -notlike '*.psm1') | Should Be $true
+                ($module.Name -notlike '*.psm1') | Should -BeTrue
             }
 
             It "PSModuleInfo.Name shouldn't contain a path" {
-                ($module.Name -notlike "${env:TMP}*") | Should Be $true
+                ($module.Name -notlike "${env:TMP}*") | Should -BeTrue
             }
 
             It "Get-Command returns only 1 public command from implicit remoting module (1)" {
@@ -1667,7 +1667,7 @@ try
                 $expectedError | Should Not Be NullOrEmpty
 
                 $msg = [string]($expectedError[0])
-                $msg.Contains("blah") | Should Be $true
+                $msg.Contains("blah") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
@@ -1683,7 +1683,7 @@ try
                 $expectedError | Should Not Be NullOrEmpty
 
                 $msg = [string]($expectedError[0])
-                $msg.Contains("notRequested") | Should Be $true
+                $msg.Contains("notRequested") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
@@ -1699,7 +1699,7 @@ try
                 throw "Import-PSSession should throw"
             } catch {
                 $msg = [string]($_)
-                $msg.Contains("Get-Command") | Should Be $true
+                $msg.Contains("Get-Command") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
@@ -1929,11 +1929,11 @@ try
                 $result = $ps.AddScript(" & $tempdir\TestBug450687.ps1").Invoke()
 
                 ## The module created by Export-PSSession is imported successfully
-                ($null -ne $result -and $result.Count -eq 1 -and $result[0].Name -eq "Diag") | Should Be $true
+                ($null -ne $result -and $result.Count -eq 1 -and $result[0].Name -eq "Diag") | Should -BeTrue
 
                 ## The command Add-BitsFile is imported successfully
                 $c = $result[0].ExportedCommands["New-Guid"]
-                ($null -ne $c -and $c.CommandType -eq "Function") | Should Be $true
+                ($null -ne $c -and $c.CommandType -eq "Function") | Should -BeTrue
             } finally {
                 $ps.Dispose()
             }

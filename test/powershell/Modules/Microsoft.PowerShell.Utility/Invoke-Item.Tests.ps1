@@ -217,6 +217,6 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
 
     It "Should start a file without error on Windows full SKUs" -Skip:(-not $isFullWin) {
         Start-Process $testfilepath -Wait
-        Test-Path $renamedtestfilepath | Should Be $true
+        Test-Path $renamedtestfilepath | Should -BeTrue
     }
 }

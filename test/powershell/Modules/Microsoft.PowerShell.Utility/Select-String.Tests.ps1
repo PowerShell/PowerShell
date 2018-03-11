@@ -60,7 +60,7 @@ Describe "Select-String" -Tags "CI" {
     }
 
 	it "Should be true when select string returns a positive result when the quiet switch is used" {
-	    ($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should Be $True
+	    ($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should -BeTrue
 	}
 
 	it "Should be empty when select string does not return a result when the quiet switch is used" {

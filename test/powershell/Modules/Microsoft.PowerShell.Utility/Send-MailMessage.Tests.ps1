@@ -137,7 +137,7 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
         $body = "Greetings from me."
         $subject = "Test message"
         Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
-        Test-Path -Path $mailBox | Should Be $true
+        Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
         $mail.From | Should BeExactly $address
         $mail.To.Count | Should BeExactly 1

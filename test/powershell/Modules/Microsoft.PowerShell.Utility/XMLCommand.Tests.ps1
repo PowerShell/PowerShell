@@ -146,7 +146,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$cmd.LiteralPath = "foo"
 		$cmd.LiteralPath | Should BeExactly "foo"
 		$cmd.NoClobber = $true
-		$cmd.NoClobber | Should Be $true
+		$cmd.NoClobber | Should -BeTrue
 
 		$cmd = [Microsoft.PowerShell.Commands.ImportClixmlCommand]::new()
 		$cmd.LiteralPath = "bar"

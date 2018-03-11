@@ -8,7 +8,7 @@ Describe "Sort-Object" -Tags "CI" {
         $firstLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length | Select-Object -First 1).Length
         $lastLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length | Select-Object -Last 1).Length
 
-        $firstLen -lt $lastLen | Should be $true
+        $firstLen -lt $lastLen | Should -BeTrue
 
     }
 
@@ -18,7 +18,7 @@ Describe "Sort-Object" -Tags "CI" {
         $firstLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length -Descending | Select-Object -First 1).Length
         $lastLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length -Descending | Select-Object -Last 1).Length
 
-        $firstLen -gt $lastLen | Should be $true
+        $firstLen -gt $lastLen | Should -BeTrue
     }
 }
 
@@ -234,7 +234,7 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 		if ($nSortEntry -is [System.Array]) {
 			# Arrays are compared using reference equality to ensure that the original array was
 			# moved to the correct position in both sorts; value equality doesn't verify this
-			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should Be $true
+			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should -BeTrue
 		} else {
 			$nSortEntry | Should Be $fullSortEntry
 		}

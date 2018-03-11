@@ -20,7 +20,7 @@ Describe "Json Tests" -Tags "Feature" {
             $result.SampleInt | Should Be 98765
             $result.SampleString | Should Match "stringVal"
             $result.SampleArray.Count | Should Be 2
-            $result.SampleTrue | Should Be $true
+            $result.SampleTrue | Should -BeTrue
             $result.SampleFalse | Should Be $false
             $result.SampleNull | Should Be $null
             $result.SampleFloat | Should Be 9.8765E+43
@@ -261,7 +261,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json.Rev | Should Be $json.Revision
 
             # Check the ScriptProperty
-            $json.IsOld | Should Be $true
+            $json.IsOld | Should -BeTrue
         }
 
         It "ConvertFrom-Json with a key value pair" {

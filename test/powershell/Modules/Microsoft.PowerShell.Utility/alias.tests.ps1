@@ -50,7 +50,7 @@ Describe "Alias tests" -Tags "CI" {
 
                 if($null -eq $test.expectedError)
                 {
-                    Test-Path -LiteralPath $test.testFile | Should Be $true
+                    Test-Path -LiteralPath $test.testFile | Should -BeTrue
                 }
                 else
                 {
@@ -86,7 +86,7 @@ Describe "Alias tests" -Tags "CI" {
 
         It "with a CSV file" {
             Export-Alias "alias.csv"
-            Test-Path -LiteralPath (Join-Path $testPath "alias.csv") | Should Be $true
+            Test-Path -LiteralPath (Join-Path $testPath "alias.csv") | Should -BeTrue
         }
 
         It "with NoClobber" {

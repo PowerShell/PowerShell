@@ -119,7 +119,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         Get-Item -Path $outputFilesDir| Export-Csv -Path $fileToGenerate -UseCulture -NoTypeInformation
         $contents = Get-Content -Path $fileToGenerate
         $contents.Count | Should Be 2
-        $contents[0].Contains($delimiter) | Should Be $true
-        $contents[1].Contains($delimiter) | Should Be $true
+        $contents[0].Contains($delimiter) | Should -BeTrue
+        $contents[1].Contains($delimiter) | Should -BeTrue
     }
 }

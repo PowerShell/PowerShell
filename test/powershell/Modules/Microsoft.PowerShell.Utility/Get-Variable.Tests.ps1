@@ -60,12 +60,12 @@ Describe "Get-Variable" -Tags "CI" {
     }
 
     It "Should return environment variables when called with no parameters" {
-		(Get-Variable).Name -contains "$" | Should Be $true
-		(Get-Variable).Name -contains "?" | Should Be $true
-		(Get-Variable).Name -contains "HOST" | Should Be $true
-		(Get-Variable).Name -contains "PWD" | Should Be $true
-		(Get-Variable).Name -contains "PID" | Should Be $true
-		(Get-Variable).Name -contains "^" | Should Be $true
+		(Get-Variable).Name -contains "$" | Should -BeTrue
+		(Get-Variable).Name -contains "?" | Should -BeTrue
+		(Get-Variable).Name -contains "HOST" | Should -BeTrue
+		(Get-Variable).Name -contains "PWD" | Should -BeTrue
+		(Get-Variable).Name -contains "PID" | Should -BeTrue
+		(Get-Variable).Name -contains "^" | Should -BeTrue
     }
 
     It "Should return the value of an object" {
@@ -133,7 +133,7 @@ Describe "Get-Variable" -Tags "CI" {
 
 		$actual = Get-Variable -Exclude var1, var2
 
-		$actual.Name -contains "var3" | Should Be $true
+		$actual.Name -contains "var3" | Should -BeTrue
     }
 
     Context "Scope Tests" {

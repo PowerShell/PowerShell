@@ -51,7 +51,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
   It "Update-TypeData with Invalid TypesXml should throw Exception" {
         $null = $ps.AddScript("Update-TypeData -PrependPath $testfile")
         $ps.Invoke()
-        $ps.HadErrors | Should be $true
+        $ps.HadErrors | Should -BeTrue
         $ps.Streams.Error[0].FullyQualifiedErrorID | Should be "TypesXmlUpdateException,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
@@ -60,7 +60,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 		$xmlContent>$invalidFileExtensionFile
         $null = $ps.AddScript("Update-TypeData -PrependPath $invalidFileExtensionFile")
         $ps.Invoke()
-        $ps.HadErrors | Should be $true
+        $ps.HadErrors | Should -BeTrue
         $ps.Streams.Error[0].FullyQualifiedErrorId | Should be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 

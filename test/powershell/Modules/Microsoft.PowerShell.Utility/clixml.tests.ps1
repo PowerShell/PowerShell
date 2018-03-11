@@ -94,7 +94,7 @@ Describe "CliXml test" -Tags "CI" {
                 }
             }
 
-            $isExisted | Should Be $true
+            $isExisted | Should -BeTrue
         }
 
         It "can be created with literal path using pipeline" {
@@ -120,7 +120,7 @@ Describe "CliXml test" -Tags "CI" {
                 }
             }
 
-            $isExisted | Should Be $true
+            $isExisted | Should -BeTrue
         }
     }
 

@@ -6,7 +6,7 @@ Describe "New-Object" -Tags "CI" {
             { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         } else {
             # It works on NanoServer and IoT too
-            (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should Be $true
+            (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should -BeTrue
         }
     }
 
@@ -19,7 +19,7 @@ Describe "New-Object" -Tags "CI" {
         $val.IsSerializable | Should Not BeNullOrEmpty
         $val.BaseType       | Should Not BeNullOrEmpty
 
-        $val.IsPublic       | Should Be $true
+        $val.IsPublic       | Should -BeTrue
         $val.IsSerializable | Should Be $false
         $val.Name           | Should Be 'PSCustomObject'
         $val.BaseType       | Should Be 'System.Object'

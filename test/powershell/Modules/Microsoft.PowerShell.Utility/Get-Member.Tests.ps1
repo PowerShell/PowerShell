@@ -189,7 +189,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
 
             for ($i = 0;$i -lt $methodList.Length;$i++)
             {
-                $methodFound[$i] | Should Be $true
+                $methodFound[$i] | Should -BeTrue
             }
         }
 

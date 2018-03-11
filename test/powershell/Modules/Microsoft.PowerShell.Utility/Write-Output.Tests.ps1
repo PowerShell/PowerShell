@@ -10,10 +10,10 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
         $results[1] | Should Be $objectWritten[1]
 
         $results[2] | Should Be $objectWritten[2]
-        $results[2] -is [System.Array] | Should Be $true
+        $results[2] -is [System.Array] | Should -BeTrue
 
         $results[3] | Should Be $objectWritten[3]
-        $results[3] -is [System.String] | Should Be $true
+        $results[3] -is [System.String] | Should -BeTrue
     }
 
     It "Works with NoEnumerate switch" {
