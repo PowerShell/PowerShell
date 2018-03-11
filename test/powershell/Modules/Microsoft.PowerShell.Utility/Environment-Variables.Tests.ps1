@@ -3,11 +3,11 @@
 Describe "Environment-Variables" -Tags "CI" {
 
     It "Should have environment variables" {
-	Get-Item ENV: | Should Not BeNullOrEmpty
+	Get-Item ENV: | Should -Not -BeNullOrEmpty
     }
 
     It "Should have a nonempty PATH" {
-	$ENV:PATH | Should Not BeNullOrEmpty
+	$ENV:PATH | Should -Not -BeNullOrEmpty
     }
 
     It "Should contain /bin in the PATH" {
@@ -38,7 +38,7 @@ Describe "Environment-Variables" -Tags "CI" {
 	$expected = "this is a test environment variable"
 	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should -Not -Throw
 
-	$ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
+	$ENV:TESTENVIRONMENTVARIABLE | Should -Not -BeNullOrEmpty
 	$ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
 
     }

@@ -403,7 +403,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result =  Format-Hex $inputFile1
 
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
             ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $actualResult = $result.ToString()
             $actualResult | Should MatchExactly $inputText1
@@ -413,7 +413,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result = Get-ChildItem $inputFile1 | Format-Hex
 
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
             ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $actualResult = $result.ToString()
             $actualResult | Should MatchExactly $inputText1
@@ -423,7 +423,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result = "a" * 30 | Format-Hex
 
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
             ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $result.ToString() | Should MatchExactly "00000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa`r`n00000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
         }
@@ -432,7 +432,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result = Format-Hex -path $InputFile4
 
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
             $result.Count | Should Be 3
             $result[0].ToString() | Should MatchExactly "00000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
             $result[1].ToString() | Should MatchExactly "00000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"

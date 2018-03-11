@@ -52,7 +52,7 @@ Get-Date
     }
 
     It "Should Remove all breakpoints" {
-	$(Get-PSBreakpoint).Id.Length | Should Not BeNullOrEmpty
+	$(Get-PSBreakpoint).Id.Length | Should -Not -BeNullOrEmpty
 
 	Get-PSBreakpoint | Remove-PSBreakpoint
 

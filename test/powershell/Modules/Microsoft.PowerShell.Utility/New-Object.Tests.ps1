@@ -14,10 +14,10 @@ Describe "New-Object" -Tags "CI" {
         $o = New-Object psobject
         $val = $o.GetType()
 
-        $val.IsPublic       | Should Not BeNullOrEmpty
-        $val.Name           | Should Not BeNullOrEmpty
-        $val.IsSerializable | Should Not BeNullOrEmpty
-        $val.BaseType       | Should Not BeNullOrEmpty
+        $val.IsPublic       | Should -Not -BeNullOrEmpty
+        $val.Name           | Should -Not -BeNullOrEmpty
+        $val.IsSerializable | Should -Not -BeNullOrEmpty
+        $val.BaseType       | Should -Not -BeNullOrEmpty
 
         $val.IsPublic       | Should -BeTrue
         $val.IsSerializable | Should -BeFalse

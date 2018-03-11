@@ -34,7 +34,7 @@ Describe "Get-Unique" -Tags "CI" {
 
     It "Should output an array" {
         $result = Get-Unique -InputObject $sortedList1
-        $result | Should Not BeNullOrEmpty
+        $result | Should -Not -BeNullOrEmpty
         ,$result | Should BeOfType "System.Array"
     }
 

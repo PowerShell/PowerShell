@@ -132,9 +132,9 @@ Describe "Clear-Variable" -Tags "CI" {
 	$variable3 | Should BeNullOrEmpty
 	$w         | Should BeNullOrEmpty
 
-	$var1 | Should Not BeNullOrEmpty
-	$var2 | Should Not BeNullOrEmpty
-	$var3 | Should Not BeNullOrEmpty
+	$var1 | Should -Not -BeNullOrEmpty
+	$var2 | Should -Not -BeNullOrEmpty
+	$var3 | Should -Not -BeNullOrEmpty
 
 		}
 
@@ -149,12 +149,12 @@ Describe "Clear-Variable" -Tags "CI" {
 
 	Clear-Variable -Name w, vari* -Exclude var*
 
-	$variable1 | Should Not BeNullOrEmpty
-	$variable2 | Should Not BeNullOrEmpty
-	$variable3 | Should Not BeNullOrEmpty
-	$var1      | Should Not BeNullOrEmpty
-	$var2      | Should Not BeNullOrEmpty
-	$var3      | Should Not BeNullOrEmpty
+	$variable1 | Should -Not -BeNullOrEmpty
+	$variable2 | Should -Not -BeNullOrEmpty
+	$variable3 | Should -Not -BeNullOrEmpty
+	$var1      | Should -Not -BeNullOrEmpty
+	$var2      | Should -Not -BeNullOrEmpty
+	$var3      | Should -Not -BeNullOrEmpty
 
 	$w         | Should BeNullOrEmpty
 		}
@@ -195,7 +195,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		catch {
 			$_.FullyQualifiedErrorId | should be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
-		$var2 | Should Not BeNullOrEmpty
+		$var2 | Should -Not -BeNullOrEmpty
 
 		Remove-Variable -Name var2 -Force
 		}

@@ -12,7 +12,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.Exception.InnerException | Should BeNullOrEmpty
 
         #ErrorCategoryInfo verification
-        $e.CategoryInfo | Should Not BeNullOrEmpty
+        $e.CategoryInfo | Should -Not -BeNullOrEmpty
         $e.CategoryInfo.Category | Should Be 'NotSpecified'
         $e.CategoryInfo.Activity | Should Be 'Write-Error'
         $e.CategoryInfo.Reason | Should Be 'WriteErrorException'
@@ -27,14 +27,14 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.FullyQualifiedErrorId | Should Be 'Microsoft.PowerShell.Commands.WriteErrorException'
 
         #InvocationInfo verification
-        $e.InvocationInfo | Should Not BeNullOrEmpty
+        $e.InvocationInfo | Should -Not -BeNullOrEmpty
         $e.InvocationInfo.MyCommand.Name | Should BeNullOrEmpty
     }
 
     It "Should be works with all parameters" {
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname
         $e = Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction 2>&1
-        $e | Should Not BeNullOrEmpty
+        $e | Should -Not -BeNullOrEmpty
         $e | Should BeOfType 'System.Management.Automation.ErrorRecord'
 
         #Exception verification
@@ -50,7 +50,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.FullyQualifiedErrorId | Should Be 'myerrorid'
 
         #ErrorCategoryInfo verification
-        $e.CategoryInfo | Should Not BeNullOrEmpty
+        $e.CategoryInfo | Should -Not -BeNullOrEmpty
         $e.CategoryInfo.Category | Should Be 'SyntaxError'
         $e.CategoryInfo.Activity | Should Be 'myactivity'
         $e.CategoryInfo.Reason | Should Be 'myreason'
@@ -59,12 +59,12 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.CategoryInfo.GetMessage() | Should Be 'SyntaxError: (mytargetname:mytargettype) [myactivity], myreason'
 
         #ErrorDetails verification
-        $e.ErrorDetails | Should Not BeNullOrEmpty
+        $e.ErrorDetails | Should -Not -BeNullOrEmpty
         $e.ErrorDetails.Message | Should Be 'myerrortext'
         $e.ErrorDetails.RecommendedAction | Should Be 'myrecommendedaction'
 
         #InvocationInfo verification
-        $e.InvocationInfo | Should Not BeNullOrEmpty
+        $e.InvocationInfo | Should -Not -BeNullOrEmpty
         $e.InvocationInfo.MyCommand.Name | Should BeNullOrEmpty
     }
 

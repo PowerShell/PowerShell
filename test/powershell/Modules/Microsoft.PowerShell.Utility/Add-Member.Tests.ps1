@@ -284,7 +284,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         Add-Member -InputObject $object "ABC" "Value1"
         Add-Member -InputObject $object "ABC" "Value2" -ErrorVariable errorVar -ErrorAction SilentlyContinue
         $errorVar.Exception | Should BeOfType "System.InvalidOperationException"
-        $errorVar.Exception.Message | Should Not BeNullOrEmpty
+        $errorVar.Exception.Message | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -294,7 +294,7 @@ Describe "Add-Member" -Tags "CI" {
 	$o = New-Object psobject
 	Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
 
-	$o.proppy | Should Not BeNullOrEmpty
+	$o.proppy | Should -Not -BeNullOrEmpty
 	$o.proppy | Should Be "superVal"
     }
 
@@ -303,7 +303,7 @@ Describe "Add-Member" -Tags "CI" {
 	Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
 	Add-Member -InputObject $o -MemberType NoteProperty -Name AnotherMember -Value "AnotherValue"
 
-	$o.AnotherMember | Should Not BeNullOrEmpty
+	$o.AnotherMember | Should -Not -BeNullOrEmpty
 	$o.AnotherMember | Should Be "AnotherValue"
     }
 }

@@ -9,12 +9,12 @@ Describe "Get-Member" -Tags "CI" {
 	$e = "anoeduntodeu" #test strings
 	$f = 'asntoheusth' #test strings
 
-	Get-Member -InputObject $a | Should Not BeNullOrEmpty
-	Get-Member -InputObject $b | Should Not BeNullOrEmpty
-	Get-Member -InputObject $c | Should Not BeNullOrEmpty
-	Get-Member -InputObject $d | Should Not BeNullOrEmpty
-	Get-Member -InputObject $e | Should Not BeNullOrEmpty
-	Get-Member -InputObject $f | Should Not BeNullOrEmpty
+	Get-Member -InputObject $a | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $b | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $c | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $d | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $e | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $f | Should -Not -BeNullOrEmpty
     }
 
     It "Should be able to extract a field from string objects, ints, arrays, etc" {
@@ -38,7 +38,7 @@ Describe "Get-Member" -Tags "CI" {
 	# this creates a dependency on the Add-Member cmdlet.
 	Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
 
-	Get-Member -InputObject $o | Should Not BeNullOrEmpty
+	Get-Member -InputObject $o | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -256,9 +256,9 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
     Context "Verify Get-Member with other parameters" {
         It 'works with View Parameter' {
             $results = [xml]'<a>some text</a>' | Get-Member -view adapted
-            $results | Where-Object Name -eq a | Should Not BeNullOrEmpty
-            $results | Where-Object Name -eq CreateElement | Should Not BeNullOrEmpty
-            $results | Where-Object Name -eq CreateNode | Should Not BeNullOrEmpty
+            $results | Where-Object Name -eq a | Should -Not -BeNullOrEmpty
+            $results | Where-Object Name -eq CreateElement | Should -Not -BeNullOrEmpty
+            $results | Where-Object Name -eq CreateNode | Should -Not -BeNullOrEmpty
         }
 
         It 'Get hidden members'{

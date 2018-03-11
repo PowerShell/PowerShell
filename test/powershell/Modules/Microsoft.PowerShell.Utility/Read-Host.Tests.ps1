@@ -24,7 +24,7 @@ Describe "Read-Host Test" -tag "CI" {
     It "Read-Host sets the prompt correctly" {
         $result = $ps.AddScript("Read-Host -prompt myprompt").Invoke()
         $prompt = $th.ui.streams.prompt[0]
-        $prompt | should Not BeNullOrEmpty
+        $prompt | Should -Not -BeNullOrEmpty
         $prompt.split(":")[-1] | should be myprompt
     }
     It "Read-Host returns a secure string when using -AsSecureString parameter" {

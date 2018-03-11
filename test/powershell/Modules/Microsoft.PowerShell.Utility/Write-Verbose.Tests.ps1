@@ -14,7 +14,7 @@ Describe "Write-Verbose" -Tags "CI" {
     It "Should be able to set verbose output to display by changing the `$VerbosePreference automatic variable" {
 	$VerbosePreference = "Continue"
 
-	Write-Verbose -Message "test" 4>&1 | Should Not BeNullOrEmpty
+	Write-Verbose -Message "test" 4>&1 | Should -Not -BeNullOrEmpty
 
 	$VerbosePreference = "SilentlyContinue"
     }

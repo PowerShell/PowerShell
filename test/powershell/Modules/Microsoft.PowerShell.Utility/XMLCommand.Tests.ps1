@@ -100,7 +100,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$deserialized_one = Import-Clixml -Path $testfile
 		$deserialized_one.Value | Should Be 1
 		$deserialized_one.two.Value | Should Be 2
-		$deserialized_one.two.Three | Should Not BeNullOrEmpty
+		$deserialized_one.two.Three | Should -Not -BeNullOrEmpty
 		$deserialized_one.two.three.num | Should BeNullOrEmpty
 	}
 

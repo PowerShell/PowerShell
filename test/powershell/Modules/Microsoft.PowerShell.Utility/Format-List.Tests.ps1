@@ -8,11 +8,11 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should call format list without error" {
-        { $in | Format-List } | Should Not BeNullOrEmpty
+        { $in | Format-List } | Should -Not -BeNullOrEmpty
     }
 
     It "Should be able to call the alias" {
-        { $in | fl } | Should Not BeNullOrEmpty
+        { $in | fl } | Should -Not -BeNullOrEmpty
     }
 
     It "Should have the same output whether choosing alias or not" {
@@ -27,16 +27,16 @@ Describe "Format-List" -Tags "CI" {
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
-        $in | Format-List                  | Should Not BeNullOrEmpty
-        $in | Format-List   | Out-String   | Should Not BeNullOrEmpty
+        $in | Format-List                  | Should -Not -BeNullOrEmpty
+        $in | Format-List   | Out-String   | Should -Not -BeNullOrEmpty
         $in | Format-List   | Out-String   | Should Be $expected
     }
 
     It "Should be able to call a property of the piped input" {
         # Tested on two input commands to verify functionality.
-        { Get-Command | Select-Object -First 5 | Format-List -Property Name }        | Should Not BeNullOrEmpty
+        { Get-Command | Select-Object -First 5 | Format-List -Property Name }        | Should -Not -BeNullOrEmpty
 
-        { Get-Date    | Format-List -Property DisplayName } | Should Not BeNullOrEmpty
+        { Get-Date    | Format-List -Property DisplayName } | Should -Not -BeNullOrEmpty
     }
 
     It "Should be able to display a list of props when separated by a comma" {
@@ -64,7 +64,7 @@ Describe "Format-List" -Tags "CI" {
     It "Should be able to take input without piping objects to it" {
         $output = { Format-List -InputObject $in }
 
-        $output | Should Not BeNullOrEmpty
+        $output | Should -Not -BeNullOrEmpty
 
     }
 }

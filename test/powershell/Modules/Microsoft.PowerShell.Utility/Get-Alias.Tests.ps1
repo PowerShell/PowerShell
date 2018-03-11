@@ -168,7 +168,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
         $returnObject = Get-Alias -Definition Get-Command
         For($i = 0; $i -lt $returnObject.Length;$i++)
         {
-            $returnObject[$i] | Should Not BeNullOrEmpty
+            $returnObject[$i] | Should -Not -BeNullOrEmpty
             $returnObject[$i].CommandType | Should Be 'Alias'
             $returnObject[$i].Definition | Should Be 'Get-Command'
         }
@@ -181,8 +181,8 @@ Describe "Get-Alias" -Tags "CI" {
         $val2=(Get-Alias c*)
         $i=0
 
-        $val1 | Should Not BeNullOrEmpty
-        $val2 | Should Not BeNullOrEmpty
+        $val1 | Should -Not -BeNullOrEmpty
+        $val2 | Should -Not -BeNullOrEmpty
 
         $val1 | ForEach-Object{ $i++};
         if($i -lt 2) {

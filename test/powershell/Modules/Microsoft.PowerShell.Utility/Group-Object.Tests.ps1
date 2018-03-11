@@ -88,14 +88,14 @@ Describe "Group-Object" -Tags "CI" {
     It "Should be able to output a hashtable datatype" {
         $actual = $testObject | Group-Object -AsHashTable
 
-        $actual | Should Not BeNullOrEmpty
+        $actual | Should -Not -BeNullOrEmpty
         $actual | Should BeOfType "System.Collections.Hashtable"
     }
 
     It "Should be able to access when output as hash table" {
         $actual = $testObject | Group-Object -AsHashTable
 
-        $actual.Keys | Should Not BeNullOrEmpty
+        $actual.Keys | Should -Not -BeNullOrEmpty
     }
 
     It "Should throw when attempting to use AsString without AsHashTable" {
