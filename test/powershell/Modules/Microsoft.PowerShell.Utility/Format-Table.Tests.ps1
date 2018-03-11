@@ -12,9 +12,9 @@ Describe "Format-Table" -Tags "CI" {
 
 				$val2 = (Get-Date | Format-Table | gm )
 
-				$val.TypeName | Should Match "Microsoft.Powershell.Commands.Internal.Format"
+				$val.TypeName | Should -Match "Microsoft.Powershell.Commands.Internal.Format"
 
-				$val2.TypeName | Should Match "Microsoft.Powershell.Commands.Internal.Format"
+				$val2.TypeName | Should -Match "Microsoft.Powershell.Commands.Internal.Format"
 		}
 
 		It "Should be able to be called with optional parameters" {
@@ -39,7 +39,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				}
 				catch
 				{
-						$_.CategoryInfo | Should Match "PipelineStoppedException"
+						$_.CategoryInfo | Should -Match "PipelineStoppedException"
 						$_.FullyQualifiedErrorId | Should be "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
 				}
 		}
@@ -49,14 +49,14 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$info = @{}
 				$info.array = $al
 				$result = $info|Format-Table|Out-String
-				$result | Should Match "array\s+{0, 1, 2, 3...}"
+				$result | Should -Match "array\s+{0, 1, 2, 3...}"
 		}
 
 		It "Format-Table with Negative Count should work" {
 				$FormatEnumerationLimit = -1
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{1, 2}"
+				$resultStr | Should -Match "test\s+{1, 2}"
 		}
 
 		# Pending on issue#888
@@ -64,28 +64,28 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$FormatEnumerationLimit = 0
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{...}"
+				$resultStr | Should -Match "test\s+{...}"
 		}
 
 		It "Format-Table with Less Count should work" {
 				$FormatEnumerationLimit = 1
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{1...}"
+				$resultStr | Should -Match "test\s+{1...}"
 		}
 
 		It "Format-Table with More Count should work" {
 				$FormatEnumerationLimit = 10
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{1, 2}"
+				$resultStr | Should -Match "test\s+{1, 2}"
 		}
 
 		It "Format-Table with Equal Count should work" {
 				$FormatEnumerationLimit = 2
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{1, 2}"
+				$resultStr | Should -Match "test\s+{1, 2}"
 		}
 
 		# Pending on issue#888
@@ -93,7 +93,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$FormatEnumerationLimit = "abc"
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{1, 2}"
+				$resultStr | Should -Match "test\s+{1, 2}"
 		}
 
 		# Pending on issue#888
@@ -102,14 +102,14 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				Remove-Variable FormatEnumerationLimit
 				$result = Format-Table -inputobject @{'test'= 1, 2}
 				$resultStr = $result|Out-String
-				$resultStr | Should Match "test\s+{1, 2}"
+				$resultStr | Should -Match "test\s+{1, 2}"
 		}
 
 		It "Format-Table with new line should work" {
 				$info = @{}
 				$info.name = "1\n2"
 				$result = $info|Format-Table|Out-String
-				$result | Should Match "name\s+1.+2"
+				$result | Should -Match "name\s+1.+2"
 		}
 
 		It "Format-Table with ExposeBug920454 should work" {
@@ -121,7 +121,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$info = @{}
 				$info.test = $IPs
 				$result = $info|Format-Table|Out-String
-				$result | Should Match "test\s+{1.1.1.1, 4fde::2:22:f376:ff3b:ab3f}"
+				$result | Should -Match "test\s+{1.1.1.1, 4fde::2:22:f376:ff3b:ab3f}"
 		}
 
 		It "Format-Table with Autosize should work" {
@@ -131,10 +131,10 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$IPs.Add($IP1)
 				$IPs.Add($IP2)
 				$result = $IPs|Format-Table -Autosize|Out-String
-				$result | Should Match "name size booleanValue"
-				$result | Should Match "---- ---- ------------"
-				$result | Should Match "Bob\s+1234\s+True"
-				$result | Should Match "Jim\s+5678\s+False"
+				$result | Should -Match "name size booleanValue"
+				$result | Should -Match "---- ---- ------------"
+				$result | Should -Match "Bob\s+1234\s+True"
+				$result | Should -Match "Jim\s+5678\s+False"
 		}
 
 		It "Format-Table with '<testName>' should return `$null" -TestCases @(
@@ -165,10 +165,10 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$info.enumerable = [MyDayOfWeek]$eto
 				$info.enumerableTestObject = $eto
 				$result = $info|Format-Table|Out-String
-				$result | Should Match "intArray\s+{1, 2, 3, 4}"
-				$result | Should Match "arrayList\s+{string1, string2}"
-				$result | Should Match "enumerable\s+Sun"
-				$result | Should Match "enumerableTestObject\s+Sun"
+				$result | Should -Match "intArray\s+{1, 2, 3, 4}"
+				$result | Should -Match "arrayList\s+{string1, string2}"
+				$result | Should -Match "enumerable\s+Sun"
+				$result | Should -Match "enumerableTestObject\s+Sun"
 		}
 
 		It "Format-Table with Expand Enumerable should work" {
@@ -179,16 +179,16 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				$objs.Add($obj2)
 				$mo = [PSCustomObject]@{name = "this is name";sub = $objs}
 				$result1 = $mo|Format-Table -Expand CoreOnly|Out-String
-				$result1 | Should Match "name\s+sub"
-				$result1 | Should Match "this is name"
+				$result1 | Should -Match "name\s+sub"
+				$result1 | Should -Match "this is name"
 
 				$result2 = $mo|Format-Table -Expand EnumOnly|Out-String
-				$result2 | Should Match "name\s+sub"
-				$result2 | Should Match "this is name\s+{x 0 y 0, x 1 y 1}"
+				$result2 | Should -Match "name\s+sub"
+				$result2 | Should -Match "this is name\s+{x 0 y 0, x 1 y 1}"
 
 				$result3 = $mo|Format-Table -Expand Both|Out-String
-				$result3 | Should Match "name\s+sub"
-				$result3 | Should Match "this is name\s+{x 0 y 0, x 1 y 1}"
+				$result3 | Should -Match "name\s+sub"
+				$result3 | Should -Match "this is name\s+{x 0 y 0, x 1 y 1}"
 		}
 
 		It "Format-Table should not add trailing whitespace to the header" {

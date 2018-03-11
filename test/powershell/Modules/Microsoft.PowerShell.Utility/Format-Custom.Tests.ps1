@@ -69,10 +69,10 @@ Describe "Format-Custom DRT basic functionality" -Tags "CI" {
         $testObject.subObjectValue.array = (0..63)
         $testObject.subObjectValue.stringarray = @("one","two")
         $result = $testObject | Format-Custom | Out-String
-        $result | Should Match $expectResult1
-        $result | Should Match $expectResult2
-        $result | Should Match "one"
-        $result | Should Match "two"
+        $result | Should -Match $expectResult1
+        $result | Should -Match $expectResult2
+        $result | Should -Match "one"
+        $result | Should -Match "two"
     }
 
 	It "Format-Custom with Tree Object should work" {

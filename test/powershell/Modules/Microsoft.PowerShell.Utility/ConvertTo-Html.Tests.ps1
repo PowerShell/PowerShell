@@ -142,7 +142,7 @@ After the object
         $parms = @{"authors"="John Doe";"keywords"="PowerShell,PSv6"}
         # make this a string, rather than an array of string so match will behave
         [string]$observedProperties = $customObject | ConvertTo-HTML -Meta $parms 3>&1
-        $observedProperties | Should Match $parms["authors"]
+        $observedProperties | Should -Match $parms["authors"]
     }
 
     It "Test ConvertTo-HTML charset"{

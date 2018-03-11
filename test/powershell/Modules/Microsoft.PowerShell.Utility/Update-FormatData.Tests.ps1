@@ -116,7 +116,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $sma = [appdomain]::CurrentDomain.GetAssemblies() | ? { if ($_.Location) {$_.Location.EndsWith("System.Management.Automation.dll")}}
             $smaLocation = $sma.Location
             $ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should -BeTrue }
-            $ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should Match 'FormatXmlUpdateException' }
+            $ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should -Match 'FormatXmlUpdateException' }
         }
     }
 }

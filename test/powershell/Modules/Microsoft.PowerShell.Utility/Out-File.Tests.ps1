@@ -66,9 +66,9 @@ Describe "Out-File" -Tags "CI" {
         $actual = Get-Content $testfile
 
         $actual[0] | Should Be ""
-        $actual[1] | Should Match "text"
-        $actual[2] | Should Match "----"
-        $actual[3] | Should Match "some test text"
+        $actual[1] | Should -Match "text"
+        $actual[2] | Should -Match "----"
+        $actual[3] | Should -Match "some test text"
     }
 
     It "Should Append a new line when the append switch is used" {
@@ -78,15 +78,15 @@ Describe "Out-File" -Tags "CI" {
         $actual = Get-Content $testfile
 
         $actual[0]  | Should Be ""
-        $actual[1]  | Should Match "text"
-        $actual[2]  | Should Match "----"
-        $actual[3]  | Should Match "some test text"
+        $actual[1]  | Should -Match "text"
+        $actual[2]  | Should -Match "----"
+        $actual[3]  | Should -Match "some test text"
         $actual[4]  | Should Be ""
         $actual[5]  | Should Be ""
         $actual[6]  | Should Be ""
-        $actual[7]  | Should Match "text"
-        $actual[8]  | Should Match "----"
-        $actual[9]  | Should Match "some test text"
+        $actual[7]  | Should -Match "text"
+        $actual[8]  | Should -Match "----"
+        $actual[9]  | Should -Match "some test text"
         $actual[10] | Should Be ""
         $actual[11] | Should Be ""
     }
@@ -114,15 +114,15 @@ Describe "Out-File" -Tags "CI" {
         $actual = Get-Content $testfile
 
         $actual[0]  | Should Be ""
-        $actual[1]  | Should Match "text"
-        $actual[2]  | Should Match "----"
-        $actual[3]  | Should Match "some test text"
+        $actual[1]  | Should -Match "text"
+        $actual[2]  | Should -Match "----"
+        $actual[3]  | Should -Match "some test text"
         $actual[4]  | Should Be ""
         $actual[5]  | Should Be ""
         $actual[6]  | Should Be ""
-        $actual[7]  | Should Match "text"
-        $actual[8]  | Should Match "----"
-        $actual[9]  | Should Match "some test text"
+        $actual[7]  | Should -Match "text"
+        $actual[8]  | Should -Match "----"
+        $actual[9]  | Should -Match "some test text"
         $actual[10] | Should Be ""
         $actual[11] | Should Be ""
 

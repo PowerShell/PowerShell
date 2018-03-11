@@ -101,7 +101,7 @@ Describe "Trace-Command" -tags "CI" {
         It "Set-TraceSource to file and RemoveFileListener wildcard" {
             $null = Set-TraceSource -Name "ParameterBinding" -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -PassThru
             Set-TraceSource -Name "ParameterBinding" -RemoveFileListener *
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+            Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }
 
         It "Trace-Command -Command with error" {
@@ -116,13 +116,13 @@ Describe "Trace-Command" -tags "CI" {
             $null = New-Item $filePath -Force
             Set-ItemProperty $filePath -name IsReadOnly -value $true
             Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -FilePath $filePath -Force
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+            Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }
 
         It "Trace-Command using Path parameter alias" {
             $null = New-Item $filePath -Force
             Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -Path $filePath -Force
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+            Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }
 
         It "Trace-Command contains wildcard characters" {

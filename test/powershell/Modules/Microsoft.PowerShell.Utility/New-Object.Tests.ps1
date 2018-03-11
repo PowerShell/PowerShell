@@ -91,7 +91,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.CategoryInfo| Should Match "PSArgumentException"
+            $_.CategoryInfo| Should -Match "PSArgumentException"
             $_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
@@ -104,7 +104,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.CategoryInfo| Should Match "MethodException"
+            $_.CategoryInfo| Should -Match "MethodException"
             $_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
@@ -118,7 +118,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.CategoryInfo| Should Match "MethodInvocationException"
+            $_.CategoryInfo| Should -Match "MethodInvocationException"
             $_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
@@ -135,7 +135,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.CategoryInfo| Should Match "MethodException"
+            $_.CategoryInfo| Should -Match "MethodException"
             $_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
@@ -166,7 +166,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.CategoryInfo| Should Match "PSArgumentException"
+            $_.CategoryInfo| Should -Match "PSArgumentException"
             $_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }

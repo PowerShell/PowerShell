@@ -117,6 +117,6 @@ Describe "Write-Error Tests" -Tags "CI" {
         $pwsh = $pshome + "/pwsh"
         $result = & $pwsh -c Write-Error -Message $longtext 2>&1
         $result.Count | Should BeExactly 4
-        $result[0] | Should Match $longtext
+        $result[0] | Should -Match $longtext
     }
 }

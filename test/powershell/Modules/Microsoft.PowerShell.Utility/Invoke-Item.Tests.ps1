@@ -62,7 +62,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 ## On headless SKUs, we use `UseShellExecute = false`
                 ## 'ping.exe' on Windows writes out usage to stdout.
                 & $powershell -noprofile -c "Invoke-Item '$ping'" > $redirectFile
-                Get-Content $redirectFile -Raw | Should Match "usage: ping"
+                Get-Content $redirectFile -Raw | Should -Match "usage: ping"
             } else {
                 ## On full desktop, we use `UseShellExecute = true` to align with Windows PowerShell
                 $notepad = Get-Command "notepad.exe" -CommandType Application | ForEach-Object Source
@@ -78,7 +78,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             ## On Unix, we use `UseShellExecute = false`
             ## 'ping' on Unix write out usage to stderr
             & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
-            Get-Content $redirectFile -Raw | Should Match "usage: ping"
+            Get-Content $redirectFile -Raw | Should -Match "usage: ping"
         }
     }
 
@@ -135,7 +135,7 @@ Categories=Application;
 
                 $before + 1 | Should Be $after
                 $item = $windows.Item($after - 1)
-                $item.LocationURL | Should Match ($PSHOME -replace '\\', '/')
+                $item.LocationURL | Should -Match ($PSHOME -replace '\\', '/')
                 ## close the windows explorer
                 $item.Quit()
             }

@@ -13,11 +13,11 @@ Describe "Environment-Variables" -Tags "CI" {
     It "Should contain /bin in the PATH" {
 	if ($IsWindows)
 	{
-	    $ENV:PATH | Should Match "C:"
+	    $ENV:PATH | Should -Match "C:"
 	}
 	else
 	{
-	    $ENV:PATH | Should Match "/bin"
+	    $ENV:PATH | Should -Match "/bin"
 	}
     }
 

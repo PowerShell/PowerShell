@@ -59,14 +59,14 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     It "Should return the column info in the second element of the output array" {
 	$result = $testObject | ConvertTo-Csv -IncludeTypeInformation
 
-	$result[1] | Should Match "`"FirstColumn`""
-	$result[1] | Should Match "`"SecondColumn`""
+	$result[1] | Should -Match "`"FirstColumn`""
+	$result[1] | Should -Match "`"SecondColumn`""
     }
 
     It "Should return the data as a comma-separated list in the third element of the output array" {
 	$result = $testObject | ConvertTo-Csv -IncludeTypeInformation
-	$result[2] | Should Match "`"Hello`""
-	$result[2] | Should Match "`"World`""
+	$result[2] | Should -Match "`"Hello`""
+	$result[2] | Should -Match "`"World`""
     }
 
     It "Includes type information when -IncludeTypeInformation is supplied" {

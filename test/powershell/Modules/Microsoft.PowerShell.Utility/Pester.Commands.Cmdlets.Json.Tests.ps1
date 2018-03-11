@@ -18,7 +18,7 @@ Describe "Json Tests" -Tags "Feature" {
 
             Write-Verbose "validating deserialized SampleObject" -Verbose
             $result.SampleInt | Should Be 98765
-            $result.SampleString | Should Match "stringVal"
+            $result.SampleString | Should -Match "stringVal"
             $result.SampleArray.Count | Should Be 2
             $result.SampleTrue | Should -BeTrue
             $result.SampleFalse | Should -BeFalse
@@ -63,7 +63,7 @@ Describe "Json Tests" -Tags "Feature" {
             $valueFromNotCompressedResult = ConvertFrom-Json -InputObject $notcompressed
             $valueFromCompressedResult = ConvertFrom-Json -InputObject $compressed
 
-            $valueFromNotCompressedResult.FirstName | Should Match $valueFromCompressedResult.FirstName
+            $valueFromNotCompressedResult.FirstName | Should -Match $valueFromCompressedResult.FirstName
         }
 
         It "Convertto-Json should handle Enum based on Int64" {
@@ -106,7 +106,7 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convert dictionary to PSObject" {
 
             $response = ConvertFrom-Json '{"d":{"__type":"SimpleJsonObject","Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
-            $response.d.Name.First | Should Match "Joel"
+            $response.d.Name.First | Should -Match "Joel"
         }
 
         It "Convert to Json using PSObject" -pending:($IsCoreCLR) {
@@ -135,7 +135,7 @@ Describe "Json Tests" -Tags "Feature" {
 }
 "@
             $response2 = ConvertTo-Json -InputObject $response -Depth 2
-            $response2 | Should Match $result1
+            $response2 | Should -Match $result1
 
             $result2 = @"
 {
@@ -146,7 +146,7 @@ Describe "Json Tests" -Tags "Feature" {
 }
 "@
             $response2 = ConvertTo-Json -InputObject $response -Depth 1
-            $response2 | Should Match $result2
+            $response2 | Should -Match $result2
 
             $arraylist = new-Object System.Collections.ArrayList
             [void]$arraylist.Add("one")
@@ -255,7 +255,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json.Minor | Should Be 3
             $json.Build | Should Be 4
             $json.Revision | Should Be 14
-            $json.Note | Should Match "a version object"
+            $json.Note | Should -Match "a version object"
 
             # Check the AliasProperty
             $json.Rev | Should Be $json.Revision
@@ -1038,7 +1038,7 @@ Describe "Validate Json serialization" -Tags "CI" {
                 {
                     # There are two char for which the deserialized object must be compare to the serialized one via "Should Match"
                     # These values are [char]0 and [char]13.
-                    $result.FromJson | Should Match $testCase.FromJson
+                    $result.FromJson | Should -Match $testCase.FromJson
                 }
                 $result.ToJson | Should Be $testCase.ToJson
             }

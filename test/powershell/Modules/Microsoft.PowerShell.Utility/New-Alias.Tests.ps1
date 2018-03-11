@@ -8,7 +8,7 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
+			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should be "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
 		}
 	}

@@ -19,7 +19,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
+			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 
@@ -60,7 +60,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 					Throw "Execution OK"
 			}
 			catch {
-					$_.CategoryInfo| Should Match "ItemNotFoundException"
+					$_.CategoryInfo| Should -Match "ItemNotFoundException"
 					$_.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}

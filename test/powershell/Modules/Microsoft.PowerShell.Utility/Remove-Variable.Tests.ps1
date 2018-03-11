@@ -202,7 +202,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		}
 		catch
 		{
-			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
+			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
@@ -216,7 +216,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		}
 		catch
 		{
-			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
+			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 		Remove-Variable foo -Force
@@ -233,7 +233,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		}
 		catch
 		{
-			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
+			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 
@@ -244,7 +244,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		}
 		catch
 		{
-			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
+			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
@@ -260,7 +260,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 			}
 			catch
 			{
-				$_.CategoryInfo | Should Match "ItemNotFoundException"
+				$_.CategoryInfo | Should -Match "ItemNotFoundException"
 				$_.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}

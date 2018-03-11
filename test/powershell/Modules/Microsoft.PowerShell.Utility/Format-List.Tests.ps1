@@ -43,14 +43,14 @@ Describe "Format-List" -Tags "CI" {
 
         (Get-Command | Select-Object -First 5 | Format-List -Property Name,Source | Out-String) -Split "${nl}" |
           Where-Object { $_.trim() -ne "" } |
-          ForEach-Object { $_ | Should Match "(Name)|(Source)" }
+          ForEach-Object { $_ | Should -Match "(Name)|(Source)" }
     }
 
     It "Should show the requested prop in every element" {
         # Testing each element of format-list, using a for-each loop since the Format-List is so opaque
         (Get-Command | Select-Object -First 5 | Format-List -Property Source | Out-String) -Split "${nl}" |
           Where-Object { $_.trim() -ne "" } |
-          ForEach-Object { $_ | Should Match "Source :" }
+          ForEach-Object { $_ | Should -Match "Source :" }
     }
 
     It "Should not show anything other than the requested props" {
@@ -75,7 +75,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $info = @{}
         $info.array = $al
         $result = $info | Format-List | Out-String
-        $result | Should Match "Name  : array\s+Value : {0, 1, 2, 3...}"
+        $result | Should -Match "Name  : array\s+Value : {0, 1, 2, 3...}"
     }
 
 	It "Format-List with No Objects for End-To-End should work"{
@@ -117,26 +117,26 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $info.enumerable = [MyDayOfWeek]$eto
         $info.enumerableTestObject = $eto
         $result = $info|Format-List|Out-String
-        $result | Should Match "Name  : enumerableTestObject"
-        $result | Should Match "Value : Sun"
-        $result | Should Match "Name  : arrayList"
-        $result | Should Match "Value : {string1, string2}"
-        $result | Should Match "Name  : enumerable"
-        $result | Should Match "Value : Sun"
-        $result | Should Match "Name  : intArray"
-        $result | Should Match "Value : {1, 2, 3, 4}"
+        $result | Should -Match "Name  : enumerableTestObject"
+        $result | Should -Match "Value : Sun"
+        $result | Should -Match "Name  : arrayList"
+        $result | Should -Match "Value : {string1, string2}"
+        $result | Should -Match "Name  : enumerable"
+        $result | Should -Match "Value : Sun"
+        $result | Should -Match "Name  : intArray"
+        $result | Should -Match "Value : {1, 2, 3, 4}"
     }
 
 	It "Format-List with multiple same class object should work"{
 		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
 		$testobjects = [TestClass]::New('name1',1),[TestClass]::New('name2',2),[TestClass]::New('name3',3)
 		$result = $testobjects|Format-List|Out-String
-		$result | Should Match "Name   : name1"
-		$result | Should Match "Length : 1"
-		$result | Should Match "Name   : name2"
-		$result | Should Match "Length : 2"
-		$result | Should Match "Name   : name3"
-		$result | Should Match "Length : 3"
+		$result | Should -Match "Name   : name1"
+		$result | Should -Match "Length : 1"
+		$result | Should -Match "Name   : name2"
+		$result | Should -Match "Length : 2"
+		$result | Should -Match "Name   : name3"
+		$result | Should -Match "Length : 3"
 	}
 
 	It "Format-List with multiple different class object should work"{
@@ -144,19 +144,19 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
 		Add-Type -TypeDefinition "public class TestClass2{public TestClass2(string name,string value,int length){Name = name;Value = value; Length = length;}public string Name;public string Value;public int Length;}"
 		$testobjects = [TestClass]::New('name1',1),[TestClass2]::New('name2',"value2",2),[TestClass]::New('name3',3)
 		$result = $testobjects|Format-List|Out-String
-		$result | Should Match "Name   : name1"
-		$result | Should Match "Length : 1"
-		$result | Should Match "Name   : name2"
-		$result | Should Match "Value  : value2"
-		$result | Should Match "Length : 2"
-		$result | Should Match "Name   : name3"
-		$result | Should Match "Length : 3"
+		$result | Should -Match "Name   : name1"
+		$result | Should -Match "Length : 1"
+		$result | Should -Match "Name   : name2"
+		$result | Should -Match "Value  : value2"
+		$result | Should -Match "Length : 2"
+		$result | Should -Match "Name   : name3"
+		$result | Should -Match "Length : 3"
     }
 
     It "Format-List with FileInfo should work" {
         $null = New-Item $testdrive\test.txt -ItemType File -Value "hello" -Force
         $result = Get-ChildItem -File $testdrive\test.txt | Format-List | Out-String
-        $result | Should Match "Name\s*:\s*test.txt"
-        $result | Should Match "Length\s*:\s*5"
+        $result | Should -Match "Name\s*:\s*test.txt"
+        $result | Should -Match "Length\s*:\s*5"
     }
 }

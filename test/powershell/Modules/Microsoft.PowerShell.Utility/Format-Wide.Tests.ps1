@@ -48,7 +48,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$info = @{}
 		$info.array = $al
 		$result = $info | Format-Wide | Out-String
-		$result | Should Match "array"
+		$result | Should -Match "array"
 	}
 
 	It "Format-Wide with No Objects for End-To-End should work"{
@@ -66,21 +66,21 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 	It "Format-Wide with single line string for End-To-End should work"{
 		$p = "single line string"
 		$result = $p | Format-Wide | Out-String
-		$result | Should Match $p
+		$result | Should -Match $p
 	}
 
 	It "Format-Wide with multiple line string for End-To-End should work"{
 		$p = "Line1\nLine2"
 		$result = $p | Format-Wide | Out-String
-		$result | Should Match "Line1"
-		$result | Should Match "Line2"
+		$result | Should -Match "Line1"
+		$result | Should -Match "Line2"
 	}
 
 	It "Format-Wide with string sequence for End-To-End should work"{
 		$p = "Line1","Line2"
 		$result = $p |Format-Wide | Out-String
-		$result | Should Match "Line1"
-		$result | Should Match "Line2"
+		$result | Should -Match "Line1"
+		$result | Should -Match "Line2"
 	}
 
    It "Format-Wide with complex object for End-To-End should work" {
@@ -92,10 +92,10 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$info.enumerable = [MyDayOfWeek]$eto
 		$info.enumerableTestObject = $eto
 		$result = $info|Format-Wide|Out-String
-		$result | Should Match "intArray"
-		$result | Should Match "arrayList"
-		$result | Should Match "enumerable"
-		$result | Should Match "enumerableTestObject"
+		$result | Should -Match "intArray"
+		$result | Should -Match "arrayList"
+		$result | Should -Match "enumerable"
+		$result | Should -Match "enumerableTestObject"
 	}
 
 	It "Format-Wide with multiple same class object with grouping should work"{
@@ -108,9 +108,9 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$testobject1.GroupingKey = "bar"
 		$testobjects = @($testobject1,$testobject2,$testobject3)
 		$result = $testobjects|Format-Wide -GroupBy GroupingKey|Out-String
-		$result | Should Match "GroupingKey: bar"
-		$result | Should Match "name1"
-		$result | Should Match " GroupingKey:"
-		$result | Should Match "name2\s+name3"
+		$result | Should -Match "GroupingKey: bar"
+		$result | Should -Match "name1"
+		$result | Should -Match " GroupingKey:"
+		$result | Should -Match "name2\s+name3"
 	}
 }

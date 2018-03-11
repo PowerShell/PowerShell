@@ -28,7 +28,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.CategoryInfo| Should Match "SessionStateException"
+			$_.CategoryInfo| Should -Match "SessionStateException"
 			$_.FullyQualifiedErrorId | Should Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
 		}
 		New-Variable foo bar -Force -PassThru
@@ -47,7 +47,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.CategoryInfo| Should Match "SessionStateException"
+			$_.CategoryInfo| Should -Match "SessionStateException"
 			$_.FullyQualifiedErrorId | Should Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
 		}
 		New-Variable foo bar -Force -PassThru

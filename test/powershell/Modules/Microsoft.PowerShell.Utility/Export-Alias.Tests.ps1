@@ -173,7 +173,7 @@ Describe "Export-Alias" -Tags "CI" {
 		for ( $i=0; $i -lt $expected.Length; $i++)
 		{
 			# We loop through the expected list and not the other because the output writes some comments to the file.
-			$expected[$i] | Should Match $actual[$i].Name
+			$expected[$i] | Should -Match $actual[$i].Name
 		}
   }
 }

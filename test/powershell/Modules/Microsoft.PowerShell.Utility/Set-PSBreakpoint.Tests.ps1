@@ -54,7 +54,7 @@ set-psbreakpoint -command foo
     It "Should be able to set psbreakpoints for -Line and -action" {
         $brk = set-psbreakpoint -line 13 -action {{ break; }} -script $scriptFileName
         $brk.Line | Should Be 13
-        $brk.Action | Should Match "break"
+        $brk.Action | Should -Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -62,7 +62,7 @@ set-psbreakpoint -command foo
         $brk = set-psbreakpoint -line 13 -column 1 -action {{ break; }} -script $scriptFileName
         $brk.Line | Should Be 13
         $brk.Column | Should Be 1
-        $brk.Action | Should Match "break"
+        $brk.Action | Should -Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -88,12 +88,12 @@ set-psbreakpoint -command foo
 
     It "Should throw Exception when missing mandatory parameter -line" -Pending {
          $output = & $ps -noninteractive -command "sbp -column 1 -script $scriptFileName"
-         [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+         [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should throw Exception when missing mandatory parameter" -Pending {
          $output = & $ps -noprofile -noninteractive -command "sbp -line 1"
-         [system.string]::Join(" ", $output) | Should Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+         [system.string]::Join(" ", $output) | Should -Match "MissingMandatoryParameter,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should be able to set psbreakpoints for -command" {
@@ -110,7 +110,7 @@ set-psbreakpoint -command foo
 
     It "Should be able to set psbreakpoints for -command, -action and -script" {
         $brk = set-psbreakpoint -command "write-host" -action {{ break; }} -script $scriptFileName
-        $brk.Action | Should Match "break"
+        $brk.Action | Should -Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
