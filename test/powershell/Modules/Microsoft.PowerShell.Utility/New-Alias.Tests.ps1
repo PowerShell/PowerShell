@@ -18,7 +18,7 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 			$result=Get-Alias -Name ABCD -Scope "0"
 			$result.Name| Should Be "ABCD"
 			$result.Definition| Should Be "MyCommand"
-			$result.Description| Should Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should Be "None"
 	}
 
@@ -27,7 +27,7 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 			$result=Get-Alias -Name ABCD -Scope "0"
 			$result.Name| Should Be "ABCD"
 			$result.Definition| Should Be "MyCommand"
-			$result.Description| Should Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should Be "None"
 	}
 
