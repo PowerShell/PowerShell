@@ -63,7 +63,7 @@ Describe "String cmdlets" -Tags "CI" {
         }
 
         It "throws parameter binding exception for invalid context" {
-            { select-string It $PSScriptRoot -Context -1,-1 } | Should Throw Context
+            { select-string It $PSScriptRoot -Context -1,-1 } | Should -Throw Context
         }
 
         It "match object supports RelativePath method" {

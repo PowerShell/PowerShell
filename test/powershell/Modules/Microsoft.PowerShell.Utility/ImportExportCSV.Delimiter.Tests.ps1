@@ -42,12 +42,12 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
 
     It "Disallow use of null delimiter" {
         $d | export-csv TESTDRIVE:/file.csv
-        { import-csv -path TESTDRIVE:/file.csv -delimiter $null } | Should Throw "Delimiter"
+        { import-csv -path TESTDRIVE:/file.csv -delimiter $null } | Should -Throw "Delimiter"
     }
 
     It "Disallow use of delimiter with useCulture parameter" {
         $d | export-csv TESTDRIVE:/file.csv
-        { import-csv -path TESTDRIVE:/file.csv -useCulture "," } | Should Throw "','"
+        { import-csv -path TESTDRIVE:/file.csv -useCulture "," } | Should -Throw "','"
     }
 
     It "Imports the same properties as exported" {

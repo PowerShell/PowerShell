@@ -60,8 +60,8 @@ Describe "Out-File" -Tags "CI" {
 
         Out-File -FilePath $testfile -InputObject $inObject
 
-        { Out-File -FilePath $testfile -InputObject $inObject -NoClobber -ErrorAction SilentlyContinue }   | Should Throw "already exists."
-        { Out-File -FilePath $testfile -InputObject $inObject -NoOverWrite -ErrorAction SilentlyContinue } | Should Throw "already exists."
+        { Out-File -FilePath $testfile -InputObject $inObject -NoClobber -ErrorAction SilentlyContinue }   | Should -Throw "already exists."
+        { Out-File -FilePath $testfile -InputObject $inObject -NoOverWrite -ErrorAction SilentlyContinue } | Should -Throw "already exists."
 
         $actual = Get-Content $testfile
 
