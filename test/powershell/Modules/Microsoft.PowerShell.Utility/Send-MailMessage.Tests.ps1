@@ -139,11 +139,11 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
         Send-MailMessage -To $address -From $address -Subject $subject -Body $body -SmtpServer 127.0.0.1
         Test-Path -Path $mailBox | Should -BeTrue
         $mail = read-mail $mailBox
-        $mail.From | Should BeExactly $address
-        $mail.To.Count | Should BeExactly 1
-        $mail.To[0] | Should BeExactly $address
-        $mail.Subject | Should BeExactly $subject
-        $mail.Body.Count | Should BeExactly 1
-        $mail.Body[0] | Should BeExactly $body
+        $mail.From | Should -BeExactly $address
+        $mail.To.Count | Should -BeExactly 1
+        $mail.To[0] | Should -BeExactly $address
+        $mail.Subject | Should -BeExactly $subject
+        $mail.Body.Count | Should -BeExactly 1
+        $mail.Body[0] | Should -BeExactly $body
     }
 }

@@ -9,7 +9,7 @@ Describe "Group-Object DRT Unit Tests" -Tags "CI" {
         $results.Group.Count | Should -Be 4
         $results.Name | Should -Be aA,AA
         $results.Group | Should -Be aA,aA,AA,AA
-        ,$results | Should BeOfType "System.Array"
+        ,$results | Should -BeOfType "System.Array"
     }
 }
 
@@ -30,9 +30,9 @@ Describe "Group-Object" -Tags "CI" {
     It "Should return three columns- count, name, and group" {
         $actual = Group-Object -InputObject $testObject
 
-        $actual.Count       | Should BeGreaterThan 0
-        $actual.Name.Count  | Should BeGreaterThan 0
-        $actual.Group.Count | Should BeGreaterThan 0
+        $actual.Count       | Should -BeGreaterThan 0
+        $actual.Name.Count  | Should -BeGreaterThan 0
+        $actual.Group.Count | Should -BeGreaterThan 0
     }
 
     It "Should use the group alias" {
@@ -46,13 +46,13 @@ Describe "Group-Object" -Tags "CI" {
 
     It "Should return object of 'GroupInfo' type" {
         $actualParam = Group-Object -InputObject $testObject
-        $actualParam | Should BeOfType "Microsoft.PowerShell.Commands.GroupInfo"
+        $actualParam | Should -BeOfType "Microsoft.PowerShell.Commands.GroupInfo"
     }
 
     It "Should output an array when piped input is used" {
         $actual = $testObject | Group-Object
 
-        ,$actual | Should BeOfType "System.Array"
+        ,$actual | Should -BeOfType "System.Array"
     }
 
     It "Should have the same output between the group alias and the group-object cmdlet" {
@@ -68,7 +68,7 @@ Describe "Group-Object" -Tags "CI" {
 
         $actual = $testObject | Group-Object -Property Attributes
 
-        $actual.Group.Count | Should BeGreaterThan 0
+        $actual.Group.Count | Should -BeGreaterThan 0
     }
 
     It "Should be able to use the property switch on multiple properties without error" {
@@ -76,7 +76,7 @@ Describe "Group-Object" -Tags "CI" {
 
         $actual = $testObject | Group-Object -Property Attributes, Length
 
-        $actual.Group.Count | Should BeGreaterThan 0
+        $actual.Group.Count | Should -BeGreaterThan 0
     }
 
     It "Should be able to omit members of a group using the NoElement switch without error" {
@@ -89,7 +89,7 @@ Describe "Group-Object" -Tags "CI" {
         $actual = $testObject | Group-Object -AsHashTable
 
         $actual | Should -Not -BeNullOrEmpty
-        $actual | Should BeOfType "System.Collections.Hashtable"
+        $actual | Should -BeOfType "System.Collections.Hashtable"
     }
 
     It "Should be able to access when output as hash table" {

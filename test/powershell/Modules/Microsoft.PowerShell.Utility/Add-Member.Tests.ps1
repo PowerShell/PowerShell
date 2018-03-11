@@ -134,13 +134,13 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Successful alias, no type" {
         $results = Add-Member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -passthru
-        $results.Cnt | Should BeOfType Int32
+        $results.Cnt | Should -BeOfType Int32
         $results.Cnt | Should -Be 1
     }
 
     It "Successful alias, with type" {
         $results = add-member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -SecondValue String -passthru
-        $results.Cnt | Should BeOfType String
+        $results.Cnt | Should -BeOfType String
         $results.Cnt | Should -Be '1'
     }
 
@@ -283,7 +283,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $object = @(1,2)
         Add-Member -InputObject $object "ABC" "Value1"
         Add-Member -InputObject $object "ABC" "Value2" -ErrorVariable errorVar -ErrorAction SilentlyContinue
-        $errorVar.Exception | Should BeOfType "System.InvalidOperationException"
+        $errorVar.Exception | Should -BeOfType "System.InvalidOperationException"
         $errorVar.Exception.Message | Should -Not -BeNullOrEmpty
     }
 }

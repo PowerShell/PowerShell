@@ -30,19 +30,19 @@ Describe "Stream writer tests" -Tags "CI" {
         It "Should write error messages to the error stream" {
             Write-Error "Testing Error" 2>&1 > $targetfile
             # The contents of the error stream should contain the expected text
-            $targetfile | Should FileContentMatch ": Testing Error"
+            $targetfile | Should -FileContentMatch ": Testing Error"
         }
 
         It "Should write debug messages to the debug stream" {
             Write-Messages -Debug -EA SilentlyContinue 5>&1 > $targetfile
             # The contents of the debug stream should contain the expected text
-            $targetfile | Should FileContentMatch "Debug Message"
+            $targetfile | Should -FileContentMatch "Debug Message"
         }
 
         It "Should write messages to the verbose stream" {
             Write-Messages -Verbose 4>&1 > $targetfile
             # The contents of the debug stream should contain the expected text
-            $targetfile | Should FileContentMatch "Verbose Message"
+            $targetfile | Should -FileContentMatch "Verbose Message"
         }
     }
 
@@ -81,7 +81,7 @@ Describe "Stream writer tests" -Tags "CI" {
             $result = Write-Information "Test Message" *>&1
             $result.NativeThreadId | Should -Not -Be 0
             $result.ProcessId | Should -Be $pid
-            $result | Should BeOfType System.Management.Automation.InformationRecord
+            $result | Should -BeOfType System.Management.Automation.InformationRecord
 
             # Use Match instead of Be so we can avoid dealing with a potential domain name
             $result.Computer | Should -Match "^($([environment]::MachineName)){1}(\.[a-zA-Z0-9]+)*$|^localhost$"

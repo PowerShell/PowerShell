@@ -71,7 +71,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 Invoke-Item -Path $notepad
                 $notepadProcess = Get-Process -Name $notepadProcessName
                 # we need BeIn because multiple notepad processes could be running
-                $notepadProcess.Name | Should BeIn $notepadProcessName
+                $notepadProcess.Name | Should -BeIn $notepadProcessName
                 Stop-Process -InputObject $notepadProcess
             }
         } else {

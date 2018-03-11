@@ -87,9 +87,9 @@ Describe "XML cmdlets" -Tags "Feature" {
         It "-xml works with inputstream" {
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
             $node = Select-Xml -Xml $xml -XPath "//c:b" -Namespace @{c='bar'}
-            $node.Path | Should BeExactly "InputStream"
+            $node.Path | Should -BeExactly "InputStream"
             $node.Pattern = "//c:b"
-            $node.ToString() | Should BeExactly "hello"
+            $node.ToString() | Should -BeExactly "hello"
         }
 
         It "Returns error for invalid xmlnamespace" {
@@ -107,14 +107,14 @@ Describe "XML cmdlets" -Tags "Feature" {
 
         It "ToString() works correctly on nested node" {
             $node = Select-Xml -Content "<a><b>one<c>hello</c></b></a>" -XPath "//b"
-            $node.ToString() | Should BeExactly "one<c>hello</c>"
+            $node.ToString() | Should -BeExactly "one<c>hello</c>"
         }
 
         It "ToString() works correctly with file" {
             $testfile = Join-Path "$testdrive" "test.xml"
             Set-Content -Path $testfile -Value "<a><b>hello</b></a>"
             $node = Select-Xml -Path $testfile -XPath "//b"
-            $node.ToString() | Should BeExactly "hello:$testfile"
+            $node.ToString() | Should -BeExactly "hello:$testfile"
         }
     }
 }

@@ -44,7 +44,7 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
         $fileStream > $scriptFilePath
 
         $results = & "$scriptFilePath"
-        $results.Count | Should BeGreaterThan 3
+        $results.Count | Should -BeGreaterThan 3
         $results[0].Command | Should -Be "bar"
         $results[0].ScriptName | Should -Be $scriptFilePath
         $results[0].ScriptLineNumber | Should -Be 27
@@ -75,7 +75,7 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
 
         $fileStream > $scriptFilePath
         $results = & "$scriptFilePath"
-        $results.Count | Should BeGreaterThan 2
+        $results.Count | Should -BeGreaterThan 2
         $results[0].Command | Should -Be $scriptFileName
         $results[0].ScriptName | Should -Be $scriptFilePath
         $results[0].ScriptLineNumber | Should -Be 3

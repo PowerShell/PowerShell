@@ -361,7 +361,7 @@ try
             @($newResults).Count | Should -Be 4
 
             # Verifies that Export-PSSession creates *new* files
-            $newResults | ForEach-Object { $_.LastWriteTime | Should BeGreaterThan $oldTimestamp }
+            $newResults | ForEach-Object { $_.LastWriteTime | Should -BeGreaterThan $oldTimestamp }
         }
 
         Context "The module is usable when the original runspace is still around" {

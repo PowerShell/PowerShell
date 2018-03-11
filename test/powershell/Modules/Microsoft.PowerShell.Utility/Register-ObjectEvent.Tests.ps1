@@ -14,7 +14,7 @@ Describe "Register-ObjectEvent" -Tags "CI" {
 
 	It "Should return System.Management.Automation.PSEventSubscriber as return type of New-Event with the registered sourceidentifier" {
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    Get-EventSubscriber -SourceIdentifier PesterTestRegister | Should BeOfType System.Management.Automation.PSEventSubscriber
+	    Get-EventSubscriber -SourceIdentifier PesterTestRegister | Should -BeOfType System.Management.Automation.PSEventSubscriber
 	}
     }
 
@@ -26,7 +26,7 @@ Describe "Register-ObjectEvent" -Tags "CI" {
 
 	It "Should return an integer greater than 0 for the SubscriptionId" {
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SubscriptionId | Should BeGreaterThan 0
+	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SubscriptionId | Should -BeGreaterThan 0
 
 	}
     }

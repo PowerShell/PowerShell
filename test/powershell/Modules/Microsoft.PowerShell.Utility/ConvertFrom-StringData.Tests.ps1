@@ -33,7 +33,7 @@ bazz = 2
 
     It "Should return a hashtable" {
 	$result = ConvertFrom-StringData -StringData 'a=b'
-    $result | Should BeOfType Hashtable
+    $result | Should -BeOfType Hashtable
     }
 
     It "Should throw if not in x=y format" {
@@ -68,8 +68,8 @@ bazz = 2
 	{ ConvertFrom-StringData -StringData $sampleData } | Should -Not -Throw
 
     # keys are not order guaranteed
-	$(ConvertFrom-StringData -StringData $sampleData).Keys   | Should BeIn @("foo", "bar", "bazz")
+	$(ConvertFrom-StringData -StringData $sampleData).Keys   | Should -BeIn @("foo", "bar", "bazz")
 
-	$(ConvertFrom-StringData -StringData $sampleData).Values | Should BeIn @("0","1","2")
+	$(ConvertFrom-StringData -StringData $sampleData).Values | Should -BeIn @("0","1","2")
     }
 }

@@ -29,8 +29,8 @@ Describe "Read-Host Test" -tag "CI" {
     }
     It "Read-Host returns a secure string when using -AsSecureString parameter" {
         $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | select-object -first 1
-        $result | Should BeOfType SecureString
-        [pscredential]::New("foo",$result).GetNEtworkCredential().Password | should BeExactly TEST
+        $result | Should -BeOfType SecureString
+        [pscredential]::New("foo",$result).GetNEtworkCredential().Password | Should -BeExactly TEST
 
     }
 }

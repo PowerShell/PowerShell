@@ -15,7 +15,7 @@ Describe "Format-Custom" -Tags "CI" {
 
         It "Should be able to specify the depth in output" {
             $getprocesspester =  Get-FormatData | Format-Custom -depth 1
-            ($getprocesspester).Count                   | Should BeGreaterThan 0
+            ($getprocesspester).Count                   | Should -BeGreaterThan 0
         }
 
         It "Should be able to use the Property flag to select properties" {

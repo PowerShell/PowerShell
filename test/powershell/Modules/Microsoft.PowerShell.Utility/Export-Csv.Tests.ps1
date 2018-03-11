@@ -23,7 +23,7 @@ Describe "Export-Csv" -Tags "CI" {
 
         $piped = Get-Content $testCsv
 
-        $piped[0] | Should BeExactly "#TYPE System.String"
+        $piped[0] | Should -BeExactly "#TYPE System.String"
     }
 
     It "Should be an object when exporting via the inputObject switch" {
@@ -31,7 +31,7 @@ Describe "Export-Csv" -Tags "CI" {
 
         $switch = Get-Content $testCsv
 
-        $switch[0] | Should BeExactly "#TYPE System.Object[]"
+        $switch[0] | Should -BeExactly "#TYPE System.Object[]"
     }
 
     It "Should output a csv file containing a string of all the lengths of each element when piped input is used" {
@@ -64,7 +64,7 @@ Describe "Export-Csv" -Tags "CI" {
     It "Includes type information when -IncludeTypeInformation is supplied" {
         $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation
 
-        $(Get-Content $testCsv)[0] | Should BeExactly "#TYPE System.String"
+        $(Get-Content $testCsv)[0] | Should -BeExactly "#TYPE System.String"
     }
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {

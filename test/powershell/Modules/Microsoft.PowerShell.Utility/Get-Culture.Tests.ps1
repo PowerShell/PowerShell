@@ -12,7 +12,7 @@ Describe "Get-Culture" -Tags "CI" {
 
     It "Should return a type of CultureInfo for Get-Culture cmdlet" {
 
-	Get-Culture | Should BeOfType CultureInfo
+	Get-Culture | Should -BeOfType CultureInfo
 
     }
 

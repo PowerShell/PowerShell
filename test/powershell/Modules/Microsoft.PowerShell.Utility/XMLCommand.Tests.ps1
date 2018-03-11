@@ -38,7 +38,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
  	It "Import with CliXml directive should work" {
         Get-Command export* -Type Cmdlet | Select-Object -First 3 | Export-Clixml -Path $testfile
 		$results = Import-Clixml $testfile
-		$results.Count | Should BeExactly 3
+		$results.Count | Should -BeExactly 3
         $results[0].PSTypeNames[0] | Should -Be "Deserialized.System.Management.Automation.CmdletInfo"
     }
 
@@ -117,15 +117,15 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		# this cmdlets supports paging, but not this switch
 		[PSCustomObject]@{foo=1;bar=@{hello="world"}} | Export-Clixml -Path $testfile
 		$out = Import-Clixml -Path $testfile -IncludeTotalCount
-		$out[0].ToString() | Should BeExactly "Unknown total count"
+		$out[0].ToString() | Should -BeExactly "Unknown total count"
 	}
 
 	It "Import-Clixml -First and -Skip work together for simple types" {
 		"one","two","three","four" | Export-Clixml -Path $testfile
 		$out = Import-Clixml -Path $testfile -First 2 -Skip 1
 		$out.Count | Should -Be 2
-		$out[0] | Should BeExactly "two"
-		$out[1] | Should BeExactly "three"
+		$out[0] | Should -BeExactly "two"
+		$out[1] | Should -BeExactly "three"
 	}
 
 	It "Import-Clixml -First and -Skip work together for collections" {
@@ -144,17 +144,17 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
 		$cmd = [Microsoft.PowerShell.Commands.ExportClixmlCommand]::new()
 		$cmd.LiteralPath = "foo"
-		$cmd.LiteralPath | Should BeExactly "foo"
+		$cmd.LiteralPath | Should -BeExactly "foo"
 		$cmd.NoClobber = $true
 		$cmd.NoClobber | Should -BeTrue
 
 		$cmd = [Microsoft.PowerShell.Commands.ImportClixmlCommand]::new()
 		$cmd.LiteralPath = "bar"
-		$cmd.LiteralPath | Should BeExactly "bar"
+		$cmd.LiteralPath | Should -BeExactly "bar"
 
 		$cmd = [Microsoft.PowerShell.Commands.SelectXmlCommand]::new()
 		$cmd.LiteralPath = "foo"
-		$cmd.LiteralPath | Should BeExactly "foo"
+		$cmd.LiteralPath | Should -BeExactly "foo"
 		$xml = [xml]"<a/>"
 		$cmd.Xml = $xml
 		$cmd.Xml | Should -Be $xml

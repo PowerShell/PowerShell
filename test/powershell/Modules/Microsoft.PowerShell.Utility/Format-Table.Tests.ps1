@@ -153,7 +153,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		) {
 			param ($testString)
 			$result = $testString | Format-Table -Property "foo","bar" -Force | Out-String
-			$result.Replace(" ","").Replace([Environment]::NewLine,"") | Should BeExactly "foobar------"
+			$result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foobar------"
 		}
 
 		It "Format-Table with complex object for End-To-End should work" {
@@ -193,12 +193,12 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 
 		It "Format-Table should not add trailing whitespace to the header" {
 			$out = "hello" | Format-Table -Property foo -Force | Out-String
-			$out.Replace([System.Environment]::NewLine, "") | Should BeExactly "foo---"
+			$out.Replace([System.Environment]::NewLine, "") | Should -BeExactly "foo---"
 		}
 
 		It "Format-Table should not add trailing whitespace to rows" {
 			$out = [pscustomobject]@{a=1;b=2} | Format-Table -HideTableHeaders | Out-String
-			$out.Replace([System.Environment]::NewLine, "") | Should BeExactly "1 2"
+			$out.Replace([System.Environment]::NewLine, "") | Should -BeExactly "1 2"
 		}
 
 		It "Format-Table should have correct alignment" {
@@ -268,7 +268,7 @@ Left Center Right
 
 
 "@
-			$output.Replace("`n","").Replace("`r","") | Should BeExactly $expectedTable.Replace("`n","").Replace("`r","")
+			$output.Replace("`n","").Replace("`r","") | Should -BeExactly $expectedTable.Replace("`n","").Replace("`r","")
 		}
 
 		It "Format-Table should not have trailing whitespace if there is truncation: <view>" -TestCases @(
@@ -344,6 +344,6 @@ Left Center Right
 				$object | Format-Table -View $view | Out-String
 			} ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($object) | Out-Null
 			$output = $ps.Invoke()
-			$output.Replace("`n","").Replace("`r","") | Should BeExactly $expected
+			$output.Replace("`n","").Replace("`r","") | Should -BeExactly $expected
 		}
 }

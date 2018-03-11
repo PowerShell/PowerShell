@@ -186,20 +186,20 @@ Describe "Get-Alias" -Tags "CI" {
 
         $val1 | ForEach-Object{ $i++};
         if($i -lt 2) {
-            $val1 | Should BeOfType "System.Management.Automation.CommandInfo"
+            $val1 | Should -BeOfType   "System.Management.Automation.CommandInfo"
         }
         else
         {
-            ,$val1 | Should BeOfType "System.Array"
+            ,$val1 | Should -BeOfType   "System.Array"
         }
 
         $val2 | ForEach-Object{ $i++};
         if($i -lt 2) {
-            $val2 | Should BeOfType "System.Management.Automation.CommandInfo"
+            $val2 | Should -BeOfType   "System.Management.Automation.CommandInfo"
         }
         else
         {
-            ,$val2 | Should BeOfType "System.Array"
+            ,$val2 | Should -BeOfType   "System.Array"
         }
     }
 

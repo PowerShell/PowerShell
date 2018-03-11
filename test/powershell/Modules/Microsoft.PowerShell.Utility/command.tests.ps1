@@ -21,13 +21,13 @@ Describe "Trace-Command" -tags "Feature" {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
             $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         It "Callstack works" -pending:($IsCoreCLR) {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         It "Datetime works" {
@@ -44,7 +44,7 @@ Describe "Trace-Command" -tags "Feature" {
                         $actualGap = $expectedDate - $_;
                     }
 
-                    $allowedGap | Should BeGreaterThan $actualGap
+                    $allowedGap | Should -BeGreaterThan $actualGap
                 }
         }
 

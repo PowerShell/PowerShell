@@ -21,7 +21,7 @@ Describe 'ConvertFrom-Json' -tags "CI" {
         $json[1].a | Should -Be 'x'
         if ($AsHashtable)
         {
-            $json | Should BeOfType Hashtable
+            $json | Should -BeOfType Hashtable
         }
     }
 
@@ -31,7 +31,7 @@ Describe 'ConvertFrom-Json' -tags "CI" {
         $json.a | Should -Be 'x'
         if ($AsHashtable)
         {
-            $json | Should BeOfType Hashtable
+            $json | Should -BeOfType Hashtable
         }
     }
 }

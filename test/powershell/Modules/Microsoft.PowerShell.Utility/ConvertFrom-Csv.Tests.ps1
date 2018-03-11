@@ -31,8 +31,8 @@ a,b,c
         $csvContent   = Get-Content $testcsv
         $actualresult = $csvContent | ConvertFrom-Csv
 
-        ,$actualresult | Should BeOfType "System.Array"
-        $actualresult[0] | Should BeOfType "PSCustomObject"
+        ,$actualresult | Should -BeOfType "System.Array"
+        $actualresult[0] | Should -BeOfType "PSCustomObject"
 
         #Should have a name property in the result
         $actualresult[0].Name | Should -Be $testName
@@ -46,8 +46,8 @@ a,b,c
         $csvContent   = Get-Content $testcsv
         $actualresult = $csvContent | ConvertFrom-Csv -Delimiter ";"
 
-        ,$actualresult | Should BeOfType "System.Array"
-        $actualresult[0] | Should BeOfType "PSCustomObject"
+        ,$actualresult | Should -BeOfType "System.Array"
+        $actualresult[0] | Should -BeOfType "PSCustomObject"
 
         # ConvertFrom-Csv takes the first line of the input as a header by default
         $actualresult.Length | Should -Be $($csvContent.Length - 1)

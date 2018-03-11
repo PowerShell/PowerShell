@@ -4,7 +4,7 @@ Describe "Object cmdlets" -Tags "CI" {
     Context "Group-Object" {
         It "AsHashtable returns a hashtable" {
             $result = Get-Process | Group-Object -Property ProcessName -AsHashTable
-            $result["pwsh"].Count | Should BeGreaterThan 0
+            $result["pwsh"].Count | Should -BeGreaterThan 0
         }
 
         It "AsString returns a string" {
@@ -86,7 +86,7 @@ Describe "Object cmdlets" -Tags "CI" {
 
         It 'returns a GenericMeasureInfoObject' {
             $gmi = 1,2,3 | measure-object -max -min
-            $gmi | Should BeOfType Microsoft.PowerShell.Commands.GenericMeasureInfo
+            $gmi | Should -BeOfType Microsoft.PowerShell.Commands.GenericMeasureInfo
         }
 
         It 'should return correct error for non-numeric input' {

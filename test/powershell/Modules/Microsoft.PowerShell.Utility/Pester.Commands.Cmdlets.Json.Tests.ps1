@@ -276,7 +276,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json = "[1,2,3,4,5,6]"
             $result = ConvertFrom-Json $json
             $result.Count | Should -Be 6
-            ,$result | Should BeOfType "System.Array"
+            ,$result | Should -BeOfType "System.Array"
         }
 
         It "ConvertFrom-Json with a float value" {

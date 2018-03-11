@@ -24,14 +24,14 @@ Describe "Trace-Command" -tags "CI" {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
             $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         # GetStackTrace is not in .NET Core
         It "Callstack works" -Skip:$IsCoreCLR {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         It "Datetime works" {
@@ -48,7 +48,7 @@ Describe "Trace-Command" -tags "CI" {
                         $actualGap = $expectedDate - $_;
                     }
 
-                    $allowedGap | Should BeGreaterThan $actualGap
+                    $allowedGap | Should -BeGreaterThan $actualGap
                 }
         }
 
@@ -127,7 +127,7 @@ Describe "Trace-Command" -tags "CI" {
 
         It "Trace-Command contains wildcard characters" {
             $a = Trace-Command -Name ParameterB* -Command 'get-alias'
-            $a.count | Should BeGreaterThan 0
+            $a.count | Should -BeGreaterThan 0
         }
     }
 }

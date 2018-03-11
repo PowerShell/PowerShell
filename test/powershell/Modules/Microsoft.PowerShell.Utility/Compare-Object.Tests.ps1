@@ -95,7 +95,7 @@ Describe "Compare-Object" -Tags "CI" {
     It "Should be able to specify the property of two objects to compare" {
 	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $TestDrive -Property Length
 	$actualOutput[0].Length | Should -BeNullOrEmpty
-	$actualOutput[1].Length | Should BeGreaterThan 0
+	$actualOutput[1].Length | Should -BeGreaterThan 0
 	$actualOutput[0].Length | Should -Not -Be $actualOutput[1].Length
     }
 

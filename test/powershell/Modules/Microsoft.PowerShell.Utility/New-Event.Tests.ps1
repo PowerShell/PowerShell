@@ -5,7 +5,7 @@ Describe "New-Event" -Tags "CI" {
     Context "Check return type of New-Event" {
 
         It "Should return PSEventArgs as return type of New-Event" {
-            New-Event -SourceIdentifier a | Should BeOfType System.Management.Automation.PSEventArgs
+            New-Event -SourceIdentifier a | Should -BeOfType System.Management.Automation.PSEventArgs
         }
     }
 

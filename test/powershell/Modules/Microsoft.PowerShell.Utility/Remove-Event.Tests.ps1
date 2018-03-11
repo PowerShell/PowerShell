@@ -34,7 +34,7 @@ Describe "Remove-Event" -Tags "CI" {
 	It "Should NOT remove an event given the whatif flag" {
 	    { Remove-Event -sourceidentifier PesterTimer -whatif }
 	    { $events = Get-Event }
-	    { $events.SourceIdentifier  | Should FileContentMatch "PesterTimer" }
+	    { $events.SourceIdentifier  | Should -FileContentMatch "PesterTimer" }
 	}
     }
 }
