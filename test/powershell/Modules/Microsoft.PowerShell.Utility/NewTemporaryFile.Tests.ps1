@@ -19,7 +19,7 @@ Describe "New-TemporaryFile" -Tags "CI" {
     It "creates a new temporary file" {
         $tempFile = New-TemporaryFile
 
-        $tempFile | Should Exist
+        $tempFile | Should -Exist
         $tempFile | Should -BeOfType System.IO.FileInfo
         $tempFile | Should -BeLikeExactly "$([System.IO.Path]::GetTempPath())*"
 

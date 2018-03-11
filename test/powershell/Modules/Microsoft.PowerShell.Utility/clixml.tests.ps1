@@ -76,7 +76,7 @@ Describe "CliXml test" -Tags "CI" {
             $filePath = Join-Path $subFilePath 'gps.xml'
             Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject ($gpsList | Select-Object -First 1)
 
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $isExisted = $false
@@ -102,7 +102,7 @@ Describe "CliXml test" -Tags "CI" {
             $filePath = Join-Path $subFilePath 'gps.xml'
             ($gpsList | Select-Object -First 1) | Export-Clixml -Depth 1 -LiteralPath $filePath
 
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $isExisted = $false
@@ -156,7 +156,7 @@ Describe "CliXml test" -Tags "CI" {
 
         It "can import from a literal path" {
             Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $fileContent | Should -Not -BeNullOrEmpty
@@ -170,7 +170,7 @@ Describe "CliXml test" -Tags "CI" {
 
         It "can import from a literal path using pipeline" {
             $gps | Export-Clixml -Depth 1 -LiteralPath $filePath
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $fileContent | Should -Not -BeNullOrEmpty
