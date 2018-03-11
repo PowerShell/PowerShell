@@ -21,7 +21,7 @@ Describe "Register-ObjectEvent" -Tags "CI" {
     Context "Check Register-ObjectEvent can validly register events"{
 	It "Should return source identifier of PesterTimer " {
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SourceIdentifier | Should Be "PesterTestRegister"
+	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SourceIdentifier | Should -Be "PesterTestRegister"
 	}
 
 	It "Should return an integer greater than 0 for the SubscriptionId" {

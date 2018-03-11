@@ -30,8 +30,8 @@ Describe "Event Subscriber Tests" -tags "CI" {
         $eventtest = register-engineevent -SourceIdentifier foo -Action {set-variable -scope global -name aglobalvariable -value $incomingGlobal}
         new-event foo
         $getvar = get-variable aglobalvariable -scope global
-        $getvar.Name | should Be aglobalvariable
-        $getvar.Value | should Be globVarValue
+        $getvar.Name | Should -Be aglobalvariable
+        $getvar.Value | Should -Be globVarValue
         Unregister-Event foo
         Get-EventSubscriber | Should -BeNullOrEmpty
     }

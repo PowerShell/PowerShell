@@ -4,11 +4,11 @@ Describe "Group-Object DRT Unit Tests" -Tags "CI" {
     It "Test for CaseSensitive switch" {
         $testObject = 'aA', 'aA', 'AA', 'AA'
         $results = $testObject | Group-Object -CaseSensitive
-        $results.Count | Should Be 2
-        $results.Name.Count | Should Be 2
-        $results.Group.Count | Should Be 4
-        $results.Name | Should Be aA,AA
-        $results.Group | Should Be aA,aA,AA,AA
+        $results.Count | Should -Be 2
+        $results.Name.Count | Should -Be 2
+        $results.Group.Count | Should -Be 4
+        $results.Name | Should -Be aA,AA
+        $results.Group | Should -Be aA,aA,AA,AA
         ,$results | Should BeOfType "System.Array"
     }
 }
@@ -41,7 +41,7 @@ Describe "Group-Object" -Tags "CI" {
 
     It "Should create a collection when the inputObject parameter is used" {
         $actualParam = Group-Object -InputObject $testObject
-        $actualParam.Group.Gettype().Name | Should Be 'Collection`1'
+        $actualParam.Group.Gettype().Name | Should -Be 'Collection`1'
     }
 
     It "Should return object of 'GroupInfo' type" {

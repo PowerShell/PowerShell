@@ -45,7 +45,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
-            $afterCount | Should Be ($beforeCount + 1)
+            $afterCount | Should -Be ($beforeCount + 1)
             $title | Should -Be $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
@@ -161,7 +161,7 @@ Categories=Application;
                     $title = 'tell application "Finder" to get name of front window' | osascript
                 }
                 $afterCount = [int]('tell application "Finder" to count of windows' | osascript)
-                $afterCount | Should Be ($beforeCount + 1)
+                $afterCount | Should -Be ($beforeCount + 1)
                 $title | Should -Be $expectedTitle
                 'tell application "Finder" to close front window' | osascript
             }

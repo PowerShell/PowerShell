@@ -40,28 +40,28 @@ set-psbreakpoint -command foo
 
     It "Should be able to set psbreakpoints for -Line" {
         $brk = Set-PSBreakpoint -Line 13 -Script $scriptFileName
-        $brk.Line | Should Be 13
+        $brk.Line | Should -Be 13
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set psbreakpoints for -Line and -column" {
         $brk = set-psbreakpoint -line 13 -column 1 -script $scriptFileName
-        $brk.Line | Should Be 13
-        $brk.Column | Should Be 1
+        $brk.Line | Should -Be 13
+        $brk.Column | Should -Be 1
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set psbreakpoints for -Line and -action" {
         $brk = set-psbreakpoint -line 13 -action {{ break; }} -script $scriptFileName
-        $brk.Line | Should Be 13
+        $brk.Line | Should -Be 13
         $brk.Action | Should -Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set psbreakpoints for -Line, -column and -action" {
         $brk = set-psbreakpoint -line 13 -column 1 -action {{ break; }} -script $scriptFileName
-        $brk.Line | Should Be 13
-        $brk.Column | Should Be 1
+        $brk.Line | Should -Be 13
+        $brk.Column | Should -Be 1
         $brk.Action | Should -Match "break"
         Remove-PSBreakPoint -Id $brk.Id
     }
@@ -75,14 +75,14 @@ set-psbreakpoint -command foo
 
     It "-script and -line are positional" {
         $brk = sbp $scriptFileName 13
-        $brk.Line | Should Be 13
+        $brk.Line | Should -Be 13
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-script, -line and -column are positional" {
         $brk = sbp $scriptFileName 13 1
-        $brk.Line | Should Be 13
-        $brk.Column | Should Be 1
+        $brk.Line | Should -Be 13
+        $brk.Column | Should -Be 1
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -98,13 +98,13 @@ set-psbreakpoint -command foo
 
     It "Should be able to set psbreakpoints for -command" {
         $brk = set-psbreakpoint -command "write-host"
-        $brk.Command | Should Be "write-host"
+        $brk.Command | Should -Be "write-host"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set psbreakpoints for -command, -script" {
         $brk = set-psbreakpoint -command "write-host" -script $scriptFileName
-        $brk.Command | Should Be "write-host"
+        $brk.Command | Should -Be "write-host"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -116,23 +116,23 @@ set-psbreakpoint -command foo
 
     It "-Command can take multiple items" {
         $brk = set-psbreakpoint -command write-host,Hello
-        $brk.Command | Should Be write-host,Hello
+        $brk.Command | Should -Be write-host,Hello
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-Script is positional" {
         $brk = set-psbreakpoint -command "Hello" $scriptFileName
-        $brk.Command | Should Be "Hello"
+        $brk.Command | Should -Be "Hello"
         Remove-PSBreakPoint -Id $brk.Id
 
         $brk = set-psbreakpoint $scriptFileName -command "Hello"
-        $brk.Command | Should Be "Hello"
+        $brk.Command | Should -Be "Hello"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set breakpoints on functions" {
         $brk = set-psbreakpoint -command Hello,Goodbye -script $scriptFileName
-        $brk.Command | Should Be Hello,Goodbye
+        $brk.Command | Should -Be Hello,Goodbye
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -142,7 +142,7 @@ set-psbreakpoint -command foo
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         }
     }
 
@@ -153,7 +153,7 @@ set-psbreakpoint -command foo
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+            $_.FullyQualifiedErrorId | Should -Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         }
         $ErrorActionPreference = "SilentlyContinue"
     }

@@ -44,7 +44,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 "@
         $stream4 = '</Objects>'
 
-        $returnObject.Count | Should Be 4
+        $returnObject.Count | Should -Be 4
         $returnObject[0] | Should -Be $stream1
         $returnObject[1] | Should -Be $stream2
         $returnObject[2] | Should -Be $stream3
@@ -65,7 +65,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 		$ps.AddParameter("Depth", 2)
 		$ps.BeginInvoke()
 		$ps.Stop()
-		$ps.InvocationStateInfo.State | Should Be "Stopped"
+		$ps.InvocationStateInfo.State | Should -Be "Stopped"
     }
 
     # these tests just cover aspects that aren't normally exercised being used as a cmdlet

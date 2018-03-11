@@ -8,71 +8,71 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
 		}
 	}
 
 	It "Set-Alias ReadOnly Force"{
 			Set-Alias -Name ABCD -Value "foo" -Option ReadOnly -Force:$true
 			$result=Get-Alias -Name ABCD
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "foo"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "foo"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "ReadOnly"
+			$result.Options| Should -Be "ReadOnly"
 
 			Set-Alias -Name ABCD -Value "foo" -Force:$true
 			$result=Get-Alias -Name ABCD
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "foo"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "foo"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "None"
+			$result.Options| Should -Be "None"
 	}
 
 	It "Set-Alias Name And Value Valid"{
 			Set-Alias -Name ABCD -Value "MyCommand"
 			$result=Get-Alias -Name ABCD
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "MyCommand"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "MyCommand"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "None"
+			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Name And Value Positional Valid"{
 			Set-Alias -Name ABCD "foo"
 			$result=Get-Alias ABCD
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "foo"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "foo"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "None"
+			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Description Valid"{
 			Set-Alias -Name ABCD -Value "MyCommand" -Description "test description"
 			$result=Get-Alias -Name ABCD
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "MyCommand"
-			$result.Description| Should Be "test description"
-			$result.Options| Should Be "None"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "MyCommand"
+			$result.Description| Should -Be "test description"
+			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Scope Valid"{
 			Set-Alias -Name ABCD -Value "localfoo" -scope local -Force:$true
 			Set-Alias -Name ABCD -Value "foo1" -scope "1" -Force:$true
 
 			$result=Get-Alias -Name ABCD
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "localfoo"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "localfoo"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "None"
+			$result.Options| Should -Be "None"
 
 			$result=Get-Alias -Name ABCD -scope local
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "localfoo"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "localfoo"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "None"
+			$result.Options| Should -Be "None"
 
 			$result=Get-Alias -Name ABCD -scope "1"
-			$result.Name| Should Be "ABCD"
-			$result.Definition| Should Be "foo1"
+			$result.Name| Should -Be "ABCD"
+			$result.Definition| Should -Be "foo1"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should Be "None"
+			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Expose Bug 1062958, BugId:905449"{
 		try {
@@ -80,7 +80,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
 		}
 	}
 }

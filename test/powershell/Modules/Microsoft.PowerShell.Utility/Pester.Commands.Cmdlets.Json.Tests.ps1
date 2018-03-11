@@ -17,13 +17,13 @@ Describe "Json Tests" -Tags "Feature" {
             param ($result, [switch]$hasEmbeddedSampleObject )
 
             Write-Verbose "validating deserialized SampleObject" -Verbose
-            $result.SampleInt | Should Be 98765
+            $result.SampleInt | Should -Be 98765
             $result.SampleString | Should -Match "stringVal"
-            $result.SampleArray.Count | Should Be 2
+            $result.SampleArray.Count | Should -Be 2
             $result.SampleTrue | Should -BeTrue
             $result.SampleFalse | Should -BeFalse
             $result.SampleNull | Should -BeNullOrEmpty
-            $result.SampleFloat | Should Be 9.8765E+43
+            $result.SampleFloat | Should -Be 9.8765E+43
 
             if ($hasEmbeddedSampleObject)
             {
@@ -85,9 +85,9 @@ Describe "Json Tests" -Tags "Feature" {
                 }"
             }
             $op = [JsonEnumTest]::New() | convertto-json | convertfrom-json
-            $op.TestEnum1 | Should Be "One"
-            $op.TestEnum2 | Should Be "Two"
-            $op.TestEnum3 | Should Be 1
+            $op.TestEnum1 | Should -Be "One"
+            $op.TestEnum2 | Should -Be "Two"
+            $op.TestEnum3 | Should -Be 1
         }
 
         It "Test followup for Windows 8 bug 121627" {
@@ -95,9 +95,9 @@ Describe "Json Tests" -Tags "Feature" {
             $JsonString = Get-Command Get-help |Select-Object Name, Noun, Verb| ConvertTo-Json
             $actual = ConvertFrom-Json $JsonString
 
-            $actual.Name | Should Be "Get-Help"
-            $actual.Noun | Should Be "Help"
-            $actual.Verb | Should Be "Get"
+            $actual.Name | Should -Be "Get-Help"
+            $actual.Noun | Should -Be "Help"
+            $actual.Verb | Should -Be "Get"
         }
     }
 
@@ -117,11 +117,11 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 = ConvertTo-Json -InputObject $response -ErrorAction Inquire
             $response2 = ConvertTo-Json -InputObject $response -ErrorAction SilentlyContinue
             $response2 = ConvertTo-Json -InputObject $response -Depth 2 -Compress
-            $response2 | Should Be '{"d":{"Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
+            $response2 | Should -Be '{"d":{"Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
 
             $response2 = ConvertTo-Json -InputObject $response -Depth 1 -Compress
             $nameString = [System.Management.Automation.LanguagePrimitives]::ConvertTo($response.d.Name, [string])
-            $response2 | Should Be "{`"d`":{`"Name`":`"$nameString`",`"Greeting`":`"Hello`"}}"
+            $response2 | Should -Be "{`"d`":{`"Name`":`"$nameString`",`"Greeting`":`"Hello`"}}"
 
             $result1 = @"
 {
@@ -153,7 +153,7 @@ Describe "Json Tests" -Tags "Feature" {
             [void]$arraylist.Add("two")
             [void]$arraylist.Add("three")
             $response2 = ConvertTo-Json -InputObject $arraylist -Compress
-            $response2 | Should Be '["one","two","three"]'
+            $response2 | Should -Be '["one","two","three"]'
 
             $result3 = @"
 [
@@ -175,10 +175,10 @@ Describe "Json Tests" -Tags "Feature" {
             $dHash = @{Name=$nameHash; Greeting="Hello"}
             $rootHash = @{d=$dHash}
             $response3 = ConvertTo-Json -InputObject $rootHash -Depth 2 -Compress
-            $response3 | Should Be '{"d":{"Greeting":"Hello","Name":{"Last":"Wood","First":"Joe1"}}}'
+            $response3 | Should -Be '{"d":{"Greeting":"Hello","Name":{"Last":"Wood","First":"Joe1"}}}'
 
             $response3 = ConvertTo-Json -InputObject $rootHash -Depth 1 -Compress
-            $response3 | Should Be '{"d":{"Greeting":"Hello","Name":"System.Collections.Hashtable"}}'
+            $response3 | Should -Be '{"d":{"Greeting":"Hello","Name":"System.Collections.Hashtable"}}'
 
             $result4 = @"
 {
@@ -221,10 +221,10 @@ Describe "Json Tests" -Tags "Feature" {
             }
 
             $response4 = ConvertTo-Json -InputObject $sampleObject -Compress
-            $response4 | Should Be '{"SampleSimpleEnum":4,"SampleBitwiseEnum":11}'
+            $response4 | Should -Be '{"SampleSimpleEnum":4,"SampleBitwiseEnum":11}'
 
             $response4 = ConvertTo-Json -InputObject $sampleObject -Compress -EnumsAsStrings
-            $response4 | Should Be '{"SampleSimpleEnum":"Ignore","SampleBitwiseEnum":"Alias, Function, Cmdlet"}'
+            $response4 | Should -Be '{"SampleSimpleEnum":"Ignore","SampleBitwiseEnum":"Alias, Function, Cmdlet"}'
 
         }
 
@@ -251,10 +251,10 @@ Describe "Json Tests" -Tags "Feature" {
             $json = ConvertFrom-Json $jstr
 
             # Check the basic properties
-            $json.Major | Should Be 2
-            $json.Minor | Should Be 3
-            $json.Build | Should Be 4
-            $json.Revision | Should Be 14
+            $json.Major | Should -Be 2
+            $json.Minor | Should -Be 3
+            $json.Build | Should -Be 4
+            $json.Revision | Should -Be 14
             $json.Note | Should -Match "a version object"
 
             # Check the AliasProperty
@@ -268,14 +268,14 @@ Describe "Json Tests" -Tags "Feature" {
 
             $json = "{name:1}"
             $result = ConvertFrom-Json $json
-            $result.name | Should Be 1
+            $result.name | Should -Be 1
         }
 
         It "ConvertFrom-Json with a simple array" {
 
             $json = "[1,2,3,4,5,6]"
             $result = ConvertFrom-Json $json
-            $result.Count | Should Be 6
+            $result.Count | Should -Be 6
             ,$result | Should BeOfType "System.Array"
         }
 
@@ -296,18 +296,18 @@ Describe "Json Tests" -Tags "Feature" {
             $json = "['one', 'two', {'First':1,'Second':2,'Third':['Five','Six', 'Seven']}, 'four']"
             $result = ConvertFrom-Json $json
 
-            $result.Count | Should Be 4
-            $result[0] | Should Be "one"
-            $result[1] | Should Be "two"
-            $result[3] | Should Be "four"
+            $result.Count | Should -Be 4
+            $result[0] | Should -Be "one"
+            $result[1] | Should -Be "two"
+            $result[3] | Should -Be "four"
 
             $hash = $result[2]
-            $hash.First | Should Be 1
-            $hash.Second | Should Be 2
-            $hash.Third.Count | Should Be 3
-            $hash.Third[0] | Should Be "Five"
-            $hash.Third[1] | Should Be "Six"
-            $hash.Third[2] | Should Be "Seven"
+            $hash.First | Should -Be 1
+            $hash.Second | Should -Be 2
+            $hash.Third.Count | Should -Be 3
+            $hash.Third[0] | Should -Be "Five"
+            $hash.Third[1] | Should -Be "Six"
+            $hash.Third[2] | Should -Be "Seven"
         }
 
         It "ConvertFrom-Json array nested in hash table" {
@@ -315,16 +315,16 @@ Describe "Json Tests" -Tags "Feature" {
             $json = '{"First":["one", "two", "three"], "Second":["four", "five"], "Third": {"blah": 4}}'
             $result = ConvertFrom-Json $json
 
-            $result.First.Count | Should Be 3
-            $result.First[0] | Should Be "one"
-            $result.First[1] | Should Be "two"
-            $result.First[2] | Should Be "three"
+            $result.First.Count | Should -Be 3
+            $result.First[0] | Should -Be "one"
+            $result.First[1] | Should -Be "two"
+            $result.First[2] | Should -Be "three"
 
-            $result.Second.Count | Should Be 2
-            $result.Second[0] | Should Be "four"
-            $result.Second[1] | Should Be "five"
+            $result.Second.Count | Should -Be 2
+            $result.Second[0] | Should -Be "four"
+            $result.Second[1] | Should -Be "five"
 
-            $result.Third.blah | Should Be "4"
+            $result.Third.blah | Should -Be "4"
         }
 
         It "ConvertFrom-Json case insensitive test" {
@@ -332,7 +332,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json = '{"sAMPleValUE":12345}'
             $result = ConvertFrom-Json $json
 
-            $result.SampleValue | Should Be 12345
+            $result.SampleValue | Should -Be 12345
         }
 
         It "ConvertFrom-Json sample values" {
@@ -357,15 +357,15 @@ Describe "Json Tests" -Tags "Feature" {
 
             $json = '{"SampleValue":"\"\\\b\f\n\r\t\u4321\uD7FF"}'
             $result = ConvertFrom-Json $json
-            $result.SampleValue[0] | Should Be '"'
-            $result.SampleValue[1] | Should Be '\'
-            $result.SampleValue[2] | Should Be 0x8
-            $result.SampleValue[3] | Should Be 0xC
-            $result.SampleValue[4] | Should Be 0xA
-            $result.SampleValue[5] | Should Be 0xD
-            $result.SampleValue[6] | Should Be 0x9
-            $result.SampleValue[7] | Should Be 0x4321
-            $result.SampleValue[8] | Should Be 0xD7FF
+            $result.SampleValue[0] | Should -Be '"'
+            $result.SampleValue[1] | Should -Be '\'
+            $result.SampleValue[2] | Should -Be 0x8
+            $result.SampleValue[3] | Should -Be 0xC
+            $result.SampleValue[4] | Should -Be 0xA
+            $result.SampleValue[5] | Should -Be 0xD
+            $result.SampleValue[6] | Should -Be 0x9
+            $result.SampleValue[7] | Should -Be 0x4321
+            $result.SampleValue[8] | Should -Be 0xD7FF
         }
     }
 }
@@ -1371,7 +1371,7 @@ Describe "Validate Json serialization" -Tags "CI" {
         It "Should print a pretty Array" {
             $array = 'one', 'two', 'three'
             $response = $array | ConvertTo-Json
-            ($response -split "\r?\n")[1] | Should Be '  "one",'
+            ($response -split "\r?\n")[1] | Should -Be '  "one",'
         }
 
         It "Should print a pretty dictionary" {
@@ -1381,11 +1381,11 @@ Describe "Validate Json serialization" -Tags "CI" {
                 'three' = 3
             }
             $response2 = $dictionary | ConvertTo-Json
-            ($response2 -split "\r?\n")[1] | Should Be '  "one": 1,'
+            ($response2 -split "\r?\n")[1] | Should -Be '  "one": 1,'
         }
 
         It "Should minify Json with Compress switch" {
-            (@{ a = 1 } | ConvertTo-Json -Compress).Length | Should Be 7
+            (@{ a = 1 } | ConvertTo-Json -Compress).Length | Should -Be 7
         }
     }
 }
@@ -1480,12 +1480,12 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
         # Read the object as an array of PSObjects and deserialize it.
         $result = Get-Content $filePath | ConvertFrom-Json
-        $result.Count | Should be 2
+        $result.Count | Should -Be 2
     }
 
     It "ConvertFrom-Json deserializes an array of strings (in multiple lines) as a single string." {
 
         $result = "[1,","2,","3]" | ConvertFrom-Json
-        $result.Count | Should be 3
+        $result.Count | Should -Be 3
     }
 }

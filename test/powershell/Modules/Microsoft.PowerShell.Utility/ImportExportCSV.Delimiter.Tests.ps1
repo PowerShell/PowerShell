@@ -54,7 +54,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
         $a = [pscustomobject]@{ a = 1; b = 2; c = 3 }
         $a | export-Csv TESTDRIVE:/file.csv
         $b = import-csv TESTDRIVE:/file.csv
-        @($b.psobject.properties).count | should be 3
+        @($b.psobject.properties).count | Should -Be 3
         $b.a | Should -Be $a.a
         $b.b | Should -Be $a.b
         $b.c | Should -Be $a.c

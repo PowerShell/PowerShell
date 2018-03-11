@@ -6,7 +6,7 @@ Describe "Format-Wide" -Tags "CI" {
         $nonaliased = Get-ChildItem | Format-Wide
         $aliased    = Get-ChildItem | fw
 
-        $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should Be 0
+        $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should -Be 0
     }
 
     It "Should be able to specify the columns in output using the column switch" {
@@ -33,7 +33,7 @@ Describe "Format-Wide" -Tags "CI" {
 		}
 		catch
 		{
-			$_.FullyQualifiedErrorId | Should be "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
+			$_.FullyQualifiedErrorId | Should -Be "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
 		}
     }
 

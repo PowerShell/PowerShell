@@ -36,7 +36,7 @@ Describe "Add-Type" -Tags "CI" {
     }
 
     It "Public 'Language' enumeration contains all members" {
-        [Enum]::GetNames("Microsoft.PowerShell.Commands.Language") -join "," | Should Be "CSharp,VisualBasic"
+        [Enum]::GetNames("Microsoft.PowerShell.Commands.Language") -join "," | Should -Be "CSharp,VisualBasic"
     }
 
     It "Should not throw given a simple class definition" {

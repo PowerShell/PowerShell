@@ -19,7 +19,7 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
     It "Works with NoEnumerate switch" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
         [string]$s = Write-Output $objectWritten -NoEnumerate 6>&1
-        $s | Should be  '1 2.2 System.Object[] abc'
+        $s | Should -Be  '1 2.2 System.Object[] abc'
     }
 }
 
@@ -50,13 +50,13 @@ Describe "Write-Output" -Tags "CI" {
 
     Context "Pipeline Command Tests" {
 	It "Should send object to the next command in the pipeline" {
-	    Write-Output -InputObject (1+1) | Should Be 2
+	    Write-Output -InputObject (1+1) | Should -Be 2
 	}
 
 	It "Should have the same result between inputobject switch and piped input" {
-	    Write-Output -InputObject (1+1) | Should Be 2
+	    Write-Output -InputObject (1+1) | Should -Be 2
 
-	    1+1 | Write-Output | Should Be 2
+	    1+1 | Write-Output | Should -Be 2
 	}
     }
 
@@ -71,7 +71,7 @@ Describe "Write-Output" -Tags "CI" {
 	It "Should be able to treat a collection as a single object using the NoEnumerate switch" {
 	    $singleCollection = $(Write-Output $enumerationObject -NoEnumerate | Measure-Object).Count
 
-	    $singleCollection | Should Be 1
+	    $singleCollection | Should -Be 1
 	}
     }
 }

@@ -166,7 +166,7 @@ After the object
 
     It "Test ConvertTo-HTML transitional"{
         $returnString = $customObject | ConvertTo-HTML -Transitional | Select-Object -First 1
-        $returnString | Should Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
+        $returnString | Should -Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
     }
 }
 

@@ -111,7 +111,7 @@ try
                 $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber
                 throw "expect Import-PSSession to throw"
             } catch {
-                $_.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
+                $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
             }
         }
     }
@@ -152,9 +152,9 @@ try
                 $module = Import-PSSession -Session $session -CommandName foo -AllowClobber
 
                 # The enum is treated as an int
-                (foo -x "Value2") | Should Be 2
+                (foo -x "Value2") | Should -Be 2
                 # The enum is to-string-ed appropriately
-                (foo -x "Value2").ToString() | Should Be "Value2"
+                (foo -x "Value2").ToString() | Should -Be "Value2"
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -237,7 +237,7 @@ try
             It "Test terminating error" {
                 $results = Get-MyVariable pid -Scope blah 2>&1
 
-                $results.Count | Should Be 1              # Verifies that remote session pid is not returned
+                $results.Count | Should -Be 1              # Verifies that remote session pid is not returned
 
                 $errorString = $results[0] | Out-String   # Verifes error message for incorrect Scope parameter argument
                 ($errorString -like "*Argument*") | Should -BeTrue
@@ -303,7 +303,7 @@ try
             It "Verifies WarningVariable" {
                 $global:myWarningVariable = @()
                 Write-RemoteWarning MyWarning -WarningVariable global:myWarningVariable
-                ([string]($myWarningVariable[0])) | Should Be 'MyWarning'
+                ([string]($myWarningVariable[0])) | Should -Be 'MyWarning'
 	        }
         }
     }
@@ -329,7 +329,7 @@ try
         }
 
         It "Verifies Export-PSSession creates a file/directory" {
-            @(Get-Item $file).Count | Should Be 1
+            @(Get-Item $file).Count | Should -Be 1
         }
 
         It "Verifies Export-PSSession creates a psd1 file" {
@@ -358,7 +358,7 @@ try
             $newResults = Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file -Force
 
             # Verifies that Export-PSSession returns 4 files
-            @($newResults).Count | Should Be 4
+            @($newResults).Count | Should -Be 4
 
             # Verifies that Export-PSSession creates *new* files
             $newResults | ForEach-Object { $_.LastWriteTime | Should BeGreaterThan $oldTimestamp }
@@ -426,7 +426,7 @@ try
             }
 
             It "Verifies ApplicationArguments got preserved correctly" -Pending {
-                $(Invoke-Command $internalSession { $PSSenderInfo.ApplicationArguments.MyTest }) | Should Be "MyValue"
+                $(Invoke-Command $internalSession { $PSSenderInfo.ApplicationArguments.MyTest }) | Should -Be "MyValue"
             }
 
             It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
@@ -435,7 +435,7 @@ try
             }
 
             It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
-                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Closed"
+                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Closed"
             }
         }
 
@@ -457,10 +457,10 @@ try
 
             # culture settings should be taken from the explicitly passed session options
             It "Verifies proxy returns modified culture" -Pending {
-                (Get-Variable -Name PSCulture).Value | Should Be "fr-FR"
+                (Get-Variable -Name PSCulture).Value | Should -Be "fr-FR"
             }
             It "Verifies proxy returns modified culture" -Pending {
-                (Get-Variable -Name PSUICulture).Value | Should Be "de-DE"
+                (Get-Variable -Name PSUICulture).Value | Should -Be "de-DE"
             }
 
             # removing the module should remove the implicitly/magically created runspace
@@ -469,7 +469,7 @@ try
                 (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
             It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
-                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Closed"
+                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Closed"
             }
         }
 
@@ -496,12 +496,12 @@ try
             }
 
             It "Verifies Adding a module affects runspace's state" {
-                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Opened"
+                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Opened"
             }
 
             It "Verifies Runspace stays opened after removing module from Export-PSSession that got initialized with an external runspace" {
                 Remove-Module $module -Force
-		        ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Opened"
+		        ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Opened"
 	        }
         }
     }
@@ -679,11 +679,11 @@ try
             }
 
             # Should get 2 deserialized S.M.A.H.Coordinates objects
-            $results.Count | Should Be 2
+            $results.Count | Should -Be 2
             # First object shouldn't have the additional ETS note property
             $results[0].MyTestLabel | Should -BeNullOrEmpty
             # Second object should have the additional ETS note property
-            $results[1].MyTestLabel | Should Be 123
+            $results[1].MyTestLabel | Should -Be 123
         }
 
         Context "Implicit remoting works even when types.ps1xml is missing on the client" {
@@ -725,17 +725,17 @@ try
 
             It "Serialization works for top-level properties" {
                 $x = foo
-                $x.text | Should Be "root"
+                $x.text | Should -Be "root"
             }
 
             It "Serialization settings works for deep properties" {
                 $x = foo
-                $x.Son.Grandson.text | Should Be "Grandson"
+                $x.Son.Grandson.text | Should -Be "Grandson"
             }
 
             It "Serialization settings are preserved even if types.ps1xml is missing on the client" {
                 $y = foo | bar
-                $y | Should Be "Grandson"
+                $y | Should -Be "Grandson"
             }
         }
     }
@@ -781,7 +781,7 @@ try
         }
 
         It "Calls implicit remoting proxies 'MyFunction'" {
-            (MyFunction 1 2 3) | Should Be "x = '1'; args = '2 3'"
+            (MyFunction 1 2 3) | Should -Be "x = '1'; args = '2 3'"
         }
 
         It "proxy should return remote pid" {
@@ -798,7 +798,7 @@ try
 
         It "NoName-c8aeb5c8-2388-4d64-98c1-a9c6c218d404" {
             Invoke-Command -Session $session { $env:TestImplicitRemotingVariable = 123 }
-            (cmd.exe /c "echo TestImplicitRemotingVariable=%TestImplicitRemotingVariable%") | Should Be "TestImplicitRemotingVariable=123"
+            (cmd.exe /c "echo TestImplicitRemotingVariable=%TestImplicitRemotingVariable%") | Should -Be "TestImplicitRemotingVariable=123"
         }
 
         Context "Test what happens after the runspace is closed" {
@@ -832,11 +832,11 @@ try
                 {
                     if ($item.SourceIdentifier -match "Implicit remoting event") { $implicitEventCount++ }
                 }
-                $implicitEventCount | Should Be 0
+                $implicitEventCount | Should -Be 0
             }
 
             It "Private functions from the implicit remoting module shouldn't get imported into global scope" {
-                @(Get-ChildItem function:*Implicit* -ErrorAction SilentlyContinue).Count | Should Be 0
+                @(Get-ChildItem function:*Implicit* -ErrorAction SilentlyContinue).Count | Should -Be 0
             }
         }
     }
@@ -857,7 +857,7 @@ try
             try {
                 $module = Import-PSSession -Session $session -Name Get-Random -AllowClobber
                 $x = 1..20 | Get-Random -Count 5
-                $x.Count | Should Be 5
+                $x.Count | Should -Be 5
             } finally {
                 Remove-Module $module -Force
             }
@@ -885,8 +885,8 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {"s" | foo} | Should Be "Bound parameter: string"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should Be "Bound parameter: ipaddress"
+                Invoke-Command $session {"s" | foo} | Should -Be "Bound parameter: string"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -Be "Bound parameter: ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -897,11 +897,11 @@ try
             }
 
             It "Pipeline binding works even if it relies on type constraints" {
-                ("s" | foo) | Should Be "Bound parameter: string"
+                ("s" | foo) | Should -Be "Bound parameter: string"
             }
 
             It "Pipeline binding works even if it relies on type constraints" {
-                ([ipaddress]::parse("127.0.0.1") | foo) | Should Be "Bound parameter: ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo) | Should -Be "Bound parameter: ipaddress"
             }
         }
 
@@ -926,8 +926,8 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {"s" | foo} | Should Be "Bound parameter: string"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should Be "Bound parameter: ipaddress"
+                Invoke-Command $session {"s" | foo} | Should -Be "Bound parameter: string"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -Be "Bound parameter: ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -938,11 +938,11 @@ try
             }
 
             It "Pipeline binding works even if it relies on type constraints and parameter set is ambiguous" {
-                ("s" | foo) | Should Be "Bound parameter: string"
+                ("s" | foo) | Should -Be "Bound parameter: string"
             }
 
             It "Pipeline binding works even if it relies on type constraints and parameter set is ambiguous" {
-                ([ipaddress]::parse("127.0.0.1") | foo) | Should Be "Bound parameter: ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo) | Should -Be "Bound parameter: ipaddress"
             }
         }
 
@@ -967,10 +967,10 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {Get-Date | foo} | Should Be "Bound parameter: date"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should Be "Bound parameter: ipaddress"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo -date (get-date)} | Should Be "Bound parameter: date ipaddress"
-                Invoke-Command $session {Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))} | Should Be "Bound parameter: date ipaddress"
+                Invoke-Command $session {Get-Date | foo} | Should -Be "Bound parameter: date"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -Be "Bound parameter: ipaddress"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo -date (get-date)} | Should -Be "Bound parameter: date ipaddress"
+                Invoke-Command $session {Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))} | Should -Be "Bound parameter: date ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -981,19 +981,19 @@ try
             }
 
             It "Pipeline binding works even when also binding by name" {
-                (Get-Date | foo) | Should Be "Bound parameter: date"
+                (Get-Date | foo) | Should -Be "Bound parameter: date"
             }
 
             It "Pipeline binding works even when also binding by name" {
-                ([ipaddress]::parse("127.0.0.1") | foo) | Should Be "Bound parameter: ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo) | Should -Be "Bound parameter: ipaddress"
             }
 
             It "Pipeline binding works even when also binding by name" {
-                ([ipaddress]::parse("127.0.0.1") | foo -date $(Get-Date)) | Should Be "Bound parameter: date ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo -date $(Get-Date)) | Should -Be "Bound parameter: date ipaddress"
             }
 
             It "Pipeline binding works even when also binding by name" {
-    	        (Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))) | Should Be "Bound parameter: date ipaddress"
+    	        (Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))) | Should -Be "Bound parameter: date ipaddress"
             }
         }
 
@@ -1018,9 +1018,9 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {gps -pid $pid | foo} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {gps -pid $pid | foo} | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1031,15 +1031,15 @@ try
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+                (gps -id $pid | foo) | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Total 5) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+                (gps -id $pid | foo -Total 5) | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Priority normal) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+                (gps -id $pid | foo -Priority normal) | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
             }
         }
 
@@ -1064,8 +1064,8 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {foo ([ipaddress]::parse("127.0.0.1"))} | Should Be "Bound parameter: ipaddress"
-                Invoke-Command $session {foo "blah"} | Should Be "Bound parameter: string"
+                Invoke-Command $session {foo ([ipaddress]::parse("127.0.0.1"))} | Should -Be "Bound parameter: ipaddress"
+                Invoke-Command $session {foo "blah"} | Should -Be "Bound parameter: string"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1076,11 +1076,11 @@ try
             }
 
             It "Positional binding works" {
-                foo "blah" | Should Be "Bound parameter: string"
+                foo "blah" | Should -Be "Bound parameter: string"
             }
 
             It "Positional binding works" {
-                foo ([ipaddress]::parse("127.0.0.1")) | Should Be "Bound parameter: ipaddress"
+                foo ([ipaddress]::parse("127.0.0.1")) | Should -Be "Bound parameter: ipaddress"
             }
         }
 
@@ -1105,11 +1105,11 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {foo 1,2,3} | Should Be "1 2 3 : "
-                Invoke-Command $session {foo 1,2,3 4} | Should Be "1 2 3 : 4"
-                Invoke-Command $session {foo -p2 4 1,2,3} | Should Be "1 2 3 : 4"
-                Invoke-Command $session {foo 1 4} | Should Be "1 : 4"
-                Invoke-Command $session {foo -p2 4 1} | Should Be "1 : 4"
+                Invoke-Command $session {foo 1,2,3} | Should -Be "1 2 3 : "
+                Invoke-Command $session {foo 1,2,3 4} | Should -Be "1 2 3 : 4"
+                Invoke-Command $session {foo -p2 4 1,2,3} | Should -Be "1 2 3 : 4"
+                Invoke-Command $session {foo 1 4} | Should -Be "1 : 4"
+                Invoke-Command $session {foo -p2 4 1} | Should -Be "1 : 4"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1120,23 +1120,23 @@ try
             }
 
             It "Positional binding works when binding an array value" {
-                foo 1,2,3 | Should Be "1 2 3 : "
+                foo 1,2,3 | Should -Be "1 2 3 : "
             }
 
             It "Positional binding works when binding an array value" {
-                foo 1,2,3 4 | Should Be "1 2 3 : 4"
+                foo 1,2,3 4 | Should -Be "1 2 3 : 4"
             }
 
             It "Positional binding works when binding an array value" {
-                foo -p2 4 1,2,3 | Should Be "1 2 3 : 4"
+                foo -p2 4 1,2,3 | Should -Be "1 2 3 : 4"
             }
 
             It "Positional binding works when binding an array value" {
-                foo 1 4 | Should Be "1 : 4"
+                foo 1 4 | Should -Be "1 : 4"
             }
 
             It "Positional binding works when binding an array value" {
-                foo -p2 4 1 | Should Be "1 : 4"
+                foo -p2 4 1 | Should -Be "1 : 4"
             }
         }
 
@@ -1161,13 +1161,13 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {foo} | Should Be " : "
-                Invoke-Command $session {foo 1} | Should Be "1 : "
-                Invoke-Command $session {foo -first 1} | Should Be "1 : "
-                Invoke-Command $session {foo 1 2 3} | Should Be "1 : 2 3"
-                Invoke-Command $session {foo -first 1 2 3} | Should Be "1 : 2 3"
-                Invoke-Command $session {foo 2 3 -first 1 4 5} | Should Be "1 : 2 3 4 5"
-                Invoke-Command $session {foo -remainingArgs 2,3 1} | Should Be "1 : 2 3"
+                Invoke-Command $session {foo} | Should -Be " : "
+                Invoke-Command $session {foo 1} | Should -Be "1 : "
+                Invoke-Command $session {foo -first 1} | Should -Be "1 : "
+                Invoke-Command $session {foo 1 2 3} | Should -Be "1 : 2 3"
+                Invoke-Command $session {foo -first 1 2 3} | Should -Be "1 : 2 3"
+                Invoke-Command $session {foo 2 3 -first 1 4 5} | Should -Be "1 : 2 3 4 5"
+                Invoke-Command $session {foo -remainingArgs 2,3 1} | Should -Be "1 : 2 3"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1178,31 +1178,31 @@ try
             }
 
             It "Value from remaining arguments works" {
-                $( foo ) | Should Be " : "
+                $( foo ) | Should -Be " : "
             }
 
             It "Value from remaining arguments works" {
-                $( foo 1 ) | Should Be "1 : "
+                $( foo 1 ) | Should -Be "1 : "
             }
 
             It "Value from remaining arguments works" {
-                $( foo -first 1 ) | Should Be "1 : "
+                $( foo -first 1 ) | Should -Be "1 : "
             }
 
             It "Value from remaining arguments works" {
-                $( foo 1 2 3 ) | Should Be "1 : 2 3"
+                $( foo 1 2 3 ) | Should -Be "1 : 2 3"
             }
 
             It "Value from remaining arguments works" {
-                $( foo -first 1 2 3 ) | Should Be "1 : 2 3"
+                $( foo -first 1 2 3 ) | Should -Be "1 : 2 3"
             }
 
             It "Value from remaining arguments works" {
-                $( foo 2 3 -first 1 4 5 ) | Should Be "1 : 2 3 4 5"
+                $( foo 2 3 -first 1 4 5 ) | Should -Be "1 : 2 3 4 5"
             }
 
             It "Value from remaining arguments works" {
-                $( foo -remainingArgs 2,3 1 ) | Should Be "1 : 2 3"
+                $( foo -remainingArgs 2,3 1 ) | Should -Be "1 : 2 3"
             }
         }
 
@@ -1222,17 +1222,17 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session { foo } | Should Be " :  : "
-                Invoke-Command $session { foo 1 } | Should Be "1 :  : "
-                Invoke-Command $session { foo -first 1 } | Should Be "1 :  : "
-                Invoke-Command $session { foo 1 2 } | Should Be "1 : 2 : "
-                Invoke-Command $session { foo 1 -second 2 } | Should Be "1 : 2 : "
-                Invoke-Command $session { foo -first 1 -second 2 } | Should Be "1 : 2 : "
-                Invoke-Command $session { foo 1 2 3 4 } | Should Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo -first 1 2 3 4 } | Should Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo 1 -second 2 3 4 } | Should Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo 1 3 -second 2 4 } | Should Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo -first 1 -second 2 3 4 } | Should Be "1 : 2 : 3 4"
+                Invoke-Command $session { foo } | Should -Be " :  : "
+                Invoke-Command $session { foo 1 } | Should -Be "1 :  : "
+                Invoke-Command $session { foo -first 1 } | Should -Be "1 :  : "
+                Invoke-Command $session { foo 1 2 } | Should -Be "1 : 2 : "
+                Invoke-Command $session { foo 1 -second 2 } | Should -Be "1 : 2 : "
+                Invoke-Command $session { foo -first 1 -second 2 } | Should -Be "1 : 2 : "
+                Invoke-Command $session { foo 1 2 3 4 } | Should -Be "1 : 2 : 3 4"
+                Invoke-Command $session { foo -first 1 2 3 4 } | Should -Be "1 : 2 : 3 4"
+                Invoke-Command $session { foo 1 -second 2 3 4 } | Should -Be "1 : 2 : 3 4"
+                Invoke-Command $session { foo 1 3 -second 2 4 } | Should -Be "1 : 2 : 3 4"
+                Invoke-Command $session { foo -first 1 -second 2 3 4 } | Should -Be "1 : 2 : 3 4"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1243,47 +1243,47 @@ try
             }
 
             It "Non cmdlet-based binding works." {
-                foo | Should Be " :  : "
+                foo | Should -Be " :  : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 | Should Be "1 :  : "
+                foo 1 | Should -Be "1 :  : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 | Should Be "1 :  : "
+                foo -first 1 | Should -Be "1 :  : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 2 | Should Be "1 : 2 : "
+                foo 1 2 | Should -Be "1 : 2 : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 -second 2 | Should Be "1 : 2 : "
+                foo 1 -second 2 | Should -Be "1 : 2 : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 -second 2 | Should Be "1 : 2 : "
+                foo -first 1 -second 2 | Should -Be "1 : 2 : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 2 3 4 | Should Be "1 : 2 : 3 4"
+                foo 1 2 3 4 | Should -Be "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 2 3 4 | Should Be "1 : 2 : 3 4"
+                foo -first 1 2 3 4 | Should -Be "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 -second 2 3 4 | Should Be "1 : 2 : 3 4"
+                foo 1 -second 2 3 4 | Should -Be "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 3 -second 2 4 | Should Be "1 : 2 : 3 4"
+                foo 1 3 -second 2 4 | Should -Be "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 -second 2 3 4 | Should Be "1 : 2 : 3 4"
+                foo -first 1 -second 2 3 4 | Should -Be "1 : 2 : 3 4"
             }
         }
 
@@ -1314,7 +1314,7 @@ try
             }
 
             It "Initializer not run when value provided" {
-                (MyInitializerFunction 123) | Should Be 123
+                (MyInitializerFunction 123) | Should -Be 123
             }
         }
 
@@ -1341,10 +1341,10 @@ try
                     $job | Should -Not -Be NullOrEmpty
                     ($job -is [System.Management.Automation.Job]) | Should -BeTrue
                     ($job.Finished.WaitOne([TimeSpan]::FromSeconds(10), $false)) | Should -BeTrue
-                    $job.JobStateInfo.State | Should Be 'Completed'
+                    $job.JobStateInfo.State | Should -Be 'Completed'
 
                     $childJob = $job.ChildJobs[0]
-                    $childJob.Output.Count | Should Be 1
+                    $childJob.Output.Count | Should -Be 1
                     $childJob.Output[0].Value | Should -Be $remotePid
                 } finally {
                     Remove-Job $job -Force
@@ -1374,7 +1374,7 @@ try
                     $jobWithWarnings = write-remotewarning foo -WarningAction continue -Asjob
                     $null = Wait-Job $jobWithWarnings
 
-                    $jobWithWarnings.ChildJobs[0].Warning.Count | Should Be 1
+                    $jobWithWarnings.ChildJobs[0].Warning.Count | Should -Be 1
                 } finally {
                     Remove-Job $jobWithWarnings -Force
                 }
@@ -1385,7 +1385,7 @@ try
                     $jobWithoutWarnings = write-remotewarning foo -WarningAction silentlycontinue -Asjob
                     $null = Wait-Job $jobWithoutWarnings
 
-                    $jobWithoutWarnings.ChildJobs[0].Warning.Count | Should Be 0
+                    $jobWithoutWarnings.ChildJobs[0].Warning.Count | Should -Be 0
                 } finally {
                     Remove-Job $jobWithoutWarnings -Force
                 }
@@ -1399,7 +1399,7 @@ try
                 Invoke-Command $session { function foo { param($OutVariable) "OutVariable = $OutVariable" } }
 
                 # Sanity check
-                Invoke-Command $session { foo -OutVariable x } | Should Be "OutVariable = x"
+                Invoke-Command $session { foo -OutVariable x } | Should -Be "OutVariable = x"
 
                 $module = Import-PSSession -Session $session -Name foo -Type function -AllowClobber
             }
@@ -1410,7 +1410,7 @@ try
             }
 
             It "Implicit remoting: OutVariable is not intercepted for non-cmdlet-bound functions" {
-                foo -OutVariable x | Should Be "OutVariable = x"
+                foo -OutVariable x | Should -Be "OutVariable = x"
             }
         }
 
@@ -1433,7 +1433,7 @@ try
 
             It "Positional parameters work fine" {
                 $proxiedPid = Get-RemoteVariable pid
-                $remotePid | Should Be ($proxiedPid.Value)
+                $remotePid | Should -Be ($proxiedPid.Value)
             }
         }
     }
@@ -1514,10 +1514,10 @@ try
 
         Context "restrictions works" {
             It "Get-Variable is private" {
-                @(Invoke-Command $session { Get-Command -Name Get-Variabl* }).Count | Should Be 0
+                @(Invoke-Command $session { Get-Command -Name Get-Variabl* }).Count | Should -Be 0
             }
             It "Only 9 commands are public" {
-                @(Invoke-Command $session { Get-Command }).Count | Should Be 9
+                @(Invoke-Command $session { Get-Command }).Count | Should -Be 9
             }
         }
 
@@ -1532,11 +1532,11 @@ try
             }
 
             It "Import-PSSession works against the ISS-restricted runspace (Out-String)" {
-                @(Get-Command Out-String -Type Function).Count | Should Be 1
+                @(Get-Command Out-String -Type Function).Count | Should -Be 1
             }
 
             It "Import-PSSession works against the ISS-restricted runspace (Measure-Object)" {
-                @(Get-Command Measure-Object -Type Function).Count | Should Be 1
+                @(Get-Command Measure-Object -Type Function).Count | Should -Be 1
             }
 
             It "Invoking an implicit remoting proxy works against the ISS-restricted runspace (Out-String)" {
@@ -1549,7 +1549,7 @@ try
             It "Invoking an implicit remoting proxy works against the ISS-restricted runspace (Measure-Object)" {
                 $remoteResult = 1..10 | Measure-Object
                 $localResult = 1..10 | Microsoft.PowerShell.Utility\Measure-Object
-                ($localResult.Count) | Should Be ($remoteResult.Count)
+                ($localResult.Count) | Should -Be ($remoteResult.Count)
             }
         }
     }
@@ -1591,14 +1591,14 @@ try
 
             It "Get-Command returns only 1 public command from implicit remoting module (1)" {
                 $c = @(Get-Command -Module $module)
-                $c.Count | Should Be 1
-                $c[0].Name | Should Be "Get-MyVariable"
+                $c.Count | Should -Be 1
+                $c[0].Name | Should -Be "Get-MyVariable"
             }
 
             It "Get-Command returns only 1 public command from implicit remoting module (2)" {
                 $c = @(Get-Command -Module $module.Name)
-                $c.Count | Should Be 1
-                $c[0].Name | Should Be "Get-MyVariable"
+                $c.Count | Should -Be 1
+                $c[0].Name | Should -Be "Get-MyVariable"
             }
         }
 
@@ -1617,7 +1617,7 @@ try
             }
 
             It "'Completed' progress record should be present" {
-                ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should Be "Completed"
+                ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should -Be "Completed"
             }
         }
 
@@ -1642,7 +1642,7 @@ try
             try {
                 $module = Import-PSSession -Session $session -Name Write-Output -AllowClobber
                 $result = Write-Output 123 | Write-Output
-                $result | Should Be 123
+                $result | Should -Be 123
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -1758,7 +1758,7 @@ try
                     $ps = [powershell]::Create().AddCommand("Import-PSSession", $true).AddParameter("Session", $session).AddParameter("CommandName", "BadVerb-Variable")
                     $module = $ps.Invoke() | Select-Object -First 1
 
-                    $ps.Streams.Error.Count | Should Be 0
+                    $ps.Streams.Error.Count | Should -Be 0
                     $ps.Streams.Warning.Count | Should -Not -Be 0
                 } finally {
                     if ($null -ne $module) {
@@ -1798,8 +1798,8 @@ try
                     $ps = [powershell]::Create().AddCommand("Import-PSSession", $true).AddParameter("Session", $session).AddParameter("CommandName", "BadVerb-Variable").AddParameter("DisableNameChecking", $true)
                     $module = $ps.Invoke() | Select-Object -First 1
 
-                    $ps.Streams.Error.Count | Should Be 0
-                    $ps.Streams.Warning.Count | Should Be 0
+                    $ps.Streams.Error.Count | Should -Be 0
+                    $ps.Streams.Warning.Count | Should -Be 0
                 } finally {
                     if ($null -ne $module) {
                         $ps.Commands.Clear()
@@ -1849,8 +1849,8 @@ try
                     $ps = [powershell]::Create().AddCommand("Import-PSSession", $true).AddParameter("Session", $session).AddParameter("CommandName", "BadVerb-Variable")
                     $module = $ps.Invoke() | Select-Object -First 1
 
-                    $ps.Streams.Error.Count | Should Be 0
-                    $ps.Streams.Warning.Count | Should Be 0
+                    $ps.Streams.Error.Count | Should -Be 0
+                    $ps.Streams.Warning.Count | Should -Be 0
                 } finally {
                     if ($null -ne $module) {
                         $ps.Commands.Clear()
@@ -1893,7 +1893,7 @@ try
             $oldNumberOfHandlers | Should -Be $newNumberOfHandlers
 
             ## Private functions from the implicit remoting module shouldn't get imported into global scope
-            @(dir function:*Implicit* -ErrorAction SilentlyContinue).Count | Should Be 0
+            @(dir function:*Implicit* -ErrorAction SilentlyContinue).Count | Should -Be 0
         }
     }
 
@@ -1966,7 +1966,7 @@ try
             $dSessionPid = Get-RemoteVariable pid
             $dSessionPid.Value | Should -Be $remotePid
 
-            $session.State | Should Be 'Opened'
+            $session.State | Should -Be 'Opened'
         }
 
         ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
@@ -2002,9 +2002,9 @@ try
         It "Select -First should work with implicit remoting" {
             $bar = foo | Select-Object -First 2
             $bar | Should -Not -Be NullOrEmpty
-            $bar.Count | Should Be 2
-            $bar[0] | Should Be "a"
-            $bar[1] | Should Be "b"
+            $bar.Count | Should -Be 2
+            $bar[0] | Should -Be "a"
+            $bar[1] | Should -Be "b"
         }
     }
 

@@ -8,7 +8,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 
@@ -33,7 +33,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable bcdaVar "another test"
 		Set-Variable aVarfoo wow
 		$var1=get-variable -Name *aVar* -Scope local
-		$var1.Count | Should be 3
+		$var1.Count | Should -Be 3
 		$var1[0].Name|Should Be "abcaVar"
 		$var1[0].Value|Should Be "testing"
 		$var1[1].Name|Should Be "aVarfoo"
@@ -49,7 +49,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 }
@@ -70,7 +70,7 @@ Describe "Get-Variable" -Tags "CI" {
 
     It "Should return the value of an object" {
 		New-Variable -Name tempVar -Value 1
-		(Get-Variable tempVar).Value | Should Be (1)
+		(Get-Variable tempVar).Value | Should -Be (1)
     }
 
     It "Should be able to call using the Name switch" {
@@ -78,7 +78,7 @@ Describe "Get-Variable" -Tags "CI" {
 
 		{ Get-Variable -Name var1 } | Should -Not -Throw
 
-		(Get-Variable -Name var1).Value | Should Be 4
+		(Get-Variable -Name var1).Value | Should -Be 4
 
 		Remove-Variable var1
     }
@@ -87,8 +87,8 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable -Name var1 -Value 4
 		New-Variable -Name var2 -Value "test"
 
-		(Get-Variable -Name var*).Value[0] | Should be 4
-		(Get-Variable -Name var*).Value[1] | Should be "test"
+		(Get-Variable -Name var*).Value[0] | Should -Be 4
+		(Get-Variable -Name var*).Value[1] | Should -Be "test"
 
 		Remove-Variable var1
 		Remove-Variable var2
@@ -97,7 +97,7 @@ Describe "Get-Variable" -Tags "CI" {
     It "Should return only the value if the value switch is used" {
 		New-Variable -Name var1 -Value 4
 
-		Get-Variable -Name var1 -ValueOnly | Should be 4
+		Get-Variable -Name var1 -ValueOnly | Should -Be 4
 
 		Remove-Variable var1
     }
@@ -105,7 +105,7 @@ Describe "Get-Variable" -Tags "CI" {
     It "Should pipe string to the name field without the Name field being specified"{
 		New-Variable -Name var1 -Value 3
 
-		("var1" | Get-Variable ).Value | Should Be 3
+		("var1" | Get-Variable ).Value | Should -Be 3
 
 		Remove-Variable var1
     }
@@ -116,11 +116,11 @@ Describe "Get-Variable" -Tags "CI" {
 
 		$actual = Get-Variable -Include var1, var2
 
-		$actual[0].Name | Should Be var1
-		$actual[1].Name | Should Be var2
+		$actual[0].Name | Should -Be var1
+		$actual[1].Name | Should -Be var2
 
-		$actual[0].Value | Should Be 4
-		$actual[1].Value | Should Be 2
+		$actual[0].Value | Should -Be 4
+		$actual[1].Value | Should -Be 2
 
 		Remove-Variable var1
 		Remove-Variable var2
@@ -141,21 +141,21 @@ Describe "Get-Variable" -Tags "CI" {
 	It "Should be able to get a global scope variable using the global switch" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
-	    (Get-Variable -Name globalVar -Scope global).Value | Should Be 1
+	    (Get-Variable -Name globalVar -Scope global).Value | Should -Be 1
 	}
 
 	It "Should not be able to clear a global scope variable using the local switch" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
 	    Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue -ErrorVariable removeGlobalAsLocal
-	    $removeGlobalAsLocal.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+	    $removeGlobalAsLocal.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Should be able to get a global variable when there's one in the script scope" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 	    { New-Variable globalVar -Value 2 -Scope script -Force}
 
-	    (Get-Variable -Name globalVar).Value | Should Be 1
+	    (Get-Variable -Name globalVar).Value | Should -Be 1
 	}
 
 	It "Should be able to get an item locally using the local switch" {
@@ -171,7 +171,7 @@ Describe "Get-Variable" -Tags "CI" {
 
 	    New-Variable localVar -Value 2 -Scope global -Force
 
-	    (Get-Variable -Name localVar -Scope global).Value | Should Be 2
+	    (Get-Variable -Name localVar -Scope global).Value | Should -Be 2
 	}
 
 	It "Should be able to get a script variable created using the script switch" {

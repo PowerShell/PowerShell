@@ -10,8 +10,8 @@ Describe "Get-FileHash" -Tags "CI" {
     Context "Default result tests" {
         It "Should default to correct algorithm, hash and path" {
             $result = Get-FileHash $testDocument
-            $result.Algorithm | Should Be "SHA256"
-            $result.Hash | Should Be "8129a08e5d748ffb9361375677785f96545a1a37619a27608efd76a870787a7a"
+            $result.Algorithm | Should -Be "SHA256"
+            $result.Hash | Should -Be "8129a08e5d748ffb9361375677785f96545a1a37619a27608efd76a870787a7a"
             $result.Path | Should -Be $testDocument
         }
     }
@@ -38,7 +38,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 throw "No Exception!"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+                $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
             }
         }
     }
@@ -50,7 +50,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 throw "No Exception!"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
+                $_.FullyQualifiedErrorId | Should -Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
             }
         }
 
@@ -60,7 +60,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 throw "No Exception!"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
+                $_.FullyQualifiedErrorId | Should -Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
             }
         }
 

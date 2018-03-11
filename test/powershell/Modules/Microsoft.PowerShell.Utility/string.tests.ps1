@@ -41,25 +41,25 @@ Describe "String cmdlets" -Tags "CI" {
         }
 
         It "LiteralPath with relative path" {
-            (select-string -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should Be 2
+            (select-string -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should -Be 2
         }
 
         It "LiteralPath with absolute path" {
-            (select-string -LiteralPath $fileName "b").count | Should Be 2
+            (select-string -LiteralPath $fileName "b").count | Should -Be 2
         }
 
         It "LiteralPath with dots in path" {
-            (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2
+            (select-string -LiteralPath $fileNameWithDots "b").count | Should -Be 2
         }
 
         It "Network path" -skip:(!$IsWindows) {
-            (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should Be 2
+            (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should -Be 2
         }
 
         It "throws error for non filesystem providers" {
             $aaa = "aaaaaaaaaa"
             select-string -literalPath variable:\aaa "a" -ErrorAction SilentlyContinue -ErrorVariable selectStringError
-            $selectStringError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand'
+            $selectStringError.FullyQualifiedErrorId | Should -Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand'
         }
 
         It "throws parameter binding exception for invalid context" {

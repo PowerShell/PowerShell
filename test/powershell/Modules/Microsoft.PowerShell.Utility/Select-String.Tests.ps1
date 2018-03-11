@@ -35,11 +35,11 @@ Describe "Select-String" -Tags "CI" {
 	    $secondMatch = $testinputtwo | Select-String -Pattern "hello" -ca
 
 	    $equal = @(Compare-Object $firstMatch $secondMatch).Length -eq 0
-	    $equal | Should Be True
+	    $equal | Should -Be True
 	}
 
 	it "Should only return the case sensitive match when the casesensitive switch is used" {
-	    $testinputtwo | Select-String -Pattern "hello" -CaseSensitive | Should Be "hello"
+	    $testinputtwo | Select-String -Pattern "hello" -CaseSensitive | Should -Be "hello"
 	}
 
 	it "Should accept a collection of strings from the input object" {
@@ -68,7 +68,7 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return an array of non matching strings when the switch of NotMatch is used and the string do not match" {
-	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should Be "hello", "hello"
+	    $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -Be "hello", "hello"
 	}
 
 	it "Should return the same as NotMatch" {
@@ -76,7 +76,7 @@ Describe "Select-String" -Tags "CI" {
 	    $secondMatch = $testinputone | Select-String -pattern "goodbye" -n
 
 	    $equal = @(Compare-Object $firstMatch $secondMatch).Length -eq 0
-	    $equal | Should Be True
+	    $equal | Should -Be True
 	}
     }
 
@@ -143,7 +143,7 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	It "Should return the number of matches for 'is' in textfile1 " {
-	    (Select-String is $testInputFile -CaseSensitive).count| Should Be 4
+	    (Select-String is $testInputFile -CaseSensitive).count| Should -Be 4
 	}
 
 	It "Should return the third line in testfile1 when a relative path is used" {

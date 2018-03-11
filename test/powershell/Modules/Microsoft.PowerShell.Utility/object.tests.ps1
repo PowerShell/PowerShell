@@ -10,7 +10,7 @@ Describe "Object cmdlets" -Tags "CI" {
         It "AsString returns a string" {
            $processes = Get-Process | Group-Object -Property ProcessName -AsHashTable -AsString
            $result = $processes.Keys | ForEach-Object {$_.GetType()}
-           $result[0].Name | Should Be "String"
+           $result[0].Name | Should -Be "String"
         }
     }
 
@@ -18,7 +18,7 @@ Describe "Object cmdlets" -Tags "CI" {
         It "with literal path" {
             $path = "TestDrive:\[TeeObjectLiteralPathShouldWorkForSpecialFilename].txt"
             Write-Output "Test" | Tee-Object -LiteralPath $path | Tee-Object -Variable TeeObjectLiteralPathShouldWorkForSpecialFilename
-            $TeeObjectLiteralPathShouldWorkForSpecialFilename | Should Be (Get-Content -LiteralPath $path)
+            $TeeObjectLiteralPathShouldWorkForSpecialFilename | Should -Be (Get-Content -LiteralPath $path)
         }
     }
 }
@@ -91,12 +91,12 @@ Describe "Object cmdlets" -Tags "CI" {
 
         It 'should return correct error for non-numeric input' {
             $gmi = "abc",[Datetime]::Now | measure  -sum -max -ev err -ea silentlycontinue
-            $err | ForEach-Object { $_.FullyQualifiedErrorId | Should Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
+            $err | ForEach-Object { $_.FullyQualifiedErrorId | Should -Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
         }
 
         It 'should have the correct count' {
             $gmi = "abc",[Datetime]::Now | measure  -sum -max -ev err -ea silentlycontinue
-            $gmi.Count | Should Be 2
+            $gmi.Count | Should -Be 2
         }
     }
 }

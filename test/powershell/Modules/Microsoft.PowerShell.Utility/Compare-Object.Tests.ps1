@@ -35,21 +35,21 @@ Describe "Compare-Object" -Tags "CI" {
     It "Should indicate data that exists only in the reference dataset" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4)
 
-	$actualOutput[1].SideIndicator | Should Be "<="
+	$actualOutput[1].SideIndicator | Should -Be "<="
     }
 
     It "Should indicate data that exists only in the difference dataset" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4)
 
-	$actualOutput[1].SideIndicator | Should Be "<="
+	$actualOutput[1].SideIndicator | Should -Be "<="
     }
 
     It "Should indicate data that exists in both datasets when the includeEqual switch is used" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -IncludeEqual
 
-	$actualOutput.Length           | Should Be 4
-	$actualOutput[0].SideIndicator | Should Be "=="
-	$actualOutput[1].SideIndicator | Should Be "=="
+	$actualOutput.Length           | Should -Be 4
+	$actualOutput[0].SideIndicator | Should -Be "=="
+	$actualOutput[1].SideIndicator | Should -Be "=="
     }
 
     It "Should be able to use the casesensitive switch" {
@@ -60,7 +60,7 @@ Describe "Compare-Object" -Tags "CI" {
 	$caOutput  = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -CaseSensitive
 	$ncaOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4)
 
-	$caOutput.Length | Should Be 4
+	$caOutput.Length | Should -Be 4
 
 	$ncaOutput[1].SideIndicator | Should -Not -Be $caOutput[1].SideIndicator
 	$ncaOutput[2].SideIndicator | Should -Not -Be $caOutput[2].SideIndicator
@@ -79,13 +79,13 @@ Describe "Compare-Object" -Tags "CI" {
     It "Should give a 0 array when using excludedifferent switch without also using the includeequal switch" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent
 
-	$actualOutput.Length | Should Be 0
+	$actualOutput.Length | Should -Be 0
     }
 
     It "Should only display equal lines when excludeDifferent switch is used alongside the includeequal switch" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -IncludeEqual -ExcludeDifferent
 
-	$actualOutput.Length | Should Be 2
+	$actualOutput.Length | Should -Be 2
     }
 
     It "Should be able to pass objects to pipeline using the passthru switch" {
@@ -110,15 +110,15 @@ Describe "Compare-Object" -Tags "CI" {
 
 	$actualOutput = Compare-Object -ReferenceObject $var1 -DifferenceObject $var2 -syncWindow 6
 
-	$actualOutput[0].InputObject | Should Be 15
-	$actualOutput[1].InputObject | Should Be 1
-	$actualOutput[2].InputObject | Should Be 1
-	$actualOutput[3].InputObject | Should Be 15
+	$actualOutput[0].InputObject | Should -Be 15
+	$actualOutput[1].InputObject | Should -Be 1
+	$actualOutput[2].InputObject | Should -Be 1
+	$actualOutput[3].InputObject | Should -Be 15
 
-	$actualOutput[0].SideIndicator | Should be "=>"
-	$actualOutput[1].SideIndicator | Should be "<="
-	$actualOutput[2].SideIndicator | Should be "=>"
-	$actualOutput[3].SideIndicator | Should be "<="
+	$actualOutput[0].SideIndicator | Should -Be "=>"
+	$actualOutput[1].SideIndicator | Should -Be "<="
+	$actualOutput[2].SideIndicator | Should -Be "=>"
+	$actualOutput[3].SideIndicator | Should -Be "<="
     }
 }
 
@@ -230,7 +230,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 
 					if(!$excludeDifferent)
 					{
-						$result.Count | Should Be 2
+						$result.Count | Should -Be 2
 						if($passthru)
 						{
 							$result[0] | Should -Be $empsDifference
@@ -240,13 +240,13 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						{
 							$result[0].InputObject | Should -Be $empsDifference
 							$result[1].InputObject | Should -Be $empsReference
-							$result[0].SideIndicator | Should Be "=>"
-							$result[1].SideIndicator | Should Be "<="
+							$result[0].SideIndicator | Should -Be "=>"
+							$result[1].SideIndicator | Should -Be "<="
 						}
 					}
 					else
 					{
-						$result.Count | Should Be 0
+						$result.Count | Should -Be 0
 					}
 				}
 			}
@@ -268,7 +268,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 					{
 						if(!$excludeDifferent)
 						{
-							$result.Count | Should Be 2
+							$result.Count | Should -Be 2
 							if($passthru)
 							{
 								$result[0] | Should -Be $empsReference[0]
@@ -278,8 +278,8 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							{
 								$result[0].InputObject | Should -Be $empsReference[0]
 								$result[1].InputObject | Should -Be $empsReference[1]
-								$result[0].SideIndicator | Should Be "=="
-								$result[1].SideIndicator | Should Be "<="
+								$result[0].SideIndicator | Should -Be "=="
+								$result[1].SideIndicator | Should -Be "<="
 							}
 						}
 						else
@@ -291,7 +291,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							else
 							{
 								$result.InputObject | Should -Be $empsReference[0]
-								$result.SideIndicator | Should Be "=="
+								$result.SideIndicator | Should -Be "=="
 							}
 						}
 					}
@@ -306,12 +306,12 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							else
 							{
 								$result.InputObject | Should -Be $empsReference[1]
-								$result.SideIndicator | Should Be "<="
+								$result.SideIndicator | Should -Be "<="
 							}
 						}
 						else
 						{
-							$result.Count | Should Be 0
+							$result.Count | Should -Be 0
 						}
 					}
 				}
@@ -334,7 +334,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 					{
 						if(!$excludeDifferent)
 						{
-							$result.Count | Should Be 2
+							$result.Count | Should -Be 2
 							if($passthru)
 							{
 								$result[0] | Should -Be $empsReference
@@ -344,8 +344,8 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							{
 								$result[0].InputObject | Should -Be $empsReference
 								$result[1].InputObject | Should -Be $empsDifference[1]
-								$result[0].SideIndicator | Should Be "=="
-								$result[1].SideIndicator | Should Be "=>"
+								$result[0].SideIndicator | Should -Be "=="
+								$result[1].SideIndicator | Should -Be "=>"
 							}
 						}
 						else
@@ -357,7 +357,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							else
 							{
 								$result.InputObject | Should -Be $empsReference
-								$result.SideIndicator | Should Be "=="
+								$result.SideIndicator | Should -Be "=="
 							}
 						}
 					}
@@ -372,12 +372,12 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							else
 							{
 								$result.InputObject | Should -Be $empsDifference[1]
-								$result.SideIndicator | Should Be "=>"
+								$result.SideIndicator | Should -Be "=>"
 							}
 						}
 						else
 						{
-							$result.Count | Should Be 0
+							$result.Count | Should -Be 0
 						}
 					}
 				}
@@ -399,7 +399,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 
 					if($recordEqual)
 					{
-						$result.Count | Should Be 4
+						$result.Count | Should -Be 4
 						if($passthru)
 						{
 							$result[0] | Should -Be $empsReference[0]
@@ -410,18 +410,18 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						else
 						{
 							$result[0].InputObject | Should -Be $empsReference[0]
-							$result[0].SideIndicator | Should Be "=="
+							$result[0].SideIndicator | Should -Be "=="
 							$result[1].InputObject | Should -Be $empsReference[2]
-							$result[1].SideIndicator | Should Be "=="
+							$result[1].SideIndicator | Should -Be "=="
 							$result[2].InputObject | Should -Be $empsReference[1]
-							$result[2].SideIndicator | Should Be "=="
+							$result[2].SideIndicator | Should -Be "=="
 							$result[3].InputObject | Should -Be $empsReference[3]
-							$result[3].SideIndicator | Should Be "=="
+							$result[3].SideIndicator | Should -Be "=="
 						}
 					}
 					else
 					{
-						$result.Count | Should Be 0
+						$result.Count | Should -Be 0
 					}
 				}
 			}
@@ -432,12 +432,12 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 		$a = [version]"1.2.3.4"
 		$b = [version]"5.6.7.8"
 		$result = Compare-Object $a $b -IncludeEqual -Property {$_.Major},{$_.Minor}
-		$result[0] | Select-Object -ExpandProperty "*Major" | Should Be 5
-		$result[0] | Select-Object -ExpandProperty "*Minor" | Should Be 6
-		$result[0].SideIndicator | Should Be "=>"
-		$result[1] | Select-Object -ExpandProperty "*Major" | Should Be 1
-		$result[1] | Select-Object -ExpandProperty "*Minor" | Should Be 2
-		$result[1].SideIndicator | Should Be "<="
+		$result[0] | Select-Object -ExpandProperty "*Major" | Should -Be 5
+		$result[0] | Select-Object -ExpandProperty "*Minor" | Should -Be 6
+		$result[0].SideIndicator | Should -Be "=>"
+		$result[1] | Select-Object -ExpandProperty "*Major" | Should -Be 1
+		$result[1] | Select-Object -ExpandProperty "*Minor" | Should -Be 2
+		$result[1].SideIndicator | Should -Be "<="
 	}
 
 	It "Compare-Object with no ReferenceObject nor DifferenceObject: output nothing, no error and should work"{
@@ -447,13 +447,13 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 
 	It "Compare-Object with no DifferenceObject should work"{
 		$result = Compare-Object @() @("diffObject")
-		$result.InputObject | Should Be "diffObject"
-		$result.SideIndicator | Should Be "=>"
+		$result.InputObject | Should -Be "diffObject"
+		$result.SideIndicator | Should -Be "=>"
 	}
 
 	It "Compare-Object with no ReferenceObject should work"{
 		$result = Compare-Object @("refObject") @()
-		$result.InputObject | Should Be "refObject"
-		$result.SideIndicator | Should Be "<="
+		$result.InputObject | Should -Be "refObject"
+		$result.SideIndicator | Should -Be "<="
 	}
 }

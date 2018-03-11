@@ -45,21 +45,21 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
 
         $results = & "$scriptFilePath"
         $results.Count | Should BeGreaterThan 3
-        $results[0].Command | Should be "bar"
+        $results[0].Command | Should -Be "bar"
         $results[0].ScriptName | Should -Be $scriptFilePath
-        $results[0].ScriptLineNumber | Should be 27
-        $results[0].InvocationInfo.ScriptLineNumber | Should be 9
+        $results[0].ScriptLineNumber | Should -Be 27
+        $results[0].InvocationInfo.ScriptLineNumber | Should -Be 9
 
-        $results[1].Command | Should be "foo"
+        $results[1].Command | Should -Be "foo"
         $results[1].ScriptName | Should -Be $scriptFilePath
-        $results[1].ScriptLineNumber | Should be 9
-        $results[1].InvocationInfo.ScriptLineNumber | Should be 32
+        $results[1].ScriptLineNumber | Should -Be 9
+        $results[1].InvocationInfo.ScriptLineNumber | Should -Be 32
 
         #InvocationInfo.ScriptLineNumber: Gets the line number of the script that contains the command
         $results[2].Command | Should -Be $scriptFileName
         $results[2].ScriptName | Should -Be $scriptFilePath
-        $results[2].ScriptLineNumber | Should be 32
-        $results[2].InvocationInfo.ScriptLineNumber | Should be 46
+        $results[2].ScriptLineNumber | Should -Be 32
+        $results[2].InvocationInfo.ScriptLineNumber | Should -Be 46
     }
 
     It "Verify that the script block of a trap statement shows up on the call stack" {
@@ -78,12 +78,12 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
         $results.Count | Should BeGreaterThan 2
         $results[0].Command | Should -Be $scriptFileName
         $results[0].ScriptName | Should -Be $scriptFilePath
-        $results[0].ScriptLineNumber | Should be 3
-        $results[0].InvocationInfo.ScriptLineNumber | Should be 77
+        $results[0].ScriptLineNumber | Should -Be 3
+        $results[0].InvocationInfo.ScriptLineNumber | Should -Be 77
 
         $results[1].Command | Should -Be $scriptFileName
         $results[1].ScriptName | Should -Be $scriptFilePath
-        $results[1].ScriptLineNumber | Should be 7
-        $results[1].InvocationInfo.ScriptLineNumber | Should be 77
+        $results[1].ScriptLineNumber | Should -Be 7
+        $results[1].InvocationInfo.ScriptLineNumber | Should -Be 77
     }
 }

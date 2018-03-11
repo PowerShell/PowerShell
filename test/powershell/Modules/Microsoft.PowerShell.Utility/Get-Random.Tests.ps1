@@ -80,7 +80,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
+            $_.FullyQualifiedErrorId | Should -Be "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
         }
     }
 
@@ -120,37 +120,37 @@ Describe "Get-Random" -Tags "CI" {
 
     It "Should return a number from 1,2,3,5,8,13 " {
 	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13
-	$randomNumber | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
     }
 
     It "Should return an array " {
 	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
-    $randomNumber.Count | Should Be 3
+    $randomNumber.Count | Should -Be 3
 	,$randomNumber | Should BeOfType "System.Array"
     }
 
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {
 	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
-	$randomNumber[0] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[1] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[2] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[0] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[1] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[2] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
 	$randomNumber[3] | Should -BeNullOrEmpty
     }
 
     It "Should return all the numbers for array of 1,2,3,5,8,13 in no particular order" {
 	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count ([int]::MaxValue)
-	$randomNumber[0] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[1] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[2] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[3] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[4] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
-	$randomNumber[5] | Should Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[0] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[1] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[2] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[3] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[4] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
+	$randomNumber[5] | Should -Be (1 -or 2 -or 3 -or 5 -or 8 -or 13)
 	$randomNumber[6] | Should -BeNullOrEmpty
     }
 
     It "Should return for a string collection " {
 	$randomNumber = Get-Random -InputObject "red", "yellow", "blue"
-	$randomNumber | Should Be ("red" -or "yellow" -or "blue")
+	$randomNumber | Should -Be ("red" -or "yellow" -or "blue")
     }
 
     It "Should return a number for hexadecimal " {
@@ -168,7 +168,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return the same number for hexadecimal number and regular number when the switch SetSeed it used " {
 	$firstRandomNumber = Get-Random 0x07FFFFFFFF -SetSeed 20
 	$secondRandomNumber = Get-Random 34359738367 -SetSeed 20
-	$firstRandomNumber | Should Be @secondRandomNumber
+	$firstRandomNumber | Should -Be @secondRandomNumber
     }
     It "Should throw an error because the hexadecimal number is to large " {
 	{ Get-Random 0x07FFFFFFFFFFFFFFFF } | Should -Throw "Value was either too large or too small for a UInt32"

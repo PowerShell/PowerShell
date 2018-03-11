@@ -51,7 +51,7 @@ Describe "XML cmdlets" -Tags "Feature" {
             $params = $_.parameters
 
             It $_.testName {
-                @(Select-XML @params).Count | Should Be 1
+                @(Select-XML @params).Count | Should -Be 1
                 (Select-XML @params).Path | Should -Be $fileName.FullName
             }
         }
@@ -81,7 +81,7 @@ Describe "XML cmdlets" -Tags "Feature" {
             Set-Content -Path $testfile -Value "<a><b>"
             $err = $null
             Select-Xml -Path $testfile -XPath foo -ErrorVariable err -ErrorAction SilentlyContinue
-            $err.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
+            $err.FullyQualifiedErrorId | Should -Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "-xml works with inputstream" {
@@ -96,13 +96,13 @@ Describe "XML cmdlets" -Tags "Feature" {
             $err = $null
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
             Select-Xml -Xml $xml -XPath foo -Namespace @{c=$null} -ErrorVariable err -ErrorAction SilentlyContinue
-            $err.FullyQualifiedErrorId | Should Be 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
+            $err.FullyQualifiedErrorId | Should -Be 'PrefixError,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "Returns error for invalid content" {
             $err = $null
             Select-Xml -Content "hello" -XPath foo -ErrorVariable err -ErrorAction SilentlyContinue
-            $err.FullyQualifiedErrorId | Should Be 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
+            $err.FullyQualifiedErrorId | Should -Be 'InvalidCastToXmlDocument,Microsoft.PowerShell.Commands.SelectXmlCommand'
         }
 
         It "ToString() works correctly on nested node" {

@@ -9,7 +9,7 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.WriteProgressCommand'
+            $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.WriteProgressCommand'
         }
     }
 
@@ -21,7 +21,7 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
+            $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
         }
     }
 
@@ -33,7 +33,7 @@ Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
+            $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
         }
     }
 

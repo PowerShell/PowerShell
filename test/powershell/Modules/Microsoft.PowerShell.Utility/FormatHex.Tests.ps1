@@ -392,7 +392,7 @@ Describe "FormatHex" -tags "CI" {
 
             $errorThrown.FullyQualifiedErrorId | Should MatchExactly $ExpectedFullyQualifiedErrorId
 
-            $output.Length | Should Be 1
+            $output.Length | Should -Be 1
             $output[0].ToString() | Should MatchExactly $inputText1
         }
     }
@@ -433,7 +433,7 @@ Describe "FormatHex" -tags "CI" {
             $result = Format-Hex -path $InputFile4
 
             $result | Should -Not -BeNullOrEmpty
-            $result.Count | Should Be 3
+            $result.Count | Should -Be 3
             $result[0].ToString() | Should MatchExactly "00000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
             $result[1].ToString() | Should MatchExactly "00000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
             $result[2].ToString() | Should MatchExactly "00000020   65 6E 74                                         ent             "

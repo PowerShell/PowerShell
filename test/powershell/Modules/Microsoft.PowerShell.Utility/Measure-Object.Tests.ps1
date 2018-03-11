@@ -28,16 +28,16 @@ Describe "Measure-Object" -Tags "CI" {
         $data = [pscustomobject]@{ A1 = 1; A2 = 2; C3 = 3 },
                 [pscustomobject]@{ A1 = 1; A2 = 2; A3 = 3 }
         $actual = $data | Measure-Object -Property A* -Sum
-        $actual.Count       | Should Be 3
-        $actual[0].Property | Should Be A1
-        $actual[0].Sum      | Should Be 2
-        $actual[0].Count    | Should Be 2
-        $actual[1].Property | Should Be A2
-        $actual[1].Sum      | Should Be 4
-        $actual[1].Count    | Should Be 2
-        $actual[2].Property | Should Be A3
-        $actual[2].Sum      | Should Be 3
-        $actual[2].Count    | Should Be 1
+        $actual.Count       | Should -Be 3
+        $actual[0].Property | Should -Be A1
+        $actual[0].Sum      | Should -Be 2
+        $actual[0].Count    | Should -Be 2
+        $actual[1].Property | Should -Be A2
+        $actual[1].Sum      | Should -Be 4
+        $actual[1].Count    | Should -Be 2
+        $actual[2].Property | Should -Be A3
+        $actual[2].Sum      | Should -Be 3
+        $actual[2].Count    | Should -Be 1
     }
 
     Context "Numeric tests" {
@@ -203,7 +203,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
         $testMax = ($flags -band [TestMeasureGeneric]::TestMax) -gt 0
         $testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
         $result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
-        $result.Count   | Should Be 4
+        $result.Count   | Should -Be 4
         $result.Sum     | Should -BeNullOrEmpty
         $result.Average | Should -BeNullOrEmpty
         $result.Max     | Should -BeNullOrEmpty
@@ -217,10 +217,10 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             $testMax = ($flags -band [TestMeasureGeneric]::TestMax) -gt 0
             $testMin = ($flags -band [TestMeasureGeneric]::TestMin) -gt 0
             $result = $employees | Measure-Object -Sum:$testSum -Average:$testAverage -Max:$testMax -Min:$testMin -Prop $property
-            $result.Count | Should Be 4
+            $result.Count | Should -Be 4
             if($testSum)
             {
-                $result.Sum | Should Be 44
+                $result.Sum | Should -Be 44
             }
             else
             {
@@ -229,7 +229,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
             if($testAverage)
             {
-                $result.Average | Should Be 11
+                $result.Average | Should -Be 11
             }
             else
             {
@@ -238,7 +238,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
             if($testMax)
             {
-                $result.Maximum | Should Be 15
+                $result.Maximum | Should -Be 15
             }
             else
             {
@@ -247,7 +247,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
             if($testMin)
             {
-                $result.Minimum | Should Be 5
+                $result.Minimum | Should -Be 5
             }
             else
             {
@@ -271,11 +271,11 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
             {
                 if($testIgnoreWS)
                 {
-                    $result.Characters | Should Be 25
+                    $result.Characters | Should -Be 25
                 }
                 else
                 {
-                    $result.Characters | Should Be 29
+                    $result.Characters | Should -Be 29
                 }
             }
             else
@@ -285,7 +285,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
             if($testWord)
             {
-                $result.Words | Should Be 6
+                $result.Words | Should -Be 6
             }
             else
             {
@@ -294,7 +294,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
             if($testLine)
             {
-                $result.Lines | Should Be 4
+                $result.Lines | Should -Be 4
             }
             else
             {
@@ -305,6 +305,6 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 
     It "Measure-Object with multiple lines should work"{
         $result = "123`n4" | Measure-Object -Line
-        $result.Lines | Should Be 2
+        $result.Lines | Should -Be 2
     }
 }

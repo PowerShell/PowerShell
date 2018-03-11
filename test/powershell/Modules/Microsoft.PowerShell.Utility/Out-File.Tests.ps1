@@ -5,7 +5,7 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
         { 1 | Out-File -PSPath $tempFile } | Should -Not -Throw
         $fileContents = Get-Content $tempFile
-        $fileContents | Should be 1
+        $fileContents | Should -Be 1
         Remove-Item $tempFile -Force
     }
 
@@ -98,9 +98,9 @@ Describe "Out-File" -Tags "CI" {
         $actual = Get-Content $testfile
 
         $actual[0] | Should -BeNullOrEmpty
-        $actual[1] | Should Be "text"
-        $actual[2] | Should Be "----"
-        $actual[3] | Should Be "some te..."
+        $actual[1] | Should -Be "text"
+        $actual[2] | Should -Be "----"
+        $actual[3] | Should -Be "some te..."
     }
 
     It "Should allow the cmdlet to overwrite an existing read-only file" {

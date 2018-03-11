@@ -7,12 +7,12 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should get a specific verb" {
-        @(Get-Verb -Verb Add).Count | Should be 1
-        @(Get-Verb -Verb Add -Group Common).Count | Should be 1
+        @(Get-Verb -Verb Add).Count | Should -Be 1
+        @(Get-Verb -Verb Add -Group Common).Count | Should -Be 1
     }
 
     It "Should get a specific group" {
-        (Get-Verb -Group Common).Group | Sort-Object -Unique | Should be Common
+        (Get-Verb -Group Common).Group | Sort-Object -Unique | Should -Be Common
     }
 
     It "Should not return duplicate Verbs with Verb paramater" {
@@ -39,7 +39,7 @@ Describe "Get-Verb" -Tags "CI" {
             throw "Expected error did not occur"
         }
         Catch{
-            $PSItem.FullyQualifiedErrorId | Should be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
+            $PSItem.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
         }
     }
 

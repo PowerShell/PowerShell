@@ -75,7 +75,7 @@ Describe "Alias tests" -Tags "CI" {
                 $exportAliasError = $_
             }
 
-            $exportAliasError.FullyQualifiedErrorId | Should Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
+            $exportAliasError.FullyQualifiedErrorId | Should -Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
         }
     }
 
@@ -101,7 +101,7 @@ Describe "Alias tests" -Tags "CI" {
                 $exportAliasError = $_
             }
 
-            $exportAliasError.FullyQualifiedErrorId | Should Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
+            $exportAliasError.FullyQualifiedErrorId | Should -Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
         }
 
         AfterEach {
@@ -155,8 +155,8 @@ Describe "Alias tests" -Tags "CI" {
             $definedAlias = Get-Alias myuh
 
             $definedAlias | Should -Not -BeNullOrEmpty
-            $definedAlias.Name | Should Be "myuh"
-            $definedAlias.Definition | Should Be "update-help"
+            $definedAlias.Name | Should -Be "myuh"
+            $definedAlias.Definition | Should -Be "update-help"
         }
     }
 }

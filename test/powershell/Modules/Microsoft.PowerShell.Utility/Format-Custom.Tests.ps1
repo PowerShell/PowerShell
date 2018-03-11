@@ -7,7 +7,7 @@ Describe "Format-Custom" -Tags "CI" {
         It "Should have the same output between the alias and the unaliased function" {
             $nonaliased = Get-FormatData | Format-Custom
             $aliased    = Get-FormatData | fc
-            $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should Be 0
+            $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should -Be 0
         }
     }
 

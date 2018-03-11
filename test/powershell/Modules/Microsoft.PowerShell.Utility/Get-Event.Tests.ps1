@@ -24,11 +24,11 @@ Describe "Get-Event" -Tags "CI" {
 	}
 
 	It "Should return PesterTestMessage as the MessageData" {
-	    { (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should Be "PesterTestMessage" }
+	    { (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should -Be "PesterTestMessage" }
 	}
 
 	It "Should return Sender as Windows.timer" {
-	    { (Get-Event -SourceIdentifier PesterTimer).Sender  | Should be Windows.timer }
+	    { (Get-Event -SourceIdentifier PesterTimer).Sender  | Should -Be Windows.timer }
 	}
 
     }

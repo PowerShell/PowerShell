@@ -31,20 +31,20 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Sort-Object -Property YearsInMS
 
-		$results[0].FirstName | Should Be "Minus"
-		$results[0].LastName | Should Be "Two"
-		$results[0].YearsInMS | Should Be -2
+		$results[0].FirstName | Should -Be "Minus"
+		$results[0].LastName | Should -Be "Two"
+		$results[0].YearsInMS | Should -Be -2
 
-		$results[1].FirstName | Should Be "Eight"
+		$results[1].FirstName | Should -Be "Eight"
 		$results[1].YearsInMS | Should -BeNullOrEmpty
 
-		$results[2].FirstName | Should Be "One"
-		$results[2].LastName | Should Be "One"
-		$results[2].YearsInMS | Should Be 1
+		$results[2].FirstName | Should -Be "One"
+		$results[2].LastName | Should -Be "One"
+		$results[2].YearsInMS | Should -Be 1
 
-		$results[3].FirstName | Should Be "Eight"
-		$results[3].LastName | Should Be "Eight"
-		$results[3].YearsInMS | Should Be 8
+		$results[3].FirstName | Should -Be "Eight"
+		$results[3].LastName | Should -Be "Eight"
+		$results[3].YearsInMS | Should -Be 8
 	}
 
 	It "Sort-Object with Non Conflicting Order Entry Keys should work"{
@@ -111,7 +111,7 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$a = new-object microsoft.powershell.commands.newobjectcommand
 		$a.TypeName = 'atype'
 		$results = $n, $d, $b, 'b', $a | Sort-Object -proper {$_.TypeName}
-		$results.Count | Should Be 5
+		$results.Count | Should -Be 5
 		$results[2] | Should -Be $a
 		$results[3] | Should -Be $b
 		$results[4] | Should -Be $d
@@ -128,12 +128,12 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$a = new-object microsoft.powershell.commands.newobjectcommand
 		$a.TypeName = 'atype'
 		$results = $n, $d, $b, 'b', $a | Sort-Object -prop TypeName
-		$results.Count | Should Be 5
+		$results.Count | Should -Be 5
 		$results[0] | Should -Be $n
 		$results[1] | Should -Be $a
 		$results[2] | Should -Be $b
 		$results[3] | Should -Be $d
-		$results[4] | Should Be 'b'
+		$results[4] | Should -Be 'b'
 	}
 
 	It "Sort-Object with Non Case-Sensitive Unique should work"{
@@ -219,9 +219,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Descending
 
-		$results[0] | Should Be 3
-		$results[1] | Should Be 2
-		$results[2] | Should Be 1
+		$results[0] | Should -Be 3
+		$results[1] | Should -Be 2
+		$results[2] | Should -Be 1
 	}
 }
 

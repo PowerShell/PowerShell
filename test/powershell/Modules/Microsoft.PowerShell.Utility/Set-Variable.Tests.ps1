@@ -96,7 +96,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 		}
 	}
 
@@ -123,7 +123,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 
@@ -139,7 +139,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 		}
 	}
 
@@ -171,7 +171,7 @@ Describe "Set-Variable" -Tags "CI" {
     It "Should assign a value to a variable it has to create" {
 	Set-Variable -Name testVar -Value 4
 
-	Get-Variable testVar -ValueOnly | Should Be 4
+	Get-Variable testVar -ValueOnly | Should -Be 4
     }
 
     It "Should change the value of an already existing variable" {
@@ -181,25 +181,25 @@ Describe "Set-Variable" -Tags "CI" {
 
 	Set-Variable testVar -Value 2
 
-	$testVar | Should Be 2
+	$testVar | Should -Be 2
     }
 
     It "Should be able to be called with the set alias" {
 	set testVar -Value 1
 
-	$testVar | Should Be 1
+	$testVar | Should -Be 1
     }
 
     It "Should be able to be called with the sv alias" {
 	sv testVar -Value 2
 
-	$testVar | Should Be 2
+	$testVar | Should -Be 2
     }
 
     It "Should be able to set variable name using the Name parameter" {
 	Set-Variable -Name testVar -Value 1
 
-	$testVar | Should Be 1
+	$testVar | Should -Be 1
     }
 
     It "Should be able to set the value of a variable by piped input" {
@@ -216,17 +216,17 @@ Describe "Set-Variable" -Tags "CI" {
 	$output = $in | Format-List -Property Description | Out-String
 
 	# This will cause errors running these tests in Windows
-	$output.Trim() | Should Be "Description : test description"
+	$output.Trim() | Should -Be "Description : test description"
     }
 
     It "Should be able to set the value using the value switch" {
 	Set-Variable -Name testVar -Value 4
 
-	$testVar | Should Be 4
+	$testVar | Should -Be 4
 
 	Set-Variable -Name testVar -Value "test"
 
-	$testVar | Should Be "test"
+	$testVar | Should -Be "test"
     }
 
     Context "Scope Tests" {

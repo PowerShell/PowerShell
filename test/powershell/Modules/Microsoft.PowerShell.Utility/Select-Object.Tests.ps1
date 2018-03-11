@@ -62,7 +62,7 @@ Describe "Select-Object" -Tags "CI" {
     It "Should return correct object with Skip parameter" {
 	$result = $dirObject | Select-Object -Skip $TestLength
 
-	$result.Length       | Should Be ($dirObject.Length - $TestLength)
+	$result.Length       | Should -Be ($dirObject.Length - $TestLength)
 
 	for ($i=0; $i -lt $TestLength; $i++)
 	{
@@ -99,8 +99,8 @@ Describe "Select-Object" -Tags "CI" {
 	$orig2  = $dirObject[$TestLength].Size
 	$result = $dirObject | addOneToSizeProperty | Select-Object -First $TestLength
 
-	$result[0].Size              | Should Be ($orig1 + 1)
-	$dirObject[0].Size           | Should Be ($orig1 + 1)
+	$result[0].Size              | Should -Be ($orig1 + 1)
+	$dirObject[0].Size           | Should -Be ($orig1 + 1)
 	$dirObject[$TestLength].Size | Should -Be $orig2
     }
 
@@ -109,9 +109,9 @@ Describe "Select-Object" -Tags "CI" {
 	$orig2  = $dirObject[$TestLength].Size
 	$result = $dirObject | addOneToSizeProperty | Select-Object -First $TestLength -Wait
 
-	$result[0].Size              | Should Be ($orig1 + 1)
-	$dirObject[0].Size           | Should Be ($orig1 + 1)
-	$dirObject[$TestLength].Size | Should Be ($orig2 + 1)
+	$result[0].Size              | Should -Be ($orig1 + 1)
+	$dirObject[0].Size           | Should -Be ($orig1 + 1)
+	$dirObject[$TestLength].Size | Should -Be ($orig2 + 1)
     }
 }
 
@@ -132,19 +132,19 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "PSArgumentException"
-			$_.FullyQualifiedErrorId | Should be "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"
+			$_.FullyQualifiedErrorId | Should -Be "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"
 		}
 	}
 
 	It "Select-Object with string property should work"{
 		$result = "bar" | select-object -Prop foo | Measure-Object
-		$result.Count | Should Be 1
+		$result.Count | Should -Be 1
 	}
 
 	It "Select-Object with Property First Last Overlap should work"{
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 3
 
-		$results.Count | Should Be 4
+		$results.Count | Should -Be 4
 
 		$results[0].LastName | Should -Be $employees[0].LastName
 		$results[1].LastName | Should -Be $employees[1].LastName
@@ -160,7 +160,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	It "Select-Object with Property First Last should work"{
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 1
 
-		$results.Count | Should Be 3
+		$results.Count | Should -Be 3
 
 		$results[0].LastName | Should -Be $employees[0].LastName
 		$results[1].LastName | Should -Be $employees[1].LastName
@@ -174,7 +174,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	It "Select-Object with Property First should work"{
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2
 
-		$results.Count | Should Be 2
+		$results.Count | Should -Be 2
 
 		$results[0].LastName | Should -Be $employees[0].LastName
 		$results[1].LastName | Should -Be $employees[1].LastName
@@ -186,19 +186,19 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	It "Select-Object with Property First Zero should work"{
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -First 0
 
-		$results.Count | Should Be 0
+		$results.Count | Should -Be 0
 	}
 
 	It "Select-Object with Property Last Zero should work"{
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -Last 0
 
-		$results.Count | Should Be 0
+		$results.Count | Should -Be 0
 	}
 
 	It "Select-Object with Unique should work"{
 		$results = $employees | Select-Object -Property "YearsInMS", "L*" -Unique:$true
 
-		$results.Count | Should Be 3
+		$results.Count | Should -Be 3
 
 		$results[0].LastName | Should -Be $employees[1].LastName
 		$results[1].LastName | Should -Be $employees[2].LastName
@@ -216,7 +216,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 		$employees3 = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees3 | Select-Object -Property "FirstName", "YearsInMS"
 
-		$results.Count | Should Be 3
+		$results.Count | Should -Be 3
 
 		$results[0].FirstName | Should -Be $employees3[0].FirstName
 		$results[1].FirstName | Should -Be $employees3[1].FirstName
@@ -229,7 +229,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 	It "Select-Object with no input should work"{
 		$results = $null | Select-Object -Property "FirstName", "YearsInMS", "FirstNa*"
-		$results.Count | Should Be 0
+		$results.Count | Should -Be 0
 	}
 
 	It "Select-Object with Start-Time In Idle Process should work"{
@@ -239,15 +239,15 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 	It "Select-Object with Skip should work"{
 		$results = "1","2","3" | Select-Object -Skip 1
-		$results.Count | Should Be 2
-		$results[0] | Should Be 2
-		$results[1] | Should Be 3
+		$results.Count | Should -Be 2
+		$results[0] | Should -Be 2
+		$results[1] | Should -Be 3
 	}
 
 	It "Select-Object with Index should work"{
 		$results = "1","2","3" | Select-Object -Index 2
-		$results.Count | Should Be 1
-		$results[0] | Should Be "3"
+		$results.Count | Should -Be 1
+		$results[0] | Should -Be "3"
 	}
 }
 
@@ -283,14 +283,14 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 	It "Select-Object with implicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -ExcludeProperty Param2
 		$results.Param2 | Should -BeNullOrEmpty
-		$results.Thing | Should Be "thing1"
+		$results.Thing | Should -Be "thing1"
 	}
 
         # Issue #2351
 	It "Select-Object with explicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -Property * -ExcludeProperty Param2
 		$results.Param2 | Should -BeNullOrEmpty
-		$results.Thing | Should Be "thing1"
+		$results.Thing | Should -Be "thing1"
 	}
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {

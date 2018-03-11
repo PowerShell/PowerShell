@@ -11,7 +11,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
+            $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -24,7 +24,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
+            $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
 
     }
@@ -39,7 +39,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
+            $_.FullyQualifiedErrorId | Should -Be "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -53,7 +53,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
+            $_.FullyQualifiedErrorId | Should -Be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -62,7 +62,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
         $path = Setup -F gooddatafile -content '@{ "Hello" = "World" }' -pass
 
         $result = Import-PowerShellDataFile $path -ErrorAction Stop
-        $result.Hello | Should be "World"
+        $result.Hello | Should -Be "World"
     }
 
 }

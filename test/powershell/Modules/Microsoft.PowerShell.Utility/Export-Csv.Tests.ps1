@@ -83,9 +83,9 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input = [pscustomobject]@{ "P1" = "V11"; "P2" = "V12"; "P3" = "V13" }
         $input | Export-Csv -Path $filePath -NoTypeInformation
         $results = Import-Csv $filePath
-        $results.P1 | Should Be "V11"
-        $results.P2 | Should Be "V12"
-        $results.P3 | Should Be "V13"
+        $results.P1 | Should -Be "V11"
+        $results.P2 | Should -Be "V12"
+        $results.P3 | Should -Be "V13"
     }
 
     It "Test if it works with special character" {
@@ -93,8 +93,8 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input = [pscustomobject]@{ "P1" = "  "; "P2" = "abc,foo"; "P3" = $v3}
         $input | Export-Csv -Path $filePath -NoTypeInformation
         $results = Import-Csv $filePath
-        $results.P1 | Should Be "  "
-        $results.P2 | Should Be "abc,foo"
+        $results.P1 | Should -Be "  "
+        $results.P2 | Should -Be "abc,foo"
         $results.P3 | Should -Be $v3
     }
 
@@ -106,7 +106,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input | Export-Csv -Path $filePath -Force
         $results = Import-Csv $filePath
 
-        $results.P2 | Should be "second"
+        $results.P2 | Should -Be "second"
         $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
         $property | Should -Not -be P1
     }
@@ -118,7 +118,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         New-Item -Path $outputFilesDir -ItemType Directory -Force
         Get-Item -Path $outputFilesDir| Export-Csv -Path $fileToGenerate -UseCulture -NoTypeInformation
         $contents = Get-Content -Path $fileToGenerate
-        $contents.Count | Should Be 2
+        $contents.Count | Should -Be 2
         $contents[0].Contains($delimiter) | Should -BeTrue
         $contents[1].Contains($delimiter) | Should -BeTrue
     }

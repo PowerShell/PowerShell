@@ -9,7 +9,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable -Name var1 -Value 4
 
 	Remove-Variable $var1 -ErrorAction SilentlyContinue -ErrorVariable err
-	$err.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+	$err.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
     }
 
     It "Should not throw error when used without the Name field, and named variable is properly specified and exists" {
@@ -17,7 +17,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable var1
 
-	$var1 | Should Be #nothing.  it should be Nothing at all.
+	$var1 | Should -Be #nothing.  it should be Nothing at all.
     }
 
     It "Should not throw error when used with the Name field, and named variable is specified and exists" {
@@ -25,7 +25,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable -Name var1
 
-	$var1 | Should Be #nothing.  it should be Nothing at all.
+	$var1 | Should -Be #nothing.  it should be Nothing at all.
     }
 
     It "Should throw error when used with Name field, and named variable does not exist" {
@@ -37,15 +37,15 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable tmpvar2 -Value 2
 	New-Variable tmpmyvar1 -Value 234
 
-	$tmpvar1   | Should Be "tempvalue"
-	$tmpvar2   | Should Be 2
-	$tmpmyvar1 | Should Be 234
+	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar2   | Should -Be 2
+	$tmpmyvar1 | Should -Be 234
 
 	Remove-Variable -Name tmp*
 
-	$tmpvar1   | Should Be #nothing.  it should be Nothing at all.
-	$tmpvar2   | Should Be #nothing.  it should be Nothing at all.
-	$tmpmyvar1 | Should Be #nothing.  it should be Nothing at all.
+	$tmpvar1   | Should -Be #nothing.  it should be Nothing at all.
+	$tmpvar2   | Should -Be #nothing.  it should be Nothing at all.
+	$tmpmyvar1 | Should -Be #nothing.  it should be Nothing at all.
     }
 
     It "Should be able to exclude a set of variables to remove using the Exclude switch" {
@@ -53,15 +53,15 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable tmpvar2 -Value 2
 	New-Variable tmpmyvar1 -Value 234
 
-	$tmpvar1   | Should Be "tempvalue"
-	$tmpvar2   | Should Be 2
-	$tmpmyvar1 | Should Be 234
+	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar2   | Should -Be 2
+	$tmpmyvar1 | Should -Be 234
 
 	Remove-Variable -Name tmp* -Exclude *my*
 
-	$tmpvar1   | Should Be #nothing.  it should be Nothing at all.
-	$tmpvar2   | Should Be #nothing.  it should be Nothing at all.
-	$tmpmyvar1 | Should Be 234
+	$tmpvar1   | Should -Be #nothing.  it should be Nothing at all.
+	$tmpvar2   | Should -Be #nothing.  it should be Nothing at all.
+	$tmpmyvar1 | Should -Be 234
     }
 
     It "Should be able to include a set of variables to remove using the Include switch" {
@@ -70,17 +70,17 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable tmpmyvar1 -Value 234
 	New-Variable thevar -Value 1
 
-	$tmpvar1   | Should Be "tempvalue"
-	$tmpvar2   | Should Be 2
-	$tmpmyvar1 | Should Be 234
-	$thevar    | Should Be 1
+	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar2   | Should -Be 2
+	$tmpmyvar1 | Should -Be 234
+	$thevar    | Should -Be 1
 
 	Remove-Variable -Name tmp* -Include *my*
 
-	$tmpvar1   | Should Be "tempvalue"
-	$tmpvar2   | Should Be 2
-	$tmpmyvar1 | Should Be #nothing.  it should be Nothing at all.
-	$thevar    | should Be 1
+	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar2   | Should -Be 2
+	$tmpmyvar1 | Should -Be #nothing.  it should be Nothing at all.
+	$thevar    | Should -Be 1
 
 	Remove-Variable tmpvar1
 	Remove-Variable tmpvar2
@@ -93,7 +93,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	{ Remove-Variable -Name var1 -ErrorAction Stop } | Should -Throw
 
-	$var1 | Should Be 2
+	$var1 | Should -Be 2
 
 	Remove-Variable -Name var1 -Force
     }
@@ -120,7 +120,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should Be "context"
+	    $var1 | Should -Be "context"
 
 	    Remove-Variable -Name var1 -Scope global
 	    $var1 | Should -BeNullOrEmpty
@@ -131,7 +131,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should Be "context"
+	    $var1 | Should -Be "context"
 
 	    Remove-Variable -Name var1 -Scope global
 	    $var1 | Should -BeNullOrEmpty
@@ -142,7 +142,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should Be context
+	    $var1 | Should -Be context
 	}
 
 	It "Should be able to remove an item locally using the global switch" {
@@ -150,7 +150,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should Be "context"
+	    $var1 | Should -Be "context"
 
 	    Remove-Variable -Name var1 -Scope local
 	    $var1 | Should -BeNullOrEmpty
@@ -161,7 +161,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope script -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should Be "context"
+	    $var1 | Should -Be "context"
 
 	    Remove-Variable -Name var1 -Scope local
 	    $var1 | Should -BeNullOrEmpty
@@ -180,7 +180,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should Be "context"
+	    $var1 | Should -Be "context"
 	}
     }
 }
@@ -203,7 +203,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
 
@@ -217,7 +217,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 		Remove-Variable foo -Force
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
@@ -234,7 +234,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 
 		try
@@ -245,7 +245,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
 
@@ -261,14 +261,14 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 			catch
 			{
 				$_.CategoryInfo | Should -Match "ItemNotFoundException"
-				$_.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+				$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 
 		$var1 = Get-Variable -Name foo
-		$var1.Name | Should Be "foo"
-		$var1.Value | Should Be "bar"
-		$var1.Options | Should Be "None"
+		$var1.Name | Should -Be "foo"
+		$var1.Value | Should -Be "bar"
+		$var1.Options | Should -Be "None"
 		$var1.Description | Should -BeNullOrEmpty
 
 	}

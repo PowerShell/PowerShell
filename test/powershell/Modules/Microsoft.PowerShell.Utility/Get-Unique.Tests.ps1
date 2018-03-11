@@ -5,12 +5,12 @@ Describe "Get-Unique DRT Unit Tests" -Tags "CI" {
         $inputArray = "aa","aa","Aa","ba","BA","BA"
         $results = $inputArray | Get-Unique -AsString
 
-        $results.Length | Should Be 4
+        $results.Length | Should -Be 4
 
-        $results[0] | Should Be "aa"
-        $results[1] | Should Be "Aa"
-        $results[2] | Should Be "ba"
-        $results[3] | Should Be "BA"
+        $results[0] | Should -Be "aa"
+        $results[1] | Should -Be "Aa"
+        $results[2] | Should -Be "ba"
+        $results[3] | Should -Be "BA"
 
         $results[0] | Should BeOfType "System.String"
         $results[1] | Should BeOfType "System.String"
@@ -40,7 +40,7 @@ Describe "Get-Unique" -Tags "CI" {
 
     It "Should output an array of unchanged items when the InputObject switch is used" {
         $actual   = Get-Unique -InputObject $sortedList1
-        $(Compare-Object $actual $sortedList1 -SyncWindow 0).Length | Should Be 0
+        $(Compare-Object $actual $sortedList1 -SyncWindow 0).Length | Should -Be 0
     }
 
     It "Should accept piped input" {
@@ -49,16 +49,16 @@ Describe "Get-Unique" -Tags "CI" {
 
     It "Should have the expected output when piped input is used" {
         $actualOutput   = $sortedList1 | Get-Unique
-        $(Compare-Object $actualOutput $expectedOutput1 -SyncWindow 0).Length | Should Be 0
+        $(Compare-Object $actualOutput $expectedOutput1 -SyncWindow 0).Length | Should -Be 0
     }
 
     It "Should be able to input a collection in the inputObject switch" {
         $actual = Get-Unique -InputObject $collection
-        $(Compare-Object $actual $collection -SyncWindow 0).Length | Should Be 0
+        $(Compare-Object $actual $collection -SyncWindow 0).Length | Should -Be 0
     }
 
     It "Should get the unique items when piped collection input is used" {
         $actual = $collection | Get-Unique
-        $(Compare-Object $actual $expectedOutput2 -SyncWindow 0).Length | Should Be 0
+        $(Compare-Object $actual $expectedOutput2 -SyncWindow 0).Length | Should -Be 0
     }
 }

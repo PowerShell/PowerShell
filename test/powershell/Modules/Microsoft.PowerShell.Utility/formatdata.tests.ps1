@@ -60,7 +60,7 @@ Describe "FormatData" -tags "Feature" {
                 $exportFormatError = $_
             }
 
-            $exportFormatError.FullyQualifiedErrorId | Should Be 'NoClobber,Microsoft.PowerShell.Commands.ExportFormatDataCommand'
+            $exportFormatError.FullyQualifiedErrorId | Should -Be 'NoClobber,Microsoft.PowerShell.Commands.ExportFormatDataCommand'
         }
     }
 }
