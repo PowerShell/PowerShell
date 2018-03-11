@@ -173,7 +173,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $methodList = "GetHashCode", "Equals", "ToString", "GetType"
             $results = $emps | Get-Member -MemberType Method
-            $results.Length | Should Be $methodList.Length
+            $results.Length | Should -Be $methodList.Length
             $methodFound = @()
 
             for ($i = 0;$i -lt $methodList.Length;$i++)

@@ -46,7 +46,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             }
             $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
             $afterCount | Should Be ($beforeCount + 1)
-            $title | Should Be $expectedTitle
+            $title | Should -Be $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
             'tell application "TextEdit" to quit' | osascript
         }
@@ -133,7 +133,7 @@ Categories=Application;
                 Wait-UntilTrue -sb { $windows.Count -gt $before } -TimeoutInMilliseconds (10*1000) -IntervalInMilliseconds 100 > $null
                 $after = $windows.Count
 
-                $before + 1 | Should Be $after
+                $before + 1 | Should -Be $after
                 $item = $windows.Item($after - 1)
                 $item.LocationURL | Should -Match ($PSHOME -replace '\\', '/')
                 ## close the windows explorer
@@ -145,7 +145,7 @@ Categories=Application;
                 Invoke-Item -Path $PSHOME
                 # may take time for handler to start
                 Wait-FileToBePresent -File "$HOME/InvokeItemTest.Success" -TimeoutInSeconds 10 -IntervalInMilliseconds 100
-                Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
+                Get-Content $HOME/InvokeItemTest.Success | Should -Be $PSHOME
             }
             else
             {
@@ -162,7 +162,7 @@ Categories=Application;
                 }
                 $afterCount = [int]('tell application "Finder" to count of windows' | osascript)
                 $afterCount | Should Be ($beforeCount + 1)
-                $title | Should Be $expectedTitle
+                $title | Should -Be $expectedTitle
                 'tell application "Finder" to close front window' | osascript
             }
         }

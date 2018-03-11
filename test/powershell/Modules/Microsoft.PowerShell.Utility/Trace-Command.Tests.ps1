@@ -72,7 +72,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*Timestamp=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
             $sortedResults = $results | Sort-Object
-            $sortedResults | Should Be $results
+            $sortedResults | Should -Be $results
         }
 
         It "ProcessId logs current process Id" {
@@ -80,7 +80,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should Be $pid }
+            $results | ForEach-Object { $_ | Should -Be $pid }
         }
     }
 

@@ -19,7 +19,7 @@ Describe "Format-List" -Tags "CI" {
         $expected = $in | Format-List | Out-String
         $actual   = $in | fl          | Out-String
 
-        $actual | Should Be $expected
+        $actual | Should -Be $expected
     }
 
     It "Should produce the expected output" {
@@ -29,7 +29,7 @@ Describe "Format-List" -Tags "CI" {
 
         $in | Format-List                  | Should -Not -BeNullOrEmpty
         $in | Format-List   | Out-String   | Should -Not -BeNullOrEmpty
-        $in | Format-List   | Out-String   | Should Be $expected
+        $in | Format-List   | Out-String   | Should -Be $expected
     }
 
     It "Should be able to call a property of the piped input" {

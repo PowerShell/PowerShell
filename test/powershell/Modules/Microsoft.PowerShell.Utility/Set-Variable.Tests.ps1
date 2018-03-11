@@ -207,7 +207,7 @@ Describe "Set-Variable" -Tags "CI" {
 
 	$testValue | Set-Variable -Name testVar
 
-	$testVar | Should Be $testValue
+	$testVar | Should -Be $testValue
     }
 
     It "Should be able to pipe object properties to output using the PassThru switch" {

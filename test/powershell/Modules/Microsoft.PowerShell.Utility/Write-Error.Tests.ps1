@@ -106,7 +106,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $theError = "Error: Too many input values."
         write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
 
-        [string]$error[0]| Should Be $theError
+        [string]$error[0]| Should -Be $theError
     }
 
     It "ErrorRecord should not be truncated or have inserted newlines when redirected from another process" {

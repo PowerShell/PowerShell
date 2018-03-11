@@ -4,15 +4,15 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
     It "Simple Write Object Test" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
         $results = Write-Output $objectWritten
-        $results.Length | Should Be $objectWritten.Length
+        $results.Length | Should -Be $objectWritten.Length
 
-        $results[0] | Should Be $objectWritten[0]
-        $results[1] | Should Be $objectWritten[1]
+        $results[0] | Should -Be $objectWritten[0]
+        $results[1] | Should -Be $objectWritten[1]
 
-        $results[2] | Should Be $objectWritten[2]
+        $results[2] | Should -Be $objectWritten[2]
         $results[2] -is [System.Array] | Should -BeTrue
 
-        $results[3] | Should Be $objectWritten[3]
+        $results[3] | Should -Be $objectWritten[3]
         $results[3] -is [System.String] | Should -BeTrue
     }
 
@@ -31,7 +31,7 @@ Describe "Write-Output" -Tags "CI" {
 	}
 
 	It "Should write output to the output stream when using piped input" {
-	    $testString | Write-Output | Should Be $testString
+	    $testString | Write-Output | Should -Be $testString
 	}
 
 	It "Should use inputobject switch" {
@@ -39,12 +39,12 @@ Describe "Write-Output" -Tags "CI" {
 	}
 
 	It "Should write output to the output stream when using inputobject switch" {
-	    Write-Output -InputObject $testString | Should Be $testString
+	    Write-Output -InputObject $testString | Should -Be $testString
 	}
 
 	It "Should be able to write to a variable" {
 	    Write-Output -InputObject $testString -OutVariable var
-	    $var | Should Be $testString
+	    $var | Should -Be $testString
 	}
     }
 
@@ -65,7 +65,7 @@ Describe "Write-Output" -Tags "CI" {
 	It "Should see individual objects when not using the NoEnumerate switch" {
 	    $singleCollection = $(Write-Output $enumerationObject| Measure-Object).Count
 
-	    $singleCollection | Should Be $enumerationObject.length
+	    $singleCollection | Should -Be $enumerationObject.length
 	}
 
 	It "Should be able to treat a collection as a single object using the NoEnumerate switch" {

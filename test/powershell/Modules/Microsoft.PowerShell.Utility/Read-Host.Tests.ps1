@@ -19,7 +19,7 @@ Describe "Read-Host Test" -tag "CI" {
     }
     It "Read-Host returns expected string" {
         $result = $ps.AddCommand("Read-Host").Invoke()
-        $result | Should Be $th.UI.ReadLineData
+        $result | Should -Be $th.UI.ReadLineData
     }
     It "Read-Host sets the prompt correctly" {
         $result = $ps.AddScript("Read-Host -prompt myprompt").Invoke()

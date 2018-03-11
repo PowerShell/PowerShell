@@ -180,7 +180,7 @@ try
                 $gcmOutPut = (Get-Command Select-MyObject ).Name
                 $getHelpOutPut = (Get-Help Select-MyObject).Name
 
-                $gcmOutPut | Should Be $getHelpOutPut
+                $gcmOutPut | Should -Be $getHelpOutPut
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -269,22 +269,22 @@ try
             }
 
             It "Verifies proxied output = proxied output 2" {
-                $proxiedOut2 | Should Be $proxiedOut
+                $proxiedOut2 | Should -Be $proxiedOut
             }
 
             It "Verifies proxied output = icm output (for mixed error and output results)" {
-                $icmOut | Should Be $proxiedOut
+                $icmOut | Should -Be $proxiedOut
             }
 
             It "Verifies proxied error = icm error (for mixed error and output results)" {
-                $icmErr | Should Be $proxiedErr
+                $icmErr | Should -Be $proxiedErr
             }
 
             It "Verifies proxied order = icm order (for mixed error and output results)" {
                 $icmOrder = Invoke-Command $session { foo1 } 2>&1 | out-string
                 $proxiedOrder = foo1 2>&1 | out-string
 
-                $icmOrder | Should Be $proxiedOrder
+                $icmOrder | Should -Be $proxiedOrder
             }
         }
 
@@ -641,7 +641,7 @@ try
 
                 # Original local and remote formatting should be equal (sanity check)
                 $originalRemoteFormatting = Invoke-Command $samesession $formattingScript
-                $originalLocalFormatting | Should Be $originalRemoteFormatting
+                $originalLocalFormatting | Should -Be $originalRemoteFormatting
 
                 Invoke-Command $samesession { param($file) Update-FormatData $file } -ArgumentList $formatFile
 
@@ -659,13 +659,13 @@ try
 
             It "modified remote and imported local should be equal" {
                 $importedLocalFormatting = & $formattingScript
-                $modifiedRemoteFormatting | Should Be $importedLocalFormatting
+                $modifiedRemoteFormatting | Should -Be $importedLocalFormatting
             }
 
             It "original local and unimported local should be equal" {
                 Remove-Module $module -Force
                 $unimportedLocalFormatting = & $formattingScript
-                $originalLocalFormatting | Should Be $unimportedLocalFormatting
+                $originalLocalFormatting | Should -Be $unimportedLocalFormatting
             }
         }
 
@@ -1310,7 +1310,7 @@ try
             }
 
             It "Initializer run on the remote server" {
-                (MyInitializerFunction) | Should Be $remotePid
+                (MyInitializerFunction) | Should -Be $remotePid
             }
 
             It "Initializer not run when value provided" {
@@ -1345,7 +1345,7 @@ try
 
                     $childJob = $job.ChildJobs[0]
                     $childJob.Output.Count | Should Be 1
-                    $childJob.Output[0].Value | Should Be $remotePid
+                    $childJob.Output[0].Value | Should -Be $remotePid
                 } finally {
                     Remove-Job $job -Force
                 }
@@ -1353,8 +1353,8 @@ try
 
             It "Test OutVariable" {
                 $result1 = Get-Variable -Name PID -OutVariable global:result2
-                $result1.Value | Should Be $remotePid
-                $global:result2[0].Value | Should Be $remotePid
+                $result1.Value | Should -Be $remotePid
+                $global:result2[0].Value | Should -Be $remotePid
             }
         }
 
@@ -1428,7 +1428,7 @@ try
 
             It "Switch parameters work fine" {
                 $proxiedPid = Get-RemoteVariable -Name pid -ValueOnly
-                $remotePid | Should Be $proxiedPid
+                $remotePid | Should -Be $proxiedPid
             }
 
             It "Positional parameters work fine" {
@@ -1543,7 +1543,7 @@ try
                 $remoteResult = Out-String -input ("blah " * 10) -Width 10
                 $localResult = Microsoft.PowerShell.Utility\Out-String -input ("blah " * 10) -Width 10
 
-                $localResult | Should Be $remoteResult
+                $localResult | Should -Be $remoteResult
             }
 
             It "Invoking an implicit remoting proxy works against the ISS-restricted runspace (Measure-Object)" {
@@ -1631,10 +1631,10 @@ try
             # Since New-PSSession now only loads Microsoft.PowerShell.Core and for the session in the test, Autoloading is disabled, engine cannot find New-Object as it is part of Microsoft.PowerShell.Utility module.
             # The fix is to import this module before running the command.
             It "Display of local property-less objects" {
-                ($x | Out-String).Trim() | Should Be $expected
+                ($x | Out-String).Trim() | Should -Be $expected
             }
             It "Display of remote property-less objects" {
-                (Invoke-Command $session { Import-Module Microsoft.PowerShell.Utility; New-Object random } | out-string).Trim() | Should Be $expected
+                (Invoke-Command $session { Import-Module Microsoft.PowerShell.Utility; New-Object random } | out-string).Trim() | Should -Be $expected
             }
         }
 
@@ -1724,7 +1724,7 @@ try
                 $module = Import-PSSession $session myOrder -CommandType All -AllowClobber
                 $actualResult = myOrder -aliasParam 123
 
-                $expectedResult | Should Be $actualResult
+                $expectedResult | Should -Be $actualResult
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { param($x) $env:PATH = $x; Remove-Item Alias:\myOrder, Function:\myOrder, Function:\helper -Force -ErrorAction SilentlyContinue } -ArgumentList $oldPath
@@ -1776,7 +1776,7 @@ try
 
                     $remotePid = Invoke-Command $session { $PID }
                     $getVariablePid = Invoke-Command $session { (Get-Variable -Name PID).Value }
-                    $getVariablePid | Should Be $remotePid
+                    $getVariablePid | Should -Be $remotePid
 
                     ## Get-Variable function should not be exported when importing a BadVerb-Variable function
                     Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
@@ -1787,7 +1787,7 @@ try
                     ## BadVerb-Variable should be a function, not an alias (2)
                     Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
-                    (BadVerb-Variable -Name pid).Value | Should Be $remotePid
+                    (BadVerb-Variable -Name pid).Value | Should -Be $remotePid
                 } finally {
                     if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 }
@@ -1816,7 +1816,7 @@ try
 
                     $remotePid = Invoke-Command $session { $PID }
                     $getVariablePid = Invoke-Command $session { (Get-Variable -Name PID).Value }
-                    $getVariablePid | Should Be $remotePid
+                    $getVariablePid | Should -Be $remotePid
 
                     ## Get-Variable function should not be exported when importing a BadVerb-Variable function
                     Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
@@ -1827,7 +1827,7 @@ try
                     ## BadVerb-Variable should be a function, not an alias (2)
                     Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
-                    (BadVerb-Variable -Name pid).Value | Should Be $remotePid
+                    (BadVerb-Variable -Name pid).Value | Should -Be $remotePid
                 } finally {
                     if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 }
@@ -1867,7 +1867,7 @@ try
 
                     $remotePid = Invoke-Command $session { $PID }
                     $getVariablePid = Invoke-Command $session { (Get-Variable -Name PID).Value }
-                    $getVariablePid | Should Be $remotePid
+                    $getVariablePid | Should -Be $remotePid
 
                     ## BadVerb-Variable should be an alias, not a function (1)
                     Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
@@ -1875,7 +1875,7 @@ try
                     ## BadVerb-Variable should be an alias, not a function (2)
                     Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
-                    (BadVerb-Variable -Name pid).Value | Should Be $remotePid
+                    (BadVerb-Variable -Name pid).Value | Should -Be $remotePid
                 } finally {
                     if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 }
@@ -1890,7 +1890,7 @@ try
             $newNumberOfHandlers = $executionContext.GetType().GetProperty("Events").GetValue($executionContext, $null).Subscribers.Count
 
             ## Event should be unregistered when the module is removed
-            $oldNumberOfHandlers | Should Be $newNumberOfHandlers
+            $oldNumberOfHandlers | Should -Be $newNumberOfHandlers
 
             ## Private functions from the implicit remoting module shouldn't get imported into global scope
             @(dir function:*Implicit* -ErrorAction SilentlyContinue).Count | Should Be 0
@@ -1957,14 +1957,14 @@ try
 
         It "Remote session PID should be different" {
             $sessionPid = Get-RemoteVariable pid
-            $sessionPid.Value | Should Be $remotePid
+            $sessionPid.Value | Should -Be $remotePid
         }
 
         It "Disconnected session should be reconnected when calling proxied command" {
             Disconnect-PSSession $session
 
             $dSessionPid = Get-RemoteVariable pid
-            $dSessionPid.Value | Should Be $remotePid
+            $dSessionPid.Value | Should -Be $remotePid
 
             $session.State | Should Be 'Opened'
         }
@@ -2062,7 +2062,7 @@ try
         It "Verifies that the number of local cmdlet command count is the same as remote cmdlet command count." {
             $localCommandCount = (Get-Command -Type Cmdlet).Count
             $remoteCommandCount = Invoke-Command { (Get-Command -Type Cmdlet).Count }
-            $localCommandCount | Should Be $remoteCommandCount
+            $localCommandCount | Should -Be $remoteCommandCount
         }
     }
 

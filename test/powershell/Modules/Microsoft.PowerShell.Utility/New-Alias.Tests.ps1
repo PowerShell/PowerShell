@@ -53,7 +53,7 @@ Describe "New-Alias" -Tags "CI" {
 	$cmdletId = $(Get-Command).Id
 	foreach ($IdNumber in $aliasId)
 	{
-	    $aliasId[$IdNumber] | Should Be $cmdletId[$IdNumber]
+	    $aliasId[$IdNumber] | Should -Be $cmdletId[$IdNumber]
 	}
     }
 
@@ -71,7 +71,7 @@ Describe "New-Alias" -Tags "CI" {
 
 	foreach ($IdNumber in $aliasData)
 	{
-	    $aliasData[$IdNumber] | Should Be $cmdletData[$IdNumber]
+	    $aliasData[$IdNumber] | Should -Be $cmdletData[$IdNumber]
 	}
     }
 }

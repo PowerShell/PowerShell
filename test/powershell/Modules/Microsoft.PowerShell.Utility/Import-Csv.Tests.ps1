@@ -55,13 +55,13 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
             It "Should be able to import all fields" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
                 $actualfields = $actual[0].psobject.Properties.Name
-                $actualfields | Should Be $orginalHeader
+                $actualfields | Should -Be $orginalHeader
             }
 
             It "Should be able to import all fields with custom header" {
                 $actual = Import-Csv -Path $testCsv @CustomHeaderParams
                 $actualfields = $actual[0].psobject.Properties.Name
-                $actualfields | Should Be $customHeader
+                $actualfields | Should -Be $customHeader
             }
 
             It "Should be able to import correct values" {
@@ -87,12 +87,12 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
 
     It "Test import-csv import Object" {
         $importObjectList = Import-Csv -Path $testfile
-        $processlist.Count | Should Be $importObjectList.Count
+        $processlist.Count | Should -Be $importObjectList.Count
 
         $importTypes = $importObjectList[0].psobject.TypeNames
-        $importTypes.Count | Should Be $expectedProcessTypes.Count
-        $importTypes[0] | Should Be $expectedProcessTypes[0]
-        $importTypes[1] | Should Be $expectedProcessTypes[1]
+        $importTypes.Count | Should -Be $expectedProcessTypes.Count
+        $importTypes[0] | Should -Be $expectedProcessTypes[0]
+        $importTypes[1] | Should -Be $expectedProcessTypes[1]
     }
 }
 

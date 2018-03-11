@@ -233,13 +233,13 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						$result.Count | Should Be 2
 						if($passthru)
 						{
-							$result[0] | Should Be $empsDifference
-							$result[1] | Should Be $empsReference
+							$result[0] | Should -Be $empsDifference
+							$result[1] | Should -Be $empsReference
 						}
 						else
 						{
-							$result[0].InputObject | Should Be $empsDifference
-							$result[1].InputObject | Should Be $empsReference
+							$result[0].InputObject | Should -Be $empsDifference
+							$result[1].InputObject | Should -Be $empsReference
 							$result[0].SideIndicator | Should Be "=>"
 							$result[1].SideIndicator | Should Be "<="
 						}
@@ -271,13 +271,13 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							$result.Count | Should Be 2
 							if($passthru)
 							{
-								$result[0] | Should Be $empsReference[0]
-								$result[1] | Should Be $empsReference[1]
+								$result[0] | Should -Be $empsReference[0]
+								$result[1] | Should -Be $empsReference[1]
 							}
 							else
 							{
-								$result[0].InputObject | Should Be $empsReference[0]
-								$result[1].InputObject | Should Be $empsReference[1]
+								$result[0].InputObject | Should -Be $empsReference[0]
+								$result[1].InputObject | Should -Be $empsReference[1]
 								$result[0].SideIndicator | Should Be "=="
 								$result[1].SideIndicator | Should Be "<="
 							}
@@ -286,11 +286,11 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						{
 							if($passthru)
 							{
-								$result | Should Be $empsReference[0]
+								$result | Should -Be $empsReference[0]
 							}
 							else
 							{
-								$result.InputObject | Should Be $empsReference[0]
+								$result.InputObject | Should -Be $empsReference[0]
 								$result.SideIndicator | Should Be "=="
 							}
 						}
@@ -301,11 +301,11 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						{
 							if($passthru)
 							{
-								$result | Should Be $empsReference[1]
+								$result | Should -Be $empsReference[1]
 							}
 							else
 							{
-								$result.InputObject | Should Be $empsReference[1]
+								$result.InputObject | Should -Be $empsReference[1]
 								$result.SideIndicator | Should Be "<="
 							}
 						}
@@ -337,13 +337,13 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							$result.Count | Should Be 2
 							if($passthru)
 							{
-								$result[0] | Should Be $empsReference
-								$result[1] | Should Be $empsDifference[1]
+								$result[0] | Should -Be $empsReference
+								$result[1] | Should -Be $empsDifference[1]
 							}
 							else
 							{
-								$result[0].InputObject | Should Be $empsReference
-								$result[1].InputObject | Should Be $empsDifference[1]
+								$result[0].InputObject | Should -Be $empsReference
+								$result[1].InputObject | Should -Be $empsDifference[1]
 								$result[0].SideIndicator | Should Be "=="
 								$result[1].SideIndicator | Should Be "=>"
 							}
@@ -352,11 +352,11 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						{
 							if($passthru)
 							{
-								$result | Should Be $empsReference
+								$result | Should -Be $empsReference
 							}
 							else
 							{
-								$result.InputObject | Should Be $empsReference
+								$result.InputObject | Should -Be $empsReference
 								$result.SideIndicator | Should Be "=="
 							}
 						}
@@ -367,11 +367,11 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						{
 							if($passthru)
 							{
-								$result | Should Be $empsDifference[1]
+								$result | Should -Be $empsDifference[1]
 							}
 							else
 							{
-								$result.InputObject | Should Be $empsDifference[1]
+								$result.InputObject | Should -Be $empsDifference[1]
 								$result.SideIndicator | Should Be "=>"
 							}
 						}
@@ -402,20 +402,20 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						$result.Count | Should Be 4
 						if($passthru)
 						{
-							$result[0] | Should Be $empsReference[0]
-							$result[1] | Should Be $empsReference[2]
-							$result[2] | Should Be $empsReference[1]
-							$result[3] | Should Be $empsReference[3]
+							$result[0] | Should -Be $empsReference[0]
+							$result[1] | Should -Be $empsReference[2]
+							$result[2] | Should -Be $empsReference[1]
+							$result[3] | Should -Be $empsReference[3]
 						}
 						else
 						{
-							$result[0].InputObject | Should Be $empsReference[0]
+							$result[0].InputObject | Should -Be $empsReference[0]
 							$result[0].SideIndicator | Should Be "=="
-							$result[1].InputObject | Should Be $empsReference[2]
+							$result[1].InputObject | Should -Be $empsReference[2]
 							$result[1].SideIndicator | Should Be "=="
-							$result[2].InputObject | Should Be $empsReference[1]
+							$result[2].InputObject | Should -Be $empsReference[1]
 							$result[2].SideIndicator | Should Be "=="
-							$result[3].InputObject | Should Be $empsReference[3]
+							$result[3].InputObject | Should -Be $empsReference[3]
 							$result[3].SideIndicator | Should Be "=="
 						}
 					}

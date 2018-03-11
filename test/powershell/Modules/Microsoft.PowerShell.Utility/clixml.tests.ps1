@@ -67,7 +67,7 @@ Describe "CliXml test" -Tags "CI" {
                     $exportCliXmlError = $_
                 }
 
-                $exportCliXmlError.FullyQualifiedErrorId | Should Be $test.expectedError
+                $exportCliXmlError.FullyQualifiedErrorId | Should -Be $test.expectedError
             }
         }
 
@@ -150,7 +150,7 @@ Describe "CliXml test" -Tags "CI" {
                     $importCliXmlError = $_
                 }
 
-                $importCliXmlError.FullyQualifiedErrorId | Should Be $test.expectedError
+                $importCliXmlError.FullyQualifiedErrorId | Should -Be $test.expectedError
             }
         }
 
@@ -163,9 +163,9 @@ Describe "CliXml test" -Tags "CI" {
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
-            $gps.ProcessName | Should Be $importedProcess.ProcessName
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
             $importedProcess.Id | Should -Not -BeNullOrEmpty
-            $gps.Id | Should Be $importedProcess.Id
+            $gps.Id | Should -Be $importedProcess.Id
         }
 
         It "can import from a literal path using pipeline" {
@@ -177,9 +177,9 @@ Describe "CliXml test" -Tags "CI" {
 
             $importedProcess = Import-Clixml $filePath
             $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
-            $gps.ProcessName | Should Be $importedProcess.ProcessName
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
             $importedProcess.Id | Should -Not -BeNullOrEmpty
-            $gps.Id | Should Be $importedProcess.Id
+            $gps.Id | Should -Be $importedProcess.Id
         }
 
         It "test follow-up for WinBlue: 161470 - Export-CliXml errors in WhatIf scenarios" {

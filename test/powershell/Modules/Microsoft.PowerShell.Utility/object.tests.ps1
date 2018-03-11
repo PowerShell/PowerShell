@@ -62,26 +62,26 @@ Describe "Object cmdlets" -Tags "CI" {
 
         It "can compare string representation for minimum" {
             $minResult = $firstObject, $secondObject | Measure-Object Header -Minimum
-            $minResult.Minimum.ToString() | Should Be $expectedFirstValue.ToString()
+            $minResult.Minimum.ToString() | Should -Be $expectedFirstValue.ToString()
         }
 
         It "can compare string representation for maximum" {
             $maxResult = $firstObject, $secondObject | Measure-Object Header -Maximum
-            $maxResult.Maximum.ToString() | Should Be $expectedSecondValue.ToString()
+            $maxResult.Maximum.ToString() | Should -Be $expectedSecondValue.ToString()
         }
 
         It 'correctly find minimum of (<data>)' -TestCases $testCases {
             param($data, $min, $max)
 
             $output = $data | Measure-Object -Minimum
-            $output.Minimum.ToString() | Should Be $min
+            $output.Minimum.ToString() | Should -Be $min
         }
 
         It 'correctly find maximum of (<data>)' -TestCases $testCases {
             param($data, $min, $max)
 
             $output = $data | Measure-Object -Maximum
-            $output.Maximum.ToString() | Should Be $max
+            $output.Maximum.ToString() | Should -Be $max
         }
 
         It 'returns a GenericMeasureInfoObject' {

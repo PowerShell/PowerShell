@@ -19,14 +19,14 @@ Describe "Get-Verb" -Tags "CI" {
         $dups = Get-Verb -Verb Add,ad*,a*
         $unique = $dups |
             Select-Object -Property * -Unique
-        $dups.Count | Should be $unique.Count
+        $dups.Count | Should -Be $unique.Count
     }
 
     It "Should not return duplicate Verbs with Group paramater" {
         $dupVerbs = Get-Verb -Group Data,Data
         $uniqueVerbs = $dupVerbs |
             Select-Object -Property * -Unique
-        $dupVerbs.Count | Should be $uniqueVerbs.Count
+        $dupVerbs.Count | Should -Be $uniqueVerbs.Count
     }
 
     It "Should filter using the Verb parameter" {

@@ -201,7 +201,7 @@ class MyContainer1
 		$result = $objectList | Format-Custom | Out-String
 		$result = $result -replace "[{} `n\r]",""
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
-		$result | Should Be $expectedResult
+		$result | Should -Be $expectedResult
 	}
 
 	It "Format-Custom with Empty Data Tree Object should work" {
@@ -223,7 +223,7 @@ class MyContainer1
 		$result = $objectList | Format-Custom | Out-String
 		$result = $result -replace "[{} `n\r]",""
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
-		$result | Should Be $expectedResult
+		$result | Should -Be $expectedResult
 	}
 
 	It "Format-Custom with Back Pointers Tree Object should work" {
@@ -266,7 +266,7 @@ class MyContainer1
 		$result = $objectList | Format-Custom | Out-String
 		$result = $result -replace "[{} `n\r]",""
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
-		$result | Should Be $expectedResult
+		$result | Should -Be $expectedResult
 	}
 
 	It "Format-Custom with Leaf Only Data should work" {
@@ -296,6 +296,6 @@ class MyLeaf2
 		$result = $objectList | Format-Custom | Out-String
 		$result = $result -replace "[{} `n\r]",""
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
-		$result | Should Be $expectedResult
+		$result | Should -Be $expectedResult
 	}
 }

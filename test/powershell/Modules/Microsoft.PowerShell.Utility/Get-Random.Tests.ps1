@@ -87,7 +87,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     It "Tests for setting the seed" {
         $result1 = (get-random -SetSeed 123), (get-random)
         $result2 = (get-random -SetSeed 123), (get-random)
-        $result1 | Should Be $result2
+        $result1 | Should -Be $result2
     }
 }
 
@@ -115,7 +115,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return same number for both Get-Random when switch SetSeed is used " {
 	$firstRandomNumber = Get-Random -Maximum 100 -SetSeed 23
 	$secondRandomNumber = Get-Random -Maximum 100 -SetSeed 23
-	$firstRandomNumber | Should be $secondRandomNumber
+	$firstRandomNumber | Should -Be $secondRandomNumber
     }
 
     It "Should return a number from 1,2,3,5,8,13 " {

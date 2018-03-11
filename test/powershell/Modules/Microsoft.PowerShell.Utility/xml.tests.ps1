@@ -52,7 +52,7 @@ Describe "XML cmdlets" -Tags "Feature" {
 
             It $_.testName {
                 @(Select-XML @params).Count | Should Be 1
-                (Select-XML @params).Path | Should Be $fileName.FullName
+                (Select-XML @params).Path | Should -Be $fileName.FullName
             }
         }
 
@@ -68,7 +68,7 @@ Describe "XML cmdlets" -Tags "Feature" {
                 $params = @{$parameter=$file}
                 $err = $null
                 Select-XML @params "Root" -ErrorVariable err -ErrorAction SilentlyContinue
-                $err.FullyQualifiedErrorId | Should Be $expectedError
+                $err.FullyQualifiedErrorId | Should -Be $expectedError
             }
             finally
             {

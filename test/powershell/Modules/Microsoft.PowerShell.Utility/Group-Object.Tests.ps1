@@ -59,8 +59,8 @@ Describe "Group-Object" -Tags "CI" {
         $actualAlias = Group-Object -InputObject $testObject
         $actualCmdlet = Group-Object -InputObject $testObject
 
-        $actualAlias.Name[0] | Should Be $actualCmdlet.Name[0]
-        $actualAlias.Group[0] | Should Be $actualCmdlet.Group[0]
+        $actualAlias.Name[0] | Should -Be $actualCmdlet.Name[0]
+        $actualAlias.Group[0] | Should -Be $actualCmdlet.Group[0]
     }
 
     It "Should be able to use the property switch without error" {

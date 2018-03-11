@@ -39,7 +39,7 @@ Describe "Out-File" -Tags "CI" {
 
         $actual = Get-Content $testfile
 
-        $actual | Should Be $expectedContent
+        $actual | Should -Be $expectedContent
     }
 
     It "Should be able to accept string input via the InputObject switch" {
@@ -47,7 +47,7 @@ Describe "Out-File" -Tags "CI" {
 
         $actual = Get-Content $testfile
 
-        $actual | Should Be $expectedContent
+        $actual | Should -Be $expectedContent
     }
 
     It "Should be able to accept object input" {

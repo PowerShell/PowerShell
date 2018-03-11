@@ -109,7 +109,7 @@ Describe "New-Variable" -Tags "CI" {
 
 	$in | New-Variable -Name var1
 
-	$var1 | Should Be $in
+	$var1 | Should -Be $in
 
     }
 

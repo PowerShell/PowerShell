@@ -38,11 +38,11 @@ Describe "New-TimeSpan" -Tags "CI" {
 	$TEN_MILLION = 10000000
 
 	It "Should have expected values for time properties set during creation" {
-	    $testObject.Days    | Should Be $expectedOutput["Days"]
-	    $testObject.Hours   | Should Be $expectedOutput["Hours"]
-	    $testObject.Minutes | Should Be $expectedOutput["Minutes"]
-	    $testObject.Seconds | Should Be $expectedOutput["Seconds"]
-	    $testObject.Ticks   | Should Be $expectedOutput["Ticks"]
+	    $testObject.Days    | Should -Be $expectedOutput["Days"]
+	    $testObject.Hours   | Should -Be $expectedOutput["Hours"]
+	    $testObject.Minutes | Should -Be $expectedOutput["Minutes"]
+	    $testObject.Seconds | Should -Be $expectedOutput["Seconds"]
+	    $testObject.Ticks   | Should -Be $expectedOutput["Ticks"]
 	}
 
     }

@@ -54,7 +54,7 @@ Describe "Alias tests" -Tags "CI" {
                 }
                 else
                 {
-                    $exportAliasError.FullyqualifiedErrorId | Should Be $test.expectedError
+                    $exportAliasError.FullyqualifiedErrorId | Should -Be $test.expectedError
                 }
             }
 
@@ -135,7 +135,7 @@ Describe "Alias tests" -Tags "CI" {
                     $exportAliasError = $_
                 }
 
-                $exportAliasError.FullyqualifiedErrorId | Should Be $test.expectedError
+                $exportAliasError.FullyqualifiedErrorId | Should -Be $test.expectedError
             }
         }
 

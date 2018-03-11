@@ -12,7 +12,7 @@ Describe "Get-FileHash" -Tags "CI" {
             $result = Get-FileHash $testDocument
             $result.Algorithm | Should Be "SHA256"
             $result.Hash | Should Be "8129a08e5d748ffb9361375677785f96545a1a37619a27608efd76a870787a7a"
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
     }
 
@@ -29,7 +29,7 @@ Describe "Get-FileHash" -Tags "CI" {
         It "Should be able to get the correct hash from <algorithm> algorithm" -TestCases $testCases {
             param($algorithm, $hash)
             $algorithmResult = Get-FileHash $testDocument -Algorithm $algorithm
-            $algorithmResult.Hash | Should Be $hash
+            $algorithmResult.Hash | Should -Be $hash
         }
 
         It "Should be throw for wrong algorithm name" {
@@ -66,12 +66,12 @@ Describe "Get-FileHash" -Tags "CI" {
 
         It "With '-Path': file exist" {
             $result = Get-FileHash -Path $testDocument
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
 
         It "With '-LiteralPath': file exist" {
             $result = Get-FileHash -LiteralPath $testDocument
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
     }
 }

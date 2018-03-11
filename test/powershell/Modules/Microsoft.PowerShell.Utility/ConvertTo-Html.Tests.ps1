@@ -29,7 +29,7 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html Fragment parameter" {
@@ -41,7 +41,7 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
 <tr><td>John Doe</td><td>42</td><td>System.Object[]</td></tr>
 </table>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html as List" {
@@ -59,7 +59,7 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html specified properties" {
@@ -76,7 +76,7 @@ Describe "ConvertTo-Html Tests" -Tags "CI" {
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html using page parameters" {
@@ -96,7 +96,7 @@ Body Text
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-Html pre and post" {
@@ -116,7 +116,7 @@ Before the object
 After the object
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-HTML meta"{
@@ -135,7 +135,7 @@ After the object
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-HTML meta with invalid properties should throw warning" {
@@ -161,7 +161,7 @@ After the object
 </table>
 </body></html>
 "@
-        $returnString | Should Be $expectedValue
+        $returnString | Should -Be $expectedValue
     }
 
     It "Test ConvertTo-HTML transitional"{

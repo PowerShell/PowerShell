@@ -16,7 +16,7 @@ Describe "Select-Object" -Tags "CI" {
 	$result   = $(Select-Object -inputObject $dirObject -last $TestLength).Length
 	$expected = $dirObject.Length
 
-	$result | Should Be $expected
+	$result | Should -Be $expected
     }
 
     It "Should be able to use the alias" {
@@ -27,28 +27,28 @@ Describe "Select-Object" -Tags "CI" {
 	$result   = $dirObject | select
 	$expected = $dirObject | Select-Object
 
-	$result | Should Be $expected
+	$result | Should -Be $expected
     }
 
     It "Should return correct object with First parameter" {
 	$result = $dirObject | Select-Object -First $TestLength
 
-	$result.Length | Should Be $TestLength
+	$result.Length | Should -Be $TestLength
 
 	for ($i=0; $i -lt $TestLength; $i++)
 	{
-	    $result[$i].Name | Should Be $dirObject[$i].Name
+	    $result[$i].Name | Should -Be $dirObject[$i].Name
 	}
     }
 
     It "Should return correct object with Last parameter" {
 	$result = $dirObject | Select-Object -Last $TestLength
 
-	$result.Length | Should Be $TestLength
+	$result.Length | Should -Be $TestLength
 
 	for ($i=0; $i -lt $TestLength; $i++)
 	{
-	    $result[$i].Name | Should Be $dirObject[$dirObject.Length - $TestLength + $i].Name
+	    $result[$i].Name | Should -Be $dirObject[$dirObject.Length - $TestLength + $i].Name
 	}
     }
 
@@ -56,7 +56,7 @@ Describe "Select-Object" -Tags "CI" {
 	$result   = ("a","b","c","a","a","a" | Select-Object -Unique).Length
 	$expected = 3
 
-	$result | Should Be $expected
+	$result | Should -Be $expected
     }
 
     It "Should return correct object with Skip parameter" {
@@ -66,16 +66,16 @@ Describe "Select-Object" -Tags "CI" {
 
 	for ($i=0; $i -lt $TestLength; $i++)
 	{
-	    $result[$i].Name | Should Be $dirObject[$TestLength + $i].Name
+	    $result[$i].Name | Should -Be $dirObject[$TestLength + $i].Name
 	}
     }
 
     It "Should return an object with selected columns" {
 	$result = $dirObject | Select-Object -Property Name, Size
 
-	$result.Length  | Should Be $dirObject.Length
-	$result[0].Name | Should Be $dirObject[0].Name
-	$result[0].Size | Should Be $dirObject[0].Size
+	$result.Length  | Should -Be $dirObject.Length
+	$result[0].Name | Should -Be $dirObject[0].Name
+	$result[0].Size | Should -Be $dirObject[0].Size
 	$result[0].Mode | Should -BeNullOrEmpty
     }
 
@@ -88,8 +88,8 @@ Describe "Select-Object" -Tags "CI" {
 	$secondIndex = 4
 	$result      = $dirObject | Select-Object -Index $firstIndex, $secondIndex
 
-	$result[0].Name | Should Be $dirObject[$firstIndex].Name
-	$result[1].Name | Should Be $dirObject[$secondIndex].Name
+	$result[0].Name | Should -Be $dirObject[$firstIndex].Name
+	$result[1].Name | Should -Be $dirObject[$secondIndex].Name
     }
 
     # Note that these two tests will modify original values of $dirObject
@@ -101,7 +101,7 @@ Describe "Select-Object" -Tags "CI" {
 
 	$result[0].Size              | Should Be ($orig1 + 1)
 	$dirObject[0].Size           | Should Be ($orig1 + 1)
-	$dirObject[$TestLength].Size | Should Be $orig2
+	$dirObject[$TestLength].Size | Should -Be $orig2
     }
 
     It "Should wait when used with -Wait option" {
@@ -146,15 +146,15 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 		$results.Count | Should Be 4
 
-		$results[0].LastName | Should Be $employees[0].LastName
-		$results[1].LastName | Should Be $employees[1].LastName
-		$results[2].LastName | Should Be $employees[2].LastName
-		$results[3].LastName | Should Be $employees[3].LastName
+		$results[0].LastName | Should -Be $employees[0].LastName
+		$results[1].LastName | Should -Be $employees[1].LastName
+		$results[2].LastName | Should -Be $employees[2].LastName
+		$results[3].LastName | Should -Be $employees[3].LastName
 
-		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
-		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
-		$results[2].YearsInMS | Should Be $employees[2].YearsInMS
-		$results[3].YearsInMS | Should Be $employees[3].YearsInMS
+		$results[0].YearsInMS | Should -Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should -Be $employees[1].YearsInMS
+		$results[2].YearsInMS | Should -Be $employees[2].YearsInMS
+		$results[3].YearsInMS | Should -Be $employees[3].YearsInMS
 	}
 
 	It "Select-Object with Property First Last should work"{
@@ -162,13 +162,13 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 		$results.Count | Should Be 3
 
-		$results[0].LastName | Should Be $employees[0].LastName
-		$results[1].LastName | Should Be $employees[1].LastName
-		$results[2].LastName | Should Be $employees[3].LastName
+		$results[0].LastName | Should -Be $employees[0].LastName
+		$results[1].LastName | Should -Be $employees[1].LastName
+		$results[2].LastName | Should -Be $employees[3].LastName
 
-		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
-		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
-		$results[2].YearsInMS | Should Be $employees[3].YearsInMS
+		$results[0].YearsInMS | Should -Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should -Be $employees[1].YearsInMS
+		$results[2].YearsInMS | Should -Be $employees[3].YearsInMS
 	}
 
 	It "Select-Object with Property First should work"{
@@ -176,11 +176,11 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 		$results.Count | Should Be 2
 
-		$results[0].LastName | Should Be $employees[0].LastName
-		$results[1].LastName | Should Be $employees[1].LastName
+		$results[0].LastName | Should -Be $employees[0].LastName
+		$results[1].LastName | Should -Be $employees[1].LastName
 
-		$results[0].YearsInMS | Should Be $employees[0].YearsInMS
-		$results[1].YearsInMS | Should Be $employees[1].YearsInMS
+		$results[0].YearsInMS | Should -Be $employees[0].YearsInMS
+		$results[1].YearsInMS | Should -Be $employees[1].YearsInMS
 	}
 
 	It "Select-Object with Property First Zero should work"{
@@ -200,13 +200,13 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 		$results.Count | Should Be 3
 
-		$results[0].LastName | Should Be $employees[1].LastName
-		$results[1].LastName | Should Be $employees[2].LastName
-		$results[2].LastName | Should Be $employees[3].LastName
+		$results[0].LastName | Should -Be $employees[1].LastName
+		$results[1].LastName | Should -Be $employees[2].LastName
+		$results[2].LastName | Should -Be $employees[3].LastName
 
-		$results[0].YearsInMS | Should Be $employees[1].YearsInMS
-		$results[1].YearsInMS | Should Be $employees[2].YearsInMS
-		$results[2].YearsInMS | Should Be $employees[3].YearsInMS
+		$results[0].YearsInMS | Should -Be $employees[1].YearsInMS
+		$results[1].YearsInMS | Should -Be $employees[2].YearsInMS
+		$results[2].YearsInMS | Should -Be $employees[3].YearsInMS
 	}
 
 	It "Select-Object with Simple should work"{
@@ -218,13 +218,13 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 
 		$results.Count | Should Be 3
 
-		$results[0].FirstName | Should Be $employees3[0].FirstName
-		$results[1].FirstName | Should Be $employees3[1].FirstName
-		$results[2].FirstName | Should Be $employees3[2].FirstName
+		$results[0].FirstName | Should -Be $employees3[0].FirstName
+		$results[1].FirstName | Should -Be $employees3[1].FirstName
+		$results[2].FirstName | Should -Be $employees3[2].FirstName
 
-		$results[0].YearsInMS | Should Be $employees3[0].YearsInMS
-		$results[1].YearsInMS | Should Be $employees3[1].YearsInMS
-		$results[2].YearsInMS | Should Be $employees3[2].YearsInMS
+		$results[0].YearsInMS | Should -Be $employees3[0].YearsInMS
+		$results[1].YearsInMS | Should -Be $employees3[1].YearsInMS
+		$results[2].YearsInMS | Should -Be $employees3[2].YearsInMS
 	}
 
 	It "Select-Object with no input should work"{

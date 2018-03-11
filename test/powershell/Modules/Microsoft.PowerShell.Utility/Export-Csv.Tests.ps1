@@ -43,7 +43,7 @@ Describe "Export-Csv" -Tags "CI" {
         $expected = @("#TYPE System.String", "`"Length`"", $first , $second, $third)
 
         for ($i = 0; $i -lt $expected.Count; $i++) {
-            $(Get-Content $testCsv)[$i] | Should Be $expected[$i]
+            $(Get-Content $testCsv)[$i] | Should -Be $expected[$i]
         }
     }
 
@@ -95,7 +95,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $results = Import-Csv $filePath
         $results.P1 | Should Be "  "
         $results.P2 | Should Be "abc,foo"
-        $results.P3 | Should Be $v3
+        $results.P3 | Should -Be $v3
     }
 
     It "Test force switch works well" {

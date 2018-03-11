@@ -105,7 +105,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result = Format-Hex -InputObject $InputObject
 
-            $result.count | Should Be $Count
+            $result.count | Should -Be $Count
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $result.ToString() | Should MatchExactly $ExpectedResult
         }
@@ -179,7 +179,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result = $InputObject | Format-Hex
 
-            $result.count | Should Be $Count
+            $result.count | Should -Be $Count
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $result[0].ToString() | Should MatchExactly $ExpectedResult
 
@@ -302,7 +302,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result = Format-Hex -InputObject 'hello' -Encoding $Encoding
 
-            $result.count | Should Be $Count
+            $result.count | Should -Be $Count
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $result[0].ToString() | Should MatchExactly $ExpectedResult
         }

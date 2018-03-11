@@ -17,10 +17,10 @@ Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
         [array]$result = & $powershell -noprofile -c $Command
 
-        $result.Count | Should Be $returnCount
+        $result.Count | Should -Be $returnCount
         foreach ($i in 0..($returnCount - 1))
         {
-            $result[$i] | Should Be $returnValue[$i]
+            $result[$i] | Should -Be $returnValue[$i]
         }
     }
 }
@@ -86,12 +86,12 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
 
         $result = $th.ui.Streams.ConsoleOutput
 
-        $result.Count | Should Be $returnCount
+        $result.Count | Should -Be $returnCount
         (Compare-Object $result $returnValue -SyncWindow 0).length | Should Be 0
 
         $result = $th.ui.Streams.Information
 
-        $result.Count | Should Be $returnCount
+        $result.Count | Should -Be $returnCount
         (Compare-Object $result $returnInfo -SyncWindow 0).length | Should Be 0
     }
 }

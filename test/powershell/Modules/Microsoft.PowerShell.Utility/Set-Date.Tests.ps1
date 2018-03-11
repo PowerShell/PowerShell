@@ -8,7 +8,7 @@ Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo
     It "Set-Date should be able to set the date with -Date parameter" {
         $target = Get-Date
         $expected = $target
-        Set-Date -Date $target | Should Be $expected
+        Set-Date -Date $target | Should -Be $expected
     }
 }
 

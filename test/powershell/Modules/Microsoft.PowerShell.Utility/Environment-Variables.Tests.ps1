@@ -25,12 +25,12 @@ Describe "Environment-Variables" -Tags "CI" {
 	if ($IsWindows)
 	{
 	    $expected = "\Users"
-	    Split-Path $ENV:HOMEPATH -Parent | Should Be $expected
+	    Split-Path $ENV:HOMEPATH -Parent | Should -Be $expected
 	}
 	else
 	{
 	    $expected = /bin/bash -c "cd ~ && pwd"
-	    $ENV:HOME | Should Be $expected
+	    $ENV:HOME | Should -Be $expected
 	}
     }
 
@@ -39,7 +39,7 @@ Describe "Environment-Variables" -Tags "CI" {
 	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should -Not -Throw
 
 	$ENV:TESTENVIRONMENTVARIABLE | Should -Not -BeNullOrEmpty
-	$ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
+	$ENV:TESTENVIRONMENTVARIABLE | Should -Be $expected
 
     }
 }

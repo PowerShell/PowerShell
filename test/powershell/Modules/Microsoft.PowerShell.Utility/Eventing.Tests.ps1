@@ -18,7 +18,7 @@ Describe "Event Subscriber Tests" -tags "CI" {
 
         wait-event EventSIDTest
         $eventdata = get-event EventSIDTest
-        $eventdata.MessageData | should Be $messageData
+        $eventdata.MessageData | Should -Be $messageData
         remove-event EventSIDTest
         Unregister-Event EventSIDTest
         Get-EventSubscriber | Should -BeNullOrEmpty

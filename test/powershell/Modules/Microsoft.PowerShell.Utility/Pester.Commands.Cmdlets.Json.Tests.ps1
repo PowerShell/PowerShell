@@ -50,7 +50,7 @@ Describe "Json Tests" -Tags "Feature" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
+                $_.FullyQualifiedErrorId | Should -Be $expectedFullyQualifiedErrorId
             }
         }
 
@@ -163,10 +163,10 @@ Describe "Json Tests" -Tags "Feature" {
 ]
 "@
             $response2 = ConvertTo-Json -InputObject $arraylist
-            $response2 | Should Be $result3
+            $response2 | Should -Be $result3
 
             $response2 = $arraylist | ConvertTo-Json
-            $response2 | Should Be $result3
+            $response2 | Should -Be $result3
         }
 
         It "Convert to Json using hashtable" -pending:($IsCoreCLR) {
@@ -192,7 +192,7 @@ Describe "Json Tests" -Tags "Feature" {
 }
 "@
             $response3 = ConvertTo-Json -InputObject $rootHash -Depth 2
-            $response3 | Should Be $result4
+            $response3 | Should -Be $result4
 
             $result5 = @"
 {
@@ -203,7 +203,7 @@ Describe "Json Tests" -Tags "Feature" {
 }
 "@
             $response3 = ConvertTo-Json -InputObject $rootHash -Depth 1
-            $response3 | Should Be $result5
+            $response3 | Should -Be $result5
         }
 
         It "Convert from Json allows an empty string" {
@@ -258,7 +258,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json.Note | Should -Match "a version object"
 
             # Check the AliasProperty
-            $json.Rev | Should Be $json.Revision
+            $json.Rev | Should -Be $json.Revision
 
             # Check the ScriptProperty
             $json.IsOld | Should -BeTrue
@@ -285,10 +285,10 @@ Describe "Json Tests" -Tags "Feature" {
             $result = ConvertFrom-Json $json
 
             $sampleFloat1 = Invoke-Expression 1.2345E67
-            $result.SampleFloat1 | Should Be $sampleFloat1
+            $result.SampleFloat1 | Should -Be $sampleFloat1
 
             $sampleFloat2 = Invoke-Expression -7.6543E-12
-            $result.SampleFloat2 | Should Be $sampleFloat2
+            $result.SampleFloat2 | Should -Be $sampleFloat2
         }
 
         It "ConvertFrom-Json hash table nested in array" {
@@ -1032,7 +1032,7 @@ Describe "Validate Json serialization" -Tags "CI" {
 
                 if ($testCase.FromJson)
                 {
-                    $result.FromJson | Should Be $testCase.FromJson
+                    $result.FromJson | Should -Be $testCase.FromJson
                 }
                 else
                 {
@@ -1040,7 +1040,7 @@ Describe "Validate Json serialization" -Tags "CI" {
                     # These values are [char]0 and [char]13.
                     $result.FromJson | Should -Match $testCase.FromJson
                 }
-                $result.ToJson | Should Be $testCase.ToJson
+                $result.ToJson | Should -Be $testCase.ToJson
             }
         }
 
@@ -1257,8 +1257,8 @@ Describe "Validate Json serialization" -Tags "CI" {
                     FromJson = $expression | ConvertTo-Json | ConvertFrom-Json
                 }
 
-                $result.ToJson | Should Be $testCase.ToJson
-                $result.FromJson | Should Be $testCase.FromJson
+                $result.ToJson | Should -Be $testCase.ToJson
+                $result.FromJson | Should -Be $testCase.FromJson
             }
         }
 
@@ -1279,7 +1279,7 @@ Describe "Validate Json serialization" -Tags "CI" {
             )
 
             # Validate that the two collections are the same size.
-            $expected.Count | Should Be $serialized.Count
+            $expected.Count | Should -Be $serialized.Count
 
             for ($index = 0; $index -lt $serialized.Count; $index++)
             {
@@ -1290,11 +1290,11 @@ Describe "Validate Json serialization" -Tags "CI" {
                     # Write-Verbose "Validating $property" -Verbose
                     if ($property -eq "Qualifiers")
                     {
-                        $serializedObject.$property.Count | Should Be $expectedObject.$property.Count
+                        $serializedObject.$property.Count | Should -Be $expectedObject.$property.Count
                     }
                     else
                     {
-                        $serializedObject.$property | Should Be $expectedObject.$property
+                        $serializedObject.$property | Should -Be $expectedObject.$property
                     }
                 }
             }
@@ -1362,7 +1362,7 @@ Describe "Validate Json serialization" -Tags "CI" {
 }
 '@
             $expectedNoWhiteSpace = $expected -replace "\s"
-            $actual | Should Be $expectedNoWhiteSpace
+            $actual | Should -Be $expectedNoWhiteSpace
         }
     }
 
@@ -1422,7 +1422,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 }
                 catch
                 {
-                    $_.FullyQualifiedErrorId | Should Be $testCase.FullyQualifiedErrorId
+                    $_.FullyQualifiedErrorId | Should -Be $testCase.FullyQualifiedErrorId
                 }
             }
             else

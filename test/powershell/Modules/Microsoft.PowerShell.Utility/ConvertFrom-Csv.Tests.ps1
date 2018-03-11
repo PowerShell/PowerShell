@@ -35,7 +35,7 @@ a,b,c
         $actualresult[0] | Should BeOfType "PSCustomObject"
 
         #Should have a name property in the result
-        $actualresult[0].Name | Should Be $testName
+        $actualresult[0].Name | Should -Be $testName
     }
 
     It "Should be able to set a delimiter" {
@@ -50,7 +50,7 @@ a,b,c
         $actualresult[0] | Should BeOfType "PSCustomObject"
 
         # ConvertFrom-Csv takes the first line of the input as a header by default
-        $actualresult.Length | Should Be $($csvContent.Length - 1)
+        $actualresult.Length | Should -Be $($csvContent.Length - 1)
     }
 
     It "Should be able to have multiple columns" {

@@ -94,7 +94,7 @@ Describe "Set-Alias" -Tags "CI" {
 
     It "Should be able to have the same output between set-alias and the output of the function being aliased" {
 	set-alias -Name gd -Value Get-Date
-	gd | Should Be $(Get-Date)
+	gd | Should -Be $(Get-Date)
     }
 
     It "Should be able to use the sal alias" {
@@ -106,6 +106,6 @@ Describe "Set-Alias" -Tags "CI" {
 
 	Set-Alias -Name gd2 -Value Get-Date
 
-	gd2 | Should Be $(gd)
+	gd2 | Should -Be $(gd)
     }
 }

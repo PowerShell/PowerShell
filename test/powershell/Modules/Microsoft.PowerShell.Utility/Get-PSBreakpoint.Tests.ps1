@@ -28,7 +28,7 @@ Describe "Get-PSBreakpoint" -Tags "CI" {
         { Get-PSBreakpoint -Variable "$scriptName" -Script $fullScriptPath } | Should -Not -Throw
 
         $Id = (Get-PSBreakpoint -Variable "$scriptName" -Script $fullScriptPath).Variable
-        $Id | Should be $scriptName
+        $Id | Should -Be $scriptName
 
     }
 }

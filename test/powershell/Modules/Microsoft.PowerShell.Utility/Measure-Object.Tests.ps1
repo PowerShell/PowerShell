@@ -14,14 +14,14 @@ Describe "Measure-Object" -Tags "CI" {
     }
 
     It "Should be able to count the number of objects input to it" {
-        $($testObject | Measure-Object).Count | Should Be $testObject.Length
+        $($testObject | Measure-Object).Count | Should -Be $testObject.Length
     }
 
     It "Should be able to count using the Property switch" {
         $expected = $(Get-ChildItem $TestDrive).Length
         $actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
 
-        $actual | Should Be $expected
+        $actual | Should -Be $expected
     }
 
     It "Should be able to use wildcards for the Property argument" {
@@ -50,7 +50,7 @@ Describe "Measure-Object" -Tags "CI" {
                 $expected += $obj
             }
 
-            $actual.Sum | Should Be $expected
+            $actual.Sum | Should -Be $expected
         }
 
         It "Should be able to average" {
@@ -64,7 +64,7 @@ Describe "Measure-Object" -Tags "CI" {
 
             $expected /= $testObject.length
 
-            $actual.Average | Should Be $expected
+            $actual.Average | Should -Be $expected
         }
 
         It "Should be able to return a minimum" {
@@ -79,7 +79,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Minimum | Should Be $expected
+            $actual.Minimum | Should -Be $expected
         }
 
         It "Should be able to return a minimum when multiple objects are the minimum" {
@@ -95,7 +95,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Minimum | Should Be $expected
+            $actual.Minimum | Should -Be $expected
         }
 
         It "Should be able to return a maximum" {
@@ -110,7 +110,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Maximum | Should Be $expected
+            $actual.Maximum | Should -Be $expected
         }
 
         It "Should be able to return a maximum when multiple objects are the maximum" {
@@ -126,7 +126,7 @@ Describe "Measure-Object" -Tags "CI" {
                 }
             }
 
-            $actual.Maximum | Should Be $expected
+            $actual.Maximum | Should -Be $expected
         }
     }
 
@@ -140,21 +140,21 @@ Describe "Measure-Object" -Tags "CI" {
             $expectedLength = $testString.Replace($nl,"").Split().length
             $actualLength   = $testString | Measure-Object -Word
 
-            $actualLength.Words | Should Be $expectedLength
+            $actualLength.Words | Should -Be $expectedLength
         }
 
         It "Should be able to count the number of characters in a string" {
             $expectedLength = $testString.length
             $actualLength   = $testString | Measure-Object -Character
 
-            $actualLength.Characters | Should Be $expectedLength
+            $actualLength.Characters | Should -Be $expectedLength
         }
 
         It "Should be able to count the number of lines in a string" {
             $expectedLength = $testString.Split($nl, [System.StringSplitOptions]::RemoveEmptyEntries).length
             $actualLength   = $testString | Measure-Object -Line
 
-            $actualLength.Lines | Should Be $expectedLength
+            $actualLength.Lines | Should -Be $expectedLength
         }
     }
 }

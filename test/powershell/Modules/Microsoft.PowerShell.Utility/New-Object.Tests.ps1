@@ -54,7 +54,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         $result = New-Object -TypeName char
         $result.Count | Should Be 1
         $defaultChar = [char]0
-        ([char]$result) | Should Be $defaultChar
+        ([char]$result) | Should -Be $defaultChar
     }
 
     It "New-Object with default Coordinates should work"{

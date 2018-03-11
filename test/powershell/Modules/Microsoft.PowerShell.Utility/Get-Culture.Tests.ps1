@@ -4,7 +4,7 @@ Describe "Get-Culture DRT Unit Tests" -Tags "CI" {
     It "Should works proper with get-culture" {
         $results = get-Culture
         $results -is "System.Globalization.CultureInfo" | Should -BeTrue
-        $results[0].Name | Should Be $PSCulture
+        $results[0].Name | Should -Be $PSCulture
     }
 }
 
@@ -18,7 +18,7 @@ Describe "Get-Culture" -Tags "CI" {
 
     It "Should have $ culture variable be equivalent to (Get-Culture).Name" {
 
-	(Get-Culture).Name | Should Be $PsCulture
+	(Get-Culture).Name | Should -Be $PsCulture
 
     }
 

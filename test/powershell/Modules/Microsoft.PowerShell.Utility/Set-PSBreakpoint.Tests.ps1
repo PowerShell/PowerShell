@@ -198,7 +198,7 @@ Describe "Set-PSBreakpoint" -Tags "CI" {
     It "Should be able to set a psbreakpoint on a line" {
         $lineNumber = 1
         $brk = Set-PSBreakpoint -Line $lineNumber -Script $testScript
-        $brk.Line | Should Be $lineNumber
+        $brk.Line | Should -Be $lineNumber
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -213,14 +213,14 @@ Describe "Set-PSBreakpoint" -Tags "CI" {
     It "Should be able to set a psbreakpoint on a Command" {
         $command = "theCommand"
         $brk = Set-PSBreakpoint -Command $command -Script $testScript
-        $brk.Command | Should Be $command
+        $brk.Command | Should -Be $command
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set a psbreakpoint on a variable" {
         $var = "theVariable"
         $brk = Set-PSBreakpoint -Command $var -Script $testScript
-        $brk.Command | Should Be $var
+        $brk.Command | Should -Be $var
         Remove-PSBreakPoint -Id $brk.Id
     }
 

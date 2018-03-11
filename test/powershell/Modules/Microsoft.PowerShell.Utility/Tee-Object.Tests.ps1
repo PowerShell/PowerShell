@@ -30,18 +30,18 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
         $expected = "1", "2", "3"
         $results = $expected | Tee-Object -FilePath $tempFile
         $results.Length | Should be 3
-        $results | Should Be $expected
+        $results | Should -Be $expected
         $content = Get-Content $tempFile
-        $content | Should Be $expected
+        $content | Should -Be $expected
     }
 
     It "Positive File Test with Path parameter alias" {
         $expected = "1", "2", "3"
         $results = $expected | Tee-Object -Path $tempFile
         $results.Length | Should be 3
-        $results | Should Be $expected
+        $results | Should -Be $expected
         $content = Get-Content $tempFile
-        $content | Should Be $expected
+        $content | Should -Be $expected
     }
 
     It "Positive Variable Test" {
@@ -49,11 +49,11 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
         $varName = "teeObjectTestVar"
         $results = $expected | Tee-Object -Variable $varName
         $results.Length | Should be 3
-        $results | Should Be $expected
+        $results | Should -Be $expected
 
         $results = Get-Variable -Name $varName -ValueOnly
         $results.Length | Should be 3
-        $results | Should Be $expected
+        $results | Should -Be $expected
     }
 
 }

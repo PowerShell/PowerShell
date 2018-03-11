@@ -19,7 +19,7 @@ Describe "FormatData" -tags "Feature" {
                 $runspace.CreatePipeline("Update-FormatData -AppendPath $TESTDRIVE\allformat.ps1xml").Invoke()
                 $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -TypeName *").Invoke()
 
-                $expectAllFormat.Count | Should Be $actualAllFormat.Count
+                $expectAllFormat.Count | Should -Be $actualAllFormat.Count
                 Compare-Object $expectAllFormat $actualAllFormat | Should -BeNullOrEmpty
                 $runspace.Close()
             }

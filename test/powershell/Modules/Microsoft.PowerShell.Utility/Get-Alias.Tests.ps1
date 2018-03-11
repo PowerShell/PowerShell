@@ -207,12 +207,12 @@ Describe "Get-Alias" -Tags "CI" {
         $val = Get-Alias a*
         $alias = gal a*
 
-        $val.Count | Should Be $alias.Count
+        $val.Count | Should -Be $alias.Count
         for ($i=0; $i -lt $val.Count;$i++)
         {
-            $val[$i].CommandType | Should Be $alias[$i].CommandType
-            $val[$i].Name | Should Be $alias[$i].Name
-            $val[$i].ModuleName | Should Be $alias[$i].ModuleName
+            $val[$i].CommandType | Should -Be $alias[$i].CommandType
+            $val[$i].Name | Should -Be $alias[$i].Name
+            $val[$i].ModuleName | Should -Be $alias[$i].ModuleName
         }
     }
 }

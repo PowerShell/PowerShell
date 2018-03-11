@@ -71,9 +71,9 @@ Describe "String cmdlets" -Tags "CI" {
 
             $match = Select-String CmdletsToExport $pshome/$file
 
-            $match.RelativePath($pshome) | Should Be $file
-            $match.RelativePath($pshome.ToLower()) | Should Be $file
-            $match.RelativePath($pshome.ToUpper()) | Should Be $file
+            $match.RelativePath($pshome) | Should -Be $file
+            $match.RelativePath($pshome.ToLower()) | Should -Be $file
+            $match.RelativePath($pshome.ToUpper()) | Should -Be $file
         }
     }
 }

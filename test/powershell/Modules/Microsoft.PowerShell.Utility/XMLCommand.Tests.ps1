@@ -48,8 +48,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$isHiddenTestType = [IsHiddenTestType]::New($property1,$property2)
 		$isHiddenTestType | Export-Clixml $testfile
 		$results = Import-Clixml $testfile
-		$results.Property1 | Should Be $property1
-		$results.Property2 | Should Be $property2
+		$results.Property1 | Should -Be $property1
+		$results.Property2 | Should -Be $property2
     }
 
 	It "Export-Clixml StopProcessing should succeed" {
@@ -157,6 +157,6 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$cmd.LiteralPath | Should BeExactly "foo"
 		$xml = [xml]"<a/>"
 		$cmd.Xml = $xml
-		$cmd.Xml | Should Be $xml
+		$cmd.Xml | Should -Be $xml
 	}
 }
