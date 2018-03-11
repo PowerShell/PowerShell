@@ -44,7 +44,7 @@ Describe "FormatData" -tags "Feature" {
             Get-FormatData -TypeName * | Export-FormatData -Path $filename -Force
 
             $actual = @(Get-Content $filename)[0]
-            $actual | Should Not Be $unexpected
+            $actual | Should -Not -Be $unexpected
         }
 
         It "should not overwrite the destination file with NoClobber" {

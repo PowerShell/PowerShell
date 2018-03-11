@@ -162,7 +162,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return false, check two random numbers are not equal when not using the SetSeed switch " {
 	$firstRandomNumber = Get-Random
 	$secondRandomNumber = Get-Random
-	$firstRandomNumber | Should Not Be $secondRandomNumber
+	$firstRandomNumber | Should -Not -Be $secondRandomNumber
     }
 
     It "Should return the same number for hexadecimal number and regular number when the switch SetSeed it used " {

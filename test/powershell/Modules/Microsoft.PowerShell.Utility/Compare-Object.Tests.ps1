@@ -62,9 +62,9 @@ Describe "Compare-Object" -Tags "CI" {
 
 	$caOutput.Length | Should Be 4
 
-	$ncaOutput[1].SideIndicator | Should Not Be $caOutput[1].SideIndicator
-	$ncaOutput[2].SideIndicator | Should Not Be $caOutput[2].SideIndicator
-	$ncaOutput[3].SideIndicator | Should Not Be $caOutput[3].SideIndicator
+	$ncaOutput[1].SideIndicator | Should -Not -Be $caOutput[1].SideIndicator
+	$ncaOutput[2].SideIndicator | Should -Not -Be $caOutput[2].SideIndicator
+	$ncaOutput[3].SideIndicator | Should -Not -Be $caOutput[3].SideIndicator
 
     }
 
@@ -96,7 +96,7 @@ Describe "Compare-Object" -Tags "CI" {
 	$actualOutput = Compare-Object -ReferenceObject $file3 -DifferenceObject $TestDrive -Property Length
 	$actualOutput[0].Length | Should -BeNullOrEmpty
 	$actualOutput[1].Length | Should BeGreaterThan 0
-	$actualOutput[0].Length | Should Not Be $actualOutput[1].Length
+	$actualOutput[0].Length | Should -Not -Be $actualOutput[1].Length
     }
 
     It "Should be able to specify the syncwindow without error" {

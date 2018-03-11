@@ -66,7 +66,7 @@ Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tag
         set-Delimiter $delimiter
         $Data | export-CSV TESTDRIVE:\File.csv -useCulture
         $i = Import-CSV TESTDRIVE:\File.csv
-        $i.Ticks | Should Not Be $ExpectedResult
+        $i.Ticks | Should -Not -Be $ExpectedResult
     }
 
     It 'Delimiter <Delimiter> with CSV import will succeed when culture matches export' -testCases $testCases {

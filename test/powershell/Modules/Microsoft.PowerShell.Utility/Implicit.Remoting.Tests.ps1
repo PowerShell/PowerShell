@@ -228,7 +228,7 @@ try
             It "Test non-terminating error" {
                 $results = Get-MyVariable blah,pid 2>&1
 
-                ($results[1]).Value | Should Not Be $PID  # Verifies that returned PID is not for this session
+                ($results[1]).Value | Should -Not -Be $PID  # Verifies that returned PID is not for this session
 
                 $errorString = $results[0] | Out-String   # Verifies error message for variable blah
                 ($errorString -like "*VariableNotFound*") | Should -BeTrue
@@ -377,7 +377,7 @@ try
             }
 
             It "Verifies that proxy returns remote pid" {
-                (Get-Variable -Name pid).Value | Should Not Be $pid
+                (Get-Variable -Name pid).Value | Should -Not -Be $pid
             }
 
 	        It "Verfies Remove-Module doesn't remove user's runspace" {
@@ -422,7 +422,7 @@ try
             }
 
             It "Verifies proxy should return remote pid" -Pending {
-                (Get-Variable -Name PID).Value | Should Not Be $PID
+                (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
             It "Verifies ApplicationArguments got preserved correctly" -Pending {
@@ -452,7 +452,7 @@ try
             }
 
             It "Verifies proxy should return remote pid" -Pending {
-                (Get-Variable -Name PID).Value | Should Not Be $PID
+                (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
             # culture settings should be taken from the explicitly passed session options
@@ -488,11 +488,11 @@ try
             }
 
             It "Verifies proxy returns remote pid" {
-                (Get-Variable -Name PID).Value | Should Not Be $PID
+                (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
             It "Verifies switch parameters work" {
-                (Get-Variable -Name PID -ValueOnly) | Should Not Be $PID
+                (Get-Variable -Name PID -ValueOnly) | Should -Not -Be $PID
             }
 
             It "Verifies Adding a module affects runspace's state" {
@@ -647,7 +647,7 @@ try
 
                 # Original remote and modified remote formatting should not be equal (sanity check)
                 $modifiedRemoteFormatting = Invoke-Command $samesession $formattingScript
-                $originalRemoteFormatting | Should Not Be $modifiedRemoteFormatting
+                $originalRemoteFormatting | Should -Not -Be $modifiedRemoteFormatting
 
                 $module = Import-PSSession -Session $samesession -CommandName @() -FormatTypeName * -AllowClobber
             }
@@ -785,15 +785,15 @@ try
         }
 
         It "proxy should return remote pid" {
-            (Get-VariableProxy -Name:pid).Value | Should Not Be $pid
+            (Get-VariableProxy -Name:pid).Value | Should -Not -Be $pid
         }
 
         It "proxy should return remote pid" {
-            (Get-Variable -Name:pid).Value | Should Not Be $pid
+            (Get-Variable -Name:pid).Value | Should -Not -Be $pid
         }
 
         It "proxy should return remote pid" {
-            $(& (Get-Command gvalias -Type alias) -Name:pid).Value | Should Not Be $pid
+            $(& (Get-Command gvalias -Type alias) -Name:pid).Value | Should -Not -Be $pid
         }
 
         It "NoName-c8aeb5c8-2388-4d64-98c1-a9c6c218d404" {
@@ -1299,7 +1299,7 @@ try
                 $remotePid = Invoke-Command $session { $PID }
 
                 # Sanity check
-                $localPid | Should Not Be $remotePid
+                $localPid | Should -Not -Be $remotePid
 
                 $module = Import-PSSession -Session $session -Name MyInitializerFunction -AllowClobber
             }
@@ -1331,7 +1331,7 @@ try
             }
 
             It "Importing by name/type should work" {
-                (Get-Variable -Name PID).Value | Should Not Be $PID
+                (Get-Variable -Name PID).Value | Should -Not -Be $PID
             }
 
             It "Test -AsJob parameter" {
@@ -1735,7 +1735,7 @@ try
         It "Test -Prefix parameter" {
             try {
                 $module = Import-PSSession -Session $session -Name Get-Variable -Type cmdlet -Prefix My -AllowClobber
-                (Get-MyVariable -Name pid).Value | Should Not Be $PID
+                (Get-MyVariable -Name pid).Value | Should -Not -Be $PID
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -1980,7 +1980,7 @@ try
 
             ## This time a new session is created because the old one is unavailable.
             $dSessionPid = Get-RemoteVariable pid
-            $dSessionPid.Value | Should Not Be $remotePid
+            $dSessionPid.Value | Should -Not -Be $remotePid
         }
     }
 
