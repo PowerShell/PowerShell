@@ -256,45 +256,45 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         # Issue #2420
 	It "Select-Object with implicit Property = '*' don't return property named '*'"{
 		$results = [pscustomobject]@{Thing="thing1"} | Select-Object -ExcludeProperty thing
-		$results.psobject.Properties.Item("*") | Should Be $null
+		$results.psobject.Properties.Item("*") | Should -BeNullOrEmpty
 	}
 
         # Issue #2420
 	It "Select-Object with explicit Property = '*' don't return property named '*'"{
 		$results = [pscustomobject]@{Thing="thing1"} | Select-Object -Property * -ExcludeProperty thing
-		$results.psobject.Properties.Item("*") | Should Be $null
+		$results.psobject.Properties.Item("*") | Should -BeNullOrEmpty
 	}
 
         # Issue #2351
 	It "Select-Object with implicit Property = '*' exclude single property"{
 		$results = [pscustomobject]@{Thing="thing1"} | Select-Object -ExcludeProperty thing
-		$results.psobject.Properties.Item("Thing") | Should Be $null
-		$results.psobject.Properties.Item("*") | Should Be $null
+		$results.psobject.Properties.Item("Thing") | Should -BeNullOrEmpty
+		$results.psobject.Properties.Item("*") | Should -BeNullOrEmpty
 	}
 
         # Issue #2351
 	It "Select-Object with explicit Property = '*' exclude single property"{
 		$results = [pscustomobject]@{Thing="thing1"} | Select-Object -Property * -ExcludeProperty thing
-		$results.psobject.Properties.Item("Thing") | Should Be $null
-		$results.psobject.Properties.Item("*") | Should Be $null
+		$results.psobject.Properties.Item("Thing") | Should -BeNullOrEmpty
+		$results.psobject.Properties.Item("*") | Should -BeNullOrEmpty
 	}
 
         # Issue #2351
 	It "Select-Object with implicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -ExcludeProperty Param2
-		$results.Param2 | Should Be $null
+		$results.Param2 | Should -BeNullOrEmpty
 		$results.Thing | Should Be "thing1"
 	}
 
         # Issue #2351
 	It "Select-Object with explicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -Property * -ExcludeProperty Param2
-		$results.Param2 | Should Be $null
+		$results.Param2 | Should -BeNullOrEmpty
 		$results.Thing | Should Be "thing1"
 	}
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {
 		$p = Get-Process -Id $pid | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
-		$p[0].psobject.Properties.Item("ProcessorAffinity") | Should Be $null
+		$p[0].psobject.Properties.Item("ProcessorAffinity") | Should -BeNullOrEmpty
     }
 }

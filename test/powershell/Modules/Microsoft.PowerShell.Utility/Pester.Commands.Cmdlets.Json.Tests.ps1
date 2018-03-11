@@ -22,7 +22,7 @@ Describe "Json Tests" -Tags "Feature" {
             $result.SampleArray.Count | Should Be 2
             $result.SampleTrue | Should -BeTrue
             $result.SampleFalse | Should -BeFalse
-            $result.SampleNull | Should Be $null
+            $result.SampleNull | Should -BeNullOrEmpty
             $result.SampleFloat | Should Be 9.8765E+43
 
             if ($hasEmbeddedSampleObject)
@@ -209,7 +209,7 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convert from Json allows an empty string" {
 
             $emptyStringResult = ConvertFrom-Json ""
-            $emptyStringResult | Should Be $null
+            $emptyStringResult | Should -BeNullOrEmpty
         }
 
         It "Convert enumerated values to Json" {
@@ -1436,7 +1436,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 {
                     $theError = $_
                 }
-                $theError | Should Be $null
+                $theError | Should -BeNullOrEmpty
             }
         }
     }

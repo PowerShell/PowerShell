@@ -20,7 +20,7 @@ Describe "FormatData" -tags "Feature" {
                 $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -TypeName *").Invoke()
 
                 $expectAllFormat.Count | Should Be $actualAllFormat.Count
-                Compare-Object $expectAllFormat $actualAllFormat | Should Be $null
+                Compare-Object $expectAllFormat $actualAllFormat | Should -BeNullOrEmpty
                 $runspace.Close()
             }
             finally

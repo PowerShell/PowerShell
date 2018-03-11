@@ -23,7 +23,7 @@ Describe "TestData cmdlets" -Tags "CI" {
         }
 
         It "System.Object" {
-            Get-TypeData System.Object | Should Be $null
+            Get-TypeData System.Object | Should -BeNullOrEmpty
         }
     }
 
