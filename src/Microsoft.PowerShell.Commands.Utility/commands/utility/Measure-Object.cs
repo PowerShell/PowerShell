@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         public double? Minimum { get; set; }
 
         /// <summary>
-        /// The Standard Deviation of property values
+        /// The Standard Deviation of property values.
         /// </summary>
         public double? StdDeviation { get; set; }
     }
@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
         public object Minimum { get; set; }
 
         /// <summary>
-        /// The Standard Deviation of property values
+        /// The Standard Deviation of property values.
         /// </summary>
         public double? StdDeviation { get; set; }
     }
@@ -276,10 +276,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion Common parameters in both sets
 
         /// <summary>
-        /// Set to true if Standard Deviation is to be returned
+        /// Set to true if Standard Deviation is to be returned.
         /// </summary>
-        /// <value></value>
-        [Parameter(ParameterSetName = GenericParameterSet)]
+            [Parameter(ParameterSetName = GenericParameterSet)]
         public SwitchParameter StdDeviation
         {
             get
@@ -746,9 +745,10 @@ namespace Microsoft.PowerShell.Commands
             }
             if (_measureStdDeviation && stat.count > 1)
             {
-                double countMinusOne = stat.count - 1;
-                double avgPrevious = stat.sumPrevious / countMinusOne;
-                stat.variance *= (countMinusOne - 1)/countMinusOne;
+                // Based off of iterative method of calculating variance on
+                // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+                double avgPrevious = stat.sumPrevious / (stat.count - 1);
+                stat.variance *= (stat.count - 2.0) / (stat.count - 1);
                 stat.variance += (numValue - avgPrevious) * (numValue - avgPrevious) / stat.count;
             }
         }
