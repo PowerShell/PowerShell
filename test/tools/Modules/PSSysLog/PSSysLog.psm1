@@ -388,8 +388,13 @@ class PSLogItem
             if ($subparts.Length -eq 4)
             {
                 $item.LogId = $subparts[3]
+                if ($id -ne $null -and $id -ne $item.LogId)
+                {
+                    # this is not the log id we're looking for.
+                    $result = $null
+                    break
+                }
             }
-
             # (commitid:TID:ChannelID)
             $splitChars = ('(', ')', ':', ' ')
             $item.CommitId = $parts[[OsLogIds]::CommitId]
@@ -769,11 +774,6 @@ function Get-PSOsLog
 .SYNOPSIS
     Export PowerShell os_log content as text.
 
-.PARAMETER WorkingDirectory
-    The fully qualified path to the working directory to use.
-    A subdirectory under the working directory will be created for imported content.
-    The subdirectory will be removed before the command completes.
-
 .PARAMETER After
     The datetime for the starting entries to export.
     Log entries with a timestamp on or after this value will be returned.
@@ -781,66 +781,41 @@ function Get-PSOsLog
 .EXAMPLE
     PS> $timestamp = [DateTime]::Now
     PS> # perform some work...
-    PS> $content = (Export-OSLog -WorkingDirectory $PSDrive -After $timestamp)
+    PS> $content = (Export-PSOsLog -After $timestamp)
 
 .EXAMPLE
     PS> $timestamp = [DateTime]::Now
     PS> # perform some work...
-    PS> Export-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Export-PSOsLog -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
 
 .NOTES
-    This function must be run as elevated (sudo) on MacOS
+    This command requires MacOS.
+    See Get-PSOsLog for parsing content from this cmdlet
 #>
-function Export-OSLog
+function Export-PSOsLog
 {
     [CmdletBinding()]
     param
     (
         [Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [string] $WorkingDirectory,
+        [DateTime] $After,
 
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [DateTime] $After
+        [string] $LogId = "powershell"
     )
     Test-MacOS
-    Test-Elevated
-
-    if ((Test-Path -Path $WorkingDirectory) -eq $false)
+    # NOTE: The use of double quotes and single quotes for the predicate parameter
+    # is mandatory. Reversing the usage (e.g., single quotes around double quotes)
+    # causes the double quotes to be stripped breaking the predicate syntax expected
+    # by log show
+    if ($After -ne $null)
     {
-        throw "WorkingDirectory must exist: $WorkingDirectory"
+        [string] $startTime = $After.ToString("yyyy-MM-dd HH:mm:ss")
+        Start-NativeExecution -command {log show --info --start "$startTime" --predicate "subsystem == 'com.microsoft.powershell'"}
     }
-    # Generate a directory under the working directory for
-    # the log command to use.
-    $exportDir = Join-Path -Path $WorkingDirectory -ChildPath 'pwsh.logarchive'
-
-    # NOTE: The log command expects this directory to NOT exist
-    if (Test-Path -Path $exportDir)
+    else
     {
-        Remove-Item -Path $exportDir -Force -Recurse -ErrorAction SilentlyContinue
-    }
-
-    try
-    {
-        if ($After -ne $null)
-        {
-            [string] $startTime = $After.ToString("yyyy-MM-dd HH:mm:ss")
-            Start-NativeExecution -command {log collect --start $startTime --output $exportDir}
-        }
-        else
-        {
-            Start-NativeExecution -command {log collect --output $exportDir}
-        }
-
-        Start-NativeExecution -command {log show $exportDir --info --predicate 'process == "pwsh"'}
-    }
-    finally
-    {
-        if (Test-Path -Path $exportDir)
-        {
-            Remove-Item -Path $exportDir -Force -Recurse -ErrorAction SilentlyContinue
-        }
+        Start-NativeExecution -command {log show --info --predicate "process == 'pwsh'"}
     }
 }
 
@@ -928,4 +903,4 @@ function Get-OsLogPersistence
 
 #region os_log support
 
-Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Export-OSLog, Get-OsLogPersistence, Set-OsLogPersistence
+Export-ModuleMember -Function Get-PSSysLog, Get-PSOsLog, Export-PSOsLog, Get-OsLogPersistence, Set-OsLogPersistence

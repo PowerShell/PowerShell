@@ -189,9 +189,6 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
             }
         }
         [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
-        # Disabling all tests until log presistence is working. Using
-        # log config appears to update state but log items are not persisted.
-        $IsSupportedEnvironment = $false
     }
 
     BeforeEach {
@@ -222,7 +219,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        Export-OsLog -WorkingDirectory $workingDirectory -After $after -Verbose | Set-Content -Path $contentFile
+        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
 
         $items | Should Not Be $null
@@ -241,7 +238,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        Export-OsLog -WorkingDirectory $workingDirectory -After $after -Verbose | Set-Content -Path $contentFile
+        Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
         # by default, powershell startup should only log informational events are logged.
         # With Level = Warning, nothing should
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
