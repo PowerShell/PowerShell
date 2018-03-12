@@ -115,7 +115,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return same number for both Get-Random when switch SetSeed is used " {
 	$firstRandomNumber = Get-Random -Maximum 100 -SetSeed 23
 	$secondRandomNumber = Get-Random -Maximum 100 -SetSeed 23
-	$firstRandomNumber | Should -be $secondRandomNumber
+	$firstRandomNumber | Should -Be $secondRandomNumber
     }
 
     It "Should return a number from 1,2,3,5,8,13 " {

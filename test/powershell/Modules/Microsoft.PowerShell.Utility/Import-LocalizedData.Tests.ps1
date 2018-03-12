@@ -16,22 +16,22 @@ $culture = Get-Culture
 $culture.Name     | Should -Be "en-US"
 
 $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir
-$d.d0             | Should -be $sunday
+$d.d0             | Should -Be $sunday
 }
 
 It "Should be able to import string using en-US culture" {
     $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir -UICulture en-US
-    $d.d0             | Should -be $sunday
+    $d.d0             | Should -Be $sunday
 }
 
 It "Should be able to import string using de-DE culture" {
     $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir -UICulture de-DE
-    $d.d0             | Should -be $sundayInGerman
+    $d.d0             | Should -Be $sundayInGerman
 }
 
 It "Should be able to import string and store in binding variable" {
     Import-LocalizedData -FileName $script -BaseDirectory $assetsDir -UICulture de-DE -BindingVariable d
-    $d.d0             | Should -be $sundayInGerman
+    $d.d0             | Should -Be $sundayInGerman
 }
 
 }

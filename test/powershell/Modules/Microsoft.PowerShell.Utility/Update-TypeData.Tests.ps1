@@ -51,8 +51,8 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
   It "Update-TypeData with Invalid TypesXml should throw Exception" {
         $null = $ps.AddScript("Update-TypeData -PrependPath $testfile")
         $ps.Invoke()
-        $ps.HadErrors | Should -be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorID | Should -be "TypesXmlUpdateException,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.HadErrors | Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorID | Should -Be "TypesXmlUpdateException,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Invalid File Extension should throw Exception"{
@@ -60,8 +60,8 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 		$xmlContent>$invalidFileExtensionFile
         $null = $ps.AddScript("Update-TypeData -PrependPath $invalidFileExtensionFile")
         $ps.Invoke()
-        $ps.HadErrors | Should -be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorId | Should -be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.HadErrors | Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorId | Should -Be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
@@ -69,7 +69,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Invoke()
         $ps.Commands.Clear()
         $null = $ps.AddScript("'string'.TestNote")
-        $ps.Invoke() | should -be 2
+        $ps.Invoke() | Should -Be 2
         $ps.Commands.Clear()
         $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 'test' -TypeName System.String -Force")
         $ps.Invoke()
@@ -151,29 +151,29 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 	It "Update-TypeData with Invalid DynamicType Null Value For AliasProperty should throw Exception"{
         $null = $ps.AddScript('Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value $null -TypeName System.String')
         $ps.Invoke()
-        $ps.HadErrors  |Should -be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.HadErrors  |Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -Be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Invalid DynamicType with No MemberName should throw Exception"{
 	    $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String')
         $ps.Invoke()
-        $ps.HadErrors  |Should -be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -be "MemberNameShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.HadErrors  |Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -Be "MemberNameShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Invalid DynamicType with No Value should throw Exception"{
 		$null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -TypeName System.String')
         $ps.Invoke()
-        $ps.HadErrors  |Should -be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.HadErrors  |Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -Be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Invalid DynamicType with Empty TypeData should throw Exception"{
 		$null = $ps.AddScript("Update-TypeData -TypeName System.String")
         $ps.Invoke()
-        $ps.HadErrors  |Should -be $true
-        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -be "TypeDataEmpty,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.HadErrors  |Should -BeTrue
+        $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -Be "TypeDataEmpty,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Valid Standard Members Serialization Method String should work"{
@@ -314,7 +314,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
             $ps.Commands.Clear()
             $ps.AddScript('$a.Yada').Invoke() | Should -Be 3
             $ps.AddScript("Remove-TypeData -Path $testfile").Invoke()
-            $ps.HadErrors|Should -be $false
+            $ps.HadErrors|Should -BeFalse
         }
     }
 }

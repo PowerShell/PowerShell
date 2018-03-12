@@ -48,11 +48,11 @@ Describe "Add-Type" -Tags "CI" {
 [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = System.Management.Automation.ConfirmImpact.High, SupportsPaging = true)]
 public class AttributeTest$guid {}
 "@
-        Add-Type -TypeDefinition $code -PassThru | Should -Not -Be $null
+        Add-Type -TypeDefinition $code -PassThru | Should -Not -BeNullOrEmpty
     }
 
     It "Can load TPA assembly System.Runtime.Serialization.Primitives.dll" {
-        Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru | Should -Not -Be $null
+        Add-Type -AssemblyName 'System.Runtime.Serialization.Primitives' -PassThru | Should -Not -BeNullOrEmpty
     }
 
     It "Can compile C# files" {

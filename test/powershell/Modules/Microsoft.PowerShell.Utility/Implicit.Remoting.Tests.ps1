@@ -100,7 +100,7 @@ try
         It "Verifies that Import-PSSession works in AllSigned if Certificate is used" -Skip:($skipTest -or $skipThisTest) {
             try {
                 $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -Certificate $cert -AllowClobber
-    	        $importedModule | Should -Not -Be $null
+    	        $importedModule | Should -Not -BeNullOrEmpty
             } finally {
                 $importedModule | Remove-Module -Force -ErrorAction SilentlyContinue
             }
@@ -206,7 +206,7 @@ try
                 $module = Import-PSSession $session -CommandName:BrokenAlias -CommandType:All -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
 
                 $expectedError | Should -Not -Be NullOrEmpty
-                $expectedError[0].ToString().Contains("BrokenAlias") | Should -Be $true
+                $expectedError[0].ToString().Contains("BrokenAlias") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { Remove-Item alias:BrokenAlias }
@@ -231,7 +231,7 @@ try
                 ($results[1]).Value | Should -Not -Be $PID  # Verifies that returned PID is not for this session
 
                 $errorString = $results[0] | Out-String   # Verifies error message for variable blah
-                ($errorString -like "*VariableNotFound*") | Should -Be $true
+                ($errorString -like "*VariableNotFound*") | Should -BeTrue
             }
 
             It "Test terminating error" {
@@ -240,7 +240,7 @@ try
                 $results.Count | Should -Be 1              # Verifies that remote session pid is not returned
 
                 $errorString = $results[0] | Out-String   # Verifes error message for incorrect Scope parameter argument
-                ($errorString -like "*Argument*") | Should -Be $true
+                ($errorString -like "*Argument*") | Should -BeTrue
             }
         }
 
@@ -333,15 +333,15 @@ try
         }
 
         It "Verifies Export-PSSession creates a psd1 file" {
-            ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should -Be $true
+            ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should -BeTrue
         }
 
         It "Verifies Export-PSSession creates a psm1 file" {
-            ($results | Where-Object { $_.Name -like "*.psm1" }) | Should -Be $true
+            ($results | Where-Object { $_.Name -like "*.psm1" }) | Should -BeTrue
         }
 
         It "Verifies Export-PSSession creates a ps1xml file" {
-            ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should -Be $true
+            ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should -BeTrue
         }
 
         It "Verifies that Export-PSSession fails when a module directory already exists" {
@@ -351,7 +351,7 @@ try
 
             $expectedError | Should -Not -Be NullOrEmpty
             # Error contains reference to the directory that already exists
-            ([string]($expectedError[0]) -like "*$file*") | Should -Be $true
+            ([string]($expectedError[0]) -like "*$file*") | Should -BeTrue
         }
 
         It "Verifies that overwriting an existing directory succeeds with -Force" {
@@ -431,7 +431,7 @@ try
 
             It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
                 Remove-Module $module -Force
-                (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -Be $null
+                (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
 
             It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
@@ -466,7 +466,7 @@ try
             # removing the module should remove the implicitly/magically created runspace
             It "Verifies Remove-Module removes automatically created runspace" -Pending {
                 Remove-Module $module -Force
-                (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -Be $null
+                (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
             It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
                 ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Closed"
@@ -681,7 +681,7 @@ try
             # Should get 2 deserialized S.M.A.H.Coordinates objects
             $results.Count | Should -Be 2
             # First object shouldn't have the additional ETS note property
-            $results[0].MyTestLabel | Should -Be $null
+            $results[0].MyTestLabel | Should -BeNullOrEmpty
             # Second object should have the additional ETS note property
             $results[1].MyTestLabel | Should -Be 123
         }
@@ -777,7 +777,7 @@ try
         }
 
         It "Helper functions should not be imported" {
-            (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) | Should -Be $null
+            (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
         }
 
         It "Calls implicit remoting proxies 'MyFunction'" {
@@ -818,11 +818,11 @@ try
             }
 
             It "Temporary module should be automatically removed after runspace is closed" {
-                (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should -Be $null
+                (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should -BeNullOrEmpty
             }
 
             It "Temporary psm1 file should be automatically removed after runspace is closed" {
-                (Get-Item $module.Path -ErrorAction SilentlyContinue) | Should -Be $null
+                (Get-Item $module.Path -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
 
             It "Event should be unregistered when the runspace is closed" {
@@ -1339,8 +1339,8 @@ try
                     $job = Get-Variable -Name PID -AsJob
 
                     $job | Should -Not -Be NullOrEmpty
-                    ($job -is [System.Management.Automation.Job]) | Should -Be $true
-                    ($job.Finished.WaitOne([TimeSpan]::FromSeconds(10), $false)) | Should -Be $true
+                    ($job -is [System.Management.Automation.Job]) | Should -BeTrue
+                    ($job.Finished.WaitOne([TimeSpan]::FromSeconds(10), $false)) | Should -BeTrue
                     $job.JobStateInfo.State | Should -Be 'Completed'
 
                     $childJob = $job.ChildJobs[0]
@@ -1502,7 +1502,7 @@ try
                 -Force
 
             $session = New-RemoteSession -ConfigurationName $myConfiguration.Name
-            $session | Should -Not -Be $null
+            $session | Should -Not -BeNullOrEmpty
         }
 
         AfterAll {
@@ -1578,15 +1578,15 @@ try
             }
 
             It "PSModuleInfo.Name shouldn't contain a psd1 extension" {
-                ($module.Name -notlike '*.psd1') | Should -Be $true
+                ($module.Name -notlike '*.psd1') | Should -BeTrue
             }
 
             It "PSModuleInfo.Name shouldn't contain a psm1 extension" {
-                ($module.Name -notlike '*.psm1') | Should -Be $true
+                ($module.Name -notlike '*.psm1') | Should -BeTrue
             }
 
             It "PSModuleInfo.Name shouldn't contain a path" {
-                ($module.Name -notlike "${env:TMP}*") | Should -Be $true
+                ($module.Name -notlike "${env:TMP}*") | Should -BeTrue
             }
 
             It "Get-Command returns only 1 public command from implicit remoting module (1)" {
@@ -1667,7 +1667,7 @@ try
                 $expectedError | Should -Not -Be NullOrEmpty
 
                 $msg = [string]($expectedError[0])
-                $msg.Contains("blah") | Should -Be $true
+                $msg.Contains("blah") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
@@ -1683,7 +1683,7 @@ try
                 $expectedError | Should -Not -Be NullOrEmpty
 
                 $msg = [string]($expectedError[0])
-                $msg.Contains("notRequested") | Should -Be $true
+                $msg.Contains("notRequested") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
@@ -1699,7 +1699,7 @@ try
                 throw "Import-PSSession should throw"
             } catch {
                 $msg = [string]($_)
-                $msg.Contains("Get-Command") | Should -Be $true
+                $msg.Contains("Get-Command") | Should -BeTrue
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
                 Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
@@ -1740,7 +1740,7 @@ try
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
 
-            (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) | Should -Be $null
+            (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
         }
 
         Context "BadVerbs of functions should trigger a warning" {
@@ -1779,13 +1779,13 @@ try
                     $getVariablePid | Should -Be $remotePid
 
                     ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                    Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should -Be $null
+                    Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
                     ## BadVerb-Variable should be a function, not an alias (1)
-                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -Be $null
+                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
                     ## BadVerb-Variable should be a function, not an alias (2)
-                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Be $null
+                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
                     (BadVerb-Variable -Name pid).Value | Should -Be $remotePid
                 } finally {
@@ -1819,13 +1819,13 @@ try
                     $getVariablePid | Should -Be $remotePid
 
                     ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                    Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should -Be $null
+                    Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
                     ## BadVerb-Variable should be a function, not an alias (1)
-                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -Be $null
+                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
                     ## BadVerb-Variable should be a function, not an alias (2)
-                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Be $null
+                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
                     (BadVerb-Variable -Name pid).Value | Should -Be $remotePid
                 } finally {
@@ -1870,10 +1870,10 @@ try
                     $getVariablePid | Should -Be $remotePid
 
                     ## BadVerb-Variable should be an alias, not a function (1)
-                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Be $null
+                    Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
 
                     ## BadVerb-Variable should be an alias, not a function (2)
-                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -Be $null
+                    Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should -Not -BeNullOrEmpty
 
                     (BadVerb-Variable -Name pid).Value | Should -Be $remotePid
                 } finally {
@@ -1929,11 +1929,11 @@ try
                 $result = $ps.AddScript(" & $tempdir\TestBug450687.ps1").Invoke()
 
                 ## The module created by Export-PSSession is imported successfully
-                ($null -ne $result -and $result.Count -eq 1 -and $result[0].Name -eq "Diag") | Should -Be $true
+                ($null -ne $result -and $result.Count -eq 1 -and $result[0].Name -eq "Diag") | Should -BeTrue
 
                 ## The command Add-BitsFile is imported successfully
                 $c = $result[0].ExportedCommands["New-Guid"]
-                ($null -ne $c -and $c.CommandType -eq "Function") | Should -Be $true
+                ($null -ne $c -and $c.CommandType -eq "Function") | Should -BeTrue
             } finally {
                 $ps.Dispose()
             }

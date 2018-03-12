@@ -18,7 +18,7 @@ Describe "New-Event" -Tags "CI" {
 
 	It "Should return Sender as Windows.timer" {
 	    (New-Event -sourceidentifier PesterTimer -sender Windows.timer -messagedata "PesterTestMessage")
-	    (Get-Event -SourceIdentifier PesterTimer).Sender  | Should -be Windows.timer
+	    (Get-Event -SourceIdentifier PesterTimer).Sender  | Should -Be Windows.timer
 	    Remove-Event -sourceIdentifier PesterTimer
 	}
     }

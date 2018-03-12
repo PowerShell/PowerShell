@@ -94,15 +94,15 @@ Describe "Stream writer tests" -Tags "CI" {
                 $result.User | Should -Be $(whoami)
             }
 
-            "$result" | Should -be "Test Message"
+            "$result" | Should -Be "Test Message"
        }
 
        It "Write-Information accept objects from pipe" {
             $ps.AddScript("'teststring',12345 | Write-Information -InformationAction Continue").Invoke()
             $result = $ps.Streams.Information
-            $result.Count | Should -be 2
-            $result[0].MessageData | Should -be "teststring"
-            $result[1].MessageData | Should -be "12345"
+            $result.Count | Should -Be 2
+            $result[0].MessageData | Should -Be "teststring"
+            $result[1].MessageData | Should -Be "12345"
        }
 
        It "Write-Information works with <Name>" -TestCases:$testInfoData {

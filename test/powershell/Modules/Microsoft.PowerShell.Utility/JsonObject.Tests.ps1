@@ -44,7 +44,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
         It 'Not throw when json contains empty key name when ReturnHashTable is true' {
             $errorRecord = $null
             $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonWithEmptyKey, $true, [ref]$errorRecord)
-            $result | Should -Not -Be $null
+            $result | Should -Not -BeNullOrEmpty
             $result.Count | Should -Be 1
             $result.'' | Should -Be 'Value'
         }
@@ -61,7 +61,7 @@ Describe 'Unit tests for JsonObject' -tags "CI" {
         It 'Not throw when json contains key (same casing) when ReturnHashTable is true' {
             $errorRecord = $null
             $result = [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($jsonContainingKeysWithDifferentCasing, $true, [ref]$errorRecord)
-            $result | Should -Not -Be $null
+            $result | Should -Not -BeNullOrEmpty
             $result.Count | Should -Be 2
             $result.key1  | Should -Be 'Value1'
             $result.Key1  | Should -Be 'Value2'

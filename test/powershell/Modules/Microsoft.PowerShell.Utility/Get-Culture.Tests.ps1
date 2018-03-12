@@ -3,7 +3,7 @@
 Describe "Get-Culture DRT Unit Tests" -Tags "CI" {
     It "Should works proper with get-culture" {
         $results = get-Culture
-        $results -is "System.Globalization.CultureInfo" | Should -be $true
+        $results -is "System.Globalization.CultureInfo" | Should -BeTrue
         $results[0].Name | Should -Be $PSCulture
     }
 }

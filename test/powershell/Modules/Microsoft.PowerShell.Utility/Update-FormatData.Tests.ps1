@@ -24,7 +24,7 @@ Describe "Update-FormatData" -Tags "CI" {
             Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
             $ps.Invoke()
-            $ps.HadErrors | Should -be $false
+            $ps.HadErrors | Should -BeFalse
         }
     }
 }
@@ -115,7 +115,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
             $ps.Invoke()
             $sma = [appdomain]::CurrentDomain.GetAssemblies() | ? { if ($_.Location) {$_.Location.EndsWith("System.Management.Automation.dll")}}
             $smaLocation = $sma.Location
-            $ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should -be $true }
+            $ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should -BeTrue }
             $ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should -Match 'FormatXmlUpdateException' }
         }
     }

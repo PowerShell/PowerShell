@@ -8,7 +8,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 
@@ -33,7 +33,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable bcdaVar "another test"
 		Set-Variable aVarfoo wow
 		$var1=get-variable -Name *aVar* -Scope local
-		$var1.Count | Should -be 3
+		$var1.Count | Should -Be 3
 		$var1[0].Name|Should -Be "abcaVar"
 		$var1[0].Value|Should -Be "testing"
 		$var1[1].Name|Should -Be "aVarfoo"
@@ -49,7 +49,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 }
@@ -60,12 +60,12 @@ Describe "Get-Variable" -Tags "CI" {
     }
 
     It "Should return environment variables when called with no parameters" {
-		(Get-Variable).Name -contains "$" | Should -Be $true
-		(Get-Variable).Name -contains "?" | Should -Be $true
-		(Get-Variable).Name -contains "HOST" | Should -Be $true
-		(Get-Variable).Name -contains "PWD" | Should -Be $true
-		(Get-Variable).Name -contains "PID" | Should -Be $true
-		(Get-Variable).Name -contains "^" | Should -Be $true
+		(Get-Variable).Name -contains "$" | Should -BeTrue
+		(Get-Variable).Name -contains "?" | Should -BeTrue
+		(Get-Variable).Name -contains "HOST" | Should -BeTrue
+		(Get-Variable).Name -contains "PWD" | Should -BeTrue
+		(Get-Variable).Name -contains "PID" | Should -BeTrue
+		(Get-Variable).Name -contains "^" | Should -BeTrue
     }
 
     It "Should return the value of an object" {
@@ -87,8 +87,8 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable -Name var1 -Value 4
 		New-Variable -Name var2 -Value "test"
 
-		(Get-Variable -Name var*).Value[0] | Should -be 4
-		(Get-Variable -Name var*).Value[1] | Should -be "test"
+		(Get-Variable -Name var*).Value[0] | Should -Be 4
+		(Get-Variable -Name var*).Value[1] | Should -Be "test"
 
 		Remove-Variable var1
 		Remove-Variable var2
@@ -97,7 +97,7 @@ Describe "Get-Variable" -Tags "CI" {
     It "Should return only the value if the value switch is used" {
 		New-Variable -Name var1 -Value 4
 
-		Get-Variable -Name var1 -ValueOnly | Should -be 4
+		Get-Variable -Name var1 -ValueOnly | Should -Be 4
 
 		Remove-Variable var1
     }
@@ -133,7 +133,7 @@ Describe "Get-Variable" -Tags "CI" {
 
 		$actual = Get-Variable -Exclude var1, var2
 
-		$actual.Name -contains "var3" | Should -Be $true
+		$actual.Name -contains "var3" | Should -BeTrue
     }
 
     Context "Scope Tests" {

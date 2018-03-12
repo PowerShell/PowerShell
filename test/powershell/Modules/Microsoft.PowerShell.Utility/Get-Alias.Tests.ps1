@@ -8,7 +8,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -be "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
+            $_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias OutOfRange Scope"{
@@ -17,7 +17,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias Named Single Valid"{
@@ -146,7 +146,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias Zero Scope Valid"{

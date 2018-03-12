@@ -6,7 +6,7 @@ Describe "New-Object" -Tags "CI" {
             { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         } else {
             # It works on NanoServer and IoT too
-            (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should -Be $true
+            (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should -BeTrue
         }
     }
 
@@ -19,8 +19,8 @@ Describe "New-Object" -Tags "CI" {
         $val.IsSerializable | Should -Not -BeNullOrEmpty
         $val.BaseType       | Should -Not -BeNullOrEmpty
 
-        $val.IsPublic       | Should -Be $true
-        $val.IsSerializable | Should -Be $false
+        $val.IsPublic       | Should -BeTrue
+        $val.IsSerializable | Should -BeFalse
         $val.Name           | Should -Be 'PSCustomObject'
         $val.BaseType       | Should -Be 'System.Object'
     }
@@ -92,7 +92,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "PSArgumentException"
-            $_.FullyQualifiedErrorId | Should -be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.FullyQualifiedErrorId | Should -Be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -105,7 +105,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "MethodException"
-            $_.FullyQualifiedErrorId | Should -be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -119,7 +119,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "MethodInvocationException"
-            $_.FullyQualifiedErrorId | Should -be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -136,7 +136,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "MethodException"
-            $_.FullyQualifiedErrorId | Should -be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -153,7 +153,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should -be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.FullyQualifiedErrorId | Should -Be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -167,7 +167,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "PSArgumentException"
-            $_.FullyQualifiedErrorId | Should -be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.FullyQualifiedErrorId | Should -Be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -199,12 +199,12 @@ try
         It "Should be able to create <Name> with property <Property> of Type <Type>" -TestCases $testCases {
             param($Name, $Property, $Type)
             $comObject = New-Object -ComObject $name
-            $comObject.$Property | should -not -be $null
-            $comObject.$Property | should -beoftype $Type
+            $comObject.$Property | Should -Not -BeNullOrEmpty
+            $comObject.$Property | Should -Beoftype $Type
         }
 
         It "Should fail with correct error when creating a COM object that dose not exist" {
-            {New-Object -ComObject 'doesnotexist'} | shouldBeErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
+            {New-Object -ComObject 'doesnotexist'} | ShouldBeErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
         }
     }
 }

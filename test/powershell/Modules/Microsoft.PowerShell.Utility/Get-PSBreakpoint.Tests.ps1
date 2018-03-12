@@ -19,7 +19,7 @@ Describe "Get-PSBreakpoint" -Tags "CI" {
         # so we can't check against a specific number
         # however, we can be sure that we're getting an int and that the int is
         # greater or equal to 0
-        ([int]$Id) -ge 0 | should -be $true
+        ([int]$Id) -ge 0 | Should -BeTrue
     }
 
     It "should be able to get PSBreakpoint with using Variable switch" {
@@ -28,7 +28,7 @@ Describe "Get-PSBreakpoint" -Tags "CI" {
         { Get-PSBreakpoint -Variable "$scriptName" -Script $fullScriptPath } | Should -Not -Throw
 
         $Id = (Get-PSBreakpoint -Variable "$scriptName" -Script $fullScriptPath).Variable
-        $Id | Should -be $scriptName
+        $Id | Should -Be $scriptName
 
     }
 }

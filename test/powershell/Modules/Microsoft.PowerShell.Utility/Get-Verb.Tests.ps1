@@ -3,30 +3,30 @@
 Describe "Get-Verb" -Tags "CI" {
 
     It "Should get a list of Verbs" {
-        Get-Verb | Should -not -be $null
+        Get-Verb | Should -Not -BeNullOrEmpty
     }
 
     It "Should get a specific verb" {
-        @(Get-Verb -Verb Add).Count | Should -be 1
-        @(Get-Verb -Verb Add -Group Common).Count | Should -be 1
+        @(Get-Verb -Verb Add).Count | Should -Be 1
+        @(Get-Verb -Verb Add -Group Common).Count | Should -Be 1
     }
 
     It "Should get a specific group" {
-        (Get-Verb -Group Common).Group | Sort-Object -Unique | Should -be Common
+        (Get-Verb -Group Common).Group | Sort-Object -Unique | Should -Be Common
     }
 
     It "Should not return duplicate Verbs with Verb paramater" {
         $dups = Get-Verb -Verb Add,ad*,a*
         $unique = $dups |
             Select-Object -Property * -Unique
-        $dups.Count | Should -be $unique.Count
+        $dups.Count | Should -Be $unique.Count
     }
 
     It "Should not return duplicate Verbs with Group paramater" {
         $dupVerbs = Get-Verb -Group Data,Data
         $uniqueVerbs = $dupVerbs |
             Select-Object -Property * -Unique
-        $dupVerbs.Count | Should -be $uniqueVerbs.Count
+        $dupVerbs.Count | Should -Be $uniqueVerbs.Count
     }
 
     It "Should filter using the Verb parameter" {
@@ -39,7 +39,7 @@ Describe "Get-Verb" -Tags "CI" {
             throw "Expected error did not occur"
         }
         Catch{
-            $PSItem.FullyQualifiedErrorId | Should -be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
+            $PSItem.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
         }
     }
 

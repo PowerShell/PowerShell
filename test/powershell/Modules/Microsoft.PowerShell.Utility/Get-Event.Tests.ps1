@@ -28,7 +28,7 @@ Describe "Get-Event" -Tags "CI" {
 	}
 
 	It "Should return Sender as Windows.timer" {
-	    { (Get-Event -SourceIdentifier PesterTimer).Sender  | Should -be Windows.timer }
+	    { (Get-Event -SourceIdentifier PesterTimer).Sender  | Should -Be Windows.timer }
 	}
 
     }

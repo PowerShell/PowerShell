@@ -74,7 +74,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable -Name foo $null -Description "new description" -PassThru:$true -Scope "local"
 		$var1=Get-Variable -Name foo -Scope "local"
 		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be $null
+		$var1.Value|Should -BeNullOrEmpty
 		$var1.Options|Should -Be "None"
 		$var1.Description|Should -Be "new description"
 	}
@@ -96,7 +96,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 		}
 	}
 
@@ -123,7 +123,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 
@@ -139,7 +139,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 		}
 	}
 

@@ -62,7 +62,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
         $null = $ps.BeginInvoke()
         Start-Sleep 1
         $null = $ps.Stop()
-        $ps.InvocationStateInfo.State | should -be "Stopped"
+        $ps.InvocationStateInfo.State | Should -Be "Stopped"
         $ps.Dispose()
 	}
 
@@ -134,8 +134,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$out1 = Import-Clixml -Path $testfile	# this results in a hashtable
 		$out2 = Import-Clixml -Path $testfile -First 2 -Skip 1	# this results in a dictionary entry
 		$out2.Count | Should -Be 2
-        ($out2.Name) -join ":" | should -be (@($out1.Keys)[1, 2] -join ":")
-        ($out2.Value) -join ":" | should -be (@($out1.Values)[1, 2] -join ":")
+        ($out2.Name) -join ":" | Should -Be (@($out1.Keys)[1, 2] -join ":")
+        ($out2.Value) -join ":" | Should -Be (@($out1.Values)[1, 2] -join ":")
 	}
 
 	# these tests just cover aspects that aren't normally exercised being used as a cmdlet
@@ -146,7 +146,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$cmd.LiteralPath = "foo"
 		$cmd.LiteralPath | Should -BeExactly "foo"
 		$cmd.NoClobber = $true
-		$cmd.NoClobber | Should -Be $true
+		$cmd.NoClobber | Should -BeTrue
 
 		$cmd = [Microsoft.PowerShell.Commands.ImportClixmlCommand]::new()
 		$cmd.LiteralPath = "bar"

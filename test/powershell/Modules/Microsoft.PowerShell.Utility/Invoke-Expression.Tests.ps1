@@ -5,7 +5,7 @@ Describe "Invoke-Expression" -Tags "CI" {
     Context "Should execute the invoked command validly" {
 
 	It "Should return the echoed text" {
-	    (Invoke-Expression -command "echo pestertest1") | Should -be "pestertest1"
+	    (Invoke-Expression -command "echo pestertest1") | Should -Be "pestertest1"
 	}
 
 	It "Should return the echoed text from a script" {

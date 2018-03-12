@@ -5,7 +5,7 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
         { 1 | Out-File -PSPath $tempFile } | Should -Not -Throw
         $fileContents = Get-Content $tempFile
-        $fileContents | Should -be 1
+        $fileContents | Should -Be 1
         Remove-Item $tempFile -Force
     }
 

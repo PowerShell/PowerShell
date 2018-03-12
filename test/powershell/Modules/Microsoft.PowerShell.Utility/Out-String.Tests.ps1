@@ -6,8 +6,8 @@ Describe "Out-String DRT Unit Tests" -Tags "CI" {
         $results = new-object psobject | add-member -passthru noteproperty 'name with square brackets: [0]' 'myvalue' | out-string
         $results.Length | Should -BeGreaterThan 1
         $results | Should -BeOfType "System.String"
-        $results.Contains("myvalue") | Should -Be $true
-        $results.Contains("name with square brackets: [0]") | Should -Be $true
+        $results.Contains("myvalue") | Should -BeTrue
+        $results.Contains("name with square brackets: [0]") | Should -BeTrue
     }
 
 }

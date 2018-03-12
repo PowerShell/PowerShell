@@ -80,7 +80,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	$tmpvar1   | Should -Be "tempvalue"
 	$tmpvar2   | Should -Be 2
 	$tmpmyvar1 | Should -Be #nothing.  it should be Nothing at all.
-	$thevar    | should -Be 1
+	$thevar    | Should -Be 1
 
 	Remove-Variable tmpvar1
 	Remove-Variable tmpvar2

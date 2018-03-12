@@ -20,9 +20,9 @@ Describe "Json Tests" -Tags "Feature" {
             $result.SampleInt | Should -Be 98765
             $result.SampleString | Should -Match "stringVal"
             $result.SampleArray.Count | Should -Be 2
-            $result.SampleTrue | Should -Be $true
-            $result.SampleFalse | Should -Be $false
-            $result.SampleNull | Should -Be $null
+            $result.SampleTrue | Should -BeTrue
+            $result.SampleFalse | Should -BeFalse
+            $result.SampleNull | Should -BeNullOrEmpty
             $result.SampleFloat | Should -Be 9.8765E+43
 
             if ($hasEmbeddedSampleObject)
@@ -50,7 +50,7 @@ Describe "Json Tests" -Tags "Feature" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | should -be $expectedFullyQualifiedErrorId
+                $_.FullyQualifiedErrorId | Should -Be $expectedFullyQualifiedErrorId
             }
         }
 
@@ -209,7 +209,7 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convert from Json allows an empty string" {
 
             $emptyStringResult = ConvertFrom-Json ""
-            $emptyStringResult | Should -Be $null
+            $emptyStringResult | Should -BeNullOrEmpty
         }
 
         It "Convert enumerated values to Json" {
@@ -261,7 +261,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json.Rev | Should -Be $json.Revision
 
             # Check the ScriptProperty
-            $json.IsOld | Should -Be $true
+            $json.IsOld | Should -BeTrue
         }
 
         It "ConvertFrom-Json with a key value pair" {
@@ -1436,7 +1436,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 {
                     $theError = $_
                 }
-                $theError | Should -Be $null
+                $theError | Should -BeNullOrEmpty
             }
         }
     }
@@ -1480,12 +1480,12 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
         # Read the object as an array of PSObjects and deserialize it.
         $result = Get-Content $filePath | ConvertFrom-Json
-        $result.Count | Should -be 2
+        $result.Count | Should -Be 2
     }
 
     It "ConvertFrom-Json deserializes an array of strings (in multiple lines) as a single string." {
 
         $result = "[1,","2,","3]" | ConvertFrom-Json
-        $result.Count | Should -be 3
+        $result.Count | Should -Be 3
     }
 }

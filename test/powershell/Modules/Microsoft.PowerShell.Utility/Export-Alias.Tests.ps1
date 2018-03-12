@@ -45,7 +45,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 		finally{
 			Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
@@ -59,7 +59,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 	}
 
@@ -123,7 +123,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			throw "No Exception!"
 		}
 		catch{
-			$_.FullyQualifiedErrorId | Should -be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 		Export-Alias $fulltestpath abcd03 -force
 		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
@@ -160,12 +160,12 @@ Describe "Export-Alias" -Tags "CI" {
 
 	It "Should be able to create a file in the specified location"{
 		Export-Alias $fulltestpath
-		Test-Path $fulltestpath | Should -be $true
+		Test-Path $fulltestpath | Should -BeTrue
   }
 
   It "Should create a file with the list of aliases that match the expected list" {
 		Export-Alias $fulltestpath
-		Test-Path $fulltestpath | Should -Be $true
+		Test-Path $fulltestpath | Should -BeTrue
 
 		$actual   = Get-Content $fulltestpath | Sort-Object
 		$expected = Get-Command -CommandType Alias

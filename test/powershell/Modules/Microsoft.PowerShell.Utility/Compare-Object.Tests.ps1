@@ -115,10 +115,10 @@ Describe "Compare-Object" -Tags "CI" {
 	$actualOutput[2].InputObject | Should -Be 1
 	$actualOutput[3].InputObject | Should -Be 15
 
-	$actualOutput[0].SideIndicator | Should -be "=>"
-	$actualOutput[1].SideIndicator | Should -be "<="
-	$actualOutput[2].SideIndicator | Should -be "=>"
-	$actualOutput[3].SideIndicator | Should -be "<="
+	$actualOutput[0].SideIndicator | Should -Be "=>"
+	$actualOutput[1].SideIndicator | Should -Be "<="
+	$actualOutput[2].SideIndicator | Should -Be "=>"
+	$actualOutput[3].SideIndicator | Should -Be "<="
     }
 }
 

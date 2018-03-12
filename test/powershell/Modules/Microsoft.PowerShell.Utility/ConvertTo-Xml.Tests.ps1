@@ -11,7 +11,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
     $newLine = [System.Environment]::NewLine
     It "Test convertto-xml with a depth parameter" {
         $returnObject = $customPSObject | ConvertTo-Xml -Depth 1
-        $returnObject -is [System.Xml.XmlDocument] | Should -Be $true
+        $returnObject -is [System.Xml.XmlDocument] | Should -BeTrue
         #$xml = [System.Xml.XmlDocument]$returnObject
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object Type="System.Management.Automation.PSCustomObject">' + '<Property Name="prop1" Type="System.String">val1</Property><Property Name="prop2" Type="System.String">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should -Be $expectedValue
@@ -19,7 +19,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
     It "Test convertto-xml with notypeinfo parameter" {
         $returnObject = $customPSObject | ConvertTo-Xml -NoTypeInformation
-        $returnObject -is [System.Xml.XmlDocument] | Should -Be $true
+        $returnObject -is [System.Xml.XmlDocument] | Should -BeTrue
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object>' + '<Property Name="prop1">val1</Property><Property Name="prop2">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should -Be $expectedValue
     }
@@ -29,14 +29,14 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
         $expectedValue = @"
 <?xml version="1.0" encoding="utf-8"?>$newLine<Objects>$newLine  <Object Type="System.Management.Automation.PSCustomObject">$newLine    <Property Name="prop1" Type="System.String">val1</Property>$newLine    <Property Name="prop2" Type="System.String">val2</Property>$newLine  </Object>$newLine</Objects>
 "@
-        $returnObject -is [System.String] | Should -Be $true
+        $returnObject -is [System.String] | Should -BeTrue
         $returnObject | Should -Be $expectedValue
         #$returnObject.Trim($newLine) | Should Be $expectedValue.Trim($newLine)
     }
 
     It "Test convertto-xml as Stream" {
         $returnObject = $customPSObject | ConvertTo-Xml -As Stream
-        $returnObject -is [System.Array] | Should -Be $true
+        $returnObject -is [System.Array] | Should -BeTrue
         $stream1 = '<?xml version="1.0" encoding="utf-8"?>'
         $stream2 = '<Objects>'
         $stream3 = @"
@@ -53,7 +53,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
     It "Test convertto-xml as Document" {
         $returnObject = $customPSObject | ConvertTo-Xml -As Document -NoTypeInformation
-        $returnObject -is [System.Xml.XmlDocument] | Should -Be $true
+        $returnObject -is [System.Xml.XmlDocument] | Should -BeTrue
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object><Property Name="prop1">val1</Property><Property Name="prop2">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should -Be $expectedValue
     }
@@ -74,7 +74,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 
 		$cmd = [Microsoft.PowerShell.Commands.ConvertToXmlCommand]::new()
 		$cmd.NoTypeInformation = $true
-		$cmd.NoTypeInformation | Should -Be $true
+		$cmd.NoTypeInformation | Should -BeTrue
     }
 
     It "Serialize primitive type" {

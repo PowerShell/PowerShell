@@ -106,9 +106,9 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input | Export-Csv -Path $filePath -Force
         $results = Import-Csv $filePath
 
-        $results.P2 | Should -be "second"
+        $results.P2 | Should -Be "second"
         $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
-        $property | should -not -be P1
+        $property | Should -Not -Be P1
     }
 
     It "Test export-csv with a useculture flag" {
@@ -119,7 +119,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         Get-Item -Path $outputFilesDir| Export-Csv -Path $fileToGenerate -UseCulture -NoTypeInformation
         $contents = Get-Content -Path $fileToGenerate
         $contents.Count | Should -Be 2
-        $contents[0].Contains($delimiter) | Should -Be $true
-        $contents[1].Contains($delimiter) | Should -Be $true
+        $contents[0].Contains($delimiter) | Should -BeTrue
+        $contents[1].Contains($delimiter) | Should -BeTrue
     }
 }

@@ -30,7 +30,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
 		}
 	}
 
@@ -42,7 +42,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
 		}
     }
 
@@ -53,7 +53,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -be "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
+			$_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
 		}
     }
 
@@ -98,6 +98,6 @@ Describe "Import-Alias" -Tags "CI" {
 
 	It "Should be able to use ipal alias to import an alias file and perform cmd" {
 	    (ipal $pesteraliasfile)
-	    (pesterecho pestertesting) | Should -be "pestertesting"
+	    (pesterecho pestertesting) | Should -Be "pestertesting"
 	}
 }

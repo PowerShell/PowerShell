@@ -6,7 +6,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		Clear-Variable -Name foo
 		$var1=Get-Variable -Name foo
 		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be $null
+		$var1.Value|Should -BeNullOrEmpty
 		$var1.Options|Should -Be "None"
 		$var1.Description|Should -Be ""
 	}
@@ -26,7 +26,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		Clear-Variable -Name foo -Force
 		$var1=Get-Variable -Name foo
 		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be $null
+		$var1.Value|Should -BeNullOrEmpty
 		$var1.Options|Should -Be "ReadOnly"
 		$var1.Description|Should -Be ""
 	}
@@ -35,12 +35,12 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable foo bar
 		&{
 			Set-Variable foo baz
-			$foo | should -be baz
+			$foo | Should -Be baz
 			Clear-Variable -Name foo -Scope "local"
 
 			$var1=Get-Variable -Name foo -Scope "local"
 			$var1.Name|Should -Be "foo"
-			$var1.Value|Should -Be $null
+			$var1.Value|Should -BeNullOrEmpty
 			$var1.Options|Should -Be "None"
 			$var1.Description|Should -Be ""
 		}
@@ -80,7 +80,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 
 			$var1=Get-Variable -Name foo -Scope "local"
 			$var1.Name|Should -Be "foo"
-			$var1.Value|Should -Be $null
+			$var1.Value|Should -BeNullOrEmpty
 			$var1.Options|Should -Be "None"
 			$var1.Description|Should -Be ""
 		}
@@ -193,7 +193,7 @@ Describe "Clear-Variable" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | should -be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 		$var2 | Should -Not -BeNullOrEmpty
 

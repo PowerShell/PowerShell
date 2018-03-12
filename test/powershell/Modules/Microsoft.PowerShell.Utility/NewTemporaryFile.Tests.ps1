@@ -29,7 +29,7 @@ Describe "New-TemporaryFile" -Tags "CI" {
     }
 
     It "with WhatIf does not create a file" {
-        New-TemporaryFile -WhatIf | Should -Be $null
+        New-TemporaryFile -WhatIf | Should -BeNullOrEmpty
     }
 
     It "has an OutputType of System.IO.FileInfo" {

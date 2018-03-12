@@ -383,18 +383,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     function ValidateResponse {
         param ($response)
 
-        $response.Error | Should -Be $null
+        $response.Error | Should -BeNullOrEmpty
 
         # A successful call returns: Status = 200, and StatusDescription = "OK"
         $response.Output.StatusDescription | Should -Match "OK"
         $response.Output.StatusCode | Should -Be 200
 
         # Make sure the response contains the following properties:
-        $response.Output.RawContent | Should -Not -Be $null
-        $response.Output.Headers | Should -Not -Be $null
-        $response.Output.RawContent | Should -Not -Be $null
-        $response.Output.RawContentLength | Should -Not -Be $null
-        $response.Output.Content | Should -Not -Be $null
+        $response.Output.RawContent | Should -Not -BeNullOrEmpty
+        $response.Output.Headers | Should -Not -BeNullOrEmpty
+        $response.Output.RawContent | Should -Not -BeNullOrEmpty
+        $response.Output.RawContentLength | Should -Not -BeNullOrEmpty
+        $response.Output.Content | Should -Not -BeNullOrEmpty
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -2763,7 +2763,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 body        = 'null'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            Invoke-RestMethod -Uri $uri | Should -Be $null
+            Invoke-RestMethod -Uri $uri | Should -BeNullOrEmpty
         }
 
         It "Invoke-RestMethod Supports a Single Value JSON null and ignores whitespace" {
@@ -2772,10 +2772,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 body        = "            null         "
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            Invoke-RestMethod -Uri $uri | Should -Be $null
+            Invoke-RestMethod -Uri $uri | Should -BeNullOrEmpty
             $query['body'] = "           null         `n"
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            Invoke-RestMethod -Uri $uri | Should -Be $null
+            Invoke-RestMethod -Uri $uri | Should -BeNullOrEmpty
         }
     }
 

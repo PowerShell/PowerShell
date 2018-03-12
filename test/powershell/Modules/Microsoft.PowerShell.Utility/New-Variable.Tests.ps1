@@ -131,7 +131,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should default to none as the value for options" {
-		 (new-variable -name var2 -value 4 -passthru).Options | should -be "None"
+		 (new-variable -name var2 -value 4 -passthru).Options | Should -Be "None"
 	}
 
 	It "Should be able to set ReadOnly option" {
@@ -155,7 +155,7 @@ Describe "New-Variable" -Tags "CI" {
 
 		Set-Variable -Name var1 -Option Constant  -ErrorAction SilentlyContinue
 
-		(Get-Variable var1).Options | should -be "None"
+		(Get-Variable var1).Options | Should -Be "None"
 	}
 
 	It "Should not be able to delete a constant variable" {
@@ -228,16 +228,16 @@ Describe "New-Variable" -Tags "CI" {
     }
     It "Should be able to create a global scope variable using the global switch" {
         new-variable -Scope global -name globalvar1 -value 1
-        get-variable -Scope global -name globalVar1 -ValueOnly | Should -be 1
+        get-variable -Scope global -name globalVar1 -ValueOnly | Should -Be 1
     }
     It "Should be able to create a local scope variable using the local switch" {
-        Get-Variable -scope local -name localvar -ValueOnly -ea silentlycontinue | should -BeNullOrEmpty
+        Get-Variable -scope local -name localvar -ValueOnly -ea silentlycontinue | Should -BeNullOrEmpty
         New-Variable -Scope local -Name localVar -value 10
-        get-variable -scope local -name localvar -ValueOnly | Should -be 10
+        get-variable -scope local -name localvar -ValueOnly | Should -Be 10
     }
     It "Should be able to create a script scope variable using the script switch" {
         new-variable -scope script -name scriptvar -value 100
-        get-variable -scope script -name scriptvar -ValueOnly | should -be 100
+        get-variable -scope script -name scriptvar -ValueOnly | Should -Be 100
     }
 	}
 }
