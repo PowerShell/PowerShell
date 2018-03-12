@@ -96,7 +96,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 		}
 	}
 
@@ -123,7 +123,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 
@@ -139,7 +139,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 		}
 	}
 

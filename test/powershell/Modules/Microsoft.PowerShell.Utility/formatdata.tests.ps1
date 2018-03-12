@@ -32,7 +32,7 @@ Describe "FormatData" -tags "Feature" {
         It "works with literal path" {
             $filename = 'TestDrive:\[formats.ps1xml'
             Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename
-            (Test-Path -LiteralPath $filename) | Should -Be $true
+            (Test-Path -LiteralPath $filename) | Should -BeTrue
         }
 
         It "should overwrite the destination file" {

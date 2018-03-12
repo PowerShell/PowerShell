@@ -38,7 +38,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 throw "No Exception!"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+                $_.| Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
             }
         }
     }
@@ -50,7 +50,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 throw "No Exception!"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
+                $_.| Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
             }
         }
 
@@ -60,7 +60,7 @@ Describe "Get-FileHash" -Tags "CI" {
                 throw "No Exception!"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should -Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
+                $_.| Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
             }
         }
 

@@ -29,7 +29,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		}
 		catch {
 			$_.CategoryInfo| Should -Match "SessionStateException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
 		}
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
@@ -48,7 +48,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		}
 		catch {
 			$_.CategoryInfo| Should -Match "SessionStateException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
 		}
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
@@ -89,7 +89,7 @@ Describe "New-Variable" -Tags "CI" {
     It "Should not be able to set the name of a new variable to that of an old variable within same scope when the Force switch is missing" {
         New-Variable var1
         New-Variable var1 -ErrorAction SilentlyContinue -ErrorVariable newWhenExists
-        $newWhenExists.FullyQualifiedErrorId | Should -Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+        $newWhenExists.| Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
     }
 
     It "Should change the value of an already existing variable using the Force switch" {

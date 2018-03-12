@@ -20,7 +20,7 @@ Describe "Debug-Runspace" -tag "CI" {
             throw "Command did not throw exception"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "DebugRunspaceTooManyRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+            $_.| Should -Throw -ErrorId "DebugRunspaceTooManyRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
         }
     }
 
@@ -30,7 +30,7 @@ Describe "Debug-Runspace" -tag "CI" {
             throw "Command did not throw exception"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "DebugRunspaceNoRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+            $_.| Should -Throw -ErrorId "DebugRunspaceNoRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
         }
     }
 
@@ -41,7 +41,7 @@ Describe "Debug-Runspace" -tag "CI" {
             throw "Command did not throw exception"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+            $_.| Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
         }
     }
 
@@ -52,7 +52,7 @@ Describe "Debug-Runspace" -tag "CI" {
             throw "Command did not throw exception"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+            $_.| Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
         }
     }
 

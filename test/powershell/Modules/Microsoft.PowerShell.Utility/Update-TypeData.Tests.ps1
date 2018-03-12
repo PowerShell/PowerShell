@@ -61,7 +61,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $null = $ps.AddScript("Update-TypeData -PrependPath $invalidFileExtensionFile")
         $ps.Invoke()
         $ps.HadErrors | Should -BeTrue
-        $ps.Streams.Error[0].FullyQualifiedErrorId | Should -Be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        $ps.Streams.Error[0].| Should -Throw -ErrorId "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{

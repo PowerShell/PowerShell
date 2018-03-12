@@ -111,7 +111,7 @@ try
                 $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber
                 throw "expect Import-PSSession to throw"
             } catch {
-                $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
+                $_.| Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
             }
         }
     }

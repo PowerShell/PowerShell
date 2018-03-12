@@ -36,7 +36,7 @@ Describe "Get-Uptime" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should -Be "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
+            $_.| Should -Throw -ErrorId "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
         }
         finally
         {

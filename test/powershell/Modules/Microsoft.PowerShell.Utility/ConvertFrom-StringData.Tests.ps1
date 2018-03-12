@@ -15,7 +15,7 @@ def=content of def
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+            $_.| Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
         }
     }
 }

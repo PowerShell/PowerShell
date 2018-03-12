@@ -156,7 +156,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -Be 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
+                $_.| Should -Throw -ErrorId 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
             }
         }
 

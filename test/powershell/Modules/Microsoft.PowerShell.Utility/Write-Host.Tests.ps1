@@ -43,7 +43,7 @@ Describe "Write-Host with wrong colors" -Tags "CI" {
           Write-Host "No output from Write-Host" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
           throw "No Exception!"
       }
-      catch { $_.FullyQualifiedErrorId | Should -Be 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand' }
+      catch { $_.| Should -Throw -ErrorId 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand' }
     }
 }
 

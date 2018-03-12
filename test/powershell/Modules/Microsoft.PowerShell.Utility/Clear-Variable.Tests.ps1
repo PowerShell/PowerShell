@@ -20,7 +20,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		}
 		catch {
 			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 
 		Clear-Variable -Name foo -Force
@@ -61,7 +61,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 			}
 			catch {
 					$_.CategoryInfo| Should -Match "ItemNotFoundException"
-					$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+					$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 
@@ -193,7 +193,7 @@ Describe "Clear-Variable" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 		$var2 | Should -Not -BeNullOrEmpty
 

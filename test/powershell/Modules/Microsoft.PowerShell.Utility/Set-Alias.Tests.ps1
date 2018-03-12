@@ -8,7 +8,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
+			$_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
 		}
 	}
 
@@ -80,7 +80,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
+			$_.| Should -Throw -ErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
 		}
 	}
 }

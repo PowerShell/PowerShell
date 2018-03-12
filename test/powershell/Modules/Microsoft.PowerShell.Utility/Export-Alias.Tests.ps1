@@ -45,7 +45,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
+			$_.| Should -Throw -ErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 		finally{
 			Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
@@ -59,7 +59,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
+			$_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 	}
 
@@ -123,7 +123,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			throw "No Exception!"
 		}
 		catch{
-			$_.FullyQualifiedErrorId | Should -Be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
+			$_.| Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		}
 		Export-Alias $fulltestpath abcd03 -force
 		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'

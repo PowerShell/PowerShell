@@ -33,7 +33,7 @@ Describe "Format-Wide" -Tags "CI" {
 		}
 		catch
 		{
-			$_.FullyQualifiedErrorId | Should -Be "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
+			$_.| Should -Throw -ErrorId "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
 		}
     }
 

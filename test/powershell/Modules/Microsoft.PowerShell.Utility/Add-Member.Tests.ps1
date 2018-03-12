@@ -4,59 +4,19 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Mandatory parameters should not be null nor empty" {
         # when Name is null
-        try
-        {
-            Add-Member -Name $null
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -Name $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
 
         # when Name is empty
-        try
-        {
-            Add-Member -Name ""
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -Name "" } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
 
         # when MemberType is null
-        try
-        {
-            Add-Member -MemberType $null
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -MemberType $null } | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
 
         # when MemberType is empty
-        try
-        {
-            Add-Member -MemberType ""
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -MemberType "" } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
 
         # when InputObject is null
-        try
-        {
-            Add-Member -InputObject $null
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     # It only support on AliasProperty, ScriptProperty, CodeProperty and CodeMethod
@@ -64,14 +24,8 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $memberTypesWhereV1CannotBeNull = "CodeMethod", "MemberSet", "PropertySet", "ScriptMethod", "NoteProperty"
         foreach ($memberType in $memberTypesWhereV1CannotBeNull)
         {
-            try
-            {
-                Add-Member -InputObject a -memberType $memberType -Name Name -Value something -SecondValue somethingElse
-                Throw "Execution OK"
-            }
-            catch{
-                $_.FullyQualifiedErrorId | Should -Be "Value2ShouldNotBeSpecified,Microsoft.PowerShell.Commands.AddMemberCommand"
-            }
+            { Add-Member -InputObject a -memberType $memberType -Name Name -Value something -SecondValue somethingElse } |
+                Should -Throw -ErrorId "Value2ShouldNotBeSpecified,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
     }
 
@@ -79,27 +33,10 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $membersYouCannotAdd = "Method", "Property", "ParameterizedProperty"
         foreach ($member in $membersYouCannotAdd)
         {
-            try
-            {
-                Add-Member -InputObject a -memberType $member -Name Name
-                Throw "Execution OK"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "CannotAddMemberType,Microsoft.PowerShell.Commands.AddMemberCommand"
-
-            }
+            { Add-Member -InputObject a -memberType $member -Name Name } | Should -Throw -ErrorId "CannotAddMemberType,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
 
-        try
-        {
-            Add-Member -InputObject a -memberType AnythingElse -Name Name
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject a -memberType AnythingElse -Name Name } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
 
     }
 
@@ -107,29 +44,15 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $memberTypes = "CodeProperty", "ScriptProperty"
         foreach ($memberType in $memberTypes)
         {
-            try
-            {
-                Add-Member -memberType $memberType -Name PropertyName -Value $null -SecondValue $null -InputObject a
-                Throw "Execution OK"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -Be "Value1AndValue2AreNotBothNull,Microsoft.PowerShell.Commands.AddMemberCommand"
-            }
+            { Add-Member -memberType $memberType -Name PropertyName -Value $null -SecondValue $null -InputObject a } |
+                Should -Throw -ErrorId "Value1AndValue2AreNotBothNull,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
 
     }
 
     It "Fail to add unexisting type" {
-        try
-        {
-            Add-Member -InputObject a -MemberType AliasProperty -Name Name -Value something -SecondValue unexistingType
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "InvalidCastFromStringToType,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject a -MemberType AliasProperty -Name Name -Value something -SecondValue unexistingType }
+            Should -Throw -ErrorId "InvalidCastFromStringToType,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     It "Successful alias, no type" {
@@ -145,15 +68,8 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
     }
 
     It "CodeProperty Reference Wrong Type" {
-        try
-        {
-            add-member -InputObject a -MemberType CodeProperty -Name Name -Value something
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject a -MemberType CodeProperty -Name Name -Value something } |
+            Should -Throw -ErrorId "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     It "Empty Member Set Null Value1" {
@@ -166,58 +82,37 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $members = new-object System.Collections.ObjectModel.Collection[System.Management.Automation.PSMemberInfo]
         $n=new-object Management.Automation.PSNoteProperty a,1
         $members.Add($n)
-        $r=add-member -InputObject a -MemberType MemberSet -Name Name -Value $members -passthru
+        $r=Add-Member -InputObject a -MemberType MemberSet -Name Name -Value $members -passthru
         $r.Name.a | Should -Be '1'
     }
 
     It "MemberSet With Wrong Type For Value1" {
-        try
-        {
-            add-member -InputObject a -MemberType MemberSet -Name Name -Value ImNotACollection
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject a -MemberType MemberSet -Name Name -Value ImNotACollection } |
+            Should -Throw -ErrorId "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     It "ScriptMethod Reference Wrong Type" {
-        try
-        {
-            add-member -InputObject a -MemberType ScriptMethod -Name Name -Value something
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject a -MemberType ScriptMethod -Name Name -Value something }
+            | Should -Throw -ErrorId "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     It "Add ScriptMethod Success" {
-        $results = add-member -InputObject 'abc' -MemberType ScriptMethod -Name Name -Value {$this.length} -passthru
-        $results | Should -Be abc
+        $results = Add-Member -InputObject 'abc' -MemberType ScriptMethod -Name Name -Value {$this.length} -PassThru
+        $results | Should -BeExactly 'abc'
         $results.Name() | Should -Be 3
     }
 
     It "ScriptProperty Reference Wrong Type" {
-        try
-        {
-            add-member -InputObject a -MemberType ScriptProperty -Name Name -Value something
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Be "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
-        }
+        { Add-Member -InputObject a -MemberType ScriptProperty -Name Name -Value something } |
+            Should -Throw -ErrorId "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     It "Add ScriptProperty Success" {
         set-alias ScriptPropertyTestAlias dir
         $al=(get-alias ScriptPropertyTestAlias)
         $al.Description="MyDescription"
-        $al | add-member -MemberType ScriptProperty -Name NewDescription -Value {$this.Description} -SecondValue {$this.Description=$args[0]}
-        $al.NewDescription | Should -Be 'MyDescription'
+        $al | Add-Member -MemberType ScriptProperty -Name NewDescription -Value {$this.Description} -SecondValue {$this.Description=$args[0]}
+        $al.NewDescription | Should -BeExactly 'MyDescription'
         $al.NewDescription = "some description"
         $al.NewDescription | Should -Be 'some description'
     }

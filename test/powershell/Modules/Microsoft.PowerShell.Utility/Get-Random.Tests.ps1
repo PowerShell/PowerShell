@@ -80,7 +80,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should -Be "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
+            $_.| Should -Throw -ErrorId "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
         }
     }
 

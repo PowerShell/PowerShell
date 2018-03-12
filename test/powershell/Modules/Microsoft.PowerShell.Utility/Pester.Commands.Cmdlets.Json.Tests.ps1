@@ -50,7 +50,7 @@ Describe "Json Tests" -Tags "Feature" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should -Be $expectedFullyQualifiedErrorId
+                $_.| Should -Throw -ErrorId $expectedFullyQualifiedErrorId
             }
         }
 
@@ -1422,7 +1422,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 }
                 catch
                 {
-                    $_.FullyQualifiedErrorId | Should -Be $testCase.FullyQualifiedErrorId
+                    $_.| Should -Throw -ErrorId $testCase.FullyQualifiedErrorId
                 }
             }
             else

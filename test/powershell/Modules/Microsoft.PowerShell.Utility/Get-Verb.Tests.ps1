@@ -39,7 +39,7 @@ Describe "Get-Verb" -Tags "CI" {
             throw "Expected error did not occur"
         }
         Catch{
-            $PSItem.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
+            $PSItem.| Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
         }
     }
 

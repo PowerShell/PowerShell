@@ -8,7 +8,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 
@@ -49,7 +49,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
 }
@@ -148,7 +148,7 @@ Describe "Get-Variable" -Tags "CI" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
 	    Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue -ErrorVariable removeGlobalAsLocal
-	    $removeGlobalAsLocal.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+	    $removeGlobalAsLocal.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Should be able to get a global variable when there's one in the script scope" {

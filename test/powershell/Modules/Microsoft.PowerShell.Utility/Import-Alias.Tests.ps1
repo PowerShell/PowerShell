@@ -30,7 +30,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
+			$_.| Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
 		}
 	}
 
@@ -42,7 +42,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
+			$_.| Should -Throw -ErrorId "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
 		}
     }
 
@@ -53,7 +53,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
+			$_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
 		}
     }
 

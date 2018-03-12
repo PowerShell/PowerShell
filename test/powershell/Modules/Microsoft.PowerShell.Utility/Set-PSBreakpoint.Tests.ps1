@@ -142,7 +142,7 @@ set-psbreakpoint -command foo
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+            $_.| Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         }
     }
 
@@ -153,7 +153,7 @@ set-psbreakpoint -command foo
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
+            $_.| Should -Throw -ErrorId "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         }
         $ErrorActionPreference = "SilentlyContinue"
     }

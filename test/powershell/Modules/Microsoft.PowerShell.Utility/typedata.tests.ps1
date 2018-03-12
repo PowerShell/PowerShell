@@ -18,7 +18,7 @@ Describe "TestData cmdlets" -Tags "CI" {
             $types[0].TypeName | Should -Be System.DateTime
             for($i = 1; $i -lt $types.Count; $i++)
             {
-                $types[$i].TypeName.StartsWith("System.Management.Automation") | Should -Be $true
+                $types[$i].TypeName.StartsWith("System.Management.Automation") | Should -BeTrue
             }
         }
 

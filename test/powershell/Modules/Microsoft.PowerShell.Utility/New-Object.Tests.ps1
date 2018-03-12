@@ -92,7 +92,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "PSArgumentException"
-            $_.FullyQualifiedErrorId | Should -Be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.| Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -105,7 +105,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "MethodException"
-            $_.FullyQualifiedErrorId | Should -Be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.| Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -119,7 +119,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "MethodInvocationException"
-            $_.FullyQualifiedErrorId | Should -Be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.| Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -136,7 +136,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "MethodException"
-            $_.FullyQualifiedErrorId | Should -Be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.| Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -153,7 +153,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should -Be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.| Should -Throw -ErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 
@@ -167,7 +167,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         catch
         {
             $_.CategoryInfo| Should -Match "PSArgumentException"
-            $_.FullyQualifiedErrorId | Should -Be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+            $_.| Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         }
     }
 

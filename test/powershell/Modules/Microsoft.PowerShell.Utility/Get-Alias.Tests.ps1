@@ -8,7 +8,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
+            $_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias OutOfRange Scope"{
@@ -17,7 +17,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
+            $_.| Should -Throw -ErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias Named Single Valid"{
@@ -146,7 +146,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should -Be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
+            $_.| Should -Throw -ErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias Zero Scope Valid"{
@@ -231,7 +231,7 @@ Describe "Get-Alias null tests" -Tags "CI" {
           Get-Alias -Name $data
           throw "No Exception!"
       }
-      catch { $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
+      catch { $_.| Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
     }
   }
   Context 'Check null or empty value to the -Name parameter via pipeline' {
@@ -242,7 +242,7 @@ Describe "Get-Alias null tests" -Tags "CI" {
           $data | Get-Alias -ErrorAction Stop
           throw "No Exception!"
       }
-      catch { $_.FullyQualifiedErrorId | Should -Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
+      catch { $_.| Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
     }
   }
 }

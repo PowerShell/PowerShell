@@ -24,7 +24,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.ErrorDetails | Should -BeNullOrEmpty
 
         #FullyQualifiedErrorId verification
-        $e.FullyQualifiedErrorId | Should -Be 'Microsoft.PowerShell.Commands.WriteErrorException'
+        $e.| Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.WriteErrorException'
 
         #InvocationInfo verification
         $e.InvocationInfo | Should -Not -BeNullOrEmpty
@@ -47,7 +47,7 @@ Describe "Write-Error Tests" -Tags "CI" {
         $e.TargetObject | Should -Be 'TargetObject'
 
         #FullyQualifiedErrorId verification
-        $e.FullyQualifiedErrorId | Should -Be 'myerrorid'
+        $e.| Should -Throw -ErrorId 'myerrorid'
 
         #ErrorCategoryInfo verification
         $e.CategoryInfo | Should -Not -BeNullOrEmpty

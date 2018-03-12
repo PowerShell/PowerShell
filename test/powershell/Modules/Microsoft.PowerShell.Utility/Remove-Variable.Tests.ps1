@@ -9,7 +9,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable -Name var1 -Value 4
 
 	Remove-Variable $var1 -ErrorAction SilentlyContinue -ErrorVariable err
-	$err.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+	$err.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
     }
 
     It "Should not throw error when used without the Name field, and named variable is properly specified and exists" {
@@ -203,7 +203,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
 
@@ -217,7 +217,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 		Remove-Variable foo -Force
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
@@ -234,7 +234,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 
 		try
@@ -245,7 +245,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should -Be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+			$_.| Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
 
@@ -261,7 +261,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 			catch
 			{
 				$_.CategoryInfo | Should -Match "ItemNotFoundException"
-				$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+				$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 

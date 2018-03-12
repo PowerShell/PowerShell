@@ -132,7 +132,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 		catch
 		{
 			$_.CategoryInfo | Should -Match "PSArgumentException"
-			$_.FullyQualifiedErrorId | Should -Be "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"
+			$_.| Should -Throw -ErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"
 		}
 	}
 

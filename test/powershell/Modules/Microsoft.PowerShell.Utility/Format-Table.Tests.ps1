@@ -40,7 +40,7 @@ Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 				catch
 				{
 						$_.CategoryInfo | Should -Match "PipelineStoppedException"
-						$_.FullyQualifiedErrorId | Should -Be "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
+						$_.| Should -Throw -ErrorId "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
 				}
 		}
 
