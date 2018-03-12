@@ -3,13 +3,7 @@
 
 Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 	It "Set-Alias Invalid Scope Name should throw PSArgumentException"{
-		try {
-			Set-Alias -Name "ABCD" -Value "foo" -Scope "bogus"
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
-		}
+			{ Set-Alias -Name "ABCD" -Value "foo" -Scope "bogus" } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
 	}
 
 	It "Set-Alias ReadOnly Force"{
@@ -75,13 +69,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Expose Bug 1062958, BugId:905449"{
-		try {
-			Set-Alias -Name "ABCD" -Value "foo" -Scope "-1"
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
-		}
+			{ Set-Alias -Name "ABCD" -Value "foo" -Scope "-1" } | Should -Throw -ErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
 	}
 }
 

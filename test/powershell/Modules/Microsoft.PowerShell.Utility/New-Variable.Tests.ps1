@@ -23,14 +23,9 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable twice should throw Exception"{
 		New-Variable foo bogus
 
-		try {
-			New-Variable foo bar -EA Stop
-			Throw "Execution OK"
-		}
-		catch {
-			$_.CategoryInfo| Should -Match "SessionStateException"
-			$_.| Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
-		}
+		{ New-Variable foo bar -EA Stop } | Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+		$e.CategoryInfo | Should -Match "SessionStateException"
+		
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
 		$var1.Name|Should -Be "foo"
@@ -42,14 +37,9 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable ReadOnly variable twice should throw Exception"{
 		New-Variable foo bogus -option ReadOnly
 
-		try {
-			New-Variable foo bar -EA Stop
-			Throw "Execution OK"
-		}
-		catch {
-			$_.CategoryInfo| Should -Match "SessionStateException"
-			$_.| Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
-		}
+		{ New-Variable foo bar -EA Stop } | Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+		$e.CategoryInfo | Should -Match "SessionStateException"
+
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
 		$var1.Name|Should -Be "foo"
@@ -187,7 +177,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should not be able to see the value of a private variable when out of scope" {
-		{New-Variable -Name var1 -Value 1 -Option Private}| Should -Not -Throw
+		{New-Variable -Name var1 -Value 1 -Option Private} | Should -Not -Throw
 
 		$var1 | Should -BeNullOrEmpty
 	}

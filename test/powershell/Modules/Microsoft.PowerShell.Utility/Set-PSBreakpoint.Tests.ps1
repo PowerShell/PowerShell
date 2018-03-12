@@ -137,24 +137,12 @@ set-psbreakpoint -command foo
     }
 
     It "Should be throw Exception when Column number less than 1" {
-        try {
-            set-psbreakpoint -line 1 -column -1 -script $scriptFileName
-            Throw "Execution OK"
-        }
-        catch {
-            $_.| Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
+        { set-psbreakpoint -line 1 -column -1 -script $scriptFileName } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should be throw Exception when Line number less than 1" {
         $ErrorActionPreference = "Stop"
-        try {
-            set-psbreakpoint -line -1 -script $scriptFileName
-            Throw "Execution OK"
-        }
-        catch {
-            $_.| Should -Throw -ErrorId "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
+        { set-psbreakpoint -line -1 -script $scriptFileName } | Should -Throw -ErrorId "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
         $ErrorActionPreference = "SilentlyContinue"
     }
 

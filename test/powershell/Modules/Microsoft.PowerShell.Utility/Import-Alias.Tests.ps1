@@ -24,42 +24,22 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {
-			$ErrorActionPreference = "Stop"
-		try {
-			Import-Alias *
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+		{ Import-Alias * -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
 	}
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException" {
-			$ErrorActionPreference = "Stop"
-		{Export-Alias  $fulltestpath abcd*}| Should -Not -Throw
-		try {
-			Import-Alias $fulltestpath
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+		{ Export-Alias  $fulltestpath abcd* } | Should -Not -Throw
+		{ Import-Alias $fulltestpath -ErrorAction Stop } | Should -Throw -ErrorId "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
 	It "Import-Alias Into Invalid Scope should throw PSArgumentException"{
-		{Export-Alias  $fulltestpath abcd*}| Should -Not -Throw
-		try {
-			Import-Alias $fulltestpath -scope bogus
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+		{ Export-Alias  $fulltestpath abcd* } | Should -Not -Throw
+		{ Import-Alias $fulltestpath -scope bogus } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist using force should not throw"{
-		{Export-Alias  $fulltestpath abcd*}| Should -Not -Throw
-		{Import-Alias $fulltestpath  -Force}| Should -Not -Throw
+		{Export-Alias  $fulltestpath abcd*} | Should -Not -Throw
+		{Import-Alias $fulltestpath  -Force} | Should -Not -Throw
     }
 }
 

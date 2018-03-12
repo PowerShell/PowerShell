@@ -91,13 +91,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 
 	It "Set-Variable overwrite Constant Option should throw SessionStateUnauthorizedAccessException"{
 		Set-Variable -Name abcaVar bar -Option Constant -Scope "local"
-		try {
-			Set-Variable -Name abcaVar new -Scope "local" -EA Stop
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
-		}
+		{ Set-Variable -Name abcaVar new -Scope "local" -EA Stop } |  Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
 	It "Set-Variable of existing Private variable without force should throw Exception"{
@@ -118,13 +112,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 
 	It "Set-Variable with Exclude, then Get-Variable it should throw ItemNotFoundException"{
 		Set-Variable -Name foo1,foo2 hello -Exclude foo2 -EA Stop
-		try {
-			Get-Variable -Name foo2 -EA Stop
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
-		}
+		{ Get-Variable -Name foo2 -EA Stop } | Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Set-Variable of existing ReadOnly variable without force should throw Exception"{
@@ -134,13 +122,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "ReadOnly"
 		$var1.Description|Should -Be "new description"
-		try {
-			Set-Variable abcaVar -Option None -EA Stop
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
-		}
+		{ Set-Variable abcaVar -Option None -EA Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
 	It "Set-Variable of ReadOnly variable with private scope should work"{

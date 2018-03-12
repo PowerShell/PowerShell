@@ -34,7 +34,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 
     It "Export-Alias for exist file should work"{
 		New-Item -Path $fulltestpath -ItemType File -Force
-		{Export-Alias $fulltestpath}| Should -Not -Throw
+		{Export-Alias $fulltestpath} | Should -Not -Throw
     }
 
 	It "Export-Alias resolving to multiple files will throw ReadWriteMultipleFilesNotSupported" {

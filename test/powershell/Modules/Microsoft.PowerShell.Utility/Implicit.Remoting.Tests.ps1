@@ -107,12 +107,7 @@ try
         }
 
         It "Verifies security error when Certificate parameter is not used" -Skip:($skipTest -or $skipThisTest) {
-            try {
-                $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber
-                throw "expect Import-PSSession to throw"
-            } catch {
-                $_.| Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
-            }
+            { $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
         }
     }
 
