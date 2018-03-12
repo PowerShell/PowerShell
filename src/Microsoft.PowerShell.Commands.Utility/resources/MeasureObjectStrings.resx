@@ -126,7 +126,4 @@
   <data name="NonNumericInputObject" xml:space="preserve">
     <value>Input object "{0}" is not numeric.</value>
   </data>
-  <data name="AverageSwitchNotSet" xml:space="preserve">
-    <value>StdDeviation was requested and requires the average to be calculated, however '-Average' was set to $false.</value>
-  </data>
 </root>
