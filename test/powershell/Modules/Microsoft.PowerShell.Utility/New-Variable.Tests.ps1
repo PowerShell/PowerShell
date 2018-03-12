@@ -17,7 +17,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "Constant"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 
 	It "New-Variable variable twice should throw Exception"{
@@ -36,7 +36,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 
 	It "New-Variable ReadOnly variable twice should throw Exception"{
@@ -55,7 +55,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 }
 

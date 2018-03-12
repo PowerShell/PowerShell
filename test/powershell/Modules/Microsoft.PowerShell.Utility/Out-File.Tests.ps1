@@ -65,7 +65,7 @@ Describe "Out-File" -Tags "CI" {
 
         $actual = Get-Content $testfile
 
-        $actual[0] | Should -Be ""
+        $actual[0] | Should -BeNullOrEmpty
         $actual[1] | Should -Match "text"
         $actual[2] | Should -Match "----"
         $actual[3] | Should -Match "some test text"
@@ -77,18 +77,18 @@ Describe "Out-File" -Tags "CI" {
 
         $actual = Get-Content $testfile
 
-        $actual[0]  | Should -Be ""
+        $actual[0]  | Should -BeNullOrEmpty
         $actual[1]  | Should -Match "text"
         $actual[2]  | Should -Match "----"
         $actual[3]  | Should -Match "some test text"
-        $actual[4]  | Should -Be ""
-        $actual[5]  | Should -Be ""
-        $actual[6]  | Should -Be ""
+        $actual[4]  | Should -BeNullOrEmpty
+        $actual[5]  | Should -BeNullOrEmpty
+        $actual[6]  | Should -BeNullOrEmpty
         $actual[7]  | Should -Match "text"
         $actual[8]  | Should -Match "----"
         $actual[9]  | Should -Match "some test text"
-        $actual[10] | Should -Be ""
-        $actual[11] | Should -Be ""
+        $actual[10] | Should -BeNullOrEmpty
+        $actual[11] | Should -BeNullOrEmpty
     }
 
     It "Should limit each line to the specified number of characters when the width switch is used on objects" {
@@ -97,7 +97,7 @@ Describe "Out-File" -Tags "CI" {
 
         $actual = Get-Content $testfile
 
-        $actual[0] | Should -Be ""
+        $actual[0] | Should -BeNullOrEmpty
         $actual[1] | Should -Be "text"
         $actual[2] | Should -Be "----"
         $actual[3] | Should -Be "some te..."
@@ -113,18 +113,18 @@ Describe "Out-File" -Tags "CI" {
 
         $actual = Get-Content $testfile
 
-        $actual[0]  | Should -Be ""
+        $actual[0]  | Should -BeNullOrEmpty
         $actual[1]  | Should -Match "text"
         $actual[2]  | Should -Match "----"
         $actual[3]  | Should -Match "some test text"
-        $actual[4]  | Should -Be ""
-        $actual[5]  | Should -Be ""
-        $actual[6]  | Should -Be ""
+        $actual[4]  | Should -BeNullOrEmpty
+        $actual[5]  | Should -BeNullOrEmpty
+        $actual[6]  | Should -BeNullOrEmpty
         $actual[7]  | Should -Match "text"
         $actual[8]  | Should -Match "----"
         $actual[9]  | Should -Match "some test text"
-        $actual[10] | Should -Be ""
-        $actual[11] | Should -Be ""
+        $actual[10] | Should -BeNullOrEmpty
+        $actual[11] | Should -BeNullOrEmpty
 
         # reset to not read only so it can be deleted
         Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false

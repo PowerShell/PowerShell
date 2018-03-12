@@ -17,14 +17,14 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "foo"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "ReadOnly"
 
 			Set-Alias -Name ABCD -Value "foo" -Force:$true
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "foo"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "None"
 	}
 
@@ -33,7 +33,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "MyCommand"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Name And Value Positional Valid"{
@@ -41,7 +41,7 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			$result=Get-Alias ABCD
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "foo"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Description Valid"{
@@ -59,19 +59,19 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			$result=Get-Alias -Name ABCD
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "localfoo"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "None"
 
 			$result=Get-Alias -Name ABCD -scope local
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "localfoo"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "None"
 
 			$result=Get-Alias -Name ABCD -scope "1"
 			$result.Name| Should -Be "ABCD"
 			$result.Definition| Should -Be "foo1"
-			$result.Description| Should -Be ""
+			$result.Description| Should -BeNullOrEmpty
 			$result.Options| Should -Be "None"
 	}
 	It "Set-Alias Expose Bug 1062958, BugId:905449"{

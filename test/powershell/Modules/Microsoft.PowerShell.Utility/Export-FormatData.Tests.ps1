@@ -34,7 +34,7 @@ Describe "Export-FormatData" -Tags "CI" {
 	    It "Should not return an empty xml file" {
 	        Get-FormatData | Export-FormatData -Path $testOutput
 	        $piped = Get-Content $testOutput
-	        $piped | Should -Not -Be ""
+	        $piped | Should -Not -BeNullOrEmpty
 	    }
 
 	    It "Should have a valid xml tag at the start of the file" {

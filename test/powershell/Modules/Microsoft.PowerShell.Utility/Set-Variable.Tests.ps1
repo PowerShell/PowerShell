@@ -8,7 +8,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 
 	It "Set-Variable normal variable Name with position should works"{
@@ -17,7 +17,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 
 	It "Set-Variable normal variable Name with scope should works"{
@@ -28,21 +28,21 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 
 		Set-Variable -Name foo -Value newValue -Scope "local"
 		$var1=Get-Variable -Name foo -scope "local"
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "newValue"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 
 		Set-Variable -Name foo -Value newValue2 -Scope "script"
 		$var1=Get-Variable -Name foo -scope "script"
 		$var1.Name|Should -Be "foo"
 		$var1.Value|Should -Be "newValue2"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 
 	It "Set-Variable normal variable Name with position should works"{
@@ -56,17 +56,17 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1[0].Name|Should -Be "abcaVar"
 		$var1[0].Value|Should -Be "overwrite"
 		$var1[0].Options|Should -Be "None"
-		$var1[0].Description|Should -Be ""
+		$var1[0].Description|Should -BeNullOrEmpty
 
 		$var1[1].Name|Should -Be "aVarfoo"
 		$var1[1].Value|Should -Be "overwrite"
 		$var1[1].Options|Should -Be "None"
-		$var1[1].Description|Should -Be ""
+		$var1[1].Description|Should -BeNullOrEmpty
 
 		$var1[2].Name|Should -Be "bcdaVar"
 		$var1[2].Value|Should -Be "anotherVal"
 		$var1[2].Options|Should -Be "None"
-		$var1[2].Description|Should -Be ""
+		$var1[2].Description|Should -BeNullOrEmpty
 	}
 
 	It "Set-Variable normal variable Name with Description and Value should works"{
@@ -159,7 +159,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Name|Should -Be "footest1"
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be ""
+		$var1.Description|Should -BeNullOrEmpty
 	}
 }
 
