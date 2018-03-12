@@ -65,8 +65,7 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    mainModule = targetProcess.MainModule;
-                    break;
+                    return targetProcess.MainModule;
                 }
                 catch (System.ComponentModel.Win32Exception e)
                 {
