@@ -1,4 +1,5 @@
-using namespace System.Text
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.using namespace System.Text
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -71,44 +72,28 @@ function WriteLogSettings
         [LogKeyword[]] $LogKeywords = $null
     )
 
-    [StringBuilder] $sb = [StringBuilder]::new()
     $filename = [Guid]::NewGuid().ToString('N')
     $fullPath = Join-Path -Path $TestDrive -ChildPath "$filename.config.json"
 
-    $null = $sb.AppendLine('{')
-    $null = $sb.AppendFormat('"LogIdentity": "{0}"', $LogId)
+    $values = @{}
+    $values['LogIdentity'] = $LogId
 
-    [string] $channels = [string]::Empty
     if ($LogChannels -ne $null)
     {
-        $channels = $LogChannels -join ', '
+        $values['LogChannels'] = $LogChannels -join ', '
     }
-    [string] $keywords = [string]::Empty
+
     if ($LogKeywords -ne $null)
     {
-        $keywords = $LogKeywords -join ', '
+        $values['LogKeywords'] = $LogKeywords -join ', '
     }
 
-    if ($null -ne $LogLevel)
+    if ($LogLevel)
     {
-        $null = $sb.AppendLine(',')
-        $null = $sb.AppendFormat('"LogLevel": "{0}"', $LogLevel.ToString())
-    }
-    if ([string]::IsNullOrEmpty($channels) -eq $false)
-    {
-        $null = $sb.AppendLine(',')
-        $null = $sb.AppendFormat('"LogChannels": "{0}"', $channels)
-    }
-    if ([string]::IsNullOrEmpty($keywords) -eq $false)
-    {
-        $null = $sb.AppendLine(',')
-        $null = $sb.AppendFormat('"LogKeywords": "{0}"', $keywords)
+        $values['LogLevel'] = $LogLevel.ToString()
     }
 
-    $null = $sb.AppendLine()
-    $null = $sb.AppendLine('}')
-
-    $sb.ToString() | Set-Content -Path $fullPath -ErrorAction Stop
+    ConvertTo-Json -InputObject $values | Set-Content -Path $fullPath -ErrorAction Stop
     return $fullPath
 }
 

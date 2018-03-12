@@ -207,6 +207,8 @@ class PSLogItem
 
         MMM dd HH:MM:SS machinename id[PID]: message repeated NNN times: [(commitid:TID:CHANNEL) [EventName] Message]
         #>
+
+        # split contents into separate space delimited tokens (first 7) and leave the rest as the message.
         [string[]] $parts = $content.Split(' ', 8, [System.StringSplitOptions]::RemoveEmptyEntries)
 
         if ($parts.Count -ne 8)
@@ -217,6 +219,7 @@ class PSLogItem
 
         if ([string]::IsNullOrEmpty($id) -eq $false)
         {
+            # If the log entry doesn't have the expected $id, return null.
             if ($parts[[SysLogIds]::Id].StartsWith($id, [StringComparison]::OrdinalIgnoreCase) -eq $false)
             {
                 return $null
@@ -238,6 +241,7 @@ class PSLogItem
 
         if ($after -ne $null -and $time -lt $after)
         {
+            # if the entry was logged prior to the expected time, return null
             return $null
         }
 
@@ -676,7 +680,7 @@ function ConvertFrom-OSLog
             [object] $item = [PSLogItem]::ConvertOsLog($line, $id, $after)
 
             # os_log entries can span multiple lines when new lines are
-            # included in the entry''s message text.
+            # included in the entry's message text.
             # To ensure the entire log entry is processed,
             #    LogItemBuilder.Add will not return an item until it encounters the start
             #    of another log entry.
@@ -710,26 +714,26 @@ function ConvertFrom-OSLog
     This cmdlet parses a text file exported from a MacOS os_log.
 
 .PARAMETER Path
-    The fully qualified path to the syslog formatted file.
+    The fully qualified path to the os_log formatted file.
 
 .PARAMETER Id
     The identifier for the PowerShell log identity of the instance(s) producing the log content.
     The default value is 'powershell'
 
 .PARAMETER TotalCount
-    Specifies the maximum of items to return.
+    Specifies the maximum number of items to return.
 
 .PARAMETER After
     Returns items on or after the specified DateTime
 
 .EXAMPLE
-    PS> Export-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Export-OSLog -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
     PS> Get-PSOsLog -logPath "$PSDrive/mytest.txt"
 
     Gets all log entries from a given timestamp.
 
 .EXAMPLE
-    PS> Export-OSLog -WorkingDirectory $PSDrive -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
+    PS> Export-OSLog -After $timestamp | Set-Content -Path "$PSDrive/mytest.txt"
     PS> Get-PSOsLog -id 'mypwsh' -logPath "$PSDrive/mytest.txt" -TotalCount 200
 
     Gets up to 200 log entries from a given timestamp with the log identity of 'mypwsh'
@@ -852,6 +856,8 @@ function Set-OsLogPersistence
         [Parameter(Mandatory, ParameterSetName='Disable')]
         [switch] $Disable
     )
+    Test-MacOS
+    Test-Elevated
 
     if ($Enable -eq $true)
     {
