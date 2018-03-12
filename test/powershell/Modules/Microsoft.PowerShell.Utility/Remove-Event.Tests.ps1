@@ -14,7 +14,7 @@ Describe "Remove-Event" -Tags "CI" {
 
 	It "Should remove an event given a sourceidentifier" {
 	    { Remove-Event -sourceidentifier PesterTimer }
-	    { Get-Event -ErrorAction SilentlyContinue | Should Not FileMatchContent PesterTimer }
+	    { Get-Event -ErrorAction SilentlyContinue | Should -Not FileMatchContent PesterTimer }
 	}
 
 	It "Should remove an event given an event identifier" {
@@ -22,19 +22,19 @@ Describe "Remove-Event" -Tags "CI" {
 	    { $events = $events.EventIdentifier }
 	    { Remove-Event -EventIdentifier $events }
 	    { $events = Get-Event -ErrorAction SilentlyContinue}
-	    { $events.SourceIdentifier | Should Not FileMatchContent "PesterTimer" }
+	    { $events.SourceIdentifier | Should -Not FileMatchContent "PesterTimer" }
 	}
 
 	It "Should be able to remove an event given a pipe from Get-Event" {
 	    { Get-Event -sourceidentifier PesterTimer | Remove-Event }
-	    { Get-Event -ErrorAction SilentlyContinue | Should Not FileMatchContent "PesterTimer" }
+	    { Get-Event -ErrorAction SilentlyContinue | Should -Not FileMatchContent "PesterTimer" }
 
 	}
 
 	It "Should NOT remove an event given the whatif flag" {
 	    { Remove-Event -sourceidentifier PesterTimer -whatif }
 	    { $events = Get-Event }
-	    { $events.SourceIdentifier  | Should FileContentMatch "PesterTimer" }
+	    { $events.SourceIdentifier  | Should -FileContentMatch "PesterTimer" }
 	}
     }
 }

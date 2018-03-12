@@ -4,13 +4,13 @@ Describe "Object cmdlets" -Tags "CI" {
     Context "Group-Object" {
         It "AsHashtable returns a hashtable" {
             $result = Get-Process | Group-Object -Property ProcessName -AsHashTable
-            $result["pwsh"].Count | Should BeGreaterThan 0
+            $result["pwsh"].Count | Should -BeGreaterThan 0
         }
 
         It "AsString returns a string" {
            $processes = Get-Process | Group-Object -Property ProcessName -AsHashTable -AsString
            $result = $processes.Keys | ForEach-Object {$_.GetType()}
-           $result[0].Name | Should Be "String"
+           $result[0].Name | Should -Be "String"
         }
     }
 
@@ -18,7 +18,7 @@ Describe "Object cmdlets" -Tags "CI" {
         It "with literal path" {
             $path = "TestDrive:\[TeeObjectLiteralPathShouldWorkForSpecialFilename].txt"
             Write-Output "Test" | Tee-Object -LiteralPath $path | Tee-Object -Variable TeeObjectLiteralPathShouldWorkForSpecialFilename
-            $TeeObjectLiteralPathShouldWorkForSpecialFilename | Should Be (Get-Content -LiteralPath $path)
+            $TeeObjectLiteralPathShouldWorkForSpecialFilename | Should -Be (Get-Content -LiteralPath $path)
         }
     }
 }
@@ -62,41 +62,41 @@ Describe "Object cmdlets" -Tags "CI" {
 
         It "can compare string representation for minimum" {
             $minResult = $firstObject, $secondObject | Measure-Object Header -Minimum
-            $minResult.Minimum.ToString() | Should Be $expectedFirstValue.ToString()
+            $minResult.Minimum.ToString() | Should -Be $expectedFirstValue.ToString()
         }
 
         It "can compare string representation for maximum" {
             $maxResult = $firstObject, $secondObject | Measure-Object Header -Maximum
-            $maxResult.Maximum.ToString() | Should Be $expectedSecondValue.ToString()
+            $maxResult.Maximum.ToString() | Should -Be $expectedSecondValue.ToString()
         }
 
         It 'correctly find minimum of (<data>)' -TestCases $testCases {
             param($data, $min, $max)
 
             $output = $data | Measure-Object -Minimum
-            $output.Minimum.ToString() | Should Be $min
+            $output.Minimum.ToString() | Should -Be $min
         }
 
         It 'correctly find maximum of (<data>)' -TestCases $testCases {
             param($data, $min, $max)
 
             $output = $data | Measure-Object -Maximum
-            $output.Maximum.ToString() | Should Be $max
+            $output.Maximum.ToString() | Should -Be $max
         }
 
         It 'returns a GenericMeasureInfoObject' {
             $gmi = 1,2,3 | measure-object -max -min
-            $gmi | Should BeOfType Microsoft.PowerShell.Commands.GenericMeasureInfo
+            $gmi | Should -BeOfType Microsoft.PowerShell.Commands.GenericMeasureInfo
         }
 
         It 'should return correct error for non-numeric input' {
             $gmi = "abc",[Datetime]::Now | measure  -sum -max -ev err -ea silentlycontinue
-            $err | ForEach-Object { $_.FullyQualifiedErrorId | Should Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
+            $err | ForEach-Object { $_.FullyQualifiedErrorId | Should -Be 'NonNumericInputObject,Microsoft.PowerShell.Commands.MeasureObjectCommand' }
         }
 
         It 'should have the correct count' {
             $gmi = "abc",[Datetime]::Now | measure  -sum -max -ev err -ea silentlycontinue
-            $gmi.Count | Should Be 2
+            $gmi.Count | Should -Be 2
         }
     }
 }

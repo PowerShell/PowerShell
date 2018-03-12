@@ -21,13 +21,13 @@ Describe "Trace-Command" -tags "Feature" {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
             $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         It "Callstack works" -pending:($IsCoreCLR) {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         It "Datetime works" {
@@ -44,7 +44,7 @@ Describe "Trace-Command" -tags "Feature" {
                         $actualGap = $expectedDate - $_;
                     }
 
-                    $allowedGap | Should BeGreaterThan $actualGap
+                    $allowedGap | Should -BeGreaterThan $actualGap
                 }
         }
 
@@ -52,7 +52,7 @@ Describe "Trace-Command" -tags "Feature" {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption None -FilePath $actualLogfile
             Trace-Command -name * -Expression {write-output Foo} -FilePath $logfile
 
-            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should BeNullOrEmpty
+            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should -BeNullOrEmpty
         }
 
         It "ThreadID works" {
@@ -60,7 +60,7 @@ Describe "Trace-Command" -tags "Feature" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ThreadID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should Be ([threading.thread]::CurrentThread.ManagedThreadId) }
+            $results | ForEach-Object { $_ | Should -Be ([threading.thread]::CurrentThread.ManagedThreadId) }
         }
 
         It "Timestamp creates logs in ascending order" {
@@ -68,7 +68,7 @@ Describe "Trace-Command" -tags "Feature" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*Timestamp=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
             $sortedResults = $results | Sort-Object
-            $sortedResults | Should Be $results
+            $sortedResults | Should -Be $results
         }
 
         It "ProcessId logs current process Id" {
@@ -76,7 +76,7 @@ Describe "Trace-Command" -tags "Feature" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should Be $pid }
+            $results | ForEach-Object { $_ | Should -Be $pid }
         }
     }
 }

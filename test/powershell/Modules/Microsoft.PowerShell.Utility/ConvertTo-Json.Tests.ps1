@@ -12,8 +12,8 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $properties = @{'DictObject' = $dict; 'RandomString' = 'A quick brown fox jumped over the lazy dog'}
         $object = New-Object -TypeName psobject -Property $properties
         $jsonFormat = ConvertTo-Json -InputObject $object
-        $jsonFormat | Should Match '"TestValue1": 123456'
-        $jsonFormat | Should Match '"TestValue2": 78910'
-        $jsonFormat | Should Match '"TestValue3": 99999'
+        $jsonFormat | Should -Match '"TestValue1": 123456'
+        $jsonFormat | Should -Match '"TestValue2": 78910'
+        $jsonFormat | Should -Match '"TestValue3": 99999'
     }
 }

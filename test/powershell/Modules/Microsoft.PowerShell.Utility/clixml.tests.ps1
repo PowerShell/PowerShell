@@ -67,7 +67,7 @@ Describe "CliXml test" -Tags "CI" {
                     $exportCliXmlError = $_
                 }
 
-                $exportCliXmlError.FullyQualifiedErrorId | Should Be $test.expectedError
+                $exportCliXmlError.FullyQualifiedErrorId | Should -Be $test.expectedError
             }
         }
 
@@ -76,7 +76,7 @@ Describe "CliXml test" -Tags "CI" {
             $filePath = Join-Path $subFilePath 'gps.xml'
             Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject ($gpsList | Select-Object -First 1)
 
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $isExisted = $false
@@ -94,7 +94,7 @@ Describe "CliXml test" -Tags "CI" {
                 }
             }
 
-            $isExisted | Should Be $true
+            $isExisted | Should -Be $true
         }
 
         It "can be created with literal path using pipeline" {
@@ -102,7 +102,7 @@ Describe "CliXml test" -Tags "CI" {
             $filePath = Join-Path $subFilePath 'gps.xml'
             ($gpsList | Select-Object -First 1) | Export-Clixml -Depth 1 -LiteralPath $filePath
 
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
             $isExisted = $false
@@ -120,7 +120,7 @@ Describe "CliXml test" -Tags "CI" {
                 }
             }
 
-            $isExisted | Should Be $true
+            $isExisted | Should -Be $true
         }
     }
 
@@ -150,43 +150,43 @@ Describe "CliXml test" -Tags "CI" {
                     $importCliXmlError = $_
                 }
 
-                $importCliXmlError.FullyQualifiedErrorId | Should Be $test.expectedError
+                $importCliXmlError.FullyQualifiedErrorId | Should -Be $test.expectedError
             }
         }
 
         It "can import from a literal path" {
             Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should -Not -Be $null
 
             $importedProcess = Import-Clixml $filePath
-            $importedProcess.ProcessName | Should Not BeNullOrEmpty
-            $gps.ProcessName | Should Be $importedProcess.ProcessName
-            $importedProcess.Id | Should Not BeNullOrEmpty
-            $gps.Id | Should Be $importedProcess.Id
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
         }
 
         It "can import from a literal path using pipeline" {
             $gps | Export-Clixml -Depth 1 -LiteralPath $filePath
-            $filePath | Should Exist
+            $filePath | Should -Exist
 
             $fileContent = Get-Content $filePath
-            $fileContent | Should Not Be $null
+            $fileContent | Should -Not -Be $null
 
             $importedProcess = Import-Clixml $filePath
-            $importedProcess.ProcessName | Should Not BeNullOrEmpty
-            $gps.ProcessName | Should Be $importedProcess.ProcessName
-            $importedProcess.Id | Should Not BeNullOrEmpty
-            $gps.Id | Should Be $importedProcess.Id
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
         }
 
         It "test follow-up for WinBlue: 161470 - Export-CliXml errors in WhatIf scenarios" {
 
             $testPath = "testdrive:\Bug161470NonExistPath.txt"
             Export-Clixml -Path $testPath -InputObject "string" -WhatIf
-            $testPath | Should Not Exist
+            $testPath | Should -Not -Exist
         }
     }
 }
@@ -228,6 +228,6 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
             Start-Sleep -Milliseconds 500
         }
 
-        $calcProc | Should BeNullOrEmpty
+        $calcProc | Should -BeNullOrEmpty
     }
 }
