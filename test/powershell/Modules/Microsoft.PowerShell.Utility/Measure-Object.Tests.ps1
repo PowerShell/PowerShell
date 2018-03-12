@@ -3,6 +3,7 @@
 Describe "Measure-Object" -Tags "CI" {
     BeforeAll {
         $testObject = 1,3,4
+        $testObject2 = 1..100
     }
 
     It "Should be able to be called without error" {
@@ -23,20 +24,17 @@ Describe "Measure-Object" -Tags "CI" {
         [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
     }
 
+
+    It "Should calculate Standard Deviation" {
+        $actual = ($testObject2 | Measure-Object -StdDeviation)
+        # We check this way since .StdDeviation returns a double value
+        [Math]::abs($actual.StdDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
+    }
+
     It "Should calculate Standard Deviation without -Average" {
         $actual = ($testObject | Measure-Object -StdDeviation)
         # We check this way since .StdDeviation returns a double value
         [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
-    }
-
-    It 'Should throw if Standard Deviation requested and -Average:$false' {
-        try {
-            $Error.Clear()
-            $testObject | Measure-Object -StdDeviation -Average:$false -ErrorAction Stop
-        }
-        catch {
-            $Error.Count | should be 1
-        }
     }
 
     It "Should be able to count using the Property switch" {
