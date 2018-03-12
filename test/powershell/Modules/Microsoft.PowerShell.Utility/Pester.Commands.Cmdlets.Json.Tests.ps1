@@ -43,15 +43,7 @@ Describe "Json Tests" -Tags "Feature" {
             $hash = @{ $process = "def" }
             $expectedFullyQualifiedErrorId = "NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
 
-            try
-            {
-                ConvertTo-Json -InputObject $hash
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.| Should -Throw -ErrorId $expectedFullyQualifiedErrorId
-            }
+            { ConvertTo-Json -InputObject $hash } | Should -Throw -ErrorId $expectedFullyQualifiedErrorId
         }
 
         It "ConvertTo-Json should handle terms with double quotes" {
@@ -1415,28 +1407,11 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
             if ($testCase.ShouldThrow)
             {
-                try
-                {
-                    $previous | ConvertTo-Json -Depth $testCase.MaxDepth
-                    throw "CodeExecuted"
-                }
-                catch
-                {
-                    $_.| Should -Throw -ErrorId $testCase.FullyQualifiedErrorId
-                }
+                { $previous | ConvertTo-Json -Depth $testCase.MaxDepth } | Should -Throw -ErrorId $testCase.FullyQualifiedErrorId
             }
             else
             {
-                $theError = $null
-                try
-                {
-                    $previous | ConvertTo-Json -Depth $testCase.MaxDepth | ConvertFrom-Json
-                }
-                catch
-                {
-                    $theError = $_
-                }
-                $theError | Should -BeNullOrEmpty
+               	{ $previous | ConvertTo-Json -Depth $testCase.MaxDepth | ConvertFrom-Json } | Should -Not -Throw
             }
         }
     }

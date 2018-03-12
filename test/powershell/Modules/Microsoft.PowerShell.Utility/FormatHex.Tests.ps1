@@ -332,7 +332,6 @@ Describe "FormatHex" -tags "CI" {
 
             param ($Name, $PathParameterErrorCase, $Path, $InputObject, $InputObjectErrorCase, $ExpectedFullyQualifiedErrorId)
 
-            try
             {
                 if ($PathParameterErrorCase)
                 {
@@ -342,13 +341,7 @@ Describe "FormatHex" -tags "CI" {
                 {
                     $result = Format-Hex -InputObject $InputObject -ErrorAction Stop
                 }
-            }
-            catch
-            {
-                $thrownError = $_
-            }
-
-            $thrownError.FullyQualifiedErrorId | Should -MatchExactly $ExpectedFullyQualifiedErrorId
+            } | Should -Throw -ErrorId $ExpectedFullyQualifiedErrorId
         }
     }
 

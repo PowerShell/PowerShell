@@ -38,29 +38,19 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Export-Alias resolving to multiple files will throw ReadWriteMultipleFilesNotSupported" {
-		try {
+		{
 			$null = New-Item -Path $TestDrive\foo -ItemType File
 			$null = New-Item -Path $TestDrive\bar -ItemType File
 			Export-Alias $TestDrive\*
 			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
-		finally{
-			Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
-			Remove-Item $TestDrive\bar -Force -ErrorAction SilentlyContinue
-		}
+		} | Should -Throw -ErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
+
+		Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
+		Remove-Item $TestDrive\bar -Force -ErrorAction SilentlyContinue
 	}
 
 	It "Export-Alias with Invalid Scope will throw PSArgumentException" {
-		try {
-			Export-Alias $fulltestpath -scope foobar
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
+		{ Export-Alias $fulltestpath -scope foobar } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 	}
 
 	It "Export-Alias for Default"{
@@ -118,17 +108,11 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			chmod 444 $fulltestpath
 		}
 
-		try{
-			Export-Alias $fulltestpath abcd02
-			throw "No Exception!"
-		}
-		catch{
-			$_.| Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
+		{ Export-Alias $fulltestpath abcd02 } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		Export-Alias $fulltestpath abcd03 -force
-		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd02","efgh02","","None"'
-		$fulltestpath| Should -FileContentMatchExactly '"abcd03","efgh03","","None"'
+		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd02","efgh02","","None"'
+		$fulltestpath | Should -FileContentMatchExactly '"abcd03","efgh03","","None"'
 
 		if ( $IsWindows )
 		{

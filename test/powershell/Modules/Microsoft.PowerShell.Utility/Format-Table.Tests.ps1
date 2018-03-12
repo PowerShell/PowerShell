@@ -32,16 +32,8 @@ Describe "Format-Table" -Tags "CI" {
 Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		It "Format-Table with not existing table with force should throw PipelineStoppedException"{
 				$obj = New-Object -typename PSObject
-				try
-				{
-						$obj | Format-Table -view bar -force -EA Stop
-						Throw "Execution OK"
-				}
-				catch
-				{
-						$_.CategoryInfo | Should -Match "PipelineStoppedException"
-						$_.| Should -Throw -ErrorId "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
-				}
+				$e = { $obj | Format-Table -view bar -force -EA Stop } | Should -Throw -ErrorId "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
+				$e.CategoryInfo | Should -Match "PipelineStoppedException"
 		}
 
 		It "Format-Table with array should work" {

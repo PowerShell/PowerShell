@@ -84,43 +84,20 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
     }
 
     It "New-Object with invalid type should throw Exception"{
-        try
-        {
-            New-Object -TypeName LiarType -EA Stop
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.CategoryInfo| Should -Match "PSArgumentException"
-            $_.| Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
-        }
+        $e = { New-Object -TypeName LiarType -EA Stop } | Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $e.CategoryInfo | Should -Match "PSArgumentException"
     }
 
     It "New-Object with invalid argument should throw Exception"{
-        try
-        {
-            New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -EA Stop
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.CategoryInfo| Should -Match "MethodException"
-            $_.| Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
-        }
+        $e = { New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -EA Stop } |
+	    | Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $e.CategoryInfo | Should -Match "MethodException"
     }
 
     It "New-Object with abstract class should throw Exception"{
         Add-Type -TypeDefinition "public abstract class AbstractEmployee{public AbstractEmployee(){}}"
-        try
-        {
-            New-Object -TypeName AbstractEmployee -EA Stop
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.CategoryInfo| Should -Match "MethodInvocationException"
-            $_.| Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
-        }
+        $e = { New-Object -TypeName AbstractEmployee -EA Stop } | Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $e.CategoryInfo | Should -Match "MethodInvocationException
     }
 
     It "New-Object with bad argument for class constructor should throw Exception"{
@@ -128,16 +105,8 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         {
             Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
         }
-        try
-        {
-            New-Object -TypeName Employee -ArgumentList 11 -EA Stop
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.CategoryInfo| Should -Match "MethodException"
-            $_.| Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
-        }
+        { New-Object -TypeName Employee -ArgumentList 11 -EA Stop } | Should -Throw -ErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $e.CategoryInfo | Should -Match "MethodException"
     }
 
     #This case will throw "Execution OK" now, just mark as pending now
@@ -146,29 +115,13 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         {
             Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
         }
-        try
-        {
-            New-Object -TypeName Employee -EA Stop
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.| Should -Throw -ErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
-        }
+        { New-Object -TypeName Employee -EA Stop } | Should -Throw -ErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 
     It "New-Object with Private Nested class should throw Exception"{
         Add-Type -TypeDefinition "public class WeirdEmployee{public WeirdEmployee(){}private class PrivateNestedWeirdEmployee{public PrivateNestedWeirdEmployee(){}}}"
-        try
-        {
-            New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -EA Stop
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.CategoryInfo| Should -Match "PSArgumentException"
-            $_.| Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
-        }
+        $e = {New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -EA Stop } | | Should -Throw -ErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $e.CategoryInfo | Should -Match "PSArgumentException"
     }
 
     It "New-Object with TypeName and Property parameter should work"{

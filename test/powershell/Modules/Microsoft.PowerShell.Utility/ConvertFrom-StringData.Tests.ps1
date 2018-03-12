@@ -8,15 +8,7 @@ abc
 #comments here
 def=content of def
 "@
-        try
-        {
-            ConvertFrom-StringData $str
-            Throw "we expect 'InvalidOperation' exception"
-        }
-        catch
-        {
-            $_.| Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
-        }
+        { ConvertFrom-StringData $str } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
     }
 }
 

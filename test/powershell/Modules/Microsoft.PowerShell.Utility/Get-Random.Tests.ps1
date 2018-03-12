@@ -73,15 +73,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
 
     It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {
         param($maximum, $minimum)
-        try
-        {
-            Get-Random -Minimum $minimum -Maximum $maximum
-            throw "OK"
-        }
-        catch
-        {
-            $_.| Should -Throw -ErrorId "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
-        }
+        { Get-Random -Minimum $minimum -Maximum $maximum } | Should -Throw -ErrorId "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
     }
 
     It "Tests for setting the seed" {

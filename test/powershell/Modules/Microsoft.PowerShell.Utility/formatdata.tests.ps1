@@ -51,16 +51,7 @@ Describe "FormatData" -tags "Feature" {
             $filename = "TestDrive:\ExportFormatDataWithNoClobber.ps1xml"
             Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename
 
-            try
-            {
-                Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename -NoClobber
-            }
-            catch
-            {
-                $exportFormatError = $_
-            }
-
-            $exportFormatError.FullyQualifiedErrorId | Should -Be 'NoClobber,Microsoft.PowerShell.Commands.ExportFormatDataCommand'
+            { Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename -NoClobber } | Should -Throw -ErrorId 'NoClobber,Microsoft.PowerShell.Commands.ExportFormatDataCommand'
         }
     }
 }

@@ -57,17 +57,7 @@ Describe "CliXml test" -Tags "CI" {
 
             It "$($_.testName)" {
                 $test = $_
-
-                try
-                {
-                    Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force
-                }
-                catch
-                {
-                    $exportCliXmlError = $_
-                }
-
-                $exportCliXmlError.FullyQualifiedErrorId | Should -Be $test.expectedError
+                { Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force } | Should -Throw - ErrorId $test.expectedError
             }
         }
 
@@ -141,16 +131,7 @@ Describe "CliXml test" -Tags "CI" {
             It "$($_.testName)" {
                 $test = $_
 
-                try
-                {
-                    Import-Clixml -LiteralPath $test.testFile
-                }
-                catch
-                {
-                    $importCliXmlError = $_
-                }
-
-                $importCliXmlError.FullyQualifiedErrorId | Should -Be $test.expectedError
+                { Import-Clixml -LiteralPath $test.testFile } | Should -Throw -ErrorId $test.expectedError
             }
         }
 

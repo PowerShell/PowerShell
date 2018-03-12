@@ -149,15 +149,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         Update-TypeData -AppendPath $fileToDeleteName
 
         It "Fail to get member without any input" {
-            try
-            {
-                Get-Member -MemberType All -ErrorAction Stop
-                Throw "Execution OK"
-            }
-            catch
-            {
-                $_.| Should -Throw -ErrorId 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
-            }
+            { Get-Member -MemberType All -ErrorAction Stop } | Should -Throw -ErrorId 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
         }
 
         It 'Get the expected Properties of "Employee" object' {

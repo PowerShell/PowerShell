@@ -2,39 +2,17 @@
 # Licensed under the MIT License.
 Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
     It "Should be able to throw exception when missing mandatory parameters" {
-        try
-        {
-            Write-Progress $null
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.| Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.WriteProgressCommand'
-        }
+        { Write-Progress $null } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.WriteProgressCommand'
     }
 
     It "Should be able to throw exception when running Write-Progress with bad percentage" {
-        try
-        {
-            write-progress -activity 'myactivity' -status 'mystatus' -percent 101
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.| Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
-        }
+        { write-progress -activity 'myactivity' -status 'mystatus' -percent 101 }
+	    | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
     }
 
     It "Should be able to throw exception when running Write-Progress with bad parent id " {
-        try
-        {
-            write-progress -activity 'myactivity' -status 'mystatus' -id 1 -parentid -2
-            Throw "Execution OK"
-        }
-        catch
-        {
-            $_.| Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
-        }
+        { write-progress -activity 'myactivity' -status 'mystatus' -id 1 -parentid -2 }
+	    | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.WriteProgressCommand'
     }
 
     It "all mandatory params works" -Pending {

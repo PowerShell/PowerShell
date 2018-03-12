@@ -41,16 +41,7 @@ Describe "GetRandomMiscTests" -Tags "Feature" {
 
         $hadError = $false
 
-        try
-        {
-            ## Don't actually need to validate
-            Get-Random -Minimum ([Int32]::MinValue) -Maximum ([Int32]::MaxValue) -ErrorAction Stop
-        }
-        catch
-        {
-            $hadError = $true
-        }
-
-        $hadError | Should -BeFalse
+        ## Don't actually need to validate
+        { Get-Random -Minimum ([Int32]::MinValue) -Maximum ([Int32]::MaxValue) -ErrorAction Stop } | Should -Not -Throw
     }
 }

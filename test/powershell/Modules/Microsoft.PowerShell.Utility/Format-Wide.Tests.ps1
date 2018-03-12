@@ -26,15 +26,8 @@ Describe "Format-Wide" -Tags "CI" {
     }
 
     It "Should throw an error when property switch and view switch are used together" {
-        try
-		{
-			Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu
-			throw "No Exception!"
-		}
-		catch
-		{
-			$_.| Should -Throw -ErrorId "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
-		}
+	{ Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu } |
+	    Should -Throw -ErrorId "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
     }
 
     It "Should throw and suggest proper input when view is used with invalid input without the property switch" {
