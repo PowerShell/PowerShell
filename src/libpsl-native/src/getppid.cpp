@@ -1,11 +1,15 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#include "pal_config.h"
 #include "getppid.h"
 
 #include <sys/user.h>
 #include <sys/param.h>
+
+#if HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
+#endif
 
 //! @brief GetPPid returns the parent process id for a process
 //!
