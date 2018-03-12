@@ -236,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
             // Generic/Numeric statistics
             internal double sum = 0.0;
             internal double sumPrevious = 0.0;
-            internal double stdDeviation = 0.0;
+            internal double variance = 0.0;
             internal object max = null;
             internal object min = null;
 
@@ -744,14 +744,12 @@ namespace Microsoft.PowerShell.Commands
                 stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
             }
-            if (_measureStdDeviation)
+            if (_measureStdDeviation && stat.count > 1)
             {
                 double countMinusOne = stat.count - 1;
-                double avgPrevious = (countMinusOne == 0) ? 0 : (stat.sumPrevious / countMinusOne);
-                double avg = stat.sum / stat.count;
-                stat.stdDeviation *= countMinusOne;
-                stat.stdDeviation += (numValue - avgPrevious) * (numValue - avg);
-                stat.stdDeviation /= stat.count;
+                double avgPrevious = stat.sumPrevious / countMinusOne;
+                stat.variance *= (countMinusOne - 1)/countMinusOne;
+                stat.variance += (numValue - avgPrevious) * (numValue - avgPrevious) / stat.count;
             }
         }
 
@@ -847,7 +845,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_measureStdDeviation)
                 {
-                    stdDeviation = stat.stdDeviation;
+                    stdDeviation = Math.Sqrt(stat.variance);
                 }
             }
 
