@@ -620,9 +620,9 @@ function New-UnixPackage {
 
         # Destination for symlink to powershell executable
         $Link = if ($Environment.IsLinux) {
-            "/usr/bin"
+            "/usr/bin/pwsh"
         } elseif ($Environment.IsMacOS) {
-            "/usr/local/bin"
+            "/usr/local/bin/"
         }
         $linkSource = "/tmp/pwsh"
 
