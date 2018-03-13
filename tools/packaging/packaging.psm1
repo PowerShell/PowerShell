@@ -2247,6 +2247,8 @@ function Test-FileWxs
         [string] $HeatFilesWxsPath
     )
 
+    # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
+    # Wix will update this automaticaly, but the output is not the same xml
     $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
 
     [xml] $filesAssetXml = $filesAssetString
