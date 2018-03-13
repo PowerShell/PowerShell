@@ -3,7 +3,7 @@
 Describe "Alias tests" -Tags "CI" {
 
     BeforeAll {
-        $testPath = Join-Path testdrive:\ ("testAlias\[.test")
+        $testPath = Join-Path testdrive:\ ("testAlias\.test")
         New-Item -ItemType Directory -Path $testPath -Force | Out-Null
 
         class TestData
@@ -50,7 +50,7 @@ Describe "Alias tests" -Tags "CI" {
 
                 if($null -eq $test.expectedError)
                 {
-                    $test.testFile | Should -Exist
+                   Test-Path -LiteralPath $test.testFile | Should -BeTrue
                 }
                 else
                 {

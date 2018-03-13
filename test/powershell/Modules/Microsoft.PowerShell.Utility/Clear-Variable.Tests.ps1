@@ -50,7 +50,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable foo bar -Option Private
 		&{
 			$e = { Get-Variable -Name foo -Scope local -EA Stop } |
-				Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+				ShouldBeErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			$e.CategoryInfo | Should -Match "ItemNotFoundException"
 		}
 

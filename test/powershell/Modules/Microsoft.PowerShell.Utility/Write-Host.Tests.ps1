@@ -38,12 +38,7 @@ Describe "Write-Host with wrong colors" -Tags "CI" {
 
     It 'Should throw if color is invalid: ForegroundColor = <ForegroundColor>; BackgroundColor = <BackgroundColor>' -TestCases:$testWrongColor {
       param($ForegroundColor, $BackgroundColor)
-      try
-      {
-          Write-Host "No output from Write-Host" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
-          throw "No Exception!"
-      }
-      catch { $_.| Should -Throw -ErrorId 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand' }
+      { Write-Host "No output from Write-Host" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor } | Should -Throw -ErrorId 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand'
     }
 }
 

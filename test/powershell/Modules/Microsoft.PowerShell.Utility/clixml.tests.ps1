@@ -57,7 +57,7 @@ Describe "CliXml test" -Tags "CI" {
 
             It "$($_.testName)" {
                 $test = $_
-                { Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force } | Should -Throw - ErrorId $test.expectedError
+                { Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force } | Should -Throw -ErrorId $test.expectedError
             }
         }
 
