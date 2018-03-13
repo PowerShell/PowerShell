@@ -4981,13 +4981,13 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     string originalPathComparison = path;
-                    if (!originalPathComparison.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase))
+                    if (!originalPathComparison.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
                     {
                         originalPathComparison += StringLiterals.DefaultPathSeparator;
                     }
 
                     string basePathComparison = basePath;
-                    if (!basePathComparison.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase))
+                    if (!basePathComparison.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase))
                     {
                         basePathComparison += StringLiterals.DefaultPathSeparator;
                     }
@@ -5190,7 +5190,7 @@ namespace Microsoft.PowerShell.Commands
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(path, basePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)))
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -5237,7 +5237,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!String.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(path, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!path.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)))
+                            (!path.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);
