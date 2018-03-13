@@ -629,7 +629,7 @@ function New-UnixPackage {
         $Link = if ($Environment.IsLinux) {
             "/usr/bin/pwsh"
         } elseif ($Environment.IsMacOS) {
-            "/usr/local/bin/"
+            "/usr/local/bin/pwsh"
         }
         $linkSource = "/tmp/pwsh"
 
