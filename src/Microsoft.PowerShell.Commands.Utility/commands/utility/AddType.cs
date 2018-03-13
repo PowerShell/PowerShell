@@ -461,7 +461,7 @@ namespace Microsoft.PowerShell.Commands
         ///     nowarn                   - disable all warnings
         ///     nowarn:strings           - disable a list of individual warnings
         ///     usings:strings           - ';'-delimited usings for CSharp
-        ///     imports:strings          - ';'-delimited imports for CSharp
+        ///     imports:strings          - ';'-delimited imports for VisualBasic
         ///
         /// Emit options:
         ///     platform:string          - limit which platforms this code can run on; must be x86, x64, Itanium, arm, AnyCPU32BitPreferred or anycpu (default)
@@ -1201,16 +1201,19 @@ namespace Microsoft.PowerShell.Commands
 
             public override void VisitNamedType(INamedTypeSymbol symbol)
             {
-                if (s_sourceTypesCache.TryGetValue(symbol.ToString(), out int hash))
+                // It is namespace-fully-qualified name
+                var symbolFullName = symbol.ToString();
+
+                if (s_sourceTypesCache.TryGetValue(symbolFullName, out int hash))
                 {
                     if (hash == _hash)
                     {
-                        DuplicateSymbols.Add(symbol.ToString());
+                        DuplicateSymbols.Add(symbolFullName);
                     }
                 }
                 else
                 {
-                    UniqueSymbols.Add(symbol.ToString());
+                    UniqueSymbols.Add(symbolFullName);
                 }
             }
         }
@@ -1293,7 +1296,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (var diagnisticRecord in compilerDiagnostics)
                 {
                     // We shouldn't specify input and output files in ExtendedOptions parameter
-                    // so suppress errors from Roslyn default command line parcer:
+                    // so suppress errors from Roslyn default command line parser:
                     //      CS1562: Outputs without source must have the /out option specified
                     //      CS2008: No inputs specified
                     //      BC2008: No inputs specified
@@ -1376,7 +1379,7 @@ namespace Microsoft.PowerShell.Commands
                         // We copy white chars from the source string.
                         sb.Append(errorLineString, 0, i);
                         // then pad up to the error position.
-                        sb.Append(' ', Math.Max(0, lineSpan.StartLinePosition.Character - i));
+                        sb.Append(' ', Math.Max(0, errorPosition - i));
                         // then put "^" into the error position.
                         sb.AppendLine("^");
                         break;
@@ -1407,7 +1410,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // If the file name does not exist, the source text is set by the user using parameters.
                 // In this case, we assume that the source text is of a small size and we can re-allocate by ToString().
-                hash = st.GetText().ToString().GetHashCode();
+                hash = st.ToString().GetHashCode();
             }
             else
             {
