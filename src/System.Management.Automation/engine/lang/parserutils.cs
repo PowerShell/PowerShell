@@ -895,14 +895,13 @@ namespace System.Management.Automation
                         "BadReplaceArgument", ParserStrings.BadReplaceArgument, ignoreCase ? "-ireplace" : "-replace", rList.Count);
                 }
 
-                if(rList.Count > 1)
-                {
-                    substitute = rList[1];
-                }
-
                 if (rList.Count > 0)
                 {
                     pattern = rList[0];
+                    if (rList.Count > 1)
+                    {
+                        substitute = rList[1];
+                    }
                 }
             }
             else
@@ -963,14 +962,29 @@ namespace System.Management.Automation
         /// <returns>The result of the regex.Replace operation</returns>
         private static object ReplaceOperatorImpl(ExecutionContext context, string input, Regex regex, object substitute)
         {
-            MatchEvaluator matchEvaluator = null;
-            if (!(substitute is string) && LanguagePrimitives.TryConvertTo(substitute, out matchEvaluator))
+            switch (substitute)
             {
-                return regex.Replace(input, matchEvaluator);
-            }
+                case ScriptBlock sb:
+                    MatchEvaluator me = match => {
+                        var result = sb.DoInvokeReturnAsIs(
+                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                            dollarUnder: match,
+                            input: AutomationNull.Value,
+                            scriptThis: AutomationNull.Value,
+                            args: Utils.EmptyArray<object>());
 
-            string replacement = PSObject.ToStringParser(context, substitute);
-            return regex.Replace(input, replacement);
+                        return PSObject.ToStringParser(context, result);;
+                    };
+                    return regex.Replace(input, me);
+
+                case object val when LanguagePrimitives.TryConvertTo(val, out MatchEvaluator matchEvaluator):
+                    return regex.Replace(input, matchEvaluator);
+
+                default:
+                    string replacement = PSObject.ToStringParser(context, substitute);
+                    return regex.Replace(input, replacement);
+            }
         }
 
         /// <summary>
