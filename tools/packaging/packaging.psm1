@@ -2163,13 +2163,15 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
     }
-
+    $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
     {
+        $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
     }
     [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
+    [Environment]::SetEnvironmentVariable("FileArchitecture", $fileArchitecture, "Process")
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
@@ -2245,7 +2247,9 @@ function Test-FileWxs
         [string] $HeatFilesWxsPath
     )
 
-    [xml] $filesAssetXml = Get-Content -Raw -Path $FilesWxsPath
+    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
+
+    [xml] $filesAssetXml = $filesAssetString
     [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
     $assetFiles = $filesAssetXml.GetElementsByTagName('File')
     $heatFiles = $heatFilesXml.GetElementsByTagName('File')
