@@ -29,7 +29,7 @@ Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
     It "Can parse a PowerShell Data File (detailed tests are in AST.SafeGetValue tests)" {
         $path = Setup -F gooddatafile -content '@{ "Hello" = "World" }' -pass
         $result = Import-PowerShellDataFile $path -ErrorAction Stop
-        $result.Hello | Should -Exactly "World"
+        $result.Hello | Should -BeExactly "World"
     }
 
 }

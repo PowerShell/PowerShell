@@ -691,7 +691,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
-        $result.Error.| Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest returns empty RelationLink property if there is no Link Header" {
@@ -840,7 +840,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.| Should -Throw -ErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
             $response.Error.Exception.Message | Should -Be "The format of value '12345' is invalid."
         }
 
@@ -869,7 +869,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.| Should -Throw -ErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
             $response.Error.Exception.Message | Should -Be "The format of value 'Invalid:Agent' is invalid."
         }
 
@@ -1172,7 +1172,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
             $result.Error.ErrorDetails.Message | Should -Match $result.Error.Exception.InnerException.Message
-            $result.Error.FullyQualifiedErrorId | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate" {
@@ -1918,7 +1918,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
-        $result.Error.FullyQualifiedErrorId | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink doesn't fail if no Link Header is present" {
@@ -2039,7 +2039,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -Cmdlet "Invoke-RestMethod"
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.| Should -Throw -ErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
             $response.Error.Exception.Message | Should -Be "The format of value '12345' is invalid."
         }
 
@@ -2068,7 +2068,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-RestMethod"
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.| Should -Throw -ErrorId "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
             $response.Error.Exception.Message | Should -Be "The format of value 'Invalid:Agent' is invalid."
         }
 
@@ -2165,7 +2165,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
             # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
             $result.Error.ErrorDetails.Message | Should -Match $result.Error.Exception.InnerException.Message
-            $result.Error.FullyQualifiedErrorId | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {

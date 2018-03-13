@@ -58,10 +58,10 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 	It "Update-TypeData with Invalid File Extension should throw Exception"{
 		$xmlContent="not really an xml file, but we will not use it"
 		$xmlContent>$invalidFileExtensionFile
-        $null = $ps.AddScript("Update-TypeData -PrependPath $invalidFileExtensionFile")
-        $ps.Invoke()
-        $ps.HadErrors | Should -BeTrue
-        $ps.Streams.Error[0].FullyQualifiedErrorId | Should -Throw -ErrorId "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
+        	$null = $ps.AddScript("Update-TypeData -PrependPath $invalidFileExtensionFile")
+        	$ps.Invoke()
+        	$ps.HadErrors | Should -BeTrue
+        	$ps.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
