@@ -39,7 +39,7 @@ Describe "TestWSMan tests" -Tags 'Feature' {
         if ($expected -eq $null) {
             $expected = $value
         }
-        $testWsman.$parameter | Should Be $expected
+        $testWsman.$parameter | Should -Be $expected
     }
 
     It "-Authentication for unsupported type should return error" {
@@ -53,10 +53,10 @@ Describe "TestWSMan tests" -Tags 'Feature' {
     ) {
         param($computername)
         $response = Test-WSMan -ComputerName $computername
-        $response.PSObject.TypeNames[0] | Should Be "System.Xml.XmlElement#http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd#IdentifyResponse"
-        $response.wsmid | Should Be "http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd"
-        $response.ProtocolVersion | Should Be "http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd"
-        $response.ProductVendor | Should Be "Microsoft Corporation"
-        $response.ProductVersion | Should Be "OS: 0.0.0 SP: 0.0 Stack: 3.0"
+        $response.PSObject.TypeNames[0] | Should -Be "System.Xml.XmlElement#http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd#IdentifyResponse"
+        $response.wsmid | Should -Be "http://schemas.dmtf.org/wbem/wsman/identity/1/wsmanidentity.xsd"
+        $response.ProtocolVersion | Should -Be "http://schemas.dmtf.org/wbem/wsman/1/wsman.xsd"
+        $response.ProductVendor | Should -Be "Microsoft Corporation"
+        $response.ProductVersion | Should -Be "OS: 0.0.0 SP: 0.0 Stack: 3.0"
     }
 }

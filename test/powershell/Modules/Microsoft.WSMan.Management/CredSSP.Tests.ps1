@@ -49,16 +49,16 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     ) {
         param ($params)
         $c = Enable-WSManCredSSP @params -Force
-        $c.CredSSP | Should Be $true
+        $c.CredSSP | Should -Be $true
 
         $c = Get-WSManCredSSP
         if ($params.Role -eq "Client")
         {
-            $c[0] | Should Match "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*"
+            $c[0] | Should -Match "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*"
         }
         else
         {
-            $c[1] | Should Match "This computer is configured to receive credentials from a remote client computer"
+            $c[1] | Should -Match "This computer is configured to receive credentials from a remote client computer"
         }
     }
 
@@ -67,31 +67,31 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         @{Role="Server"}
     ) {
         param ($role)
-        Disable-WSManCredSSP -Role $role | Should BeNullOrEmpty
+        Disable-WSManCredSSP -Role $role | Should -BeNullOrEmpty
 
         $c = Get-WSManCredSSP
         if ($role -eq "Client")
         {
-            $c[0] | Should Match "The machine is not configured to allow delegating fresh credentials."
+            $c[0] | Should -Match "The machine is not configured to allow delegating fresh credentials."
         }
         else
         {
-            $c[1] | Should Match "This computer is not configured to receive credentials from a remote client computer"
+            $c[1] | Should -Match "This computer is not configured to receive credentials from a remote client computer"
         }
     }
 
     It "Call cmdlet as API" {
         $credssp = [Microsoft.WSMan.Management.EnableWSManCredSSPCommand]::new()
         $credssp.Role = "Client"
-        $credssp.Role | Should BeExactly "Client"
+        $credssp.Role | Should -BeExactly "Client"
         $credssp.DelegateComputer = "foo", "bar"
-        $credssp.DelegateComputer -join ',' | Should Be "foo,bar"
+        $credssp.DelegateComputer -join ',' | Should -Be "foo,bar"
         $credssp.Force = $true
-        $credssp.Force | Should Be $true
+        $credssp.Force | Should -Be $true
 
         $credssp = [Microsoft.WSMan.Management.DisableWSManCredSSPCommand]::new()
         $credssp.Role = "Server"
-        $credssp.Role | Should BeExactly "Server"
+        $credssp.Role | Should -BeExactly "Server"
     }
 
     It "Error returned if runas non-admin: <cmdline>" -TestCases @(
@@ -103,8 +103,8 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
 
         runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline } catch { `$_.FullyQualifiedErrorId | Out-File $errtxt }; New-Item -Type File -Path $donefile"
         Wait-FileToBePresent -File $donefile -TimeoutInSeconds 5 -IntervalInMilliseconds 100
-        $errtxt | Should Exist
+        $errtxt | Should -Exist
         $err = Get-Content $errtxt
-        $err | Should Be "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
+        $err | Should -Be "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
     }
 }
