@@ -203,6 +203,15 @@
         "BinaryBucket": "release"
     },
     {
+        "Name": "ubuntu.14.04-no-appimage",
+        "RepoDestinationPath": "/PowerShell",
+        "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_ -TarX64 -TarArm",
+        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_ubuntu14.04/Dockerfile",
+        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/GenericLinuxFiles/PowerShellPackage.ps1"],
+        "DockerImageName": "ps-ubunutu-14-04",
+        "BinaryBucket": "release"
+    },
+    {
         "Name": "ubuntu.16.04",
         "RepoDestinationPath": "/PowerShell",
         "BuildCommand": "/PowerShellPackage.ps1 -location _RepoDestinationPath_ -destination _DockerVolume_ -ReleaseTag _ReleaseTag_",
