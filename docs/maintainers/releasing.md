@@ -129,7 +129,7 @@ and instead should be given a binary with the version in the name.
 This pattern is followed by many other languages
 (Python being the most obvious example).
 This same pattern can be followed for versions 6.1, 7.0, etc.,
-and can be used for patch version (e.g. 6.0.1).
+and can be used for patch version (e.g. 6.0.2).
 Use `Start-PSPackage -Name powershell6.0` to generate
 the versioned `powershell6.0` package.
 Without `-Name` specified, the primary `powershell`
