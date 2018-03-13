@@ -353,7 +353,7 @@ namespace System.Management.Automation
                     // The title is automatically generated
                     XmlElement title = _doc.CreateElement("maml:title", mamlURI);
                     string titleStr = string.Format(CultureInfo.InvariantCulture,
-                        "				-------------------------- {0} {1} --------------------------",
+                        "\t\t\t\t-------------------------- {0} {1} --------------------------",
                         HelpDisplayStrings.ExampleUpperCase, count++);
                     XmlText title_text = _doc.CreateTextNode(titleStr);
                     example_node.AppendChild(title).AppendChild(title_text);
