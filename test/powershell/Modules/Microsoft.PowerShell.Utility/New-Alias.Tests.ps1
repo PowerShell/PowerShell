@@ -2,10 +2,9 @@
 # Licensed under the MIT License.
 Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{
-		$e = {
-			New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
-			New-Alias -Name "ABCD" -Value "foo" -Force:$true -ErrorAction Stop
-		} | Should -Throw -ErrorId "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
+		New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
+		$e = { New-Alias -Name "ABCD" -Value "foo" -Force:$true -ErrorAction Stop } |
+			Should -Throw -ErrorId "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 	}
 

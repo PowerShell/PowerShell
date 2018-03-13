@@ -8,8 +8,7 @@ Describe "Remove-Variable" -Tags "CI" {
     It "Should throw an error when a dollar sign is used in the variable name place" {
 	New-Variable -Name var1 -Value 4
 
-	Remove-Variable $var1 -ErrorAction SilentlyContinue -ErrorVariable err
-	$err.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+	{ Remove-Variable $var1 -ErrorAction Stop } | Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.RemoveVariableCommand"
     }
 
     It "Should not throw error when used without the Name field, and named variable is properly specified and exists" {
@@ -213,7 +212,7 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		$e = { Remove-Variable foo -EA Stop } | Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 
-		$e = { Remove-Variable foo -Force -EA Stop } | Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand
+		$e = { Remove-Variable foo -Force -EA Stop } | Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 
 	}

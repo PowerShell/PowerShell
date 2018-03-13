@@ -78,8 +78,7 @@ Describe "New-Variable" -Tags "CI" {
 
     It "Should not be able to set the name of a new variable to that of an old variable within same scope when the Force switch is missing" {
         New-Variable var1
-        New-Variable var1 -ErrorAction SilentlyContinue -ErrorVariable newWhenExists
-        $newWhenExists.| Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+        { New-Variable var1 -ErrorAction Stop } | Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
     }
 
     It "Should change the value of an already existing variable using the Force switch" {
