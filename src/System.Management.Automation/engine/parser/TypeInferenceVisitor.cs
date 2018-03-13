@@ -423,7 +423,7 @@ namespace System.Management.Automation
     {
         private readonly TypeInferenceContext _context;
 
-		private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
+        private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
 
         public TypeInferenceVisitor(TypeInferenceContext context)
         {
