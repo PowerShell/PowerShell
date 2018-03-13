@@ -3,13 +3,8 @@
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{
-		try {
-			Get-Variable -EA Stop -Name nonexistingVariableName
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
-		}
+		{ Get-Variable -EA Stop -Name nonexistingVariableName } | 
+			Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Get-Variable of existing variable Name with include and bogus exclude should work"{
@@ -43,14 +38,9 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
-		try {
-			Set-Variable newVar testing -Option Private
-			&{Get-Variable -Name newVar -EA Stop}
-			Throw "Execution OK"
-		}
-		catch {
-			$_.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
-		}
+		Set-Variable newVar testing -Option Private
+		{Get-Variable -Name newVar -EA Stop} | 
+			Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 }
 
@@ -147,8 +137,7 @@ Describe "Get-Variable" -Tags "CI" {
 	It "Should not be able to clear a global scope variable using the local switch" {
 	    New-Variable globalVar -Value 1 -Scope global -Force
 
-	    Get-Variable -Name globalVar -Scope local -ErrorAction SilentlyContinue -ErrorVariable removeGlobalAsLocal
-	    $removeGlobalAsLocal.| Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+	    { Get-Variable -Name globalVar -Scope local -ErrorAction Stop } | Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 	}
 
 	It "Should be able to get a global variable when there's one in the script scope" {

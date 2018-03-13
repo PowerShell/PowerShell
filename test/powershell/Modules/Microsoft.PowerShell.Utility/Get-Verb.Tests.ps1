@@ -34,13 +34,8 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should not accept Groups that are not in the validate set" {
-        try{
-            Get-Verb -Group FakeGroupNeverExists -ErrorAction Stop
-            throw "Expected error did not occur"
-        }
-        Catch{
-            $PSItem.| Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
-        }
+        { Get-Verb -Group FakeGroupNeverExists -ErrorAction Stop } |
+            Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
     }
 
     It "Accept all valid verb groups" {

@@ -10,7 +10,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         { Add-Member -Name "" } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
 
         # when MemberType is null
-        { Add-Member -MemberType $null } | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
+        { Add-Member -MemberType $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
 
         # when MemberType is empty
         { Add-Member -MemberType "" } | Should -Throw -ErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
@@ -51,7 +51,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
     }
 
     It "Fail to add unexisting type" {
-        { Add-Member -InputObject a -MemberType AliasProperty -Name Name -Value something -SecondValue unexistingType }
+        { Add-Member -InputObject a -MemberType AliasProperty -Name Name -Value something -SecondValue unexistingType } |
             Should -Throw -ErrorId "InvalidCastFromStringToType,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
@@ -92,8 +92,8 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
     }
 
     It "ScriptMethod Reference Wrong Type" {
-        { Add-Member -InputObject a -MemberType ScriptMethod -Name Name -Value something }
-            | Should -Throw -ErrorId "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
+        { Add-Member -InputObject a -MemberType ScriptMethod -Name Name -Value something } |
+            Should -Throw -ErrorId "ConvertToFinalInvalidCastException,Microsoft.PowerShell.Commands.AddMemberCommand"
     }
 
     It "Add ScriptMethod Success" {
