@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Describe "Replace Operator" -Tags CI {
     Context "Replace operator" {
         It "Replace operator can replace string values using regular expressions" {
@@ -40,7 +43,7 @@ Describe "Replace Operator" -Tags CI {
         }
 
         It "Replace operator can take a ScriptBlock in place of a substitution string" {
-            $res = "ID ABC123" -replace "\b[A-C]+", {return "X" * $args[0].Value.Length}
+            $res = "ID ABC123" -replace "\b[A-C]+", {return "X" * $_[0].Value.Length}
             $res | Should BeExactly "ID XXX123"
         }
 
