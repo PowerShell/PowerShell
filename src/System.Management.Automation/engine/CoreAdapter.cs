@@ -38,6 +38,19 @@ namespace System.Management.Automation
     internal abstract class Adapter
     {
         /// <summary>
+        /// The member type that a callsite binder operates on.
+        /// </summary>
+        /// <remarks>
+        /// An adapter can decide whether the binder can optimize the operations
+        /// on an object member based on the type of the member.
+        /// </remarks>
+        internal enum SiteBinderOperatesOn
+        {
+            Property,
+            Method,
+        }
+
+        /// <summary>
         /// tracer for this and derivate classes
         /// </summary>
         [TraceSource("ETS", "Extended Type System")]
@@ -46,7 +59,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal virtual bool SiteBinderCanOptimize { get { return false; } }
+        internal virtual bool CanSiteBinderOptimize(SiteBinderOperatesOn opType) { return false; }
 
         protected static IEnumerable<string> GetDotNetTypeNameHierarchy(Type type)
         {
@@ -3519,7 +3532,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return true; } }
+        internal override bool CanSiteBinderOptimize(SiteBinderOperatesOn opType) { return true; }
 
         private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
@@ -4545,7 +4558,24 @@ namespace System.Management.Automation
     /// </summary>
     internal abstract class PropertyOnlyAdapter : DotNetAdapter
     {
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        /// <summary>
+        /// For a PropertyOnlyAdapter, the property may come from various sources,
+        /// but methods, including parameterized properties, still come from DotNetAdapter.
+        /// So, the binder can optimize on method calls for objects that map to a
+        /// custom PropertyOnlyAdapter.
+        /// </summary>
+        internal override bool CanSiteBinderOptimize(SiteBinderOperatesOn opType)
+        {
+            switch (opType)
+            {
+                case SiteBinderOperatesOn.Property:
+                    return false;
+                case SiteBinderOperatesOn.Method:
+                    return true;
+                default:
+                    throw new InvalidOperationException("Should be unreachable. Update this code if new members are added to 'SiteBinderOperation'");
+            }
+        }
 
         protected override ConsolidatedString GetInternedTypeNameHierarchy(object obj)
         {
