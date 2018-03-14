@@ -175,7 +175,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int ConvertList(string json, int index, StringBuilder result, string padString, int numberOfSpaces)
         {
-            CheckStopping();
             result.Append("\r\n");
             StringBuilder newPadString = new StringBuilder();
             newPadString.Append(padString);
@@ -186,6 +185,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = index; i < json.Length; i++)
             {
+                CheckStopping();
                 switch (json[i])
                 {
                     case '{':
@@ -245,9 +245,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int ConvertQuotedString(string json, int index, StringBuilder result)
         {
-            CheckStopping();
             for (int i = index; i < json.Length; i++)
             {
+                CheckStopping();
                 result.Append(json[i]);
                 if (json[i] == '"')
                 {
@@ -286,7 +286,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int ConvertDictionary(string json, int index, StringBuilder result, string padString, int numberOfSpaces)
         {
-            CheckStopping();
             result.Append("\r\n");
             StringBuilder newPadString = new StringBuilder();
             newPadString.Append(padString);
@@ -300,6 +299,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = index; i < json.Length; i++)
             {
+                CheckStopping();
                 switch (json[i])
                 {
                     case '{':
@@ -601,11 +601,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private object ProcessDictionary(IDictionary dict, int depth)
         {
-            CheckStopping();
             Dictionary<string, object> result = new Dictionary<string, object>(dict.Count);
 
             foreach (DictionaryEntry entry in dict)
             {
+                CheckStopping();
                 string name = entry.Key as string;
                 if (name == null)
                 {
