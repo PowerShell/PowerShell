@@ -23,8 +23,6 @@ class CommitNode {
 
         if ($subject -match "\(#(\d+)\)") {
             $this.PullRequest = $Matches[1]
-        } else {
-            throw "PR number is missing from the commit subject. (commit: $hash)"
         }
     }
 }
@@ -175,10 +173,13 @@ function Get-ChangeLog
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
                 $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
-                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header
-                $content = ConvertFrom-Json -InputObject $response.Content
-                $commit.AuthorGitHubLogin = $content.author.login
-                $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction SilentlyContinue
+                if($response)
+                {
+                    $content = ConvertFrom-Json -InputObject $response.Content
+                    $commit.AuthorGitHubLogin = $content.author.login
+                    $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+                }
             }
             $commit.ChangeLogMessage = "- {0} (Thanks @{1}!)" -f $commit.Subject, $commit.AuthorGitHubLogin
         }
