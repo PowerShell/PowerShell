@@ -731,7 +731,6 @@ namespace Microsoft.PowerShell.Commands
         {
             // netcoreapp2.0 currently comes with 137 reference assemblies (maybe more in future), so we use a capacity of '150'.
             var defaultRefAssemblies = new List<PortableExecutableReference>(150);
-            Diagnostics.Assert(defaultRefAssemblies.Count < 150, "Size of defaultRefAssemblies is small.");
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
             {
