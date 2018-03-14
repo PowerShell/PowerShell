@@ -12,7 +12,7 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 0
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should Be 'abc'
+                    $result.BoundParameters.Name.ConstantValue | Should -Be 'abc'
                 }
             },
             @{
@@ -22,8 +22,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 0
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.Value | Should BeOfType ([ScriptBlockExpressionAst].FullName)
-                    $result.BoundParameters.Name.Value.Extent.Text | Should Be '{abc}'
+                    $result.BoundParameters.Name.Value | Should -BeOfType ([ScriptBlockExpressionAst].FullName)
+                    $result.BoundParameters.Name.Value.Extent.Text | Should -Be '{abc}'
                 }
             },
             @{
@@ -33,8 +33,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 1
                 ValidateScript = {
                     param ($result)
-                    $result.BindingExceptions.Path.CommandElement.Extent.Text | Should Be '-Path'
-                    $result.BindingExceptions.Path.BindingException.ErrorId | Should Be 'NamedParameterNotFound'
+                    $result.BindingExceptions.Path.CommandElement.Extent.Text | Should -Be '-Path'
+                    $result.BindingExceptions.Path.BindingException.ErrorId | Should -Be 'NamedParameterNotFound'
                 }
             },
             @{
@@ -44,9 +44,9 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 1
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should Be 'abc'
-                    $result.BindingExceptions.Path.CommandElement.Extent.Text | Should Be '-Path'
-                    $result.BindingExceptions.Path.BindingException.ErrorId | Should Be 'NamedParameterNotFound'
+                    $result.BoundParameters.Name.ConstantValue | Should -Be 'abc'
+                    $result.BindingExceptions.Path.CommandElement.Extent.Text | Should -Be '-Path'
+                    $result.BindingExceptions.Path.BindingException.ErrorId | Should -Be 'NamedParameterNotFound'
                 }
             },
             @{
@@ -56,8 +56,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 0
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.Value | Should BeOfType ([CommandParameterAst].FullName)
-                    $result.BoundParameters.Name.Value.Extent.Text | Should Be '-abc'
+                    $result.BoundParameters.Name.Value | Should -BeOfType ([CommandParameterAst].FullName)
+                    $result.BoundParameters.Name.Value.Extent.Text | Should -Be '-abc'
                 }
             },
             @{
@@ -67,8 +67,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 1
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should Be 'aa'
-                    $result.BindingExceptions.bb.BindingException.ErrorId | Should Be 'PositionalParameterNotFound'
+                    $result.BoundParameters.Name.ConstantValue | Should -Be 'aa'
+                    $result.BindingExceptions.bb.BindingException.ErrorId | Should -Be 'PositionalParameterNotFound'
                 }
             },
             @{
@@ -78,8 +78,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 0
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.Value | Should BeOfType ([ArrayLiteralAst].FullName)
-                    $result.BoundParameters.Name.Value.Extent.Text | Should Be 'aa,bb,cc'
+                    $result.BoundParameters.Name.Value | Should -BeOfType ([ArrayLiteralAst].FullName)
+                    $result.BoundParameters.Name.Value.Extent.Text | Should -Be 'aa,bb,cc'
                 }
             },
             @{
@@ -89,9 +89,9 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 0
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should Be $true
-                    $result.BoundParameters.Recurse.ConstantValue | Should Be $true
-                    $result.BoundParameters.Path.ConstantValue | Should Be 'abc'
+                    $result.BoundParameters.Name.ConstantValue | Should -BeTrue
+                    $result.BoundParameters.Recurse.ConstantValue | Should -BeTrue
+                    $result.BoundParameters.Path.ConstantValue | Should -Be 'abc'
                 }
             },
             @{
@@ -101,9 +101,9 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 1
                 ValidateScript = {
                     param ($result)
-                    $result.BoundParameters.Name.ConstantValue | Should Be $true
-                    $result.BindingExceptions.f.CommandElement.Extent.Text | Should Be '-f'
-                    $result.BindingExceptions.f.BindingException.ErrorId | Should Be 'AmbiguousParameter'
+                    $result.BoundParameters.Name.ConstantValue | Should -BeTrue
+                    $result.BindingExceptions.f.CommandElement.Extent.Text | Should -Be '-f'
+                    $result.BindingExceptions.f.BindingException.ErrorId | Should -Be 'AmbiguousParameter'
                 }
             },
             @{
@@ -113,8 +113,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
                 ExceptionCount = 1
                 ValidateScript = {
                     param ($result)
-                    $result.BindingExceptions.f.CommandElement.Extent.Text | Should Be '-f'
-                    $result.BindingExceptions.f.BindingException.ErrorId | Should Be 'AmbiguousParameter'
+                    $result.BindingExceptions.f.CommandElement.Extent.Text | Should -Be '-f'
+                    $result.BindingExceptions.f.BindingException.ErrorId | Should -Be 'AmbiguousParameter'
                 }
             }
         )
@@ -127,8 +127,8 @@ Describe "StaticParameterBinder tests" -Tags "CI" {
         $cmdAst = $ast.Find({$args[0] -is [CommandAst]}, $false)
         $result = [StaticParameterBinder]::BindCommand($cmdAst)
 
-        $result.BoundParameters.Count | Should Be $BoundParametersCount
-        $result.BindingExceptions.Count | Should Be $ExceptionCount
+        $result.BoundParameters.Count | Should -Be $BoundParametersCount
+        $result.BindingExceptions.Count | Should -Be $ExceptionCount
         . $ValidateScript $result
     }
 }
