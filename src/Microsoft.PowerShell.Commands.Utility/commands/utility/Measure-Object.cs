@@ -883,6 +883,7 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Count = stat.count;
                 gmi.Sum = sum;
                 gmi.Average = average;
+                gmi.StdDeviation = stdDeviation;
                 if (null != max)
                 {
                     gmi.Maximum = (double)max;
