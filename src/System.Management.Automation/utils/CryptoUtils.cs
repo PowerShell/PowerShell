@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Text;
 using System.Security;
@@ -138,7 +137,6 @@ namespace System.Management.Automation.Internal
             ref int pdwDataLen,
             int dwBufLen);
 
-
         /// Return Type: BOOL->int
         ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
         ///hHash: HCRYPTHASH->ULONG_PTR->unsigned int
@@ -171,7 +169,6 @@ namespace System.Management.Automation.Internal
             byte[] pbData,
             ref uint pdwDataLen);
 
-
         /// Return Type: BOOL->int
         ///hProv: HCRYPTPROV->ULONG_PTR->unsigned int
         ///pbData: BYTE*
@@ -187,7 +184,6 @@ namespace System.Management.Automation.Internal
             PSSafeCryptKey hPubKey,
             uint dwFlags,
             ref PSSafeCryptKey phKey);
-
 
         /// Return Type: BOOL->int
         ///hKey: HCRYPTKEY->ULONG_PTR->unsigned int
@@ -1100,7 +1096,6 @@ namespace System.Management.Automation.Internal
         #endregion Protected Members
 
         #region Internal Methods
-
 
         /// <summary>
         /// Encrypt a secure string

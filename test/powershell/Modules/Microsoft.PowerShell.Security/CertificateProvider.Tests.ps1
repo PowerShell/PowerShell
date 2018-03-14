@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # The import and table creation work on non-windows, but are currently not needed
 if($IsWindows)
 {
@@ -8,7 +11,7 @@ if($IsWindows)
         @{path = 'Cert:\CurrentUser\my'}
         @{path = 'cert:\currentuser\my'}
         @{path = 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'}
-        @{path = 'Microsoft.PowerShell.Security\certificate::currentuser\my'}        
+        @{path = 'Microsoft.PowerShell.Security\certificate::currentuser\my'}
     )
 
     $testLocations = @(
@@ -30,7 +33,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
             # Skip for non-Windows platforms
             $defaultParamValues = $global:PSDefaultParameterValues.Clone()
             $global:PSDefaultParameterValues = @{ "it:skip" = $true }
-        }        
+        }
     }
 
     AfterAll {
@@ -50,7 +53,7 @@ Describe "Certificate Provider tests" -Tags "CI" {
                 $resolvedPath = Resolve-Path $_.PSPath
                 $resolvedPath.Provider | should be $expectedResolvedPath.Provider
                 $resolvedPath.ProviderPath.TrimStart('\') | should be $expectedResolvedPath.ProviderPath.TrimStart('\')
-            }            
+            }
         }
         it "Should return two items at the root of the provider" {
             (Get-Item -Path cert:\*).Count | should be 2
@@ -87,9 +90,9 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             # Skip for non-Windows platforms
             $defaultParamValues = $global:PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues = @{ "it:skip" = $true }
-        }        
+        }
     }
-    
+
     AfterAll {
         if($IsWindows)
         {

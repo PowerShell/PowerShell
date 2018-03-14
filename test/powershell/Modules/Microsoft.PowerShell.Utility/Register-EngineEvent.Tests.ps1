@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Register-EngineEvent" -Tags "CI" {
 
     Context "Check return type of Register-ObjectEvent" {

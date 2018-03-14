@@ -124,7 +124,7 @@ Copyright (c) Microsoft Corporation. All rights reserved.
 https://aka.ms/pscore6-docs
 Type 'help' to get help.</value>
   </data>
-  <data name="ShellHelp" xml:space="preserve">
+  <data name="UsageHelp" xml:space="preserve">
     <value>Usage: pwsh[.exe] [[-File] &lt;filePath&gt; [args]]
                   [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                                 | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
@@ -137,7 +137,10 @@ Type 'help' to get help.</value>
 
 PowerShell Online Help https://aka.ms/pscore6-docs
 
-All parameters are case-insensitive.
+All parameters are case-insensitive.</value>
+  </data>
+  <data name="ExtendedHelp" xml:space="preserve">
+    <value>
 
 -Command | -c
     Executes the specified commands (and any parameters) as though they were typed
@@ -168,7 +171,7 @@ All parameters are case-insensitive.
     This can be any endpoint registered on the local machine including the default PowerShell
     remoting endpoints or a custom endpoint having specific user role capabilities.
 
-    Example: pwsh -configurationmame AdminRoles
+    Example: pwsh -ConfigurationName AdminRoles
 
 -EncodedCommand | -e | -ec
     Accepts a base64 encoded string version of a command. Use this parameter to submit
@@ -228,6 +231,16 @@ All parameters are case-insensitive.
     Default is "Text".
 
     Example: pwsh -o XML -c Get-Date
+
+-SettingsFile | -settings
+    Overrides the system-wide powershell.config.json settings file for the session.
+    By default, system-wide settings are read from the powershell.config.json
+    in the $PSHOME directory.
+
+    Note that these settings are not used by the endpoint specified
+    by the -ConfigurationName argument.
+
+    Example: pwsh -SettingsFile c:\myproject\powershell.config.json
 
 -Version | -v
     Shows the version of PowerShell and exits. Additional arguments are ignored.

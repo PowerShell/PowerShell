@@ -1,6 +1,5 @@
-//
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace System.Management.Automation
 {
@@ -10,7 +9,6 @@ namespace System.Management.Automation
     internal static class CustomSerializationStrings
     {
         #region element tags
-
 
         /// <summary>
         /// Element tag for root node
@@ -26,7 +24,6 @@ namespace System.Management.Automation
         /// Element tag for properties
         /// </summary>
         internal const string Properties = "Property";
-
 
         #region attribute tags
 

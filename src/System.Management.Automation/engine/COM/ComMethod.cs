@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
@@ -56,7 +55,6 @@ namespace System.Management.Automation
             _methods.Add(index);
         }
 
-
         /// <summary>
         /// Returns the different method overloads signatures.
         /// </summary>
@@ -64,7 +62,6 @@ namespace System.Management.Automation
         internal Collection<String> MethodDefinitions()
         {
             Collection<String> result = new Collection<string>();
-
 
             foreach (int index in _methods)
             {

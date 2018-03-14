@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Get-ChildItem" -Tags "CI" {
 
     Context 'FileSystem provider' {
@@ -10,7 +12,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_D = "D39B4FD9-3E1D-4DD5-8718-22FE2C934CE3"
             $item_E = "EE150FEB-0F21-4AFF-8066-AF59E925810C"
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43"
-            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676" 
+            $item_G = "5560A62F-74F1-4FAE-9A23-F4EBD90D2676"
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
@@ -18,67 +20,105 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_E -ItemType "Directory" -Force
             $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
             $null = New-Item -Path (Join-Path -Path $TestDrive -ChildPath $item_E) -Name $item_G -ItemType "File" -Force
+
+            $searchRoot = Join-Path $TestDrive -ChildPath "TestPS"
+            $file1 = Join-Path $searchRoot -ChildPath "D1" -AdditionalChildPath "File1.txt"
+            $file2 = Join-Path $searchRoot -ChildPath "File1.txt"
+
+            $PathWildCardTestCases = @(
+                @{Parameters = @{Path = $searchRoot; Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory without wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; Directory = $true }; ExpectedCount = 1; Title = "directory with wildcard"},
+                @{Parameters = @{Path = $searchRoot; Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file without wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot '*'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard"},
+                @{Parameters = @{Path = (Join-Path $searchRoot 'F*.txt'); Recurse = $true; File = $true }; ExpectedCount = 1; Title = "file with wildcard filename"}
+            )
         }
 
         It "Should list the contents of the current folder" {
-            (Get-ChildItem .).Name.Length | Should BeGreaterThan 0
+            (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
         }
 
         It "Should list the contents of the home directory" {
             pushd $HOME
-            (Get-ChildItem .).Name.Length | Should BeGreaterThan 0
+            (Get-ChildItem .).Name.Length | Should -BeGreaterThan 0
             popd
         }
 
         It "Should have a the proper fields and be populated" {
             $var = Get-Childitem .
 
-            $var.Name.Length   | Should BeGreaterThan 0
-            $var.Mode.Length   | Should BeGreaterThan 0
-            $var.LastWriteTime | Should BeGreaterThan 0
-            $var.Length.Length | Should BeGreaterThan 0
+            $var.Name.Length   | Should -BeGreaterThan 0
+            $var.Mode.Length   | Should -BeGreaterThan 0
+            $var.LastWriteTime | Should -BeGreaterThan 0
+            $var.Length.Length | Should -BeGreaterThan 0
 
         }
 
         It "Should list files in sorted order" {
             $files = Get-ChildItem -Path $TestDrive
-            $files[0].Name     | Should Be $item_E
-            $files[1].Name     | Should Be $item_a
-            $files[2].Name     | Should Be $item_B
-            $files[3].Name     | Should Be $item_c
-            $files[4].Name     | Should Be $item_D
+            $files[0].Name     | Should -Be $item_E
+            $files[1].Name     | Should -Be $item_a
+            $files[2].Name     | Should -Be $item_B
+            $files[3].Name     | Should -Be $item_c
+            $files[4].Name     | Should -Be $item_D
         }
 
         It "Should list hidden files as well when 'Force' parameter is used" {
             $files = Get-ChildItem -path $TestDrive -Force
-            $files | Should not be $null
-            $files.Count | Should be 6
-            $files.Name.Contains($item_F) | Should Be $true
+            $files | Should -Not -BeNullOrEmpty
+            $files.Count | Should -Be 6
+            $files.Name.Contains($item_F) | Should -BeTrue
         }
 
         It "Should list only hidden files when 'Hidden' parameter is used" {
             $files = Get-ChildItem -path $TestDrive -Hidden
-            $files | Should not be $null
-            $files.Count | Should be 1
-            $files[0].Name | Should Be $item_F
+            $files | Should -Not -BeNullOrEmpty
+            $files.Count | Should -Be 1
+            $files[0].Name | Should -BeExactly $item_F
         }
         It "Should find the hidden file if specified with hidden switch" {
             $file = Get-ChildItem -Path (Join-Path $TestDrive $item_F) -Hidden
-            $file | Should Not BeNullOrEmpty
-            $file.Count | Should be 1
-            $file.Name | Should be $item_F
+            $file | Should -Not -BeNullOrEmpty
+            $file.Count | Should -Be 1
+            $file.Name | Should -BeExactly $item_F
         }
 
         It "Should list items in current directory only with depth set to 0" {
-            (Get-ChildItem -Path $TestDrive -Depth 0).Count | Should Be 5
-            (Get-ChildItem -Path $TestDrive -Depth 0 -Include *).Count | Should Be 5
-            (Get-ChildItem -Path $TestDrive -Depth 0 -Exclude IntentionallyNonexistent).Count | Should Be 5
+            (Get-ChildItem -Path $TestDrive -Depth 0).Count | Should -Be 5
+            (Get-ChildItem -Path $TestDrive -Depth 0 -Include *).Count | Should -Be 5
+            (Get-ChildItem -Path $TestDrive -Depth 0 -Exclude IntentionallyNonexistent).Count | Should -Be 5
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters" {
-            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should Be 6
-            (Get-ChildItem -Path $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
-            (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+            (Get-ChildItem -Path $TestDrive -Depth 1).Count | Should -Be 6
+            (Get-ChildItem -Path $TestDrive -Depth 1 -Include $item_G).Count | Should -Be 1
+            (Get-ChildItem -Path $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 5
+        }
+
+        It "Should return items recursively when using 'Include' or 'Exclude' parameters with -LiteralPath" {
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should Be 0
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+        }
+        
+        It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
+            param($Parameters, $ExpectedCount)
+
+            $null = New-Item $file1 -Force -ItemType File
+
+            (Get-ChildItem @Parameters).Count | Should -Be $ExpectedCount
+        }
+
+        It "get-childitem with and without file in search root" {
+            $null = New-Item $file2 -Force -ItemType File
+
+            (Get-ChildItem -Path $searchRoot -File -Recurse).Count | Should -Be 2
+            (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should -Be 1
+
+            Remove-Item $file2 -ErrorAction SilentlyContinue -Force
+            (Get-ChildItem -Path $searchRoot -File -Recurse).Count | Should -Be 1
+            (Get-ChildItem -Path $searchRoot -Directory -Recurse).Count | Should -Be 1
         }
     }
 
@@ -92,7 +132,7 @@ Describe "Get-ChildItem" -Tags "CI" {
 
                 $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
-                ($foobar | measure).Count | Should Be $count
+                ($foobar | measure).Count | Should -Be $count
             }
             catch
             {

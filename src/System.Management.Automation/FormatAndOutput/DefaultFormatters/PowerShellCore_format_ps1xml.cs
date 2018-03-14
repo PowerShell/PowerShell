@@ -1,7 +1,5 @@
-
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 
@@ -999,6 +997,7 @@ namespace System.Management.Automation.Runspaces
                 TableControl.Create()
                     .AddHeader(Alignment.Right, label: "Id", width: 3)
                     .AddHeader(Alignment.Left, label: "Name", width: 15)
+                    .AddHeader(Alignment.Left, label: "Transport", width: 9)
                     .AddHeader(Alignment.Left, label: "ComputerName", width: 15)
                     .AddHeader(Alignment.Left, label: "ComputerType", width: 15)
                     .AddHeader(Alignment.Left, label: "State", width: 13)
@@ -1007,6 +1006,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("Id")
                         .AddPropertyColumn("Name")
+                        .AddPropertyColumn("Transport")
                         .AddPropertyColumn("ComputerName")
                         .AddPropertyColumn("ComputerType")
                         .AddPropertyColumn("State")

@@ -1,10 +1,13 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @file nativesyslog.cpp
 //! @brief Provides wrappers around the syslog apis to support exporting
 //! for PInvoke calls by powershell.
 //! These functions are intended only for PowerShell internal use.
 //! To view log output in real time
 //! On Linux
-//!    tail -f /var/log/syslog | grep powershell 
+//!    tail -f /var/log/syslog | grep powershell
 //!  On OSX
 //!    sudo log stream
 //!  NOTE: replace powershell with the LogIdentity value when overriding in configuration
@@ -45,7 +48,7 @@ extern "C" void Native_SysLog(int32_t priority, const char* message)
         case LOG_CRIT:
             os_log_fault(_log, MESSAGE_FORMAT, message);
             break;
-        
+
         case LOG_ERR:
             os_log_error(_log, MESSAGE_FORMAT, message);
             break;
@@ -53,10 +56,10 @@ extern "C" void Native_SysLog(int32_t priority, const char* message)
         case LOG_DEBUG:
             os_log_debug(_log, MESSAGE_FORMAT, message);
             break;
-        
+
         default:
             os_log(_log, MESSAGE_FORMAT, message);
-            break;        
+            break;
     }
 #else
     syslog(priority, "%s", message);
@@ -84,7 +87,7 @@ extern "C" void Native_CloseLog()
 {
 #if defined(__APPLE__) && defined(__MACH__)
     // Nothing to do here now, for now.
-#else 
+#else
     closelog();
 #endif
 }

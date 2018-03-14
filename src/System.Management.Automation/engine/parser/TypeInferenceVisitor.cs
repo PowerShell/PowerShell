@@ -1,4 +1,7 @@
-﻿using System.Collections;
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -188,7 +191,6 @@ namespace System.Management.Automation
             return results;
         }
 
-
         internal void AddMembersByInferredTypesClrType(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
         {
             if (CurrentTypeDefinitionAst == null || CurrentTypeDefinitionAst.Type != typename.Type)
@@ -303,7 +305,6 @@ namespace System.Management.Automation
             }
             results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
         }
-
 
         internal void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
         {
@@ -422,7 +423,7 @@ namespace System.Management.Automation
     {
         private readonly TypeInferenceContext _context;
 
-		private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
+        private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
 
         public TypeInferenceVisitor(TypeInferenceContext context)
         {
@@ -924,7 +925,7 @@ namespace System.Management.Automation
                 foreach (var t in InferTypes(previousPipelineElement))
                 {
                     var memberName = (((AstPair)argument).Argument as StringConstantExpressionAst)?.Value;
-                    
+
                     if (memberName != null)
                     {
                         var members = _context.GetMembersByInferredType(t, false, null);
@@ -1009,17 +1010,17 @@ namespace System.Management.Automation
             if (memberAsStringConst == null)
                 return Utils.EmptyArray<PSTypeName>();
 
-            var exprType = GetExpressionType(expression, isStatic);                
+            var exprType = GetExpressionType(expression, isStatic);
             if (exprType == null || exprType.Length == 0)
             {
                 return Utils.EmptyArray<PSTypeName>();
             }
-            
+
             var res = new List<PSTypeName>(10);
             bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
             var maybeWantDefaultCtor = isStatic
                 && isInvokeMemberExpressionAst
-                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");            
+                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.
@@ -1369,7 +1370,6 @@ namespace System.Management.Automation
                     yield break;
                 }
 
-
             // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
             // a type constraint or at least we can use the rhs to infer the type.
 
@@ -1457,7 +1457,6 @@ namespace System.Management.Automation
                     yield return type;
                 }
             }
-
 
             PSTypeName evalTypeName;
             if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out evalTypeName))

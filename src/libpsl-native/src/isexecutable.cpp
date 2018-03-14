@@ -1,5 +1,6 @@
-//! @file isexecutable.cpp
-//! @author George Fleming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief returns whether a file is executable
 
 #include "isexecutable.h"

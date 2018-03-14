@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+    <!-- the following package(s) are from https://github.com/microsoft/applicationinsights-??? -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.4.0" />
   </ItemGroup>
 

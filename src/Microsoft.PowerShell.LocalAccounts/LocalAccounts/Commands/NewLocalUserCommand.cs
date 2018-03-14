@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 #region Using directives
 using System;
 using System.Management.Automation;
@@ -7,7 +10,6 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 
 using Microsoft.PowerShell.LocalAccounts;
 #endregion
-
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -179,8 +181,6 @@ namespace Microsoft.PowerShell.Commands
         private System.Management.Automation.SwitchParameter usermaynotchangepassword;
         #endregion Parameter Properties
 
-
-
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -194,7 +194,6 @@ namespace Microsoft.PowerShell.Commands
             }
             sam = new Sam();
         }
-
 
         /// <summary>
         /// ProcessRecord method.
@@ -249,7 +248,6 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(ex.MakeErrorRecord());
             }
         }
-
 
         /// <summary>
         /// EndProcessing method.

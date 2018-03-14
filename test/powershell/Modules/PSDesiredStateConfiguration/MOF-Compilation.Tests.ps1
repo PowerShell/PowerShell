@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
 
     AfterAll {
@@ -81,7 +83,6 @@ Describe "DSC MOF Compilation" -tags "CI" {
             Ensure = "Present"
         }
 
-
         #Ensure directory for Wordpress site
         nxFile wpHttpDir{
             DestinationPath = "/var/www/wordpress"
@@ -133,7 +134,6 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
          #Set wp-config
 
-
          #Fixup SE Linux context
          #nxScript SELinuxContext{
             #TestScript= "#!/bin/bash"
@@ -148,14 +148,11 @@ Describe "DSC MOF Compilation" -tags "CI" {
             ContainsLine = "SELINUX=disabled"
          }
 
-
         nxScript SELinuxHTTPNet{
           GetScript = "#!/bin/bash`ngetsebool httpd_can_network_connect"
           setScript = "#!/bin/bash`nsetsebool -P httpd_can_network_connect=1"
           TestScript = "#!/bin/bash`n exit 1"
         }
-
-
 
         }
 

@@ -1,4 +1,6 @@
-﻿Describe "String cmdlets" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "String cmdlets" -Tags "CI" {
     Context "Select-String" {
         BeforeAll {
             $sep = [io.path]::DirectorySeparatorChar

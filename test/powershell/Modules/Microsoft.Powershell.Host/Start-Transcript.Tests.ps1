@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
 
     BeforeAll {
@@ -32,9 +34,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                     $ps.addscript("Stop-Transcript").Invoke()
 
                     Test-Path $outputFilePath | Should be $true
-                    $outputFilePath | should contain "Get-Date"
+                    $outputFilePath | should FileContentMatch "Get-Date"
                     if($append) {
-                        $outputFilePath | Should contain $content
+                        $outputFilePath | Should FileContentMatch $content
                     }
                 }
             } finally {
@@ -48,7 +50,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $transcriptFilePath = join-path $TestDrive "transcriptdata.txt"
         Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
-
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
@@ -122,7 +123,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         }
 
         Test-Path $transcriptFilePath | Should be $true
-        $transcriptFilePath | Should contain "After Dispose"
+        $transcriptFilePath | Should FileContentMatch "After Dispose"
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
@@ -131,8 +132,8 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Invoke-Expression $powerShellCommand
 
         Test-Path $transcriptFilePath | Should be $true
-        $transcriptFilePath | Should contain "Before Dispose"
-        $transcriptFilePath | Should contain "PowerShell transcript end"
+        $transcriptFilePath | Should FileContentMatch "Before Dispose"
+        $transcriptFilePath | Should FileContentMatch "PowerShell transcript end"
     }
 
     It "Transcription should record native command output" {
@@ -144,6 +145,6 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         Test-Path $transcriptFilePath | Should be $true
 
         $machineName = [System.Environment]::MachineName
-        $transcriptFilePath | Should contain $machineName
+        $transcriptFilePath | Should FileContentMatch $machineName
     }
 }

@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #if UNIX
 
 using System;
@@ -88,7 +90,7 @@ namespace System.Management.Automation.Tracing
         /// Initializes a new instance of this class.
         /// </summary>
         /// <param name="applicationId">The log identity name used to identify the application in syslog.</param>
-        /// <param name="level">The trace lavel to enable.</param>
+        /// <param name="level">The trace level to enable.</param>
         /// <param name="keywords">The keywords to enable.</param>
         /// <param name="channels">The output channels to enable.</param>
         public SysLogProvider(string applicationId, PSLevel level, PSKeyword keywords, PSChannel channels)
@@ -102,6 +104,14 @@ namespace System.Management.Automation.Tracing
             _keywordFilter = (ulong)keywords;
             _levelFilter = (byte) level;
             _channelFilter = (byte) channels;
+            if ((_channelFilter & (ulong) PSChannel.Operational) != 0)
+            {
+                _keywordFilter |= (ulong) PSKeyword.UseAlwaysOperational;
+            }
+            if ((_channelFilter & (ulong) PSChannel.Analytic) != 0)
+            {
+                _keywordFilter |= (ulong) PSKeyword.UseAlwaysAnalytic;
+            }
         }
 
         /// <summary>

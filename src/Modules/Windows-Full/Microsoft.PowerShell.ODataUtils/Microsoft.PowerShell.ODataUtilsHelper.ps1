@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # Base class definitions used by the actual Adapter modules
 $global:BaseClassDefinitions = @"
 using System;

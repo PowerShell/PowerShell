@@ -1,4 +1,6 @@
-﻿Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     BeforeAll {
         If (-not $IsCoreCLR) {
             Get-WmiObject -Query "select * from win32_environment where name='TestWmiInstance'"  | Remove-WmiObject
@@ -16,7 +18,6 @@
         $a.one | Should Be 1
     }
 
-
     Context 'Select-Xml cmdlet - Namespace parameter must take IDictionary' {
         $script:a = $null
 
@@ -33,7 +34,6 @@
     </command:details>
 </command:command>
 
-
 </helpItems>
 '@
 
@@ -44,7 +44,6 @@
 
         It '$a should not be $null' { $script:a | Should Not Be $null }
    }
-
 
     It 'Set-WmiInstance cmdlet - Argument parameter must take IDictionary' -skip:$IsCoreCLR {
 

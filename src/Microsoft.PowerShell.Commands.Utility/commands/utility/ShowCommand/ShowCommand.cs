@@ -1,8 +1,5 @@
-﻿//-----------------------------------------------------------------------
-// <copyright company="Microsoft">
-//    Copyright (c) Microsoft Corporation. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 namespace Microsoft.PowerShell.Commands
 {

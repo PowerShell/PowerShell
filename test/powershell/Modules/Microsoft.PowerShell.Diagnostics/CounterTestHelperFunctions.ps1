@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <############################################################################################
  # File: CounterTestHelperFunctions.ps1
  # Provides functions common to the performance counter Pester tests.

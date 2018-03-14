@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'using module' -Tags "CI" {
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
@@ -432,7 +434,6 @@ function foo()
             $ps.Streams.Error | Should Be $null
         }
     }
-
 
     # here we are back to normal $env:PSModulePath, but all modules are there
     Context "Module by path" {

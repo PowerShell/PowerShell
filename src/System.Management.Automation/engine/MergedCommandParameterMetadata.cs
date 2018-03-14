@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -161,7 +160,6 @@ namespace System.Management.Automation
             }
             return result;
         }
-
 
         /// <summary>
         /// The next available parameter set bit. This number increments but the parameter
@@ -403,7 +401,6 @@ namespace System.Management.Automation
             return result;
         } // GetParameterSetName
 
-
         /// <summary>
         /// Helper function to retrieve the name of the parameter
         /// which defined an alias.
@@ -478,7 +475,6 @@ namespace System.Management.Automation
             {
                 name = name.Substring(1);
             }
-
 
             // First try to match the bindable parameters
 
@@ -696,7 +692,6 @@ namespace System.Management.Automation
             return Parameter.ToString();
         }
     }
-
 
     /// <summary>
     /// This enum is used in the MergedCompiledCommandParameter class

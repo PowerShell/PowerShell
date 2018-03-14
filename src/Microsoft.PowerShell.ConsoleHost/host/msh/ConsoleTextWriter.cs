@@ -1,8 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
-
-
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Text;
@@ -12,8 +9,6 @@ using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using HRESULT = System.UInt32;
 using DWORD = System.UInt32;
 using NakedWin32Handle = System.IntPtr;
-
-
 
 namespace Microsoft.PowerShell
 {
@@ -30,8 +25,6 @@ namespace Microsoft.PowerShell
             _ui = ui;
         }
 
-
-
         public override
         Encoding
         Encoding
@@ -42,16 +35,12 @@ namespace Microsoft.PowerShell
             }
         }
 
-
-
         public override
         void
         Write(string value)
         {
             _ui.WriteToConsole(value, true);
         }
-
-
 
         public override
         void
@@ -60,16 +49,12 @@ namespace Microsoft.PowerShell
             this.Write(value + ConsoleHostUserInterface.Crlf);
         }
 
-
-
         public override
         void
         Write(Boolean b)
         {
             this.Write(b.ToString());
         }
-
-
 
         public override
         void
@@ -78,8 +63,6 @@ namespace Microsoft.PowerShell
             this.Write(new String(c, 1));
         }
 
-
-
         public override
         void
         Write(Char[] a)
@@ -87,10 +70,7 @@ namespace Microsoft.PowerShell
             this.Write(new String(a));
         }
 
-
-
         private ConsoleHostUserInterface _ui;
     }
 }   // namespace
-
 

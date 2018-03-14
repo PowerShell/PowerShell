@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Collections.Generic;
@@ -15,7 +17,7 @@ using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using System.Reflection;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public class FileSystemProviderTests: IDisposable
     {

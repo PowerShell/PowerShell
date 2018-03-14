@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Import-Module HelpersCommon
 #
 # These are general tests that verify non-Windows behavior

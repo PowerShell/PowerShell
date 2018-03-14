@@ -18,13 +18,13 @@ ModuleVersion = '1.0'
 GUID = 'a5506849-3cc7-44ec-8d8a-79e0f43c4f8b'
 
 # Author of this module
-Author = 'brucepay'
+Author = 'PowerShell'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright = '(c) 2013 brucepay. All rights reserved.'
+Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
 
 # Description of the functionality provided by this module
 # Description = ''

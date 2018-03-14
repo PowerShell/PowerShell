@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Test-ModuleManifest tests" -tags "CI" {
 
     AfterEach {
@@ -123,7 +125,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 }
-
 
 Describe "Tests for circular references in required modules" -tags "CI" {
 

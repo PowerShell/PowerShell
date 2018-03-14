@@ -1,4 +1,6 @@
-﻿Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "Tests for hashtable to PSCustomObject conversion" -Tags "CI" {
     BeforeAll {
         class SampleClass5 {
             [int]$a
@@ -112,7 +114,6 @@
            }
        }
     }
-
 
     It  'Creating an object of an existing type from hashtable should succeed' {
         $result = [System.Management.Automation.Host.Coordinates]@{X=10;Y=33}

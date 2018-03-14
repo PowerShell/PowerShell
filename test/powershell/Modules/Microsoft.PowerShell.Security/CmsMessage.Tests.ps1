@@ -1,10 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 
 Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
-    
+
     BeforeAll {
         $certLocation = New-GoodCertificate
         $certLocation | Should Not BeNullOrEmpty | Out-Null
+
+        $protectedCertLocation = New-ProtectedCertificate
+        $protectedCertLocation | Should Not BeNullOrEmpty | Out-Null
     }
 
     It "Verify Get-PfxCertificate -FilePath" {
@@ -20,6 +25,17 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     It "Verify Get-PfxCertificate positional argument" {
         $cert = Get-PfxCertificate $certLocation
         $cert.Subject | Should Be "CN=MyDataEnciphermentCert"
+    }
+
+    It "Verify Get-PfxCertificate right password" {
+        $pass = ConvertTo-SecureString "password" -AsPlainText -Force
+        $cert = Get-PfxCertificate $protectedCertLocation -Password $pass
+        $cert.Subject | Should Be "CN=localhost"
+    }
+
+    It "Verify Get-PfxCertificate wrong password" {
+        $pass = ConvertTo-SecureString "wrongpass" -AsPlainText -Force
+        $e = { Get-PfxCertificate $protectedCertLocation -Password $pass -ErrorAction Stop } | ShouldBeErrorId "GetPfxCertificateUnknownCryptoError,Microsoft.PowerShell.Commands.GetPfxCertificateCommand"
     }
 
     It "Verify CMS message recipient resolution by path" -Skip:(!$IsWindows) {
@@ -58,7 +74,6 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     }
 }
 
-
 Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
     BeforeAll{
@@ -71,9 +86,9 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
             # Skip for non-Windows platforms
             $defaultParamValues = $PSdefaultParameterValues.Clone()
             $PSdefaultParameterValues = @{ "it:skip" = $true }
-        }        
+        }
     }
-    
+
     AfterAll {
         if($IsWindows)
         {
@@ -318,7 +333,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
         # Validate they all match the EKU
         $correctMatching = $foundCerts | Where-Object {
-            ($_.EnhancedKeyUsageList.Count -gt 0) -and 
+            ($_.EnhancedKeyUsageList.Count -gt 0) -and
             ($_.EnhancedKeyUsageList[0].ObjectId -eq '1.3.6.1.4.1.311.80.1')
         }
         # "All Document Encryption Cert should have had correct EKU"

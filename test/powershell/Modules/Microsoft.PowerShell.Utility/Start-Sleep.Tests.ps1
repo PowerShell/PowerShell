@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
 
     # WaitHandle.WaitOne(milliseconds, exitContext) is not accurate.

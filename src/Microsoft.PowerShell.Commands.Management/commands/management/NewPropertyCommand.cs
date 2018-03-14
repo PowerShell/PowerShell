@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation;
 using Dbg = System.Management.Automation;
@@ -181,7 +180,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // ProcessRecord
         #endregion Command code
-
 
     } // NewItemPropertyCommand
 } // namespace Microsoft.PowerShell.Commands

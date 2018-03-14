@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Contents:  Entry points for PowerShell plugin used to host powershell
 //  in a WSMan service.
@@ -31,15 +31,18 @@ LPCWSTR g_MAIN_BINARY_NAME = L"pwrshplugin.dll";
 // the caller should free pwszErrorMessage using LocalFree().
 // returns: If the function succeeds the return value is the number of CHARs stored int the output
 // buffer, excluding the terminating null character. If the function fails the return value is zero.
-#pragma prefast(push)
-#pragma prefast (disable: 28196)
-DWORD GetFormattedErrorMessage(__deref_out PWSTR * pwszErrorMessage, DWORD dwMessageId, va_list* arguments)
-#pragma prefast(pop)
+_Success_(return > 0)
+DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId, va_list* arguments)
 {
     DWORD dwLength = 0;
+    LPWSTR wszSystemErrorMessage = NULL;
 
     do
     {
+        if (NULL == pwszErrorMessage)
+        {
+            break;
+        }
         *pwszErrorMessage = NULL;
 
         if (NULL == g_hResourceInstance)
@@ -51,8 +54,6 @@ DWORD GetFormattedErrorMessage(__deref_out PWSTR * pwszErrorMessage, DWORD dwMes
 #endif
         }
 
-        LPWSTR wszSystemErrorMessage = NULL;
-        //string function
         dwLength = FormatMessageW(
             FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
             g_hResourceInstance,
@@ -62,28 +63,36 @@ DWORD GetFormattedErrorMessage(__deref_out PWSTR * pwszErrorMessage, DWORD dwMes
             0,
             arguments);
 
-        if (dwLength > 0)
+        if (dwLength == 0)
         {
-            *pwszErrorMessage = new WCHAR[dwLength + 1];
-            if (NULL != *pwszErrorMessage)
-            {
-                //string function
-                if (FAILED(StringCchCopyW(*pwszErrorMessage, dwLength + 1, wszSystemErrorMessage)))
-                {
-                    dwLength = 0;
-                    delete [] (*pwszErrorMessage);
-                    *pwszErrorMessage = NULL;
-                }
-            }
-            LocalFree(wszSystemErrorMessage);
+            break;
+        }
+
+        *pwszErrorMessage = new WCHAR[dwLength + 1];
+        if (*pwszErrorMessage == NULL)
+        {
+            dwLength = 0;
+            break;
+        }
+
+        if (FAILED(StringCchCopyW(*pwszErrorMessage, dwLength + 1, wszSystemErrorMessage)))
+        {
+            dwLength = 0;
+            delete [] (*pwszErrorMessage);
+            *pwszErrorMessage = NULL;
         }
 
     }while(false);
 
+    if (NULL != wszSystemErrorMessage)
+    {
+        LocalFree(wszSystemErrorMessage);
+    }
+
     return dwLength;
 }
 
-DWORD GetFormattedErrorMessage(__deref_out PZPWSTR pwszErrorMessage, DWORD dwMessageId, ...)
+DWORD GetFormattedErrorMessage(__out PWSTR * pwszErrorMessage, DWORD dwMessageId, ...)
 {
     DWORD result = 0;
 
@@ -307,12 +316,19 @@ DWORD ReportOperationComplete(WSMAN_PLUGIN_REQUEST *requestDetails, DWORD errorC
 
     DWORD result = EXIT_CODE_SUCCESS;
     PWSTR pwszErrorMessage = NULL;
-    GetFormattedErrorMessage(&pwszErrorMessage, errorCode);
-
-    result = WSManPluginOperationComplete(requestDetails, 0, errorCode, pwszErrorMessage);
-
-    if (NULL != pwszErrorMessage)
+    if (GetFormattedErrorMessage(&pwszErrorMessage, errorCode) == 0)
     {
+        /* if an error message could not be loaded, generate a fallback
+           message to provide a level of diagnosability.
+        */
+        WCHAR szFallbackMessageMessage[64] = L"\0";
+        swprintf_s(szFallbackMessageMessage, _countof(szFallbackMessageMessage), L"ReportOperationComplete: %d", errorCode);
+
+        result = WSManPluginOperationComplete(requestDetails, 0, errorCode, szFallbackMessageMessage);
+    }
+    else
+    {
+        result = WSManPluginOperationComplete(requestDetails, 0, errorCode, pwszErrorMessage);
         delete[] pwszErrorMessage;
     }
 
