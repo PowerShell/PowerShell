@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_stopping)
             {
-                return -1;
+                throw new StopUpstreamCommandsException(this);
             }
 
             result.Append("\r\n");
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_stopping)
             {
-                return -1;
+                throw new StopUpstreamCommandsException(this);
             }
 
             for (int i = index; i < json.Length; i++)
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_stopping)
             {
-                return -1;
+                throw new StopUpstreamCommandsException(this);
             }
 
             result.Append("\r\n");
@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_stopping)
             {
-                return null;
+                throw new StopUpstreamCommandsException(this);
             }
 
             PSObject pso = obj as PSObject;
@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_stopping)
             {
-                return null;
+                throw new StopUpstreamCommandsException(this);
             }
 
             Dictionary<string, object> result = new Dictionary<string, object>(dict.Count);
@@ -660,7 +660,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_stopping)
                 {
-                    return null;
+                    throw new StopUpstreamCommandsException(this);
                 }
                 result.Add(ProcessValue(o, depth + 1));
             }
