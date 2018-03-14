@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
-        public string[] ExtendedOptions { get; set; }
+        public string[] CompilerOptions { get; set; }
 
         #endregion Parameters
 
@@ -943,9 +943,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void CSharpSourceCodeProcessing()
         {
-            if (ExtendedOptions != null)
+            if (CompilerOptions != null)
             {
-                var arguments = CSharpDefaultParse(args: ExtendedOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
+                var arguments = CSharpDefaultParse(args: CompilerOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
 
                 HandleCompilerErrors(arguments.Errors);
 
@@ -1025,9 +1025,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void VisualBasicSourceCodeProcessing()
         {
-            if (ExtendedOptions != null)
+            if (CompilerOptions != null)
             {
-                var arguments = VisualBasicDefaultParse(args: ExtendedOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
+                var arguments = VisualBasicDefaultParse(args: CompilerOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
 
                 HandleCompilerErrors(arguments.Errors);
 
@@ -1295,7 +1295,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (var diagnisticRecord in compilerDiagnostics)
                 {
-                    // We shouldn't specify input and output files in ExtendedOptions parameter
+                    // We shouldn't specify input and output files in CompilerOptions parameter
                     // so suppress errors from Roslyn default command line parser:
                     //      CS1562: Outputs without source must have the /out option specified
                     //      CS2008: No inputs specified
