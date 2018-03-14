@@ -4,7 +4,7 @@
 # First Lets start with areas with no filters or paths
 
 # Area: Performance
-# @lzybkr @adityapatwardhan
+# @adityapatwardhan
 
 # Area: Portability
 # @BrucePay @JamesWTruher
@@ -32,7 +32,7 @@ src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
 src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @dantraMSFT @PaulHigin
 
 # Area: Console
-src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @lzybkr @anmenaga
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga
 
 # Area: Demo
 demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
@@ -41,7 +41,7 @@ demos/                                             @joeyaiello @SteveL-MSFT @Hem
 src/System.Management.Automation/DscSupport        @TravisEz13 @dantraMSFT
 
 # Area: engine
-src/System.Management.Automation/engine            @daxian-dbw @lzybkr @BrucePay
+src/System.Management.Automation/engine            @daxian-dbw @BrucePay
 
 # Area: Debugging
 # Must be below engine to override
@@ -51,16 +51,16 @@ src/System.Management.Automation/engine/debugger/  @BrucePay @dantraMSFT @PaulHi
 src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
 
 # Area: Intellisense
-# @daxian-dbw @lzybkr @charub
+# @daxian-dbw @charub
 
 # Area: Language
-src/System.Management.Automation/engine/parser     @daxian-dbw @vors @lzybkr @BrucePay
+src/System.Management.Automation/engine/parser     @daxian-dbw @vors @BrucePay
 
 # Area: Providers
 src/System.Management.Automation/namespaces        @BrucePay @anmenaga
 
 # Area: PSReadLine
-src/Microsoft.PowerShell.PSReadLine                @lzybkr @charub
+src/Microsoft.PowerShell.PSReadLine                @charub
 
 # Area: Remoting
 src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHigin
