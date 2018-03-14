@@ -108,18 +108,31 @@ namespace Microsoft.PowerShell.Commands
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
                 object preprocessedObject = ProcessValue(objectToProcess, 0);
-                JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
-                if (EnumsAsStrings)
+                if (!_stopping)
                 {
-                    jsonSettings.Converters.Add(new StringEnumConverter());
+                    JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
+                    if (EnumsAsStrings)
+                    {
+                        jsonSettings.Converters.Add(new StringEnumConverter());
+                    }
+                    if (!Compress)
+                    {
+                        jsonSettings.Formatting = Formatting.Indented;
+                    }
+                    string output = JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
+                    WriteObject(output);
                 }
-                if (!Compress)
-                {
-                    jsonSettings.Formatting = Formatting.Indented;
-                }
-                string output = JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
-                WriteObject(output);
             }
+        }
+
+        private bool _stopping = false;
+
+        /// <summary>
+        /// Allow Ctrl+C to stop processing.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _stopping = true;
         }
 
         #endregion overrides
@@ -164,6 +177,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int ConvertList(string json, int index, StringBuilder result, string padString, int numberOfSpaces)
         {
+            if (_stopping)
+            {
+                return -1;
+            }
+
             result.Append("\r\n");
             StringBuilder newPadString = new StringBuilder();
             newPadString.Append(padString);
@@ -233,6 +251,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int ConvertQuotedString(string json, int index, StringBuilder result)
         {
+            if (_stopping)
+            {
+                return -1;
+            }
+
             for (int i = index; i < json.Length; i++)
             {
                 result.Append(json[i]);
@@ -273,6 +296,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private int ConvertDictionary(string json, int index, StringBuilder result, string padString, int numberOfSpaces)
         {
+            if (_stopping)
+            {
+                return -1;
+            }
+
             result.Append("\r\n");
             StringBuilder newPadString = new StringBuilder();
             newPadString.Append(padString);
@@ -401,6 +429,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>An object suitable for serializing to JSON</returns>
         private object ProcessValue(object obj, int depth)
         {
+            if (_stopping)
+            {
+                return null;
+            }
+
             PSObject pso = obj as PSObject;
 
             if (pso != null)
@@ -586,6 +619,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private object ProcessDictionary(IDictionary dict, int depth)
         {
+            if (_stopping)
+            {
+                return null;
+            }
+
             Dictionary<string, object> result = new Dictionary<string, object>(dict.Count);
 
             foreach (DictionaryEntry entry in dict)
@@ -620,6 +658,10 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (object o in enumerable)
             {
+                if (_stopping)
+                {
+                    return null;
+                }
                 result.Add(ProcessValue(o, depth + 1));
             }
 
@@ -644,7 +686,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (FieldInfo info in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (!info.IsDefined(typeof(T), true))
+                if (!info.IsDefined(typeof(T), true) && !_stopping)
                 {
                     object value;
                     try
@@ -662,7 +704,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (PropertyInfo info2 in t.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (!info2.IsDefined(typeof(T), true))
+                if (!info2.IsDefined(typeof(T), true) && !_stopping)
                 {
                     MethodInfo getMethod = info2.GetGetMethod();
                     if ((getMethod != null) && (getMethod.GetParameters().Length <= 0))

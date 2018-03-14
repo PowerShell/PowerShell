@@ -16,4 +16,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $jsonFormat | Should Match '"TestValue2": 78910'
         $jsonFormat | Should Match '"TestValue3": 99999'
     }
+
+	It "StopProcessing should succeed" {
+        $tmpFile = Join-Path $TestDrive "test.txt"
+        Set-Content -Path $tmpFile -Value "hello"
+        $ps = [PowerShell]::Create()
+        $null = $ps.AddCommand("Get-Content")
+        $null = $ps.AddParameter("Path", $tmpFile)
+        $null = $ps.AddCommand("ConvertTo-Json")
+        $null = $ps.AddParameter("Depth", 10)
+        $null = $ps.BeginInvoke()
+        Start-Sleep -Milliseconds 100
+        $null = $ps.Stop()
+        $ps.InvocationStateInfo.State | should be "Stopped"
+        $ps.Dispose()
+    }
 }
