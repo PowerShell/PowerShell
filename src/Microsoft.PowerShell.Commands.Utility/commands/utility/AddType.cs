@@ -1374,7 +1374,7 @@ namespace Microsoft.PowerShell.Commands
 
                 for (var i = 0 ; i < errorLineString.Length ; i++)
                 {
-                    if (errorLineString[i] != ' ' && errorLineString[i] != '\t')
+                    if (!char.IsWhiteSpace(errorLineString[i]))
                     {
                         // We copy white chars from the source string.
                         sb.Append(errorLineString, 0, i);
