@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set to true if Standard Deviation is to be returned.
         /// </summary>
-            [Parameter(ParameterSetName = GenericParameterSet)]
+        [Parameter(ParameterSetName = GenericParameterSet)]
         public SwitchParameter StdDeviation
         {
             get
