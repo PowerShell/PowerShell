@@ -1360,11 +1360,7 @@ function New-UnifiedNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
 
-        # This is required only for first release since the nuget package version and System.Management.Automation.dll version do not match.
-        # The nuget package for SMA is 6.0.1.1, but the assembly version is going to be 6.0.1.
-        # For future releases where NuGet version and assembly versions are going to be same, this can be removed.
-        $forceSMAAssemblyVersion = '6.0.1'
-        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
