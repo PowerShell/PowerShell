@@ -329,12 +329,21 @@ Describe "help function uses full view by default" -Tags "CI" {
 
 Describe 'help can be found from $home directory' -Tags 'Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix' {
     BeforeAll {
+        if([System.Management.Automation.Platform]::IsWindows)
+        {
+            $userHelpRoot = "$HOME/Documents/PowerShell/Help"
+        } else
+        {
+            $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+            $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+        }
+
         ## Clear all help from user scope.
-        Remove-Item "$HOME\PowerShellHelp" -Force -ErrorAction SilentlyContinue -Recurse
-        Update-Help -Module 'Microsoft.PowerShell.Core' -Scope User -Force
-        Update-Help -Module 'Microsoft.PowerShell.Management' -Scope User -Force
-        Update-Help -Module 'PSReadLine' -Scope User -Force
-        Update-Help -Module 'PackageManagement' -Scope User -Force
+        Remove-Item $userHelpRoot -Force -ErrorAction SilentlyContinue -Recurse
+        Update-Help -Module 'Microsoft.PowerShell.Core' -Scope CurrentUser -Force
+        Update-Help -Module 'Microsoft.PowerShell.Management' -Scope CurrentUser -Force
+        Update-Help -Module 'PSReadLine' -Scope CurrentUser -Force
+        Update-Help -Module 'PackageManagement' -Scope CurrentUser -Force
 
         ## Delete help from global scope if it exists.
         $currentCulture = (Get-Culture).Name

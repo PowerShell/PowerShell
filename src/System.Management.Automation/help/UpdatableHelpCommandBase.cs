@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true)]
         public UpdateHelpScope Scope
         {
-            internal get;
+            get;
             set;
         }
 
@@ -881,10 +881,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Save the help content to the module directory. This is the default behavior.
         /// </summary>
-        Global,
+        AllUsers,
 
         /// <summary>
         /// Save the help content to the user directory.
-        User
+        CurrentUser
     }
 }

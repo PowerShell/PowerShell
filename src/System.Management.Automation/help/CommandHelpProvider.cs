@@ -317,8 +317,7 @@ namespace System.Management.Automation
                 // and the nested module that implements the command
                 GetModulePaths(commandInfo, out moduleName, out moduleDir, out nestedModulePath);
 
-                Collection<String> searchPaths = new Collection<String>();
-                searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
+                Collection<String> searchPaths = new Collection<String>(){ HelpUtils.GetUserHomeHelpSearchPath() };
 
                 if (!String.IsNullOrEmpty(moduleDir))
                 {
@@ -513,21 +512,24 @@ namespace System.Management.Automation
                     // we have to search only in the application base for a mshsnapin...
                     // if you create an absolute path for helpfile, then MUIFileSearcher
                     // will look only in that path.
-                    helpFileToLoad = Path.Combine(mshSnapInInfo.ApplicationBase, helpFile);
+                    
+                    searchPaths.Add(mshSnapInInfo.ApplicationBase);
+                    searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                 }
                 else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path))
-                {
-                    helpFileToLoad = Path.Combine(cmdletInfo.Module.ModuleBase, helpFile);
+                {                    
+                    searchPaths.Add(cmdletInfo.Module.ModuleBase);
+                    searchPaths.Add(CalculateHelpSearchPath(cmdletInfo));
                 }
                 else
                 {
                     searchPaths.Add(GetDefaultShellSearchPath());
                     searchPaths.Add(GetCmdletAssemblyPath(cmdletInfo));
 
-                    // in case of Microsoft.PowerShell.Core module, cmdletInfo.ModuleName is null.
-                    // if cmdletInfo.ModuleName is null, Path.Combine return HelpUtils.GetUserHomeHelpSearchPath()
+                    // In case of Microsoft.PowerShell.Core module, cmdletInfo.ModuleName is null.
+                    // If cmdletInfo.ModuleName is null, Path.Combine returns HelpUtils.GetUserHomeHelpSearchPath()
                     // So we will be searching under HelpUtils.GetUserHomeHelpSearchPath()
-                    // The search is done in order of the searchPath list. We keep the userHelp
+                    // The search is done in order of the searchPath list.
                     var homeModulePath = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), cmdletInfo.ModuleName);
                     searchPaths.Add(homeModulePath);
                 }
@@ -539,44 +541,6 @@ namespace System.Management.Automation
 
             string location = MUIFileSearcher.LocateFile(helpFileToLoad, searchPaths);
 
-            // try home location
-            if(String.IsNullOrEmpty(location))
-            {
-                string homeModulePath = null;
-
-                // In case of inbox modules, the help is put under $PSHOME/<current_culture>,
-                // since the dlls are not published under individual module folders, but under $PSHome
-                // In case of other modules, the help in under module.ModuleBase/<current_culture>
-
-                var moduleBase = cmdletInfo?.Module?.ModuleBase;
-                var moduleName = cmdletInfo?.Module?.Name;
-                string homeHelpPath = HelpUtils.GetUserHomeHelpSearchPath();
-
-                if(!string.IsNullOrEmpty(moduleBase) && !string.IsNullOrEmpty(moduleName))
-                {
-                    string parentModuleBase = Directory.GetParent(moduleBase).Name;                    
-
-                    if (moduleBase.EndsWith(moduleName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        homeModulePath = Path.Combine(homeHelpPath, cmdletInfo.ModuleName);
-                    }
-                    else
-                    {
-                        // This module has version folder.
-                        var moduleVersion = (new DirectoryInfo(moduleBase)).Name;
-                        homeModulePath = Path.Combine(homeHelpPath,cmdletInfo.ModuleName, moduleVersion);
-                    }
-                }
-                else
-                {
-                    homeModulePath = homeHelpPath;
-                }
-
-                searchPaths.Clear();
-                searchPaths.Add(homeModulePath);
-                location = MUIFileSearcher.LocateFile(helpFile, searchPaths);
-            }
-
             // let caller take care of getting help info in a different way
             // like "get-command -syntax"
             if (String.IsNullOrEmpty(location))
@@ -585,6 +549,41 @@ namespace System.Management.Automation
             }
 
             return location;
+        }
+
+        private string CalculateHelpSearchPath(CmdletInfo cmdletInfo)
+        {
+            string homeModulePath = null;
+
+            // In case of inbox modules, the help is put under $PSHOME/<current_culture>,
+            // since the dlls are not published under individual module folders, but under $PSHome
+            // In case of other modules, the help in under module.ModuleBase/<current_culture>
+
+            var moduleBase = cmdletInfo?.Module?.ModuleBase;
+            var moduleName = cmdletInfo?.Module?.Name;
+            string homeHelpPath = HelpUtils.GetUserHomeHelpSearchPath();
+
+            if (!string.IsNullOrEmpty(moduleBase) && !string.IsNullOrEmpty(moduleName))
+            {
+                string parentModuleBase = Directory.GetParent(moduleBase).Name;
+
+                if (moduleBase.EndsWith(moduleName, StringComparison.OrdinalIgnoreCase))
+                {
+                    homeModulePath = Path.Combine(homeHelpPath, moduleName);
+                }
+                else
+                {
+                    // This module has version folder.
+                    var moduleVersion = Path.GetFileName(moduleBase);
+                    homeModulePath = Path.Combine(homeHelpPath, moduleName, moduleVersion);
+                }
+            }
+            else
+            {
+                homeModulePath = homeHelpPath;
+            }
+
+            return homeModulePath;
         }
 
         /// <summary>

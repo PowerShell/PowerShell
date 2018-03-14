@@ -347,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Utils.IsUnderProductFolder(module.ModuleBase) && (!Utils.IsAdministrator()))
+                if (Utils.IsUnderProductFolder(module.ModuleBase) && (!Utils.IsAdministrator()) && (this.Scope == UpdateHelpScope.AllUsers))
                 {
                     string message = StringUtil.Format(HelpErrors.UpdatableHelpRequiresElevation);
                     ProcessException(module.ModuleName, null, new UpdatableHelpSystemException("UpdatableHelpSystemRequiresElevation",
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                         // Gather destination paths
                         Collection<string> destPaths = new Collection<string>();
 
-                        if(this.Scope == UpdateHelpScope.User)
+                        if(this.Scope == UpdateHelpScope.CurrentUser)
                         {
                             string homeFolder = HelpUtils.GetUserHomeHelpSearchPath();
                             string destPathToAdd = null;
@@ -383,16 +383,18 @@ namespace Microsoft.PowerShell.Commands
                             string parentModuleBase = Directory.GetParent(module.ModuleBase).Name;
 
                             // In case of inbox modules, the help is put under $PSHOME/<current_culture>,
-                            // since the dlls are not published under individual module folders, but under $PSHome
-                            // In case of other modules, the help in under module.ModuleBase/<current_culture>
+                            // since the dlls are not published under individual module folders, but under $PSHome.
+                            // In case of other modules, the help is under module.ModuleBase/<current_culture> or
+                            // under module.ModuleBase/<Version>/<current_culture>.
+                            // The code below creates a similar layout for CurrentUser scope.
                             if(module.ModuleBase.EndsWith(module.ModuleName, StringComparison.OrdinalIgnoreCase))
                             {
                                 destPathToAdd = Path.Combine(homeFolder, module.ModuleName);
                             }
                             else if(String.Compare(parentModuleBase, module.ModuleName, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                //This module has version folder.
-                                var moduleVersion = (new DirectoryInfo(module.ModuleBase)).Name;
+                                //This module has version folder.                                
+                                var moduleVersion = Path.GetFileName(module.ModuleBase);
                                 destPathToAdd = Path.Combine(homeFolder,module.ModuleName, moduleVersion);
                             }
                             else

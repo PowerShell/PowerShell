@@ -8,25 +8,30 @@ namespace System.Management.Automation
 {
     internal class HelpUtils
     {
+        private static string userScopeRootPath = null;
+        private static string userHomeHelpPath = null;
+
+
         /// <summary>
         /// Get the path to $HOME
         /// </summary>
         internal static string GetUserHomeHelpSearchPath()
         {
-            string homeFolder = null;
-
-            if (Platform.IsWindows)
+            if (userScopeRootPath == null)
             {
-                homeFolder = Environment.GetEnvironmentVariable("USERPROFILE");
-            }
-            else
-            {
-                homeFolder = Environment.GetEnvironmentVariable("HOME");
+#if UNIX
+                userScopeRootPath = Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
+#else
+                userScopeRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
+#endif
             }
 
-            var homeHelpFolder = Path.Combine(homeFolder, "PowerShellHelp");
+            if (userHomeHelpPath == null)
+            {
+                userHomeHelpPath = Path.Combine(userScopeRootPath, "Help");
+            }
 
-            return homeHelpFolder;
+            return userHomeHelpPath;
         }
     }
 }
