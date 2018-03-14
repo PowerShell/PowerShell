@@ -21,6 +21,8 @@ Describe "Measure-Object" -Tags "CI" {
     It "Should calculate Standard Deviation" {
         $actual = ($testObject | Measure-Object -StdDeviation)
         # We check this way since .StdDeviation returns a double value
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
     }
 
@@ -28,6 +30,8 @@ Describe "Measure-Object" -Tags "CI" {
     It "Should calculate Standard Deviation" {
         $actual = ($testObject2 | Measure-Object -StdDeviation)
         # We check this way since .StdDeviation returns a double value
+        # 29.011491975882 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StdDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
     }
 
@@ -35,6 +39,8 @@ Describe "Measure-Object" -Tags "CI" {
         $actual = ($testObject | Measure-Object -Sum -StdDeviation)
         # We check this way since .StdDeviation returns a double value
         $actual.Sum | Should Be 8
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
     }
 
@@ -42,6 +48,8 @@ Describe "Measure-Object" -Tags "CI" {
         $actual = ($testObject | Measure-Object -Average -StdDeviation)
         # We check this way since .StdDeviation returns a double value
         [Math]::abs($actual.Average - 2.66666666666667) | Should -BeLessThan .00000000000001
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StdDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
     }
 
@@ -50,6 +58,8 @@ Describe "Measure-Object" -Tags "CI" {
         # We check this way since .StdDeviation returns a double value
         $actual.Sum | Should Be 5050
         $actual.Average | Should Be 50.5
+        # 29.011491975882 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StdDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
     }
 
