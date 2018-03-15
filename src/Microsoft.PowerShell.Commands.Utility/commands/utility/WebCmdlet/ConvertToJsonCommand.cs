@@ -107,7 +107,15 @@ namespace Microsoft.PowerShell.Commands
                 object objectToProcess = (_inputObjects.Count > 1) ? (_inputObjects.ToArray() as object) : (_inputObjects[0]);
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
-                object preprocessedObject = ProcessValue(objectToProcess, 0);
+                object preprocessedObject = null;
+                try
+                {
+                    preprocessedObject = ProcessValue(objectToProcess, 0);
+                }
+                catch (StoppingException)
+                {
+                    return;
+                }
                 CheckStopping();
                 JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
                 if (EnumsAsStrings)
@@ -124,275 +132,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion overrides
-
-        #region convertOutputToPrettierFormat
-
-        /// <summary>
-        /// Convert the Json string to a more readable format
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        private string ConvertToPrettyJsonString(string json)
-        {
-            if (!json.StartsWith("{", StringComparison.OrdinalIgnoreCase) && !json.StartsWith("[", StringComparison.OrdinalIgnoreCase))
-            {
-                return json;
-            }
-
-            StringBuilder retStr = new StringBuilder();
-            if (json.StartsWith("{", StringComparison.OrdinalIgnoreCase))
-            {
-                retStr.Append('{');
-                ConvertDictionary(json, 1, retStr, "", 0);
-            }
-            else if (json.StartsWith("[", StringComparison.OrdinalIgnoreCase))
-            {
-                retStr.Append('[');
-                ConvertList(json, 1, retStr, "", 0);
-            }
-
-            return retStr.ToString();
-        }
-
-        /// <summary>
-        /// Convert a Json List, which starts with '['.
-        /// </summary>
-        /// <param name="json"></param>
-        /// <param name="index"></param>
-        /// <param name="result"></param>
-        /// <param name="padString"></param>
-        /// <param name="numberOfSpaces"></param>
-        /// <returns></returns>
-        private int ConvertList(string json, int index, StringBuilder result, string padString, int numberOfSpaces)
-        {
-            result.Append("\r\n");
-            StringBuilder newPadString = new StringBuilder();
-            newPadString.Append(padString);
-            AddSpaces(numberOfSpaces, newPadString);
-            AddIndentations(1, newPadString);
-
-            bool headChar = true;
-
-            for (int i = index; i < json.Length; i++)
-            {
-                CheckStopping();
-                switch (json[i])
-                {
-                    case '{':
-                        result.Append(newPadString.ToString());
-                        result.Append(json[i]);
-                        i = ConvertDictionary(json, i + 1, result, newPadString.ToString(), 0);
-                        headChar = false;
-                        break;
-                    case '[':
-                        result.Append(newPadString.ToString());
-                        result.Append(json[i]);
-                        i = ConvertList(json, i + 1, result, newPadString.ToString(), 0);
-                        headChar = false;
-                        break;
-                    case ']':
-                        result.Append("\r\n");
-                        result.Append(padString);
-                        AddSpaces(numberOfSpaces, result);
-                        result.Append(json[i]);
-                        return i;
-                    case '"':
-                        if (headChar)
-                        {
-                            result.Append(newPadString.ToString());
-                        }
-                        result.Append(json[i]);
-                        i = ConvertQuotedString(json, i + 1, result);
-                        headChar = false;
-                        break;
-                    case ',':
-                        result.Append(json[i]);
-                        result.Append("\r\n");
-                        headChar = true;
-                        break;
-                    default:
-                        if (headChar)
-                        {
-                            result.Append(newPadString.ToString());
-                        }
-                        result.Append(json[i]);
-                        headChar = false;
-                        break;
-                }
-            }
-
-            Dbg.Diagnostics.Assert(false, "ConvertDictionary should return when encounter '}'");
-            ThrowTerminatingError(NewError());
-            return -1;
-        }
-
-        /// <summary>
-        /// Convert the quoted string.
-        /// </summary>
-        /// <param name="json"></param>
-        /// <param name="index"></param>
-        /// <param name="result"></param>
-        /// <returns></returns>
-        private int ConvertQuotedString(string json, int index, StringBuilder result)
-        {
-            for (int i = index; i < json.Length; i++)
-            {
-                CheckStopping();
-                result.Append(json[i]);
-                if (json[i] == '"')
-                {
-                    // Ensure that the quote is not escaped by iteratively searching backwards for the backslash.
-                    // Examples:
-                    //      "a \" b" --> here second quote is escaped
-                    //      "c:\\"  --> here second quote is not escaped
-                    //
-                    var j = i;
-                    var escaped = false;
-                    while (j > 0 && json[--j] == '\\')
-                    {
-                        escaped = !escaped;
-                    }
-
-                    if (!escaped)
-                    {
-                        return i;
-                    }
-                }
-            }
-
-            Dbg.Diagnostics.Assert(false, "ConvertDictionary should return when encounter '}'");
-            ThrowTerminatingError(NewError());
-            return -1;
-        }
-
-        /// <summary>
-        /// Convert a Json dictionary, which starts with '{'.
-        /// </summary>
-        /// <param name="json"></param>
-        /// <param name="index"></param>
-        /// <param name="result"></param>
-        /// <param name="padString"></param>
-        /// <param name="numberOfSpaces"></param>
-        /// <returns></returns>
-        private int ConvertDictionary(string json, int index, StringBuilder result, string padString, int numberOfSpaces)
-        {
-            result.Append("\r\n");
-            StringBuilder newPadString = new StringBuilder();
-            newPadString.Append(padString);
-            AddSpaces(numberOfSpaces, newPadString);
-            AddIndentations(1, newPadString);
-
-            bool headChar = true;
-            bool beforeQuote = true;
-            int newSpaceCount = 0;
-            const int spaceCountAfterQuoteMark = 1;
-
-            for (int i = index; i < json.Length; i++)
-            {
-                CheckStopping();
-                switch (json[i])
-                {
-                    case '{':
-                        result.Append(json[i]);
-                        i = ConvertDictionary(json, i + 1, result, newPadString.ToString(), newSpaceCount);
-                        headChar = false;
-                        break;
-                    case '[':
-                        result.Append(json[i]);
-                        i = ConvertList(json, i + 1, result, newPadString.ToString(), newSpaceCount);
-                        headChar = false;
-                        break;
-                    case '}':
-                        result.Append("\r\n");
-                        result.Append(padString);
-                        AddSpaces(numberOfSpaces, result);
-                        result.Append(json[i]);
-                        return i;
-                    case '"':
-                        if (headChar)
-                        {
-                            result.Append(newPadString.ToString());
-                        }
-                        result.Append(json[i]);
-                        int end = ConvertQuotedString(json, i + 1, result);
-                        if (beforeQuote)
-                        {
-                            newSpaceCount = 0;
-                        }
-                        i = end;
-                        headChar = false;
-                        break;
-                    case ':':
-                        result.Append(json[i]);
-                        AddSpaces(spaceCountAfterQuoteMark, result);
-                        headChar = false;
-                        beforeQuote = false;
-                        break;
-                    case ',':
-                        result.Append(json[i]);
-                        result.Append("\r\n");
-                        headChar = true;
-                        beforeQuote = true;
-                        newSpaceCount = 0;
-                        break;
-                    default:
-                        if (headChar)
-                        {
-                            result.Append(newPadString.ToString());
-                        }
-                        result.Append(json[i]);
-                        if (beforeQuote)
-                        {
-                            newSpaceCount += 1;
-                        }
-                        headChar = false;
-                        break;
-                }
-            }
-
-            Dbg.Diagnostics.Assert(false, "ConvertDictionary should return when encounter '}'");
-            ThrowTerminatingError(NewError());
-            return -1;
-        }
-
-        /// <summary>
-        /// Add tabs to result
-        /// </summary>
-        /// <param name="numberOfTabsToReturn"></param>
-        /// <param name="result"></param>
-        private void AddIndentations(int numberOfTabsToReturn, StringBuilder result)
-        {
-            int realNumber = numberOfTabsToReturn * 2;
-            for (int i = 0; i < realNumber; i++)
-            {
-                result.Append(' ');
-            }
-        }
-
-        /// <summary>
-        /// Add spaces to result
-        /// </summary>
-        /// <param name="numberOfSpacesToReturn"></param>
-        /// <param name="result"></param>
-        private void AddSpaces(int numberOfSpacesToReturn, StringBuilder result)
-        {
-            for (int i = 0; i < numberOfSpacesToReturn; i++)
-            {
-                result.Append(' ');
-            }
-        }
-
-        private ErrorRecord NewError()
-        {
-            ErrorRecord errorRecord = new ErrorRecord(
-                new InvalidOperationException(WebCmdletStrings.JsonStringInBadFormat),
-                "JsonStringInBadFormat",
-                ErrorCategory.InvalidOperation,
-                InputObject);
-            return errorRecord;
-        }
-
-        #endregion convertOutputToPrettierFormat
 
         /// <summary>
         /// Return an alternate representation of the specified object that serializes the same JSON, except
@@ -595,7 +334,6 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (DictionaryEntry entry in dict)
             {
-                CheckStopping();
                 string name = entry.Key as string;
                 if (name == null)
                 {
@@ -626,7 +364,6 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (object o in enumerable)
             {
-                CheckStopping();
                 result.Add(ProcessValue(o, depth + 1));
             }
 
@@ -698,8 +435,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Stopping)
             {
-                throw new StopUpstreamCommandsException(this);
+                throw new StoppingException();
             }
         }
+
+        /// <summary>
+        /// Exception used for Stopping.
+        /// </summary>
+        private class StoppingException : System.Exception {}
     }
 }
