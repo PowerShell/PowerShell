@@ -8,8 +8,9 @@ daysUntilStale: 30
 daysUntilClose: 10
 
 # Issues or Pull Requests with these labels will never be considered stale. Set to `[]` to disable
-exemptLabels: []
-#  - pinned
+exemptLabels:
+  - Issue-Meta
+  - Issue-Discussion
 
 # Set to true to ignore issues in a project (defaults to false)
 exemptProjects: true
@@ -22,8 +23,8 @@ staleLabel: Review - Abandoned
 
 # Comment to post when marking as stale. Set to `false` to disable
 markComment: >
-  This PR has been automatically marked as stale because it has not had
-  recent activity. It will be closed if no further activity occurs within 10 days.
+  This PR has been automatically marked as stale because it has not had activity in the last 30 days.
+  It will be closed if no further activity occurs within 10 days.
   Thank you for your contributions.
 
 # Comment to post when removing the stale label.
