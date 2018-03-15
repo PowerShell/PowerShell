@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
                             if (currentPath.Drive != SessionState.Path.CurrentLocation.Drive &&
                                 !currentPath.ProviderPath.StartsWith(SessionState.Path.CurrentLocation.Drive.Root))
                             {
-                                WriteObject(sendToPipeline: currentPath.Path, enumerateCollection: false);
+                                WriteObject(currentPath.Path, enumerateCollection: false);
                                 continue;
                             }
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
-                            WriteObject(sendToPipeline: adjustedPath, enumerateCollection: false);
+                            WriteObject(adjustedPath, enumerateCollection: false);
                         }
                     }
                 }
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_relative)
                 {
-                    WriteObject(sendToPipeline: result, enumerateCollection: true);
+                    WriteObject(result, enumerateCollection: true);
                 }
             }
         } // ProcessRecord

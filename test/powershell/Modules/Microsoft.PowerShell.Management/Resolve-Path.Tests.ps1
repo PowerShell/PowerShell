@@ -16,7 +16,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         )
     }
     AfterAll {
-        Remove-PSDrive -Name $driveName -PSProvider FileSystem
+        Remove-PSDrive -Name $driveName
     }
     It "Resolve-Path returns resolved paths" {
         Resolve-Path $TESTDRIVE | Should be "$TESTDRIVE"
@@ -42,7 +42,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         $result = Resolve-Path -LiteralPath "TestDrive:\\\\\"
         ($result.Path.TrimEnd('/\')) | Should Be "TestDrive:"
     }
-    It "Resolve-Path -Relative should return correct path on different drive" -TestCases $relCases {
+    It "Resolve-Path -Relative '<target>' should return correct path on '<wd>'" -TestCases $relCases {
         param($wd, $target, $expected)
         try {
             Push-Location -Path $wd
