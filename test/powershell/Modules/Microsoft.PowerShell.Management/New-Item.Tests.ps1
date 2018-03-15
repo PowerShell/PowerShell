@@ -91,7 +91,7 @@ Describe "New-Item" -Tags "CI" {
     It "Should create a file with correct name when Name switch is not used and Path contains special char" {
         New-Item -Path $FullyQualifiedFileSp -ItemType file
 
-        Test-Path $FullyQualifiedFileSp | Should Be $true
+        $FullyQualifiedFileSp | Should -Exist
     }
 
     It "Should be able to create a multiple items in different directories" {

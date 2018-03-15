@@ -96,8 +96,8 @@ Describe "Out-File" -Tags "CI" {
         Out-File -FilePath $testfile
         Out-File -FilePath $testfileSp
 
-        Test-Path $testfile | Should Be $true
-        Test-Path $testfileSp | Should Be $true
+        $testfile | Should -Exist
+        $testfileSp | Should -Exist
     }
 
     It "Should limit each line to the specified number of characters when the width switch is used on objects" {

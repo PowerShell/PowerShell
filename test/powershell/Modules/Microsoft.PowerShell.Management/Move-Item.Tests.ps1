@@ -19,9 +19,9 @@ Describe "Move-Item tests" -Tag "CI" {
     }
     It "Move-Item will move a file when path contains special char" {
         Move-Item $sourceSp $targetSpName
-        $sourceSp | Should Not Exist
-        $targetSp | Should Exist
-        $targetSp | Should FileContentMatchExactly "This is not content"
+        $sourceSp | Should -Not -Exist
+        $targetSp | Should -Exist
+        $targetSp | Should -FileContentMatchExactly "This is not content"
     }
 
     Context "Move-Item with filters" {
