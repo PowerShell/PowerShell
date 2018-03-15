@@ -315,3 +315,49 @@ Describe "DataRow and DataRowView Adapter tests" -tags "CI" {
         }
     }
 }
+
+Describe "Base method call on object mapped to PropertyOnlyAdapter should work" -tags "CI" {
+    It "Base method call on object of a subclass of 'XmlDocument' -- Add-Type" {
+        $code =@'
+namespace BaseMethodCallTest.OnXmlDocument {
+    public class Foo : System.Xml.XmlDocument {
+        public string MyName { get; set; }
+        public override void LoadXml(string content) {
+            MyName = content;
+        }
+    }
+}
+'@
+        try {
+            $null = [BaseMethodCallTest.OnXmlDocument.Foo]
+        } catch {
+            Add-Type -TypeDefinition $code
+        }
+
+        $foo = [BaseMethodCallTest.OnXmlDocument.Foo]::new()
+        $foo.LoadXml('<test>bar</test>')
+        $foo.MyName | Should -BeExactly '<test>bar</test>'
+        $foo.ChildNodes.Count | Should -Be 0
+
+        ([System.Xml.XmlDocument]$foo).LoadXml('<test>bar</test>')
+        $foo.test | Should -BeExactly 'bar'
+        $foo.ChildNodes.Count | Should -Be 1
+    }
+
+    It "Base method call on object of a subclass of 'XmlDocument' -- PowerShell Class" {
+        class XmlDocChild : System.Xml.XmlDocument {
+            [string] $MyName
+            [void] LoadXml([string]$content) {
+                $this.MyName = $content
+                # Try to call the base type's .LoadXml() method.
+                ([System.Xml.XmlDocument] $this).LoadXml($content)
+            }
+        }
+
+        $child = [XmlDocChild]::new()
+        $child.LoadXml('<test>bar</test>')
+        $child.MyName | Should -BeExactly '<test>bar</test>'
+        $child.test | Should -BeExactly 'bar'
+        $child.ChildNodes.Count | Should -Be 1
+    }
+}
