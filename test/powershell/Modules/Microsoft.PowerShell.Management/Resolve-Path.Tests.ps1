@@ -16,7 +16,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         )
     }
     AfterAll {
-        Remove-PSDrive -Name $driveName
+        Remove-PSDrive -Name $driveName -Force
     }
     It "Resolve-Path returns resolved paths" {
         Resolve-Path $TESTDRIVE | Should be "$TESTDRIVE"
@@ -46,7 +46,7 @@ Describe "Resolve-Path returns proper path" -Tag "CI" {
         param($wd, $target, $expected)
         try {
             Push-Location -Path $wd
-            Resolve-Path -Path $target -Relative | Should BeExactly $expected
+            Resolve-Path -Path $target -Relative | Should -BeExactly $expected
         }
         finally {
             Pop-Location
