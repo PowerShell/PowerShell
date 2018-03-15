@@ -5053,7 +5053,7 @@ namespace System.Management.Automation.Language
 
             bool canOptimize;
             Type aliasConversionType;
-            memberInfo = GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, Adapter.SiteBinderOperatesOn.Property);
+            memberInfo = GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Property);
 
             if (!canOptimize)
             {
@@ -5416,7 +5416,7 @@ namespace System.Management.Automation.Language
             }
 
             PSMemberInfo result = binder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType,
-                                                         Adapter.SiteBinderOperatesOn.Property, aliases, aliasRestrictions);
+                                                         MemberTypes.Property, aliases, aliasRestrictions);
             return result;
         }
 
@@ -5424,7 +5424,7 @@ namespace System.Management.Automation.Language
                                               out BindingRestrictions restrictions,
                                               out bool canOptimize,
                                               out Type aliasConversionType,
-                                              Adapter.SiteBinderOperatesOn binderOperatesOn,
+                                              MemberTypes memberTypeToOperateOn,
                                               HashSet<string> aliases = null,
                                               List<BindingRestrictions> aliasRestrictions = null)
         {
@@ -5494,7 +5494,7 @@ namespace System.Management.Automation.Language
             var adapterSet = PSObject.GetMappedAdapter(value, typeTable);
             if (memberInfo == null)
             {
-                canOptimize = adapterSet.OriginalAdapter.CanSiteBinderOptimize(binderOperatesOn);
+                canOptimize = adapterSet.OriginalAdapter.CanSiteBinderOptimize(memberTypeToOperateOn);
                 // Don't bother looking for the member if we're not going to use it.
                 if (canOptimize)
                 {
@@ -5970,7 +5970,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions;
             bool canOptimize;
             Type aliasConversionType;
-            memberInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, Adapter.SiteBinderOperatesOn.Property);
+            memberInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Property);
 
             restrictions = restrictions.Merge(value.PSGetTypeRestriction());
 
@@ -6465,7 +6465,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions;
             bool canOptimize;
             Type aliasConversionType;
-            var methodInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, Adapter.SiteBinderOperatesOn.Method) as PSMethodInfo;
+            var methodInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Method) as PSMethodInfo;
             restrictions = args.Aggregate(restrictions, (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
             // If the process has ever used ConstrainedLanguage, then we need to add the language mode

@@ -38,19 +38,6 @@ namespace System.Management.Automation
     internal abstract class Adapter
     {
         /// <summary>
-        /// The member type that a callsite binder operates on.
-        /// </summary>
-        /// <remarks>
-        /// An adapter can decide whether the binder can optimize the operations
-        /// on an object member based on the type of the member.
-        /// </remarks>
-        internal enum SiteBinderOperatesOn
-        {
-            Property,
-            Method,
-        }
-
-        /// <summary>
         /// tracer for this and derivate classes
         /// </summary>
         [TraceSource("ETS", "Extended Type System")]
@@ -59,7 +46,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal virtual bool CanSiteBinderOptimize(SiteBinderOperatesOn opType) { return false; }
+        internal virtual bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return false; }
 
         protected static IEnumerable<string> GetDotNetTypeNameHierarchy(Type type)
         {
@@ -3532,7 +3519,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool CanSiteBinderOptimize(SiteBinderOperatesOn opType) { return true; }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return true; }
 
         private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
@@ -4564,16 +4551,16 @@ namespace System.Management.Automation
         /// So, the binder can optimize on method calls for objects that map to a
         /// custom PropertyOnlyAdapter.
         /// </summary>
-        internal override bool CanSiteBinderOptimize(SiteBinderOperatesOn opType)
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
         {
-            switch (opType)
+            switch (typeToOperateOn)
             {
-                case SiteBinderOperatesOn.Property:
+                case MemberTypes.Property:
                     return false;
-                case SiteBinderOperatesOn.Method:
+                case MemberTypes.Method:
                     return true;
                 default:
-                    throw new InvalidOperationException("Should be unreachable. Update this code if new members are added to 'SiteBinderOperation'");
+                    throw new InvalidOperationException("Should be unreachable. Update code if other member types need to be handled here.");
             }
         }
 
