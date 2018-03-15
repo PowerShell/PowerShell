@@ -519,7 +519,7 @@ namespace System.Management.Automation
                 else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path))
                 {                    
                     searchPaths.Add(cmdletInfo.Module.ModuleBase);
-                    searchPaths.Add(CalculateHelpSearchPath(cmdletInfo));
+                    searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
                 }
                 else
                 {

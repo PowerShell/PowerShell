@@ -369,7 +369,7 @@ Describe 'help can be found from $home directory' -Tags 'Feature', 'RequireAdmin
         $TestCases = @(
             @{TestName = 'module under $PSHOME'; CmdletName = 'Add-Content'}
             @{TestName = 'module is a PSSnapin'; CmdletName = 'Get-Command' }
-            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineKeyHandler' }
+            @{TestName = 'module is under $PSHOME\Modules'; CmdletName = 'Get-PSReadlineOption' }
             @{TestName = 'module has a version folder'; CmdletName = 'Find-Package' }
         )
     }
