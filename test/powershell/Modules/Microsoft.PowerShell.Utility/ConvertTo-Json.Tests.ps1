@@ -27,8 +27,10 @@ Describe 'ConvertTo-Json' -tags "CI" {
             throw "Should not have thrown exception"
         })
         $null = $ps.BeginInvoke()
+        # wait to ensure invocation has reached ConvertTo-Json
         Start-Sleep -Milliseconds 100
         $null = $ps.BeginStop($null, $null)
+        # wait to ensure Stopped is set within ConvertTo-Json
         Start-Sleep -Milliseconds 100
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()

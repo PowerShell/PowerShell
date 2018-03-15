@@ -692,7 +692,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Check if Stopping is set and throw special exception to stop
+        /// Check if Stopping is set and throw special exception to stop.
         /// </summary>
         private void CheckStopping()
         {
