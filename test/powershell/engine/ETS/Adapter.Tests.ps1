@@ -336,11 +336,11 @@ namespace BaseMethodCallTest.OnXmlDocument {
 
         $foo = [BaseMethodCallTest.OnXmlDocument.Foo]::new()
         $foo.LoadXml('<test>bar</test>')
-        $foo.MyName | Should -Be '<test>bar</test>'
+        $foo.MyName | Should -BeExactly '<test>bar</test>'
         $foo.ChildNodes.Count | Should -Be 0
 
         ([System.Xml.XmlDocument]$foo).LoadXml('<test>bar</test>')
-        $foo.test | Should -Be 'bar'
+        $foo.test | Should -BeExactly 'bar'
         $foo.ChildNodes.Count | Should -Be 1
     }
 
@@ -356,8 +356,8 @@ namespace BaseMethodCallTest.OnXmlDocument {
 
         $child = [XmlDocChild]::new()
         $child.LoadXml('<test>bar</test>')
-        $child.MyName | Should -Be '<test>bar</test>'
-        $child.test | Should -Be 'bar'
+        $child.MyName | Should -BeExactly '<test>bar</test>'
+        $child.test | Should -BeExactly 'bar'
         $child.ChildNodes.Count | Should -Be 1
     }
 }
