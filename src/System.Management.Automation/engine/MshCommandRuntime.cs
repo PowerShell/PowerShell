@@ -930,8 +930,6 @@ namespace System.Management.Automation
                 {
                     this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
                 }
-
-                _state.PSVariable.Set(this.OutVariable, _outVarList);
             }
             else
             {
@@ -2498,34 +2496,21 @@ namespace System.Management.Automation
 
             if (variableName.StartsWith("+", StringComparison.Ordinal))
             {
+                varList = new ArrayList();
+
                 variableName = variableName.Substring(1);
                 object oldValue = PSObject.Base(_state.PSVariable.GetValue(variableName));
-                varList = oldValue as IList;
-                if (null == varList)
-                {
-                    varList = new ArrayList();
 
-                    if (null != oldValue && AutomationNull.Value != oldValue)
+                if (oldValue is object[] oldArray)
+                {
+                    foreach (object streamObject in oldArray)
                     {
-                        IEnumerable enumerable = LanguagePrimitives.GetEnumerable(oldValue);
-                        if (null != enumerable)
-                        {
-                            foreach (object o in enumerable)
-                            {
-                                varList.Add(o);
-                            }
-                        }
-                        else
-                        {
-                            varList.Add(oldValue);
-                        }
+                        varList.Add(streamObject);
                     }
                 }
-                else if (varList.IsFixedSize)
+                else if (oldValue != null && oldValue != AutomationNull.Value)
                 {
-                    ArrayList varListNew = new ArrayList();
-                    varListNew.AddRange(varList);
-                    varList = varListNew;
+                    varList.Add(oldValue);
                 }
             }
             else
@@ -2537,7 +2522,6 @@ namespace System.Management.Automation
             {
                 this.OutputPipe.AddVariableList(streamKind, varList);
             }
-            _state.PSVariable.Set(variableName, varList);
         } // SetupVariable
 
         /// <summary>
@@ -3677,21 +3661,25 @@ namespace System.Management.Automation
 
             if (_outVarList != null)
             {
+                SetNonArrayListVariable(OutVariable, _outVarList);
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Output, _outVarList);
             }
 
             if (_errorVarList != null)
             {
+                SetNonArrayListVariable(ErrorVariable, _errorVarList);
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Error, _errorVarList);
             }
 
             if (_warningVarList != null)
             {
+                SetNonArrayListVariable(WarningVariable, _warningVarList);
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Warning, _warningVarList);
             }
 
             if (_informationVarList != null)
             {
+                SetNonArrayListVariable(InformationVariable, _informationVarList);
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Information, _informationVarList);
             }
 
@@ -3700,6 +3688,46 @@ namespace System.Management.Automation
                 this.OutputPipe.RemovePipelineVariable();
                 _state.PSVariable.Remove(this.PipelineVariable);
             }
+        }
+
+        /// <summary>
+        /// Stream variables are setup as ArrayLists, but we want this to be
+        /// transparent so that the following are indistinguishable:
+        /// 
+        ///     $ov = Write-Output @(1,2); $ov.GetType().FullName
+        ///
+        ///     Write-Output -OutVariable ov @(1,2); $ov.GetType().FullName
+        ///
+        /// So when we clean up internally, set the variables back to the
+        /// ordinary PowerShell return types
+        /// </summary>
+        /// <param name="variableName">the name of the variable to set</param>
+        /// <param name="varList">the variable value stored in the ArrayList</param>
+        private void SetNonArrayListVariable(string variableName, IList varList)
+        {
+            if (variableName == null)
+            {
+                return;
+            }
+
+            // No values -> output is null
+            if (varList.Count == 0)
+            {
+                _state.PSVariable.Set(variableName, null);
+                return;
+            }
+
+            // One value -> output is object
+            if (varList.Count == 1)
+            {
+                _state.PSVariable.Set(variableName, varList[0]);
+                return;
+            }
+
+            // Multiple items in the list -> output is object[]
+            var valArray = new object[varList.Count];
+            varList.CopyTo(valArray, 0);
+            _state.PSVariable.Set(variableName.StartsWith('+') ? variableName.Substring(1) : variableName, valArray);
         }
     }
 }

@@ -75,6 +75,46 @@ Describe "Tests OutVariable only" -Tags "CI" {
         $script:a | Should Be 'foo'
         $b | Should Be @("bar", "foo")
     }
+
+    It "OutVariable type test: <Name>" -TestCases @(
+                                @{ Name = 'Pass single object through OutVariable';
+                                    Value = 'a';
+                                    Expected = 'a';
+                                    ExpectedType = 'System.String'
+                                    },
+                                @{ Name = 'Pass array of objects through OutVariable';
+                                    Value = @(1, 2, 3);
+                                    Expected = @(1, 2, 3);
+                                    ExpectedType = 'System.Object[]'
+                                    },
+                                @{ Name = 'Pass collection of objects through OutVariable';
+                                    Value = [System.Collections.ArrayList]::new(@(1, 2, 3));
+                                    Expected = @(1, 2, 3);
+                                    ExpectedType = 'System.Object[]'
+                                    },
+                                @{ Name = 'Pass lifted collection of object through OutVariable';
+                                    Value = @(, [System.Collections.ArrayList]::new(@(1, 2, 3)));
+                                    Expected = @(1, 2, 3);
+                                    ExpectedType = 'System.Collections.ArrayList'
+                                    },
+                                @{ Name = 'Pass $null through OutVariable';
+                                    Value = $null;
+                                    Expected = $null
+                                    },
+                                @{ Name = 'Pass AutomationNull.Value through OutVariable';
+                                    Value = [System.Management.Automation.Internal.AutomationNull]::Value;
+                                    Expected = $null
+                                    }
+    ) {
+        param($Name, $Value, $Expected, $ExpectedType)
+
+        $null = Write-Output -OutVariable outVar $Value
+        $outVar | Should -BeExactly $Expected
+        if ($Value)
+        {
+            $outVar.GetType().FullName | Should -BeExactly $ExpectedType
+        }
+    }
 }
 
 Describe "Test ErrorVariable only" -Tags "CI" {
