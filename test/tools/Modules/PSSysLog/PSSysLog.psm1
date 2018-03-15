@@ -217,7 +217,7 @@ class PSLogItem
             return $null
         }
 
-        if ([string]::IsNullOrEmpty($id) -eq $false)
+        if ($id)
         {
             # If the log entry doesn't have the expected $id, return null.
             if ($parts[[SysLogIds]::Id].StartsWith($id, [StringComparison]::OrdinalIgnoreCase) -eq $false)
