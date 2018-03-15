@@ -22,11 +22,12 @@ The PowerShell Committee and its members (aka Committee Members) are the primary
 ### Current Committee Members
 
 * Bruce Payette ([BrucePay](https://github.com/BrucePay))
-* Steve Lee ([SteveL-MSFT](https://github.com/SteveL-MSFT))
-* Hemant Mahawar ([HemantMahawar](https://github.com/HemantMahawar))
-* Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
 * Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
+* Hemant Mahawar ([HemantMahawar](https://github.com/HemantMahawar))
 * Jim Truher ([JamesWTruher](https://github.com/JamesWTruher))
+* Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
+* Kenneth Hansen ([khansen00](https://github.com/khansen00))
+* Steve Lee ([SteveL-MSFT](https://github.com/SteveL-MSFT))
 
 ### Committee Member Responsibilities
 
