@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericMeasureInfo()
         {
-            Average = Sum = Maximum = Minimum = StdDeviation = null;
+            Average = Sum = Maximum = Minimum = StandardDeviation = null;
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Standard Deviation of property values.
         /// </summary>
-        public double? StdDeviation { get; set; }
+        public double? StandardDeviation { get; set; }
     }
 
     /// <summary>
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericObjectMeasureInfo()
         {
-            Average = Sum = StdDeviation = null;
+            Average = Sum = StandardDeviation = null;
             Maximum = Minimum = null;
         }
 
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Standard Deviation of property values.
         /// </summary>
-        public double? StdDeviation { get; set; }
+        public double? StandardDeviation { get; set; }
     }
 
     /// <summary>
@@ -279,19 +279,19 @@ namespace Microsoft.PowerShell.Commands
         /// Set to true if Standard Deviation is to be returned.
         /// </summary>
         [Parameter(ParameterSetName = GenericParameterSet)]
-        public SwitchParameter StdDeviation
+        public SwitchParameter StandardDeviation
         {
             get
             {
-                return _measureStdDeviation;
+                return _measureStandardDeviation;
             }
             set
             {
-                _measureStdDeviation = value;
+                _measureStandardDeviation = value;
             }
         }
 
-        private bool _measureStdDeviation;
+        private bool _measureStandardDeviation;
 
         /// <summary>
         /// Set to true is Sum is to be returned
@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeString(strValue, stat);
             }
 
-            if (_measureAverage || _measureSum || _measureStdDeviation)
+            if (_measureAverage || _measureSum || _measureStandardDeviation)
             {
                 double numValue = 0.0;
                 if (!LanguagePrimitives.TryConvertTo(objValue, out numValue))
@@ -738,12 +738,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AnalyzeNumber(double numValue, Statistics stat)
         {
-            if (_measureSum || _measureAverage || _measureStdDeviation)
+            if (_measureSum || _measureAverage || _measureStandardDeviation)
             {
                 stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
             }
-            if (_measureStdDeviation && stat.count > 1)
+            if (_measureStandardDeviation && stat.count > 1)
             {
                 // Based off of iterative method of calculating variance on
                 // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell.Commands
         {
             double? sum = null;
             double? average = null;
-            double? stdDeviation = null;
+            double? StandardDeviation = null;
             object max = null;
             object min = null;
 
@@ -843,9 +843,9 @@ namespace Microsoft.PowerShell.Commands
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
 
-                if (_measureStdDeviation)
+                if (_measureStandardDeviation)
                 {
-                    stdDeviation = Math.Sqrt(stat.variance);
+                    StandardDeviation = Math.Sqrt(stat.variance);
                 }
             }
 
@@ -883,7 +883,7 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Count = stat.count;
                 gmi.Sum = sum;
                 gmi.Average = average;
-                gmi.StdDeviation = stdDeviation;
+                gmi.StandardDeviation = StandardDeviation;
                 if (null != max)
                 {
                     gmi.Maximum = (double)max;
