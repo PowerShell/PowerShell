@@ -123,16 +123,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool _stopping = false;
-
-        /// <summary>
-        /// Allow Ctrl+C to stop processing.
-        /// </summary>
-        protected override void StopProcessing()
-        {
-            _stopping = true;
-        }
-
         #endregion overrides
 
         #region convertOutputToPrettierFormat
@@ -702,11 +692,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Check if StopProcessing() was called and throw special exception to stop
+        /// Check if Stopping is set and throw special exception to stop
         /// </summary>
         private void CheckStopping()
         {
-            if (_stopping)
+            if (Stopping)
             {
                 throw new StopUpstreamCommandsException(this);
             }

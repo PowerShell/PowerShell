@@ -18,17 +18,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
 	It "StopProcessing should succeed" {
-        $tmpFile = Join-Path $TestDrive "test.txt"
-        Set-Content -Path $tmpFile -Value "hello"
         $ps = [PowerShell]::Create()
-        $null = $ps.AddCommand("Get-Content")
-        $null = $ps.AddParameter("Path", $tmpFile)
-        $null = $ps.AddCommand("ConvertTo-Json")
-        $null = $ps.AddParameter("Depth", 10)
+        $null = $ps.AddScript({
+            $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
+            $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
+            1..100 | Foreach-Object { $obj } | ConvertTo-Json -Depth 10
+            # the conversion is expected to take some time, this throw is in case it doesn't
+            throw "Should not have thrown exception"
+        })
         $null = $ps.BeginInvoke()
         Start-Sleep -Milliseconds 100
-        $null = $ps.Stop()
-        $ps.InvocationStateInfo.State | should be "Stopped"
+        $null = $ps.BeginStop($null, $null)
+        Start-Sleep -Milliseconds 100
+        $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
     }
 }
