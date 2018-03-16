@@ -1,6 +1,5 @@
-# This is a Pester test suite to validate the cmdlets in LocalAccounts module
-#
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 # Module removed due to #4272
 # disabling tests
@@ -252,14 +251,12 @@ try {
             $result.AccountExpires | Should BeNullOrEmpty
         }
 
-
          It "Errors on both AccountExpires and AccountNeverExpires being set" {
             $sb = {
                 New-LocalUser TestUserNew1 -NoPassword -AccountExpires $dateInFuture -AccountNeverExpires
             }
             VerifyFailingTest $sb "InvalidParameters,Microsoft.PowerShell.Commands.NewLocalUserCommand"
         }
-
 
         It "Can set empty string for Description" {
             $result = New-LocalUser TestUserNew1 -NoPassword -Description ""

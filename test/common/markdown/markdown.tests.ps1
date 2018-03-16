@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 $moduleRootFilePath = Split-Path -Path $PSScriptRoot -Parent
 
 # Identify the repository root path of the resource module
@@ -72,19 +74,20 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         try
         {
             $docsToTest = @(
+                './.github/CONTRIBUTING.md'
                 './*.md'
+                './demos/SSHRemoting/*.md'
+                './demos/python/*.md'
+                './docker/*.md'
                 './docs/*.md'
                 './docs/building/*.md'
                 './docs/cmdlet-example/*.md'
                 './docs/git/submodules.md'
                 './docs/installation/*.md'
-                './docs/maintainers/README.md'
+                './docs/maintainers/*.md'
                 './docs/testing-guidelines/testing-guidelines.md'
-                './demos/SSHRemoting/*.md'
-                './docker/*.md'
                 './test/powershell/README.md'
                 './tools/*.md'
-                './.github/CONTRIBUTING.md'
             )
             $filter = ($docsToTest -join ',')
             &"gulp" test-mdsyntax --silent `

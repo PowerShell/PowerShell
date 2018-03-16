@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.ObjectModel;
@@ -111,7 +110,6 @@ namespace System.Management.Automation
             _engine = context.EngineIntrinsics;
             _isTranscribing = context.EngineHostInterface.UI.IsTranscribing;
         }
-
 
         /// <summary>
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
@@ -1129,7 +1127,6 @@ namespace System.Management.Automation
                                 boType = argumentType;
                             }
 
-
                             if (boType == typeof(bool))
                             {
                                 if (LanguagePrimitives.IsBooleanType(toType))
@@ -1198,7 +1195,6 @@ namespace System.Management.Automation
                             }
                             break;
                         }
-
 
                         // NTRAID#Windows OS Bugs-1009284-2004/05/05-JeffJon
                         // Need to handle other collection types here as well

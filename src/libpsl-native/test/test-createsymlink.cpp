@@ -1,5 +1,6 @@
-//! @file test-createsymlink.cpp
-//! @author George Fleming <v-geflem@microsoft.com>
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 //! @brief Implements test for CreateSymLink() and FollowSymLink()
 
 #include <gtest/gtest.h>

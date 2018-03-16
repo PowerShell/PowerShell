@@ -1,10 +1,12 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.IO;
 using System.Diagnostics;
 using System.Management.Automation;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public static class PlatformTests
     {
@@ -176,7 +178,6 @@ namespace PSTests
                 process.WaitForExit();
                 Assert.Equal(0, process.ExitCode);
             }
-
 
             // Since there are now two references to the file, both are considered
             // hardlinks by our API (though all files are hardlinks on Linux)

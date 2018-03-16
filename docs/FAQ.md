@@ -104,7 +104,7 @@ that new packages' binaries get stomped on by old packages' binaries.
 
 ## Why is my submodule empty?
 
-If a submodule (such as `src/Modules/Pester`) is empty, that means it is
+If a submodule (such as `src/libpsl-native/test/googletest`) is empty, that means it is
 uninitialized.
 If you've already cloned, you can do this with:
 
@@ -122,14 +122,12 @@ git submodule status
 If they're initialized, it will look like this:
 
 ```output
-f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
 c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
 ```
 
 If they're not, there will be minuses in front (and the folders will be empty):
 
 ```output
--f23641488f8d7bf8630ca3496e61562aa3a64009 src/Modules/Pester (f23641488)
 -c99458533a9b4c743ed51537e25989ea55944908 src/libpsl-native/test/googletest (release-1.7.0)
 ```
 

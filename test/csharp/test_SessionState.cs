@@ -1,3 +1,5 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Collections;
@@ -10,7 +12,7 @@ using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     public class SessionStateTests
     {

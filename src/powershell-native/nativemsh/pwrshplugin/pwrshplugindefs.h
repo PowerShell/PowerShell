@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Contents:  Headers used by pwrshplugin.
 //  pwrshplugin is totally unmanaged.
@@ -140,7 +140,7 @@ public:
     // the memory.
     PWSTR extendedErrorInformation;
 
-    PlugInException(DWORD msgId, __in PWSTR msg)
+    PlugInException(DWORD msgId, __in_opt PWSTR msg)
     {
         dwMessageId = msgId;
         extendedErrorInformation = msg;

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
 #if !CLR2
@@ -144,7 +143,6 @@ namespace System.Management.Automation.ComInterop
             // 4. Fallback
             return base.BindGetMember(binder);
         }
-
 
         private DynamicMetaObject BindGetMember(ComMethodDesc method, bool canReturnCallables)
         {

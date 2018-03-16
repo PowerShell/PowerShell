@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -446,7 +445,6 @@ namespace System.Management.Automation
                             ParameterBinderStrings.ParameterAlreadyBound,
                             "ParameterAlreadyBound");
 
-
                     throw bindingException;
                 }
 
@@ -634,7 +632,6 @@ namespace System.Management.Automation
                     // by introducing the default parameter binding.
                     throw bindingException;
                 }
-
 
                 if (positionalParameterDictionary.Count > 0)
                 {
@@ -902,7 +899,6 @@ namespace System.Management.Automation
             return result;
         }
 
-
         /// <summary>
         /// Generate elaborated binding exception so that the user will know the default binding might cause the failure
         /// </summary>
@@ -940,7 +936,6 @@ namespace System.Management.Automation
 
             throw newBindingException;
         }
-
 
         private static CommandParameterInternal GetNextPositionalArgument(
             List<CommandParameterInternal> unboundArgumentsCollection,

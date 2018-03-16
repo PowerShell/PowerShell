@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe 'Exceptions flow for classes' -Tags "CI" {
 
     $canaryHashtable = @{}
@@ -144,7 +146,6 @@ class C
         s2
     }
 }
-
 
 function m2()
 {

@@ -1,10 +1,12 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
         try {
             New-PSSession -ComputerName nonexistcomputer -Authentication Basic
             throw "New-PSSession should throw"
         } catch {
-            $_.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
         }
     }
 }
@@ -41,7 +43,7 @@ Describe "JEA session Transcript script test" -Tag @("Feature", 'RequireAdminOnW
             [powershell]::Create().AddScript($scriptBlock).Invoke()
             $headerFile = Get-ChildItem $transScriptFile | Sort-Object LastWriteTime | Select-Object -Last 1
             $header = Get-Content $headerFile | Out-String
-            $header | Should Match "Configuration Name: JEA"
+            $header | Should -Match "Configuration Name: JEA"
         }
         finally
         {
@@ -80,7 +82,7 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
             # Invoke the script block in a different PowerShell instance so that when TestDrive tries to delete $RoleCapDirectory,
             # the transcription has finished and the files are not locked.
             $helpContent = [powershell]::Create().AddScript($scriptBlock).Invoke()
-            $helpContent | Should Not Be $null
+            $helpContent | Should -Not -BeNullOrEmpty
         }
         finally
         {
@@ -150,9 +152,9 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
             function script:ValidateSessionInfo($session, $state)
             {
-                $session.ComputerName | Should BeExactly 'localhost'
-                $session.ConfigurationName | Should BeExactly $endPoint
-                $session.State | Should Be $state
+                $session.ComputerName | Should -BeExactly 'localhost'
+                $session.ConfigurationName | Should -BeExactly $endPoint
+                $session.State | Should -Be $state
             }
         }
     }
@@ -186,8 +188,8 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
             ValidateSessionInfo -session $session -state 'Disconnected'
 
             $result = Receive-PSSession -Session $session
-            $result | Should Be 2
-            $result.PSComputerName | Should BeExactly 'localhost'
+            $result | Should -Be 2
+            $result.PSComputerName | Should -BeExactly 'localhost'
         }
         finally
         {
@@ -206,8 +208,8 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
             Connect-RemoteSession -Session $session
 
             $result = Invoke-Command -Session $session -ScriptBlock { 1 + 1 }
-            $result | Should Be 2
-            $result.PSComputerName | Should BeExactly 'localhost'
+            $result | Should -Be 2
+            $result.PSComputerName | Should -BeExactly 'localhost'
         }
         finally
         {
@@ -235,25 +237,25 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
             }
         }
 
-        $result.Count | Should Be 1
-        $result | Should Be 2
+        $result.Count | Should -Be 1
+        $result | Should -Be 2
     }
 
     It 'Can execute command without creating new scope' {
         Invoke-Command -NoNewScope -ScriptBlock { $sameScopeVariable = 'SetInCurrentScope' }
-        $sameScopeVariable | Should BeExactly 'SetInCurrentScope'
+        $sameScopeVariable | Should -BeExactly 'SetInCurrentScope'
     }
 
     It 'Can execute command from a file' {
         $fileName = "$testdrive/remotingscript.ps1"
         '1 + 1' | Out-File $fileName
         $result = Invoke-Command -FilePath $fileName -Session $openSession
-        $result | Should Be 2
+        $result | Should -Be 2
     }
 
     It 'Can invoke-command as job' {
         $result = Invoke-Command -ScriptBlock { 1 + 1 } -Session $openSession -AsJob | Receive-Job -AutoRemoveJob -Wait
-        $result | Should Be 2
+        $result | Should -Be 2
     }
 
     It 'Can connect to all disconnected sessions by name' {
@@ -277,7 +279,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     It 'Can pass values through $using' {
         $number = 100
         $result = Invoke-Command -Session $openSession -ScriptBlock { $using:number }
-        $result | Should Be 100
+        $result | Should -Be 100
     }
 }
 

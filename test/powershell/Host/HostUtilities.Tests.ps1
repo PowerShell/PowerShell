@@ -1,4 +1,6 @@
-﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()

@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 try
 {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
@@ -517,14 +519,12 @@ namespace PowershellTestConfigNamespace
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$script:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
                 }
 
-
                 It "Validate Register-PSSessionConfiguration -AccessMode parameter" {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -AccessMode Disabled -Force
 
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $null -ExpectedError "RemoteConnectionDisallowed,PSSessionOpenFailed"
                 }
-
 
                 It "Validate Register-PSSessionConfiguration -ModulesToImport parameter" -Pending {
 

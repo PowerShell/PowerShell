@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Generic;
@@ -786,6 +785,92 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// The implementation of the PowerShell range operator.
+        /// </summary>
+        /// <param name="lval">The object on which to start.</param>
+        /// <param name="rval">The object on which to stop.</param>
+        /// <returns>The array of objects.</returns>
+        internal static object RangeOperator(object lval, object rval)
+        {
+            var lbase = PSObject.Base(lval);
+            var rbase = PSObject.Base(rval);
+
+            // If both arguments is [char] type or [string] type with length==1
+            // return objects of [char] type.
+            // In special case "0".."9" return objects of [int] type.
+            if (AsChar(lbase) is char lc && AsChar(rbase) is char rc)
+            {
+                return CharOps.Range(lc, rc);
+            }
+
+            // As a last resort, the range operator tries to return objects of [int] type.
+            //    1..10
+            //    "1".."10"
+            //    [int]"1"..[int]"10"
+            var l = Convert.ToInt32(lbase);
+            var r = Convert.ToInt32(rbase);
+
+            return IntOps.Range(l, r);
+        }
+
+        /// <summary>
+        /// The implementation of an enumerator for the PowerShell range operator.
+        /// </summary>
+        /// <param name="lval">The object on which to start.</param>
+        /// <param name="rval">The object on which to stop.</param>
+        /// <returns>The enumerator.</returns>
+        internal static IEnumerator GetRangeEnumerator(object lval, object rval)
+        {
+            var lbase = PSObject.Base(lval);
+            var rbase = PSObject.Base(rval);
+
+            // If both arguments is [char] type or [string] type with length==1
+            // return objects of [char] type.
+            // In special case "0".."9" return objects of [int] type.
+            if (AsChar(lbase) is char lc && AsChar(rbase) is char rc)
+            {
+                return new CharRangeEnumerator(lc, rc);
+            }
+
+            // As a last resort, the range operator tries to return objects of [int] type.
+            //    1..10
+            //    "1".."10"
+            //    [int]"1"..[int]"10"
+            var l = Convert.ToInt32(lbase);
+            var r = Convert.ToInt32(rbase);
+
+            return new RangeEnumerator(l, r);
+        }
+
+        // Help function for Range operator.
+        //
+        // In common case:
+        //      for [char] type
+        //      for [string] type and length == 1
+        // return objects of [char] type:
+        //     [char]'A'..[char]'Z'
+        //     [char]'A'..'Z'
+        //     [char]'A'.."Z"
+        //     'A'..[char]'Z'
+        //     "A"..[char]'Z'
+        //     "A".."Z"
+        //     [char]"A"..[string]"Z"
+        //     "A"..[char]"Z"
+        //     [string]"A".."Z"
+        // and so on.
+        //
+        // In special case:
+        //     "0".."9"
+        // return objects of [int] type.
+        private static object AsChar(object obj)
+        {
+            if (obj is char) return obj;
+            if (obj is string str && str.Length == 1 && !Char.IsDigit(str, 0)) return str[0];
+            return null;
+        }
+
+
+        /// <summary>
         /// The implementation of the PowerShell -replace operator....
         /// </summary>
         /// <param name="context">The execution context in which to evaluate the expression</param>
@@ -796,8 +881,8 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object ReplaceOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool ignoreCase)
         {
-            string replacement = "";
             object pattern = "";
+            object substitute = "";
 
             rval = PSObject.Base(rval);
             IList rList = rval as IList;
@@ -815,7 +900,7 @@ namespace System.Management.Automation
                     pattern = rList[0];
                     if (rList.Count > 1)
                     {
-                        replacement = PSObject.ToStringParser(context, rList[1]);
+                        substitute = rList[1];
                     }
                 }
             }
@@ -850,8 +935,7 @@ namespace System.Management.Automation
             {
                 string lvalString = lval?.ToString() ?? String.Empty;
 
-                // Find a single match in the string.
-                return rr.Replace(lvalString, replacement);
+                return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
             else
             {
@@ -859,11 +943,47 @@ namespace System.Management.Automation
                 while (ParserOps.MoveNext(context, errorPosition, list))
                 {
                     string lvalString = PSObject.ToStringParser(context, ParserOps.Current(errorPosition, list));
-
-                    resultList.Add(rr.Replace(lvalString, replacement));
+                    resultList.Add(ReplaceOperatorImpl(context, lvalString, rr, substitute));
                 }
 
                 return resultList.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// ReplaceOperator implementation.
+        /// Abstracts away conversion of the optional substitute parameter to either a string or a MatchEvaluator delegate
+        /// and finally returns the result of the final Regex.Replace operation.
+        /// </summary>
+        /// <param name="context">The execution context in which to evaluate the expression</param>
+        /// <param name="input">The input string</param>
+        /// <param name="regex">A Regex instance.</param>
+        /// <param name="substitute">The substitute value</param>
+        /// <returns>The result of the regex.Replace operation</returns>
+        private static object ReplaceOperatorImpl(ExecutionContext context, string input, Regex regex, object substitute)
+        {
+            switch (substitute)
+            {
+                case ScriptBlock sb:
+                    MatchEvaluator me = match => {
+                        var result = sb.DoInvokeReturnAsIs(
+                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                            dollarUnder: match,
+                            input: AutomationNull.Value,
+                            scriptThis: AutomationNull.Value,
+                            args: Utils.EmptyArray<object>());
+
+                        return PSObject.ToStringParser(context, result);;
+                    };
+                    return regex.Replace(input, me);
+
+                case object val when LanguagePrimitives.TryConvertTo(val, out MatchEvaluator matchEvaluator):
+                    return regex.Replace(input, matchEvaluator);
+
+                default:
+                    string replacement = PSObject.ToStringParser(context, substitute);
+                    return regex.Replace(input, replacement);
             }
         }
 
@@ -948,7 +1068,6 @@ namespace System.Management.Automation
 
             return BoolToObject(!rType.IsInstanceOfType(lval));
         }
-
 
         /// <summary>
         /// Implementation of the PowerShell -like operator
@@ -1310,9 +1429,6 @@ namespace System.Management.Automation
             return mshObj.InternalTypeNames[0];
         }
 
-
-
-
         /// <summary>
         /// Launch a method on an object. This will handle .NET native methods, COM
         /// methods and ScriptBlock notes. Native methods currently take precedence over notes...
@@ -1478,7 +1594,13 @@ namespace System.Management.Automation
         }
 
         private int _current;
-        public object Current
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        public virtual int Current
         {
             get { return _current; }
         }
@@ -1521,6 +1643,70 @@ namespace System.Management.Automation
             return true;
         }
     }
+
+    /// <summary>
+    /// The simple enumerator class is used for the range operator '..'
+    /// in expressions like 'A'..'B' | ForEach-Object { $_ }
+    /// </summary>
+    internal class CharRangeEnumerator : IEnumerator
+    {
+        private int _increment = 1;
+
+        private bool _firstElement = true;
+
+        public CharRangeEnumerator(char lowerBound, char upperBound)
+        {
+            LowerBound = lowerBound;
+            Current = lowerBound;
+            UpperBound = upperBound;
+            if (lowerBound > upperBound)
+                _increment = -1;
+        }
+
+        Object IEnumerator.Current
+        {
+            get { return Current; }
+        }
+
+        internal char LowerBound
+        {
+            get; private set;
+        }
+
+        internal char UpperBound
+        {
+            get; private set;
+        }
+
+        public char Current
+        {
+            get; private set;
+        }
+
+        public bool MoveNext()
+        {
+            if (_firstElement)
+            {
+                _firstElement = false;
+                return true;
+            }
+
+            if (Current == UpperBound)
+            {
+                return false;
+            }
+
+            Current = (char)(Current + _increment);
+            return true;
+        }
+
+        public void Reset()
+        {
+            Current = LowerBound;
+            _firstElement = true;
+        }
+    }
+
     #endregion RangeEnumerator
 
     #region InterpreterError
@@ -1755,4 +1941,3 @@ namespace System.Management.Automation
     }
     #endregion ScriptTrace
 }
-

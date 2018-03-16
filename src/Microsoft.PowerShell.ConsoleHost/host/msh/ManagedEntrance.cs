@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Reflection;
@@ -74,7 +73,7 @@ namespace Microsoft.PowerShell
                 var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     formattedBanner,
-                    ManagedEntranceStrings.ShellHelp,
+                    ManagedEntranceStrings.UsageHelp,
                     args);
             }
             catch (System.Management.Automation.Host.HostException e)

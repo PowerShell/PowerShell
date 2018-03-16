@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     BeforeAll {
         $asciiString = "abc"
@@ -8,7 +10,6 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         else {
             $asciiCR = [string][char]10
         }
-
 
         # If Out-File -Encoding happens to have a default, be sure to
         # save it away

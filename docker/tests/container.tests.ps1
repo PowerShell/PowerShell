@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 Import-module -Name "$PSScriptRoot\containerTestCommon.psm1" -Force
 $script:linuxContainerTests = Get-LinuxContainer
 $script:windowsContainerTests = Get-WindowsContainer
@@ -57,8 +60,7 @@ Describe "Linux Containers run PowerShell" -Tags 'Behavior', 'Linux' {
         # prune unused volumes
         $null=Invoke-Docker -Command 'volume', 'prune' -Params '--force' -SuppressHostOutput
     }
-    BeforeEach
-    {
+    BeforeEach {
         Remove-Item $testContext.resolvedXmlPath -ErrorAction SilentlyContinue
         Remove-Item $testContext.resolvedLogPath -ErrorAction SilentlyContinue
     }
@@ -74,7 +76,7 @@ Describe "Linux Containers run PowerShell" -Tags 'Behavior', 'Linux' {
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0-rc.2'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.2'
     }
 }
 
@@ -82,8 +84,7 @@ Describe "Windows Containers run PowerShell" -Tags 'Behavior', 'Windows' {
     BeforeAll{
         $testContext = Get-TestContext -type Windows
     }
-    BeforeEach
-    {
+    BeforeEach {
         Remove-Item $testContext.resolvedXmlPath -ErrorAction SilentlyContinue
         Remove-Item $testContext.resolvedLogPath -ErrorAction SilentlyContinue
     }
@@ -99,6 +100,6 @@ Describe "Windows Containers run PowerShell" -Tags 'Behavior', 'Windows' {
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.0-rc.2'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.2'
     }
 }

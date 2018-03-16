@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 class CommitNode {
     [string] $Hash
     [string[]] $Parents
@@ -21,8 +23,6 @@ class CommitNode {
 
         if ($subject -match "\(#(\d+)\)") {
             $this.PullRequest = $Matches[1]
-        } else {
-            throw "PR number is missing from the commit subject. (commit: $hash)"
         }
     }
 }
@@ -173,10 +173,13 @@ function Get-ChangeLog
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
                 $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
-                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header
-                $content = ConvertFrom-Json -InputObject $response.Content
-                $commit.AuthorGitHubLogin = $content.author.login
-                $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction SilentlyContinue
+                if($response)
+                {
+                    $content = ConvertFrom-Json -InputObject $response.Content
+                    $commit.AuthorGitHubLogin = $content.author.login
+                    $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+                }
             }
             $commit.ChangeLogMessage = "- {0} (Thanks @{1}!)" -f $commit.Subject, $commit.AuthorGitHubLogin
         }
@@ -189,4 +192,110 @@ function Get-ChangeLog
     $new_commits | Sort-Object -Descending -Property IsBreakingChange | ForEach-Object -MemberName ChangeLogMessage
 }
 
-Export-ModuleMember -Function Get-ChangeLog
+##############################
+#.SYNOPSIS
+#Gets packages which have newer packages in nuget.org
+#
+#.PARAMETER Path
+#The path to check for csproj files with packagse
+#
+#.OUTPUTS
+#Objects which represet the csproj package ref, with the current and new version
+##############################
+function Get-NewOfficalPackage
+{
+    param(
+        [String]
+        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+    )
+    # Calculate the filter to find the CSProj files
+    $filter = Join-Path -Path $Path -ChildPath '*.csproj'
+    $csproj = Get-ChildItem $filter -Recurse
+
+    $csproj | ForEach-Object{
+        $file = $_
+
+        # parse the csproj
+        [xml] $csprojXml = (Get-content -Raw -Path $_)
+
+        # get the package references
+        $packages=$csprojXml.Project.ItemGroup.PackageReference
+
+        # check to see if there is a newer package for each refernce
+        foreach($package in $packages)
+        {
+            # Get the name of the package
+            $name = $package.Include
+
+            # don't pull 'Microsoft.Management.Infrastructure' from nuget
+            if($name -and $name -ne 'Microsoft.Management.Infrastructure')
+            {
+                # Get the current package from nuget
+                $newPackage = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue
+
+                # If the current package has a different version from the version in the csproj, print the details
+                if($newPackage -and $newPackage.Version.ToString() -ne $package.version)
+                {
+                    [pscustomobject]@{
+                        Csproj = $file
+                        PackageName = $name
+                        CsProjVersion = $Package.Version
+                        NuGetVersion = $newPackage.Version
+                    }
+                }
+            }
+        }
+    }
+}
+
+##############################
+#.SYNOPSIS
+# Update the version number in code
+#
+#.PARAMETER NewReleaseTag
+# The new Release Tag
+#
+#.PARAMETER NextReleaseTag
+# The next Release Tag
+#
+#.PARAMETER Path
+# The path to the root of where you want to update
+#
+##############################
+function Update-PsVersionInCode
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [String]
+        $NewReleaseTag,
+
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [String]
+        $NextReleaseTag,
+
+        [String]
+        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+    )
+
+    $metaDataPath = (Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json')
+    $metaData = Get-Content -Path $metaDataPath | convertfrom-json
+    $currentTag = $metaData.ReleaseTag
+
+    $currentVersion = $currentTag -replace '^v'
+    $newVersion = $NewReleaseTag -replace '^v'
+    $metaData.NextReleaseTag = $NextReleaseTag
+    Set-Content -path $metaDataPath -Encoding ascii -Force -Value ($metaData | convertto-json)
+
+    Get-ChildItem -Path $Path -Recurse -File |
+        Where-Object {$_.Extension -notin '.icns','.svg' -and $_.NAME -ne 'CHANGELOG.md' -and $_.DirectoryName -notmatch '[\\/]docs|demos[\\/]'} |
+            Where-Object {$_ | Select-String -SimpleMatch $currentVersion -List} |
+                Foreach-Object {
+                    $content = Get-Content -Path $_.FullName -Raw -ReadCount 0
+                    $newContent = $content.Replace($currentVersion,$newVersion)
+                    Set-Content -path $_.FullName -Encoding ascii -Force -Value $newContent -NoNewline
+                }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode

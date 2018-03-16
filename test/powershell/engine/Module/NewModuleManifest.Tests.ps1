@@ -1,6 +1,8 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "New-ModuleManifest tests" -tags "CI" {
     BeforeEach {
-        New-Item -ItemType Directory -Path testdrive:/module
+        $null = New-Item -ItemType Directory -Path testdrive:/module
         $testModulePath = "testdrive:/module/test.psd1"
     }
 
@@ -9,13 +11,10 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     }
 
     BeforeAll {
-        if ($IsWindows)
-        {
-            $ExpectedManifestBytes = @(255,254,35,0,13,0,10,0)
-        }
-        else
-        {
-            $ExpectedManifestBytes = @(35,10)
+        if ($IsWindows) {
+            $ExpectedManifestBytes = @(35,13) # CR
+        } else {
+            $ExpectedManifestBytes = @(35,10) # LF
         }
     }
 
@@ -25,23 +24,22 @@ Describe "New-ModuleManifest tests" -tags "CI" {
 
         New-ModuleManifest -Path $testModulePath -ProjectUri $testUri -LicenseUri $testUri -IconUri $testUri -HelpInfoUri $testUri
         $module = Test-ModuleManifest -Path $testModulePath
-        $module.HelpInfoUri | Should BeExactly $absoluteUri
-        $module.PrivateData.PSData.IconUri | Should BeExactly $absoluteUri
-        $module.PrivateData.PSData.LicenseUri | Should BeExactly $absoluteUri
-        $module.PrivateData.PSData.ProjectUri | Should BeExactly $absoluteUri
+        $module.HelpInfoUri | Should -BeExactly $absoluteUri
+        $module.PrivateData.PSData.IconUri | Should -BeExactly $absoluteUri
+        $module.PrivateData.PSData.LicenseUri | Should -BeExactly $absoluteUri
+        $module.PrivateData.PSData.ProjectUri | Should -BeExactly $absoluteUri
     }
 
     function TestNewModuleManifestEncoding {
         param ([byte[]]$expected)
         New-ModuleManifest -Path $testModulePath
-        (Get-Content -AsByteStream -Path $testModulePath -TotalCount $expected.Length) -join ',' | Should Be ($expected -join ',')
+        (Get-Content -AsByteStream -Path $testModulePath -TotalCount $expected.Length) -join ',' | Should -Be ($expected -join ',')
     }
 
     It "Verify module manifest encoding" {
-        
+
         # verify first line of the manifest:
-        # on Windows platforms - 3 characters - '#' '\r' '\n' - in UTF-16 with BOM - this should be @(255,254,35,0,13,0,10,0)
-        # on non-Windows platforms - 2 characters - '#' '\n' - in UTF-8 no BOM - this should be @(35,10)
+        # 2 characters - '#' '\n' - in UTF-8 no BOM - this should be @(35,10)
         TestNewModuleManifestEncoding -expected $ExpectedManifestBytes
     }
 

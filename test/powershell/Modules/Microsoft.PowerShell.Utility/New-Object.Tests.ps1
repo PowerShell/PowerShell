@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "New-Object" -Tags "CI" {
     It "Support 'ComObject' parameter on platforms" {
         if ($IsLinux -or $IsMacOs ) {

@@ -16,7 +16,7 @@ We are calling `dotnet` tool build for `$Top` directory
 ### Dummy dependencies
 
 We use dummy dependencies between projects to leverage `dotnet` build functionality.
-For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.PSReadLine`,
+For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.Commands.Diagnostics.csproj`,
 but in reality, there is no build dependency.
 
 Dummy dependencies allows us to build just `$Top` folder, instead of building several folders.
@@ -86,7 +86,7 @@ cat > $targetFile <<-"EOF"
   </Target>
 </Project>
 EOF
-dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/src/TypeCatalogGen/powershell.inc" /nologo
+dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/TypeCatalogGen/powershell.inc" /nologo
 ```
 
 `powershell.inc` contains the resolved paths to the DLLs of each dependency of PowerShell,

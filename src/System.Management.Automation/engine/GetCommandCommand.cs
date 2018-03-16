@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Globalization;
@@ -898,7 +897,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-
                     // Only for this case, the loop should exit
                     // Get-Command Foo
                     if (isPattern || All || TotalCount != -1 || _isCommandTypeSpecified || _isModuleSpecified || _isFullyQualifiedModuleSpecified)
@@ -911,7 +909,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             } while (true);
-
 
             if (All)
             {

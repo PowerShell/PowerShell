@@ -326,7 +326,6 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-
         internal bool ContainsTarget(LabelTarget target)
         {
             if (_labels == null)

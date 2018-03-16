@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
@@ -43,10 +45,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
         $setServiceCommand.$parameter = $value
         if ($expectedNull -eq $true) {
-            $setServiceCommand.$parameter | Should BeNullOrEmpty
+            $setServiceCommand.$parameter | Should -BeNullOrEmpty
         }
         else {
-            $setServiceCommand.$parameter | Should Be $value
+            $setServiceCommand.$parameter | Should -Be $value
         }
     }
 
@@ -79,10 +81,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 $expected = $value
             }
             if ($parameter -eq "StartupType") {
-                $updatedService.StartMode | Should Be $expected
+                $updatedService.StartMode | Should -Be $expected
             }
             else {
-                $updatedService.$parameter | Should Be $expected
+                $updatedService.$parameter | Should -Be $expected
             }
         }
         finally {
@@ -94,7 +96,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
             }
             $setServiceCommand.Invoke()
             $updatedService = Get-CimInstance -ClassName Win32_Service -Filter "Name='spooler'"
-            $updatedService.$parameter | Should Be $currentService.$parameter
+            $updatedService.$parameter | Should -Be $currentService.$parameter
         }
     }
 
@@ -117,7 +119,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
 
         $newServiceCommand = [Microsoft.PowerShell.Commands.NewServiceCommand]::new()
         $newServiceCommand.$parameter = $value
-        $newServiceCommand.$parameter | Should Be $value
+        $newServiceCommand.$parameter | Should -Be $value
     }
 
     It "Set-Service can change credentials of a service" {
@@ -137,14 +139,14 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 Credential     = $creds
             }
             $service = New-Service @parameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
-            $service.StartName | Should BeExactly $creds.UserName
+            $service.StartName | Should -BeExactly $creds.UserName
 
             $creds = [pscredential]::new(".\$endUsername", $password)
             Set-Service -Name $servicename -Credential $creds
             $service = Get-CimInstance Win32_Service -Filter "name='$servicename'"
-            $service.StartName | Should BeExactly $creds.UserName
+            $service.StartName | Should -BeExactly $creds.UserName
         }
         finally {
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
@@ -172,11 +174,11 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 $parameters += @{displayname = $displayname}
             }
             $service = New-Service @parameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             $service = Get-CimInstance Win32_Service -Filter "name='$name'"
-            $service | Should Not BeNullOrEmpty
-            $service.Name | Should Be $name
-            $service.Description | Should Be $description
+            $service | Should -Not -BeNullOrEmpty
+            $service.Name | Should -Be $name
+            $service.Description | Should -Be $description
             $expectedStartup = $(
                 switch ($startupType) {
                     "Automatic" {"Auto"}
@@ -185,12 +187,12 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                     default { throw "Unsupported StartupType in TestCases" }
                 }
             )
-            $service.StartMode | Should Be $expectedStartup
+            $service.StartMode | Should -Be $expectedStartup
             if ($displayname -eq $null) {
-                $service.DisplayName | Should Be $name
+                $service.DisplayName | Should -Be $name
             }
             else {
-                $service.DisplayName | Should Be $displayname
+                $service.DisplayName | Should -Be $displayname
             }
         }
         finally {
@@ -209,10 +211,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             Remove-Service -Name $servicename
             $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
-            $service | Should BeNullOrEmpty
+            $service | Should -BeNullOrEmpty
         }
         finally {
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
@@ -227,10 +229,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             Get-Service -Name $servicename | Remove-Service
             $service = Get-Service -Name $servicename -ErrorAction SilentlyContinue
-            $service | Should BeNullOrEmpty
+            $service | Should -BeNullOrEmpty
         }
         finally {
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
@@ -259,9 +261,9 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 $startparameters.$property = $value
             }
             $service = New-Service @startparameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             $service = Get-Service -Name $servicename
-            $service.$property | Should BeExactly $value
+            $service.$property | Should -BeExactly $value
         }
         finally {
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
@@ -277,10 +279,10 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             Get-Service -Name $servicename | Set-Service -DisplayName $newdisplayname
             $service = Get-Service -Name $servicename
-            $service.DisplayName | Should BeExactly $newdisplayname
+            $service.DisplayName | Should -BeExactly $newdisplayname
         }
         finally {
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue
@@ -296,11 +298,11 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
                 BinaryPathName = "$PSHOME\pwsh.exe"
             }
             $service = New-Service @parameters
-            $service | Should Not BeNullOrEmpty
+            $service | Should -Not -BeNullOrEmpty
             $script = { Set-Service $service -DisplayName $newdisplayname }
-            { & $script } | Should Not Throw
+            { & $script } | Should -Not -Throw
             $service = Get-Service -Name $servicename
-            $service.DisplayName | Should BeExactly $newdisplayname
+            $service.DisplayName | Should -BeExactly $newdisplayname
         }
         finally {
             Get-CimInstance Win32_Service -Filter "name='$servicename'" | Remove-CimInstance -ErrorAction SilentlyContinue

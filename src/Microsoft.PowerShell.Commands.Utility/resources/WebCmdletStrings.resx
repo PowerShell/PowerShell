@@ -138,6 +138,15 @@
   <data name="BodyConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and InFile. Specify either Body or Infile, then retry.  </value>
   </data>
+  <data name="BodyFormConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: Body and Form. Specify either Body or Form, then retry.  </value>
+  </data>
+  <data name="FormInFileConflict" xml:space="preserve">
+    <value>The cmdlet cannot run because the following conflicting parameters are specified: InFile and Form. Specify either InFile or Form, then retry.  </value>
+  </data>
+  <data name="ContentTypeException" xml:space="preserve">
+    <value>The cmdlet cannot run because the -ContentType parameter is not a valid Content-Type header. Specify a valid Content-Type for -ContentType, then retry. To suppress header validation, supply the -SkipHeaderValidation parameter.</value>
+  </data>
   <data name="CredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: Credential and UseDefaultCredentials. Specify either Credential or UseDefaultCredentials, then retry.</value>
   </data>

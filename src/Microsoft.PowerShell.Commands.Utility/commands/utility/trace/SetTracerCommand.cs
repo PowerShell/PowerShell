@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -43,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
             }
         } // Flags
 
-
         /// <summary>
         /// The parameter which determines the options for output from the
         /// trace listeners.
@@ -64,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "optionsSet")]
-        [Alias("PSPath")]
+        [Alias("PSPath","Path")]
         public string FilePath
         {
             get { return base.FileListener; }

@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Host;
@@ -1012,7 +1011,6 @@ namespace System.Management.Automation
         {
             return CoreCreatePipeline(null, false, false);
         }
-
 
         /// <summary>
         /// Create a pipeline from a command string

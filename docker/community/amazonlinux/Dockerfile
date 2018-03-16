@@ -2,8 +2,8 @@
 
 FROM amazonlinux:latest
 
-ARG POWERSHELL_VERSION=6.0.0-rc.2
-ARG POWERSHELL_PACKAGE=powershell-6.0.0-rc.2-linux-x64.tar.gz
+ARG POWERSHELL_VERSION=6.0.2
+ARG POWERSHELL_PACKAGE=powershell-6.0.2-linux-x64.tar.gz
 ARG IMAGE_NAME=microsoft/powershell:amazonlinux
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \

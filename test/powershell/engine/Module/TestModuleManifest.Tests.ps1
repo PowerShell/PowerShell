@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 Describe "Test-ModuleManifest tests" -tags "CI" {
 
     AfterEach {
@@ -16,10 +18,10 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-ModuleManifest -NestedModules $fileList -RootModule foo\bar.psm1 -RequiredAssemblies $fileList -Path $testModulePath -TypesToProcess $fileList -FormatsToProcess $fileList -ScriptsToProcess $fileList -FileList $fileList -ModuleList $fileList
 
-        Test-Path $testModulePath | Should Be $true
+        Test-Path $testModulePath | Should -BeTrue
 
         # use -ErrorAction Stop to cause test to fail if Test-ModuleManifest writes to error stream
-        Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should BeOfType System.Management.Automation.PSModuleInfo
+        Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should -BeOfType System.Management.Automation.PSModuleInfo
     }
 
     It "module manifest containing missing files returns error: <parameter>" -TestCases (
@@ -61,8 +63,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
-        $moduleManifest | Should BeOfType System.Management.Automation.PSModuleInfo
-        $moduleManifest.RootModule | Should Be $rootModuleValue
+        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest.RootModule | Should -Be $rootModuleValue
     }
 
     It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
@@ -92,8 +94,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
-        $moduleManifest | Should BeOfType System.Management.Automation.PSModuleInfo
-        $moduleManifest.RootModule | Should BeNullOrEmpty
+        $moduleManifest | Should -BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest.RootModule | Should -BeNullOrEmpty
     }
 
     It "module manifest containing invalid rootmodule returns error: <rootModuleValue>" -TestCases (
@@ -123,7 +125,6 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 }
-
 
 Describe "Tests for circular references in required modules" -tags "CI" {
 
@@ -189,7 +190,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
         try
         {
             Import-Module $lastModule -ErrorAction Stop
-            Get-Module $lastModule | Should Not BeNullOrEmpty
+            Get-Module $lastModule | Should -Not -BeNullOrEmpty
         }
         finally
         {
@@ -233,7 +234,7 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
         
         $verbose = $job.ChildJobs[0].Verbose.ReadAll()
         # Before the fix, all modules under $pshome will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
-        $verbose.Count | Should BeLessThan 15
+        $verbose.Count | Should -BeLessThan 15
     }
 
     AfterAll {

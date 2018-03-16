@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.ObjectModel;
@@ -307,6 +306,14 @@ namespace Microsoft.PowerShell.Commands
         public virtual object Body { get; set; }
 
         /// <summary>
+        /// Dictionary for use with RFC-7578 multipart/form-data submissions. 
+        /// Keys are form fields and their respective values are form values.
+        /// A value may be a collection of form values or single form value.
+        /// </summary>
+        [Parameter]
+        public virtual IDictionary Form {get; set;}
+
+        /// <summary>
         /// gets or sets the ContentType property
         /// </summary>
         [Parameter]
@@ -430,6 +437,18 @@ namespace Microsoft.PowerShell.Commands
                                                        "WebCmdletBodyConflictException");
                 ThrowTerminatingError(error);
             }
+            if ((null != Body) && (null != Form))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.BodyFormConflict,
+                                                       "WebCmdletBodyFormConflictException");
+                ThrowTerminatingError(error);
+            }
+            if ((null != InFile) && (null != Form))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.FormInFileConflict,
+                                                       "WebCmdletFormInFileConflictException");
+                ThrowTerminatingError(error);
+            }
 
             // validate InFile path
             if (InFile != null)
@@ -533,7 +552,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WebSession.UseDefaultCredentials = true;
             }
-
 
             if (null != CertificateThumbprint)
             {
@@ -927,7 +945,6 @@ namespace Microsoft.PowerShell.Commands
 
             handler.SslProtocols = (SslProtocols)SslProtocol;
 
-
             HttpClient httpClient = new HttpClient(handler);
 
             // check timeout setting (in seconds instead of milliseconds as in HttpWebRequest)
@@ -1075,8 +1092,21 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            if (null != Form)
+            {
+                // Content headers will be set by MultipartFormDataContent which will throw unless we clear them first
+                WebSession.ContentHeaders.Clear();
+
+                var formData = new MultipartFormDataContent();
+                foreach (DictionaryEntry formEntry in Form)
+                {
+                    // AddMultipartContent will handle PSObject unwrapping, Object type determination and enumerateing top level IEnumerables.
+                    AddMultipartContent(fieldName: formEntry.Key, fieldValue: formEntry.Value, formData: formData, enumerate: true);
+                }
+                SetRequestContent(request, formData);
+            }
             // coerce body into a usable form
-            if (Body != null)
+            else if (Body != null)
             {
                 object content = Body;
 
@@ -1143,7 +1173,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var entry in WebSession.ContentHeaders)
                 {
-                    request.Content.Headers.Add(entry.Key, entry.Value);
+                    if (SkipHeaderValidation)
+                    {
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
+                    }
                 }
             }
         }
@@ -1211,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // recreate the HttpClient with redirection enabled since the first call suppressed redirection
                 using (client = GetHttpClient(false))
-                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, stripAuthorization:true))
+                using (HttpRequestMessage redirectRequest = GetRequest(new Uri(request.RequestUri, response.Headers.Location), stripAuthorization:true))
                 {
                     FillRequestStream(redirectRequest);
                     _cancelToken = new CancellationTokenSource();
@@ -1443,16 +1489,29 @@ namespace Microsoft.PowerShell.Commands
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
-                var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
-                if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
+                try
                 {
-                    try
+                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
                     }
-                    catch (ArgumentException ex)
+                }
+                catch (FormatException ex)
+                {
+                    if (!SkipHeaderValidation)
                     {
-                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletEncodingException", ErrorCategory.InvalidArgument, ContentType);
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    if (!SkipHeaderValidation)
+                    {
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1557,7 +1616,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_relationLink == null)
             {
-                _relationLink = new Dictionary<string, string>();
+                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             }
             else
             {
@@ -1588,6 +1648,108 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is String, File, or Collection.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use.</param>
+        /// <param name="fieldValue">The Field Value to use.</param>
+        /// <param name="formData">The <see cref="MultipartFormDataContent" />> to update.</param>
+        /// <param name="enumerate">If true, collection types in <paramref name="fieldValue" /> will be enumerated. If false, collections will be treated as single value.</param>
+        private void AddMultipartContent(object fieldName, object fieldValue, MultipartFormDataContent formData, bool enumerate)
+        {
+            if (null == formData)
+            {
+                throw new ArgumentNullException("formDate");
+            }
+
+            // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.
+            // Before processing the field name and value we need to ensure we are working with the base objects and not the PSObject wrappers.
+
+            // Unwrap fieldName PSObjects
+            if (fieldName is PSObject namePSObject)
+            {
+                fieldName = namePSObject.BaseObject;
+            }
+
+            // Unwrap fieldValue PSObjects
+            if (fieldValue is PSObject valuePSObject)
+            {
+                fieldValue = valuePSObject.BaseObject;
+            }
+
+            // Treat a single FileInfo as a FileContent
+            if (fieldValue is FileInfo file)
+            {
+                formData.Add(GetMultipartFileContent(fieldName: fieldName, file: file));
+                return;
+            }
+
+            // Treat Strings and other single values as a StringContent. 
+            // If enumeration is false, also treat IEnumerables as StringContents.
+            // String implements IEnumerable so the explicit check is required.
+            if (enumerate == false || fieldValue is String || !(fieldValue is IEnumerable))
+            {
+                formData.Add(GetMultipartStringContent(fieldName: fieldName, fieldValue: fieldValue));
+                return;
+            }
+
+            // Treat the value as a collection and enumerate it if enumeration is true
+            if (enumerate == true && fieldValue is IEnumerable items)
+            {
+                foreach (var item in items)
+                {
+                    // Recruse, but do not enumerate the next level. IEnumerables will be treated as single values.
+                    AddMultipartContent(fieldName: fieldName, fieldValue: item, formData: formData, enumerate: false);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(Object)" /> to convert the objects to strings.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" />.</param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" />.</param>
+        private StringContent GetMultipartStringContent(Object fieldName, Object fieldValue)
+        {
+            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
+
+            var result = new StringContent(LanguagePrimitives.ConvertTo<String>(fieldValue));
+            result.Headers.ContentDisposition = contentDisposition;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
+        /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" />.</param>
+        private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
+        {
+            var contentDisposition = new ContentDispositionHeaderValue("form-data");
+            contentDisposition.Name = LanguagePrimitives.ConvertTo<String>(fieldName);
+
+            var result = new StreamContent(stream);
+            result.Headers.ContentDisposition = contentDisposition;
+            result.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(Object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
+        /// </summary>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" />.</param>
+        /// <param name="file">The file to use for the <see cref="StreamContent" />.</param>
+        private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
+        {
+            var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
+            result.Headers.ContentDisposition.FileName = file.Name;
+
+            return result;
         }
 
         #endregion Helper Methods

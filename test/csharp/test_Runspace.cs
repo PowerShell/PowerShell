@@ -1,9 +1,11 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 using Xunit;
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 
-namespace PSTests
+namespace PSTests.Parallel
 {
     // NOTE: do not call AddCommand("out-host") after invoking or MergeMyResults,
     // otherwise Invoke will not return any objects
@@ -60,7 +62,6 @@ namespace PSTests
                 runspace.Close();
             }
         }
-
 
         [Fact]
         public void TestRunspaceWithPowerShellAndInitialSessionState()

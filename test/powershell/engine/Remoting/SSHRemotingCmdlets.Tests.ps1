@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 ##
 ## SSH Remoting cmdlet tests
 ##
@@ -23,7 +25,7 @@ Describe "SSHTransport switch parameter value" -Tags 'Feature' {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Match "ParameterArgumentValidationError"
+            $_.FullyQualifiedErrorId | Should -Match "ParameterArgumentValidationError"
         }
     }
 }
@@ -51,7 +53,7 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+            $_.FullyQualifiedErrorId | Should -Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
         }
     }
 }

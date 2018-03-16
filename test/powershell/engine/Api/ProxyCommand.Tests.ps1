@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 using namespace System.Management.Automation
 using namespace System.Collections.ObjectModel
 
@@ -100,26 +102,26 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $helpObjText = NormalizeCRLF -helpObj $helpObj
         $newHelpObjText = NormalizeCRLF -helpObj $newHelpObj
 
-        $helpObjText | Should Be $newHelpObjText
+        $helpObjText | Should -Be $newHelpObjText
         $oldDespText = GetSectionText $helpObj.description
         $newDespText = GetSectionText $newHelpObj.description
-        $oldDespText | Should Be $newDespText
+        $oldDespText | Should -Be $newDespText
 
         $oldParameters = @($helpObj.parameters.parameter)
         $newParameters = @($newHelpObj.parameters.parameter)
-        $oldParameters.Length | Should Be $newParameters.Length
-        $oldParameters.name -join "," | Should Be ($newParameters.name -join ",")
+        $oldParameters.Length | Should -Be $newParameters.Length
+        $oldParameters.name -join "," | Should -Be ($newParameters.name -join ",")
 
         $oldExamples = @($helpObj.examples.example)
         $newExamples = @($newHelpObj.examples.example)
-        $oldExamples.Length | Should Be $newExamples.Length
+        $oldExamples.Length | Should -Be $newExamples.Length
     }
 
     It "Test generate proxy command" {
         $cmdInfo = Get-Command -Name Get-Content
         $cmdMetadata = [CommandMetadata]::new($cmdInfo)
         $proxyBody = [ProxyCommand]::Create($cmdMetadata, "--DummyHelpContent--")
-        $proxyBody | Should Match '--DummyHelpContent--'
+        $proxyBody | Should -Match '--DummyHelpContent--'
 
         $proxyBodySB = [scriptblock]::Create($proxyBody)
         Set-Item -Path function:\MyGetContent -Value $proxyBodySB
@@ -127,7 +129,7 @@ Describe 'ProxyCommand Tests' -Tags "CI" {
         $expectedContent = "Hello World"
         Set-Content -Path $TestDrive\content.txt -Value $expectedContent -Encoding Unicode
         $myContent = MyGetContent -Path $TestDrive\content.txt -Encoding Unicode
-        $myContent | Should Be $expectedContent
+        $myContent | Should -Be $expectedContent
     }
 
     It "Test generate individual components" {
@@ -169,12 +171,12 @@ End {{
 
         $cmdMyProxyTest = Get-Command MyProxyTest
         $dyParam = $cmdMyProxyTest.Parameters.GetEnumerator() | Where-Object { $_.Value.IsDynamic }
-        $dyParam.Key | Should Be 'LastName'
+        $dyParam.Key | Should -Be 'LastName'
 
         $result = "Msg1", "Msg2" | MyProxyTest -Name Apple -LastName Last
-        $result | Should Be "Apple,Last - Msg1;Msg2"
+        $result | Should -Be "Apple,Last - Msg1;Msg2"
 
         $result = "Msg1", "Msg2" | MyProxyTest -Id 3 -LastName Last
-        $result | Should Be "3,Last - Msg1;Msg2"
+        $result | Should -Be "3,Last - Msg1;Msg2"
     }
 }

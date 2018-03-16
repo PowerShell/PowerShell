@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +39,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal int errorCount;
     }
 
-
     /// <summary>
     /// entry logged by the loader and made available to external consumers
     /// </summary>
@@ -73,7 +71,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         internal bool failToLoadFile = false;
     }
-
 
     /// <summary>
     /// logger object used by the loader (class XmlLoaderBase) to write log entries.
@@ -164,7 +161,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private bool _hasErrors = false;
     }
-
 
     /// <summary>
     /// base class providing XML loading basic functionality (stack management and logging facilities)
@@ -677,7 +673,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-
         protected void SetDatabaseLoadingInfo(XmlFileLoadInfo info)
         {
             _loadingInfo.fileDirectory = info.fileDirectory;
@@ -710,7 +705,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected MshExpressionFactory expressionFactory;
 
         protected DisplayResourceManagerCache displayResourceManagerCache;
-
 
         internal bool VerifyStringResources { get; } = true;
 

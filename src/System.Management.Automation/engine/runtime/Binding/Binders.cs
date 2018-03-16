@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections;
 using System.Collections.Concurrent;
@@ -19,7 +18,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-
 
 namespace System.Management.Automation.Language
 {
@@ -850,7 +848,6 @@ namespace System.Management.Automation.Language
                     Expression.Block(typeof(void), Expression.Call(CachedReflectionInfo.PipelineOps_Nop)),
                     BindingRestrictions.GetInstanceRestriction(target.Expression, AutomationNull.Value))).WriteToDebugLog(this);
             }
-
 
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
             if (enumerable == null)
@@ -3746,7 +3743,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-
         internal static DynamicMetaObject ThrowNoConversion(DynamicMetaObject target, Type toType, DynamicMetaObjectBinder binder,
             int currentVersion, params DynamicMetaObject[] args)
         {
@@ -3883,7 +3879,6 @@ namespace System.Management.Automation.Language
                 }
             }
         }
-
 
         public override DynamicMetaObject FallbackGetIndex(DynamicMetaObject target, DynamicMetaObject[] indexes, DynamicMetaObject errorSuggestion)
         {
@@ -4644,7 +4639,6 @@ namespace System.Management.Automation.Language
                        PSConvertBinder.ThrowNoConversion(indexes[0], typeof(int), this, _version, target, value);
             }
 
-
             var elementType = target.LimitType.GetElementType();
             var valueExpr = PSGetIndexBinder.ConvertIndex(value, elementType);
             if (valueExpr == null)
@@ -5059,7 +5053,7 @@ namespace System.Management.Automation.Language
 
             bool canOptimize;
             Type aliasConversionType;
-            memberInfo = GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType);
+            memberInfo = GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Property);
 
             if (!canOptimize)
             {
@@ -5421,8 +5415,8 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            PSMemberInfo result = binder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, aliases, aliasRestrictions);
-
+            PSMemberInfo result = binder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType,
+                                                         MemberTypes.Property, aliases, aliasRestrictions);
             return result;
         }
 
@@ -5430,6 +5424,7 @@ namespace System.Management.Automation.Language
                                               out BindingRestrictions restrictions,
                                               out bool canOptimize,
                                               out Type aliasConversionType,
+                                              MemberTypes memberTypeToOperateOn,
                                               HashSet<string> aliases = null,
                                               List<BindingRestrictions> aliasRestrictions = null)
         {
@@ -5499,7 +5494,7 @@ namespace System.Management.Automation.Language
             var adapterSet = PSObject.GetMappedAdapter(value, typeTable);
             if (memberInfo == null)
             {
-                canOptimize = adapterSet.OriginalAdapter.SiteBinderCanOptimize;
+                canOptimize = adapterSet.OriginalAdapter.CanSiteBinderOptimize(memberTypeToOperateOn);
                 // Don't bother looking for the member if we're not going to use it.
                 if (canOptimize)
                 {
@@ -5688,6 +5683,11 @@ namespace System.Management.Automation.Language
             if (memberInfo != null)
             {
                 return memberInfo.Value;
+            }
+
+            if (string.Equals(member, "Length", StringComparison.OrdinalIgnoreCase) || string.Equals(member, "Count", StringComparison.OrdinalIgnoreCase))
+            {
+                return 1;
             }
 
             if (context != null && context.IsStrictVersion(2))
@@ -5970,7 +5970,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions;
             bool canOptimize;
             Type aliasConversionType;
-            memberInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType);
+            memberInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Property);
 
             restrictions = restrictions.Merge(value.PSGetTypeRestriction());
 
@@ -6465,7 +6465,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions;
             bool canOptimize;
             Type aliasConversionType;
-            var methodInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType) as PSMethodInfo;
+            var methodInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Method) as PSMethodInfo;
             restrictions = args.Aggregate(restrictions, (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
             // If the process has ever used ConstrainedLanguage, then we need to add the language mode
@@ -7090,6 +7090,32 @@ namespace System.Management.Automation.Language
                 return methodInfo.Invoke(args);
             }
 
+            // The object doesn't have 'Where' and 'ForEach' methods.
+            // As a last resort, we invoke 'Where' and 'ForEach' operators on singletons like
+            //    ([pscustomobject]@{ foo = 'bar' }).Foreach({$_})
+            //    ([pscustomobject]@{ foo = 'bar' }).Where({1})
+            if (string.Equals(methodName, "Where", StringComparison.OrdinalIgnoreCase))
+            {
+                var enumerator = (new object[] {obj}).GetEnumerator();
+                switch (args.Length)
+                {
+                    case 1:
+                        return EnumerableOps.Where(enumerator, args[0] as ScriptBlock, WhereOperatorSelectionMode.Default, 0);
+                    case 2:
+                        return EnumerableOps.Where(enumerator, args[0] as ScriptBlock,
+                                                   LanguagePrimitives.ConvertTo<WhereOperatorSelectionMode>(args[1]), 0);
+                    case 3:
+                        return EnumerableOps.Where(enumerator, args[0] as ScriptBlock,
+                                                   LanguagePrimitives.ConvertTo<WhereOperatorSelectionMode>(args[1]), LanguagePrimitives.ConvertTo<int>(args[2]));
+                }
+            }
+
+            if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
+            {
+                var enumerator = (new object[] {obj}).GetEnumerator();
+                return EnumerableOps.ForEach(enumerator, args[0], Utils.EmptyArray<object>());
+            }
+
             throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), null,
                 "MethodNotFound", ParserStrings.MethodNotFound, ParserOps.GetTypeFullName(obj), methodName);
         }
@@ -7205,7 +7231,6 @@ namespace System.Management.Automation.Language
                 }
             }
         }
-
 
         internal PSCreateInstanceBinder(CallInfo callInfo, PSMethodInvocationConstraints constraints, bool publicTypeOnly)
             : base(callInfo)

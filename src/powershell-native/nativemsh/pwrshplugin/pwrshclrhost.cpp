@@ -1,7 +1,7 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 // ----------------------------------------------------------------------
-//
-//  Microsoft Windows NT
-//  Copyright (c) Microsoft Corporation. All rights reserved.
 //
 //  Contents:  Source code for abstraction of CLR and worker differences between PowerShell versions.
 //  pwrshplugin is totally unmanaged.
@@ -270,7 +270,10 @@ unsigned int PowerShellClrWorker::LoadWorkerCallbackPtrs(
     {
         PWSTR msg = NULL;
         exitCode = g_MANAGED_METHOD_RESOLUTION_FAILED;
-        GetFormattedErrorMessage(&msg, exitCode);
+        /* NOTE: don't use a string literal for a fallback; PlugInException expects msg to allocated
+           and will free it but also supports NULL.
+        */
+        (void) GetFormattedErrorMessage(&msg, exitCode);
         *pPluginException = new PlugInException(exitCode, msg);
         return exitCode;
     }

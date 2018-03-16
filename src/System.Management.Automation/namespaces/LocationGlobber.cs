@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -502,6 +501,20 @@ namespace System.Management.Automation
 
             Collection<string> stringResult = new Collection<string>();
 
+            // if the directory exists, just return it
+            try
+            {
+                if (Utils.NativeDirectoryExists(userPath))
+                {
+                    result.Add(new PathInfo(drive, provider, userPath, _sessionState));
+                    return result;
+                }
+            }
+            catch
+            {
+                // in cases of Access Denied or other errors, fallback to previous behavior and let provider handle it
+            }
+
             if (!context.SuppressWildcardExpansion)
             {
                 // See if the provider will expand the wildcard
@@ -823,7 +836,6 @@ namespace System.Management.Automation
                     context.Drive = drive;
                 }
 
-
                 Collection<string> paths = new Collection<string>();
 
                 foreach (PathInfo currentPath in
@@ -1037,9 +1049,7 @@ namespace System.Management.Automation
             }
         } // GetGlobbedProviderPathsFromProviderPath
 
-
         #endregion Provider path to provider paths globbing
-
 
         #region Path manipulation
 
@@ -1098,7 +1108,6 @@ namespace System.Management.Automation
             ProviderInfo provider = null;
             return GetProviderPath(path, out provider);
         } // GetProviderPath
-
 
         /// <summary>
         /// Gets a provider specific path when given an Msh path without resolving the
@@ -1711,7 +1720,6 @@ namespace System.Management.Automation
 
             bool result = false;
 
-
             if (_sessionState.Drive.Current != null)
             {
                 driveName = _sessionState.Drive.Current.Name;
@@ -1831,7 +1839,6 @@ namespace System.Management.Automation
         } // RemoveGlobEscaping
 
         #region Path manipulation methods
-
 
         /// <summary>
         /// Determines if the given drive name is a "special" name defined
@@ -2142,7 +2149,6 @@ namespace System.Management.Automation
             string driveRoot = drive.Root.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
             driveRoot = driveRoot.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-
             // Keep on lopping off children until the the remaining path
             // is the drive root.
             while ((!String.IsNullOrEmpty(providerPath)) &&
@@ -2381,7 +2387,6 @@ namespace System.Management.Automation
                         continue;
                     }
 
-
                     // Process the current directory symbol "."
 
                     if (path.Equals(currentDirSymbol, StringComparison.OrdinalIgnoreCase))
@@ -2549,7 +2554,6 @@ namespace System.Management.Automation
             return result;
         } // GetProviderSpecificPath
 
-
         /// <summary>
         /// Parses the provider-qualified path into the provider name and
         /// the provider-internal path.
@@ -2599,7 +2603,6 @@ namespace System.Management.Automation
 
             return result;
         } // ParseProviderPath
-
 
         #endregion Path manipulation methods
 
@@ -3315,7 +3318,6 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-
             if (drive == null)
             {
                 throw PSTraceSource.NewArgumentNullException("drive");
@@ -3466,7 +3468,6 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException("path");
             }
-
 
             if (provider == null)
             {
@@ -3657,7 +3658,6 @@ namespace System.Management.Automation
                         context.Include,
                         WildcardOptions.IgnoreCase);
 
-
                 // Construct the exclude filter
 
                 Collection<WildcardPattern> excludeMatcher =
@@ -3697,7 +3697,6 @@ namespace System.Management.Automation
                             s_pathResolutionTracer.WriteLine("No child names returned for '{0}'", dir);
                             continue;
                         }
-
 
                         // Loop through each child to see if they match the glob expression
 
@@ -3786,7 +3785,6 @@ namespace System.Management.Automation
                             childPath = GetMshQualifiedPath(childPath, drive);
                         }
 
-
                         if (_sessionState.Internal.ItemExists(childPath, context))
                         {
                             s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
@@ -3797,7 +3795,6 @@ namespace System.Management.Automation
                     }
                 } // foreach (dir in currentDirs)
             } // if (StringContainsGlobCharacters(leafElement))
-
 
             return newDirs;
         } // GenerateNewPSPathsWithGlobLeaf
@@ -4196,7 +4193,6 @@ namespace System.Management.Automation
             return result;
         } // ExpandGlobPath
 
-
         /// <summary>
         /// Generates a collection of containers and/or leaves that are children of the containers
         /// in the currentDirs parameter and match the glob expression in the
@@ -4302,7 +4298,6 @@ namespace System.Management.Automation
                         context.Include,
                         WildcardOptions.IgnoreCase);
 
-
                 // Construct the exclude filter
 
                 Collection<WildcardPattern> excludeMatcher =
@@ -4402,7 +4397,6 @@ namespace System.Management.Automation
                                         context);
                         }
 
-
                         if (provider.ItemExists(childPath, context))
                         {
                             s_tracer.WriteLine("Adding child path to dirs {0}", childPath);
@@ -4414,7 +4408,6 @@ namespace System.Management.Automation
                     }
                 } // foreach (dir in currentDirs)
             } // if (StringContainsGlobCharacters(leafElement))
-
 
             return newDirs;
         } // GenerateNewPathsWithGlobLeaf

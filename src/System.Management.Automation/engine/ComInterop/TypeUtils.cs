@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #if !CLR2
 #else
@@ -134,7 +133,6 @@ namespace System.Management.Automation.ComInterop
             }
             return null;
         }
-
 
         //CONFORMING
         private static bool IsIdentityConversion(Type source, Type destination)

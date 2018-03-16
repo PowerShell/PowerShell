@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 <#
 .Synopsis
     Install PowerShell Core on Windows, Linux or macOS.
@@ -89,6 +91,11 @@ $architecture = if (-not $IsWinEnv) {
 $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 New-Item -ItemType Directory -Path $tempDir -Force > $null
 try {
+    # Setting Tls to 12 to prevent the Invoke-WebRequest : The request was
+    # aborted: Could not create SSL/TLS secure channel. error.
+    $originalValue = [Net.ServicePointManager]::SecurityProtocol
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
     if ($Daily) {
         if (-not (Get-Module -Name PackageManagement -ListAvailable)) {
             throw "PackageManagement module is required to install daily PowerShell Core."
@@ -153,6 +160,7 @@ try {
             Copy-Item $_.fullname -Destination $DestinationFilePath
         }
     } else {
+        $null = New-Item -Path (Split-Path -Path $Destination -Parent) -ItemType Directory -ErrorAction SilentlyContinue
         Move-Item -Path $contentPath -Destination $Destination
     }
 
@@ -173,11 +181,11 @@ try {
     if (-not $IsWinEnv) { chmod 755 $Destination/pwsh }
 
     if ($AddToPath) {
-        if ($IsWinEnv -and (-not $env:Path.Contains($Destination))) {
-            ## Add to the User scope 'Path' environment variable
-            $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
-            $userPath = $Destination + [System.IO.Path]::PathSeparator + $userPath
-            [System.Environment]::SetEnvironmentVariable("Path", $userPath, "User")
+        if ($IsWinEnv -and (-not [System.Environment]::GetEnvironmentVariable("Path", "Machine").Contains($Destination))) {
+            ## Add to the Machine scope 'Path' environment variable
+            $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+            $machinePath = $Destination + [System.IO.Path]::PathSeparator + $machinePath
+            [System.Environment]::SetEnvironmentVariable("Path", $machinePath, "Machine")
             Write-Verbose "'$Destination' is added to the Path" -Verbose
         }
 
@@ -224,5 +232,8 @@ try {
         Write-Host "Please restart pwsh" -ForegroundColor Magenta
     }
 } finally {
+    # Restore original value
+    [Net.ServicePointManager]::SecurityProtocol = $originalValue
+
     Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
 }

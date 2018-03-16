@@ -1,6 +1,5 @@
-/********************************************************************++
-Copyright (c) Microsoft Corporation. All rights reserved.
---********************************************************************/
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -47,7 +46,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal virtual bool SiteBinderCanOptimize { get { return false; } }
+        internal virtual bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return false; }
 
         protected static IEnumerable<string> GetDotNetTypeNameHierarchy(Type type)
         {
@@ -586,7 +585,6 @@ namespace System.Management.Automation
         }
         #endregion method
 
-
         #region parameterized property
         internal string BaseParameterizedPropertyType(PSParameterizedProperty property)
         {
@@ -691,9 +689,6 @@ namespace System.Management.Automation
                     property.Name, e.Message);
             }
         }
-
-
-
 
         internal string BaseParameterizedPropertyToString(PSParameterizedProperty property)
         {
@@ -877,7 +872,6 @@ namespace System.Management.Automation
                 {
                     return 1;
                 }
-
 
                 // Apply tie breaking rules, related to specificity of parameters
                 betterCount = CompareTypeSpecificity(candidate1, candidate2);
@@ -2652,7 +2646,6 @@ namespace System.Management.Automation
                             Expression.Convert(value, property.PropertyType)), parameter, value).Compile();
             }
 
-
             internal MemberInfo member;
 
             internal GetterDelegate getterDelegate
@@ -3526,7 +3519,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return true; } }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return true; }
 
         private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
@@ -4355,7 +4348,6 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-
         /// <summary>
         /// Returns true if the property is settable
         /// </summary>
@@ -4367,7 +4359,6 @@ namespace System.Management.Automation
             throw PSTraceSource.NewNotSupportedException();
         }
 
-
         /// <summary>
         /// Returns true if the property is gettable
         /// </summary>
@@ -4378,7 +4369,6 @@ namespace System.Management.Automation
             Diagnostics.Assert(false, "redirection adapter is not called for properties");
             throw PSTraceSource.NewNotSupportedException();
         }
-
 
         /// <summary>
         /// Returns the name of the type corresponding to the property's value
@@ -4555,7 +4545,24 @@ namespace System.Management.Automation
     /// </summary>
     internal abstract class PropertyOnlyAdapter : DotNetAdapter
     {
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        /// <summary>
+        /// For a PropertyOnlyAdapter, the property may come from various sources,
+        /// but methods, including parameterized properties, still come from DotNetAdapter.
+        /// So, the binder can optimize on method calls for objects that map to a
+        /// custom PropertyOnlyAdapter.
+        /// </summary>
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
+        {
+            switch (typeToOperateOn)
+            {
+                case MemberTypes.Property:
+                    return false;
+                case MemberTypes.Method:
+                    return true;
+                default:
+                    throw new InvalidOperationException("Should be unreachable. Update code if other member types need to be handled here.");
+            }
+        }
 
         protected override ConsolidatedString GetInternedTypeNameHierarchy(object obj)
         {
@@ -4578,7 +4585,6 @@ namespace System.Management.Automation
         /// <param name="obj">object to get all the property information from</param>
         /// <param name="members">collection where the properties will be added</param>
         protected abstract void DoAddAllProperties<T>(object obj, PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo;
-
 
         /// <summary>
         /// Returns null if memberName is not a member in the adapter or
@@ -4618,7 +4624,6 @@ namespace System.Management.Automation
             }
             return null;
         }
-
 
         /// <summary>
         /// Retrieves all the members available in the object.
@@ -4964,7 +4969,6 @@ namespace System.Management.Automation
         }
         #endregion virtual
 
-
         /// <summary>
         /// Auxiliary in GetProperty to perform case sensitive and case insensitive searches
         /// in the child nodes
@@ -5089,7 +5093,6 @@ namespace System.Management.Automation
         {
             return true;
         }
-
 
         /// <summary>
         /// Returns the value from a property coming from a previous call to DoGetProperty
