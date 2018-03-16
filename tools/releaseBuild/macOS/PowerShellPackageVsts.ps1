@@ -62,8 +62,8 @@ try {
     if ($BootStrap.IsPresent) {
         Start-PSBootstrap -Package
 
-        # gem install is run by bootstrap without sudo and fails on macOS
-        # run the commands with sudo, to resolve the issue
+        # The gem install is run by bootstrap without sudo and fails on macOS.
+        # Run the commands with sudo, to resolve the issue
         Write-Verbose -Message "Installing fpm..." -Verbose
         Start-NativeExecution { sudo gem install fpm -v 1.8.1 }
         Write-Verbose -Message "Installing ronn..." -Verbose
