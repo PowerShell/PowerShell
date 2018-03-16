@@ -300,11 +300,15 @@ namespace System.Management.Automation
         internal CommandProcessorBase LookupCommandProcessor(string commandName,
             CommandOrigin commandOrigin, bool? useLocalScope)
         {
+            CommandProcessorBase processor = null;
             CommandInfo commandInfo = LookupCommandInfo(commandName, commandOrigin);
-            CommandProcessorBase processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null);
 
-            // commandInfo.Name might be different than commandName - restore the original invocation name
-            processor.Command.MyInvocation.InvocationName = commandName;
+            if (commandInfo != null)
+            {
+                processor = LookupCommandProcessor(commandInfo, commandOrigin, useLocalScope, null);
+                // commandInfo.Name might be different than commandName - restore the original invocation name
+                processor.Command.MyInvocation.InvocationName = commandName;
+            }
 
             return processor;
         }
