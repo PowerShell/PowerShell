@@ -549,14 +549,14 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 ## Linux AppImage
 
 Using a recent Linux distribution,
-download the AppImage `powershell-6.0.2-x86_64.AppImage`
+download the AppImage `powershell-6.0.1-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
 ```bash
-chmod a+x powershell-6.0.2-x86_64.AppImage
-./powershell-6.0.2-x86_64.AppImage
+chmod a+x powershell-6.0.1-x86_64.AppImage
+./powershell-6.0.1-x86_64.AppImage
 ```
 
 The [AppImage][] lets you run PowerShell without installing it.
