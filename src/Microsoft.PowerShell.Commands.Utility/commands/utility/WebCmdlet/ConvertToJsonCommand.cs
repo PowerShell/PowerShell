@@ -116,7 +116,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return;
                 }
-                CheckStopping();
                 JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
                 if (EnumsAsStrings)
                 {
