@@ -143,7 +143,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>An object suitable for serializing to JSON</returns>
         private object ProcessValue(object obj, int depth)
         {
-            CheckStopping();
+            if (Stopping)
+            {
+                throw new StoppingException();
+            }
+
             PSObject pso = obj as PSObject;
 
             if (pso != null)
@@ -175,6 +179,8 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 TypeInfo t = obj.GetType().GetTypeInfo();
+                WriteVerbose(StringUtil.Format(UtilityCommonStrings.ConvertToJsonProcessValueVerboseMessage, t.Name, depth));
+
 
                 if (t.IsPrimitive)
                 {
@@ -425,17 +431,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             return result;
-        }
-
-        /// <summary>
-        /// Check if Stopping is set and throw special exception to stop.
-        /// </summary>
-        private void CheckStopping()
-        {
-            if (Stopping)
-            {
-                throw new StoppingException();
-            }
         }
 
         /// <summary>
