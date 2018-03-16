@@ -346,4 +346,18 @@ Left Center Right
 			$output = $ps.Invoke()
 			$output.Replace("`n","").Replace("`r","") | Should BeExactly $expected
 		}
+
+		It "Format-Table should pad correct spaces for CJK characters" {
+			$obj1 = @{'軟' = "han"}
+			$obj2 = @{'ソフト' = "kana"}
+			$obj3 = @{'soft' = "ascii"}
+			$objs = New-Object System.Collections.ArrayList
+			$objs.Add($obj1)
+			$objs.Add($obj2)
+			$objs.Add($obj3)
+			$result = $objs | Format-Table -AutoSize -HideTableHeaders
+			$result | Should -Match "軟     han"
+			$result | Should -Match "ソフト kana"
+			$result | Should -Match "soft   ascii"
+		}
 }

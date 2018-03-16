@@ -113,4 +113,16 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$result | Should Match " GroupingKey:"
 		$result | Should Match "name2\s+name3"
 	}
+
+	It "Format-Wide should pad correct spaces for CJK characters" {
+		$obj1 = @{'軟' = "han"}
+		$obj2 = @{'ソフト' = "kana"}
+		$obj3 = @{'soft' = "ascii"}
+		$objs = New-Object System.Collections.ArrayList
+		$objs.Add($obj1)
+		$objs.Add($obj2)
+		$objs.Add($obj3)
+		$result = $objs | Format-Wide -AutoSize
+		$result | Should -BeExactly "軟      ソフト  soft"
+	}
 }
