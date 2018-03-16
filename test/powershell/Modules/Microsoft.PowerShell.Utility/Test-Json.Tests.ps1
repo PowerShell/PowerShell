@@ -97,6 +97,7 @@ Describe "Test-Json" -Tags "CI" {
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should Be 2
-        $errorVar.FullyQualifiedErrorId | Should BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[0].FullyQualifiedErrorId | Should BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[1].FullyQualifiedErrorId | Should BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 }
