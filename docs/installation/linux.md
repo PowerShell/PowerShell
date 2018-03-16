@@ -322,7 +322,7 @@ sudo yum install powershell-6.0.2-1.rhel.7.x86_64.rpm
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.1/powershell-6.0.2-1.rhel.7.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.2/powershell-6.0.2-1.rhel.7.x86_64.rpm
 ```
 
 ### Uninstallation - CentOS 7
@@ -549,7 +549,7 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 ## Linux AppImage
 
 Using a recent Linux distribution,
-download the AppImage `powershell-6.0.1-x86_64.AppImage`
+download the AppImage `powershell-6.0.2-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
