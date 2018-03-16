@@ -355,7 +355,7 @@ Left Center Right
 			$objs.Add($obj1)
 			$objs.Add($obj2)
 			$objs.Add($obj3)
-			$result = $objs | Format-Table -AutoSize -HideTableHeaders
+			$result = $objs | Format-Table -AutoSize -HideTableHeaders | Out-String
 			$result | Should -Match "軟     han"
 			$result | Should -Match "ソフト kana"
 			$result | Should -Match "soft   ascii"

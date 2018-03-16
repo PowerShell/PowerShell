@@ -122,7 +122,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$objs.Add($obj1)
 		$objs.Add($obj2)
 		$objs.Add($obj3)
-		$result = $objs | Format-Wide -AutoSize
+		$result = $objs | Format-Wide -AutoSize | Out-String
 		$result | Should -BeExactly "軟      ソフト  soft"
 	}
 }
