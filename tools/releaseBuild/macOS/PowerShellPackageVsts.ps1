@@ -42,9 +42,8 @@ if($Build.IsPresent)
     Write-Verbose -Message "cleaning /PowerShell" -Verbose
     Get-ChildItem -Path /PowerShell/* -Attributes Hidden,Normal,Directory | Remove-Item -Recurse -Force
 
-    dir env:
-    # clone the repositor to the location we must build from
-    Write-Verbose -Message "cloaning to /PowerShell" -Verbose
+    # clone the repository to the location we must build from
+    Write-Verbose -Message "cloning to /PowerShell" -Verbose
     git clone $location /PowerShell
     $releaseTagParam = @{}
     if ($ReleaseTag)
@@ -79,7 +78,6 @@ try {
         Start-PSPackage @releaseTagParam
         switch ($ExtraPackage)
         {
-            "zip" { Start-PSPackage -Type zip @releaseTagParam }
             "tar" { Start-PSPackage -Type tar @releaseTagParam }
         }
     }
@@ -91,7 +89,7 @@ finally
 
 if($Build.IsPresent)
 {
-    $linuxPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg,*.zip,*.tar.gz
+    $linuxPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg,*.tar.gz
     foreach ($linuxPackage in $linuxPackages)
     {
         $filePath = $linuxPackage.FullName
