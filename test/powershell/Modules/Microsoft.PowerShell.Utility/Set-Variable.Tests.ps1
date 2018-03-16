@@ -91,7 +91,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 
 	It "Set-Variable overwrite Constant Option should throw SessionStateUnauthorizedAccessException"{
 		Set-Variable -Name abcaVar bar -Option Constant -Scope "local"
-		{ Set-Variable -Name abcaVar new -Scope "local" -EA Stop } |  Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+		{ Set-Variable -Name abcaVar new -Scope 1 -EA Stop } |  Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
 	It "Set-Variable of existing Private variable without force should throw Exception"{
@@ -122,7 +122,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Value|Should -Be "bar"
 		$var1.Options|Should -Be "ReadOnly"
 		$var1.Description|Should -Be "new description"
-		{ Set-Variable abcaVar -Option None -EA Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
+		{ Set-Variable abcaVar -Option None -Scope 1 -EA Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
 	It "Set-Variable of ReadOnly variable with private scope should work"{
