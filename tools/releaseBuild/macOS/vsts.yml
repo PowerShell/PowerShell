@@ -1,4 +1,8 @@
 steps:
+#- task: <task type name>@<version>
+#  inputs:
+#    <task specific inputs>
+#  displayName: '<display name of task>'
 - task: ShellScript@2
   inputs:
     scriptPath: 'tools/releaseBuild/setReleaseTag.sh'
