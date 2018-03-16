@@ -34,12 +34,12 @@ if ([System.Management.Automation.Platform]::IsWindows)
 
 if([System.Management.Automation.Platform]::IsWindows)
 {
-    $userHelpRoot = "$HOME/Documents/PowerShell/Help"
+    $userHelpRoot = Join-Path "$HOME/Documents/PowerShell/Help/" $PSVersionTable.PSVersion.ToString()
 }
 else
 {
     $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-    $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+    $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help", $PSVersionTable.PSVersion.ToString()
 }
 
 # This is the list of test cases -- each test case represents a PowerShell Core module.

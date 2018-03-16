@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Utils.IsUnderProductFolder(moduleBase) && (!Utils.IsAdministrator()) && (this.Scope == UpdateHelpScope.AllUsers))
+                if (Utils.IsUnderProductFolder(moduleBase) && (!Utils.IsAdministrator()))
                 {
                     string message = StringUtil.Format(HelpErrors.UpdatableHelpRequiresElevation);
                     ProcessException(module.ModuleName, null, new UpdatableHelpSystemException("UpdatableHelpSystemRequiresElevation",
@@ -384,10 +384,10 @@ namespace Microsoft.PowerShell.Commands
 
                         if(!Directory.Exists(moduleBase))
                         {
-                            Directory.CreateDirectory(moduleBase);                        
+                            Directory.CreateDirectory(moduleBase);
                         }
-                        
-                        destPaths.Add(moduleBase);                        
+
+                        destPaths.Add(moduleBase);
 
 #if !CORECLR // Side-By-Side directories are not present in OneCore environments.
                         if (IsSystemModule(module.ModuleName) && Environment.Is64BitOperatingSystem)

@@ -513,25 +513,19 @@ namespace System.Management.Automation
                     // if you create an absolute path for helpfile, then MUIFileSearcher
                     // will look only in that path.
                     
-                    searchPaths.Add(mshSnapInInfo.ApplicationBase);
                     searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
+                    searchPaths.Add(mshSnapInInfo.ApplicationBase);
                 }
                 else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path))
-                {                    
-                    searchPaths.Add(cmdletInfo.Module.ModuleBase);
+                {
                     searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
+                    searchPaths.Add(cmdletInfo.Module.ModuleBase);
                 }
                 else
                 {
+                    searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                     searchPaths.Add(GetDefaultShellSearchPath());
                     searchPaths.Add(GetCmdletAssemblyPath(cmdletInfo));
-
-                    // In case of Microsoft.PowerShell.Core module, cmdletInfo.ModuleName is null.
-                    // If cmdletInfo.ModuleName is null, Path.Combine returns HelpUtils.GetUserHomeHelpSearchPath()
-                    // So we will be searching under HelpUtils.GetUserHomeHelpSearchPath()
-                    // The search is done in order of the searchPath list.
-                    var homeModulePath = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), cmdletInfo.ModuleName);
-                    searchPaths.Add(homeModulePath);
                 }
             }
             else
@@ -549,41 +543,6 @@ namespace System.Management.Automation
             }
 
             return location;
-        }
-
-        private string CalculateHelpSearchPath(CmdletInfo cmdletInfo)
-        {
-            string homeModulePath = null;
-
-            // In case of inbox modules, the help is put under $PSHOME/<current_culture>,
-            // since the dlls are not published under individual module folders, but under $PSHome
-            // In case of other modules, the help in under module.ModuleBase/<current_culture>
-
-            var moduleBase = cmdletInfo?.Module?.ModuleBase;
-            var moduleName = cmdletInfo?.Module?.Name;
-            string homeHelpPath = HelpUtils.GetUserHomeHelpSearchPath();
-
-            if (!string.IsNullOrEmpty(moduleBase) && !string.IsNullOrEmpty(moduleName))
-            {
-                string parentModuleBase = Directory.GetParent(moduleBase).Name;
-
-                if (moduleBase.EndsWith(moduleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    homeModulePath = Path.Combine(homeHelpPath, moduleName);
-                }
-                else
-                {
-                    // This module has version folder.
-                    var moduleVersion = Path.GetFileName(moduleBase);
-                    homeModulePath = Path.Combine(homeHelpPath, moduleName, moduleVersion);
-                }
-            }
-            else
-            {
-                homeModulePath = homeHelpPath;
-            }
-
-            return homeModulePath;
         }
 
         /// <summary>

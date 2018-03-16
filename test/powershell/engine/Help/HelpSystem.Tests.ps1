@@ -5,7 +5,7 @@
 
 function UpdateHelpFromLocalContentPath
 {
-    param ([string]$ModuleName, [string]$Tag = 'CI')
+    param ([string]$ModuleName, [string]$Tag = 'CI', [string] $Scope)
 
     if ($Tag -eq 'CI')
     {
@@ -17,11 +17,11 @@ function UpdateHelpFromLocalContentPath
             throw "Unable to find help content at '$helpContentPath'"
         }
 
-        Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop
+        Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Scope $Scope
     }
     else
     {
-        Update-Help -Module $ModuleName -Force -ErrorAction Stop
+        Update-Help -Module $ModuleName -Force -ErrorAction Stop -Scope $Scope
     }
 }
 
@@ -31,7 +31,7 @@ function RunTestCase
 
     $moduleName = "Microsoft.PowerShell.Core"
 
-    UpdateHelpFromLocalContentPath $moduleName $tag
+    UpdateHelpFromLocalContentPath $moduleName $tag -Scope 'AllUsers'
 
     $cmdlets = get-command -module $moduleName
 
@@ -146,11 +146,11 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
                     pending     = $false
                 }
             )
-            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.WSMan.Management' -Tag 'CI'
-            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Security' -Tag 'CI'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.WSMan.Management' -Tag 'CI' -Scope 'AllUsers'
+            UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Security' -Tag 'CI' -Scope 'AllUsers'
         }
 
-        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Tag 'CI'
+        UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Tag 'CI' -Scope 'AllUsers'
     }
 
     AfterAll {
@@ -332,7 +332,8 @@ Describe 'help can be found from $home directory' -Tags 'Feature', 'RequireAdmin
         if([System.Management.Automation.Platform]::IsWindows)
         {
             $userHelpRoot = "$HOME/Documents/PowerShell/Help"
-        } else
+        }
+        else
         {
             $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
             $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"

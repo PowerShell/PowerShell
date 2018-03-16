@@ -10,28 +10,23 @@ namespace System.Management.Automation
 {
     internal class HelpUtils
     {
-        private static string userScopeRootPath = null;
         private static string userHomeHelpPath = null;
-
 
         /// <summary>
         /// Get the path to $HOME
         /// </summary>
         internal static string GetUserHomeHelpSearchPath()
         {
-            if (userScopeRootPath == null)
-            {
-#if UNIX
-                var userModuleFolder = Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
-                userScopeRootPath = System.IO.Path.GetDirectoryName(userModuleFolder);
-#else
-                userScopeRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
-#endif
-            }
-
             if (userHomeHelpPath == null)
             {
-                userHomeHelpPath = Path.Combine(userScopeRootPath, "Help");
+                string psVersion = PSVersionInfo.PSVersion.ToString();
+#if UNIX
+                var userModuleFolder = Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
+                string userScopeRootPath = System.IO.Path.GetDirectoryName(userModuleFolder);
+#else
+                string userScopeRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
+#endif
+                userHomeHelpPath = Path.Combine(userScopeRootPath, "Help", psVersion);
             }
 
             return userHomeHelpPath;
@@ -49,14 +44,14 @@ namespace System.Management.Automation
             // If the the scope is AllUsers, then the help goes under moduleBase.
 
             var userHelpPath = GetUserHomeHelpSearchPath();
-            string parentModuleBase = Directory.GetParent(moduleBase).Name;
+            string moduleBaseParent = Directory.GetParent(moduleBase).Name;
 
             if (moduleBase.EndsWith(moduleName, StringComparison.OrdinalIgnoreCase))
             {
                 //This module is not an inbox module, so help goes under <userHelpPath>/<moduleName>
                 newModuleBase = Path.Combine(userHelpPath, moduleName);
             }
-            else if (String.Compare(parentModuleBase, moduleName, StringComparison.OrdinalIgnoreCase) == 0)
+            else if (String.Equals(moduleBaseParent, moduleName, StringComparison.OrdinalIgnoreCase))
             {
                 //This module has version folder.
                 var moduleVersion = Path.GetFileName(moduleBase);

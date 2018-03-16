@@ -879,12 +879,12 @@ namespace Microsoft.PowerShell.Commands
     public enum UpdateHelpScope
     {
         /// <summary>
-        /// Save the help content to the module directory. This is the default behavior.
-        /// </summary>
-        AllUsers,
+        /// Save the help content to the user directory.
+        CurrentUser,
 
         /// <summary>
-        /// Save the help content to the user directory.
-        CurrentUser
+        /// Save the help content to the module directory. This is the default behavior.
+        /// </summary>
+        AllUsers
     }
 }
