@@ -10,44 +10,41 @@ param (
     [string] $location = $env:BUILD_REPOSITORY_LOCALPATH,
 
     # Destination location of the package on docker host
-    [Parameter(Mandatory,ParameterSetName='Build')]
+    [Parameter(Mandatory, ParameterSetName = 'Build')]
     [string] $destination = '/mnt',
 
-    [Parameter(Mandatory,ParameterSetName='Build')]
+    [Parameter(Mandatory, ParameterSetName = 'Build')]
     [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
-    [Parameter(ParameterSetName='Build')]
+    [Parameter(ParameterSetName = 'Build')]
     [ValidateSet("zip", "tar")]
     [string[]]$ExtraPackage,
 
-    [Parameter(Mandatory,ParameterSetName='Bootstrap')]
+    [Parameter(Mandatory, ParameterSetName = 'Bootstrap')]
     [switch] $BootStrap,
 
-    [Parameter(Mandatory,ParameterSetName='Build')]
+    [Parameter(Mandatory, ParameterSetName = 'Build')]
     [switch] $Build
 )
 
 # We must build in /PowerShell
 $repoRoot = '/PowerShell'
-if($BootStrap.IsPresent)
-{
+if ($BootStrap.IsPresent) {
     $repoRoot = $location
 }
 
-if($Build.IsPresent)
-{
+if ($Build.IsPresent) {
     # cleanup the folder but don't delete it or the build agent will loose ownership of the folder
     Write-Verbose -Message "cleaning /PowerShell" -Verbose
-    Get-ChildItem -Path /PowerShell/* -Attributes Hidden,Normal,Directory | Remove-Item -Recurse -Force
+    Get-ChildItem -Path /PowerShell/* -Attributes Hidden, Normal, Directory | Remove-Item -Recurse -Force
 
     # clone the repository to the location we must build from
     Write-Verbose -Message "cloning to /PowerShell" -Verbose
     git clone $location /PowerShell
     $releaseTagParam = @{}
-    if ($ReleaseTag)
-    {
+    if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
     }
 }
@@ -62,8 +59,7 @@ try {
     Import-Module "$repoRoot/tools/packaging"
     Sync-PSTags -AddRemoteIfMissing
 
-    if($BootStrap.IsPresent)
-    {
+    if ($BootStrap.IsPresent) {
         Start-PSBootstrap -Package
 
         # gem install in run my bootstrap without sudo an fails
@@ -74,30 +70,24 @@ try {
         Start-NativeExecution { sudo gem install ronn }
     }
 
-    if($Build.IsPresent)
-    {
+    if ($Build.IsPresent) {
         Start-PSBuild -Crossgen -PSModuleRestore @releaseTagParam
 
         Start-PSPackage @releaseTagParam
-        switch ($ExtraPackage)
-        {
+        switch ($ExtraPackage) {
             "tar" { Start-PSPackage -Type tar @releaseTagParam }
         }
     }
-}
-finally
-{
+} finally {
     Pop-Location
 }
 
-if($Build.IsPresent)
-{
-    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg,*.tar.gz
-    foreach ($macPackage in $macPackages)
-    {
+if ($Build.IsPresent) {
+    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz
+    foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName
         $name = split-path -Leaf -Path $filePath
-        $extension = (Split-Path -Extension -Path $filePath).Replace('.','')
+        $extension = (Split-Path -Extension -Path $filePath).Replace('.', '')
         Write-Verbose "Copying $filePath to $destination" -Verbose
         Write-Host "##vso[artifact.upload containerfolder=results;artifactname=$name]$filePath"
         Write-Host "##vso[task.setvariable variable=Package-$extension]$filePath"
