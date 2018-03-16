@@ -59,20 +59,20 @@ Describe "Test-Json" -Tags "CI" {
 }
 
     It "Json is valid" {
-        Test-Json -Json $validJson | Should Be $true
+        Test-Json -Json $validJson | Should -Be $true
     }
 
     It "Json is valid aganist a valid schema" {
-        Test-Json -Json $validJson -Schema $validSchemaJson | Should Be $true
+        Test-Json -Json $validJson -Schema $validSchemaJson | Should -Be $true
     }
 
     It "Json is invalid" {
-        Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should Be $false
+        Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should -Be $false
     }
 
     It "Json is invalid aganist a valid schema" {
-        Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should Be $false
-        Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should Be $false
+        Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -Be $false
+        Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -Be $false
     }
 
     It "Test-Json throw if a schema is invalid" {
@@ -88,7 +88,7 @@ Describe "Test-Json" -Tags "CI" {
             $errorVar = $null
             Test-Json -Json $json -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
-            $errorVar.FullyQualifiedErrorId | Should BeExactly $error
+            $errorVar.FullyQualifiedErrorId | Should -BeExactly $error
     }
 
     It "Test-Json return all errors when check invalid Json aganist a valid schema" {
@@ -96,8 +96,8 @@ Describe "Test-Json" -Tags "CI" {
         Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         # '$invalidTypeInJson2' contains two errors in property types.
-        $errorVar.Count | Should Be 2
-        $errorVar[0].FullyQualifiedErrorId | Should BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
-        $errorVar[1].FullyQualifiedErrorId | Should BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar.Count | Should -Be 2
+        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 }
