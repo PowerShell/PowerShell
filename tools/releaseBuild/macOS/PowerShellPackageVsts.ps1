@@ -92,10 +92,10 @@ finally
 
 if($Build.IsPresent)
 {
-    $linuxPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg,*.tar.gz
-    foreach ($linuxPackage in $linuxPackages)
+    $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg,*.tar.gz
+    foreach ($macPackage in $macPackages)
     {
-        $filePath = $linuxPackage.FullName
+        $filePath = $macPackage.FullName
         $name = split-path -Leaf -Path $filePath
         $extension = (Split-Path -Extension -Path $filePath).Replace('.','')
         Write-Verbose "Copying $filePath to $destination" -Verbose
