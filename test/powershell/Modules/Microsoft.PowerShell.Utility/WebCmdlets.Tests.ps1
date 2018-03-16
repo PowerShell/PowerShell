@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+﻿# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -383,18 +383,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     function ValidateResponse {
         param ($response)
 
-        $response.Error | Should -BeNullOrEmpty
+        $response.Error | Should -Be $null
 
         # A successful call returns: Status = 200, and StatusDescription = "OK"
         $response.Output.StatusDescription | Should -Match "OK"
         $response.Output.StatusCode | Should -Be 200
 
         # Make sure the response contains the following properties:
-        $response.Output.RawContent | Should -Not -BeNullOrEmpty
-        $response.Output.Headers | Should -Not -BeNullOrEmpty
-        $response.Output.RawContent | Should -Not -BeNullOrEmpty
-        $response.Output.RawContentLength | Should -Not -BeNullOrEmpty
-        $response.Output.Content | Should -Not -BeNullOrEmpty
+        $response.Output.RawContent | Should -Not -Be $null
+        $response.Output.Headers | Should -Not -Be $null
+        $response.Output.RawContent | Should -Not -Be $null
+        $response.Output.RawContentLength | Should -Not -Be $null
+        $response.Output.Content | Should -Not -Be $null
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -473,7 +473,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 2"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
@@ -491,14 +492,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest error with -Proxy and -NoProxy option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '10'
         $command = "Invoke-WebRequest -Uri '$uri' -Proxy 'http://127.0.0.1:8080' -NoProxy -TimeoutSec 2"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     $testCase = @(
@@ -512,7 +515,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -Proxy '${proxy_address}' -SkipCertificateCheck"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest error with environment proxy set - '<name>'" -TestCases $testCase {
@@ -524,7 +528,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
         $command = "Invoke-WebRequest -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest returns User-Agent where -NoProxy with envirionment proxy set - '<name>'" -TestCases $testCase {
@@ -691,7 +696,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
-        $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     It "Validate Invoke-WebRequest returns empty RelationLink property if there is no Link Header" {
@@ -840,7 +845,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $response.Error.FullyQualifiedErrorId | Should -Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
             $response.Error.Exception.Message | Should -Be "The format of value '12345' is invalid."
         }
 
@@ -869,7 +874,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $response.Error.FullyQualifiedErrorId | Should -Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
             $response.Error.Exception.Message | Should -Be "The format of value 'Invalid:Agent' is invalid."
         }
 
@@ -1156,7 +1161,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             # validate that exception is thrown for URI with expired certificate
             $Uri = Get-WebListenerUrl -Https
             $command = "Invoke-WebRequest -Uri '$Uri'"
-            { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
 
             # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
             $Uri = Get-WebListenerUrl -Https
@@ -1172,7 +1178,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
             $result.Error.ErrorDetails.Message | Should -Match $result.Error.Exception.InnerException.Message
-            $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate" {
@@ -1711,7 +1717,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-RestMethod -Uri '$uri' -MaximumRedirection 2"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
@@ -1726,14 +1733,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5'
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod error with -Proxy and -NoProxy option" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '10'
         $command = "Invoke-RestMethod -Uri '$uri' -Proxy 'http://127.0.0.1:8080' -NoProxy -TimeoutSec 2"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     $testCase = @(
@@ -1748,7 +1757,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $uri = 'http://httpbin.org'
         $command = "Invoke-RestMethod -Uri '$uri' -Proxy '${proxy_address}'"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -TestCases $testCase {
@@ -1760,7 +1770,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Delay' -TestValue '5' -Https:$($protocol -eq 'https')
         $command = "Invoke-RestMethod -Uri '$uri' -TimeoutSec 2 -SkipCertificateCheck"
 
-        { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod returns User-Agent with option -NoProxy when environment proxy set - '<name>'" -TestCases $testCase {
@@ -1918,7 +1929,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
-        $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod -FollowRelLink doesn't fail if no Link Header is present" {
@@ -2039,7 +2050,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomHeaders -Uri $uri -headers $headers -Cmdlet "Invoke-RestMethod"
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $response.Error.FullyQualifiedErrorId | Should -Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
             $response.Error.Exception.Message | Should -Be "The format of value '12345' is invalid."
         }
 
@@ -2068,7 +2079,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $response = ExecuteRequestWithCustomUserAgent -Uri $uri -UserAgent $UserAgent  -Cmdlet "Invoke-RestMethod"
 
             $response.Error | Should -Not -BeNullOrEmpty
-            $response.Error.FullyQualifiedErrorId | Should -BeExactly "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $response.Error.FullyQualifiedErrorId | Should -Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
             $response.Error.Exception.Message | Should -Be "The format of value 'Invalid:Agent' is invalid."
         }
 
@@ -2150,7 +2161,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             # validate that exception is thrown for URI with expired certificate
             $uri = Get-WebListenerUrl -Https
             $command = "Invoke-RestMethod -Uri '$uri' -Method HEAD"
-            { ExecuteWebCommand -command $command } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
 
             # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
             $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -Method HEAD"
@@ -2165,7 +2177,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
             # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
             $result.Error.ErrorDetails.Message | Should -Match $result.Error.Exception.InnerException.Message
-            $result.Error.FullyQualifiedErrorId | Should -BeExactly "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
@@ -2751,7 +2763,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 body        = 'null'
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            Invoke-RestMethod -Uri $uri | Should -BeNullOrEmpty
+            Invoke-RestMethod -Uri $uri | Should -Be $null
         }
 
         It "Invoke-RestMethod Supports a Single Value JSON null and ignores whitespace" {
@@ -2760,10 +2772,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 body        = "            null         "
             }
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            Invoke-RestMethod -Uri $uri | Should -BeNullOrEmpty
+            Invoke-RestMethod -Uri $uri | Should -Be $null
             $query['body'] = "           null         `n"
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
-            Invoke-RestMethod -Uri $uri | Should -BeNullOrEmpty
+            Invoke-RestMethod -Uri $uri | Should -Be $null
         }
     }
 
@@ -2844,7 +2856,12 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
         It "<Name>" -TestCases $testCases {
             param ($scriptblock, $expectedFullyQualifiedErrorId)
 
-            { & $scriptblock } | Should -Throw -ErrorId $ExpectedFullyQualifiedErrorId
+            try {
+                & $scriptblock
+                throw "No Exception!"
+            } catch {
+                $_.FullyQualifiedErrorId | Should -Be $ExpectedFullyQualifiedErrorId
+            }
         }
     }
 
