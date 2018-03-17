@@ -1071,7 +1071,6 @@ function New-ManGzip
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    # Run does not play well with files named powershell6.0.1, so we generate and then rename
     Start-NativeExecution { ronn --roff $RonnFile }
 
     # gzip in assets directory
