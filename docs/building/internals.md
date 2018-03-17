@@ -136,7 +136,7 @@ For example, the following builds the release flavor of the binary targeting arm
 Start-BuildNativeWindowsBinaries -Configuration Release -Arch x64_arm64
 ```
 
-Be sure to build and test for all supported architectures: x86, x64, x64_arm, and x64_arm64.
+Be sure to build and test for all supported architectures: `x86`, `x64`, `x64_arm`, and `x64_arm64`.
 
 The `x64_arm` and `x64_arm64` architectures mean that the host system needs to be x64 to cross-compile to ARM.
 When building for multiple architectures, be sure to use the `-clean` switch as cmake will cache the previous run and the wrong compiler will be used to generate the subsequent architectures.
