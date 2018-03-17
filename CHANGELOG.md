@@ -4,9 +4,8 @@
 
 ### Engine updates and fixes
 
-- Update PowerShell to use `2.0.6` dotnet core runtime and packages (https://github.com/PowerShell/PowerShell/commit/d607f207b9726f1c8b3a115803db2c4d129127e1)
-  - **This change addresses the following vulnerabilities**:
-    - [Microsoft Security Advisory CVE-2018-0875: Hash Collision can cause Denial of Service](https://github.com/PowerShell/Announcements/issues/4)
+- Update PowerShell to use `2.0.6` dotnet core runtime and packages (#6403)
+  - This change addresses this vulnerability: [Microsoft Security Advisory `CVE-2018-0875`: Hash Collision can cause Denial of Service](https://github.com/PowerShell/Announcements/issues/4)
 
 ### Build and Packaging Improvements
 
@@ -19,7 +18,7 @@
 - Use `ADD` instead of `Invoke-WebRequest` in `nanoserver` Docker file (#6255)
 - When doing daily/test build in a non-release branch use the branch name as the preview name (#6355)
 - Add Environment Variable override of telemetry (#6063) (Thanks @diddledan!)
-- Build: Remove two unneeded lines from 'Invoke-AppveyorFinish' (#6344)
+- Build: Remove two unneeded lines from `Invoke-AppveyorFinish` (#6344)
 - MSI: Refactor `New-MsiPackage` into `packaging.psm1`
   and various fixes to enable patching
   (#5871, #6221, #6254, #6303, #6356, #6208, #6334, #6379, #6094, #6192)
