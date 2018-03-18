@@ -5,7 +5,7 @@
 ### Engine updates and fixes
 
 - Update PowerShell to use `2.0.6` dotnet core runtime and packages (#6403)
-  - This change addresses this vulnerability: [Microsoft Security Advisory `CVE-2018-0875`: Hash Collision can cause Denial of Service](https://github.com/PowerShell/Announcements/issues/4)
+    - This change addresses this vulnerability: [Microsoft Security Advisory `CVE-2018-0875`: Hash Collision can cause Denial of Service](https://github.com/PowerShell/Announcements/issues/4)
 
 ### Build and Packaging Improvements
 
