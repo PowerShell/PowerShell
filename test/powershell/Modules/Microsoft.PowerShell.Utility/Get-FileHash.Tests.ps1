@@ -4,8 +4,7 @@ Describe "Get-FileHash" -Tags "CI" {
 
     BeforeAll {
         $testDocument = Join-Path -Path $TestDrive -ChildPath "hashable.txt"
-        Write-Host $testDocument
-        # Encode bytes directly to avoid platform issues
+        # Encode bytes of "<BOM>Get-Module`n" directly to avoid platform issues
         [System.IO.File]::WriteAllBytes($testDocument, @(0xef, 0xbb, 0xbf, 0x47, 0x65, 0x74, 0x2d, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x0a))
     }
 
