@@ -97,7 +97,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
 
 Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
 
-    It "Error returned if runas non-admin: <cmdline>" -TestCases @(
+    It "Error returned if runas non-admin: <cmdline>" -Skip:(!$IsWindows) -TestCases @(
         @{cmdline = "Enable-WSManCredSSP -Role Server -Force"; cmd = "EnableWSManCredSSPCommand"},
         @{cmdline = "Disable-WSManCredSSP -Role Server"; cmd = "DisableWSManCredSSPCommand"},
         @{cmdline = "Get-WSManCredSSP"; cmd = "GetWSmanCredSSPCommand"}
