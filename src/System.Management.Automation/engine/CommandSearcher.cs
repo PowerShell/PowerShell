@@ -469,12 +469,14 @@ namespace System.Management.Automation
 
                 // Find the match if it is.
 
-                string resolvedPath = null;
+                Collection<string> resolvedPaths = new Collection<string>();
 
                 try
                 {
+                    Provider.CmdletProvider providerInstance;
                     ProviderInfo provider;
-                    resolvedPath = _context.LocationGlobber.GetProviderPath(_commandName, out provider);
+                    resolvedPaths =
+                        _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(_commandName, false, out provider, out providerInstance);
                 }
                 catch (ItemNotFoundException)
                 {
@@ -514,14 +516,24 @@ namespace System.Management.Automation
                         _commandName);
                 }
 
-                // If the path was resolved, and it exists
-                if (resolvedPath != null && File.Exists(resolvedPath))
+                if (resolvedPaths.Count > 1)
                 {
+                    CommandDiscovery.discoveryTracer.TraceError(
+                        "The path resolved to more than one result so this path cannot be used.");
+                    break;
+                }
+
+                // If the path was resolved, and it exists
+                if (resolvedPaths.Count == 1 &&
+                    File.Exists(resolvedPaths[0]))
+                {
+                    string path = resolvedPaths[0];
+
                     CommandDiscovery.discoveryTracer.WriteLine(
                         "Path resolved to: {0}",
-                        resolvedPath);
+                        path);
 
-                    result = GetInfoFromPath(resolvedPath);
+                    result = GetInfoFromPath(path);
                 }
             } while (false);
 
@@ -1078,9 +1090,45 @@ namespace System.Management.Automation
 
             try
             {
-                // Let PowerShell resolve relative path.
-                ProviderInfo provider;
-                string resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
+                ProviderInfo provider = null;
+                string resolvedPath = null;
+                if (WildcardPattern.ContainsWildcardCharacters(path))
+                {
+                    // Let PowerShell resolve relative path with wildcards.
+                    Provider.CmdletProvider providerInstance;
+                    Collection<string> resolvedPaths = _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
+                        path,
+                        false,
+                        out provider,
+                        out providerInstance);
+
+                    if (resolvedPaths.Count == 0)
+                    {
+                        resolvedPath = null;
+
+                        CommandDiscovery.discoveryTracer.TraceError(
+                           "The relative path with wildcard did not resolve to valid path. {0}",
+                           path);
+                    }
+                    else if (resolvedPaths.Count > 1)
+                    {
+                        resolvedPath = null;
+
+                        CommandDiscovery.discoveryTracer.TraceError(
+                        "The relative path with wildcard resolved to multiple paths. {0}",
+                        path);
+                    }
+                    else
+                    {
+                        resolvedPath = resolvedPaths[0];
+                    }
+                }
+
+                // Revert to previous path resolver if wildcards produces no results.
+                if ((resolvedPath == null) || (provider == null))
+                {
+                    resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
+                }
 
                 // Verify the path was resolved to a file system path
                 if (provider.NameEquals(_context.ProviderNames.FileSystem))
