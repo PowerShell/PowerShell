@@ -1,20 +1,27 @@
 #!/bin/sh
 
-apk update
-apk add cmake clang build-base git bash
-git clone --recursive https://github.com/kasper3/powershell
-cd powershell/src/libpsl-native
+repoRoot=$1
+destination=$2
+releaseTag=$3
+
+# Build libpsl-native
+cd $repoRoot/src/libpsl-native
 
 cmake -DCMAKE_BUILD_TYPE=Debug .
 make -j
 
+# Restore packages
 cd ../..
 dotnet restore
+
+# Add telemetry file
 touch DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
 
+# run ResGen
 cd src/ResGen
 dotnet run
 
+# Create typeCatalog
 cd ..
 targetFile="Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
 cat > $targetFile <<-"EOF"
@@ -28,12 +35,21 @@ cat > $targetFile <<-"EOF"
   </Target>
 </Project>
 EOF
+
 dotnet msbuild Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/TypeCatalogGen/powershell.inc" /nologo
 
 cd TypeCatalogGen
 dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershell.inc
 
+# build PowerShell
 cd ../powershell-unix
 dotnet publish --configuration Linux --runtime linux-x64
-mv libpsl-native.so bin/Linux/netcoreapp2.0
-dotnet run -c Linux
+
+# add libpsl-native to build
+mv libpsl-native.so bin/Linux/netcoreapp2.0/linux-x64
+
+# tar build for output
+cd bin/Linux/netcoreapp2.0/linux-x64
+
+# TODO make format of file name the same as other packages
+tar -czvf $destination/powershell-alpine.3.tar.gz .
