@@ -24,16 +24,10 @@ Describe "New-Item" -Tags "CI" {
     $testfileSp           = "``[test``]file.txt"
     $testfolder           = "newDirectory"
     $testlink             = "testlink"
-    $testlinkSrcSpName    = "[test]src"
-    $testlinkSrcSp        = "``[test``]src"
-    $testlinkSpName       = "[test]link"
-    $testlinkSp           = "``[test``]link"
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
     $FullyQualifiedFileSp = Join-Path -Path $tmpDirectory -ChildPath $testfileSp
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
-    $FullyQualifiedLSrcSp = Join-Path -Path $tmpDirectory -ChildPath $testlinkSrcSp
-    $FullyQualifiedLinkSp = Join-Path -Path $tmpDirectory -ChildPath $testlinkSp
 
     BeforeEach {
         Clean-State
@@ -131,20 +125,6 @@ Describe "New-Item" -Tags "CI" {
         $fileInfo.Target | Should -BeNullOrEmpty
         $fileInfo.LinkType | Should -BeExactly "HardLink"
     }
-
-    It "Should create junction with name contains special char" {
-        $null = New-Item -Path $tmpDirectory -Name $testlinkSrcSpName -ItemType Directory
-        $FullyQualifiedLSrcSp | Should -Exist
-
-        $null = New-Item -Path $FullyQualifiedLinkSp -Target $FullyQualifiedLSrcSp -ItemType Junction
-        $FullyQualifiedLinkSp | Should -Exist
-
-        $expectedTarget = Join-Path $tmpDirectory $testlinkSrcSpName
-
-        $fileInfo = Get-Item $FullyQualifiedLinkSp
-        $fileInfo.Target | Should -BeExactly $expectedTarget
-        $fileInfo.LinkType | Should -BeExactly "Junction"
-    }
 }
 
 # More precisely these tests require SeCreateSymbolicLinkPrivilege.
@@ -156,9 +136,15 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     $testfile             = "testfile.txt"
     $testfolder           = "newDirectory"
     $testlink             = "testlink"
+    $testlinkSrcSpName    = "[test]src"
+    $testlinkSrcSp        = "``[test``]src"
+    $testlinkSpName       = "[test]link"
+    $testlinkSp           = "``[test``]link"
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
+    $FullyQualifiedLSrcSp = Join-Path -Path $tmpDirectory -ChildPath $testlinkSrcSp
+    $FullyQualifiedLinkSp = Join-Path -Path $tmpDirectory -ChildPath $testlinkSp
     $SymLinkMask          = [System.IO.FileAttributes]::ReparsePoint
     $DirLinkMask          = $SymLinkMask -bor [System.IO.FileAttributes]::Directory
 
@@ -205,6 +191,21 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
         # Remove the link explicitly to avoid broken symlink issue
         Remove-Item $FullyQualifiedLink -Force
+    }
+
+    It "Should create symbolic link with name contains special char" {
+        $null = New-Item -Path $tmpDirectory -Name $testlinkSrcSpName -ItemType File
+        $FullyQualifiedLSrcSp | Should -Exist
+
+        $null = New-Item -Path $FullyQualifiedLinkSp -Target $FullyQualifiedLSrcSp -ItemType SymbolicLink
+        $FullyQualifiedLinkSp | Should -Exist
+
+        $expectedTarget = Join-Path $tmpDirectory $testlinkSrcSpName
+
+        $fileInfo = Get-ChildItem $FullyQualifiedLinkSp
+        $fileInfo.Target | Should -BeExactly $expectedTarget
+        $fileInfo.LinkType | Should -BeExactly "SymbolicLink"
+        $fileInfo.Attributes -band $DirLinkMask | Should -BeExactly $SymLinkMask
     }
 
     It "Should error correctly when failing to create a symbolic link" -Skip:($IsWindows -or $IsElevated) {
