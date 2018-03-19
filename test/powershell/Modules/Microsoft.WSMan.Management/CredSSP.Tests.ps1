@@ -93,6 +93,9 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         $credssp.Role = "Server"
         $credssp.Role | Should BeExactly "Server"
     }
+}
+
+Describe "CredSSP cmdlet error cases tests" -Tags 'Feature' {
 
     It "Error returned if runas non-admin: <cmdline>" -TestCases @(
         @{cmdline = "Enable-WSManCredSSP -Role Server -Force"; cmd = "EnableWSManCredSSPCommand"},
@@ -101,10 +104,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     ) {
         param ($cmdline, $cmd)
 
-        runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline } catch { `$_.FullyQualifiedErrorId | Out-File $errtxt }; New-Item -Type File -Path $donefile"
-        Wait-FileToBePresent -File $donefile -TimeoutInSeconds 5 -IntervalInMilliseconds 100
-        $errtxt | Should Exist
-        $err = Get-Content $errtxt
-        $err | Should Be "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
+        $scriptBlock = [scriptblock]::Create($cmdline)
+        $scriptBlock | should -Throw -ErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.$cmd"
     }
 }
