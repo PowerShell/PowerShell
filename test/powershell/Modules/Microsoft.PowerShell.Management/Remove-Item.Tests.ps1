@@ -11,44 +11,44 @@ Describe "Remove-Item" -Tags "CI" {
 	BeforeEach {
 	    New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
 
-	    Test-Path $testfilepath | Should Be $true
+	    Test-Path $testfilepath | Should -BeTrue
 
 	}
 
 	It "Should be able to be called on a regular file without error using the Path switch" {
-	    { Remove-Item -Path $testfilepath } | Should Not Throw
+	    { Remove-Item -Path $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should be able to be called on a file without the Path switch" {
-	    { Remove-Item $testfilepath } | Should Not Throw
+	    { Remove-Item $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should be able to call the rm alias" {
-	    { rm $testfilepath } | Should Not Throw
+	    { rm $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should be able to call the del alias" {
-	    { del $testfilepath } | Should Not Throw
+	    { del $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should be able to call the erase alias" {
-	    { erase $testfilepath } | Should Not Throw
+	    { erase $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should be able to call the ri alias" {
-	    { ri $testfilepath } | Should Not Throw
+	    { ri $testfilepath } | Should -Not -Throw
 
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should not be able to remove a read-only document without using the force switch" {
@@ -56,16 +56,16 @@ Describe "Remove-Item" -Tags "CI" {
 	    Set-ItemProperty -Path $testfilepath -Name IsReadOnly -Value $true
 
 	    # attempt to remove the file
-	    { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should Not Throw
+	    { Remove-Item $testfilepath -ErrorAction SilentlyContinue } | Should -Not -Throw
 
 	    # validate
-	    Test-Path $testfilepath | Should Be $true
+	    Test-Path $testfilepath | Should -BeTrue
 
 	    # remove using the -force switch on the readonly object
 	    Remove-Item  $testfilepath -Force
 
 	    # Validate
-	    Test-Path $testfilepath | Should Be $false
+	    Test-Path $testfilepath | Should -BeFalse
 	}
 
 	It "Should be able to remove all files matching a regular expression with the include switch" {
@@ -78,15 +78,15 @@ Describe "Remove-Item" -Tags "CI" {
 	    # Delete the specific string
 	    Remove-Item (Join-Path -Path $testpath -ChildPath "*") -Include file*.txt
 	    # validate that the string under test was deleted, and the nonmatching strings still exist
-	    Test-path (Join-Path -Path $testpath -ChildPath file1.txt) | Should Be $false
-	    Test-path (Join-Path -Path $testpath -ChildPath file2.txt) | Should Be $false
-	    Test-path (Join-Path -Path $testpath -ChildPath file3.txt) | Should Be $false
-	    Test-Path $testfilepath  | Should Be $true
+	    Test-path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
+	    Test-path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
+	    Test-path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
+	    Test-Path $testfilepath  | Should -BeTrue
 
 	    # Delete the non-matching strings
 	    Remove-Item $testfilepath
 
-	    Test-Path $testfilepath  | Should Be $false
+	    Test-Path $testfilepath  | Should -BeFalse
 	}
 
 	It "Should be able to not remove any files matching a regular expression with the exclude switch" {
@@ -101,16 +101,16 @@ Describe "Remove-Item" -Tags "CI" {
 	    Remove-Item (Join-Path -Path $testpath -ChildPath "file*") -Exclude *.wav -Include *.txt
 
 	    # validate that the string under test was deleted, and the nonmatching strings still exist
-	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should Be $true
-	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should Be $true
-	    Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should Be $false
+	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeTrue
+	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeTrue
+	    Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
 
 	    # Delete the non-matching strings
 	    Remove-Item (Join-Path -Path $testpath -ChildPath file1.wav)
 	    Remove-Item (Join-Path -Path $testpath -ChildPath file2.wav)
 
-	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should Be $false
-	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should Be $false
+	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeFalse
 	}
 
         It "Should be able to remove file when path contains special char" {
@@ -128,13 +128,13 @@ Describe "Remove-Item" -Tags "CI" {
 	BeforeEach {
 	    New-Item -Name "testdir" -Path $testpath -ItemType "directory" -Force
 
-	    Test-Path $testdirectory | Should Be $true
+	    Test-Path $testdirectory | Should -BeTrue
 	}
 
 	It "Should be able to remove a directory" {
-	    { Remove-Item $testdirectory } | Should Not Throw
+	    { Remove-Item $testdirectory } | Should -Not -Throw
 
-	    Test-Path $testdirectory | Should Be $false
+	    Test-Path $testdirectory | Should -BeFalse
 	}
 
 	It "Should be able to recursively delete subfolders" {
@@ -142,11 +142,11 @@ Describe "Remove-Item" -Tags "CI" {
 	    New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
 
 	    $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
-	    test-path $complexDirectory | Should Be $true
+	    test-path $complexDirectory | Should -BeTrue
 
-	    { Remove-Item $testdirectory -Recurse} | Should Not Throw
+	    { Remove-Item $testdirectory -Recurse} | Should -Not -Throw
 
-	    Test-Path $testdirectory | Should Be $false
+	    Test-Path $testdirectory | Should -BeFalse
 	}
     }
 }

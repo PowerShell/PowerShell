@@ -3,56 +3,57 @@
 Describe "Get-PSDrive" -Tags "CI" {
 
     It "Should not throw" {
-	Get-PSDrive | Should Not BeNullOrEmpty
+	Get-PSDrive | Should -Not -BeNullOrEmpty
     }
 
     It "Should have a name and a length property" {
-	(Get-PSDrive).Name        | Should Not BeNullOrEmpty
-	(Get-PSDrive).Root.Length | Should Not BeLessThan 1
+	(Get-PSDrive).Name        | Should -Not -BeNullOrEmpty
+	(Get-PSDrive).Root.Length | Should -Not -BeLessThan 1
     }
 
     It "Should be able to be called with the gdr alias" {
-	{ gdr } | Should Not Throw
+	{ gdr } | Should -Not -Throw
 
-	gdr | Should Not BeNullOrEmpty
+	gdr | Should -Not -BeNullOrEmpty
     }
 
     It "Should be the same output between Get-PSDrive and gdr" {
 	$alias  = gdr
 	$actual = Get-PSDrive
 
-	$alias | Should Be $actual
+
+	$alias | Should -BeExactly $actual
     }
 
     It "Should return drive info"{
-        (Get-PSDrive Env).Name        | Should Be Env
-        (Get-PSDrive Alias).Name      | Should Be Alias
+        (Get-PSDrive Env).Name        | Should -BeExactly Env
+        (Get-PSDrive Alias).Name      | Should -BeExactly Alias
 
         if ($IsWindows)
         {
-            (Get-PSDrive Cert).Root       | Should Be \
-            (Get-PSDrive C).Provider.Name | Should Be FileSystem
+            (Get-PSDrive Cert).Root       | Should -Be \
+            (Get-PSDrive C).Provider.Name | Should -BeExactly FileSystem
         }
         else
         {
-            (Get-PSDrive /).Provider.Name | Should Be FileSystem
+            (Get-PSDrive /).Provider.Name | Should -BeExactly FileSystem
         }
     }
 
     It "Should be able to access a drive using the PSProvider switch" {
-	(Get-PSDrive -PSProvider FileSystem).Name.Length | Should BeGreaterThan 0
+	(Get-PSDrive -PSProvider FileSystem).Name.Length | Should -BeGreaterThan 0
     }
 
     It "Should return true that a drive that does not exist"{
-	!(Get-PSDrive fake -ErrorAction SilentlyContinue) | Should Be $True
-	Get-PSDrive fake -ErrorAction SilentlyContinue    | Should BeNullOrEmpty
+	!(Get-PSDrive fake -ErrorAction SilentlyContinue) | Should -BeTrue
+	Get-PSDrive fake -ErrorAction SilentlyContinue    | Should -BeNullOrEmpty
     }
     It "Should be able to determine the amount of free space of a drive" {
         $dInfo = Get-PSDrive TESTDRIVE
-        $dInfo.Free -ge 0 | Should be $true
+        $dInfo.Free -ge 0 | Should -BeTrue
     }
     It "Should be able to determine the amount of Used space of a drive" {
         $dInfo = Get-PSDrive TESTDRIVE
-        $dInfo.Used -ge 0 | Should be $true
+        $dInfo.Used -ge 0 | Should -BeTrue
     }
 }

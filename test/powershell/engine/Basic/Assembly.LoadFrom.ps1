@@ -53,18 +53,18 @@ Describe "Assembly.LoadFrom Validation Test" -Tags "CI" {
 
     It "Assembly.LoadFrom should automatically load the implicit referenced assembly from the same folder" {
         ## Both types should not be available before loading the test assemblies
-        { [Assembly.Foo.Consumer] } | Should Throw
-        { [Assembly.Bar.Provider] } | Should Throw
+        { [Assembly.Foo.Consumer] } | Should -Throw -ErrorId "TypeNotFound"
+        { [Assembly.Bar.Provider] } | Should -Throw -ErrorId "TypeNotFound"
 
         ## The type 'Assembly.Foo.Consumer' should be available after loading 'Consumer.dll'
         [System.Reflection.Assembly]::LoadFrom($ConsumerAssembly) > $null
-        [Assembly.Foo.Consumer].FullName | Should Be "Assembly.Foo.Consumer"
+        [Assembly.Foo.Consumer].FullName | Should -Be "Assembly.Foo.Consumer"
         ## The type 'Assembly.Bar.Provider' should still not be available
-        { [Assembly.Bar.Provider] } | Should Throw
+        { [Assembly.Bar.Provider] } | Should -Throw -ErrorId "TypeNotFound"
 
         ## Calling '[Assembly.Foo.Consumer]::GetName()' will trigger implicit loading of 'Provider.dll' and the call should work
-        [Assembly.Foo.Consumer]::GetName() | Should Be "Assembly.Bar.Provider"
+        [Assembly.Foo.Consumer]::GetName() | Should -BeExactly "Assembly.Bar.Provider"
         ## Now the type 'Assembly.Bar.Provider' should be available
-        [Assembly.Bar.Provider].FullName | Should Be "Assembly.Bar.Provider"
+        [Assembly.Bar.Provider].FullName | Should -BeExactly "Assembly.Bar.Provider"
     }
 }

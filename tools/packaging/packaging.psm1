@@ -53,7 +53,7 @@ function Start-PSPackage {
     End {
         $IncludeSymbols = $null
         if ($PSBoundParameters.ContainsKey('IncludeSymbols')) {
-            log 'setting IncludeSymbols'
+            Write-Log 'setting IncludeSymbols'
             $IncludeSymbols = $PSBoundParameters['IncludeSymbols']
         }
 
@@ -76,7 +76,7 @@ function Start-PSPackage {
             }
         }
 
-        log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
+        Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
         $Script:Options = Get-PSOptions
 
@@ -189,7 +189,7 @@ function Start-PSPackage {
             }
         }
 
-        log "Packaging Source: '$Source'"
+        Write-Log "Packaging Source: '$Source'"
 
         # Decide package output type
         if (-not $Type) {
@@ -210,7 +210,7 @@ function Start-PSPackage {
             }
             Write-Warning "-Type was not specified, continuing with $Type!"
         }
-        log "Packaging Type: $Type"
+        Write-Log "Packaging Type: $Type"
 
         # Add the symbols to the suffix
         # if symbols are specified to be included
@@ -405,7 +405,7 @@ function New-TarballPackage {
             }
 
             if (Test-Path -Path $packagePath) {
-                log "You can find the tarball package at $packagePath"
+                Write-Log "You can find the tarball package at $packagePath"
                 return $packagePath
             } else {
                 throw "Failed to create $packageName"
@@ -447,7 +447,7 @@ function New-PSSignedBuildZip
     Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
         $relativePath = $_.Replace($signedFilesPath,'')
         $destination = Join-Path -Path $buildPath -ChildPath $relativePath
-        log "replacing $destination with $_"
+        Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -force
     }
 
@@ -463,7 +463,7 @@ function New-PSSignedBuildZip
     if ($VstsVariableName)
     {
         # set VSTS variable with path to package files
-        log "Setting $VstsVariableName to $zipLocationPath"
+        Write-Log "Setting $VstsVariableName to $zipLocationPath"
         Write-Host "##vso[task.setvariable variable=$VstsVariableName]$zipLocationPath"
     }
     else
@@ -492,7 +492,13 @@ function Expand-PSSignedBuild
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
-    $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+    $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
+    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+
+    # Remove PSOptions.
+    # The file is only used to set the PSOptions.
+    Remove-Item -Path $psOptionsPath
+
     $options.PSModuleRestore = $true
 
     if(Test-Path -Path $windowsExecutablePath)
@@ -555,6 +561,7 @@ function New-UnixPackage {
         $ErrorMessage = "Must be on {0} to build '$Type' packages!"
         switch ($Type) {
             "deb" {
+                $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsUbuntu -and !$Environment.IsDebian) {
                     throw ($ErrorMessage -f "Ubuntu or Debian")
                 }
@@ -580,11 +587,13 @@ function New-UnixPackage {
                 $Iteration += ".$DebDistro"
             }
             "rpm" {
+                $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
                 if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
                     throw ($ErrorMessage -f "Redhat or SUSE Family")
                 }
             }
             "osxpkg" {
+                $packageVersion = $Version
                 if (!$Environment.IsMacOS) {
                     throw ($ErrorMessage -f "macOS")
                 }
@@ -600,7 +609,7 @@ function New-UnixPackage {
         $Suffix = $Name -replace "^powershell"
         if (!$Suffix) {
             Write-Verbose "Suffix not given, building primary PowerShell package!"
-            $Suffix = $Version
+            $Suffix = $packageVersion
         }
 
         # Setup staging directory so we don't change the original source directory
@@ -677,7 +686,7 @@ function New-UnixPackage {
 
         $Arguments = Get-FpmArguments `
             -Name $Name `
-            -Version $Version `
+            -Version $packageVersion `
             -Iteration $Iteration `
             -Description $Description `
             -Type $Type `
@@ -790,9 +799,9 @@ function New-MacOsDistributionPackage
     # 1 - version
     # 2 - package path
     # 2 - minimum os version
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $Version", $Version, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.12' | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
-    log "Applying distribution.xml to package..."
+    Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
     try
     {
@@ -1214,7 +1223,7 @@ function New-ZipPackage
 
         if (Test-Path $zipLocationPath)
         {
-            log "You can find the Zip @ $zipLocationPath"
+            Write-Log "You can find the Zip @ $zipLocationPath"
             $zipLocationPath
         }
         else
@@ -1250,7 +1259,7 @@ function CreateNugetPlatformFolder
     }
 
     Copy-Item -Path $fullPath -Destination $destPath
-    log "Copied $file to $Platform"
+    Write-Log "Copied $file to $Platform"
 }
 
 <#
@@ -1358,11 +1367,7 @@ function New-UnifiedNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
 
-        # This is required only for first release since the nuget package version and System.Management.Automation.dll version do not match.
-        # The nuget package for SMA is 6.0.1.1, but the assembly version is going to be 6.0.1.
-        # For future releases where NuGet version and assembly versions are going to be same, this can be removed.
-        $forceSMAAssemblyVersion = '6.0.1'
-        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
@@ -1376,7 +1381,7 @@ function New-UnifiedNugetPackage
             #region ref
             $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netstandard2.0') -ItemType Directory -Force
             Copy-Item $refBinFullName -Destination $refFolder -Force
-            log "Copied file $refBinFullName to $refFolder"
+            Write-Log "Copied file $refBinFullName to $refFolder"
             #endregion ref
 
             $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -1603,7 +1608,7 @@ function New-ReferenceAssembly
     $smaCs = Join-Path $smaProjectFolder 'System.Management.Automation.cs'
     $smaCsFiltered = Join-Path $smaProjectFolder 'System.Management.Automation_Filtered.cs'
 
-    log "Working directory: $genAPIFolder."
+    Write-Log "Working directory: $genAPIFolder."
 
     #region GenAPI
 
@@ -1614,7 +1619,7 @@ function New-ReferenceAssembly
         throw "GenAPI.exe was not found at: $GenAPIToolPath"
     }
 
-    log "GenAPI nuget package saved and expanded."
+    Write-Log "GenAPI nuget package saved and expanded."
 
     $linuxSMAPath = Join-Path $Linux64BinPath "System.Management.Automation.dll"
 
@@ -1624,11 +1629,11 @@ function New-ReferenceAssembly
     }
 
     $genAPIArgs = "$linuxSMAPath","-libPath:$Linux64BinPath"
-    log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+    Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
 
     Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $smaCs -Force
 
-    log "Reference assembly file generated at: $smaCs"
+    Write-Log "Reference assembly file generated at: $smaCs"
 
     #endregion GenAPI
 
@@ -1674,7 +1679,7 @@ function New-ReferenceAssembly
 
     Move-Item $smaCsFiltered $smaCs -Force
 
-    log "Reference assembly code cleanup complete."
+    Write-Log "Reference assembly code cleanup complete."
 
     #endregion Cleanup SMA.cs
 
@@ -1701,7 +1706,7 @@ function New-ReferenceAssembly
 
         Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
 
-        log "Reference assembly built and copied to $RefAssemblyDestinationPath"
+        Write-Log "Reference assembly built and copied to $RefAssemblyDestinationPath"
     }
     finally
     {
@@ -1794,7 +1799,7 @@ function Publish-NugetToMyGet
     }
 
     Get-ChildItem $PackagePath | ForEach-Object {
-        log "Pushing $_ to PowerShell Myget"
+        Write-Log "Pushing $_ to PowerShell Myget"
         Start-NativeExecution { nuget push $_.FullName -Source 'https://powershell.myget.org/F/powershell-core/api/v2/package' -ApiKey $ApiKey } > $null
     }
 }
@@ -1843,9 +1848,9 @@ function New-NugetContentPackage
         $Force
     )
 
-    log "PackageVersion: $PackageVersion"
+    Write-Log "PackageVersion: $PackageVersion"
     $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
-    log "nugetSemanticVersion: $nugetSemanticVersion"
+    Write-Log "nugetSemanticVersion: $nugetSemanticVersion"
 
     $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
 
@@ -1874,8 +1879,8 @@ function New-NugetContentPackage
     $arguments += "/p:PackageName=$nuspecPackageName"
     $arguments += $projectFolder
 
-    log "Running dotnet $arguments"
-    log "Use -verbose to see output..."
+    Write-Log "Running dotnet $arguments"
+    Write-Log "Use -verbose to see output..."
     Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
 
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
@@ -1945,6 +1950,33 @@ function Get-PackageSemanticVersion
         $packageSemanticVersion = $packageVersionTokens[0],$packageVersionTokens[1],$packageVersionTokens[2],$packageRevisionTokens -join '.'
     } else {
         throw "Cannot create Semantic Version from the string $Version containing 4 or more tokens"
+    }
+
+    $packageSemanticVersion
+}
+
+# Builds coming out of this project can have version number as 'M.m.p-previewName[Number]' OR 'M.m.p'
+# This function converts the above version into semantic version major.minor.patch[~previewName[Number]] format
+function Get-LinuxPackageSemanticVersion
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidatePattern("^\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('-')
+
+    if ($packageVersionTokens.Count -eq 1) {
+        # In case the input is of the form a.b.c, we use the same form
+        $packageSemanticVersion = $Version
+    } elseif ($packageVersionTokens.Count -ge 2) {
+        $packageRevisionTokens = ($packageVersionTokens[1..($packageVersionTokens.Count-1)] -join '-')
+        $packageSemanticVersion = ('{0}~{1}' -f  $packageVersionTokens[0], $packageRevisionTokens)
     }
 
     $packageSemanticVersion
@@ -2050,6 +2082,11 @@ function New-MSIPackage
         [ValidateScript( {Test-Path $_})]
         [string] $ProductWxsPath = "$PSScriptRoot\..\..\assets\Product.wxs",
 
+        # File describing the MSI file components
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $FilesWxsPath = "$PSScriptRoot\..\..\assets\Files.wxs",
+
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
@@ -2089,6 +2126,7 @@ function New-MSIPackage
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $isPreview = $ProductSemanticVersion -like '*-*'
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
@@ -2099,26 +2137,41 @@ function New-MSIPackage
 
     $productVersionWithName = $ProductName + '_' + $ProductVersion
     $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+    $productDirectoryName = 'PowerShell_6'
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
     [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
     # These variables are used by Product.wxs in assets directory
+    [Environment]::SetEnvironmentVariable("ProductDirectoryName", $productDirectoryName, "Process")
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
     [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+    if(!$isPreview)
+    {
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
+    }
+    else
+    {
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
+        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
+    }
+    $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
     {
+        $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
     }
     [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
+    [Environment]::SetEnvironmentVariable("FileArchitecture", $fileArchitecture, "Process")
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-Path $env:Temp "Fragment.wixobj"
+    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
@@ -2137,13 +2190,14 @@ function New-MSIPackage
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
-    log "running heat..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Write-Log "verifying no new files have been added or removed..."
+    Start-NativeExecution -VerboseOutputOnError { & $wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
 
-    log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
+    Write-Log "running candle..."
+    Start-NativeExecution -VerboseOutputOnError { & $wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
 
-    log "running light..."
+    Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
     Start-NativeExecution -VerboseOutputOnError {& $wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
@@ -2169,6 +2223,82 @@ function New-MSIPackage
            Add-AppveyorCompilationMessage $errorMessage -Category Error -FileName $MyInvocation.ScriptName -Line $MyInvocation.ScriptLineNumber
         }
         throw $errorMessage
+    }
+}
+
+# verify no files have been added or removed
+# if so, write an error with details
+function Test-FileWxs
+{
+    param
+    (
+        # File describing the MSI file components from the asset folder
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $FilesWxsPath = "$PSScriptRoot\..\..\assets\Files.wxs",
+
+        # File describing the MSI file components generated by heat
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $HeatFilesWxsPath
+    )
+
+    # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
+    # Wix will update this automaticaly, but the output is not the same xml
+    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
+
+    [xml] $filesAssetXml = $filesAssetString
+    [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
+    $assetFiles = $filesAssetXml.GetElementsByTagName('File')
+    $heatFiles = $heatFilesXml.GetElementsByTagName('File')
+    $indexedHeatFiles = @()
+
+    # Index the list of files generated by heat
+    foreach($file in $heatFiles)
+    {
+        $indexedHeatFiles += $file.Source
+    }
+
+    # Index the files from the asset wxs
+    # and verify that no files have been removed.
+    $passed = $true
+    $indexedAssetFiles = @()
+    foreach($file in $assetFiles)
+    {
+        $name = $file.Source
+        if($indexedHeatFiles -inotcontains $name)
+        {
+            $passed = $false
+            Write-Warning "{$name} is no longer in product and should be removed from {$FilesWxsPath}"
+        }
+        $indexedAssetFiles += $name
+    }
+
+    # verify that no files have been added.
+    foreach($file in $indexedHeatFiles)
+    {
+        if($indexedAssetFiles -inotcontains $file)
+        {
+            $passed = $false
+            Write-Warning "new file {$file} need to be added to {$FilesWxsPath}"
+        }
+    }
+
+    if(!$passed)
+    {
+        if($env:appveyor)
+        {
+            try
+            {
+                Push-AppveyorArtifact $HeatFilesWxsPath
+            }
+            catch
+            {
+                Write-Warning -Message "Pushing MSI File fragment failed."
+            }
+        }
+
+        throw "Current files to not match  {$FilesWxsPath}"
     }
 }
 

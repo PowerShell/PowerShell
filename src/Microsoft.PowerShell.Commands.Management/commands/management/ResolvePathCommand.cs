@@ -105,13 +105,26 @@ namespace Microsoft.PowerShell.Commands
                     {
                         foreach (PathInfo currentPath in result)
                         {
+                            // When result path and base path is on different PSDrive
+                            // (../)*path should not go beyond the root of base path
+                            if (currentPath.Drive != SessionState.Path.CurrentLocation.Drive &&
+                                SessionState.Path.CurrentLocation.Drive != null &&
+                                !currentPath.ProviderPath.StartsWith(
+                                    SessionState.Path.CurrentLocation.Drive.Root, StringComparison.OrdinalIgnoreCase))
+                            {
+                                WriteObject(currentPath.Path, enumerateCollection: false);
+                                continue;
+                            }
                             string adjustedPath = SessionState.Path.NormalizeRelativePath(currentPath.Path,
                                 SessionState.Path.CurrentLocation.ProviderPath);
-                            if (!adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                            // Do not insert './' if result path is not relative
+                            if (!adjustedPath.StartsWith(
+                                    currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
+                                !adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }
-                            WriteObject(adjustedPath, false);
+                            WriteObject(adjustedPath, enumerateCollection: false);
                         }
                     }
                 }
@@ -150,7 +163,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_relative)
                 {
-                    WriteObject(result, true);
+                    WriteObject(result, enumerateCollection: true);
                 }
             }
         } // ProcessRecord

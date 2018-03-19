@@ -446,16 +446,26 @@ function Get-ReleaseTag
 # Implements AppVeyor 'on_finish' step
 function Invoke-AppveyorFinish
 {
-    $exitCode = 0
     try {
         $releaseTag = Get-ReleaseTag
+
+        # Build clean before backing to remove files from testing
+        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -Clean
 
         # Build packages
         $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $releaseTag -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
-            $null = $artifacts.Add($package)
+            if($package -is [string])
+            {
+                $null = $artifacts.Add($package)
+            }
+            elseif($package -is [pscustomobject] -and $package.msi)
+            {
+                $null = $artifacts.Add($package.msi)
+                $null = $artifacts.Add($package.wixpdb)
+            }
         }
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
@@ -477,8 +487,8 @@ function Invoke-AppveyorFinish
         }
 
         # Smoke Test MSI installer
-        Write-Verbose "Smoke-Testing MSI installer" -Verbose
-        $msi = $artifacts | Where-Object { $_.EndsWith(".msi") }
+        Write-Log "Smoke-Testing MSI installer"
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
         $msiLog = Join-Path (Get-Location) 'msilog.txt'
         $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
         if ($msiExecProcess.ExitCode -ne 0)
@@ -487,7 +497,7 @@ function Invoke-AppveyorFinish
             $exitCode = $msiExecProcess.ExitCode
             throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
-        Write-Verbose "MSI smoke test was successful" -Verbose
+        Write-Log "MSI smoke test was successful"
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
@@ -503,11 +513,11 @@ function Invoke-AppveyorFinish
         if (Test-DailyBuild)
         {
             # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
             $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
             $artifacts.Add($arm32Package)
 
-            Start-PSBuild -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
             $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
             $artifacts.Add($arm64Package)
         }
@@ -530,7 +540,7 @@ function Invoke-AppveyorFinish
 
             if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
             {
-                log "pushing $_ to $env:NUGET_URL"
+                Write-Log "pushing $_ to $env:NUGET_URL"
                 Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
             }
         }
@@ -541,14 +551,6 @@ function Invoke-AppveyorFinish
     }
     catch {
         Write-Host -Foreground Red $_
-    }
-    finally {
-        # A throw statement would not make the build fail. This function is AppVeyor specific
-        # and is the only command executed in 'on_finish' phase, so it's safe that we request
-        # the current runspace to exit with the specified exit code. If the exit code is non-zero,
-        # AppVeyor will fail the build.
-        # See this link for details:
-        # https://help.appveyor.com/discussions/problems/4498-powershell-exception-in-test_script-does-not-fail-build
-        $host.SetShouldExit($exitCode)
+        throw $_
     }
 }

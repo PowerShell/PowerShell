@@ -20,24 +20,24 @@ try {
             $sessionName = [guid]::NewGuid()
             $session = New-CimSession -ComputerName . -name $sessionName
             $sessions += $session
-            $session.Name | Should be $sessionName
-            $session.InstanceId  | should BeOfType "System.Guid"
+            $session.Name | Should -Be $sessionName
+            $session.InstanceId  | Should -BeOfType "System.Guid"
         }
         It "A Cim session can be retrieved" {
             $sessionName = [guid]::NewGuid()
             $session = New-CimSession -ComputerName . -name $sessionName
             $sessions += $session
-            (get-cimsession -Name $sessionName).InstanceId | should be $session.InstanceId
-            (get-cimsession -Id $session.Id).InstanceId | should be $session.InstanceId
-            (get-cimsession -InstanceId $session.InstanceId).InstanceId | should be $session.InstanceId
+            (get-cimsession -Name $sessionName).InstanceId | Should -Be $session.InstanceId
+            (get-cimsession -Id $session.Id).InstanceId | Should -Be $session.InstanceId
+            (get-cimsession -InstanceId $session.InstanceId).InstanceId | Should -Be $session.InstanceId
         }
         It "A cim session can be removed" {
             $sessionName = [guid]::NewGuid()
             $session = New-CimSession -ComputerName . -name $sessionName
             $sessions += $session
-            $session.Name | Should be $sessionName
+            $session.Name | Should -Be $sessionName
             $session | Remove-CimSession
-            Get-CimSession $session.Id -ErrorAction SilentlyContinue | should BeNullOrEmpty
+            Get-CimSession $session.Id -ErrorAction SilentlyContinue | Should -BeNullOrEmpty
         }
     }
 }

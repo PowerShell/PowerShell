@@ -24,7 +24,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
+            $_.FullyQualifiedErrorId | Should -Be 'CommandNotFoundException'
         }
     }
 
@@ -37,7 +37,7 @@ Describe "Command Discovery tests" -Tags "CI" {
             New-Item -Path "$TestDrive\\TestFunctionA\TestFunctionA.psm1" -Value "function TestFunctionA {}" | Out-Null
 
             $env:PSModulePath = "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
-            (Get-command 'TestFunctionA').count | Should Be 1
+            (Get-command 'TestFunctionA').count | Should -Be 1
         }
         finally
         {
@@ -50,10 +50,10 @@ Describe "Command Discovery tests" -Tags "CI" {
             Set-Alias 'AliasCommandDiscoveryTest' Get-ChildItem
             $commands = (Get-Command 'AliasCommandDiscoveryTest')
 
-            $commands.Count | Should Be 1
+            $commands.Count | Should -Be 1
             $aliasResult = $commands -as [System.Management.Automation.AliasInfo]
-            $aliasResult | Should BeOfType [System.Management.Automation.AliasInfo]
-            $aliasResult.Name | Should Be 'AliasCommandDiscoveryTest'
+            $aliasResult | Should -BeOfType [System.Management.Automation.AliasInfo]
+            $aliasResult.Name | Should -Be 'AliasCommandDiscoveryTest'
     }
 
     It "Cyclic aliases - direct" {
@@ -66,7 +66,7 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
+            $_.FullyQualifiedErrorId | Should -Be 'CommandNotFoundException'
         }
     }
 
@@ -81,27 +81,27 @@ Describe "Command Discovery tests" -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
+            $_.FullyQualifiedErrorId | Should -Be 'CommandNotFoundException'
         }
     }
 
     It "Get-Command should return only CmdletInfo, FunctionInfo, AliasInfo or FilterInfo" {
 
          $commands = Get-Command
-         $commands.Count | Should BeGreaterThan 0
+         $commands.Count | Should -BeGreaterThan 0
 
         foreach($command in $commands)
         {
-            $command.GetType().Name | Should BeIn @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
+            $command.GetType().Name | Should -BeIn @("AliasInfo","FunctionInfo","CmdletInfo","FilterInfo")
         }
     }
 
     It "Non-existent commands with wildcard should not write errors" {
         Get-Command "CommandDoesNotExist*" -ErrorVariable ev -ErrorAction SilentlyContinue
-        $ev | Should BeNullOrEmpty
+        $ev | Should -BeNullOrEmpty
     }
 
     It "Get- is prepended to commands" {
-        (& 'location').Path | Should Be (get-location).Path
+        (& 'location').Path | Should -Be (get-location).Path
     }
 }
