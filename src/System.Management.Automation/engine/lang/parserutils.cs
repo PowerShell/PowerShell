@@ -631,22 +631,54 @@ namespace System.Management.Automation
 
         private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
-            List<string> results = new List<string>();
-            foreach (string item in content)
+            // If user supplied a negative Max-substrings argument,
+            // we employ Right-to-Left splitting instead
+            bool rightToLeft = limit < 0;
+
+            limit = System.Math.Abs(limit);
+
+            if (limit == 1)
             {
-                List<string> split = new List<String>();
+                // Don't bother with looking for any delimiters,
+                // just return the original string(s).
+                return new List<String>(content);
+            }
 
-                if (limit == 1)
+            List<string> results = new List<string>();
+
+            List<char> buf = new List<char>();
+
+            foreach (string item in content)
+            {                
+                List<string> split; 
+                if(limit == 0)
                 {
-                    // Don't bother with looking for any delimiters,
-                    // just return the original string.
-                    results.Add(item);
-                    continue;
+                    // No limit specified
+                    // set capacity to item.Length + 1
+                    // this covers worst common case (predicate == {$true})
+                    split = new List<String>(item.Length + 1);
                 }
-
-                StringBuilder buf = new StringBuilder();
-                for (int strIndex = 0; strIndex < item.Length; strIndex++)
+                else
                 {
+                    // Limit was specified by the user
+                    // instantiate list with maximum needed capacity
+                    split = new List<String>(limit);
+                }
+                
+                // Clear char buffer
+                buf.Clear(); 
+
+                int strIndex = 0;
+                for (int cursor = 0; cursor < item.Length; cursor++)
+                {
+                    if(rightToLeft)
+                    {
+                        strIndex = item.Length - 1 - cursor;
+                    }
+                    else
+                    {
+                        strIndex = cursor;
+                    }
                     object isDelimChar = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
@@ -656,8 +688,12 @@ namespace System.Management.Automation
                         args: new object[] { item, strIndex });
                     if (LanguagePrimitives.IsTrue(isDelimChar))
                     {
-                        split.Add(buf.ToString());
-                        buf = new StringBuilder();
+                        if(rightToLeft)
+                        {
+                            buf.Reverse();
+                        }
+                        split.Add(string.Concat(buf));
+                        buf.Clear();
 
                         if (limit > 0 && split.Count >= (limit - 1))
                         {
@@ -666,9 +702,16 @@ namespace System.Management.Automation
                             // and add it as the last item, otherwise
                             // add an empty string if there was
                             // a delimiter at the end.
-                            if ((strIndex + 1) < item.Length)
+                            if ((cursor + 1) < item.Length)
                             {
-                                split.Add(item.Substring(strIndex + 1));
+                                if(rightToLeft)
+                                {
+                                    split.Add(item.Substring(0, strIndex));
+                                }
+                                else
+                                {
+                                    split.Add(item.Substring(strIndex + 1));
+                                }
                             }
                             else
                             {
@@ -680,24 +723,34 @@ namespace System.Management.Automation
                         // If this delimiter is at the end of the string,
                         // add an empty string to denote the item "after"
                         // it.
-                        if (strIndex == (item.Length - 1))
+                        if (cursor == (item.Length - 1))
                         {
                             split.Add("");
                         }
                     }
                     else
                     {
-                        buf.Append(item[strIndex]);
+                        buf.Add(item[strIndex]);
                     }
                 }
 
                 // Add any remainder, if we're under the limit.
-                if (buf.Length > 0 &&
-                    (limit <= 0 || split.Count < limit))
+                if (buf.Count > 0 &&
+                    (limit == 0 || split.Count < limit))
                 {
-                    split.Add(buf.ToString());
+                    if(rightToLeft)
+                    {
+                        buf.Reverse();
+                    }
+                    split.Add(string.Concat(buf));
                 }
 
+                if(rightToLeft)
+                {
+                    // We want to preserve the order from the
+                    // original string (always output chunks left-to-right)
+                    split.Reverse();
+                }
                 ExtendList(results, split);
             }
 
@@ -727,20 +780,22 @@ namespace System.Management.Automation
                 separatorPattern = Regex.Escape(separatorPattern);
             }
 
+            RegexOptions regexOptions = parseRegexOptions(options);
+
             if (limit < 0)
             {
-                // Regex only allows 0 to signify "no limit", whereas
-                // we allow any integer <= 0.
-                limit = 0;
+                // If user-suppplied limit is negative we
+                // interpret it as "split Right-to-Left".
+                regexOptions |= RegexOptions.RightToLeft;
+                limit = System.Math.Abs(limit);
             }
 
-            RegexOptions regexOptions = parseRegexOptions(options);
             Regex regex = NewRegex(separatorPattern, regexOptions);
 
             List<string> results = new List<string>();
             foreach (string item in content)
             {
-                string[] split = regex.Split(item, limit, 0);
+                string[] split = regex.Split(item, limit);
                 ExtendList(results, split);
             }
 
