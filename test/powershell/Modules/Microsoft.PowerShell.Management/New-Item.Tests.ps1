@@ -143,7 +143,7 @@ Describe "New-Item" -Tags "CI" {
 
         $fileInfo = Get-Item $FullyQualifiedLinkSp
         $fileInfo.Target | Should -BeExactly $expectedTarget
-        $fileInfo.LinkType | Should Be "Junction"
+        $fileInfo.LinkType | Should -BeExactly "Junction"
     }
 }
 
