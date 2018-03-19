@@ -51,7 +51,9 @@ COPY --from=installer-env ["\\PowerShell\\", "$ProgramFiles\\PowerShell"]
 # Persist %PSCORE% ENV variable for user convenience
 ENV PSCORE="$ProgramFiles\PowerShell\pwsh.exe"
 
-# Set the path
-RUN setx PATH "%PATH%;%ProgramFiles%\PowerShell"
+# Set the path for all users
+USER ContainerAdministrator
+RUN setx /M PATH "%PATH%;%ProgramFiles%\PowerShell"
+USER ContainerUser
 
 CMD ["pwsh.exe"]
