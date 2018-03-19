@@ -29,11 +29,11 @@ bazz = 2
     }
 
     It "Should throw if not in x=y format" {
-	{ ConvertFrom-StringData -StringData 'ab' }  | Should -Throw
-	{ ConvertFrom-StringData -StringData 'a,b' } | Should -Throw
-	{ ConvertFrom-StringData -StringData 'a b' } | Should -Throw
-	{ ConvertFrom-StringData -StringData 'a\tb' } | Should -Throw
-	{ ConvertFrom-StringData -StringData 'a:b' } | Should -Throw
+	{ ConvertFrom-StringData -StringData 'ab' }  | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+	{ ConvertFrom-StringData -StringData 'a,b' } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+	{ ConvertFrom-StringData -StringData 'a b' } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+	{ ConvertFrom-StringData -StringData 'a\tb' } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
+	{ ConvertFrom-StringData -StringData 'a:b' } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
     }
 
     It "Should return the data on the left side in the key" {
