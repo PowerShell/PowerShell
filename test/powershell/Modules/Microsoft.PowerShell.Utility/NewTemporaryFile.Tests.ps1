@@ -33,6 +33,6 @@ Describe "New-TemporaryFile" -Tags "CI" {
     }
 
     It "has an OutputType of System.IO.FileInfo" {
-        (Get-Command New-TemporaryFile).OutputType | Should -Be "System.IO.FileInfo"
+        (Get-Command New-TemporaryFile).OutputType | Should -BeExactly "System.IO.FileInfo"
     }
 }

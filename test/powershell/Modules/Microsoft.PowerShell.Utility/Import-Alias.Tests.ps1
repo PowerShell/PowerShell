@@ -73,11 +73,11 @@ Describe "Import-Alias" -Tags "CI" {
 
 	It "Should be able to import an alias file and perform imported aliased echo cmd" {
 	    (Import-Alias $pesteraliasfile)
-	    (pesterecho pestertesting) | Should -Be "pestertesting"
+	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
 	}
 
 	It "Should be able to use ipal alias to import an alias file and perform cmd" {
 	    (ipal $pesteraliasfile)
-	    (pesterecho pestertesting) | Should -Be "pestertesting"
+	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
 	}
 }

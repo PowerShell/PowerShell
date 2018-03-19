@@ -98,13 +98,13 @@ set-psbreakpoint -command foo
 
     It "Should be able to set psbreakpoints for -command" {
         $brk = set-psbreakpoint -command "write-host"
-        $brk.Command | Should -Be "write-host"
+        $brk.Command | Should -BeExactly "write-host"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "Should be able to set psbreakpoints for -command, -script" {
         $brk = set-psbreakpoint -command "write-host" -script $scriptFileName
-        $brk.Command | Should -Be "write-host"
+        $brk.Command | Should -BeExactly "write-host"
         Remove-PSBreakPoint -Id $brk.Id
     }
 
@@ -122,11 +122,11 @@ set-psbreakpoint -command foo
 
     It "-Script is positional" {
         $brk = set-psbreakpoint -command "Hello" $scriptFileName
-        $brk.Command | Should -Be "Hello"
+        $brk.Command | Should -BeExactly "Hello"
         Remove-PSBreakPoint -Id $brk.Id
 
         $brk = set-psbreakpoint $scriptFileName -command "Hello"
-        $brk.Command | Should -Be "Hello"
+        $brk.Command | Should -BeExactly "Hello"
         Remove-PSBreakPoint -Id $brk.Id
     }
 

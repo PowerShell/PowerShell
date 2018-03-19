@@ -114,7 +114,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $al | Add-Member -MemberType ScriptProperty -Name NewDescription -Value {$this.Description} -SecondValue {$this.Description=$args[0]}
         $al.NewDescription | Should -BeExactly 'MyDescription'
         $al.NewDescription = "some description"
-        $al.NewDescription | Should -Be 'some description'
+        $al.NewDescription | Should -BeExactly 'some description'
     }
 
     It "Add TypeName MemberSet Success" {
@@ -159,16 +159,16 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Simplified Add-Member should support using 'Property' as the NoteProperty member name" {
         $results = add-member -InputObject a property Any -passthru
-        $results.property | Should -Be 'Any'
+        $results.property | Should -BeExactly 'Any'
 
         $results = add-member -InputObject a Method Any -passthru
-        $results.Method | Should -Be 'Any'
+        $results.Method | Should -BeExactly 'Any'
 
         $results = add-member -InputObject a 23 Any -passthru
-        $results.23 | Should -Be 'Any'
+        $results.23 | Should -BeExactly 'Any'
 
         $results = add-member -InputObject a 8 np Any -passthru
-        $results.np | Should -Be 'Any'
+        $results.np | Should -BeExactly 'Any'
 
         $results = add-member -InputObject a 16 sp {1+1} -passthru
         $results.sp | Should -Be 2
@@ -190,7 +190,7 @@ Describe "Add-Member" -Tags "CI" {
 	Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
 
 	$o.proppy | Should -Not -BeNullOrEmpty
-	$o.proppy | Should -Be "superVal"
+	$o.proppy | Should -BeExactly "superVal"
     }
 
     It "Should be able to add a member to an object that already has a member in it" {
@@ -199,6 +199,6 @@ Describe "Add-Member" -Tags "CI" {
 	Add-Member -InputObject $o -MemberType NoteProperty -Name AnotherMember -Value "AnotherValue"
 
 	$o.AnotherMember | Should -Not -BeNullOrEmpty
-	$o.AnotherMember | Should -Be "AnotherValue"
+	$o.AnotherMember | Should -BeExactly "AnotherValue"
     }
 }

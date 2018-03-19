@@ -98,9 +98,9 @@ Describe "Out-File" -Tags "CI" {
         $actual = Get-Content $testfile
 
         $actual[0] | Should -BeNullOrEmpty
-        $actual[1] | Should -Be "text"
-        $actual[2] | Should -Be "----"
-        $actual[3] | Should -Be "some te..."
+        $actual[1] | Should -BeExactly "text"
+        $actual[2] | Should -BeExactly "----"
+        $actual[3] | Should -BeExactly "some te..."
     }
 
     It "Should allow the cmdlet to overwrite an existing read-only file" {

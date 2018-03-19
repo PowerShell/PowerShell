@@ -80,6 +80,6 @@ Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
     It "Remove Type File In Initial Session State File Not In Cache" {
         $null = $ps.AddScript("Remove-TypeData -Path fakefile").Invoke()
         $ps.HadErrors | Should -BeTrue
-        $ps.Streams.Error[0].FullyQualifiedErrorID | Should -Be "TypePathException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
+        $ps.Streams.Error[0].FullyQualifiedErrorID | Should -BeExactly "TypePathException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
     }
 }

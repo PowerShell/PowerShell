@@ -11,81 +11,81 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Named Single Valid"{
             Set-Alias -Name ABCD -Value "foo"
             $result=Get-Alias -Name ABCD
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
     }
     It "Get-Alias Positional Single Valid"{
             Set-Alias -Name ABCD -Value "foo"
             $result=Get-Alias ABCD
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
     }
     It "Get-Alias Named Multiple Valid"{
             Set-Alias -Name ABCD -Value "foo"
             Set-Alias -Name AEFG -Value "bar"
             $result=Get-Alias -Name ABCD,AEFG
-            $result[0].Name| Should -Be "ABCD"
-            $result[0].Definition| Should -Be "foo"
+            $result[0].Name| Should -BeExactly "ABCD"
+            $result[0].Definition| Should -BeExactly "foo"
             $result[0].Description| Should -BeNullOrEmpty
-            $result[0].Options| Should -Be "None"
-            $result[1].Name| Should -Be "AEFG"
-            $result[1].Definition| Should -Be "bar"
+            $result[0].Options| Should -BeExactly "None"
+            $result[1].Name| Should -BeExactly "AEFG"
+            $result[1].Definition| Should -BeExactly "bar"
             $result[1].Description| Should -BeNullOrEmpty
-            $result[1].Options| Should -Be "None"
+            $result[1].Options| Should -BeExactly "None"
     }
     It "Get-Alias Named Wildcard Valid"{
             Set-Alias -Name ABCD -Value "foo"
             Set-Alias -Name ABCG -Value "bar"
             $result=Get-Alias -Name ABC*
-            $result[0].Name| Should -Be "ABCD"
-            $result[0].Definition| Should -Be "foo"
+            $result[0].Name| Should -BeExactly "ABCD"
+            $result[0].Definition| Should -BeExactly "foo"
             $result[0].Description| Should -BeNullOrEmpty
-            $result[0].Options| Should -Be "None"
-            $result[1].Name| Should -Be "ABCG"
-            $result[1].Definition| Should -Be "bar"
+            $result[0].Options| Should -BeExactly "None"
+            $result[1].Name| Should -BeExactly "ABCG"
+            $result[1].Definition| Should -BeExactly "bar"
             $result[1].Description| Should -BeNullOrEmpty
-            $result[1].Options| Should -Be "None"
+            $result[1].Options| Should -BeExactly "None"
     }
     It "Get-Alias Positional Wildcard Valid"{
             Set-Alias -Name ABCD -Value "foo"
             Set-Alias -Name ABCG -Value "bar"
             $result=Get-Alias ABC*
-            $result[0].Name| Should -Be "ABCD"
-            $result[0].Definition| Should -Be "foo"
+            $result[0].Name| Should -BeExactly "ABCD"
+            $result[0].Definition| Should -BeExactly "foo"
             $result[0].Description| Should -BeNullOrEmpty
-            $result[0].Options| Should -Be "None"
-            $result[1].Name| Should -Be "ABCG"
-            $result[1].Definition| Should -Be "bar"
+            $result[0].Options| Should -BeExactly "None"
+            $result[1].Name| Should -BeExactly "ABCG"
+            $result[1].Definition| Should -BeExactly "bar"
             $result[1].Description| Should -BeNullOrEmpty
-            $result[1].Options| Should -Be "None"
+            $result[1].Options| Should -BeExactly "None"
     }
     It "Get-Alias Named Wildcard And Exclude Valid"{
             Set-Alias -Name ABCD -Value "foo"
             Set-Alias -Name ABCG -Value "bar"
             $result=Get-Alias -Name ABC* -Exclude "*BCG"
-            $result[0].Name| Should -Be "ABCD"
-            $result[0].Definition| Should -Be "foo"
+            $result[0].Name| Should -BeExactly "ABCD"
+            $result[0].Definition| Should -BeExactly "foo"
             $result[0].Description| Should -BeNullOrEmpty
-            $result[0].Options| Should -Be "None"
+            $result[0].Options| Should -BeExactly "None"
     }
     It "Get-Alias Scope Valid"{
             Set-Alias -Name ABCD -Value "foo"
             $result=Get-Alias -Name ABCD
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             Set-Alias -Name ABCD -Value "localfoo" -scope local
             $result=Get-Alias -Name ABCD -scope local
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "localfoo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "localfoo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             Set-Alias -Name ABCD -Value "globalfoo" -scope global
             Set-Alias -Name ABCD -Value "scriptfoo" -scope "script"
@@ -93,40 +93,40 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             Set-Alias -Name ABCD -Value "foo1" -scope "1"
 
             $result=Get-Alias -Name ABCD
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo0"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo0"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             $result=Get-Alias -Name ABCD -scope local
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo0"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo0"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             $result=Get-Alias -Name ABCD -scope global
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "globalfoo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "globalfoo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             $result=Get-Alias -Name ABCD -scope "script"
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "scriptfoo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "scriptfoo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             $result=Get-Alias -Name ABCD -scope "0"
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo0"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo0"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             $result=Get-Alias -Name ABCD -scope "1"
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo1"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo1"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
     }
     It "Get-Alias Expose Bug 1065828, BugId:905235"{
             { Get-Alias -Name "ABCD" -Scope "100" } | Should -Throw -ErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
@@ -134,16 +134,16 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Zero Scope Valid"{
             Set-Alias -Name ABCD -Value "foo"
             $result=Get-Alias -Name ABCD
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
 
             $result=Get-Alias -Name ABCD -scope "0"
-            $result.Name| Should -Be "ABCD"
-            $result.Definition| Should -Be "foo"
+            $result.Name| Should -BeExactly "ABCD"
+            $result.Definition| Should -BeExactly "foo"
             $result.Description| Should -BeNullOrEmpty
-            $result.Options| Should -Be "None"
+            $result.Options| Should -BeExactly "None"
     }
 
     It "Test get-alias with Definition parameter" {

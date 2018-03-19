@@ -39,21 +39,21 @@ bazz = 2
     It "Should return the data on the left side in the key" {
 	$actualValue = ConvertFrom-StringData -StringData 'a=b'
 
-	$actualValue.Keys | Should -Be "a"
+	$actualValue.Keys | Should -BeExactly "a"
     }
 
     It "Should return the data on the right side in the value" {
 	$actualValue = ConvertFrom-StringData -StringData 'a=b'
 
-	$actualValue.Values | Should -Be "b"
+	$actualValue.Values | Should -BeExactly "b"
     }
 
     It "Should return a keycollection for the keys" {
-        $(ConvertFrom-StringData -StringData 'a=b').Keys.PSObject.TypeNames[0] | Should -Be "System.Collections.Hashtable+KeyCollection"
+        $(ConvertFrom-StringData -StringData 'a=b').Keys.PSObject.TypeNames[0] | Should -BeExactly "System.Collections.Hashtable+KeyCollection"
     }
 
     It "Should return a valuecollection for the values" {
-	$(ConvertFrom-StringData -StringData 'a=b').Values.PSObject.TypeNames[0] | Should -Be "System.Collections.Hashtable+ValueCollection"
+	$(ConvertFrom-StringData -StringData 'a=b').Values.PSObject.TypeNames[0] | Should -BeExactly "System.Collections.Hashtable+ValueCollection"
     }
 
     It "Should work for multiple lines" {

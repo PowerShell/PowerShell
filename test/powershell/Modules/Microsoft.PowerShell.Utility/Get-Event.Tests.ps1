@@ -24,7 +24,7 @@ Describe "Get-Event" -Tags "CI" {
 	}
 
 	It "Should return PesterTestMessage as the MessageData" {
-	    { (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should -Be "PesterTestMessage" }
+	    { (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should -BeExactly "PesterTestMessage" }
 	}
 
 	It "Should return Sender as Windows.timer" {

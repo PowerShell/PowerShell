@@ -31,19 +31,19 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Sort-Object -Property YearsInMS
 
-		$results[0].FirstName | Should -Be "Minus"
-		$results[0].LastName | Should -Be "Two"
+		$results[0].FirstName | Should -BeExactly "Minus"
+		$results[0].LastName | Should -BeExactly "Two"
 		$results[0].YearsInMS | Should -Be -2
 
-		$results[1].FirstName | Should -Be "Eight"
+		$results[1].FirstName | Should -BeExactly "Eight"
 		$results[1].YearsInMS | Should -BeNullOrEmpty
 
-		$results[2].FirstName | Should -Be "One"
-		$results[2].LastName | Should -Be "One"
+		$results[2].FirstName | Should -BeExactly "One"
+		$results[2].LastName | Should -BeExactly "One"
 		$results[2].YearsInMS | Should -Be 1
 
-		$results[3].FirstName | Should -Be "Eight"
-		$results[3].LastName | Should -Be "Eight"
+		$results[3].FirstName | Should -BeExactly "Eight"
+		$results[3].LastName | Should -BeExactly "Eight"
 		$results[3].YearsInMS | Should -Be 8
 	}
 

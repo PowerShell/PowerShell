@@ -40,7 +40,7 @@ Describe "Export-FormatData" -Tags "CI" {
 	    It "Should have a valid xml tag at the start of the file" {
 	        Get-FormatData | Export-FormatData -Path $testOutput
 	        $piped = Get-Content $testOutput
-	        $piped[0] | Should -Be "<"
+	        $piped[0] | Should -BeExactly "<"
 	    }
     }
 }

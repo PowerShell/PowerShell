@@ -12,7 +12,7 @@ Describe "New-Event" -Tags "CI" {
     Context "Check New-Event can register an event"{
 	It "Should return PesterTestMessage as the MessageData" {
 	    (New-Event -sourceidentifier PesterTimer -sender Windows.timer -messagedata "PesterTestMessage")
-	    (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should -Be "PesterTestMessage"
+	    (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should -BeExactly "PesterTestMessage"
 	    Remove-Event -sourceidentifier PesterTimer
 	}
 

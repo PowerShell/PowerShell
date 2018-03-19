@@ -36,7 +36,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable tmpvar2 -Value 2
 	New-Variable tmpmyvar1 -Value 234
 
-	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar1   | Should -BeExactly "tempvalue"
 	$tmpvar2   | Should -Be 2
 	$tmpmyvar1 | Should -Be 234
 
@@ -52,7 +52,7 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable tmpvar2 -Value 2
 	New-Variable tmpmyvar1 -Value 234
 
-	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar1   | Should -BeExactly "tempvalue"
 	$tmpvar2   | Should -Be 2
 	$tmpmyvar1 | Should -Be 234
 
@@ -69,14 +69,14 @@ Describe "Remove-Variable" -Tags "CI" {
 	New-Variable tmpmyvar1 -Value 234
 	New-Variable thevar -Value 1
 
-	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar1   | Should -BeExactly "tempvalue"
 	$tmpvar2   | Should -Be 2
 	$tmpmyvar1 | Should -Be 234
 	$thevar    | Should -Be 1
 
 	Remove-Variable -Name tmp* -Include *my*
 
-	$tmpvar1   | Should -Be "tempvalue"
+	$tmpvar1   | Should -BeExactly "tempvalue"
 	$tmpvar2   | Should -Be 2
 	$tmpmyvar1 | Should -Be #nothing.  it should be Nothing at all.
 	$thevar    | Should -Be 1
@@ -119,7 +119,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should -Be "context"
+	    $var1 | Should -BeExactly "context"
 
 	    Remove-Variable -Name var1 -Scope global
 	    $var1 | Should -BeNullOrEmpty
@@ -130,7 +130,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope local -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should -Be "context"
+	    $var1 | Should -BeExactly "context"
 
 	    Remove-Variable -Name var1 -Scope global
 	    $var1 | Should -BeNullOrEmpty
@@ -149,7 +149,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should -Be "context"
+	    $var1 | Should -BeExactly "context"
 
 	    Remove-Variable -Name var1 -Scope local
 	    $var1 | Should -BeNullOrEmpty
@@ -160,7 +160,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope script -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should -Be "context"
+	    $var1 | Should -BeExactly "context"
 
 	    Remove-Variable -Name var1 -Scope local
 	    $var1 | Should -BeNullOrEmpty
@@ -179,7 +179,7 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	    { Remove-Variable -Name var1 -Scope global -ErrorAction Stop } | Should -Throw
 
-	    $var1 | Should -Be "context"
+	    $var1 | Should -BeExactly "context"
 	}
     }
 }
@@ -226,10 +226,10 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		}
 
 		$var1 = Get-Variable -Name foo
-		$var1.Name | Should -Be "foo"
-		$var1.Value | Should -Be "bar"
-		$var1.Options | Should -Be "None"
-		$var1.Description | Should -Be ""
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeExactly ""
 
 	}
 }

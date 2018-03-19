@@ -13,7 +13,7 @@ Describe "Import-LocalizedData" -Tags "CI" {
     It "Should be able to import string using default culture" {
 	# Set-Culture is broken, but let's verify that default culture is en-US
 $culture = Get-Culture
-$culture.Name     | Should -Be "en-US"
+$culture.Name     | Should -BeExactly "en-US"
 
 $d = Import-LocalizedData -FileName $script -BaseDirectory $assetsDir
 $d.d0             | Should -Be $sunday

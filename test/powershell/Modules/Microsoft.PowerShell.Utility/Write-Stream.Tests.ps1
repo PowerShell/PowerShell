@@ -24,7 +24,7 @@ Describe "Stream writer tests" -Tags "CI" {
         It "Should write warnings to the warning stream" {
             Write-Warning "Test Warning" 3>&1 > $targetfile
 
-            Get-Content $targetfile | Should -Be "Test Warning"
+            Get-Content $targetfile | Should -BeExactly "Test Warning"
         }
 
         It "Should write error messages to the error stream" {
@@ -94,15 +94,15 @@ Describe "Stream writer tests" -Tags "CI" {
                 $result.User | Should -Be $(whoami)
             }
 
-            "$result" | Should -Be "Test Message"
+            "$result" | Should -BeExactly "Test Message"
        }
 
        It "Write-Information accept objects from pipe" {
             $ps.AddScript("'teststring',12345 | Write-Information -InformationAction Continue").Invoke()
             $result = $ps.Streams.Information
             $result.Count | Should -Be 2
-            $result[0].MessageData | Should -Be "teststring"
-            $result[1].MessageData | Should -Be "12345"
+            $result[0].MessageData | Should -BeExactly "teststring"
+            $result[1].MessageData | Should -BeExactly "12345"
        }
 
        It "Write-Information works with <Name>" -TestCases:$testInfoData {

@@ -156,9 +156,9 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $results = $emps | Get-Member -MemberType Property
             $results.Length | Should -Be 3
-            $results[0].Name | Should -Be "FirstName"
-            $results[1].Name | Should -Be "LastName"
-            $results[2].Name | Should -Be "YearsInMS"
+            $results[0].Name | Should -BeExactly "FirstName"
+            $results[1].Name | Should -BeExactly "LastName"
+            $results[2].Name | Should -BeExactly "YearsInMS"
         }
 
         It 'Get the Public Methods of "Employee" object' {
@@ -189,8 +189,8 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $results = $emps | Get-Member -MemberType PropertySet
             $results.Length | Should -Be 2
-            $results[0].Name | Should -Be "FullSet"
-            $results[1].Name | Should -Be "PropertySetName"
+            $results[0].Name | Should -BeExactly "FullSet"
+            $results[1].Name | Should -BeExactly "PropertySetName"
         }
     }
 

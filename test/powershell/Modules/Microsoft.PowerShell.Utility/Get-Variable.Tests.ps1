@@ -10,17 +10,17 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 	It "Get-Variable of existing variable Name with include and bogus exclude should work"{
 		Set-Variable newVar testing
 		$var1=get-variable -Name newVar -Include newVar -Exclude bogus
-		$var1.Name|Should -Be "newVar"
-		$var1.Value|Should -Be "testing"
+		$var1.Name|Should -BeExactly "newVar"
+		$var1.Value|Should -BeExactly "testing"
 	}
 
 	It "Get-Variable of existing variable Name with Description and Option should work"{
 		Set-Variable newVar testing -Option ReadOnly -Description "testing description"
 		$var1=get-variable -Name newVar
-		$var1.Name|Should -Be "newVar"
-		$var1.Value|Should -Be "testing"
-		$var1.Options|Should -Be "ReadOnly"
-		$var1.Description|Should -Be "testing description"
+		$var1.Name|Should -BeExactly "newVar"
+		$var1.Value|Should -BeExactly "testing"
+		$var1.Options|Should -BeExactly "ReadOnly"
+		$var1.Description|Should -BeExactly "testing description"
 	}
 
 	It "Get-Variable of existing variable Globbing Name should work"{
@@ -29,12 +29,12 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable aVarfoo wow
 		$var1=get-variable -Name *aVar* -Scope local
 		$var1.Count | Should -Be 3
-		$var1[0].Name|Should -Be "abcaVar"
-		$var1[0].Value|Should -Be "testing"
-		$var1[1].Name|Should -Be "aVarfoo"
-		$var1[1].Value|Should -Be "wow"
-		$var1[2].Name|Should -Be "bcdaVar"
-		$var1[2].Value|Should -Be "another test"
+		$var1[0].Name|Should -BeExactly "abcaVar"
+		$var1[0].Value|Should -BeExactly "testing"
+		$var1[1].Name|Should -BeExactly "aVarfoo"
+		$var1[1].Value|Should -BeExactly "wow"
+		$var1[2].Name|Should -BeExactly "bcdaVar"
+		$var1[2].Value|Should -BeExactly "another test"
 	}
 
 	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
@@ -78,7 +78,7 @@ Describe "Get-Variable" -Tags "CI" {
 		New-Variable -Name var2 -Value "test"
 
 		(Get-Variable -Name var*).Value[0] | Should -Be 4
-		(Get-Variable -Name var*).Value[1] | Should -Be "test"
+		(Get-Variable -Name var*).Value[1] | Should -BeExactly "test"
 
 		Remove-Variable var1
 		Remove-Variable var2

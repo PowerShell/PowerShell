@@ -65,7 +65,7 @@ Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
 		$ps.AddParameter("Depth", 2)
 		$ps.BeginInvoke()
 		$ps.Stop()
-		$ps.InvocationStateInfo.State | Should -Be "Stopped"
+		$ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
     }
 
     # these tests just cover aspects that aren't normally exercised being used as a cmdlet

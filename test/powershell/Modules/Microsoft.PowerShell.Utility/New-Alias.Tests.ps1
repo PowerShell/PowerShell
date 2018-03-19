@@ -11,28 +11,28 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 	It "New-Alias NamePositional And Value Valid" {
 			New-Alias ABCD -Value "MyCommand" -Scope "0"
 			$result=Get-Alias -Name ABCD -Scope "0"
-			$result.Name| Should -Be "ABCD"
-			$result.Definition| Should -Be "MyCommand"
+			$result.Name| Should -BeExactly "ABCD"
+			$result.Definition| Should -BeExactly "MyCommand"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should -Be "None"
+			$result.Options| Should -BeExactly "None"
 	}
 
 	It "New-Alias NamePositional And ValuePositional Valid" {
 			New-Alias ABCD "MyCommand" -Scope "0"
 			$result=Get-Alias -Name ABCD -Scope "0"
-			$result.Name| Should -Be "ABCD"
-			$result.Definition| Should -Be "MyCommand"
+			$result.Name| Should -BeExactly "ABCD"
+			$result.Definition| Should -BeExactly "MyCommand"
 			$result.Description| Should -BeNullOrEmpty
-			$result.Options| Should -Be "None"
+			$result.Options| Should -BeExactly "None"
 	}
 
 	It "New-Alias Description Valid" {
 			New-Alias -Name ABCD -Value "MyCommand" -Description "test description" -Scope "0"
 			$result=Get-Alias -Name ABCD -Scope "0"
-			$result.Name| Should -Be "ABCD"
-			$result.Definition| Should -Be "MyCommand"
-			$result.Description| Should -Be "test description"
-			$result.Options| Should -Be "None"
+			$result.Name| Should -BeExactly "ABCD"
+			$result.Definition| Should -BeExactly "MyCommand"
+			$result.Description| Should -BeExactly "test description"
+			$result.Options| Should -BeExactly "None"
 	}
 }
 

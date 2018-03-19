@@ -5,18 +5,18 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	It "Set-Variable normal variable Name should works"{
 		Set-Variable foo bar
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "None"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "None"
 		$var1.Description|Should -BeNullOrEmpty
 	}
 
 	It "Set-Variable normal variable Name with position should works"{
 		Set-Variable -Name foo bar
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "None"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "None"
 		$var1.Description|Should -BeNullOrEmpty
 	}
 
@@ -25,23 +25,23 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 
 		Set-Variable -Name foo -Value bar -Scope "1"
 		$var1=Get-Variable -Name foo -scope "1"
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "None"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "None"
 		$var1.Description|Should -BeNullOrEmpty
 
 		Set-Variable -Name foo -Value newValue -Scope "local"
 		$var1=Get-Variable -Name foo -scope "local"
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "newValue"
-		$var1.Options|Should -Be "None"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "newValue"
+		$var1.Options|Should -BeExactly "None"
 		$var1.Description|Should -BeNullOrEmpty
 
 		Set-Variable -Name foo -Value newValue2 -Scope "script"
 		$var1=Get-Variable -Name foo -scope "script"
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "newValue2"
-		$var1.Options|Should -Be "None"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "newValue2"
+		$var1.Options|Should -BeExactly "None"
 		$var1.Description|Should -BeNullOrEmpty
 	}
 
@@ -53,19 +53,19 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable -Name "*aV*" -Value "overwrite" -Include "*Var*" -Exclude "bcd*"
 
 		$var1=Get-Variable -Name "*aVar*" -Scope "local"
-		$var1[0].Name|Should -Be "abcaVar"
-		$var1[0].Value|Should -Be "overwrite"
-		$var1[0].Options|Should -Be "None"
+		$var1[0].Name|Should -BeExactly "abcaVar"
+		$var1[0].Value|Should -BeExactly "overwrite"
+		$var1[0].Options|Should -BeExactly "None"
 		$var1[0].Description|Should -BeNullOrEmpty
 
-		$var1[1].Name|Should -Be "aVarfoo"
-		$var1[1].Value|Should -Be "overwrite"
-		$var1[1].Options|Should -Be "None"
+		$var1[1].Name|Should -BeExactly "aVarfoo"
+		$var1[1].Value|Should -BeExactly "overwrite"
+		$var1[1].Options|Should -BeExactly "None"
 		$var1[1].Description|Should -BeNullOrEmpty
 
-		$var1[2].Name|Should -Be "bcdaVar"
-		$var1[2].Value|Should -Be "anotherVal"
-		$var1[2].Options|Should -Be "None"
+		$var1[2].Name|Should -BeExactly "bcdaVar"
+		$var1[2].Value|Should -BeExactly "anotherVal"
+		$var1[2].Options|Should -BeExactly "None"
 		$var1[2].Description|Should -BeNullOrEmpty
 	}
 
@@ -73,20 +73,20 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable foo bar
 		Set-Variable -Name foo $null -Description "new description" -PassThru:$true -Scope "local"
 		$var1=Get-Variable -Name foo -Scope "local"
-		$var1.Name|Should -Be "foo"
+		$var1.Name|Should -BeExactly "foo"
 		$var1.Value|Should -BeNullOrEmpty
-		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be "new description"
+		$var1.Options|Should -BeExactly "None"
+		$var1.Description|Should -BeExactly "new description"
 	}
 
 	It "Set-Variable normal variable Name with just Description should works"{
 		Set-Variable foo bar
 		Set-Variable -Name foo -Description "new description" -PassThru:$true -Scope "local"
 		$var1=Get-Variable -Name foo -Scope "local"
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "None"
-		$var1.Description|Should -Be "new description"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "None"
+		$var1.Description|Should -BeExactly "new description"
 	}
 
 	It "Set-Variable overwrite Constant Option should throw SessionStateUnauthorizedAccessException"{
@@ -97,17 +97,17 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	It "Set-Variable of existing Private variable without force should throw Exception"{
 		Set-Variable abcaVar bar -Description "new description" -Option Private
 		$var1=Get-Variable -Name abcaVar
-		$var1.Name|Should -Be "abcaVar"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "Private"
-		$var1.Description|Should -Be "new description"
+		$var1.Name|Should -BeExactly "abcaVar"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "Private"
+		$var1.Description|Should -BeExactly "new description"
 
 		Set-Variable abcaVar other -Description "new description"
 		$var1=Get-Variable -Name abcaVar
-		$var1.Name|Should -Be "abcaVar"
-		$var1.Value|Should -Be "other"
-		$var1.Options|Should -Be "Private"
-		$var1.Description|Should -Be "new description"
+		$var1.Name|Should -BeExactly "abcaVar"
+		$var1.Value|Should -BeExactly "other"
+		$var1.Options|Should -BeExactly "Private"
+		$var1.Description|Should -BeExactly "new description"
 	}
 
 	It "Set-Variable with Exclude, then Get-Variable it should throw ItemNotFoundException"{
@@ -118,29 +118,29 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	It "Set-Variable of existing ReadOnly variable without force should throw Exception"{
 		Set-Variable abcaVar bar -Description "new description" -Option ReadOnly
 		$var1=Get-Variable -Name abcaVar
-		$var1.Name|Should -Be "abcaVar"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "ReadOnly"
-		$var1.Description|Should -Be "new description"
+		$var1.Name|Should -BeExactly "abcaVar"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "ReadOnly"
+		$var1.Description|Should -BeExactly "new description"
 		{ Set-Variable abcaVar -Option None -Scope 1 -EA Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.SetVariableCommand"
 	}
 
 	It "Set-Variable of ReadOnly variable with private scope should work"{
 		Set-Variable foo bar -Description "new description" -Option ReadOnly -scope "private"
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -Be "foo"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "ReadOnly, Private"
-		$var1.Description|Should -Be "new description"
+		$var1.Name|Should -BeExactly "foo"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "ReadOnly, Private"
+		$var1.Description|Should -BeExactly "new description"
 	}
 
 	It "Set-Variable pipeline with Get-Variable should work"{
 		$footest1="bar"
 		${Get-Variable footest1 -valueonly|Set-Variable bootest1 -passthru}
 		$var1=Get-Variable -Name footest1
-		$var1.Name|Should -Be "footest1"
-		$var1.Value|Should -Be "bar"
-		$var1.Options|Should -Be "None"
+		$var1.Name|Should -BeExactly "footest1"
+		$var1.Value|Should -BeExactly "bar"
+		$var1.Options|Should -BeExactly "None"
 		$var1.Description|Should -BeNullOrEmpty
 	}
 }
@@ -198,7 +198,7 @@ Describe "Set-Variable" -Tags "CI" {
 	$output = $in | Format-List -Property Description | Out-String
 
 	# This will cause errors running these tests in Windows
-	$output.Trim() | Should -Be "Description : test description"
+	$output.Trim() | Should -BeExactly "Description : test description"
     }
 
     It "Should be able to set the value using the value switch" {
@@ -208,7 +208,7 @@ Describe "Set-Variable" -Tags "CI" {
 
 	Set-Variable -Name testVar -Value "test"
 
-	$testVar | Should -Be "test"
+	$testVar | Should -BeExactly "test"
     }
 
     Context "Scope Tests" {

@@ -83,9 +83,9 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input = [pscustomobject]@{ "P1" = "V11"; "P2" = "V12"; "P3" = "V13" }
         $input | Export-Csv -Path $filePath -NoTypeInformation
         $results = Import-Csv $filePath
-        $results.P1 | Should -Be "V11"
-        $results.P2 | Should -Be "V12"
-        $results.P3 | Should -Be "V13"
+        $results.P1 | Should -BeExactly "V11"
+        $results.P2 | Should -BeExactly "V12"
+        $results.P3 | Should -BeExactly "V13"
     }
 
     It "Test if it works with special character" {
@@ -93,8 +93,8 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input = [pscustomobject]@{ "P1" = "  "; "P2" = "abc,foo"; "P3" = $v3}
         $input | Export-Csv -Path $filePath -NoTypeInformation
         $results = Import-Csv $filePath
-        $results.P1 | Should -Be "  "
-        $results.P2 | Should -Be "abc,foo"
+        $results.P1 | Should -BeExactly "  "
+        $results.P2 | Should -BeExactly "abc,foo"
         $results.P3 | Should -Be $v3
     }
 
@@ -106,7 +106,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $input | Export-Csv -Path $filePath -Force
         $results = Import-Csv $filePath
 
-        $results.P2 | Should -Be "second"
+        $results.P2 | Should -BeExactly "second"
         $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
         $property | Should -Not -Be P1
     }

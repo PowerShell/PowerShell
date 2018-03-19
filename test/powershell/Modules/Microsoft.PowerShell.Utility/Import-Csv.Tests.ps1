@@ -67,9 +67,9 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
             It "Should be able to import correct values" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
                 $actual.count         | Should -Be 4
-                $actual[0].'Column1'  | Should -Be "data1"
-                $actual[0].'Column2'  | Should -Be "1"
-                $actual[0].'Column 3' | Should -Be "A"
+                $actual[0].'Column1'  | Should -BeExactly "data1"
+                $actual[0].'Column2'  | Should -BeExactly "1"
+                $actual[0].'Column 3' | Should -BeExactly "A"
             }
 
         }

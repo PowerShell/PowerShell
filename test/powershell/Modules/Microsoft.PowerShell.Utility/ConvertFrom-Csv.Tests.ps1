@@ -64,8 +64,8 @@ a,b,c
     It "Should Contain the Imported Type data" {
         $actualData = $testTypeData | ConvertFrom-Csv
         $actualData.PSObject.TypeNames.Count | Should -Be 2
-        $actualData.PSObject.TypeNames[0] | Should -Be "My.Custom.Object"
-        $actualData.PSObject.TypeNames[1] | Should -Be "CSV:My.Custom.Object"
+        $actualData.PSObject.TypeNames[0] | Should -BeExactly "My.Custom.Object"
+        $actualData.PSObject.TypeNames[1] | Should -BeExactly "CSV:My.Custom.Object"
     }
 }
 
@@ -75,9 +75,9 @@ Describe "ConvertFrom-Csv DRT Unit Tests" -Tags "CI" {
         $res = $inputObject | ConvertTo-Csv
         $result = $res | ConvertFrom-Csv -Header "Header1","Header2"
 
-        $result[0].Header1 | Should -Be "First"
-        $result[0].Header2 | Should -Be "Second"
-        $result[1].Header1 | Should -Be "1"
-        $result[1].Header2 | Should -Be "2"
+        $result[0].Header1 | Should -BeExactly "First"
+        $result[0].Header2 | Should -BeExactly "Second"
+        $result[1].Header1 | Should -BeExactly "1"
+        $result[1].Header2 | Should -BeExactly "2"
     }
 }

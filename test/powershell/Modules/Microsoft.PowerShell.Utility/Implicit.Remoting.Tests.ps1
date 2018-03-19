@@ -149,7 +149,7 @@ try
                 # The enum is treated as an int
                 (foo -x "Value2") | Should -Be 2
                 # The enum is to-string-ed appropriately
-                (foo -x "Value2").ToString() | Should -Be "Value2"
+                (foo -x "Value2").ToString() | Should -BeExactly "Value2"
             } finally {
                 if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
@@ -421,7 +421,7 @@ try
             }
 
             It "Verifies ApplicationArguments got preserved correctly" -Pending {
-                $(Invoke-Command $internalSession { $PSSenderInfo.ApplicationArguments.MyTest }) | Should -Be "MyValue"
+                $(Invoke-Command $internalSession { $PSSenderInfo.ApplicationArguments.MyTest }) | Should -BeExactly "MyValue"
             }
 
             It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
@@ -430,7 +430,7 @@ try
             }
 
             It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
-                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Closed"
+                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Closed"
             }
         }
 
@@ -452,10 +452,10 @@ try
 
             # culture settings should be taken from the explicitly passed session options
             It "Verifies proxy returns modified culture" -Pending {
-                (Get-Variable -Name PSCulture).Value | Should -Be "fr-FR"
+                (Get-Variable -Name PSCulture).Value | Should -BeExactly "fr-FR"
             }
             It "Verifies proxy returns modified culture" -Pending {
-                (Get-Variable -Name PSUICulture).Value | Should -Be "de-DE"
+                (Get-Variable -Name PSUICulture).Value | Should -BeExactly "de-DE"
             }
 
             # removing the module should remove the implicitly/magically created runspace
@@ -464,7 +464,7 @@ try
                 (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should -BeNullOrEmpty
             }
             It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
-                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Closed"
+                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Closed"
             }
         }
 
@@ -491,12 +491,12 @@ try
             }
 
             It "Verifies Adding a module affects runspace's state" {
-                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Opened"
+                ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Opened"
             }
 
             It "Verifies Runspace stays opened after removing module from Export-PSSession that got initialized with an external runspace" {
                 Remove-Module $module -Force
-		        ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -Be "Opened"
+		        ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should -BeExactly "Opened"
 	        }
         }
     }
@@ -720,17 +720,17 @@ try
 
             It "Serialization works for top-level properties" {
                 $x = foo
-                $x.text | Should -Be "root"
+                $x.text | Should -BeExactly "root"
             }
 
             It "Serialization settings works for deep properties" {
                 $x = foo
-                $x.Son.Grandson.text | Should -Be "Grandson"
+                $x.Son.Grandson.text | Should -BeExactly "Grandson"
             }
 
             It "Serialization settings are preserved even if types.ps1xml is missing on the client" {
                 $y = foo | bar
-                $y | Should -Be "Grandson"
+                $y | Should -BeExactly "Grandson"
             }
         }
     }
@@ -776,7 +776,7 @@ try
         }
 
         It "Calls implicit remoting proxies 'MyFunction'" {
-            (MyFunction 1 2 3) | Should -Be "x = '1'; args = '2 3'"
+            (MyFunction 1 2 3) | Should -BeExactly "x = '1'; args = '2 3'"
         }
 
         It "proxy should return remote pid" {
@@ -793,7 +793,7 @@ try
 
         It "NoName-c8aeb5c8-2388-4d64-98c1-a9c6c218d404" {
             Invoke-Command -Session $session { $env:TestImplicitRemotingVariable = 123 }
-            (cmd.exe /c "echo TestImplicitRemotingVariable=%TestImplicitRemotingVariable%") | Should -Be "TestImplicitRemotingVariable=123"
+            (cmd.exe /c "echo TestImplicitRemotingVariable=%TestImplicitRemotingVariable%") | Should -BeExactly "TestImplicitRemotingVariable=123"
         }
 
         Context "Test what happens after the runspace is closed" {
@@ -880,8 +880,8 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {"s" | foo} | Should -Be "Bound parameter: string"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -Be "Bound parameter: ipaddress"
+                Invoke-Command $session {"s" | foo} | Should -BeExactly "Bound parameter: string"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -BeExactly "Bound parameter: ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -892,11 +892,11 @@ try
             }
 
             It "Pipeline binding works even if it relies on type constraints" {
-                ("s" | foo) | Should -Be "Bound parameter: string"
+                ("s" | foo) | Should -BeExactly "Bound parameter: string"
             }
 
             It "Pipeline binding works even if it relies on type constraints" {
-                ([ipaddress]::parse("127.0.0.1") | foo) | Should -Be "Bound parameter: ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo) | Should -BeExactly "Bound parameter: ipaddress"
             }
         }
 
@@ -921,8 +921,8 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {"s" | foo} | Should -Be "Bound parameter: string"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -Be "Bound parameter: ipaddress"
+                Invoke-Command $session {"s" | foo} | Should -BeExactly "Bound parameter: string"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -BeExactly "Bound parameter: ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -933,11 +933,11 @@ try
             }
 
             It "Pipeline binding works even if it relies on type constraints and parameter set is ambiguous" {
-                ("s" | foo) | Should -Be "Bound parameter: string"
+                ("s" | foo) | Should -BeExactly "Bound parameter: string"
             }
 
             It "Pipeline binding works even if it relies on type constraints and parameter set is ambiguous" {
-                ([ipaddress]::parse("127.0.0.1") | foo) | Should -Be "Bound parameter: ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo) | Should -BeExactly "Bound parameter: ipaddress"
             }
         }
 
@@ -962,10 +962,10 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {Get-Date | foo} | Should -Be "Bound parameter: date"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -Be "Bound parameter: ipaddress"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo -date (get-date)} | Should -Be "Bound parameter: date ipaddress"
-                Invoke-Command $session {Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))} | Should -Be "Bound parameter: date ipaddress"
+                Invoke-Command $session {Get-Date | foo} | Should -BeExactly "Bound parameter: date"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -BeExactly "Bound parameter: ipaddress"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo -date (get-date)} | Should -BeExactly "Bound parameter: date ipaddress"
+                Invoke-Command $session {Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))} | Should -BeExactly "Bound parameter: date ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -976,19 +976,19 @@ try
             }
 
             It "Pipeline binding works even when also binding by name" {
-                (Get-Date | foo) | Should -Be "Bound parameter: date"
+                (Get-Date | foo) | Should -BeExactly "Bound parameter: date"
             }
 
             It "Pipeline binding works even when also binding by name" {
-                ([ipaddress]::parse("127.0.0.1") | foo) | Should -Be "Bound parameter: ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo) | Should -BeExactly "Bound parameter: ipaddress"
             }
 
             It "Pipeline binding works even when also binding by name" {
-                ([ipaddress]::parse("127.0.0.1") | foo -date $(Get-Date)) | Should -Be "Bound parameter: date ipaddress"
+                ([ipaddress]::parse("127.0.0.1") | foo -date $(Get-Date)) | Should -BeExactly "Bound parameter: date ipaddress"
             }
 
             It "Pipeline binding works even when also binding by name" {
-    	        (Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))) | Should -Be "Bound parameter: date ipaddress"
+    	        (Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))) | Should -BeExactly "Bound parameter: date ipaddress"
             }
         }
 
@@ -1013,9 +1013,9 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {gps -pid $pid | foo} | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
-                Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {gps -pid $pid | foo} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1026,15 +1026,15 @@ try
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo) | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
+                (gps -id $pid | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Total 5) | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
+                (gps -id $pid | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (gps -id $pid | foo -Priority normal) | Should -Be "Bound parameter: PriorityClass TotalProcessorTime"
+                (gps -id $pid | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
         }
 
@@ -1059,8 +1059,8 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {foo ([ipaddress]::parse("127.0.0.1"))} | Should -Be "Bound parameter: ipaddress"
-                Invoke-Command $session {foo "blah"} | Should -Be "Bound parameter: string"
+                Invoke-Command $session {foo ([ipaddress]::parse("127.0.0.1"))} | Should -BeExactly "Bound parameter: ipaddress"
+                Invoke-Command $session {foo "blah"} | Should -BeExactly "Bound parameter: string"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1071,11 +1071,11 @@ try
             }
 
             It "Positional binding works" {
-                foo "blah" | Should -Be "Bound parameter: string"
+                foo "blah" | Should -BeExactly "Bound parameter: string"
             }
 
             It "Positional binding works" {
-                foo ([ipaddress]::parse("127.0.0.1")) | Should -Be "Bound parameter: ipaddress"
+                foo ([ipaddress]::parse("127.0.0.1")) | Should -BeExactly "Bound parameter: ipaddress"
             }
         }
 
@@ -1100,11 +1100,11 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {foo 1,2,3} | Should -Be "1 2 3 : "
-                Invoke-Command $session {foo 1,2,3 4} | Should -Be "1 2 3 : 4"
-                Invoke-Command $session {foo -p2 4 1,2,3} | Should -Be "1 2 3 : 4"
-                Invoke-Command $session {foo 1 4} | Should -Be "1 : 4"
-                Invoke-Command $session {foo -p2 4 1} | Should -Be "1 : 4"
+                Invoke-Command $session {foo 1,2,3} | Should -BeExactly "1 2 3 : "
+                Invoke-Command $session {foo 1,2,3 4} | Should -BeExactly "1 2 3 : 4"
+                Invoke-Command $session {foo -p2 4 1,2,3} | Should -BeExactly "1 2 3 : 4"
+                Invoke-Command $session {foo 1 4} | Should -BeExactly "1 : 4"
+                Invoke-Command $session {foo -p2 4 1} | Should -BeExactly "1 : 4"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1115,23 +1115,23 @@ try
             }
 
             It "Positional binding works when binding an array value" {
-                foo 1,2,3 | Should -Be "1 2 3 : "
+                foo 1,2,3 | Should -BeExactly "1 2 3 : "
             }
 
             It "Positional binding works when binding an array value" {
-                foo 1,2,3 4 | Should -Be "1 2 3 : 4"
+                foo 1,2,3 4 | Should -BeExactly "1 2 3 : 4"
             }
 
             It "Positional binding works when binding an array value" {
-                foo -p2 4 1,2,3 | Should -Be "1 2 3 : 4"
+                foo -p2 4 1,2,3 | Should -BeExactly "1 2 3 : 4"
             }
 
             It "Positional binding works when binding an array value" {
-                foo 1 4 | Should -Be "1 : 4"
+                foo 1 4 | Should -BeExactly "1 : 4"
             }
 
             It "Positional binding works when binding an array value" {
-                foo -p2 4 1 | Should -Be "1 : 4"
+                foo -p2 4 1 | Should -BeExactly "1 : 4"
             }
         }
 
@@ -1156,13 +1156,13 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session {foo} | Should -Be " : "
-                Invoke-Command $session {foo 1} | Should -Be "1 : "
-                Invoke-Command $session {foo -first 1} | Should -Be "1 : "
-                Invoke-Command $session {foo 1 2 3} | Should -Be "1 : 2 3"
-                Invoke-Command $session {foo -first 1 2 3} | Should -Be "1 : 2 3"
-                Invoke-Command $session {foo 2 3 -first 1 4 5} | Should -Be "1 : 2 3 4 5"
-                Invoke-Command $session {foo -remainingArgs 2,3 1} | Should -Be "1 : 2 3"
+                Invoke-Command $session {foo} | Should -BeExactly " : "
+                Invoke-Command $session {foo 1} | Should -BeExactly "1 : "
+                Invoke-Command $session {foo -first 1} | Should -BeExactly "1 : "
+                Invoke-Command $session {foo 1 2 3} | Should -BeExactly "1 : 2 3"
+                Invoke-Command $session {foo -first 1 2 3} | Should -BeExactly "1 : 2 3"
+                Invoke-Command $session {foo 2 3 -first 1 4 5} | Should -BeExactly "1 : 2 3 4 5"
+                Invoke-Command $session {foo -remainingArgs 2,3 1} | Should -BeExactly "1 : 2 3"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1173,31 +1173,31 @@ try
             }
 
             It "Value from remaining arguments works" {
-                $( foo ) | Should -Be " : "
+                $( foo ) | Should -BeExactly " : "
             }
 
             It "Value from remaining arguments works" {
-                $( foo 1 ) | Should -Be "1 : "
+                $( foo 1 ) | Should -BeExactly "1 : "
             }
 
             It "Value from remaining arguments works" {
-                $( foo -first 1 ) | Should -Be "1 : "
+                $( foo -first 1 ) | Should -BeExactly "1 : "
             }
 
             It "Value from remaining arguments works" {
-                $( foo 1 2 3 ) | Should -Be "1 : 2 3"
+                $( foo 1 2 3 ) | Should -BeExactly "1 : 2 3"
             }
 
             It "Value from remaining arguments works" {
-                $( foo -first 1 2 3 ) | Should -Be "1 : 2 3"
+                $( foo -first 1 2 3 ) | Should -BeExactly "1 : 2 3"
             }
 
             It "Value from remaining arguments works" {
-                $( foo 2 3 -first 1 4 5 ) | Should -Be "1 : 2 3 4 5"
+                $( foo 2 3 -first 1 4 5 ) | Should -BeExactly "1 : 2 3 4 5"
             }
 
             It "Value from remaining arguments works" {
-                $( foo -remainingArgs 2,3 1 ) | Should -Be "1 : 2 3"
+                $( foo -remainingArgs 2,3 1 ) | Should -BeExactly "1 : 2 3"
             }
         }
 
@@ -1217,17 +1217,17 @@ try
                 }
 
                 # Sanity checks.
-                Invoke-Command $session { foo } | Should -Be " :  : "
-                Invoke-Command $session { foo 1 } | Should -Be "1 :  : "
-                Invoke-Command $session { foo -first 1 } | Should -Be "1 :  : "
-                Invoke-Command $session { foo 1 2 } | Should -Be "1 : 2 : "
-                Invoke-Command $session { foo 1 -second 2 } | Should -Be "1 : 2 : "
-                Invoke-Command $session { foo -first 1 -second 2 } | Should -Be "1 : 2 : "
-                Invoke-Command $session { foo 1 2 3 4 } | Should -Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo -first 1 2 3 4 } | Should -Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo 1 -second 2 3 4 } | Should -Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo 1 3 -second 2 4 } | Should -Be "1 : 2 : 3 4"
-                Invoke-Command $session { foo -first 1 -second 2 3 4 } | Should -Be "1 : 2 : 3 4"
+                Invoke-Command $session { foo } | Should -BeExactly " :  : "
+                Invoke-Command $session { foo 1 } | Should -BeExactly "1 :  : "
+                Invoke-Command $session { foo -first 1 } | Should -BeExactly "1 :  : "
+                Invoke-Command $session { foo 1 2 } | Should -BeExactly "1 : 2 : "
+                Invoke-Command $session { foo 1 -second 2 } | Should -BeExactly "1 : 2 : "
+                Invoke-Command $session { foo -first 1 -second 2 } | Should -BeExactly "1 : 2 : "
+                Invoke-Command $session { foo 1 2 3 4 } | Should -BeExactly "1 : 2 : 3 4"
+                Invoke-Command $session { foo -first 1 2 3 4 } | Should -BeExactly "1 : 2 : 3 4"
+                Invoke-Command $session { foo 1 -second 2 3 4 } | Should -BeExactly "1 : 2 : 3 4"
+                Invoke-Command $session { foo 1 3 -second 2 4 } | Should -BeExactly "1 : 2 : 3 4"
+                Invoke-Command $session { foo -first 1 -second 2 3 4 } | Should -BeExactly "1 : 2 : 3 4"
 
                 $module = Import-PSSession $session foo -AllowClobber
             }
@@ -1238,47 +1238,47 @@ try
             }
 
             It "Non cmdlet-based binding works." {
-                foo | Should -Be " :  : "
+                foo | Should -BeExactly " :  : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 | Should -Be "1 :  : "
+                foo 1 | Should -BeExactly "1 :  : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 | Should -Be "1 :  : "
+                foo -first 1 | Should -BeExactly "1 :  : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 2 | Should -Be "1 : 2 : "
+                foo 1 2 | Should -BeExactly "1 : 2 : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 -second 2 | Should -Be "1 : 2 : "
+                foo 1 -second 2 | Should -BeExactly "1 : 2 : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 -second 2 | Should -Be "1 : 2 : "
+                foo -first 1 -second 2 | Should -BeExactly "1 : 2 : "
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 2 3 4 | Should -Be "1 : 2 : 3 4"
+                foo 1 2 3 4 | Should -BeExactly "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 2 3 4 | Should -Be "1 : 2 : 3 4"
+                foo -first 1 2 3 4 | Should -BeExactly "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 -second 2 3 4 | Should -Be "1 : 2 : 3 4"
+                foo 1 -second 2 3 4 | Should -BeExactly "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo 1 3 -second 2 4 | Should -Be "1 : 2 : 3 4"
+                foo 1 3 -second 2 4 | Should -BeExactly "1 : 2 : 3 4"
             }
 
             It "Non cmdlet-based binding works." {
-                foo -first 1 -second 2 3 4 | Should -Be "1 : 2 : 3 4"
+                foo -first 1 -second 2 3 4 | Should -BeExactly "1 : 2 : 3 4"
             }
         }
 
@@ -1394,7 +1394,7 @@ try
                 Invoke-Command $session { function foo { param($OutVariable) "OutVariable = $OutVariable" } }
 
                 # Sanity check
-                Invoke-Command $session { foo -OutVariable x } | Should -Be "OutVariable = x"
+                Invoke-Command $session { foo -OutVariable x } | Should -BeExactly "OutVariable = x"
 
                 $module = Import-PSSession -Session $session -Name foo -Type function -AllowClobber
             }
@@ -1405,7 +1405,7 @@ try
             }
 
             It "Implicit remoting: OutVariable is not intercepted for non-cmdlet-bound functions" {
-                foo -OutVariable x | Should -Be "OutVariable = x"
+                foo -OutVariable x | Should -BeExactly "OutVariable = x"
             }
         }
 
@@ -1587,13 +1587,13 @@ try
             It "Get-Command returns only 1 public command from implicit remoting module (1)" {
                 $c = @(Get-Command -Module $module)
                 $c.Count | Should -Be 1
-                $c[0].Name | Should -Be "Get-MyVariable"
+                $c[0].Name | Should -BeExactly "Get-MyVariable"
             }
 
             It "Get-Command returns only 1 public command from implicit remoting module (2)" {
                 $c = @(Get-Command -Module $module.Name)
                 $c.Count | Should -Be 1
-                $c[0].Name | Should -Be "Get-MyVariable"
+                $c[0].Name | Should -BeExactly "Get-MyVariable"
             }
         }
 
@@ -1612,7 +1612,7 @@ try
             }
 
             It "'Completed' progress record should be present" {
-                ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should -Be "Completed"
+                ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should -BeExactly "Completed"
             }
         }
 
@@ -1998,8 +1998,8 @@ try
             $bar = foo | Select-Object -First 2
             $bar | Should -Not -Be NullOrEmpty
             $bar.Count | Should -Be 2
-            $bar[0] | Should -Be "a"
-            $bar[1] | Should -Be "b"
+            $bar[0] | Should -BeExactly "a"
+            $bar[1] | Should -BeExactly "b"
         }
     }
 

@@ -45,12 +45,12 @@ Describe "Get-PSCallStack DRT Unit Tests" -Tags "CI" {
 
         $results = & "$scriptFilePath"
         $results.Count | Should -BeGreaterThan 3
-        $results[0].Command | Should -Be "bar"
+        $results[0].Command | Should -BeExactly "bar"
         $results[0].ScriptName | Should -Be $scriptFilePath
         $results[0].ScriptLineNumber | Should -Be 27
         $results[0].InvocationInfo.ScriptLineNumber | Should -Be 9
 
-        $results[1].Command | Should -Be "foo"
+        $results[1].Command | Should -BeExactly "foo"
         $results[1].ScriptName | Should -Be $scriptFilePath
         $results[1].ScriptLineNumber | Should -Be 9
         $results[1].InvocationInfo.ScriptLineNumber | Should -Be 32

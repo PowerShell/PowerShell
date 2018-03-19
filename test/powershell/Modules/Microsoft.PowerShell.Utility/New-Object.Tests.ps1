@@ -40,7 +40,7 @@ Describe "New-Object" -Tags "CI" {
         $o = New-Object -TypeName System.Version -ArgumentList "1.2.3.4"
         $o.GetType() | Should -Be ([System.Version])
 
-        $o      | Should -Be "1.2.3.4"
+        $o      | Should -BeExactly "1.2.3.4"
     }
 }
 
@@ -78,8 +78,8 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         }
         $result = New-Object -TypeName Employee -ArgumentList "Mary", "Soe", 11
         $result.Count | Should -Be 1
-        $result.FirstName | Should -Be "Mary"
-        $result.LastName | Should -Be "Soe"
+        $result.FirstName | Should -BeExactly "Mary"
+        $result.LastName | Should -BeExactly "Soe"
         $result.YearsInMS | Should -Be 11
     }
 

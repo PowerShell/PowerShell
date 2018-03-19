@@ -77,8 +77,8 @@ Describe "Json Tests" -Tags "Feature" {
                 }"
             }
             $op = [JsonEnumTest]::New() | convertto-json | convertfrom-json
-            $op.TestEnum1 | Should -Be "One"
-            $op.TestEnum2 | Should -Be "Two"
+            $op.TestEnum1 | Should -BeExactly "One"
+            $op.TestEnum2 | Should -BeExactly "Two"
             $op.TestEnum3 | Should -Be 1
         }
 
@@ -87,9 +87,9 @@ Describe "Json Tests" -Tags "Feature" {
             $JsonString = Get-Command Get-help |Select-Object Name, Noun, Verb| ConvertTo-Json
             $actual = ConvertFrom-Json $JsonString
 
-            $actual.Name | Should -Be "Get-Help"
-            $actual.Noun | Should -Be "Help"
-            $actual.Verb | Should -Be "Get"
+            $actual.Name | Should -BeExactly "Get-Help"
+            $actual.Noun | Should -BeExactly "Help"
+            $actual.Verb | Should -BeExactly "Get"
         }
     }
 
@@ -113,7 +113,7 @@ Describe "Json Tests" -Tags "Feature" {
 
             $response2 = ConvertTo-Json -InputObject $response -Depth 1 -Compress
             $nameString = [System.Management.Automation.LanguagePrimitives]::ConvertTo($response.d.Name, [string])
-            $response2 | Should -Be "{`"d`":{`"Name`":`"$nameString`",`"Greeting`":`"Hello`"}}"
+            $response2 | Should -BeExactly "{`"d`":{`"Name`":`"$nameString`",`"Greeting`":`"Hello`"}}"
 
             $result1 = @"
 {
@@ -289,17 +289,17 @@ Describe "Json Tests" -Tags "Feature" {
             $result = ConvertFrom-Json $json
 
             $result.Count | Should -Be 4
-            $result[0] | Should -Be "one"
-            $result[1] | Should -Be "two"
-            $result[3] | Should -Be "four"
+            $result[0] | Should -BeExactly "one"
+            $result[1] | Should -BeExactly "two"
+            $result[3] | Should -BeExactly "four"
 
             $hash = $result[2]
             $hash.First | Should -Be 1
             $hash.Second | Should -Be 2
             $hash.Third.Count | Should -Be 3
-            $hash.Third[0] | Should -Be "Five"
-            $hash.Third[1] | Should -Be "Six"
-            $hash.Third[2] | Should -Be "Seven"
+            $hash.Third[0] | Should -BeExactly "Five"
+            $hash.Third[1] | Should -BeExactly "Six"
+            $hash.Third[2] | Should -BeExactly "Seven"
         }
 
         It "ConvertFrom-Json array nested in hash table" {
@@ -308,15 +308,15 @@ Describe "Json Tests" -Tags "Feature" {
             $result = ConvertFrom-Json $json
 
             $result.First.Count | Should -Be 3
-            $result.First[0] | Should -Be "one"
-            $result.First[1] | Should -Be "two"
-            $result.First[2] | Should -Be "three"
+            $result.First[0] | Should -BeExactly "one"
+            $result.First[1] | Should -BeExactly "two"
+            $result.First[2] | Should -BeExactly "three"
 
             $result.Second.Count | Should -Be 2
-            $result.Second[0] | Should -Be "four"
-            $result.Second[1] | Should -Be "five"
+            $result.Second[0] | Should -BeExactly "four"
+            $result.Second[1] | Should -BeExactly "five"
 
-            $result.Third.blah | Should -Be "4"
+            $result.Third.blah | Should -BeExactly "4"
         }
 
         It "ConvertFrom-Json case insensitive test" {

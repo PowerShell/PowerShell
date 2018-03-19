@@ -36,7 +36,7 @@ Describe "Add-Type" -Tags "CI" {
     }
 
     It "Public 'Language' enumeration contains all members" {
-        [Enum]::GetNames("Microsoft.PowerShell.Commands.Language") -join "," | Should -Be "CSharp,VisualBasic"
+        [Enum]::GetNames("Microsoft.PowerShell.Commands.Language") -join "," | Should -BeExactly "CSharp,VisualBasic"
     }
 
     It "Should not throw given a simple class definition" {
@@ -57,8 +57,8 @@ public class AttributeTest$guid {}
 
     It "Can compile C# files" {
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Throw
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Throw
+        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Throw -ErrorId "TypeNotFound"
+        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Throw -ErrorId "TypeNotFound"
 
         Add-Type -Path $codeFile1,$codeFile2
 

@@ -5,14 +5,14 @@ Describe "Invoke-Expression" -Tags "CI" {
     Context "Should execute the invoked command validly" {
 
 	It "Should return the echoed text" {
-	    (Invoke-Expression -command "echo pestertest1") | Should -Be "pestertest1"
+	    (Invoke-Expression -command "echo pestertest1") | Should -BeExactly "pestertest1"
 	}
 
 	It "Should return the echoed text from a script" {
 	    $testfile = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath echoscript.ps1
 	    $testcommand = "echo pestertestscript"
 	    $testcommand | Add-Content -Path "$testfile"
-	    (Invoke-Expression "& '$testfile'") | Should -Be "pestertestscript"
+	    (Invoke-Expression "& '$testfile'") | Should -BeExactly "pestertestscript"
 	    Remove-Item "$testfile"
 	}
     }

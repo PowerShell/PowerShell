@@ -239,7 +239,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	It "Select-Object with Index should work"{
 		$results = "1","2","3" | Select-Object -Index 2
 		$results.Count | Should -Be 1
-		$results[0] | Should -Be "3"
+		$results[0] | Should -BeExactly "3"
 	}
 }
 
@@ -275,14 +275,14 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 	It "Select-Object with implicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -ExcludeProperty Param2
 		$results.Param2 | Should -BeNullOrEmpty
-		$results.Thing | Should -Be "thing1"
+		$results.Thing | Should -BeExactly "thing1"
 	}
 
         # Issue #2351
 	It "Select-Object with explicit Property = '*' exclude not single property"{
 		$results = [pscustomobject]@{Thing="thing1";Param2="param2"} | Select-Object -Property * -ExcludeProperty Param2
 		$results.Param2 | Should -BeNullOrEmpty
-		$results.Thing | Should -Be "thing1"
+		$results.Thing | Should -BeExactly "thing1"
 	}
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {

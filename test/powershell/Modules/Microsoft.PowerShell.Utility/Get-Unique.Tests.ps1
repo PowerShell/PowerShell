@@ -7,10 +7,10 @@ Describe "Get-Unique DRT Unit Tests" -Tags "CI" {
 
         $results.Length | Should -Be 4
 
-        $results[0] | Should -Be "aa"
-        $results[1] | Should -Be "Aa"
-        $results[2] | Should -Be "ba"
-        $results[3] | Should -Be "BA"
+        $results[0] | Should -BeExactly "aa"
+        $results[1] | Should -BeExactly "Aa"
+        $results[2] | Should -BeExactly "ba"
+        $results[3] | Should -BeExactly "BA"
 
         $results[0] | Should -BeOfType "System.String"
         $results[1] | Should -BeOfType "System.String"
