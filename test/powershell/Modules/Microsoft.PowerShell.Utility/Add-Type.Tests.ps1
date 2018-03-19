@@ -57,6 +57,20 @@ Describe "Add-Type" -Tags "CI" {
 
         Set-Content -Path $VBFile1 -Value $VBCode1 -Force
         Set-Content -Path $VBFile2 -Value $VBCode2 -Force
+
+        $codeWarning = @"
+        namespace Test.AddType
+        {
+            public class CSharpTestWarn$guid
+            {
+                public static int Add2(int a, int b)
+                {
+                    return (a + b);
+                }
+            }
+        }
+        #warning Test warning line
+"@
     }
 
     It "Public 'Language' enumeration contains all members" {
@@ -192,8 +206,8 @@ public class AttributeTest$guid : PSCmdlet
         if (Test-Path $TempPath) { Remove-Item -Path $TempPath -Force -Recurse }
         New-Item -Path $TempPath -ItemType Directory -Force > $null
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Throw -ErrorId "TypeNotFound"
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Throw -ErrorId "TypeNotFound"
+        $outFile = Join-Path -Path $TempPath -ChildPath "assembly$guid.dll"
+        $outFile2 = Join-Path -Path $TempPath -ChildPath "assembly2$guid.dll"
 
         $code = @"
 using System.Management.Automation;
@@ -210,7 +224,12 @@ public class AttributeTest$guid : PSCmdlet
 
         $cmdlet = "Get-CompileThing$guid"
 
-        Add-Type -TypeDefinition $code -CompileOnly -OutputAssembly $outFile -PassThru | Should BeNullOrEmpty
+        Add-Type -TypeDefinition $code -OutputAssembly $outFile | Should -BeNullOrEmpty
+        $outFile | Should -Exist
+        $types = Add-Type -TypeDefinition $code -OutputAssembly $outFile2 -PassThru
+        $types[0].Name | Should -BeExactly "AttributeTest$guid"
+        $outFile2 | Should -Exist
+
         { Invoke-Expression -Command $cmdlet } | Should Throw
 
         $testModule = Import-Module -Name $outFile -PassThru
@@ -229,12 +248,22 @@ public class AttributeTest$guid : PSCmdlet
         # Catch final terminationg error.
         { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction SilentlyContinue } | ShouldBeErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
-        # Catch non-termination information error for ExtendedOptions.
-        { Add-Type -ExtendedOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
-        { Add-Type -ExtendedOptions "/platform:anycpuERROR" -Language VisualBasic -MemberDefinition "Public Shared Function TestString() As String `n Return `"`" `n End Function" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        # Catch non-termination information error for CompilerOptions.
+        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language VisualBasic -MemberDefinition "Public Shared Function TestString() As String `n Return `"`" `n End Function" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
-        { [Test.AddType.BasicTest1]::Add1(1, 2) } | Should -Not -Throw
-        { [Test.AddType.BasicTest2]::Add2(3, 4) } | Should -Not -Throw
+    It "OutputType parameter requires that the OutputAssembly parameter be specified." {
+        $code = "public static string TestString() {}"
+        { Add-Type -TypeDefinition $code -OutputType Library } | ShouldBeErrorId "OUTPUTTYPE_REQUIRES_ASSEMBLY,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "By default Add-Type treats 'warnings as errors'." {
+        { Add-Type -TypeDefinition $codeWarning -WarningAction SilentlyContinue } | ShouldBeErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+    }
+
+    It "IgnoreWarnings suppress 'warnings as errors'." {
+        Add-Type -TypeDefinition $codeWarning -IgnoreWarnings -WarningVariable warnVar -WarningAction SilentlyContinue
+        $warnVar.Count | Should -Be 1
     }
 }

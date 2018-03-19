@@ -134,7 +134,6 @@ namespace Microsoft.PowerShell.Commands
         /// Any using statements required by the auto-generated type.
         /// </summary>
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [Parameter(ParameterSetName = FromSourceParameterSetName)]
         [ValidateNotNull()]
         [Alias("Using")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -332,15 +331,15 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return outputAssembly;
+                return _outputAssembly;
             }
             set
             {
-                outputAssembly = value;
+                _outputAssembly = value;
 
-                if (outputAssembly != null)
+                if (_outputAssembly != null)
                 {
-                    outputAssembly = outputAssembly.Trim();
+                    _outputAssembly = _outputAssembly.Trim();
 
                     // Try to resolve the path
                     ProviderInfo provider = null;
@@ -348,17 +347,17 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        newPaths = SessionState.Path.GetResolvedProviderPathFromPSPath(outputAssembly, out provider);
+                        newPaths = SessionState.Path.GetResolvedProviderPathFromPSPath(_outputAssembly, out provider);
                     }
                     // Ignore the ItemNotFound -- we handle it.
                     catch (ItemNotFoundException) { }
 
                     ErrorRecord errorRecord = new ErrorRecord(
                         new Exception(
-                            StringUtil.Format(AddTypeStrings.OutputAssemblyDidNotResolve, outputAssembly)),
+                            StringUtil.Format(AddTypeStrings.OutputAssemblyDidNotResolve, _outputAssembly)),
                         "INVALID_OUTPUT_ASSEMBLY",
                         ErrorCategory.InvalidArgument,
-                        outputAssembly);
+                        _outputAssembly);
 
                     // If it resolved to a non-standard provider,
                     // generate an error.
@@ -380,25 +379,25 @@ namespace Microsoft.PowerShell.Commands
                     else if (newPaths.Count == 0)
                     {
                         // We can't create one with wildcard characters
-                        if (WildcardPattern.ContainsWildcardCharacters(outputAssembly))
+                        if (WildcardPattern.ContainsWildcardCharacters(_outputAssembly))
                         {
                             ThrowTerminatingError(errorRecord);
                         }
                         // Create the file
                         else
                         {
-                            outputAssembly = SessionState.Path.GetUnresolvedProviderPathFromPSPath(outputAssembly);
+                            _outputAssembly = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_outputAssembly);
                         }
                     }
                     // It resolved to a single file
                     else
                     {
-                        outputAssembly = newPaths[0];
+                        _outputAssembly = newPaths[0];
                     }
                 }
             }
         }
-        private string outputAssembly = null;
+        private string _outputAssembly = null;
 
         /// <summary>
         /// The output type of the assembly.
@@ -421,23 +420,14 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Flag to compile without loading compiled assembly.
-        /// </summary>
-        [Parameter(ParameterSetName = FromSourceParameterSetName)]
-        [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [Parameter(ParameterSetName = FromPathParameterSetName)]
-        [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
-        public SwitchParameter CompileOnly { get; set; }
-
-        /// <summary>
         /// Flag to ignore warnings during compilation.
         /// </summary>
         [Parameter(ParameterSetName = FromSourceParameterSetName)]
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
-        [Alias("IW", "IgnoreWarnings")]
-        public SwitchParameter WarnAsError { get; set; }
+        [Alias("IW")]
+        public SwitchParameter IgnoreWarnings { get; set; }
 
         /// <summary>
         /// Roslyn command line parameters.
@@ -619,21 +609,23 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            // The CompileOnly parameter requires that the OutputAssembly parameter be specified.
-            if (CompileOnly && String.IsNullOrEmpty(outputAssembly))
+            // Generate an error if they've specified an output
+            // assembly type without an output assembly
+            if (String.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey("OutputType"))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
                         String.Format(
                             CultureInfo.CurrentCulture,
-                            AddTypeStrings.CompileOnlyRequiresOutputAssembly)),
-                    "COMPILEONLY_REQUIRES_OUTUPASSEMBLY",
+                            AddTypeStrings.OutputTypeRequiresOutputAssembly)),
+                    "OUTPUTTYPE_REQUIRES_ASSEMBLY",
                     ErrorCategory.InvalidArgument,
                     OutputType);
 
                 ThrowTerminatingError(errorRecord);
                 return;
             }
+
 
             if (loadAssembly)
             {
@@ -680,7 +672,7 @@ namespace Microsoft.PowerShell.Commands
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
         private static Lazy<IEnumerable<PortableExecutableReference>> s_defaultAssemblies = new Lazy<IEnumerable<PortableExecutableReference>>(InitDefaultRefAssemblies);
 
-        private bool InMemory { get { return String.IsNullOrEmpty(outputAssembly); } }
+        private bool InMemory { get { return String.IsNullOrEmpty(_outputAssembly); } }
 
         // These dictionaries prevent reloading already loaded and unchanged code.
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
@@ -951,7 +943,7 @@ namespace Microsoft.PowerShell.Commands
                 _csharpParseOptions = arguments.ParseOptions;
                 _csharpCompilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
 
-                if (WarnAsError)
+                if (!IgnoreWarnings.IsPresent)
                 {
                     _csharpCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
                 }
@@ -961,6 +953,11 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 _csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
+
+                if (!IgnoreWarnings.IsPresent)
+                {
+                    _csharpCompilationOptions = _csharpCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
+                }
 
                 if (UsingNamespace.Length > 0)
                 {
@@ -998,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (CompileOnly)
+            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
             {
                 CSharpCompileToAssembly();
             }
@@ -1033,7 +1030,7 @@ namespace Microsoft.PowerShell.Commands
                 _visualbasicParseOptions = arguments.ParseOptions;
                 _visualbasicCompilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
 
-                if (WarnAsError)
+                if (!IgnoreWarnings.IsPresent)
                 {
                     _visualbasicCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
                 }
@@ -1043,6 +1040,11 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 _visualbasicCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
+
+                if (!IgnoreWarnings.IsPresent)
+                {
+                    _visualbasicCompilationOptions = _visualbasicCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
+                }
 
                 if (UsingNamespace.Length > 0)
                 {
@@ -1080,7 +1082,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
             }
 
-            if (CompileOnly)
+            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
             {
                 VisualBasicCompileToAssembly();
             }
@@ -1261,16 +1263,16 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                using (var fs = new FileStream(outputAssembly, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
+                using (var fs = new FileStream(_outputAssembly, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
                 {
                     emitResult = compilation.Emit(peStream: fs, options: _emitOptions);
                 }
 
                 if (emitResult.Success)
                 {
-                    if (!CompileOnly)
+                    if (PassThru.IsPresent)
                     {
-                        Assembly assembly = Assembly.LoadFrom(outputAssembly);
+                        Assembly assembly = Assembly.LoadFrom(_outputAssembly);
 
                         CacheNewTypes(newTypes);
                         CacheAssemply(assembly);
@@ -1364,6 +1366,7 @@ namespace Microsoft.PowerShell.Commands
                 // a message number, a source context and an error position.
                 var diagnisticMessage = diagnisticRecord.ToString();
                 var errorLineString = textLines[errorLineNumber].ToString();
+                var errorPosition = lineSpan.StartLinePosition.Character;
 
                 StringBuilder sb = new StringBuilder(diagnisticMessage.Length + errorLineString.Length * 2 + 4);
 

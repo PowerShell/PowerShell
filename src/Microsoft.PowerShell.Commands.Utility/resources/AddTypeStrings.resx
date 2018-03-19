@@ -159,9 +159,6 @@
   <data name="OutputTypeRequiresOutputAssembly" xml:space="preserve">
     <value>Cannot add type. The OutputType parameter requires that the OutputAssembly parameter be specified.</value>
   </data>
-  <data name="CompileOnlyRequiresOutputAssembly" xml:space="preserve">
-    <value>Cannot add type. The CompileOnly parameter requires that the OutputAssembly parameter be specified.</value>
-  </data>
   <data name="CannotDefineNewType" xml:space="preserve">
     <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
   </data>
