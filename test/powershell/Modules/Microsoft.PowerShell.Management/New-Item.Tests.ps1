@@ -24,10 +24,16 @@ Describe "New-Item" -Tags "CI" {
     $testfileSp           = "``[test``]file.txt"
     $testfolder           = "newDirectory"
     $testlink             = "testlink"
+    $testlinkSrcSpName    = "[test]src"
+    $testlinkSrcSp        = "``[test``]src"
+    $testlinkSpName       = "[test]link"
+    $testlinkSp           = "``[test``]link"
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
     $FullyQualifiedFileSp = Join-Path -Path $tmpDirectory -ChildPath $testfileSp
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
+    $FullyQualifiedLSrcSp = Join-Path -Path $tmpDirectory -ChildPath $testlinkSrcSp
+    $FullyQualifiedLinkSp = Join-Path -Path $tmpDirectory -ChildPath $testlinkSp
 
     BeforeEach {
         Clean-State
@@ -124,6 +130,20 @@ Describe "New-Item" -Tags "CI" {
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should -BeNullOrEmpty
         $fileInfo.LinkType | Should -BeExactly "HardLink"
+    }
+
+    It "Should create junction with name contains special char" {
+        $null = New-Item -Path $tmpDirectory -Name $testlinkSrcSpName -ItemType Directory
+        $FullyQualifiedLSrcSp | Should -Exist
+
+        $null = New-Item -Path $FullyQualifiedLinkSp -Target $FullyQualifiedLSrcSp -ItemType Junction
+        $FullyQualifiedLinkSp | Should -Exist
+
+        $expectedTarget = Join-Path $tmpDirectory $testlinkSrcSpName
+
+        $fileInfo = Get-Item $FullyQualifiedLinkSp
+        $fileInfo.Target | Should -BeExactly $expectedTarget
+        $fileInfo.LinkType | Should Be "Junction"
     }
 }
 
