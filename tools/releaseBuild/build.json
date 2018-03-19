@@ -219,6 +219,15 @@
         "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_centos7/Dockerfile",
         "DockerImageName": "ps-centos-7",
         "BinaryBucket": "release"
+    },
+    {
+        "Name": "alpine.3",
+        "RepoDestinationPath": "/PowerShell",
+        "BuildCommand": "/build-and-run-pwsh.sh _RepoDestinationPath_ _DockerVolume_ _ReleaseTag_",
+        "AdditionalContextFiles" :[ "./tools/releaseBuild/Images/microsoft_powershell_alpine3/build-and-run-pwsh.sh"],
+        "DockerFile": "./tools/releaseBuild/Images/microsoft_powershell_alpine3/Dockerfile",
+        "DockerImageName": "ps-alpine-3",
+        "BinaryBucket": "release"
     }
   ]
 }
