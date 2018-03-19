@@ -261,20 +261,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         ) {
             param ($cmdline, $expectedError)
 
-            # generate a filename to use for the error and done text files to avoid test output collision
-            # when a timeout occurs waiting for powershell.
-            $fileNameBase = ([string] $cmdline).GetHashCode().ToString()
-            $errFile = Join-Path -Path $TestDrive -ChildPath "$fileNameBase.error.txt"
-            $doneFile = Join-Path -Path $TestDrive -Childpath "$fileNameBase.done.txt"
-
-            # Seed the error file with text indicating a timeout waiting for the command.
-            "Test timeout waiting for $cmdLine" | Set-Content -Path $errFile
-
-            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
-            Wait-FileToBePresent -File $doneFile -TimeoutInSeconds 15 -IntervalInMilliseconds 100
-
-            $err = Get-Content $errFile
-            $err | Should -Be $expectedError
+            {&$cmdline -ErrorAction Stop } | Should -Throw -ErrorId $expectedError
         }
     }
 
