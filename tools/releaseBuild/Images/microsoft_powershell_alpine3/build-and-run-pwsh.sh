@@ -4,6 +4,45 @@ repoRoot=$1
 destination=$2
 releaseTag=$3
 
+# in Alpine, the currently supported architectures are:
+
+# x86_64
+# x86
+# aarch64
+# armhf
+# ppc64le
+# s390x
+
+# from https://pkgs.alpinelinux.org/packages (Arch dropdown menu)
+
+arch=`uname -m`
+
+case $arch in
+    x86_64)
+        arch=x64
+        ;;
+    aarch64)
+        arch=arm64
+        ;;
+    armhf)
+        arch=arm
+        ;;
+    *)
+        echo "Error: Unsupported OS architecture $arch detected"
+        exit 1
+        ;;
+esac
+
+# set variables depending on releaseTag
+# remove v from release tag (v3.5 => 3.5)
+if [ "${releaseTag:0:1}" = "v" ]; then
+  releaseTag=${releaseTag:1}
+  tarName=$destination/powershell-$releaseTag-alpine.3-$arch.tar.gz
+  dotnetArguments=/p:ReleaseTag=$releaseTag;
+else
+  tarName=$destination/powershell-alpine.3-$arch.tar.gz
+fi
+
 # Build libpsl-native
 cd $repoRoot/src/libpsl-native
 
@@ -12,7 +51,7 @@ make -j
 
 # Restore packages
 cd ../..
-dotnet restore
+dotnet restore $dotnetArguments
 
 # Add telemetry file
 touch DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
@@ -43,7 +82,7 @@ dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs powershe
 
 # build PowerShell
 cd ../powershell-unix
-dotnet publish --configuration Linux --runtime linux-x64
+dotnet publish --configuration Linux --runtime linux-x64 $dotnetArguments
 
 # add libpsl-native to build
 mv libpsl-native.so bin/Linux/netcoreapp2.0/linux-x64
@@ -51,5 +90,4 @@ mv libpsl-native.so bin/Linux/netcoreapp2.0/linux-x64
 # tar build for output
 cd bin/Linux/netcoreapp2.0/linux-x64
 
-# TODO make format of file name the same as other packages
-tar -czvf $destination/powershell-alpine.3.tar.gz .
+tar -czvf $tarName .
