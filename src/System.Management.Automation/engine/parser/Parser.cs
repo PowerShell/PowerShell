@@ -1512,7 +1512,7 @@ namespace System.Management.Automation.Language
             return elementType;
         }
 
-        private bool CompleteScriptBlockBody(Token lCurly, ref IScriptExtent bodyExtent, out IScriptExtent fullBodyExtent)
+        private bool CompleteScriptBlockBody(Token lCurly, ref IScriptExtent bodyExtent, out IScriptExtent fullBodyExtent, bool calledFromNamedBlockRule)
         {
             // If the caller passed in the open curly, then they expect us to consume the closing curly
             // and include that in the extent.
@@ -1526,7 +1526,12 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rCurly);
                     endScriptBlock = bodyExtent ?? lCurly.Extent;
-                    ReportIncompleteInput(lCurly.Extent, rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
+                    Expression<Func<string>> errorExpr = () => ParserStrings.MissingEndCurlyBrace;
+                    if (calledFromNamedBlockRule)
+                    {
+                        errorExpr = () => ParserStrings.MissingEndCurlyBraceOrNamedBlock;
+                    }
+                    ReportIncompleteInput(lCurly.Extent, rCurly.Extent, errorExpr);
                 }
                 else
                 {
@@ -1592,7 +1597,7 @@ namespace System.Management.Automation.Language
                     statementListExtent = ExtentOf(statementListExtent, extent);
                 }
 
-                if (CompleteScriptBlockBody(lCurly, ref statementListExtent, out scriptBlockExtent))
+                if (CompleteScriptBlockBody(lCurly, ref statementListExtent, out scriptBlockExtent, calledFromNamedBlockRule: false))
                 {
                     break;
                 }
@@ -1690,7 +1695,7 @@ namespace System.Management.Automation.Language
 
             IScriptExtent scriptBlockExtent;
             extent = ExtentOf(startExtent, endExtent);
-            CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
+            CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent, calledFromNamedBlockRule: true);
 
             return new ScriptBlockAst(scriptBlockExtent, usingStatements, paramBlockAst, beginBlock, processBlock, endBlock,
                 dynamicParamBlock);

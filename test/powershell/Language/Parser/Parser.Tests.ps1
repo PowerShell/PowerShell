@@ -915,4 +915,14 @@ foo``u{2195}abc
         # Issue #2780
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should Not Throw
     }
+
+    It "Throw better error message when statement should be put in named blocks" {
+        try {
+            ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"
+            throw "Execution OK"
+        }
+        catch {
+            $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be "MissingEndCurlyBraceOrNamedBlock"
+        }
+    }
 }
