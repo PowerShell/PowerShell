@@ -34,7 +34,7 @@ Describe "Format-List" -Tags "CI" {
 
     It "Should be able to call a property of the piped input" {
         # Tested on two input commands to verify functionality.
-        Get-Command | Select-Object -First 5 | Format-List -Property Name | Should -Not -BeNullOrEmpty
+        Get-Command | Select-Object -First 1 | Format-List -Property Name | Should -Not -BeNullOrEmpty
 
         Get-Date | Format-List -Property DisplayName | Should -Not -BeNullOrEmpty
     }

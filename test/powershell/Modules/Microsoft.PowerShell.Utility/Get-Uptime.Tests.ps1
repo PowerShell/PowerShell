@@ -29,8 +29,11 @@ Describe "Get-Uptime" -Tags "CI" {
         # Enable the test hook
         [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true)
 
-        { Get-Uptime } | Should -Throw -ErrorId "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
-        # Disable the test hook
-        [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false)
+	try {
+            { Get-Uptime } | Should -Throw -ErrorId "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
+	} finally {
+            # Disable the test hook
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false)
+	}
     }
 }
