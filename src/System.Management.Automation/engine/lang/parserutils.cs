@@ -881,8 +881,8 @@ namespace System.Management.Automation
         /// <returns>The result of the operator</returns>
         internal static object ReplaceOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool ignoreCase)
         {
-            string replacement = "";
             object pattern = "";
+            object substitute = "";
 
             rval = PSObject.Base(rval);
             IList rList = rval as IList;
@@ -900,7 +900,7 @@ namespace System.Management.Automation
                     pattern = rList[0];
                     if (rList.Count > 1)
                     {
-                        replacement = PSObject.ToStringParser(context, rList[1]);
+                        substitute = rList[1];
                     }
                 }
             }
@@ -935,8 +935,7 @@ namespace System.Management.Automation
             {
                 string lvalString = lval?.ToString() ?? String.Empty;
 
-                // Find a single match in the string.
-                return rr.Replace(lvalString, replacement);
+                return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
             else
             {
@@ -944,11 +943,47 @@ namespace System.Management.Automation
                 while (ParserOps.MoveNext(context, errorPosition, list))
                 {
                     string lvalString = PSObject.ToStringParser(context, ParserOps.Current(errorPosition, list));
-
-                    resultList.Add(rr.Replace(lvalString, replacement));
+                    resultList.Add(ReplaceOperatorImpl(context, lvalString, rr, substitute));
                 }
 
                 return resultList.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// ReplaceOperator implementation.
+        /// Abstracts away conversion of the optional substitute parameter to either a string or a MatchEvaluator delegate
+        /// and finally returns the result of the final Regex.Replace operation.
+        /// </summary>
+        /// <param name="context">The execution context in which to evaluate the expression</param>
+        /// <param name="input">The input string</param>
+        /// <param name="regex">A Regex instance.</param>
+        /// <param name="substitute">The substitute value</param>
+        /// <returns>The result of the regex.Replace operation</returns>
+        private static object ReplaceOperatorImpl(ExecutionContext context, string input, Regex regex, object substitute)
+        {
+            switch (substitute)
+            {
+                case ScriptBlock sb:
+                    MatchEvaluator me = match => {
+                        var result = sb.DoInvokeReturnAsIs(
+                            useLocalScope: false, /* Use current scope to be consistent with 'ForEach/Where-Object {}' and 'collection.ForEach{}/Where{}' */
+                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                            dollarUnder: match,
+                            input: AutomationNull.Value,
+                            scriptThis: AutomationNull.Value,
+                            args: Utils.EmptyArray<object>());
+
+                        return PSObject.ToStringParser(context, result);;
+                    };
+                    return regex.Replace(input, me);
+
+                case object val when LanguagePrimitives.TryConvertTo(val, out MatchEvaluator matchEvaluator):
+                    return regex.Replace(input, matchEvaluator);
+
+                default:
+                    string replacement = PSObject.ToStringParser(context, substitute);
+                    return regex.Replace(input, replacement);
             }
         }
 
@@ -1906,4 +1941,3 @@ namespace System.Management.Automation
     }
     #endregion ScriptTrace
 }
-

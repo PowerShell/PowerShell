@@ -1008,7 +1008,7 @@ try {
 
         It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
-            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
+            $computerInfo | Should -BeOfType 'Microsoft.PowerShell.Commands.ComputerInfo'
         }
     }
 
@@ -1037,7 +1037,7 @@ try {
                     $ObservedList = $ComputerInformation.$property
                     $ExpectedList = $Expected.$property
                     $SpecialPropertyList = ($ObservedList)[0].psobject.properties.name
-                    Compare-Object $ObservedList $ExpectedList -property $SpecialPropertyList | should BeNullOrEmpty
+                    Compare-Object $ObservedList $ExpectedList -property $SpecialPropertyList | Should -BeNullOrEmpty
                 }
                 else
                 {
@@ -1049,7 +1049,7 @@ try {
                         $left = $left -join ":"
                         $right = $right -join ":"
                     }
-                    $left | should be $right
+                    $left | Should -Be $right
                 }
             }
         }
@@ -1063,9 +1063,9 @@ try {
                 $expectedProperties = @("BiosBIOSVersion")
                 $propertyFilter = "BiosBIOSVersion"
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be 1
-                $computerInfoWithProp.$propertyFilter | Should be $expected.$propertyFilter
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be 1
+                $computerInfoWithProp.$propertyFilter | Should -Be $expected.$propertyFilter
             }
 
             #
@@ -1076,10 +1076,10 @@ try {
                 $expectedProperties = @("BiosBIOSVersion","BiosBuildNumber","BiosCaption")
                 $propertyFilter = @("BiosBIOSVersion","BiosBuildNumber","BiosCaption")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be 3
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be 3
                 foreach($property in $propertyFilter) {
-                    $ComputerInfoWithProp.$property | Should Be $Expected.$property
+                    $ComputerInfoWithProp.$property | Should -Be $Expected.$property
                 }
             }
 
@@ -1091,8 +1091,8 @@ try {
                 $expectedProperties = $null
                 $propertyFilter = @("BiosBIOSVersionXXX")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be 0
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
 
             #
@@ -1103,8 +1103,8 @@ try {
                 $expectedProperties = $null
                 $propertyFilter = @("BiosBIOSVersionXXX","InvalidProperty1","InvalidProperty2","InvalidProperty3")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be 0
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
 
             #
@@ -1115,12 +1115,12 @@ try {
                 $expectedProperties = @("BiosCodeSet","BiosCurrentLanguage","BiosDescription")
                 $propertyFilter = @("InvalidProperty1","BiosCodeSet","BiosCurrentLanguage","BiosDescription")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 $realProperties  = $propertyFilter | Where-Object { $_ -notmatch "^InvalidProperty[0-9]+" }
-                @($computerInfoWithProp.psobject.properties).count | should be $realProperties.Count
+                @($computerInfoWithProp.psobject.properties).count | Should -Be $realProperties.Count
                 foreach ( $property in $realProperties )
                 {
-                    $computerInfoWithProp.$property | Should Be $expected.$property
+                    $computerInfoWithProp.$property | Should -Be $expected.$property
                 }
             }
 
@@ -1132,12 +1132,12 @@ try {
                 $expectedProperties = @("BiosCodeSet","BiosCurrentLanguage","BiosDescription")
                 $propertyFilter = @("BiosCodeSet","InvalidProperty1","BiosCurrentLanguage","BiosDescription","InvalidProperty2")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
                 $realProperties  = $propertyFilter | Where-Object { $_ -notmatch "^InvalidProperty[0-9]+" }
-                @($computerInfoWithProp.psobject.properties).count | should be $realProperties.Count
+                @($computerInfoWithProp.psobject.properties).count | Should -Be $realProperties.Count
                 foreach ( $property in $realProperties )
                 {
-                    $computerInfoWithProp.$property | Should Be $expected.$property
+                    $computerInfoWithProp.$property | Should -Be $expected.$property
                 }
             }
 
@@ -1149,11 +1149,11 @@ try {
                 $expectedProperties = @("BiosCaption","BiosCharacteristics","BiosCodeSet","BiosCurrentLanguage")
                 $propertyFilter = @("BiosC*")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be $expectedProperties.Count
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be $expectedProperties.Count
                 foreach ( $property in $expectedProperties )
                 {
-                    $computerInfoWithProp.$property | Should Be $expected.$property
+                    $computerInfoWithProp.$property | Should -Be $expected.$property
                 }
             }
 
@@ -1165,11 +1165,11 @@ try {
                 $expectedProperties = @("BiosCaption","BiosCharacteristics","BiosCodeSet","BiosCurrentLanguage","CsCaption")
                 $propertyFilter = @("BiosC*","CsCaption")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be $expectedProperties.Count
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be $expectedProperties.Count
                 foreach ( $property in $expectedProperties )
                 {
-                    $computerInfoWithProp.$property | Should Be $expected.$property
+                    $computerInfoWithProp.$property | Should -Be $expected.$property
                 }
             }
 
@@ -1181,11 +1181,11 @@ try {
                 $expectedProperties = @("BiosCaption","BiosCharacteristics","BiosCodeSet","BiosCurrentLanguage","CsCaption")
                 $propertyFilter = @("CsCaption","InvalidProperty1","BiosC*")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be $expectedProperties.Count
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be $expectedProperties.Count
                 foreach ( $property in $expectedProperties )
                 {
-                    $computerInfoWithProp.$property | Should Be $expected.$property
+                    $computerInfoWithProp.$property | Should -Be $expected.$property
                 }
             }
 
@@ -1197,8 +1197,8 @@ try {
                 $expectedProperties = $null
                 $propertyFilter = @("BiosBIOSVersionX*")
                 $computerInfoWithProp = Get-ComputerInfoForTest -properties $propertyFilter
-                $computerInfoWithProp | should beoftype [pscustomobject]
-                @($computerInfoWithProp.psobject.properties).count | should be 0
+                $computerInfoWithProp | Should -BeOfType [pscustomobject]
+                @($computerInfoWithProp.psobject.properties).count | Should -Be 0
             }
         }
 
@@ -1274,13 +1274,13 @@ try {
         It "Test for DeviceGuard properties" -Pending {
             if (-not (HasDeviceGuardLicense))
             {
-                $observed.DeviceGuardSmartStatus | Should Be 0
-                $observed.DeviceGuardRequiredSecurityProperties | Should Be $null
-                $observed.DeviceGuardAvailableSecurityProperties | Should Be $null
-                $observed.DeviceGuardSecurityServicesConfigured | Should Be $null
-                $observed.DeviceGuardSecurityServicesRunning | Should Be $null
-                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $null
-                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $null
+                $observed.DeviceGuardSmartStatus | Should -Be 0
+                $observed.DeviceGuardRequiredSecurityProperties | Should -BeNullOrEmpty
+                $observed.DeviceGuardAvailableSecurityProperties | Should -BeNullOrEmpty
+                $observed.DeviceGuardSecurityServicesConfigured | Should -BeNullOrEmpty
+                $observed.DeviceGuardSecurityServicesRunning | Should -BeNullOrEmpty
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should -BeNullOrEmpty
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should -BeNullOrEmpty
             }
             else
             {
@@ -1304,29 +1304,29 @@ try {
                     "1" = "CredentialGuard"
                     "2" = "HypervisorEnforcedCodeIntegrity"
                 }
-                $observed.DeviceGuardSmartStatus | Should Be (Get-StringValuesFromValueMap -valuemap $smartStatusValues -values $deviceGuard.SmartStatus)
+                $observed.DeviceGuardSmartStatus | Should -Be (Get-StringValuesFromValueMap -valuemap $smartStatusValues -values $deviceGuard.SmartStatus)
                 if ($deviceGuard.RequiredSecurityProperties -eq $null)
                 {
-                    $observed.DeviceGuardRequiredSecurityProperties | Should BeNullOrEmpty
+                    $observed.DeviceGuardRequiredSecurityProperties | Should -BeNullOrEmpty
                 }
                 else
                 {
-                    $observed.DeviceGuardRequiredSecurityProperties | Should Not BeNullOrEmpty
-                    [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
+                    $observed.DeviceGuardRequiredSecurityProperties | Should -Not -BeNullOrEmpty
+                    [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should -Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
                 }
-                $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
-                $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
+                $observed.DeviceGuardAvailableSecurityProperties | Should -Be $deviceGuard.AvailableSecurityProperties
+                $observed.DeviceGuardSecurityServicesConfigured | Should -Be $deviceGuard.SecurityServicesConfigured
                 if ($deviceGuard.SecurityServicesRunning -eq $null)
                 {
-                    $observed.DeviceGuardSecurityServicesRunning | Should BeNullOrEmpty
+                    $observed.DeviceGuardSecurityServicesRunning | Should -BeNullOrEmpty
                 }
                 else
                 {
-                    $observed.DeviceGuardSecurityServicesRunning | Should Not BeNullOrEmpty
-                    [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
+                    $observed.DeviceGuardSecurityServicesRunning | Should -Not -BeNullOrEmpty
+                    [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should -Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
                 }
-                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
-                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should -Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should -Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
             }
         }
 
@@ -1335,16 +1335,17 @@ try {
         #
 
         It "(special case) Test for property = OsFreePhysicalMemory" {
-            ($observed.OsFreePhysicalMemory -gt 0) | Should Be $true
+            ($observed.OsFreePhysicalMemory -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT -or !$IsWindows) {
-            ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true
+            ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsFreeVirtualMemory" {
-            ($observed.OsFreeVirtualMemory -gt 0) | Should Be $true
+            ($observed.OsFreeVirtualMemory -gt 0) | Should -BeTrue
         }
+
 
         It "(special case) Test for property = OsLocalDateTime" {
             $computerInfo = Get-ComputerInfoForTest
@@ -1354,25 +1355,25 @@ try {
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {
-            ($observed.OsMaxNumberOfProcesses -gt 0) | Should Be $true
+            ($observed.OsMaxNumberOfProcesses -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsNumberOfProcesses" {
-            ($observed.OsNumberOfProcesses -gt 0) | Should Be $true
+            ($observed.OsNumberOfProcesses -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsUptime" {
-            ($observed.OsUptime.Ticks -gt 0) | Should Be $true
+            ($observed.OsUptime.Ticks -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for property = OsInUseVirtualMemory" {
-            ($observed.OsInUseVirtualMemory -gt 0) | Should Be $true
+            ($observed.OsInUseVirtualMemory -gt 0) | Should -BeTrue
         }
 
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {
             $propertyFilter = @("BiosC*","*")
             $computerInfo = Get-ComputerInfo -Property $propertyFilter
-            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
+            $computerInfo | Should -BeOfType Microsoft.PowerShell.Commands.ComputerInfo
         }
     }
 }

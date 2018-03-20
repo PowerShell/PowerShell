@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericMeasureInfo()
         {
-            Average = Sum = Maximum = Minimum = null;
+            Average = Sum = Maximum = Minimum = StandardDeviation = null;
         }
 
         /// <summary>
@@ -71,6 +71,11 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// </summary>
         public double? Minimum { get; set; }
+
+        /// <summary>
+        /// The Standard Deviation of property values.
+        /// </summary>
+        public double? StandardDeviation { get; set; }
     }
 
     /// <summary>
@@ -90,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public GenericObjectMeasureInfo()
         {
-            Average = Sum = null;
+            Average = Sum = StandardDeviation = null;
             Maximum = Minimum = null;
         }
 
@@ -128,6 +133,11 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// </summary>
         public object Minimum { get; set; }
+
+        /// <summary>
+        /// The Standard Deviation of property values.
+        /// </summary>
+        public double? StandardDeviation { get; set; }
     }
 
     /// <summary>
@@ -225,6 +235,8 @@ namespace Microsoft.PowerShell.Commands
 
             // Generic/Numeric statistics
             internal double sum = 0.0;
+            internal double sumPrevious = 0.0;
+            internal double variance = 0.0;
             internal object max = null;
             internal object min = null;
 
@@ -262,6 +274,24 @@ namespace Microsoft.PowerShell.Commands
         public string[] Property { get; set; } = null;
 
         #endregion Common parameters in both sets
+
+        /// <summary>
+        /// Set to true if Standard Deviation is to be returned.
+        /// </summary>
+        [Parameter(ParameterSetName = GenericParameterSet)]
+        public SwitchParameter StandardDeviation
+        {
+            get
+            {
+                return _measureStandardDeviation;
+            }
+            set
+            {
+                _measureStandardDeviation = value;
+            }
+        }
+
+        private bool _measureStandardDeviation;
 
         /// <summary>
         /// Set to true is Sum is to be returned
@@ -525,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
                 AnalyzeString(strValue, stat);
             }
 
-            if (_measureAverage || _measureSum)
+            if (_measureAverage || _measureSum || _measureStandardDeviation)
             {
                 double numValue = 0.0;
                 if (!LanguagePrimitives.TryConvertTo(objValue, out numValue))
@@ -708,8 +738,19 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void AnalyzeNumber(double numValue, Statistics stat)
         {
-            if (_measureSum || _measureAverage)
+            if (_measureSum || _measureAverage || _measureStandardDeviation)
+            {
+                stat.sumPrevious = stat.sum;
                 stat.sum += numValue;
+            }
+            if (_measureStandardDeviation && stat.count > 1)
+            {
+                // Based off of iterative method of calculating variance on
+                // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+                double avgPrevious = stat.sumPrevious / (stat.count - 1);
+                stat.variance *= (stat.count - 2.0) / (stat.count - 1);
+                stat.variance += (numValue - avgPrevious) * (numValue - avgPrevious) / stat.count;
+            }
         }
 
         /// <summary>
@@ -790,6 +831,7 @@ namespace Microsoft.PowerShell.Commands
         {
             double? sum = null;
             double? average = null;
+            double? StandardDeviation = null;
             object max = null;
             object min = null;
 
@@ -797,8 +839,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_measureSum)
                     sum = stat.sum;
+
                 if (_measureAverage && stat.count > 0)
                     average = stat.sum / stat.count;
+
+                if (_measureStandardDeviation)
+                {
+                    StandardDeviation = Math.Sqrt(stat.variance);
+                }
             }
 
             if (_measureMax)
@@ -835,6 +883,7 @@ namespace Microsoft.PowerShell.Commands
                 gmi.Count = stat.count;
                 gmi.Sum = sum;
                 gmi.Average = average;
+                gmi.StandardDeviation = StandardDeviation;
                 if (null != max)
                 {
                     gmi.Maximum = (double)max;
@@ -887,7 +936,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Whether or not a numeric conversion error occurred.
-        /// If true, then average/sum will not be output.
+        /// If true, then average/sum/standard deviation will not be output.
         /// </summary>
         private bool _nonNumericError = false;
 
