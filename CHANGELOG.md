@@ -1,5 +1,29 @@
 # Changelog
 
+## v6.0.2 - 2018-03-15
+
+### Engine updates and fixes
+
+- Update PowerShell to use `2.0.6` dotnet core runtime and packages (#6403)
+    - This change addresses this vulnerability: [Microsoft Security Advisory `CVE-2018-0875`: Hash Collision can cause Denial of Service](https://github.com/PowerShell/Announcements/issues/4)
+
+### Build and Packaging Improvements
+
+- Add Ubuntu build without `AppImage` (#6380)
+- Add scripts to set and or update the release tag in `VSTS` (#6107)
+- Fix `DSC` Configuration compilation (#6225)
+- Fix errors in `Start-PSBootStrap` during release builds (#6159)
+- Fix spelling failures in `CI` (#6191)
+- Use PowerShell `windowsservercore` Docker image for release builds (#6226)
+- Use `ADD` instead of `Invoke-WebRequest` in `nanoserver` Docker file (#6255)
+- When doing daily/test build in a non-release branch use the branch name as the preview name (#6355)
+- Add Environment Variable override of telemetry (#6063) (Thanks @diddledan!)
+- Build: Remove two unneeded lines from `Invoke-AppveyorFinish` (#6344)
+- MSI: Refactor `New-MsiPackage` into `packaging.psm1`
+  and various fixes to enable patching
+  (#5871, #6221, #6254, #6303, #6356, #6208, #6334, #6379, #6094, #6192)
+- MSI: Use `HKLM` instead of `HKCU` registry keys since the current installation scope is per-machine. (#5915) (Thanks @bergmeister!)
+
 ## v6.0.1 - 2018-01-25
 
 ### Engine updates and fixes

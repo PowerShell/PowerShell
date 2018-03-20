@@ -31,12 +31,12 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date 0030-01-01T00:00:00 -uformat %y/%m/%d-%H | Should -Be "30/01/01-00"
     }
 
-    It "using -uformat 'aAbBcCdDehHIjmMpr' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%j%m%M%p%r | Should -Be "TueTuesdayJanJanuaryTue Jan  1 00:00:00 003000101/01/30 1Jan001210100AM12:00:00 AM"
+    It "using -uformat 'aAbBcCdDehHIkljmMpr' produces the correct output" {
+        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0 00010100AM12:00:00 AM"
     }
 
-    It "using -uformat 'StTuUVwWxXyYZ' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %S%T%u%U%V%w%W%x%X%y%Y%% | Should -Be "0000:00:002012001/01/3000:00:00300030%"
+    It "using -uformat 'sStTuUVwWxXyYZ' produces the correct output" {
+        Get-date -Date 1/1/0030 -uformat %s%S%T%u%U%V%w%W%x%X%y%Y%% | Should -Be "-612204480000000:00:002012001/01/3000:00:00300030%"
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
