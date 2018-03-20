@@ -13,9 +13,14 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         }
     }
 
-    It "Should support -FileVersionInfo" -Skip:(!$IsWindows) {
+    It "Should support -FileVersionInfo" {
         $pwshVersion = Get-Process -Id $pid -FileVersionInfo
         $PSVersionTable.PSVersion | Should -Match $pwshVersion.FileVersion
+    }
+
+    It "Should run correctly with parameter -FileVersionInfo also when process' main module is null." {
+        # Main module for idle process can be null on non-Windows platforms
+        { $pwshVersion = Get-Process -Id 0 -FileVersionInfo } | Should -Not -Throw
     }
 }
 
