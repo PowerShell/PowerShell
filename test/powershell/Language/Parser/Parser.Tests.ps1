@@ -922,7 +922,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be "MissingEndCurlyBraceOrNamedBlock"
+            $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be "MissingEndCurlyBraceOrNamedBlocks"
         }
     }
 }
