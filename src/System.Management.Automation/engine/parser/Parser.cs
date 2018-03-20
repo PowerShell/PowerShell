@@ -1526,11 +1526,9 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rCurly);
                     endScriptBlock = bodyExtent ?? lCurly.Extent;
-                    Expression<Func<string>> errorExpr = () => ParserStrings.MissingEndCurlyBrace;
-                    if (calledFromNamedBlockRule)
-                    {
-                        errorExpr = () => ParserStrings.MissingEndCurlyBraceOrNamedBlock;
-                    }
+                    var errorExpr = calledFromNamedBlockRule
+                        ? (Expression<Func<string>>)(() => ParserStrings.MissingEndCurlyBraceOrNamedBlocks)
+                        : (Expression<Func<string>>)(() => ParserStrings.MissingEndCurlyBrace);
                     ReportIncompleteInput(lCurly.Extent, rCurly.Extent, errorExpr);
                 }
                 else
