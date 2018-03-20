@@ -917,12 +917,7 @@ foo``u{2195}abc
     }
 
     It "Throw better error message when statement should be put in named blocks" {
-        try {
-            ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"
-            throw "Execution OK"
-        }
-        catch {
-            $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be "MissingEndCurlyBraceOrNamedBlocks"
-        }
+        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} Hi" } | Should -Throw -PassThru
+        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBraceOrNamedBlocks"
     }
 }
