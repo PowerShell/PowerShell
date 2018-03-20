@@ -526,17 +526,16 @@ Fix steps:
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules/PSGalleryModules.csproj")
-        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
 
-        $RestoreArguments = @("--verbosity")
+        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
             $RestoreArguments += "detailed"
         } else {
             $RestoreArguments += "quiet"
         }
 
-        ($srcProjectDirs + $testProjectDirs) | ForEach-Object {
+        $srcProjectDirs | ForEach-Object {
             Write-Log "Run dotnet restore $_ $RestoreArguments"
             Start-NativeExecution { dotnet restore $_ $RestoreArguments }
         }
@@ -1576,12 +1575,21 @@ function Start-PSBootstrap {
                 elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-dev", "groff" }
+                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
 
                 # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$sudo apt-get update -qq"
-                    Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                # change the fontend from apt-get to noninteractive
+                $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
+                $env:DEBIAN_FRONTEND='noninteractive'
+                try {
+                    Start-NativeExecution {
+                        Invoke-Expression "$sudo apt-get update -qq"
+                        Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                    }
+                }
+                finally {
+                    # change the apt frontend back to the original
+                    $env:DEBIAN_FRONTEND=$originalDebianFrontEnd
                 }
             } elseif ($Environment.IsRedHatFamily) {
                 # Build tools
@@ -1591,7 +1599,7 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "libunwind"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
+                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel' }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -1612,7 +1620,7 @@ function Start-PSBootstrap {
                 $Deps += "gcc", "cmake", "make"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff" }
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -1648,8 +1656,8 @@ function Start-PSBootstrap {
             if ($Package) {
                 try {
                     # We cannot guess if the user wants to run gem install as root
-                    Start-NativeExecution { gem install fpm -v 1.8.1 }
-                    Start-NativeExecution { gem install ronn }
+                    Start-NativeExecution { gem install fpm -v 1.9.3 }
+                    Start-NativeExecution { gem install ronn -v 0.7.3 }
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }

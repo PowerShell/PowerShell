@@ -20,27 +20,27 @@ Describe "Set-Location" -Tags "CI" {
     }
 
     It "Should be able to be called without error" {
-        { Set-Location $target }    | Should Not Throw
+        { Set-Location $target }    | Should -Not -Throw
     }
 
     It "Should be able to be called on different providers" {
-        { Set-Location alias: } | Should Not Throw
-        { Set-Location env: }   | Should Not Throw
+        { Set-Location alias: } | Should -Not -Throw
+        { Set-Location env: }   | Should -Not -Throw
     }
 
     It "Should have the correct current location when using the set-location cmdlet" {
         Set-Location $startDirectory
 
-        $(Get-Location).Path | Should Be $startDirectory.Path
+        $(Get-Location).Path | Should -BeExactly $startDirectory.Path
     }
 
     It "Should be able to use the Path switch" {
-        { Set-Location -Path $target } | Should Not Throw
+        { Set-Location -Path $target } | Should -Not -Throw
     }
 
     It "Should generate a pathinfo object when using the Passthru switch" {
         $result = Set-Location $target -PassThru
-        $result | Should BeOfType System.Management.Automation.PathInfo
+        $result | Should -BeOfType System.Management.Automation.PathInfo
     }
 
     It "Should accept path containing wildcard characters" {
@@ -50,7 +50,7 @@ Describe "Set-Location" -Tags "CI" {
 
         Set-Location $TestDrive
         Set-Location -Path "[ab]a"
-        $(Get-Location).Path | Should BeExactly $testPath.FullName
+        $(Get-Location).Path | Should -BeExactly $testPath.FullName
     }
 
     Context 'Set-Location with no arguments' {
@@ -58,13 +58,13 @@ Describe "Set-Location" -Tags "CI" {
         It 'Should go to $env:HOME when Set-Location run with no arguments from FileSystem provider' {
             Set-Location 'TestDrive:\'
             Set-Location
-            (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
+            (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
         }
 
         It 'Should go to $env:HOME when Set-Location run with no arguments from Env: provider' {
             Set-Location 'Env:'
             Set-Location
-            (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
+            (Get-Location).Path | Should -BeExactly (Get-PSProvider FileSystem).Home
         }
     }
 }

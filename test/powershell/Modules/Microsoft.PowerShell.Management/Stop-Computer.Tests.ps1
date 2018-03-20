@@ -27,19 +27,19 @@ try
 
         It "Should stop the local computer" {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
-            Stop-Computer -ErrorAction Stop| Should BeNullOrEmpty
+            Stop-Computer -ErrorAction Stop| Should -BeNullOrEmpty
         }
 
         It "Should support -Computer parameter" {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
-            Stop-Computer -Computer $computerNames -ErrorAction Stop| Should BeNullOrEmpty
+            Stop-Computer -Computer $computerNames -ErrorAction Stop| Should -BeNullOrEmpty
         }
 
         It "Should support WsmanAuthentication types" {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
-                Stop-Computer -WsmanAuthentication $auth | Should BeNullOrEmpty
+                Stop-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty
             }
         }
 
@@ -47,7 +47,7 @@ try
             It "Should return the proper error when it occurs" {
                 Set-TesthookResult -testhookName $stopTesthookResultName -Value 0x300000
                 Stop-Computer -ErrorVariable StopError 2>$null
-                $StopError.Exception.Message | Should match 0x300000
+                $StopError.Exception.Message | Should -Match 0x300000
             }
         }
     }

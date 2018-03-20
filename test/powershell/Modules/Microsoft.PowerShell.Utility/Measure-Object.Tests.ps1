@@ -3,6 +3,7 @@
 Describe "Measure-Object" -Tags "CI" {
     BeforeAll {
         $testObject = 1,3,4
+        $testObject2 = 1..100
     }
 
     It "Should be able to be called without error" {
@@ -15,6 +16,51 @@ Describe "Measure-Object" -Tags "CI" {
 
     It "Should be able to count the number of objects input to it" {
         $($testObject | Measure-Object).Count | Should Be $testObject.Length
+    }
+
+    It "Should calculate Standard Deviation" {
+        $actual = ($testObject | Measure-Object -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
+    }
+
+
+    It "Should calculate Standard Deviation" {
+        $actual = ($testObject2 | Measure-Object -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        # 29.011491975882 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
+    }
+
+    It "Should calculate Standard Deviation with -Sum" {
+        $actual = ($testObject | Measure-Object -Sum -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        $actual.Sum | Should Be 8
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
+    }
+
+    It "Should calculate Standard Deviation with -Average" {
+        $actual = ($testObject | Measure-Object -Average -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        [Math]::abs($actual.Average - 2.66666666666667) | Should -BeLessThan .00000000000001
+        # 1.52752523165195 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
+    }
+
+    It "Should calculate Standard Deviation with -Sum -Average" {
+        $actual = ($testObject2 | Measure-Object -Sum -Average -StandardDeviation)
+        # We check this way since .StandardDeviation returns a double value
+        $actual.Sum | Should Be 5050
+        $actual.Average | Should Be 50.5
+        # 29.011491975882 was calculated outside powershell using formula from
+        # http://mathworld.wolfram.com/StandardDeviation.html
+        [Math]::abs($actual.StandardDeviation - 29.011491975882) | Should -BeLessThan .0000000000001
     }
 
     It "Should be able to count using the Property switch" {
