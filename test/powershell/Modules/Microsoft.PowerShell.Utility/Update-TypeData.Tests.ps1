@@ -151,14 +151,14 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 	It "Update-TypeData with Invalid DynamicType Null Value For AliasProperty should throw Exception"{
         $null = $ps.AddScript('Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value $null -TypeName System.String')
         $ps.Invoke()
-        $ps.HadErrors  | Should -BeTrue
+        $ps.HadErrors | Should -BeTrue
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -BeExactly "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
 	It "Update-TypeData with Invalid DynamicType with No MemberName should throw Exception"{
 	    $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String')
         $ps.Invoke()
-        $ps.HadErrors  | Should -BeTrue
+        $ps.HadErrors | Should -BeTrue
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -BeExactly "MemberNameShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
@@ -172,7 +172,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 	It "Update-TypeData with Invalid DynamicType with Empty TypeData should throw Exception"{
 		$null = $ps.AddScript("Update-TypeData -TypeName System.String")
         $ps.Invoke()
-        $ps.HadErrors  | Should -BeTrue
+        $ps.HadErrors | Should -BeTrue
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should -BeExactly "TypeDataEmpty,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
 
