@@ -45,12 +45,12 @@ function Test-ResourceStrings
                 $resourceType = $ASSEMBLY.GetType($classname, $false, $true)
                 # the properties themselves are static internals, so we need
                 # to using the appropriate bindingflags
-                $resourceType | Should Not BeNullOrEmpty
+                $resourceType | Should -Not -BeNullOrEmpty
 
                 # check all the resource strings
                 $xmlData = [xml](Get-Content $resourceFile.Fullname)
                 foreach ( $inResource in $xmlData.root.data ) {
-                    $resourceType.GetProperty($inResource.name,$bindingFlags).GetValue(0) | should be $inresource.value
+                    $resourceType.GetProperty($inResource.name,$bindingFlags).GetValue(0) | Should -Be $inresource.value
                 }
             }
         }
