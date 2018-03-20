@@ -917,7 +917,7 @@ foo``u{2195}abc
     }
 
     It "Throw better error message when statement should be put in named blocks" {
-        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} Hi" } | Should -Throw -PassThru
+        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} Hi" } | Should -Throw -ErrorId "IncompleteParseException" -PassThru
         $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBraceOrNamedBlocks"
     }
 }

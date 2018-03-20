@@ -494,7 +494,7 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>Script command clause '{0}' has already been defined.</value>
   </data>
   <data name="MissingEndCurlyBraceOrNamedBlocks" xml:space="preserve">
-    <value>Missing closing '}' in script block. If you meant to add more statements to the script block, put the statements in one or more named blocks.</value>
+    <value>Missing closing '}' in script block. If you meant to add more statements to the script block, put the statements in begin, process, or end blocks.</value>
   </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
     <value>Missing closing '}' in statement block or type definition.</value>
