@@ -4,7 +4,7 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{
 		New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
 		$e = { New-Alias -Name "ABCD" -Value "foo" -Force:$true -Scope 1 -ErrorAction Stop } |
-			ShouldBeErrorId "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
+			Should -Throw -ErrorId "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 	}
 
@@ -38,8 +38,8 @@ Describe "New-Alias DRT Unit Tests" -Tags "CI" {
 
 Describe "New-Alias" -Tags "CI" {
     It "Should be able to be called using the name and value parameters without error" {
-		{ New-Alias -Name testAlias -Value 100 } | Should -Not -Throw
-	}
+	{ New-Alias -Name testAlias -Value 100 } | Should -Not -Throw
+    }
 
     It "Should have the same output between the alias and the original cmdlet" {
 	New-Alias -Name testAlias -Value Get-Command
@@ -53,20 +53,20 @@ Describe "New-Alias" -Tags "CI" {
     }
 
     It "Should be able to call the New-Alias cmdlet using the nal alias without error" {
-		{ nal -Name testAlias -Value 100 } | Should -Not -Throw
+	{ nal -Name testAlias -Value 100 } | Should -Not -Throw
     }
 
     It "Should have the same output between the nal alias and the New-Alias cmdlet" {
-		nal -Name testAlias -Value Get-Command
+	nal -Name testAlias -Value Get-Command
 
-		New-Alias -Name testalias2 -Value Get-Command
+	New-Alias -Name testalias2 -Value Get-Command
 
-		$aliasData = $(testAlias).Id
-		$cmdletData = $(testAlias2).Id
+	$aliasData = $(testAlias).Id
+	$cmdletData = $(testAlias2).Id
 
-		foreach ($IdNumber in $aliasData)
-		{
-			$aliasData[$IdNumber] | Should -Be $cmdletData[$IdNumber]
-		}
+	foreach ($IdNumber in $aliasData)
+	{
+	    $aliasData[$IdNumber] | Should -Be $cmdletData[$IdNumber]
+	}
     }
 }

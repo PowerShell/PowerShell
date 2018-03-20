@@ -38,12 +38,9 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Export-Alias resolving to multiple files will throw ReadWriteMultipleFilesNotSupported" {
-		{
-			$null = New-Item -Path $TestDrive\foo -ItemType File
-			$null = New-Item -Path $TestDrive\bar -ItemType File
-			Export-Alias $TestDrive\*
-			Throw "Execution OK"
-		} | Should -Throw -ErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
+		$null = New-Item -Path $TestDrive\foo -ItemType File
+		$null = New-Item -Path $TestDrive\bar -ItemType File
+		{ Export-Alias $TestDrive\* } | Should -Throw -ErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
 
 		Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
 		Remove-Item $TestDrive\bar -Force -ErrorAction SilentlyContinue

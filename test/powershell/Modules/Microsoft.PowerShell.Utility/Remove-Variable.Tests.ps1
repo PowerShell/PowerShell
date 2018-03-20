@@ -194,13 +194,15 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException"{
 		New-Variable foo bar -Option Constant
-		$e = { Remove-Variable foo -Scope 1 -EA Stop } | ShouldBeErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+		$e = { Remove-Variable foo -Scope 1 -EA Stop } |
+		    Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 	}
 
 	It "Remove-Variable ReadOnly variable should throw SessionStateUnauthorizedAccessException and force remove should work"{
 		New-Variable foo bar -Option ReadOnly
-		$e = { Remove-Variable foo -Scope 1 -EA Stop } | ShouldBeErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+		$e = { Remove-Variable foo -Scope 1 -EA Stop } |
+		    Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 		Remove-Variable foo -Force
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
@@ -209,10 +211,12 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException and force remove should also throw exception"{
 		New-Variable foo bar -Option Constant
-		$e = { Remove-Variable foo -Scope 1 -EA Stop } | ShouldBeErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+		$e = { Remove-Variable foo -Scope 1 -EA Stop } |
+		    Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 
-		{ Remove-Variable foo -Force -Scope 1 -EA Stop } | ShouldBeErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
+		{ Remove-Variable foo -Force -Scope 1 -EA Stop } |
+		    Should -Throw -ErrorId "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 	}
 
@@ -221,7 +225,8 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		&{
 			Clear-Variable foo
 			Remove-Variable foo
-			$e = { Get-Variable -Name foo -Scope local -EA Stop } | ShouldBeErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+			$e = { Get-Variable -Name foo -Scope local -EA Stop } |
+				Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand" -PassThru
 			$e.CategoryInfo | Should -Match "ItemNotFoundException"
 		}
 

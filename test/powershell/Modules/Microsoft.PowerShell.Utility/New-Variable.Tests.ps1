@@ -23,7 +23,8 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable twice should throw Exception"{
 		New-Variable foo bogus
 
-		$e = { New-Variable foo bar -Scope 1 -EA Stop } | ShouldBeErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+		$e = { New-Variable foo bar -Scope 1 -EA Stop } |
+		    Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateException"
 
 		New-Variable foo bar -Force -PassThru
@@ -37,7 +38,8 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable ReadOnly variable twice should throw Exception"{
 		New-Variable foo bogus -option ReadOnly
 
-		$e = { New-Variable foo bar -Scope 1 -EA Stop } | ShouldBeErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
+		$e = { New-Variable foo bar -Scope 1 -EA Stop } |
+		    Should -Throw -ErrorId "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand" -PassThru
 		$e.CategoryInfo | Should -Match "SessionStateException"
 
 		New-Variable foo bar -Force -PassThru
