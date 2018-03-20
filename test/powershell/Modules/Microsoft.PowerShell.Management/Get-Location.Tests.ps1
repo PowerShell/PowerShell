@@ -12,10 +12,10 @@ Describe "Get-Location" -Tags "CI" {
 
     It "Should list the output of the current working directory" {
 
-	(Get-Location).Path | Should Be $currentDirectory
+	(Get-Location).Path | Should -BeExactly $currentDirectory
     }
 
     It "Should do exactly the same thing as its alias" {
-	(pwd).Path | Should Be (Get-Location).Path
+	(pwd).Path | Should -BeExactly (Get-Location).Path
     }
 }

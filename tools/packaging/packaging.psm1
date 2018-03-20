@@ -492,7 +492,13 @@ function Expand-PSSignedBuild
 
     Restore-PSModuleToBuild -PublishPath $buildPath
 
-    $options = Get-Content -Path (Join-Path $buildPath -ChildPath 'psoptions.json') | ConvertFrom-Json
+    $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
+    $options = Get-Content -Path $psOptionsPath | ConvertFrom-Json
+
+    # Remove PSOptions.
+    # The file is only used to set the PSOptions.
+    Remove-Item -Path $psOptionsPath
+
     $options.PSModuleRestore = $true
 
     if(Test-Path -Path $windowsExecutablePath)
@@ -1065,7 +1071,6 @@ function New-ManGzip
     $RoffFile = $RonnFile -replace "\.ronn$"
 
     # Run ronn on assets file
-    # Run does not play well with files named powershell6.0.1, so we generate and then rename
     Start-NativeExecution { ronn --roff $RonnFile }
 
     # gzip in assets directory
@@ -1361,11 +1366,7 @@ function New-UnifiedNugetPackage
         $refBinPath = New-TempFolder
         $SnkFilePath = Join-Path $PSScriptRoot -ChildPath '../../src/signing/visualstudiopublic.snk' -Resolve
 
-        # This is required only for first release since the nuget package version and System.Management.Automation.dll version do not match.
-        # The nuget package for SMA is 6.0.1.1, but the assembly version is going to be 6.0.1.
-        # For future releases where NuGet version and assembly versions are going to be same, this can be removed.
-        $forceSMAAssemblyVersion = '6.0.1'
-        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $forceSMAAssemblyVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        New-ReferenceAssembly -linux64BinPath $linuxBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
         $refBinFullName = Join-Path $refBinPath 'System.Management.Automation.dll'
 
         foreach ($file in $fileList)
@@ -2157,13 +2158,15 @@ function New-MSIPackage
         [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
         [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
     }
-
+    $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
     {
+        $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
     }
     [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
+    [Environment]::SetEnvironmentVariable("FileArchitecture", $fileArchitecture, "Process")
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
     $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
@@ -2239,7 +2242,11 @@ function Test-FileWxs
         [string] $HeatFilesWxsPath
     )
 
-    [xml] $filesAssetXml = Get-Content -Raw -Path $FilesWxsPath
+    # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
+    # Wix will update this automaticaly, but the output is not the same xml
+    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
+
+    [xml] $filesAssetXml = $filesAssetString
     [xml] $heatFilesXml = Get-Content -Raw -Path $HeatFilesWxsPath
     $assetFiles = $filesAssetXml.GetElementsByTagName('File')
     $heatFiles = $heatFilesXml.GetElementsByTagName('File')

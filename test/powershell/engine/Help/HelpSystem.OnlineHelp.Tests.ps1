@@ -39,7 +39,7 @@ Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
             It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" -Skip:$skipTest {
                 $actualURI = Get-Help $cmdlet.TopicTitle -Online
                 $actualURI = $actualURI.Replace("Help URI: ","")
-                $actualURI | Should Be $cmdlet.HelpURI
+                $actualURI | Should -Be $cmdlet.HelpURI
             }
         }
     }
@@ -82,7 +82,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
     }
 
     It "Get-Help get-process -online" -skip:$skipTest {
-        { Get-Help get-process -online } | Should Not Throw
+        { Get-Help get-process -online } | Should -Not -Throw
     }
 }
 
@@ -99,7 +99,7 @@ Describe 'Get-Help -Online is not supported on Nano Server and IoT' -Tags "CI" {
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
+            $_.FullyQualifiedErrorId | Should -Be "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
         }
     }
 }

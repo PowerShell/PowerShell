@@ -29,8 +29,8 @@ try
             Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
             $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue
-            $result.HasSucceeded | should be $true
-            $result.NewComputerName | should be $newname
+            $result.HasSucceeded | Should -BeTrue
+            $result.NewComputerName | Should -BeExactly $newname
         }
 
         # we can't really look for the string "reboot" as it will change
@@ -40,16 +40,16 @@ try
             Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
             $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar
-            $WarnVar.Message | should match $result.OldComputerName
+            $WarnVar.Message | Should -Match $result.OldComputerName
         }
 
         It "Should not produce a reboot warning when renaming a computer with the reboot flag" {
             Set-TesthookResult -testhookName $RenameResultName -value $defaultResultValue
             $newname = "mynewname"
             $result = Rename-Computer -ErrorAction Stop -ComputerName . -NewName "$newname" -Pass -WarningAction SilentlyContinue -WarningVariable WarnVar -Restart
-            $result.HasSucceeded | should be $true
-            $result.NewComputerName | should be $newname
-            $WarnVar | should BeNullOrEmpty
+            $result.HasSucceeded | Should -BeTrue
+            $result.NewComputerName | Should -BeExactly $newname
+            $WarnVar | Should -BeNullOrEmpty
         }
 
         Context "Rename-Computer Error Conditions" {

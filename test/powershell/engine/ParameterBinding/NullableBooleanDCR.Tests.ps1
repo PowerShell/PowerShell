@@ -34,19 +34,19 @@ Describe "Nullable Boolean DCR Tests" -Tags "CI" {
 
     It 'Test a boolean parameter accepts positional values, input:<Arg>, expect:<Expected>' -TestCases $testCases {
         param($Arg, $Expected)
-        (parsertestfunction $Arg).Values[0] | Should Be $Expected
-        (parsertest-bool2 $Arg).Values[0] | Should Be $Expected
+        (parsertestfunction $Arg).Values[0] | Should -Be $Expected
+        (parsertest-bool2 $Arg).Values[0] | Should -Be $Expected
     }
 
     It 'Test a boolean parameter accepts values specified with a colon, input:<Arg>, expect:<Expected>' -TestCases $testCases {
         param($Arg, $Expected)
-        (parsertestfunction -First:$Arg).Values[0] | Should Be $Expected
-        (parsertest-bool2 -First:$Arg).Values[0] | Should Be $Expected
+        (parsertestfunction -First:$Arg).Values[0] | Should -Be $Expected
+        (parsertest-bool2 -First:$Arg).Values[0] | Should -Be $Expected
     }
 
     It 'Test a boolean parameter accepts values specified with general format, input:<Arg>, expect:<Expected>' -TestCases $testCases {
         param($Arg, $Expected)
-        (parsertestfunction -First $Arg).Values[0] | Should Be $Expected
-        (parsertest-bool2 -First $Arg).Values[0] | Should Be $Expected
+        (parsertestfunction -First $Arg).Values[0] | Should -Be $Expected
+        (parsertest-bool2 -First $Arg).Values[0] | Should -Be $Expected
     }
 }
