@@ -37,15 +37,15 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It "The result string is packed in an array symbols when AsArray parameter is used." {
-        $output = ConvertTo-Json -InputObject 1 -AsArray
+        $output = 1 | ConvertTo-Json -AsArray
         $output | Should -BeLike "``[*1*]"
 
-        $output = ConvertTo-Json -InputObject 1,2 -AsArray
+        $output = 1,2 | ConvertTo-Json -AsArray
         $output | Should -BeLike "``[*1*2*]"
     }
 
     It "The result string is not packed in the array symbols when there is only one input object and AsArray parameter is not used." {
-        $output = ConvertTo-Json -InputObject 1
+        $output = 1 | ConvertTo-Json
         $output | Should -Be '1'
     }
 }
