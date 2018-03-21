@@ -1512,7 +1512,7 @@ namespace System.Management.Automation.Language
             return elementType;
         }
 
-        private bool CompleteScriptBlockBody(Token lCurly, ref IScriptExtent bodyExtent, out IScriptExtent fullBodyExtent, bool calledFromNamedBlockRule)
+        private bool CompleteScriptBlockBody(Token lCurly, ref IScriptExtent bodyExtent, out IScriptExtent fullBodyExtent)
         {
             // If the caller passed in the open curly, then they expect us to consume the closing curly
             // and include that in the extent.
@@ -1526,10 +1526,7 @@ namespace System.Management.Automation.Language
 
                     UngetToken(rCurly);
                     endScriptBlock = bodyExtent ?? lCurly.Extent;
-                    var errorExpr = calledFromNamedBlockRule
-                        ? (Expression<Func<string>>)(() => ParserStrings.MissingEndCurlyBraceOrNamedBlocks)
-                        : (Expression<Func<string>>)(() => ParserStrings.MissingEndCurlyBrace);
-                    ReportIncompleteInput(lCurly.Extent, rCurly.Extent, errorExpr);
+                    ReportIncompleteInput(lCurly.Extent, rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
                 }
                 else
                 {
@@ -1595,7 +1592,7 @@ namespace System.Management.Automation.Language
                     statementListExtent = ExtentOf(statementListExtent, extent);
                 }
 
-                if (CompleteScriptBlockBody(lCurly, ref statementListExtent, out scriptBlockExtent, calledFromNamedBlockRule: false))
+                if (CompleteScriptBlockBody(lCurly, ref statementListExtent, out scriptBlockExtent))
                 {
                     break;
                 }
@@ -1623,7 +1620,8 @@ namespace System.Management.Automation.Language
                                             ? lCurly.Extent
                                             : (paramBlockAst != null) ? paramBlockAst.Extent : null;
             IScriptExtent endExtent = null;
-            IScriptExtent extent;
+            IScriptExtent extent = null;
+            IScriptExtent scriptBlockExtent = null;
 
             while (true)
             {
@@ -1632,6 +1630,20 @@ namespace System.Management.Automation.Language
                 {
                     default:
                         UngetToken(blockNameToken);
+                        extent = ExtentOf(startExtent, endExtent);
+
+                        // If 'lCurly' is null, then handle the next token in 'CompleteScriptBlockBody'.
+                        if (lCurly == null) { goto finished_named_block_list; }
+                        // Otherwise, we handle the unexpected next token here.
+                        ReportError(blockNameToken.Extent, () => ParserStrings.MissingNamedBlocks, blockNameToken.Text);
+                        scriptBlockExtent = extent;
+                        goto return_script_block_ast;
+
+                    case TokenKind.RCurly:
+                    case TokenKind.EndOfInput:
+                        // If the next token is RCurly or <eof>, handle it in 'CompleteScriptBlockBody'.
+                        UngetToken(blockNameToken);
+                        extent = ExtentOf(startExtent, endExtent);
                         goto finished_named_block_list;
 
                     case TokenKind.Dynamicparam:
@@ -1690,11 +1702,9 @@ namespace System.Management.Automation.Language
                 SkipNewlinesAndSemicolons();
             }
         finished_named_block_list:
+            CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
 
-            IScriptExtent scriptBlockExtent;
-            extent = ExtentOf(startExtent, endExtent);
-            CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent, calledFromNamedBlockRule: true);
-
+        return_script_block_ast:
             return new ScriptBlockAst(scriptBlockExtent, usingStatements, paramBlockAst, beginBlock, processBlock, endBlock,
                 dynamicParamBlock);
         }
