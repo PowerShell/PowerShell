@@ -630,7 +630,8 @@ Fix steps:
 
         Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
-            --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
+            --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
+            --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
     }
 
     # download modules from powershell gallery.
