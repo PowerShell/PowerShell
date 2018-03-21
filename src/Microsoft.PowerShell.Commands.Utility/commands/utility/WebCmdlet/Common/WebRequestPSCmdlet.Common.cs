@@ -518,15 +518,15 @@ namespace Microsoft.PowerShell.Commands
             if (PassThru && (OutFile == null))
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
-                                                       "WebCmdletOutFileMissingException");
+                                                       "WebCmdletOutFileMissingException", nameof(PassThru));
                 ThrowTerminatingError(error);
             }
 
             // Resume requires OutFile.
             if (Resume.IsPresent && OutFile == null)
             {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ResumeOutFileMissing,
-                                                       "WebCmdletOutFileMissingException");
+                ErrorRecord error = GetValidationError(WebCmdletStrings.OutFileMissing,
+                                                       "WebCmdletOutFileMissingException", nameof(Resume));
                 ThrowTerminatingError(error);
             }
         }
@@ -1436,6 +1436,7 @@ namespace Microsoft.PowerShell.Commands
                                     _isSuccess = true;
                                     // Disable writing to the OutFile.
                                     OutFile = null;
+                                    WriteVerbose(WebCmdletStrings.OutFileWritingSkipped);
                                 }
 
                                 if (!_isSuccess)

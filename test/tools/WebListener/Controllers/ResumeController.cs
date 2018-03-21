@@ -1,13 +1,19 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
+
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Net.Mime;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 using mvc.Models;
 
+using RangeItemHeaderValue = System.Net.Http.Headers.RangeItemHeaderValue;
+using RangeHeaderValue = System.Net.Http.Headers.RangeHeaderValue;
 
 namespace mvc.Controllers
 {
@@ -36,24 +42,24 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.ContentType = "application/octet-stream";
-                Response.StatusCode = 200;
+                Response.ContentType = MediaTypeNames.Application.Octet;
+                Response.StatusCode = StatusCodes.Status200OK;
                 await Response.Body.WriteAsync(FileBytes, 0, FileBytes.Length);
                 return;
             }
 
             if(to >= FileBytes.Length || from >= FileBytes.Length)
             {
-                Response.StatusCode = 416;
-                Response.Headers["Content-Range"] = $"bytes */{FileBytes.Length}";
+                Response.StatusCode = StatusCodes.Status416RequestedRangeNotSatisfiable;
+                Response.Headers[HeaderNames.ContentRange] = $"bytes */{FileBytes.Length}";
                 return;
             }
             else
             {
-                Response.ContentType = "application/octet-stream";
+                Response.ContentType = MediaTypeNames.Application.Octet;
                 Response.ContentLength = to - from + 1;
-                Response.Headers["Content-Range"] = $"bytes {from}-{to}/{FileBytes.Length}";
-                Response.StatusCode = 206;
+                Response.Headers[HeaderNames.ContentRange] = $"bytes {from}-{to}/{FileBytes.Length}";
+                Response.StatusCode = StatusCodes.Status206PartialContent;
                 await Response.Body.WriteAsync(FileBytes, from, (int)Response.ContentLength);
             }
         }
@@ -61,9 +67,9 @@ namespace mvc.Controllers
         public async void NoResume() 
         {
             SetResumeResponseHeaders();
-            Response.ContentType = "application/octet-stream";
+            Response.ContentType = MediaTypeNames.Application.Octet;
             Response.ContentLength = FileBytes.Length;
-            Response.StatusCode = 200;
+            Response.StatusCode = StatusCodes.Status200OK;
             await Response.Body.WriteAsync(FileBytes, 0, FileBytes.Length);
         }
 
@@ -73,7 +79,7 @@ namespace mvc.Controllers
             {
                 NumberBytes = FileBytes.Length;
             }
-            Response.ContentType = "application/octet-stream";
+            Response.ContentType = MediaTypeNames.Application.Octet;
             Response.ContentLength = NumberBytes;
             await Response.Body.WriteAsync(FileBytes, 0, NumberBytes);
         }
