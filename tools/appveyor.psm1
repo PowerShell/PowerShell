@@ -486,7 +486,7 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
-        # Save any powerShell paths, so we can exclude them
+        # Save any PowerShell paths, so we can exclude them
         # When we verify we updated the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
             Where-Object {$_ -like '*files\powershell*'})
