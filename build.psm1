@@ -650,22 +650,12 @@ function Restore-PSModuleToBuild
     param(
         [Parameter(Mandatory)]
         [string]
-        $PublishPath,
-        [Switch]
-        $CI
+        $PublishPath
     )
 
     Write-Log "Restore PowerShell modules to $publishPath"
-
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-
     Copy-PSGalleryModules -Destination $modulesDir
-
-    if($CI.IsPresent)
-    {
-        # take the latest version of pester and install it so it may be used
-        Restore-PSPester -Destination $modulesDir
-    }
 }
 
 function Restore-PSPester
