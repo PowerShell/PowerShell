@@ -134,15 +134,15 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
         # Get log entries from the last 100 that match our id and are after the time we launched Powershell
         $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -Verbose -TotalCount 3
 
-        $items | Should Not Be $null
-        $items.Length | Should BeGreaterThan 1
-        $items[0].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
-        $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
+        $items | Should -Not -Be $null
+        $items.Length | Should -BeGreaterThan 1
+        $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
+        $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
         if ($items.Length -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
-            $items[2] | Should be $null
+            $items[2] | Should -Be $null
         }
     }
 
@@ -150,10 +150,10 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
-        # by default, only informational events are logged. With Level = Warning, nothing should
+        # by default, PowerShell only logs informational events on startup. With Level = Warning, nothing should
         # have been logged.
         $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -TotalCount 1
-        $items | Should Be $null
+        $items | Should -Be $null
     }
 }
 
@@ -170,7 +170,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
             {
                 # enable powershell log persistence to support exporting log entries
                 # for each test
-                 Set-OsLogPersistence -Enable
+                Set-OsLogPersistence -Enable
             }
         }
         [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
@@ -196,7 +196,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         if ($IsSupportedEnvironment -and !$persistenceEnabled)
         {
             # disable persistence if it wasn't enabled
-             Set-OsLogPersistence -Disable
+            Set-OsLogPersistence -Disable
         }
     }
 
@@ -207,15 +207,15 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3 -Verbose
 
-        $items | Should Not Be $null
-        $items.Length | Should BeGreaterThan 1
-        $items[0].EventId | Should Be 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
-        $items[1].EventId | Should Be 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
+        $items | Should -Not -Be $null
+        $items.Length | Should -BeGreaterThan 1
+        $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
+        $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
         if ($items.Length -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
-            $items[2] | Should be $null
+            $items[2] | Should -Be $null
         }
     }
 
@@ -224,9 +224,9 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
         & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
 
         Export-PSOsLog -After $after -Verbose | Set-Content -Path $contentFile
-        # by default, powershell startup should only log informational events are logged.
-        # With Level = Warning, nothing should
+        # by default, powershell startup should only logs informational events.
+        # With Level = Warning, nothing should be logged.
         $items = Get-PSOsLog -Path $contentFile -Id $logId -After $after -TotalCount 3
-        $items | Should Be $null
+        $items | Should -Be $null
     }
 }

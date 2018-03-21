@@ -73,7 +73,7 @@ Context:
 
 #region Utilities
 
-function Test-Elevated
+function Test-Sudo
 {
     if(-not (Test-Path -Path "env:SUDO_USER"))
     {
@@ -857,7 +857,7 @@ function Set-OsLogPersistence
         [switch] $Disable
     )
     Test-MacOS
-    Test-Elevated
+    Test-Sudo
 
     if ($Enable -eq $true)
     {
@@ -878,7 +878,7 @@ function Set-OsLogPersistence
 function Get-OsLogPersistence
 {
     Test-MacOS
-    Test-Elevated
+    Test-Sudo
 
     $result = Start-NativeExecution -command {log config --status --subsystem com.microsoft.powershell}
     $parts = $result.Split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)
