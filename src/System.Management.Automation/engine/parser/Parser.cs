@@ -1632,11 +1632,10 @@ namespace System.Management.Automation.Language
                         UngetToken(blockNameToken);
                         extent = ExtentOf(startExtent, endExtent);
 
-                        // If 'lCurly' is null, then handle the next token in 'CompleteScriptBlockBody'.
-                        if (lCurly == null) { goto finished_named_block_list; }
-                        // Otherwise, we handle the unexpected next token here.
+                        // If 'lCurly == null", then it's a ps1/psm1 file, then the extent is the whole file.
+                        scriptBlockExtent = lCurly != null ? extent : _tokenizer.GetScriptExtent();
+                        // Handle the unexpected next token.
                         ReportError(blockNameToken.Extent, () => ParserStrings.MissingNamedBlocks, blockNameToken.Text);
-                        scriptBlockExtent = extent;
                         goto return_script_block_ast;
 
                     case TokenKind.RCurly:

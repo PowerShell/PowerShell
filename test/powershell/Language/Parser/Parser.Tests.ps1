@@ -916,8 +916,14 @@ foo``u{2195}abc
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should Not Throw
     }
 
-    It "Throw better error message when statement should be put in named blocks" {
-        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} Hi" } | Should -Throw -ErrorId "ParseException" -PassThru
+    It "Throw better error when statement should be put in named blocks - <name>" -TestCases @(
+        @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
+        @{ script = "{ begin {} Hi"; name = "script-block" }
+        @{ script = "begin {} Hi"; name = "script-file" }
+    ) {
+        param($script)
+
+        $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
         $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingNamedBlocks"
     }
 
