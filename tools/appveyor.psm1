@@ -491,7 +491,39 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
-        # only publish to nuget feed if it is a daily build and tests passed
+        # Save any PowerShell paths, so we can exclude them
+        # When we verify we updated the path
+        $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
+            Where-Object {$_ -like '*files\powershell*'})
+
+        foreach($pathPart in $beforePath)
+        {
+            Write-Log "Found existing PowerShell path: $pathPart"
+        }
+
+        # Smoke Test MSI installer
+        Write-Log "Smoke-Testing MSI installer"
+        $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
+        $msiLog = Join-Path (Get-Location) 'msilog.txt'
+        $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
+        if ($msiExecProcess.ExitCode -ne 0)
+        {
+            Push-AppveyorArtifact msiLog.txt
+            $exitCode = $msiExecProcess.ExitCode
+            throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
+        }
+        Write-Log "MSI smoke test was successful"
+
+        # Verify path was updated by MSI
+        $psPath = ([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
+            Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
+
+        if(!$psPath)
+        {
+            throw "MSI did not add powershell to path"
+        }
+
+        # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
             Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
