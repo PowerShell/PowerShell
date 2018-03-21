@@ -1630,12 +1630,12 @@ namespace System.Management.Automation.Language
                 {
                     default:
                         // Next token is unexpected.
-                        // ErrorRecovery: if 'lCurly' is present, pretent we saw a closing curly, otherwise, eat the unexpected token.
+                        // ErrorRecovery: if 'lCurly' is present, pretend we saw a closing curly; otherwise, eat the unexpected token.
                         if (lCurly != null) { UngetToken(blockNameToken); }
 
-                        // If 'lCurly == null", then it's a ps1/psm1 file, then the extent is the whole file.
+                        // If 'lCurly == null", then it's a ps1/psm1 file, and thus the extent is the whole file.
                         scriptBlockExtent = lCurly != null ? ExtentOf(startExtent, endExtent) : _tokenizer.GetScriptExtent();
-                        // Handle the unexpected next token.
+                        // Report error about the unexpected token.
                         ReportError(blockNameToken.Extent, () => ParserStrings.MissingNamedBlocks, blockNameToken.Text);
                         goto return_script_block_ast;
 
