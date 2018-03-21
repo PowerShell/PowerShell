@@ -1620,7 +1620,8 @@ namespace System.Management.Automation.Language
                                             ? lCurly.Extent
                                             : (paramBlockAst != null) ? paramBlockAst.Extent : null;
             IScriptExtent endExtent = null;
-            IScriptExtent extent;
+            IScriptExtent extent = null;
+            IScriptExtent scriptBlockExtent = null;
 
             while (true)
             {
@@ -1628,7 +1629,28 @@ namespace System.Management.Automation.Language
                 switch (blockNameToken.Kind)
                 {
                     default:
+                        // Next token is unexpected.
+                        // ErrorRecovery: if 'lCurly' is present, pretend we saw a closing curly; otherwise, eat the unexpected token.
+                        if (lCurly != null)
+                        {
+                            UngetToken(blockNameToken);
+                            scriptBlockExtent = ExtentOf(startExtent, endExtent);
+                        }
+                        else
+                        {
+                            // If "lCurly == null", then it's a ps1/psm1 file, and thus the extent is the whole file.
+                            scriptBlockExtent = _tokenizer.GetScriptExtent();
+                        }
+
+                        // Report error about the unexpected token.
+                        ReportError(blockNameToken.Extent, () => ParserStrings.MissingNamedBlocks, blockNameToken.Text);
+                        goto return_script_block_ast;
+
+                    case TokenKind.RCurly:
+                    case TokenKind.EndOfInput:
+                        // If the next token is RCurly or <eof>, handle it in 'CompleteScriptBlockBody'.
                         UngetToken(blockNameToken);
+                        extent = ExtentOf(startExtent, endExtent);
                         goto finished_named_block_list;
 
                     case TokenKind.Dynamicparam:
@@ -1687,11 +1709,9 @@ namespace System.Management.Automation.Language
                 SkipNewlinesAndSemicolons();
             }
         finished_named_block_list:
-
-            IScriptExtent scriptBlockExtent;
-            extent = ExtentOf(startExtent, endExtent);
             CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
 
+        return_script_block_ast:
             return new ScriptBlockAst(scriptBlockExtent, usingStatements, paramBlockAst, beginBlock, processBlock, endBlock,
                 dynamicParamBlock);
         }
