@@ -635,9 +635,13 @@ Fix steps:
 
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
-    if($PSModuleRestore)
-    {
-        Restore-PSModuleToBuild -PublishPath $publishPath -CI:$CI.IsPresent
+    if ($PSModuleRestore) {
+        Restore-PSModuleToBuild -PublishPath $publishPath
+    }
+
+    # Restore the Pester module
+    if ($CI) {
+        Restore-PSPester -Destination (Join-Path $publishPath "Modules")
     }
 }
 
