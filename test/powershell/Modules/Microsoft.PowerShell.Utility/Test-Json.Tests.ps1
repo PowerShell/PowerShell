@@ -62,20 +62,20 @@ Describe "Test-Json" -Tags "CI" {
 }
 
     It "Json is valid" {
-        Test-Json -Json $validJson | Should -Be $true
+        Test-Json -Json $validJson | Should -BeTrue
     }
 
     It "Json is valid aganist a valid schema" {
-        Test-Json -Json $validJson -Schema $validSchemaJson | Should -Be $true
+        Test-Json -Json $validJson -Schema $validSchemaJson | Should -BeTrue
     }
 
     It "Json is invalid" {
-        Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should -Be $false
+        Test-Json -Json $invalidNodeInJson -ErrorAction SilentlyContinue | Should -BeFalse
     }
 
     It "Json is invalid aganist a valid schema" {
-        Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -Be $false
-        Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -Be $false
+        Test-Json -Json $invalidTypeInJson2 -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
+        Test-Json -Json $invalidNodeInJson -Schema $validSchemaJson -ErrorAction SilentlyContinue | Should -BeFalse
     }
 
     It "Test-Json throw if a schema is invalid" {
