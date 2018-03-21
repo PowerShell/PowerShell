@@ -640,18 +640,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Process a source code from files or strings.
-                switch (Language)
-                {
-                    case Language.CSharp:
-                        CSharpSourceCodeProcessing();
-                        break;
-                    case Language.VisualBasic:
-                        VisualBasicSourceCodeProcessing();
-                        break;
-                    default:
-                        Diagnostics.Assert(false, "EndProcessing: Unsupported language family.");
-                        break;
-                }
+                SourceCodeProcessing();
             }
         }
 
@@ -683,12 +672,6 @@ namespace Microsoft.PowerShell.Commands
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
         private const ReportDiagnostic defaultDiagnosticOption = ReportDiagnostic.Error;
         private static string[] s_writeInformationTags = new string[] { "PSHOST" };
-        private EmitOptions _emitOptions;
-        private CSharpCompilationOptions _csharpCompilationOptions;
-        private CSharpParseOptions _csharpParseOptions;
-        private VisualBasicCompilationOptions _visualbasicCompilationOptions;
-        private VisualBasicParseOptions _visualbasicParseOptions;
-        private List<SyntaxTree> _syntaxTrees = new List<SyntaxTree>();
         private int _syntaxTreesHash;
 
         private  const string FromMemberParameterSetName = "FromMember";
@@ -920,197 +903,91 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static CSharpCommandLineArguments CSharpDefaultParse(IEnumerable<string> args, string baseDirectory = "./", string sdkDirectory = null, string additionalReferenceDirectories = null)
+        private CommandLineArguments DefaultArgsParse(IEnumerable<string> args)
         {
-            sdkDirectory = sdkDirectory ?? s_defaultSdkDirectory;
-            return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
-        }
+            string sdkDirectory = s_defaultSdkDirectory;
+            string baseDirectory = this.SessionState.Path.CurrentLocation.Path;
+            string additionalReferenceDirectories = null;
 
-        private static VisualBasicCommandLineArguments VisualBasicDefaultParse(IEnumerable<string> args, string baseDirectory = "./", string sdkDirectory = null, string additionalReferenceDirectories = null)
-        {
-            sdkDirectory = sdkDirectory ?? s_defaultSdkDirectory;
-            return VisualBasicCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
-        }
-
-        private void CSharpSourceCodeProcessing()
-        {
-            if (CompilerOptions != null)
+            switch (Language)
             {
-                var arguments = CSharpDefaultParse(args: CompilerOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
-
-                HandleCompilerErrors(arguments.Errors);
-
-                _csharpParseOptions = arguments.ParseOptions;
-                _csharpCompilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
-
-                if (!IgnoreWarnings.IsPresent)
-                {
-                    _csharpCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                }
-
-                _emitOptions = arguments.EmitOptions;
-            }
-            else
-            {
-                _csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
-
-                if (!IgnoreWarnings.IsPresent)
-                {
-                    _csharpCompilationOptions = _csharpCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                }
-
-                if (UsingNamespace.Length > 0)
-                {
-                    _csharpCompilationOptions = _csharpCompilationOptions.WithUsings(UsingNamespace);
-                }
-            }
-
-            SourceText sourceText;
-
-            switch (ParameterSetName)
-            {
-                case FromPathParameterSetName:
-                case FromLiteralPathParameterSetName:
-                    foreach (string file in _paths)
-                    {
-                        using (var sourceFile = new FileStream(file, FileMode.Open))
-                        {
-                            sourceText = SourceText.From(sourceFile);
-                            _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions, file));
-                        }
-                    }
-                    break;
-                case FromMemberParameterSetName:
-                    _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
-
-                    sourceText = SourceText.From(_sourceCode);
-                    _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions));
-                    break;
-                case FromSourceParameterSetName:
-                    sourceText = SourceText.From(_sourceCode);
-                    _syntaxTrees.Add(CSharpSyntaxTree.ParseText(sourceText, _csharpParseOptions));
-                    break;
+                case Language.CSharp:
+                    return CSharpCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
+                case Language.VisualBasic:
+                    return VisualBasicCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
                 default:
-                    Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                    Diagnostics.Assert(false, "ParseText: Unsupported language family.");
                     break;
             }
 
-            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
-            {
-                CSharpCompileToAssembly();
-            }
-            else
-            {
-                // if the source code was already compiled and loaded and not changed
-                // we get the assembly from the cache.
-                if (isSourceCodeUpdated(out Assembly assembly))
-                {
-                    CSharpCompileToAssembly();
-                }
-                else
-                {
-                    if (PassThru)
-                    {
-                        WriteTypes(assembly);
-                    }
-
-                    WriteVerbose(AddTypeStrings.AlreadyCompiledandLoaded);
-                }
-            }
+            return null;
         }
 
-        private void VisualBasicSourceCodeProcessing()
+        private SyntaxTree ParseText(SourceText sourceText, ParseOptions parseOptions, String path = "")
         {
-            if (CompilerOptions != null)
+            switch (Language)
             {
-                var arguments = VisualBasicDefaultParse(args: CompilerOptions, baseDirectory: this.SessionState.Path.CurrentLocation.Path);
+                case Language.CSharp:
+                    return CSharpSyntaxTree.ParseText(sourceText, (CSharpParseOptions) parseOptions, path);
 
-                HandleCompilerErrors(arguments.Errors);
+                case Language.VisualBasic:
+                    return VisualBasicSyntaxTree.ParseText(sourceText, (VisualBasicParseOptions) parseOptions, path);
 
-                _visualbasicParseOptions = arguments.ParseOptions;
-                _visualbasicCompilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
-
-                if (!IgnoreWarnings.IsPresent)
-                {
-                    _visualbasicCompilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                }
-
-                _emitOptions = arguments.EmitOptions;
-            }
-            else
-            {
-                _visualbasicCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
-
-                if (!IgnoreWarnings.IsPresent)
-                {
-                    _visualbasicCompilationOptions = _visualbasicCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                }
-
-                if (UsingNamespace.Length > 0)
-                {
-                    _visualbasicCompilationOptions = _visualbasicCompilationOptions.WithGlobalImports(GlobalImport.Parse(UsingNamespace));
-                }
-            }
-
-            SourceText sourceText;
-
-            switch (ParameterSetName)
-            {
-                case FromPathParameterSetName:
-                case FromLiteralPathParameterSetName:
-                    foreach (string file in _paths)
-                    {
-                        using (var sourceFile = new FileStream(file, FileMode.Open))
-                        {
-                            sourceText = SourceText.From(sourceFile);
-                            _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions, file));
-                        }
-                    }
-                    break;
-                case FromMemberParameterSetName:
-                    _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
-
-                    sourceText = SourceText.From(_sourceCode);
-                    _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions));
-                    break;
-                case FromSourceParameterSetName:
-                    sourceText = SourceText.From(_sourceCode);
-                    _syntaxTrees.Add(VisualBasicSyntaxTree.ParseText(sourceText, _visualbasicParseOptions));
-                    break;
                 default:
-                    Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                    Diagnostics.Assert(false, "ParseText: Unsupported language family.");
                     break;
             }
 
-            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
-            {
-                VisualBasicCompileToAssembly();
-            }
-            else
-            {
-                // if the source code was already compiled and loaded and not changed
-                // we get the assembly from the cache.
-                if (isSourceCodeUpdated(out Assembly assembly))
-                {
-                    VisualBasicCompileToAssembly();
-                }
-                else
-                {
-                    if (PassThru)
-                    {
-                        WriteTypes(assembly);
-                    }
-
-                    WriteVerbose(AddTypeStrings.AlreadyCompiledandLoaded);
-                }
-            }
+            return null;
         }
 
-        private bool isSourceCodeUpdated(out Assembly assembly)
+        private CompilationOptions GetDefaultCompilationOptions()
         {
-            Diagnostics.Assert(_syntaxTrees.Count != 0, "_sourceCode or _syntaxTrees should contains a source code.");
+            switch (Language)
+            {
+                case Language.CSharp:
+                    CSharpCompilationOptions csharpCompilationOptions;
+                    csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
 
-            _syntaxTreesHash = ArraySyntaxTreeGetHashCode(_syntaxTrees);
+                    if (!IgnoreWarnings.IsPresent)
+                    {
+                        csharpCompilationOptions = csharpCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
+                    }
+
+                    if (UsingNamespace.Length > 0)
+                    {
+                        csharpCompilationOptions = csharpCompilationOptions.WithUsings(UsingNamespace);
+                    }
+                    return csharpCompilationOptions;
+
+                case Language.VisualBasic:
+                    VisualBasicCompilationOptions vbCompilationOptions;
+                    vbCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
+
+                    if (!IgnoreWarnings.IsPresent)
+                    {
+                        vbCompilationOptions = vbCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
+                    }
+
+                    if (UsingNamespace.Length > 0)
+                    {
+                        vbCompilationOptions = vbCompilationOptions.WithGlobalImports(GlobalImport.Parse(UsingNamespace));
+                    }
+                    return vbCompilationOptions;
+
+                default:
+                    Diagnostics.Assert(false, "GetDefaultCompilationOptions: Unsupported language family.");
+                    break;
+            }
+
+            return null;
+        }
+
+        private bool isSourceCodeUpdated(List<SyntaxTree> syntaxTrees, out Assembly assembly)
+        {
+            Diagnostics.Assert(syntaxTrees.Count != 0, "syntaxTrees should contains a source code.");
+
+            _syntaxTreesHash = SyntaxTreeArrayGetHashCode(syntaxTrees);
 
             if (s_sourceAssemblyCache.TryGetValue(_syntaxTreesHash, out Assembly hashedAssembly))
             {
@@ -1124,30 +1001,113 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void CSharpCompileToAssembly()
+        private void SourceCodeProcessing()
         {
-            IEnumerable<PortableExecutableReference> references = GetPortableExecutableReferences();
+            ParseOptions parseOptions = null;
+            CompilationOptions compilationOptions = null;
+            EmitOptions emitOptions = null;
 
-            Compilation compilation = CSharpCompilation.Create(
-                PathType.GetRandomFileName(),
-                syntaxTrees: _syntaxTrees,
-                references: references,
-                options: _csharpCompilationOptions);
+            if (CompilerOptions != null)
+            {
+                var arguments = DefaultArgsParse(CompilerOptions);
 
-            DoEmitAndLoadAssemply(compilation);
+                HandleCompilerErrors(arguments.Errors);
+
+                parseOptions = arguments.ParseOptions;
+
+                compilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
+
+                if (!IgnoreWarnings.IsPresent)
+                {
+                    compilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
+                }
+
+                emitOptions = arguments.EmitOptions;
+            }
+            else
+            {
+                compilationOptions = GetDefaultCompilationOptions();
+            }
+
+            SourceText sourceText;
+            List<SyntaxTree> syntaxTrees = new List<SyntaxTree>();
+
+            switch (ParameterSetName)
+            {
+                case FromPathParameterSetName:
+                case FromLiteralPathParameterSetName:
+                    foreach (string filePath in _paths)
+                    {
+                        using (var sourceFile = new FileStream(filePath, FileMode.Open))
+                        {
+                            sourceText = SourceText.From(sourceFile);
+                            syntaxTrees.Add(ParseText(sourceText, parseOptions, path: filePath));
+                        }
+                    }
+                    break;
+                case FromMemberParameterSetName:
+                    _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
+
+                    sourceText = SourceText.From(_sourceCode);
+                    syntaxTrees.Add(ParseText(sourceText, parseOptions));
+                    break;
+                case FromSourceParameterSetName:
+                    sourceText = SourceText.From(_sourceCode);
+                    syntaxTrees.Add(ParseText(sourceText, parseOptions));
+                    break;
+                default:
+                    Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);
+                    break;
+            }
+
+            if (!String.IsNullOrEmpty(_outputAssembly) && !PassThru.IsPresent)
+            {
+                CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
+            }
+            else
+            {
+                // if the source code was already compiled and loaded and not changed
+                // we get the assembly from the cache.
+                if (isSourceCodeUpdated(syntaxTrees, out Assembly assembly))
+                {
+                    CompileToAssembly(syntaxTrees, compilationOptions, emitOptions);
+                }
+                else
+                {
+                    if (PassThru)
+                    {
+                        WriteTypes(assembly);
+                    }
+
+                    WriteVerbose(AddTypeStrings.AlreadyCompiledandLoaded);
+                }
+            }
         }
 
-        private void VisualBasicCompileToAssembly()
+        private void CompileToAssembly(List<SyntaxTree> syntaxTrees, CompilationOptions compilationOptions, EmitOptions emitOptions)
         {
             IEnumerable<PortableExecutableReference> references = GetPortableExecutableReferences();
+            Compilation compilation = null;
 
-            Compilation compilation = VisualBasicCompilation.Create(
-                PathType.GetRandomFileName(),
-                syntaxTrees: _syntaxTrees,
-                references: references,
-                options: _visualbasicCompilationOptions);
+            switch (Language)
+            {
+                case Language.CSharp:
+                    compilation = CSharpCompilation.Create(
+                        PathType.GetRandomFileName(),
+                        syntaxTrees: syntaxTrees,
+                        references: references,
+                        options: (CSharpCompilationOptions)compilationOptions);
+                    break;
+                case Language.VisualBasic:
+                    compilation = VisualBasicCompilation.Create(
+                        PathType.GetRandomFileName(),
+                        syntaxTrees: syntaxTrees,
+                        references: references,
+                        options: (VisualBasicCompilationOptions)compilationOptions);
+                    break;
+            }
 
-            DoEmitAndLoadAssemply(compilation);
+            DoEmitAndLoadAssemply(compilation, emitOptions);
         }
 
         private void CheckDuplicateTypes(Compilation compilation, out ConcurrentBag<String> newTypes)
@@ -1232,7 +1192,7 @@ namespace Microsoft.PowerShell.Commands
             s_sourceAssemblyCache.Add(_syntaxTreesHash, assembly);
         }
 
-        private void DoEmitAndLoadAssemply(Compilation compilation)
+        private void DoEmitAndLoadAssemply(Compilation compilation, EmitOptions emitOptions)
         {
             EmitResult emitResult;
 
@@ -1242,7 +1202,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 using (var ms = new MemoryStream())
                 {
-                    emitResult = compilation.Emit(peStream: ms, options: _emitOptions);
+                    emitResult = compilation.Emit(peStream: ms, options: emitOptions);
                     if (emitResult.Success)
                     {
                         // TODO:  We could use Assembly.LoadFromStream() in future.
@@ -1265,7 +1225,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 using (var fs = new FileStream(_outputAssembly, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None))
                 {
-                    emitResult = compilation.Emit(peStream: fs, options: _emitOptions);
+                    emitResult = compilation.Emit(peStream: fs, options: emitOptions);
                 }
 
                 if (emitResult.Success)
@@ -1391,7 +1351,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static int ArraySyntaxTreeGetHashCode(IEnumerable<SyntaxTree> sts)
+        private static int SyntaxTreeArrayGetHashCode(IEnumerable<SyntaxTree> sts)
         {
             // We use our extension method EnumerableExtensions.SequenceGetHashCode<T>().
             List<int> stHashes = new List<int>();
