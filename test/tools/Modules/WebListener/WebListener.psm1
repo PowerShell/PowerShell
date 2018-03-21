@@ -161,6 +161,7 @@ function Get-WebListenerUrl {
             'Redirect',
             'Response',
             'ResponseHeaders',
+            'Resume',
             '/'
         )]
         [String]$Test,
