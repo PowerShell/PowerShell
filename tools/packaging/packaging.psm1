@@ -2039,6 +2039,7 @@ function Get-NugetSemanticVersion
     $packageSemanticVersion
 }
 
+# Get the paths to various WiX tools
 function Get-WixPath
 {
     ## AppVeyor base image might update the version for Wix. Hence, we should
@@ -2075,13 +2076,13 @@ function Get-WixPath
 
 <#
     .Synopsis
-        Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
+        Creates a Windows installer MSP package from two MSIs and WIXPDB files
         This only works on a Windows machine due to the usage of WiX.
     .EXAMPLE
-        # This example shows how to produce a Debug-x64 installer for development purposes.
+        # This example shows how to produce a x64 patch from 6.0.2 to a theoretical 6.0.3
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp2.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPatch -NewVersion 6.0.1 -BaselineMsiPath .\PowerShell-6.0.2-win-x64.msi -BaselineWixPdbPath .\PowerShell-6.0.2-win-x64.wixpdb -PatchMsiPath .\PowerShell-6.0.3-win-x64.msi -PatchWixPdbPath .\PowerShell-6.0.3-win-x64.wixpdb
 #>
 function New-MSIPatch
 {
