@@ -3698,7 +3698,9 @@ namespace System.Management.Automation
             if (this.PipelineVariable != null)
             {
                 this.OutputPipe.RemovePipelineVariable();
-                _state.PSVariable.Remove(this.PipelineVariable);
+                // '_state' could be null when a 'DynamicParam' block runs because the 'DynamicParam' block runs in 'DoPrepare',
+                // before 'PipelineProcessor.SetupParameterVariables' is called, where '_state' is initialized.
+                _state?.PSVariable.Remove(this.PipelineVariable);
             }
         }
     }
