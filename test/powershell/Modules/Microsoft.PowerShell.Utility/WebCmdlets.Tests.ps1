@@ -1624,8 +1624,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
             # Download the entire file to reference in tests
             $referenceFile = Join-Path $TestDrive "reference.txt"
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-WebRequest -uri $uri -OutFile $referenceFile -ErrorAction Stop
+            $resumeUri = Get-WebListenerUrl -Test 'Resume'
+            Invoke-WebRequest -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
             $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
             $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
         }
@@ -1635,22 +1635,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Invoke-WebRequest -Resume requires -OutFile" {
-            $uri = Get-WebListenerUrl -Test 'Resume'
-
-            { Invoke-WebRequest -Resume -Uri $uri -ErrorAction Stop } |
+            { Invoke-WebRequest -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-WebRequest -uri $uri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
             $response.Headers.'X-Request-Range'[0] | Should -BeExactly 'bytes=0-'
-            $response.StatusCode | Should -BeExactly 206
+            $response.StatusCode | Should -Be 206
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes 0-$($referenceFileSize-1)/$referenceFileSize"
         }
 
@@ -1660,15 +1657,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-WebRequest -uri $uri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
             $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'false'
-            $response.StatusCode | Should -BeExactly 200
+            $response.StatusCode | Should -Be 200
             $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
 
@@ -1686,7 +1682,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
             $response.Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
-            $response.StatusCode | Should -BeExactly 200
+            $response.StatusCode | Should -Be 200
             $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
 
@@ -1702,15 +1698,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $null = Invoke-WebRequest -uri $uri -OutFile $outFile
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-WebRequest -uri $uri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
             $response.Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
-            $response.StatusCode | Should -BeExactly 206
+            $response.StatusCode | Should -Be 206
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes $bytes-$($referenceFileSize-1)/$referenceFileSize"
         }
 
@@ -1720,8 +1715,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $null = Invoke-WebRequest -uri $uri -OutFile $outFile
             $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-WebRequest -uri $uri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1729,7 +1723,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
             $response.Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
             # The web cmdlets special case 416 as a success code when the local file and remote file are the same size
-            $response.StatusCode | Should -BeExactly 416
+            $response.StatusCode | Should -Be 416
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
     }
@@ -2901,8 +2895,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
             # Download the entire file to reference in tests
             $referenceFile = Join-Path $TestDrive "reference.txt"
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-RestMethod -uri $uri -OutFile $referenceFile -ErrorAction Stop
+            $resumeUri = Get-WebListenerUrl -Test 'Resume'
+            Invoke-RestMethod -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
             $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
             $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
         }
@@ -2912,9 +2906,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         }
 
         It "Invoke-RestMethod -Resume requires -OutFile" {
-            $uri = Get-WebListenerUrl -Test 'Resume'
-
-            { Invoke-RestMethod -Resume -Uri $uri -ErrorAction Stop } |
+            { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
@@ -2922,8 +2914,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             # ensure the file does not exist
             Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-RestMethod -uri $uri -OutFile $outFile -RHV 'Headers' -Resume
+            Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -2939,8 +2930,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -RHV 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -2957,7 +2947,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -RHV 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -2980,8 +2970,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $null = Invoke-RestMethod -uri $uri -OutFile $outFile
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -RHV 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should BeExactly $referenceFileHash.Hash
@@ -2997,8 +2986,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $null = Invoke-RestMethod -uri $uri -OutFile $outFile
             $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $uri = Get-WebListenerUrl -Test 'Resume'
-            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -RHV 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash

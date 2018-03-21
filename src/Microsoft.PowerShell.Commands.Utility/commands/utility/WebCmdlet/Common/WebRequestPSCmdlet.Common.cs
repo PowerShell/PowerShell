@@ -1434,9 +1434,9 @@ namespace Microsoft.PowerShell.Commands
                                     response.Content.Headers.ContentRange.Length == _resumeFileSize)
                                 {
                                     _isSuccess = true;
+                                    WriteVerbose(String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.OutFileWritingSkipped, OutFile));
                                     // Disable writing to the OutFile.
                                     OutFile = null;
-                                    WriteVerbose(WebCmdletStrings.OutFileWritingSkipped);
                                 }
 
                                 if (!_isSuccess)
