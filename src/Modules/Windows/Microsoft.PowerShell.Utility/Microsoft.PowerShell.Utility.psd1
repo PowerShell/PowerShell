@@ -24,7 +24,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-FileHash",
     "Unblock-File", "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "Get-Verb", "Format-Hex",
-    "Test-Json", "Remove-Alias"
+    "Test-Json", "Remove-Alias", "ConvertFrom-Markdown", "Show-Markdown", "Set-MarkdownOption", "Get-MarkdownOption"
 FunctionsToExport= "ConvertFrom-SddlString"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"

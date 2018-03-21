@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.MarkdownRender\Microsoft.PowerShell.MarkdownRender.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
