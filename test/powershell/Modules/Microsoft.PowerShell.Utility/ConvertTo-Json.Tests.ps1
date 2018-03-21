@@ -46,6 +46,6 @@ Describe 'ConvertTo-Json' -tags "CI" {
 
     It "The result string is not packed in the array symbols when there is only one input object and AsArray parameter is not used." {
         $output = 1 | ConvertTo-Json
-        $output | Should -Be '1'
+        $output | Should -BeExactly '1'
     }
 }

@@ -61,11 +61,11 @@ namespace Microsoft.PowerShell.Commands
         /// be converted to their string equivalent. Otherwise, enum values
         /// will be converted to their numeric equivalent.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter EnumsAsStrings { get; set; }
 
         /// <summary>
-        /// gets or sets the AsArray property.
+        /// Gets or sets the AsArray property.
         /// If the AsArray property is set to be true, the result Json string will
         /// be returned with surrounding '[', ']' chars. Otherwise,
         /// the array symbols will occur only if there is more than one input object.
