@@ -37,7 +37,7 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
         & .\$scriptName
 
 	    It "Breakpoint hit count" {
-		    $breakpoint.HitCount | Should Be 1
+		    $breakpoint.HitCount | Should -Be 1
 	    }
     }
     finally
@@ -94,7 +94,7 @@ Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
         & $scriptFile
 
 	    It "Breakpoint on recursive function hit count" {
-		    $breakpoint.HitCount | Should BeGreaterThan 0
+		    $breakpoint.HitCount | Should -BeGreaterThan 0
 	    }
     }
     finally
@@ -143,11 +143,11 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
         & $scriptFile
 
 	    It "Breakpoint before function call count" {
-		    $breakpoint1.HitCount | Should Be 1
+		    $breakpoint1.HitCount | Should -Be 1
 	    }
 
 	    It "Breakpoint after function call count" {
-		    $breakpoint2.HitCount | Should Be 1
+		    $breakpoint2.HitCount | Should -Be 1
 	    }
     }
     finally
@@ -185,15 +185,15 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         $null = & $script
 
 	    It "Breakpoint on line 1 hit count" {
-		    $breakpoints[0].HitCount | Should Be 1
+		    $breakpoints[0].HitCount | Should -Be 1
 	    }
 
 	    It "Breakpoint on line 2 hit count" {
-		    $breakpoints[1].HitCount | Should Be 3
+		    $breakpoints[1].HitCount | Should -Be 3
 	    }
 
 	    It "Breakpoint on line 3 hit count" {
-		    $breakpoints[2].HitCount | Should Be 1
+		    $breakpoints[2].HitCount | Should -Be 1
 	    }
     }
     finally
@@ -228,15 +228,15 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
         }
 
         It "Short path Breakpoint on line 1 hit count" -skip:$IsCoreCLR {
-            $breakpoints[0].HitCount | Should Be 1
+            $breakpoints[0].HitCount | Should -Be 1
         }
 
         It "Short path Breakpoint on line 2 hit count" -skip:$IsCoreCLR {
-            $breakpoints[1].HitCount | Should Be 3
+            $breakpoints[1].HitCount | Should -Be 3
         }
 
         It "Short path Breakpoint on line 3 hit count" -skip:$IsCoreCLR {
-            $breakpoints[2].HitCount | Should Be 1
+            $breakpoints[2].HitCount | Should -Be 1
         }
     }
 }
@@ -262,13 +262,13 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         $actual = @(& $command)
 
 	    It "Script breakpoint count '${command}'|${expected}" {
-		    $actual.Count | Should Be $expected.Count
+		    $actual.Count | Should -Be $expected.Count
 	    }
 
         foreach ($breakpoint in $actual)
         {
 	        It "Expected script breakpoints '${command}|${breakpoint}'" {
-		        ($expected -contains $breakpoint) | Should Be $true
+		        ($expected -contains $breakpoint) | Should -BeTrue
 	        }
         }
     }
@@ -287,7 +287,7 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         catch
         {
             It "Script failed expected exception '${command}'" {
-                $_.Exception.GetType().Name | Should Be $exception
+                $_.Exception.GetType().Name | Should -Be $exception
             }
         }
     }
@@ -470,15 +470,15 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
         Get-TestCmdlet
 
 	    It "Breakpoint on function hit count" {
-		    $breakpoint1.HitCount | Should Be 1
+		    $breakpoint1.HitCount | Should -Be 1
 	    }
 
 	    It "Breakpoint on uncalled function hit count" {
-		    $breakpoint2.HitCount | Should Be 0
+		    $breakpoint2.HitCount | Should -Be 0
 	    }
 
 	    It "Breakpoint on cmdlet hit count" {
-		    $breakpoint3.HitCount | Should Be 1
+		    $breakpoint3.HitCount | Should -Be 1
 	    }
     }
     finally
@@ -567,19 +567,19 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         Get-ModuleCmdlet
 
 	    It "Breakpoint1 on module function hit count" {
-		    $breakpoint1.HitCount | Should Be 1
+		    $breakpoint1.HitCount | Should -Be 1
 	    }
 
 	    It "Breakpoint2 on uncalled module function hit count" {
-		    $breakpoint2.HitCount | Should Be 0
+		    $breakpoint2.HitCount | Should -Be 0
 	    }
 
 	    It "Breakpoint3 on module cmdlet hit count" {
-		    $breakpoint3.HitCount | Should Be 1
+		    $breakpoint3.HitCount | Should -Be 1
 	    }
 
 	    It "Breakpoint4 on module cmdlet hit count" {
-		    $breakpoint4.HitCount | Should Be 1
+		    $breakpoint4.HitCount | Should -Be 1
 	    }
     }
     finally
@@ -634,14 +634,14 @@ Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
         & $tempFileName1
 
 	    It "Breakpoint 1 hit count" {
-		    $bp1.HitCount | Should Be 6
+		    $bp1.HitCount | Should -Be 6
 	    }
 
         $bp2 = Set-PSBreakpoint -Script $tempFileName2 -Line 3 -Action {continue}
         & $tempFileName2
 
 	    It "Breakpoint 2 hit count" {
-		    $bp2.HitCount | Should Be 6
+		    $bp2.HitCount | Should -Be 6
 	    }
     }
     finally

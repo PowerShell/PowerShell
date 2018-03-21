@@ -18,8 +18,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $asyncResult = $ps.BeginInvoke()
                 $ps.EndInvoke($asyncResult)
 
-                $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
-                $ps.InvocationStateInfo.State | Should Be 'Completed'
+                $ps.Streams.Error.Count | Should -Be 1 # the host does not implement it.
+                $ps.InvocationStateInfo.State | Should -BeExactly 'Completed'
             } finally {
                 $ps.Dispose()
                 $rs.Dispose()
@@ -37,10 +37,10 @@ Describe "Tests for parameter binding" -Tags "CI" {
             {
                 $ps.AddScript($f + "get-foo").invoke()
                 $prompt = $th.ui.streams.prompt[0]
-                $prompt | should Not BeNullOrEmpty
+                $prompt | Should -Not -BeNullOrEmpty
                 $result = $prompt.split(":")
-                $result[0] | Should Match 'get-foo'
-                $result[-1] | should be 'a'
+                $result[0] | Should -Match 'get-foo'
+                $result[-1] | Should -BeExactly 'a'
             } finally {
                 $rs.Close()
                 $rs.Dispose()
@@ -57,8 +57,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo a | Should Be a
-        get-foo -a b | Should Be b
+        get-foo a | Should -BeExactly 'a'
+        get-foo -a b | Should -BeExactly 'b'
     }
 
     It 'Positional parameters when only one position specified: position = 1' {
@@ -68,7 +68,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo b | Should Be b
+        get-foo b | Should -BeExactly 'b'
     }
 
     It 'Positional parameters when only position specified: position = 2' {
@@ -78,7 +78,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo b | Should Be b
+        get-foo b | Should -BeExactly 'b'
     }
 
     It 'Multiple positional parameters case 1' {
@@ -89,11 +89,11 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a; $b
         }
 
-        ( get-foo c d ) -join ',' | Should Be 'c,d'
-        ( get-foo -a c d ) -join ',' | Should Be 'c,d'
-        ( get-foo -a c -b d ) -join ',' | Should Be 'c,d'
-        ( get-foo -b d c ) -join ',' | Should Be 'c,d'
-        ( get-foo c -b d ) -join ',' | Should Be 'c,d'
+        ( get-foo c d ) -join ',' | Should -BeExactly 'c,d'
+        ( get-foo -a c d ) -join ',' | Should -BeExactly 'c,d'
+        ( get-foo -a c -b d ) -join ',' | Should -BeExactly 'c,d'
+        ( get-foo -b d c ) -join ',' | Should -BeExactly 'c,d'
+        ( get-foo c -b d ) -join ',' | Should -BeExactly 'c,d'
     }
 
     It 'Multiple positional parameters case 2:  the parameters are put in different order?' {
@@ -105,7 +105,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a; $b
         }
 
-        (get-foo c d) -join ',' | Should Be 'd,c'
+        (get-foo c d) -join ',' | Should -BeExactly 'd,c'
     }
 
     It 'Value from pipeline' {
@@ -121,7 +121,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             }
         }
 
-        (1..10 | get-foo) -join ',' | Should Be '2,4,6,8,10'
+        (1..10 | get-foo) -join ',' | Should -BeExactly '2,4,6,8,10'
     }
 
     It 'Value from pipeline by property name' {
@@ -138,7 +138,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         $b = 1..10 | select-object @{name='foo'; expression={$_ * 10}} | get-foo
-        $b -join ',' | Should Be '10,20,30,40,50,60,70,80,90,100'
+        $b -join ',' | Should -BeExactly '10,20,30,40,50,60,70,80,90,100'
     }
 
     It 'Value from remaining arguments' {
@@ -151,9 +151,9 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $foo
         }
 
-        ( get-foo a b c d ) -join ',' | Should Be 'b,c,d'
-        ( get-foo a b -a c d ) -join ',' | Should Be 'a,b,d'
-        ( get-foo a b -a c -q d ) -join ',' | Should Be 'a,b,-q,d'
+        ( get-foo a b c d ) -join ',' | Should -BeExactly 'b,c,d'
+        ( get-foo a b -a c d ) -join ',' | Should -BeExactly 'a,b,d'
+        ( get-foo a b -a c -q d ) -join ',' | Should -BeExactly 'a,b,-q,d'
     }
 
     It 'Multiple parameter sets with Value from remaining arguments' {
@@ -166,8 +166,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         { get-foo -a a -b b c d } | ShouldBeErrorId 'AmbiguousParameterSet,get-foo'
-        ( get-foo -a a b c d ) -join ',' | Should Be 'b,c,d'
-        ( get-foo -b b a c d ) -join ',' | Should Be 'a,c,d'
+        ( get-foo -a a b c d ) -join ',' | Should -BeExactly 'b,c,d'
+        ( get-foo -b b a c d ) -join ',' | Should -BeExactly 'a,c,d'
     }
 
     It 'Default parameter set with value from remaining arguments case 1' {
@@ -181,9 +181,9 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         $x,$y,$z=get-foo a b c d
-        $x | Should Be a
-        $y | Should Be $null
-        $z -join ',' | Should Be 'b,c,d'
+        $x | Should -BeExactly 'a'
+        $y | Should -BeNullOrEmpty
+        $z -join ',' | Should -BeExactly 'b,c,d'
     }
 
     It 'Default parameter set with value from remaining argument case 2' {
@@ -198,9 +198,9 @@ Describe "Tests for parameter binding" -Tags "CI" {
 
         $x,$y,$z=get-foo a b c d
 
-        $x | Should Be $null
-        $y | Should Be 'a'
-        $z -join ',' | Should Be 'b,c,d'
+        $x | Should -BeNullOrEmpty
+        $y | Should -BeExactly 'a'
+        $z -join ',' | Should -BeExactly 'b,c,d'
     }
 
     It 'Alias are specified for parameters' {
@@ -210,17 +210,17 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo -foo b | Should Be 'b'
+        get-foo -foo b | Should -BeExactly 'b'
     }
 
     It 'Invoking with script block' {
         $foo = . { param([Parameter(position=2)] $a, [Parameter(position=1)]$b); $a; $b} a b
-        $foo[0] | Should Be b
+        $foo[0] | Should -BeExactly 'b'
     }
 
     It 'Normal functions' {
         function foo ($a, $b) {$b, $a}
-        ( foo a b ) -join ',' | Should Be 'b,a'
+        ( foo a b ) -join ',' | Should -BeExactly 'b,a'
     }
 
     It 'Null is not Allowed when AllowNull attribute is not set' {
@@ -241,7 +241,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        (get-foo -a $null) | Should Be $null
+        (get-foo -a $null) | Should -BeNullOrEmpty
 
     }
 
@@ -262,7 +262,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo -a '' | Should Be ''
+        get-foo -a '' | Should -BeExactly ''
     }
 
     It 'Empty collection is not allowed when AllowEmptyCollection it not set' {
@@ -282,7 +282,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        get-foo -a @() | Should Be $null
+        get-foo -a @() | Should -BeNullOrEmpty
     }
 
     It 'Unspecified non-mandatory bool should not cause exception' {
@@ -293,7 +293,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        42 | get-foo | Should be 42
+        42 | get-foo | Should -Be 42
     }
 
     It 'Parameter binding failure on Parameter1 should not cause parameter binding failure on Length' {
@@ -304,7 +304,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
           process  { $Length }
         }
 
-        'abc' | get-foo | Should Be 3
+        'abc' | get-foo | Should -Be 3
     }
 
     It 'Binding array of string to array of bool should fail (cmdletbinding)' {
@@ -326,8 +326,8 @@ Describe "Tests for parameter binding" -Tags "CI" {
         }
 
         $x = get-foo 'a','b'
-        $x[0] | Should be $true
-        $x[1] | Should be $true
+        $x[0] | Should -BeTrue
+        $x[1] | Should -BeTrue
     }
 
     Context 'Default value conversion tests' {
@@ -335,7 +335,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             function get-fooa
             {
                 param( [System.Reflection.MemberTypes] $memberTypes = $([Enum]::GetNames("System.Reflection.MemberTypes") -join ",") )
-                $memberTypes | Should BeOfType System.Reflection.MemberTypes
+                $memberTypes | Should -BeOfType System.Reflection.MemberTypes
             }
 
             get-fooa
@@ -346,7 +346,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             {
                 [CmdletBinding()]
                 param( [System.Reflection.MemberTypes] $memberTypes = $([Enum]::GetNames("System.Reflection.MemberTypes") -join ",") )
-                $memberTypes | Should BeOfType System.Reflection.MemberTypes
+                $memberTypes | Should -BeOfType System.Reflection.MemberTypes
             }
 
             get-foob
@@ -356,7 +356,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             function get-fooc
             {
                 param( [Parameter()] [System.Reflection.MemberTypes] $memberTypes )
-                $memberTypes | Should Be $null
+                $memberTypes | Should -BeNullOrEmpty
             }
 
             get-fooc
@@ -366,7 +366,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             function get-food
             {
                 param( [System.Reflection.MemberTypes] $memberTypes )
-                $memberTypes | Should Be $null
+                $memberTypes | Should -BeNullOrEmpty
             }
 
             get-food
@@ -379,7 +379,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-fooe| Should Be 55
+            get-fooe| Should -Be 55
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set on the parameter" {
@@ -390,7 +390,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-foof| Should Be 55
+            get-foof| Should -Be 55
         }
 
         It "Validation attributes should not run on default values" {
@@ -400,7 +400,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-foog } | Should not throw
+            { get-foog } | Should -Not -throw
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set" {
@@ -411,7 +411,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-fooh } | Should not throw
+            { get-fooh } | Should -Not -throw
         }
 
         It "ValidateScript can use custom ErrorMessage" {
@@ -429,7 +429,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             {
                 $errMsg = $_.Exception.Message
             }
-            $errMsg | Should Be "Cannot validate argument on parameter 'p'. Item '2' failed '`$_ -gt 2' validation"
+            $errMsg | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '`$_ -gt 2' validation"
         }
 
         It "ValidatePattern can use custom ErrorMessage" {
@@ -448,7 +448,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             {
                 $errMsg = $_.Exception.Message
             }
-            $errMsg | Should Be "Cannot validate argument on parameter 'p'. Item '2' failed '\s+' regex"
+            $errMsg | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' failed '\s+' regex"
         }
 
         It "ValidateSet can use custom ErrorMessage" {
@@ -466,7 +466,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $errMsg = $_.Exception.Message
             }
             $set = 'A','B','C' -join [Globalization.CultureInfo]::CurrentUICulture.TextInfo.ListSeparator
-            $errMsg | Should Be "Cannot validate argument on parameter 'p'. Item '2' is not in '$set'"
+            $errMsg | Should -BeExactly "Cannot validate argument on parameter 'p'. Item '2' is not in '$set'"
         }
 
     }
@@ -510,7 +510,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
 '@ | ForEach-Object {$_.assembly} | Import-module
             }
 
-        Get-TestCmdlet -MyParameter @{ a = 42 } | Should Be 'hashtable'
+        Get-TestCmdlet -MyParameter @{ a = 42 } | Should -BeExactly 'hashtable'
     }
 
     It 'Parameter pasing is consuming enumerators' {
@@ -521,6 +521,6 @@ Describe "Tests for parameter binding" -Tags "CI" {
         & { } $b
 
         #The position of the enumerator shouldn't be modified
-        $b.current |Should Be 1
+        $b.current | Should -Be 1
     }
 }
