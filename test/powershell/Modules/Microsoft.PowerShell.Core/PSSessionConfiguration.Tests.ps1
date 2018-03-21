@@ -644,8 +644,8 @@ namespace PowershellTestConfigNamespace
     Describe "Feature tests for New-PSSessionConfigurationFile Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
 
         It "Validate FullyQualifiedErrorId from New-PSSessionConfigurationFile when invalid path is provided as input" {
-	    $filePath = "cert:\foo.pssc"
-            { New-PSSessionConfigurationFile $filePath } | Should -Throw -ErrorId "InvalidPSSessionConfigurationFilePath,Microsoft.PowerShell.Commands.NewPSSessionConfigurationFileCommand"
+            { New-PSSessionConfigurationFile "cert:\foo.pssc" } |
+		Should -Throw -ErrorId "InvalidPSSessionConfigurationFilePath,Microsoft.PowerShell.Commands.NewPSSessionConfigurationFileCommand"
         }
     }
 

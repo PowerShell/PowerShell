@@ -164,7 +164,7 @@ Describe "Debug-job test" -tag "Feature" {
         $ps.commands.clear()
         Start-Sleep 2
         $result = $ps.runspace.Debugger.GetCallStack()
-        $result.Command | Should -Be "<ScriptBlock>"
+        $result.Command | Should -BeExactly "<ScriptBlock>"
     }
 }
 
