@@ -283,6 +283,17 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         }
     }
 
+    It "PipelineVariable shouldn't cause a NullRef exception when 'DynamicParam' block is present" {
+        function DynamicParamTest {
+            [CmdletBinding()]
+            param()
+            dynamicparam { }
+            process { 'hi' }
+        }
+
+        DynamicParamTest -PipelineVariable bar | ForEach-Object { $bar } | Should -Be "hi"
+    }
+
     Context "Use automatic variables as default value for parameters" {
         BeforeAll {
             ## Explicit use of 'CmdletBinding' make it a script cmdlet
