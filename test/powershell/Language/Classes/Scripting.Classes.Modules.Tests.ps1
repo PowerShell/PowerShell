@@ -3,7 +3,7 @@
 Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
     It "doesn't throw for any module" {
         $discard = Get-Module -ListAvailable | ForEach-Object { $_.GetExportedTypeDefinitions() }
-        $true | Should Be $true # we only verify that we didn't throw. This line contains a dummy Should to make pester happy.
+        $true | Should -BeTrue # we only verify that we didn't throw. This line contains a dummy Should to make pester happy.
     }
 }
 
@@ -26,7 +26,7 @@ Describe 'use of a module from two runspaces' -Tags "CI" {
         }
         New-ModuleManifest @manifestParams
 
-        if ($env:PSModulePath -notlike "*$TestModulePath*") {
+        if ($env:PSModulePath -NotLike "*$TestModulePath*") {
             $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$TestModulePath"
         }
     }
@@ -62,10 +62,10 @@ Import-Module Random
                 }
             }
 
-            $res.Count | Should Be 4
-            $res[0] | Should Not Be $res[1]
-            $res[0] | Should Be $res[2]
-            $res[1] | Should Be $res[3]
+            $res.Count | Should -Be 4
+            $res[0] | Should -Not -Be $res[1]
+            $res[0] | Should -Be $res[2]
+            $res[1] | Should -Be $res[3]
         }
 
     } finally {
@@ -93,23 +93,23 @@ function Get-PassedArgsNoRoot { $passedArgs }
 
     It "Class execution reflects changes in module reloading with '-Force'" {
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
-        Get-PassedArgsRoot | Should Be $Arg_Hello
-        Get-PassedArgsNoRoot | Should Be $Arg_Hello
+        Get-PassedArgsRoot | Should -BeExactly $Arg_Hello
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_Hello
 
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World -Force
-        Get-PassedArgsRoot | Should Be $Arg_World
-        Get-PassedArgsNoRoot | Should Be $Arg_World
+        Get-PassedArgsRoot | Should -BeExactly $Arg_World
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_World
     }
 
     It "Class execution reflects changes in module reloading with 'Remove-Module' and 'Import-Module'" {
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
-        Get-PassedArgsRoot | Should Be $Arg_Hello
-        Get-PassedArgsNoRoot | Should Be $Arg_Hello
+        Get-PassedArgsRoot | Should -BeExactly $Arg_Hello
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_Hello
 
         Remove-Module TestModule
 
         Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World
-        Get-PassedArgsRoot | Should Be $Arg_World
-        Get-PassedArgsNoRoot | Should Be $Arg_World
+        Get-PassedArgsRoot | Should -BeExactly $Arg_World
+        Get-PassedArgsNoRoot | Should -BeExactly $Arg_World
     }
 }

@@ -116,7 +116,7 @@ Describe "Cmdlet declaration statement" -Tags "CI" {
             $null = [system.management.automation.psparser]::tokenize($script, [ref] $syntaxerrors)
 
             #Error should not be reported
-            $syntaxerrors.Count | Should Be 0
+            $syntaxerrors.Count | Should -Be 0
         }
 }
 
