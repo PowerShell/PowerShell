@@ -645,7 +645,7 @@ function Restore-PSPackage
         [switch] $Force
     )
 
-    if(-not $ProjectDirs)
+    if (-not $ProjectDirs)
     {
         $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
     }
