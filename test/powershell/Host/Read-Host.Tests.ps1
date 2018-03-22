@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "Read-Host" -Tags "Slow","Feature" {
     Context "[Console]::ReadKey() implementation on non-Windows" {
         BeforeAll {
@@ -16,7 +17,7 @@ Describe "Read-Host" -Tags "Slow","Feature" {
 
         It @ItArgs "Should output correctly" {
             & (Join-Path $assetsDir "Read-Host.Output.expect") $powershell | Out-Null
-            $LASTEXITCODE | Should Be 0
+            $LASTEXITCODE | Should -Be 0
         }
     }
 }
