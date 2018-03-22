@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the AsArray property.
-        /// If the AsArray property is set to be true, the result Json string will
+        /// If the AsArray property is set to be true, the result JSON string will
         /// be returned with surrounding '[', ']' chars. Otherwise,
         /// the array symbols will occur only if there is more than one input object.
         /// </summary>
