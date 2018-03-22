@@ -915,4 +915,20 @@ foo``u{2195}abc
         # Issue #2780
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should -Not -Throw
     }
+
+    It "Throw better error when statement should be put in named blocks - <name>" -TestCases @(
+        @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
+        @{ script = "{ begin {} Hi"; name = "script-block" }
+        @{ script = "begin {} Hi"; name = "script-file" }
+    ) {
+        param($script)
+
+        $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
+        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingNamedBlocks"
+    }
+
+    It "IncompleteParseException should be thrown when only ending curly is missing" {
+        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} " } | Should -Throw -ErrorId "IncompleteParseException" -PassThru
+        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBrace"
+    }
 }
