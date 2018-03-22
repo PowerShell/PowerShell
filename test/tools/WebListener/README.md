@@ -619,8 +619,8 @@ Body:
 This endpoint simulates the download of a 20 byte file with support for resuming with the use of the `Range` HTTP request header.
 The bytes returned are numbered 1 to 20 inclusive.
 If the `Range` header is greater than 20, the endpoint will return a `416 Requested Range Not Satisfiable` response.
-The endpoint also returns an `X-Has-Range` response header containing `true` or `false` if the HTTP Request contains a `Range` request header.
-The endpoint will also return an `X-Request-Range` response header which contains the `Range` header value if one was present.
+The endpoint also returns an `X-WebListener-Has-Range` response header containing `true` or `false` if the HTTP Request contains a `Range` request header.
+The endpoint will also return an `X-WebListener-Request-Range` response header which contains the `Range` header value if one was present.
 
 ```powershell
 $uri = Get-WebListenerUrl -Test 'Resume'
@@ -633,8 +633,8 @@ Response Headers:
 HTTP/1.1 206 PartialContent
 Date: Tue, 20 Mar 2018 08:45:42 GMT
 Server: Kestrel
-X-Has-Range: true
-X-Request-Range: bytes=0-
+X-WebListener-Has-Range: true
+X-WebListener-Request-Range: bytes=0-
 Content-Length: 20
 Content-Type: application/octet-stream
 Content-Range: bytes 0-19/20
@@ -665,7 +665,7 @@ Content-Type: application/octet-stream
 
 This endpoint is the same as `/Resume/` with the exception that it ignores the `Range` HTTP request header.
 This endpoint always returns the full 20 bytes and a `200` status.
-The `X-Has-Range` and `X-Request-Range` headers are also returned the same as the `/Resume/` endpoint.
+The `X-WebListener-Has-Range` and `X-WebListener-Request-Range` headers are also returned the same as the `/Resume/` endpoint.
 
 ```powershell
 $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
@@ -678,7 +678,7 @@ Response Headers:
 HTTP/1.1 200 OK
 Date: Tue, 20 Mar 2018 08:48:21 GMT
 Server: Kestrel
-X-Has-Range: false
+X-WebListener-Has-Range: false
 Content-Length: 20
 Content-Type: application/octet-stream
 ```

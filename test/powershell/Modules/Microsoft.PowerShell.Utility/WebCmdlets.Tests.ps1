@@ -1645,8 +1645,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $response.Headers.'X-Request-Range'[0] | Should -BeExactly 'bytes=0-'
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly 'bytes=0-'
             $response.StatusCode | Should -Be 206
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes 0-$($referenceFileSize-1)/$referenceFileSize"
         }
@@ -1663,7 +1663,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
-            $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'false'
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'false'
             $response.StatusCode | Should -Be 200
             $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
@@ -1680,8 +1680,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $response.Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
             $response.StatusCode | Should -Be 200
             $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
@@ -1703,8 +1703,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $response.Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
             $response.StatusCode | Should -Be 206
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes $bytes-$($referenceFileSize-1)/$referenceFileSize"
         }
@@ -1720,8 +1720,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $response.Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $response.Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
             # The web cmdlets special case 416 as a success code when the local file and remote file are the same size
             $response.StatusCode | Should -Be 416
             $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
@@ -2919,8 +2919,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $Headers.'X-Request-Range'[0] | Should -BeExactly 'bytes=0-'
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly 'bytes=0-'
             $Headers.'Content-Range'[0] | Should -BeExactly "bytes 0-$($referenceFileSize-1)/$referenceFileSize"
         }
 
@@ -2936,7 +2936,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
-            $Headers.'X-Has-Range'[0] | Should -BeExactly 'false'
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'false'
             $Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
 
@@ -2953,8 +2953,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
-            $Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
             $Headers.ContainsKey('Content-Range') | Should -BeFalse
         }
 
@@ -2975,8 +2975,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
             $Headers.'Content-Range'[0] | Should -BeExactly "bytes $bytes-$($referenceFileSize-1)/$referenceFileSize"
         }
 
@@ -2991,8 +2991,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
-            $Headers.'X-Has-Range'[0] | Should -BeExactly 'true'
-            $Headers.'X-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
             $Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
     }

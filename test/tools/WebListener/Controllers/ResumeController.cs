@@ -99,12 +99,12 @@ namespace mvc.Controllers
             string rangeHeader;
             if (TryGetRangeHeader(out rangeHeader))
             {
-                Response.Headers["X-Has-Range"] = "true";
-                Response.Headers["X-Request-Range"] = rangeHeader;
+                Response.Headers["X-WebListener-Has-Range"] = "true";
+                Response.Headers["X-WebListener-Request-Range"] = rangeHeader;
             }
             else
             {
-                Response.Headers["X-Has-Range"] = "false";
+                Response.Headers["X-WebListener-Has-Range"] = "false";
             }
         }
 
