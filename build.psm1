@@ -525,21 +525,7 @@ Fix steps:
     }
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
-
-        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "detailed"
-        } else {
-            $RestoreArguments += "quiet"
-        }
-
-        $srcProjectDirs | ForEach-Object {
-            Write-Log "Run dotnet restore $_ $RestoreArguments"
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
-        }
-    }
+    Restore-PSPackage -Options $Options -Force:$Restore
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
@@ -642,6 +628,41 @@ Fix steps:
     # Restore the Pester module
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+    }
+}
+
+function Restore-PSPackage
+{
+    param(
+        [ValidateNotNullOrEmpty()]
+        [Parameter()]
+        [string[]] $ProjectDirs,
+
+        [ValidateNotNullOrEmpty()]
+        [Parameter()]
+        $Options = (Get-PSOptions -DefaultToNew),
+
+        [switch] $Force
+    )
+
+    if(-not $ProjectDirs)
+    {
+        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+    }
+
+    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
+
+        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            $RestoreArguments += "detailed"
+        } else {
+            $RestoreArguments += "quiet"
+        }
+
+        $ProjectDirs | ForEach-Object {
+            Write-Log "Run dotnet restore $_ $RestoreArguments"
+            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+        }
     }
 }
 
@@ -2324,6 +2345,9 @@ function Copy-PSGalleryModules
     if (!$Destination.EndsWith("Modules")) {
         throw "Installing to an unexpected location"
     }
+
+    Find-DotNet
+    Restore-PSPackage
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {
