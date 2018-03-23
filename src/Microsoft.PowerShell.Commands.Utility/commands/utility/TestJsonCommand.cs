@@ -19,17 +19,17 @@ namespace Microsoft.PowerShell.Commands
     public class TestJsonCommand : PSCmdlet
     {
         /// <summary>
-        /// An Json to be validated.
+        /// An JSON to be validated.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public String Json { get; set; }
 
         /// <summary>
-        /// A schema to validate the Json against.
+        /// A schema to validate the JSON against.
         /// It is optional parameter.
-        /// If the parameter is absent the cmdlet only try to parse the Json.
-        /// If the parameter present the cmdlet try to parse the Json and
-        /// then check the Json against the schema. Before the check
+        /// If the parameter is absent the cmdlet only try to parse the JSON.
+        /// If the parameter present the cmdlet try to parse the JSON and
+        /// then check the JSON against the schema. Before the check
         /// the cmdlet parse the schema doing implicitly check the schema too.
         /// </summary>
         [Parameter(Position = 1)]
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         private JsonSchema4 _jschema;
 
         /// <summary>
-        /// Prepare an Json schema.
+        /// Prepare an JSON schema.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Validate an Json.
+        /// Validate an JSON.
         /// </summary>
         protected override void ProcessRecord()
         {
