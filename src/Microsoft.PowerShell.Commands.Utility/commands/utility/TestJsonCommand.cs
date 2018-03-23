@@ -72,19 +72,17 @@ namespace Microsoft.PowerShell.Commands
                 if (_jschema != null)
                 {
                     var errorMessages = _jschema.Validate(parsedJson);
-                    if (errorMessages.Count != 0)
+                    if (errorMessages != null && errorMessages.Count != 0)
                     {
                         result = false;
 
                         Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
-                        if (errorMessages != null)
+
+                        foreach (var message in errorMessages)
                         {
-                            foreach (var message in errorMessages)
-                            {
-                                ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                                errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
-                                WriteError(errorRecord);
-                            }
+                            ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                            errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
+                            WriteError(errorRecord);
                         }
                     }
                 }
