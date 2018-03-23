@@ -1,7 +1,7 @@
 FROM centos:7
 
-ARG PSVERSIONSTUB=6.0.1
-ARG PSVERSIONSTUBRPM=6.0.1
+ARG PSVERSIONSTUB=6.0.2
+ARG PSVERSIONSTUBRPM=6.0.2
 ARG PACKAGELOCATIONSTUB
 ARG TESTLISTSTUB=/PowerShell/test/powershell/Modules/PackageManagement/PackageManagement.Tests.ps1,/PowerShell/test/powershell/engine/Module
 ARG GITLOCATION=https://github.com/PowerShell/PowerShell.git

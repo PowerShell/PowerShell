@@ -19,8 +19,8 @@ Describe "FormatData" -tags "Feature" {
                 $runspace.CreatePipeline("Update-FormatData -AppendPath $TESTDRIVE\allformat.ps1xml").Invoke()
                 $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -TypeName *").Invoke()
 
-                $expectAllFormat.Count | Should Be $actualAllFormat.Count
-                Compare-Object $expectAllFormat $actualAllFormat | Should Be $null
+                $expectAllFormat.Count | Should -Be $actualAllFormat.Count
+                Compare-Object $expectAllFormat $actualAllFormat | Should -Be $null
                 $runspace.Close()
             }
             finally
@@ -32,7 +32,7 @@ Describe "FormatData" -tags "Feature" {
         It "works with literal path" {
             $filename = 'TestDrive:\[formats.ps1xml'
             Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename
-            (Test-Path -LiteralPath $filename) | Should Be $true
+            (Test-Path -LiteralPath $filename) | Should -BeTrue
         }
 
         It "should overwrite the destination file" {
@@ -44,23 +44,14 @@ Describe "FormatData" -tags "Feature" {
             Get-FormatData -TypeName * | Export-FormatData -Path $filename -Force
 
             $actual = @(Get-Content $filename)[0]
-            $actual | Should Not Be $unexpected
+            $actual | Should -Not -Be $unexpected
         }
 
         It "should not overwrite the destination file with NoClobber" {
             $filename = "TestDrive:\ExportFormatDataWithNoClobber.ps1xml"
             Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename
 
-            try
-            {
-                Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename -NoClobber
-            }
-            catch
-            {
-                $exportFormatError = $_
-            }
-
-            $exportFormatError.FullyQualifiedErrorId | Should Be 'NoClobber,Microsoft.PowerShell.Commands.ExportFormatDataCommand'
+            { Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename -NoClobber } | Should -Throw -ErrorId 'NoClobber,Microsoft.PowerShell.Commands.ExportFormatDataCommand'
         }
     }
 }

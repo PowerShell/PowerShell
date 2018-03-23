@@ -10,7 +10,7 @@
 ## Test Note:
 ## ----------
 ## Since these tests change session and system state (constrained language and system lockdown)
-## they will all use try/finally blocks instead of Pester AfterEach/AfterAll to ensure session 
+## they will all use try/finally blocks instead of Pester AfterEach/AfterAll to ensure session
 ## and system state is restored.
 ## Pester AfterEach, AfterAll is not reliable when the session is constrained language or locked down.
 ##
@@ -69,7 +69,7 @@ if ($IsWindows)
             set { revertLockdownMode = value; }
         }
         private SwitchParameter revertLockdownMode;
-        
+
         protected override void BeginProcessing()
         {
             if (enableFullLanguageMode)
@@ -90,7 +90,7 @@ if ($IsWindows)
             if (revertLockdownMode)
             {
                 Environment.SetEnvironmentVariable("__PSLockdownPolicy", null, EnvironmentVariableTarget.Machine);
-            }            
+            }
         }
     }
 '@
@@ -104,9 +104,9 @@ if ($IsWindows)
             $null = New-Item -ItemType Directory $moduleDirectory -Force
         }
 
-        try 
-        { 
-            Add-Type -TypeDefinition $code -OutputAssembly $moduleDirectory\TestCmdletForConstrainedLanguage.dll -ErrorAction Ignore 
+        try
+        {
+            Add-Type -TypeDefinition $code -OutputAssembly $moduleDirectory\TestCmdletForConstrainedLanguage.dll -ErrorAction Ignore
         } catch {}
 
         Import-Module -Name $moduleDirectory\TestCmdletForConstrainedLanguage.dll
@@ -142,7 +142,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $result.Count | Should BeGreaterThan 0
+            $result.Count | Should -BeGreaterThan 0
         }
     }
 
@@ -167,7 +167,7 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode
                 }
 
-                $expectedError.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+                $expectedError.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
             }
         }
 
@@ -182,7 +182,7 @@ try
                     Start-Job { [object]::Equals("A", "B") }
                     throw "No Exception!"
                 }
-                catch 
+                catch
                 {
                     $exception = $_
                 }
@@ -191,7 +191,7 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
                 }
 
-                $exception.FullyQualifiedErrorId | Should Match "CannotStartJobInconsistentLanguageMode"
+                $exception.FullyQualifiedErrorId | Should -Match "CannotStartJobInconsistentLanguageMode"
             }
         }
     }
@@ -216,12 +216,12 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "CannotDefineNewType"
+            $exception.FullyQualifiedErrorId | Should -Match "CannotDefineNewType"
         }
 
         It "Verifies Add-Type works back in full language mode again" {
             Add-Type -TypeDefinition 'public class AfterFullLanguageTest { public static string Hello = "HelloAfter"; }'
-            [AfterFullLanguageTest]::Hello | Should Be "HelloAfter"
+            [AfterFullLanguageTest]::Hello | Should -Be "HelloAfter"
         }
     }
 
@@ -242,7 +242,7 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
                 }
 
-                $resultString | Should Be "Hello"
+                $resultString | Should -Be "Hello"
             }
 
             It "Verifies New-Object throws error in constrained language for disallowed IntPtr type" {
@@ -263,12 +263,12 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
                 }
 
-                $exception.FullyQualifiedErrorId | Should Match "CannotCreateTypeConstrainedLanguage"
+                $exception.FullyQualifiedErrorId | Should -Match "CannotCreateTypeConstrainedLanguage"
             }
 
             It "Verifies New-Object works for IntPtr type back in full language mode again" {
 
-                New-Object System.IntPtr 1234 | Should Be 1234
+                New-Object System.IntPtr 1234 | Should -Be 1234
             }
         }
 
@@ -294,13 +294,13 @@ try
                     Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
                 }
 
-                $exception.FullyQualifiedErrorId | Should Match "CannotCreateComTypeConstrainedLanguage"
+                $exception.FullyQualifiedErrorId | Should -Match "CannotCreateComTypeConstrainedLanguage"
             }
 
             It "Verifies New-Object with COM types works back in full language mode again" {
 
                 $result = New-Object -ComObject ADODB.Parameter
-                $result.Direction | Should Be 1
+                $result.Direction | Should -Be 1
             }
         }
     }
@@ -325,7 +325,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "NotSupported"
+            $exception.FullyQualifiedErrorId | Should -Match "NotSupported"
         }
     }
 
@@ -350,9 +350,9 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "CannotSetBreakpointInconsistentLanguageMode"
+            $exception.FullyQualifiedErrorId | Should -Match "CannotSetBreakpointInconsistentLanguageMode"
         }
-        
+
         # TODO
         # Test is pending because PowerShell Core currently stubs out Windows system lockdown APIs
         It "Verifies that a debugging breakpoint can be set in constrained language with system lockdown" -Pending {
@@ -371,7 +371,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
             }
 
-            $Global:DebuggingOk | Should Be "DebuggingOk"
+            $Global:DebuggingOk | Should -Be "DebuggingOk"
         }
 
         # TODO
@@ -400,7 +400,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $exception.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
 
         # TODO
@@ -437,10 +437,10 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
             }
 
-            $env:pwnd_738057 | Should Not Be "Pwnd"
+            $env:pwnd_738057 | Should -Not -Be "Pwnd"
         }
     }
-    
+
     Describe "Engine events in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies engine event in constrained language mode, its action runs as constrained" {
@@ -459,7 +459,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $job.Error.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $job.Error.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
@@ -485,7 +485,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $exception.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
@@ -513,7 +513,7 @@ try
                 $rs.Dispose()
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "DriveNotFoundException"
+            $exception.FullyQualifiedErrorId | Should -Match "DriveNotFoundException"
         }
     }
 
@@ -530,7 +530,7 @@ try
             $result = $pl.Invoke()
             $rs.Dispose()
 
-            $result[0] | Should BeNullOrEmpty
+            $result[0] | Should -BeNullOrEmpty
         }
     }
 
@@ -559,7 +559,7 @@ try
                 $rs.Dispose()
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "CmdletInvocationException"
+            $exception.FullyQualifiedErrorId | Should -Match "CmdletInvocationException"
         }
     }
 
@@ -570,9 +570,9 @@ try
             function VulnerableFunctionFromFullLanguage { Invoke-Expression $Args[0] }
 
             $TestCasesIEX = @(
-                @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode"; 
+                @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode";
                   scriptblock = { Invoke-Expression '[object]::Equals("A", "B")' } }
-                @{testName = "Verifies indirect Invoke-Expression does not bypass constrained language mode"; 
+                @{testName = "Verifies indirect Invoke-Expression does not bypass constrained language mode";
                   scriptblock = { VulnerableFunctionFromFullLanguage '[object]::Equals("A", "B")' } }
             )
         }
@@ -597,7 +597,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $exception.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
@@ -623,7 +623,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $exception.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
 
         It "Verifies dynamic methods invocation does not bypass constrained language mode" {
@@ -646,7 +646,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $exception.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
@@ -665,14 +665,14 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $result.Count | Should Be 0
+            $result.Count | Should -Be 0
         }
     }
 
     Describe "Variable AllScope in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Set-Variable cannot create AllScope in constrained language" {
-        
+
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -EnableConstrainedLanguageMode
@@ -689,11 +689,11 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "NotSupported"
+            $exception.FullyQualifiedErrorId | Should -Match "NotSupported"
         }
 
         It "Verifies New-Variable cannot create AllScope in constrained language" {
-        
+
             try
             {
                 Invoke-LanguageModeTestingSupportCmdlet -EnableConstrainedLanguageMode
@@ -710,7 +710,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "NotSupported"
+            $exception.FullyQualifiedErrorId | Should -Match "NotSupported"
         }
     }
 
@@ -746,8 +746,8 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception1.FullyQualifiedErrorId | Should Match "DataSectionAllowedCommandDisallowed"
-            $exception2.FullyQualifiedErrorId | Should Match "DataSectionAllowedCommandDisallowed"
+            $exception1.FullyQualifiedErrorId | Should -Match "DataSectionAllowedCommandDisallowed"
+            $exception2.FullyQualifiedErrorId | Should -Match "DataSectionAllowedCommandDisallowed"
         }
 
         It "Verifies data section with no-constant expression Add-Type additional command is disallowed in constrained language" {
@@ -769,7 +769,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "DataSectionAllowedCommandDisallowed"
+            $exception.FullyQualifiedErrorId | Should -Match "DataSectionAllowedCommandDisallowed"
         }
     }
 
@@ -795,7 +795,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "CannotDefineSupportedCommand"
+            $exception.FullyQualifiedErrorId | Should -Match "CannotDefineSupportedCommand"
         }
     }
 
@@ -877,7 +877,7 @@ try
                 @{testName = "Verify foreach statement with embedded method call in constrained language is disallowed"; script = $script3 }
                 @{testName = "Verify where statement with embedded method call in constrained language is disallowed"; script = $script4 }
             )
-        }        
+        }
 
         It "<testName>" -TestCases $TestCasesForeach {
 
@@ -903,7 +903,7 @@ try
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
             }
 
-            $exception.FullyQualifiedErrorId | Should Match "MethodInvocationNotSupportedInConstrainedLanguage"
+            $exception.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 

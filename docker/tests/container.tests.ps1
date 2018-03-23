@@ -76,7 +76,7 @@ Describe "Linux Containers run PowerShell" -Tags 'Behavior', 'Linux' {
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.1'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.2'
     }
 }
 
@@ -100,6 +100,6 @@ Describe "Windows Containers run PowerShell" -Tags 'Behavior', 'Windows' {
             $path
         )
 
-        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.1'
+        Get-ContainerPowerShellVersion -TestContext $testContext -Name $Name -RepoName (Get-RepoName)  | should be '6.0.2'
     }
 }

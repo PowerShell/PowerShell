@@ -18,8 +18,8 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         $ps.Runspace = $rs
         $result = $ps.AddScript('$pid').Invoke()
         It "Verifies the WinRM host process Id was found" {
-            $result | Should Not Be $null
-            ($result.Count -eq 1) | Should Be $true
+            $result | Should -Not -BeNullOrEmpty
+            ($result.Count -eq 1) | Should -BeTrue
         }
         [int]$winRMHostProcId = $result[0]
 
@@ -33,8 +33,8 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         # Get local remote runspace to attached process
         $hostRS = Get-Runspace -Name PSAttachRunspace
         It "Verifies that the attached-to host runspace was found" {
-            $hostRS | Should Not Be $null
-            ($hostRS.RunspaceStateInfo.State -eq 'Opened') | Should Be $true
+            $hostRS | Should -Not -BeNullOrEmpty
+            ($hostRS.RunspaceStateInfo.State -eq 'Opened') | Should -BeTrue
         }
 
         # Wait for host runspace to become available.
@@ -44,7 +44,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
             sleep -Milliseconds 500
         }
         It "Verifies that the attached-to host runspace is available" {
-            ($hostRS.RunspaceAvailability -eq 'Available') | Should Be $true
+            ($hostRS.RunspaceAvailability -eq 'Available') | Should -BeTrue
         }
 
         # Get call stack from default runspace.
@@ -62,8 +62,8 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         Exit-PSHostProcess
 
         It "Verifies a call stack was returned from the attached-to host." {
-            $stack | Should Not Be $null
-            ($stack.Count -gt 0) | Should Be $true
+            $stack | Should -Not -BeNullOrEmpty
+            ($stack.Count -gt 0) | Should -BeTrue
         }
     }
     finally

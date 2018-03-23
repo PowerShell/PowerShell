@@ -525,21 +525,7 @@ Fix steps:
     }
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
-
-        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "detailed"
-        } else {
-            $RestoreArguments += "quiet"
-        }
-
-        $srcProjectDirs | ForEach-Object {
-            Write-Log "Run dotnet restore $_ $RestoreArguments"
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
-        }
-    }
+    Restore-PSPackage -Options $Options -Force:$Restore
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
@@ -635,9 +621,48 @@ Fix steps:
 
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
-    if($PSModuleRestore)
+    if ($PSModuleRestore) {
+        Restore-PSModuleToBuild -PublishPath $publishPath
+    }
+
+    # Restore the Pester module
+    if ($CI) {
+        Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+    }
+}
+
+function Restore-PSPackage
+{
+    param(
+        [ValidateNotNullOrEmpty()]
+        [Parameter()]
+        [string[]] $ProjectDirs,
+
+        [ValidateNotNullOrEmpty()]
+        [Parameter()]
+        $Options = (Get-PSOptions -DefaultToNew),
+
+        [switch] $Force
+    )
+
+    if (-not $ProjectDirs)
     {
-        Restore-PSModuleToBuild -PublishPath $publishPath -CI:$CI.IsPresent
+        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+    }
+
+    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
+
+        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            $RestoreArguments += "detailed"
+        } else {
+            $RestoreArguments += "quiet"
+        }
+
+        $ProjectDirs | ForEach-Object {
+            Write-Log "Run dotnet restore $_ $RestoreArguments"
+            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+        }
     }
 }
 
@@ -646,22 +671,12 @@ function Restore-PSModuleToBuild
     param(
         [Parameter(Mandatory)]
         [string]
-        $PublishPath,
-        [Switch]
-        $CI
+        $PublishPath
     )
 
     Write-Log "Restore PowerShell modules to $publishPath"
-
     $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
-
     Copy-PSGalleryModules -Destination $modulesDir
-
-    if($CI.IsPresent)
-    {
-        # take the latest version of pester and install it so it may be used
-        Restore-PSPester -Destination $modulesDir
-    }
 }
 
 function Restore-PSPester
@@ -1575,12 +1590,21 @@ function Start-PSBootstrap {
                 elseif ($Environment.IsUbuntu16) { $Deps += "libicu55" }
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-dev", "groff" }
+                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
 
                 # Install dependencies
-                Start-NativeExecution {
-                    Invoke-Expression "$sudo apt-get update -qq"
-                    Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                # change the fontend from apt-get to noninteractive
+                $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
+                $env:DEBIAN_FRONTEND='noninteractive'
+                try {
+                    Start-NativeExecution {
+                        Invoke-Expression "$sudo apt-get update -qq"
+                        Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                    }
+                }
+                finally {
+                    # change the apt frontend back to the original
+                    $env:DEBIAN_FRONTEND=$originalDebianFrontEnd
                 }
             } elseif ($Environment.IsRedHatFamily) {
                 # Build tools
@@ -1590,7 +1614,7 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "libunwind"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
+                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel' }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -1611,7 +1635,7 @@ function Start-PSBootstrap {
                 $Deps += "gcc", "cmake", "make"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff" }
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -1647,8 +1671,8 @@ function Start-PSBootstrap {
             if ($Package) {
                 try {
                     # We cannot guess if the user wants to run gem install as root
-                    Start-NativeExecution { gem install fpm -v 1.8.1 }
-                    Start-NativeExecution { gem install ronn }
+                    Start-NativeExecution { gem install fpm -v 1.9.3 }
+                    Start-NativeExecution { gem install ronn -v 0.7.3 }
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
@@ -2321,6 +2345,9 @@ function Copy-PSGalleryModules
     if (!$Destination.EndsWith("Modules")) {
         throw "Installing to an unexpected location"
     }
+
+    Find-DotNet
+    Restore-PSPackage
 
     $cache = dotnet nuget locals global-packages -l
     if ($cache -match "info : global-packages: (.*)") {

@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine01 HAVE_SYS_SYSCTL_H

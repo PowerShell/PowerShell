@@ -22,7 +22,7 @@ Describe "Requires tests" -Tags "CI" {
             }
             catch
             {
-                $_.FullyQualifiedErrorId | Should Be "ParseException"
+                $_.FullyQualifiedErrorId | Should -BeExactly "ParseException"
             }
         }
     }

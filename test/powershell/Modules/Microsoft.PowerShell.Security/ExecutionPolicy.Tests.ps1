@@ -8,23 +8,23 @@ Describe "ExecutionPolicy" -Tags "CI" {
 
     Context "Check Get-ExecutionPolicy behavior" {
         It "Should unrestricted when not on Windows" -Skip:$IsWindows {
-            Get-ExecutionPolicy | Should Be Unrestricted
+            Get-ExecutionPolicy | Should -Be Unrestricted
         }
 
         It "Should return Microsoft.Powershell.ExecutionPolicy PSObject on Windows" -Skip:($IsLinux -Or $IsMacOS) {
-            Get-ExecutionPolicy | Should BeOfType Microsoft.Powershell.ExecutionPolicy
+            Get-ExecutionPolicy | Should -BeOfType Microsoft.Powershell.ExecutionPolicy
         }
     }
 
     Context "Check Set-ExecutionPolicy behavior" {
         It "Should throw PlatformNotSupported when not on Windows" -Skip:$IsWindows {
-            { Set-ExecutionPolicy Unrestricted } | Should Throw "Operation is not supported on this platform."
+            { Set-ExecutionPolicy Unrestricted } | Should -Throw "Operation is not supported on this platform."
         }
 
         It "Should succeed on Windows" -Skip:($IsLinux -Or $IsMacOS) {
             # We use the Process scope to avoid affecting the system
             # Unrestricted is assumed "safe", otherwise these tests would not be running
-            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | Should Not Throw
+            { Set-ExecutionPolicy -Force -Scope Process -ExecutionPolicy Unrestricted } | Should -Not -Throw
         }
     }
 }
@@ -63,10 +63,10 @@ try {
 
                     # 'Get-Help Get-Disk' should return one result back
                     Set-ExecutionPolicy -ExecutionPolicy Restricted -Force -ErrorAction Stop
-                    (Get-Help -Name Get-Disk -ErrorAction Stop).Name | Should Be 'Get-Disk'
+                    (Get-Help -Name Get-Disk -ErrorAction Stop).Name | Should -Be 'Get-Disk'
                 }
                 catch {
-                    $_.ToString | should be null
+                    $_.ToString | Should -Be null
                 }
                 finally
                 {
@@ -568,12 +568,12 @@ ZoneId=$FileType
                         $exception = $_
                     }
 
-                    $exception.Exception | Should Not BeNullOrEmpty
+                    $exception.Exception | Should -Not -BeNullOrEmpty
 
                     $exceptionType = $exception.Exception.getType()
                     $result = $exceptionType
 
-                    $result |  Should be "System.Management.Automation.PSSecurityException"
+                    $result | Should -Be "System.Management.Automation.PSSecurityException"
                 }
             }
 
@@ -638,7 +638,7 @@ ZoneId=$FileType
 
                     $result = & $scriptName
 
-                    $result |  Should be $expected
+                    $result | Should -Be $expected
                 }
             }
 
@@ -688,7 +688,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    $testScript | Should Not throw
+                    {& $testScript} | Should -Not -Throw
                 }
             }
         }
@@ -719,7 +719,7 @@ ZoneId=$FileType
                     $result = & $scriptName
                     return $result
 
-                    $result |  Should be $expected
+                    $result | Should -Be $expected
                 }
             }
 
@@ -798,8 +798,8 @@ ZoneId=$FileType
                     $actualResult = $result."result"
                     $actualError = $result."exception"
 
-                    $actualResult |  Should be $expected
-                    $actualError | Should be $error
+                    $actualResult | Should -Be $expected
+                    $actualError | Should -Be $error
                 }
             }
             $message = "Hello"
@@ -933,7 +933,7 @@ ZoneId=$FileType
                 }
                 else
                 {
-                    $testScript | Should Not throw
+                    {& $testScript} | Should -Not -Throw
                 }
             }
 
@@ -1025,14 +1025,14 @@ ZoneId=$FileType
             )
             It "$TestTypePrefix Running <testScript> Script should throw '<error>'" -TestCases $testData  {
                 param([string]$testScript, [string]$error)
-                $testScript | should exist
+                $testScript | Should -Exist
                 if($error)
                 {
                     {& $testScript} | ShouldBeErrorId $error
                 }
                 else
                 {
-                    {& $testScript} | Should Not throw
+                    {& $testScript} | Should -Not -Throw
                 }
             }
         }
@@ -1049,7 +1049,7 @@ ZoneId=$FileType
             throw "No Exception!"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
+            $_.FullyQualifiedErrorId | Should -Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
         }
     }
 
@@ -1124,12 +1124,12 @@ ZoneId=$FileType
 
         It "-Scope Process is Settable" {
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy ByPass
-            Get-ExecutionPolicy -Scope Process | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope Process | Should -Be "ByPass"
         }
 
         It "-Scope CurrentUser is Settable" {
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy ByPass
-            Get-ExecutionPolicy -Scope CurrentUser | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope CurrentUser | Should -Be "ByPass"
         }
     }
 
@@ -1170,10 +1170,10 @@ ZoneId=$FileType
                 throw "Expected exception: ExecutionPolicyOverride"
             }
             catch [System.Security.SecurityException] {
-                $_.FullyQualifiedErrorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
+                $_.FullyQualifiedErrorId | Should -Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
             }
 
-            Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
 
         It '-Scope LocalMachine is Settable' {
@@ -1183,7 +1183,7 @@ ZoneId=$FileType
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Undefined
 
             Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
-            Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
+            Get-ExecutionPolicy -Scope LocalMachine | Should -Be "ByPass"
         }
     }
 }

@@ -314,12 +314,13 @@ namespace Microsoft.PowerShell.Commands
             }
         } // EndProcessing
 
+        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         /// <summary>
         /// This is more an implementation of the UNIX strftime
         /// </summary>
         private string UFormatDateString(DateTime dateTime)
         {
-            DateTime epoch = DateTime.Parse("January 1, 1970", System.Globalization.CultureInfo.InvariantCulture);
             int offset = 0;
             StringBuilder sb = new StringBuilder();
 
@@ -360,9 +361,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'c':
-                            sb.Append("{0:ddd} {0:MMM} ");
-                            sb.Append(StringUtil.Format("{0,2} ", dateTime.Day));
-                            sb.Append("{0:HH}:{0:mm}:{0:ss} {0:yyyy}");
+                            sb.Append("{0:ddd} {0:dd} {0:MMM} {0:yyyy} {0:HH}:{0:mm}:{0:ss}");
                             break;
 
                         case 'D':
@@ -386,15 +385,15 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'j':
-                            sb.Append(dateTime.DayOfYear);
+                            sb.Append(StringUtil.Format("{0:000}", dateTime.DayOfYear));
                             break;
 
                         case 'k':
-                            sb.Append("{0:HH}");
+                            sb.Append(StringUtil.Format("{0,2:0}", dateTime.Hour));
                             break;
 
                         case 'l':
-                            sb.Append("{0:hh}");
+                            sb.Append(StringUtil.Format("{0,2:0}", dateTime.Hour%12));
                             break;
 
                         case 'M':
@@ -426,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(dateTime.Subtract(epoch).TotalSeconds);
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.Subtract(epoch).TotalSeconds));
                             break;
 
                         case 'T':

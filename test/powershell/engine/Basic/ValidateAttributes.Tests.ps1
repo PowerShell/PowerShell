@@ -43,12 +43,12 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
             $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should Be $InnerErrorId
+                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
 
         It 'No Exception: valid argument count' {
-            { function foo { param([ValidateCount(2, 4)] [string[]] $bar) }; foo 1,2,3,4 } | Should Not Throw
+            { function foo { param([ValidateCount(2, 4)] [string[]] $bar) }; foo 1,2,3,4 } | Should -Not -Throw
         }
     }
 
@@ -83,7 +83,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
             $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should Be $InnerErrorId
+                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
     }
@@ -119,13 +119,13 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
             $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should Be $InnerErrorId
+                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
 
         It 'No Exception: value within range' -TestCases $validTestCases {
             param($ScriptBlock)
-                $ScriptBlock | Should Not Throw
+                $ScriptBlock | Should -Not -Throw
         }
     }
 
@@ -253,13 +253,13 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
             $ScriptBlock | ShouldBeErrorId $FullyQualifiedErrorId
             if ($InnerErrorId) {
-                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should Be $InnerErrorId
+                $error[0].exception.innerexception.errorrecord.FullyQualifiedErrorId | Should -Be $InnerErrorId
             }
         }
 
         It 'No Exception: RangeType: <RangeType> - argument "<TestValue>"' -TestCases $validTestCases {
             param($ScriptBlock, $RangeType, $testValue)
-                $ScriptBlock | Should Not Throw
+                $ScriptBlock | Should -Not -Throw
         }
     }
 
@@ -348,7 +348,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
 
         It "Validate running time '<ScriptBlock>'" -TestCases $testCases {
             param ($ScriptBlock)
-            (Measure-Command $ScriptBlock).Milliseconds | Should BeLessThan $UpperBoundTime
+            (Measure-Command $ScriptBlock).Milliseconds | Should -BeLessThan $UpperBoundTime
         }
 
         It "COM enumerable argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" -Skip:(!$IsWindows) {
@@ -356,36 +356,36 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             $folder = $shell.Namespace("$TESTDRIVE")
             $items = $folder.Items()
 
-            NotNullFunc -Value $items -TestType "COM-Enumerable" | Should Be "file1"
-            NotNullOrEmptyFunc -Value $items -TestType "COM-Enumerable" | Should Be "file1"
+            NotNullFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
+            NotNullOrEmptyFunc -Value $items -TestType "COM-Enumerable" | Should -Be "file1"
         }
 
         It "Enumerator argument should work with 'ValidateNotNull' and 'ValidateNotNullOrEmpty'" {
             $data = @(1,2,3)
-            NotNullFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should Be "1,2,3"
-            NotNullOrEmptyFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should Be "1,2,3"
+            NotNullFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
+            NotNullOrEmptyFunc -Value $data.GetEnumerator() -TestType "Enumerator" | Should -Be "1,2,3"
         }
 
         It "'ValidateNotNull' should throw on null element of a collection argument" {
             ## Should throw on null element
-            { NotNullFunc -Value @("string", $null, 2) } | Should Throw
+            { NotNullFunc -Value @("string", $null, 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullFunc"
             ## Should not throw on empty string element
-            { NotNullFunc -Value @("string", "", 2) } | Should Not Throw
+            { NotNullFunc -Value @("string", "", 2) } | Should -Not -Throw
             ## Should not throw on an empty collection
-            { NotNullFunc -Value @() } | Should Not Throw
+            { NotNullFunc -Value @() } | Should -Not -Throw
         }
 
         It "'ValidateNotNullOrEmpty' should throw on null element of a collection argument or empty collection/dictionary" {
-            { NotNullOrEmptyFunc -Value @("string", $null, 2) } | Should Throw
-            { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should Throw
-            { NotNullOrEmptyFunc -Value @() } | Should Throw
-            { NotNullOrEmptyFunc -Value @{} } | Should Throw
+            { NotNullOrEmptyFunc -Value @("string", $null, 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value @("string", "", 2) } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value @() } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
         }
 
         It "Mandatory parameter should throw on empty collection" {
-            { MandatoryFunc -ByteArray ([byte[]]@()) } | Should Throw
-            { MandatoryFunc -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should Throw
-            { MandatoryFunc -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should Throw
+            { MandatoryFunc -ByteArray ([byte[]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyArrayNotAllowed,MandatoryFunc"
+            { MandatoryFunc -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyCollectionNotAllowed,MandatoryFunc"
+            { MandatoryFunc -ByteList ([System.Collections.ObjectModel.Collection[byte]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyCollectionNotAllowed,MandatoryFunc"
         }
     }
 }

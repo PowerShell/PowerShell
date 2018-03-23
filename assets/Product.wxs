@@ -26,7 +26,13 @@
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
   <!-- The ProductCode is Product Id and needs to be unique for every PowerShell version to allow SxS install: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
-  <Product Id="$(var.ProductCode)" Name="$(var.ProductSemanticVersionWithName)-$(sys.BUILDARCH)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
+  <Product 
+    Id="$(var.ProductCode)" 
+    Name="PowerShell 6-$(sys.BUILDARCH)" 
+    Language="1033" 
+    Version="$(var.ProductVersion)" 
+    Manufacturer="Microsoft Corporation" 
+    UpgradeCode="$(var.UpgradeCode)">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
     <!-- Add PowerShell icon for executable -->
@@ -159,7 +165,7 @@
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}" KeyPath="yes">
-              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductVersionWithName)]"/>
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductDirectoryName)]"/>
             </Component>
             <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->

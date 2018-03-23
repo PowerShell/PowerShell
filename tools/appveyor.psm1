@@ -486,6 +486,16 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
+        # Save any PowerShell paths, so we can exclude them
+        # When we verify we updated the path
+        $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
+            Where-Object {$_ -like '*files\powershell*'})
+
+        foreach($pathPart in $beforePath)
+        {
+            Write-Log "Found existing PowerShell path: $pathPart"
+        }
+
         # Smoke Test MSI installer
         Write-Log "Smoke-Testing MSI installer"
         $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
@@ -498,6 +508,15 @@ function Invoke-AppveyorFinish
             throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
         }
         Write-Log "MSI smoke test was successful"
+
+        # Verify path was updated by MSI
+        $psPath = ([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
+            Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
+
+        if(!$psPath)
+        {
+            throw "MSI did not add powershell to path"
+        }
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
@@ -513,11 +532,11 @@ function Invoke-AppveyorFinish
         if (Test-DailyBuild)
         {
             # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
             $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
             $artifacts.Add($arm32Package)
 
-            Start-PSBuild -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
+            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
             $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
             $artifacts.Add($arm64Package)
         }

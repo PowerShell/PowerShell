@@ -10,8 +10,8 @@ $stopwatch = [System.Diagnostics.Stopwatch]::startNew()
 # raised because it is fake
 Wait-Event -Timeout 1 -SourceIdentifier "FakeEvent"
 $stopwatch.Stop()
-$stopwatch.ElapsedMilliseconds | Should BeGreaterThan 500
-$stopwatch.ElapsedMilliseconds | Should BeLessThan 1500
+$stopwatch.ElapsedMilliseconds | Should -BeGreaterThan 500
+$stopwatch.ElapsedMilliseconds | Should -BeLessThan 1500
 }
 }
 }
