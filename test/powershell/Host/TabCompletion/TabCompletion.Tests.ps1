@@ -948,7 +948,7 @@ Describe "Tab completion help test" -Tags @('RequireAdminOnWindows', 'CI') {
         ## If help content does not exist, tab completion will not work. So update it first.
         if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
         {
-            Update-Help -Force -ErrorAction SilentlyContinue
+            Update-Help -Force -ErrorAction SilentlyContinue -Scope 'AllUsers'
         }
 
         $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length

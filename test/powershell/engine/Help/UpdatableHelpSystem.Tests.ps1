@@ -34,12 +34,12 @@ if ([System.Management.Automation.Platform]::IsWindows)
 
 if([System.Management.Automation.Platform]::IsWindows)
 {
-    $userHelpRoot = Join-Path "$HOME/Documents/PowerShell/Help/" $PSVersionTable.PSVersion.ToString()
+    $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
 }
 else
 {
     $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
-    $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help", $PSVersionTable.PSVersion.ToString()
+    $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
 }
 
 # This is the list of test cases -- each test case represents a PowerShell Core module.
@@ -174,10 +174,10 @@ function ValidateInstalledHelpContent
     param (
         [ValidateNotNullOrEmpty()]
         [string]$moduleName,
-        [switch]$userScope
+        [switch]$UserScope
     )
 
-    if($userScope)
+    if($Scope)
     {
         $params = @{ Path = $testCases[$moduleName].HelpInstallationPathHome }
     }
@@ -202,7 +202,7 @@ function RunUpdateHelpTests
     param (
         [string]$tag = "CI",
         [switch]$useSourcePath,
-        [switch]$userScope
+        [switch]$Scope
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -210,10 +210,10 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName'" {
+            It "Validate Update-Help for module '$moduleName' with scope as '$Scope'" {
 
                 # If the help file is already installed, delete it.
-                if($userScope)
+                if($Scope)
                 {
                     $params = @{Path = $testCases[$moduleName].HelpInstallationPathHome}
                     $updateScope = @{Scope = 'CurrentUser'}
@@ -258,7 +258,14 @@ function RunUpdateHelpTests
                     }
                 }
 
-                ValidateInstalledHelpContent -moduleName $moduleName -userScope:$userScope.IsPresent
+                if($Scope -eq 'AllUsers')
+                {
+                    ValidateInstalledHelpContent -moduleName $moduleName
+                }
+                else
+                {
+                    ValidateInstalledHelpContent -moduleName $moduleName -Scope
+                }
             }
 
             if ($tag -eq "CI")
@@ -349,7 +356,7 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module." -Ta
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "CI"
+    RunUpdateHelpTests -tag "CI" -Scope 'AllUsers'
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell Core module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -361,7 +368,7 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module for u
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "CI" -userScope
+    RunUpdateHelpTests -tag "CI" -Scope 'CurrentUser'
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -373,7 +380,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules." -T
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "Feature"
+    RunUpdateHelpTests -tag "Feature" -Scope 'AllUsers'
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell Core modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -385,7 +392,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules for 
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "Feature" -userScope
+    RunUpdateHelpTests -tag "Feature" -Scope 'CurrentUser'
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -397,7 +404,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tag
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "CI" -useSourcePath
+    RunUpdateHelpTests -tag "CI" -useSourcePath -Scope 'AllUsers'
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell Core module for user scope." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -409,7 +416,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module for us
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "CI" -useSourcePath -userScope
+    RunUpdateHelpTests -tag "CI" -useSourcePath -Scope 'CurrentUser'
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -421,7 +428,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Ta
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "Feature" -useSourcePath
+    RunUpdateHelpTests -tag "Feature" -useSourcePath -Scope 'AllUsers'
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell Core modules for user scope." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
@@ -433,7 +440,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell Core modules for u
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "Feature" -useSourcePath -userScope
+    RunUpdateHelpTests -tag "Feature" -useSourcePath -Scope 'CurrentUser'
 }
 
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules." -Tags @('CI', 'RequireAdminOnWindows') {

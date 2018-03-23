@@ -19,14 +19,13 @@ namespace System.Management.Automation
         {
             if (userHomeHelpPath == null)
             {
-                string psVersion = PSVersionInfo.PSVersion.ToString();
 #if UNIX
                 var userModuleFolder = Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
                 string userScopeRootPath = System.IO.Path.GetDirectoryName(userModuleFolder);
 #else
                 string userScopeRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "PowerShell");
 #endif
-                userHomeHelpPath = Path.Combine(userScopeRootPath, "Help", psVersion);
+                userHomeHelpPath = Path.Combine(userScopeRootPath, "Help");
             }
 
             return userHomeHelpPath;
