@@ -50,11 +50,11 @@ Describe "Alias tests" -Tags "CI" {
 
                 if($null -eq $test.expectedError)
                 {
-                    Test-Path -LiteralPath $test.testFile | Should Be $true
+                    Test-Path -LiteralPath $test.testFile | Should -BeTrue
                 }
                 else
                 {
-                    $exportAliasError.FullyqualifiedErrorId | Should Be $test.expectedError
+                    $exportAliasError.FullyqualifiedErrorId | Should -Be $test.expectedError
                 }
             }
 
@@ -75,7 +75,7 @@ Describe "Alias tests" -Tags "CI" {
                 $exportAliasError = $_
             }
 
-            $exportAliasError.FullyQualifiedErrorId | Should Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
+            $exportAliasError.FullyQualifiedErrorId | Should -Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
         }
     }
 
@@ -86,7 +86,7 @@ Describe "Alias tests" -Tags "CI" {
 
         It "with a CSV file" {
             Export-Alias "alias.csv"
-            Test-Path -LiteralPath (Join-Path $testPath "alias.csv") | Should Be $true
+            Test-Path -LiteralPath (Join-Path $testPath "alias.csv") | Should -BeTrue
         }
 
         It "with NoClobber" {
@@ -101,7 +101,7 @@ Describe "Alias tests" -Tags "CI" {
                 $exportAliasError = $_
             }
 
-            $exportAliasError.FullyQualifiedErrorId | Should Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
+            $exportAliasError.FullyQualifiedErrorId | Should -Be "NoClobber,Microsoft.PowerShell.Commands.ExportAliasCommand"
         }
 
         AfterEach {
@@ -135,7 +135,7 @@ Describe "Alias tests" -Tags "CI" {
                     $exportAliasError = $_
                 }
 
-                $exportAliasError.FullyqualifiedErrorId | Should Be $test.expectedError
+                $exportAliasError.FullyqualifiedErrorId | Should -Be $test.expectedError
             }
         }
 
@@ -154,9 +154,9 @@ Describe "Alias tests" -Tags "CI" {
             # Verify that the alias was imported
             $definedAlias = Get-Alias myuh
 
-            $definedAlias | Should Not Be $null
-            $definedAlias.Name | Should Be "myuh"
-            $definedAlias.Definition | Should Be "update-help"
+            $definedAlias | Should -Not -BeNullOrEmpty
+            $definedAlias.Name | Should -Be "myuh"
+            $definedAlias.Definition | Should -Be "update-help"
         }
     }
 }

@@ -19,8 +19,8 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+			$_.CategoryInfo| Should -Match "SessionStateUnauthorizedAccessException"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
 
 		Clear-Variable -Name foo -Force
@@ -35,7 +35,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable foo bar
 		&{
 			Set-Variable foo baz
-			$foo | should be baz
+			$foo | Should -Be baz
 			Clear-Variable -Name foo -Scope "local"
 
 			$var1=Get-Variable -Name foo -Scope "local"
@@ -60,8 +60,8 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 					Throw "Execution OK"
 			}
 			catch {
-					$_.CategoryInfo| Should Match "ItemNotFoundException"
-					$_.FullyQualifiedErrorId | Should Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+					$_.CategoryInfo| Should -Match "ItemNotFoundException"
+					$_.FullyQualifiedErrorId | Should -Be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
 
@@ -106,14 +106,14 @@ Describe "Clear-Variable" -Tags "CI" {
 
 		It "Should be able to clear a variable using the Name switch" {
 	Clear-Variable -Name var1
-	$var1 | Should BeNullOrEmpty
-	{ Get-Variable var1 } | Should Not Throw
+	$var1 | Should -BeNullOrEmpty
+	{ Get-Variable var1 } | Should -Not -Throw
 		}
 
 		It "Should be able to clear a variable without using the Name switch" {
 	Clear-Variable var1
-	$var1 | Should BeNullOrEmpty
-	{ Get-Variable var1 } | Should Not Throw
+	$var1 | Should -BeNullOrEmpty
+	{ Get-Variable var1 } | Should -Not -Throw
 		}
 
 		It "Should be able to include a set of variables to clear" {
@@ -127,14 +127,14 @@ Describe "Clear-Variable" -Tags "CI" {
 
 	Clear-Variable -Name w, vari* -Include w, vari*
 
-	$variable1 | Should BeNullOrEmpty
-	$variable2 | Should BeNullOrEmpty
-	$variable3 | Should BeNullOrEmpty
-	$w         | Should BeNullOrEmpty
+	$variable1 | Should -BeNullOrEmpty
+	$variable2 | Should -BeNullOrEmpty
+	$variable3 | Should -BeNullOrEmpty
+	$w         | Should -BeNullOrEmpty
 
-	$var1 | Should Not BeNullOrEmpty
-	$var2 | Should Not BeNullOrEmpty
-	$var3 | Should Not BeNullOrEmpty
+	$var1 | Should -Not -BeNullOrEmpty
+	$var2 | Should -Not -BeNullOrEmpty
+	$var3 | Should -Not -BeNullOrEmpty
 
 		}
 
@@ -149,24 +149,24 @@ Describe "Clear-Variable" -Tags "CI" {
 
 	Clear-Variable -Name w, vari* -Exclude var*
 
-	$variable1 | Should Not BeNullOrEmpty
-	$variable2 | Should Not BeNullOrEmpty
-	$variable3 | Should Not BeNullOrEmpty
-	$var1      | Should Not BeNullOrEmpty
-	$var2      | Should Not BeNullOrEmpty
-	$var3      | Should Not BeNullOrEmpty
+	$variable1 | Should -Not -BeNullOrEmpty
+	$variable2 | Should -Not -BeNullOrEmpty
+	$variable3 | Should -Not -BeNullOrEmpty
+	$var1      | Should -Not -BeNullOrEmpty
+	$var2      | Should -Not -BeNullOrEmpty
+	$var3      | Should -Not -BeNullOrEmpty
 
-	$w         | Should BeNullOrEmpty
+	$w         | Should -BeNullOrEmpty
 		}
 
 		It "Should be able to pass the cleared object through the pipeline using the passthru switch" {
-	{ Clear-Variable -Name var1 -PassThru | Format-Wide -Property Value } | Should Not Throw
+	{ Clear-Variable -Name var1 -PassThru | Format-Wide -Property Value } | Should -Not -Throw
 		}
 
 		It "Should not clear environment variables" {
 	$env:TEMPVARIABLE = "test data"
 
-	{Clear-Variable -Name env:TEMPVARIABLE -ErrorAction Stop} | Should Throw
+	{Clear-Variable -Name env:TEMPVARIABLE -ErrorAction Stop} | Should -Throw
 		}
 
 		It "Should clear variable even if it is read-only using the Force parameter" {
@@ -177,8 +177,8 @@ Describe "Clear-Variable" -Tags "CI" {
 		Clear-Variable -Name var1
 		Clear-Variable -Name var2 -Force
 
-		$var1 | Should BeNullOrEmpty
-		$var2 | Should BeNullOrEmpty
+		$var1 | Should -BeNullOrEmpty
+		$var2 | Should -BeNullOrEmpty
 	}
 	finally
 	{
@@ -193,9 +193,9 @@ Describe "Clear-Variable" -Tags "CI" {
 			Throw "Execution OK"
 		}
 		catch {
-			$_.FullyQualifiedErrorId | should be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+			$_.FullyQualifiedErrorId | Should -Be "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		}
-		$var2 | Should Not BeNullOrEmpty
+		$var2 | Should -Not -BeNullOrEmpty
 
 		Remove-Variable -Name var2 -Force
 		}
@@ -208,19 +208,19 @@ Describe "Clear-Variable" -Tags "CI" {
 
 			Clear-Variable -Name globalVar -Scope global
 
-			$globalVar | Should BeNullOrEmpty
+			$globalVar | Should -BeNullOrEmpty
 	}
 
 	It "Should not be able to clear a global scope variable using the local switch" {
 			New-Variable globalVar -Value 1 -Scope global -Force
 
-			{Clear-Variable -Name globalVar -Scope local -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name globalVar -Scope local -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should not be able to clear a global variable using the script scope switch" {
 			New-Variable globalVar -Value 1 -Scope global -Force
 
-			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should be able to clear an item locally using the local switch" {
@@ -228,21 +228,21 @@ Describe "Clear-Variable" -Tags "CI" {
 
 			Clear-Variable -Name localVar -Scope local
 
-			$localVar | Should BeNullOrEmpty
+			$localVar | Should -BeNullOrEmpty
 
-			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should not be able to clear an item locally using the global switch" {
 			New-Variable localVar -Value 2 -Scope local -Force
 
-			{Clear-Variable -Name localVar -Scope global -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope global -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should not be able to clear a local variable using the script scope switch" {
 			New-Variable localVar -Value 2 -Scope local -Force
 
-			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should Throw
+			{Clear-Variable -Name localVar -Scope script -ErrorAction Stop} | Should -Throw
 	}
 
 	It "Should be able to clear a script variable created using the script switch" {
@@ -250,7 +250,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		New-Variable -Name derp2 -Value 3 -Scope script -Force
 
 		Clear-Variable -Name derp2 -Scope script
-			}| Should Not Throw
+			}| Should -Not -Throw
 	}
 
 	It "Should be able to clear a global script variable that was created using the script scope switch" {
@@ -258,7 +258,7 @@ Describe "Clear-Variable" -Tags "CI" {
 		New-Variable -Name derpx -Value 4 -Scope script -Force
 
 		Clear-Variable -Name derpx -Scope script
-			} | Should Not Throw
+			} | Should -Not -Throw
 	}
 		}
 }

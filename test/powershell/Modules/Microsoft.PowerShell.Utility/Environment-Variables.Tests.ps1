@@ -3,21 +3,21 @@
 Describe "Environment-Variables" -Tags "CI" {
 
     It "Should have environment variables" {
-	Get-Item ENV: | Should Not BeNullOrEmpty
+	Get-Item ENV: | Should -Not -BeNullOrEmpty
     }
 
     It "Should have a nonempty PATH" {
-	$ENV:PATH | Should Not BeNullOrEmpty
+	$ENV:PATH | Should -Not -BeNullOrEmpty
     }
 
     It "Should contain /bin in the PATH" {
 	if ($IsWindows)
 	{
-	    $ENV:PATH | Should Match "C:"
+	    $ENV:PATH | Should -Match "C:"
 	}
 	else
 	{
-	    $ENV:PATH | Should Match "/bin"
+	    $ENV:PATH | Should -Match "/bin"
 	}
     }
 
@@ -25,21 +25,21 @@ Describe "Environment-Variables" -Tags "CI" {
 	if ($IsWindows)
 	{
 	    $expected = "\Users"
-	    Split-Path $ENV:HOMEPATH -Parent | Should Be $expected
+	    Split-Path $ENV:HOMEPATH -Parent | Should -Be $expected
 	}
 	else
 	{
 	    $expected = /bin/bash -c "cd ~ && pwd"
-	    $ENV:HOME | Should Be $expected
+	    $ENV:HOME | Should -Be $expected
 	}
     }
 
     It "Should be able to set the environment variables" {
 	$expected = "this is a test environment variable"
-	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should Not Throw
+	{ $ENV:TESTENVIRONMENTVARIABLE = $expected  } | Should -Not -Throw
 
-	$ENV:TESTENVIRONMENTVARIABLE | Should Not BeNullOrEmpty
-	$ENV:TESTENVIRONMENTVARIABLE | Should Be $expected
+	$ENV:TESTENVIRONMENTVARIABLE | Should -Not -BeNullOrEmpty
+	$ENV:TESTENVIRONMENTVARIABLE | Should -Be $expected
 
     }
 }
