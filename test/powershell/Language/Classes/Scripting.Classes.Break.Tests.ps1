@@ -21,8 +21,8 @@ class A
     }
 }
 '@
-            $errors.Count | Should be 1
-            $errors[0].ErrorId | Should be 'LabelNotFound'
+            $errors.Count | Should -Be 1
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
 
         It 'reports parse error for break outside of loop' {
@@ -36,8 +36,8 @@ class A
     }
 }
 '@
-            $errors.Count | Should be 1
-            $errors[0].ErrorId | Should be 'LabelNotFound'
+            $errors.Count | Should -Be 1
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
 
         It 'work fine, when break is legit' {
@@ -51,7 +51,7 @@ class A
                     return $i
                 }
             }
-            [C]::foo() | Should be 101
+            [C]::foo() | Should -Be 101
         }
     }
 
@@ -67,8 +67,8 @@ class A
     }
 }
 '@
-            $errors.Count | Should be 1
-            $errors[0].ErrorId | Should be 'LabelNotFound'
+            $errors.Count | Should -Be 1
+            $errors[0].ErrorId | Should -BeExactly 'LabelNotFound'
         }
     }
 
@@ -90,10 +90,10 @@ class A
 
             $canary = $false
             try {
-                [C]::getInt() | Should Be 123
+                [C]::getInt() | Should -Be 123
                 $canary = $true
             } finally {
-                $canary | Should be $true
+                $canary | Should -BeTrue
             }
         }
 
@@ -121,10 +121,10 @@ class A
 
             $canary = $false
             try {
-                [C]::getInt() | Should Be (123 + 4*4)
+                [C]::getInt() | Should -Be (123 + 4*4)
                 $canary = $true
             } finally {
-                $canary | Should be $true
+                $canary | Should -BeTrue
             }
         }
     }
@@ -140,7 +140,7 @@ function foo()
     return 1
 }
 '@
-            $errors.Count | Should be 0
+            $errors.Count | Should -Be 0
         }
 
     }

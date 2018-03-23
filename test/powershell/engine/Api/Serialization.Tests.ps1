@@ -33,14 +33,14 @@ Describe "Serialization Tests" -tags "CI" {
 
     It 'Test DateTimeUtc serialize and deserialize work as expected.' {
         $inputObject = [System.DateTime]::UtcNow;
-        SerializeAndDeserialize($inputObject) | Should be $inputObject
+        SerializeAndDeserialize($inputObject) | Should -Be $inputObject
     }
 
     It 'Test DateTime stamps serialize and deserialize work as expected.' {
         $objs = [System.DateTime]::MaxValue, [System.DateTime]::MinValue, [System.DateTime]::Today, (new-object System.DateTime), (new-object System.DateTime 123456789)
         foreach($inputObject in $objs)
         {
-           SerializeAndDeserialize($inputObject) | Should be $inputObject
+           SerializeAndDeserialize($inputObject) | Should -Be $inputObject
         }
     }
 
@@ -50,7 +50,7 @@ Describe "Serialization Tests" -tags "CI" {
         foreach($uristring in $uristrings)
         {
            $inputObject = new-object System.Uri $uristring
-           SerializeAndDeserialize($inputObject) | Should be $inputObject
+           SerializeAndDeserialize($inputObject) | Should -Be $inputObject
         }
     }
 
@@ -74,20 +74,20 @@ Describe "Serialization Tests" -tags "CI" {
            $outputs = SerializeAndDeserialize($inputObject);
            for($i=0;$i -lt $inputObject.Length;$i++)
            {
-               $outputs[$i] | Should be $inputObject[$i]
+               $outputs[$i] | Should -Be $inputObject[$i]
            }
         }
     }
 
     It 'Test Enum serialize and deserialize work as expected.' {
         $inputObject = [MyColorFlag]::RED
-        SerializeAndDeserialize($inputObject).ToString() | Should be $inputObject.ToString()
+        SerializeAndDeserialize($inputObject).ToString() | Should -Be $inputObject.ToString()
     }
 
     It 'Test SecureString serialize and deserialize work as expected.' {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $inputObject = Convertto-Securestring -String "PowerShellRocks!" -AsPlainText -Force
-        SerializeAndDeserialize($inputObject).Length | Should be $inputObject.Length
+        SerializeAndDeserialize($inputObject).Length | Should -Be $inputObject.Length
 
     }
 
@@ -96,7 +96,7 @@ Describe "Serialization Tests" -tags "CI" {
         $versionObject | Add-Member -MemberType NoteProperty -Name TestNote -Value "TestNote"
         $versionObject | Add-Member -MemberType ScriptProperty -Name TestScriptProperty -Value { ($this.TestNote) }
 
-        SerializeAndDeserialize($versionObject).TestScriptProperty | Should be $versionObject.TestScriptProperty
+        SerializeAndDeserialize($versionObject).TestScriptProperty | Should -Be $versionObject.TestScriptProperty
     }
 }
 

@@ -34,77 +34,64 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 
     It "Export-Alias for exist file should work"{
 		New-Item -Path $fulltestpath -ItemType File -Force
-		{Export-Alias $fulltestpath}| Should Not Throw
+		{Export-Alias $fulltestpath} | Should -Not -Throw
     }
 
 	It "Export-Alias resolving to multiple files will throw ReadWriteMultipleFilesNotSupported" {
-		try {
-			$null = New-Item -Path $TestDrive\foo -ItemType File
-			$null = New-Item -Path $TestDrive\bar -ItemType File
-			Export-Alias $TestDrive\*
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
-		finally{
-			Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
-			Remove-Item $TestDrive\bar -Force -ErrorAction SilentlyContinue
-		}
+		$null = New-Item -Path $TestDrive\foo -ItemType File
+		$null = New-Item -Path $TestDrive\bar -ItemType File
+		{ Export-Alias $TestDrive\* } | Should -Throw -ErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
+
+		Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
+		Remove-Item $TestDrive\bar -Force -ErrorAction SilentlyContinue
 	}
 
 	It "Export-Alias with Invalid Scope will throw PSArgumentException" {
-		try {
-			Export-Alias $fulltestpath -scope foobar
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
+		{ Export-Alias $fulltestpath -scope foobar } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 	}
 
 	It "Export-Alias for Default"{
 		Export-Alias $fulltestpath abcd01 -passthru
-		$fulltestpath| Should FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
     }
 
 	It "Export-Alias As CSV"{
 		Export-Alias $fulltestpath abcd01 -As CSV -passthru
-		$fulltestpath| Should FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
     }
 
 	It "Export-Alias As CSV With Description"{
 		Export-Alias $fulltestpath abcd01 -As CSV -description "My Aliases" -passthru
-		$fulltestpath| Should FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should FileContentMatchExactly "My Aliases"
+		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -FileContentMatchExactly "My Aliases"
     }
 
 	It "Export-Alias As CSV With Multiline Description"{
 		Export-Alias $fulltestpath abcd01 -As CSV -description "My Aliases\nYour Aliases\nEveryones Aliases" -passthru
-		$fulltestpath| Should FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should FileContentMatchExactly "My Aliases"
-		$fulltestpath| Should FileContentMatchExactly "Your Aliases"
-		$fulltestpath| Should FileContentMatchExactly "Everyones Aliases"
+		$fulltestpath| Should -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -FileContentMatchExactly "My Aliases"
+		$fulltestpath| Should -FileContentMatchExactly "Your Aliases"
+		$fulltestpath| Should -FileContentMatchExactly "Everyones Aliases"
     }
 
 	It "Export-Alias As Script"{
 		Export-Alias $fulltestpath abcd01 -As Script -passthru
-		$fulltestpath| Should FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
+		$fulltestpath| Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
     }
 
 	It "Export-Alias As Script With Multiline Description"{
 		Export-Alias $fulltestpath abcd01 -As Script -description "My Aliases\nYour Aliases\nEveryones Aliases" -passthru
-		$fulltestpath| Should FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
-		$fulltestpath| Should FileContentMatchExactly "My Aliases"
-		$fulltestpath| Should FileContentMatchExactly "Your Aliases"
-		$fulltestpath| Should FileContentMatchExactly "Everyones Aliases"
+		$fulltestpath| Should -FileContentMatchExactly 'set-alias -Name:"abcd01" -Value:"efgh01" -Description:"" -Option:"None"'
+		$fulltestpath| Should -FileContentMatchExactly "My Aliases"
+		$fulltestpath| Should -FileContentMatchExactly "Your Aliases"
+		$fulltestpath| Should -FileContentMatchExactly "Everyones Aliases"
     }
 
 	It "Export-Alias for Force Test"{
 		Export-Alias $fulltestpath abcd01
 		Export-Alias $fulltestpath abcd02 -force
-		$fulltestpath| Should Not FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should FileContentMatchExactly '"abcd02","efgh02","","None"'
+		$fulltestpath| Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath| Should -FileContentMatchExactly '"abcd02","efgh02","","None"'
     }
 
 	It "Export-Alias for Force ReadOnly Test" {
@@ -118,17 +105,11 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			chmod 444 $fulltestpath
 		}
 
-		try{
-			Export-Alias $fulltestpath abcd02
-			throw "No Exception!"
-		}
-		catch{
-			$_.FullyQualifiedErrorId | Should be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
+		{ Export-Alias $fulltestpath abcd02 } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
 		Export-Alias $fulltestpath abcd03 -force
-		$fulltestpath| Should Not FileContentMatchExactly '"abcd01","efgh01","","None"'
-		$fulltestpath| Should Not FileContentMatchExactly '"abcd02","efgh02","","None"'
-		$fulltestpath| Should FileContentMatchExactly '"abcd03","efgh03","","None"'
+		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd01","efgh01","","None"'
+		$fulltestpath | Should -Not -FileContentMatchExactly '"abcd02","efgh02","","None"'
+		$fulltestpath | Should -FileContentMatchExactly '"abcd03","efgh03","","None"'
 
 		if ( $IsWindows )
 		{
@@ -160,12 +141,12 @@ Describe "Export-Alias" -Tags "CI" {
 
 	It "Should be able to create a file in the specified location"{
 		Export-Alias $fulltestpath
-		Test-Path $fulltestpath | Should be $true
+		Test-Path $fulltestpath | Should -BeTrue
   }
 
   It "Should create a file with the list of aliases that match the expected list" {
 		Export-Alias $fulltestpath
-		Test-Path $fulltestpath | Should Be $true
+		Test-Path $fulltestpath | Should -BeTrue
 
 		$actual   = Get-Content $fulltestpath | Sort-Object
 		$expected = Get-Command -CommandType Alias
@@ -173,7 +154,7 @@ Describe "Export-Alias" -Tags "CI" {
 		for ( $i=0; $i -lt $expected.Length; $i++)
 		{
 			# We loop through the expected list and not the other because the output writes some comments to the file.
-			$expected[$i] | Should Match $actual[$i].Name
+			$expected[$i] | Should -Match $actual[$i].Name
 		}
   }
 }

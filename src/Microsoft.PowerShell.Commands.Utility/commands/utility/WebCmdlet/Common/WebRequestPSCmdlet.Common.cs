@@ -1173,7 +1173,23 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var entry in WebSession.ContentHeaders)
                 {
-                    request.Content.Headers.Add(entry.Key, entry.Value);
+                    if (SkipHeaderValidation)
+                    {
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
+                    }
                 }
             }
         }
@@ -1241,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // recreate the HttpClient with redirection enabled since the first call suppressed redirection
                 using (client = GetHttpClient(false))
-                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, stripAuthorization:true))
+                using (HttpRequestMessage redirectRequest = GetRequest(new Uri(request.RequestUri, response.Headers.Location), stripAuthorization:true))
                 {
                     FillRequestStream(redirectRequest);
                     _cancelToken = new CancellationTokenSource();
@@ -1473,16 +1489,29 @@ namespace Microsoft.PowerShell.Commands
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
                 // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
-                var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
-                if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
+                try
                 {
-                    try
+                    var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
+                    if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))
                     {
                         encoding = Encoding.GetEncoding(mediaTypeHeaderValue.CharSet);
                     }
-                    catch (ArgumentException ex)
+                }
+                catch (FormatException ex)
+                {
+                    if (!SkipHeaderValidation)
                     {
-                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletEncodingException", ErrorCategory.InvalidArgument, ContentType);
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                        ThrowTerminatingError(er);
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    if (!SkipHeaderValidation)
+                    {
+                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
                         ThrowTerminatingError(er);
                     }
                 }
@@ -1587,7 +1616,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_relationLink == null)
             {
-                _relationLink = new Dictionary<string, string>();
+                // Must ignore the case of relation links. See RFC 8288 (https://tools.ietf.org/html/rfc8288)
+                _relationLink = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             }
             else
             {

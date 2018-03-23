@@ -3,16 +3,24 @@
 Describe "Get-FileHash" -Tags "CI" {
 
     BeforeAll {
-        $testDocument = Join-Path -Path $PSScriptRoot -ChildPath assets testablescript.ps1
-        Write-Host $testDocument
+        $testDocument = Join-Path -Path $TestDrive -ChildPath "hashable.txt"
+        $utf8NoBOM = [System.Text.UTF8Encoding]::new($false)
+        [System.IO.File]::WriteAllText($testDocument, "Get-Module`n", $utf8NoBOM)
+    }
+
+    Context "Validate platform encoding" {
+        # If this test fails, then the problem lies outside the Get-FileHash implementation
+        It "Should have the bytes in the file as expected" {
+            [System.IO.File]::ReadAllBytes($testDocument) | Should -BeExactly @(0x47, 0x65, 0x74, 0x2d, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x0a)
+        }
     }
 
     Context "Default result tests" {
         It "Should default to correct algorithm, hash and path" {
             $result = Get-FileHash $testDocument
             $result.Algorithm | Should Be "SHA256"
-            $result.Hash | Should Be "8129a08e5d748ffb9361375677785f96545a1a37619a27608efd76a870787a7a"
-            $result.Path | Should Be $testDocument
+            $result.Hash | Should -Be "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c"
+            $result.Path | Should -Be $testDocument
         }
     }
 
@@ -20,58 +28,40 @@ Describe "Get-FileHash" -Tags "CI" {
         BeforeAll {
             # Keep "sHA1" below! It is for testing that the cmdlet accept a hash algorithm name in any case!
             $testcases =
-                @{ algorithm = "sHA1";   hash = "f262f3d36c279883e81218510c06dc205ef24c9b" },
-                @{ algorithm = "SHA256"; hash = "8129a08e5d748ffb9361375677785f96545a1a37619a27608efd76a870787a7a" },
-                @{ algorithm = "SHA384"; hash = "77cdffd27d3dcd5810c3d32b4eca656f3ce61cb0081c5ca9bf21be856c0007f9fef2f588bae512a6ecf8dc56618aedc3" },
-                @{ algorithm = "SHA512"; hash = "82e3bf7da14b6872b82d67af6580d25123b3612ba2dfcd0746036f609c7752e74af41e97130fbe943ec7b8c61549578176bff522d93dfb2f4b681de9f841c231" },
-                @{ algorithm = "MD5";    hash = "2d70c2c2cf8ae23a1a86e64ffce2bbca" }
+                @{ algorithm = "sHA1";   hash = "0c483659b1f2d5a8f116211de8f58bf45893cffb" },
+                @{ algorithm = "SHA256"; hash = "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c" },
+                @{ algorithm = "SHA384"; hash = "ec4c4d4f0b2a79f216118c5a5059b8ce061097ba9161be5890c098aaeb5db169c13dae0a6f855c9a589cd11df47d0c87" },
+                @{ algorithm = "SHA512"; hash = "6aba8ba8b619100a6829beb940d9d77e4a8197fdcac2d0fe5ad6c2758dacc5a59774195fd8a7a92780b7582a966b81ca0c1576c0044c5af7be20f5ccf425bd76" },
+                @{ algorithm = "MD5";    hash = "f9d78bd059ab162bea21eb02badde001" }
         }
         It "Should be able to get the correct hash from <algorithm> algorithm" -TestCases $testCases {
             param($algorithm, $hash)
             $algorithmResult = Get-FileHash $testDocument -Algorithm $algorithm
-            $algorithmResult.Hash | Should Be $hash
+            $algorithmResult.Hash | Should -Be $hash
         }
 
         It "Should be throw for wrong algorithm name" {
-            try {
-                Get-FileHash Get-FileHash $testDocument -Algorithm wrongAlgorithm
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash Get-FileHash $testDocument -Algorithm wrongAlgorithm } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 
     Context "Paths tests" {
         It "With '-Path': no file exist" {
-            try {
-                Get-FileHash -Path nofileexist.ttt -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "With '-LiteralPath': no file exist" {
-            try {
-                Get-FileHash -LiteralPath nofileexist.ttt -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash -LiteralPath nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "With '-Path': file exist" {
             $result = Get-FileHash -Path $testDocument
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
 
         It "With '-LiteralPath': file exist" {
             $result = Get-FileHash -LiteralPath $testDocument
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
     }
 }

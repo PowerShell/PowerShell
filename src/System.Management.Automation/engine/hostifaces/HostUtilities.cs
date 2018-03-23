@@ -960,7 +960,7 @@ namespace System.Management.Automation
                 Remove-Item -Path 'function:\global:PSEdit' -Force
             }
 
-            Get-EventSubscriber -SourceIdentifier PSISERemoteSessionOpenFile -EA Ignore | Remove-Event
+            Unregister-Event -SourceIdentifier PSISERemoteSessionOpenFile -ErrorAction Ignore
         ";
 
         /// <summary>

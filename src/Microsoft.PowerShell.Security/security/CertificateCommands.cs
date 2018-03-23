@@ -62,6 +62,18 @@ namespace Microsoft.PowerShell.Commands
         }
         private bool _isLiteralPath = false;
 
+        /// <summary>
+        /// Gets or sets the password for unlocking the certificate.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SecureString Password { get; set; }
+
+        /// <summary>
+        /// Do not prompt for password if not given.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter NoPromptForPassword { get; set; }
+
         //
         // list of files that were not found
         //
@@ -126,47 +138,35 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        if (Password == null && !NoPromptForPassword.IsPresent) 
+                        {
+                            try 
+                            {
+                                cert = GetCertFromPfxFile(resolvedProviderPath, null);
+                                WriteObject(cert);
+                                continue;
+                            } 
+                            catch (CryptographicException) 
+                            {
+                                Password = SecurityUtils.PromptForSecureString(
+                                    Host.UI,
+                                    CertificateCommands.GetPfxCertPasswordPrompt);
+                            }                            
+                        }
+                        
                         try
                         {
-                            cert = GetCertFromPfxFile(resolvedProviderPath);
+                            cert = GetCertFromPfxFile(resolvedProviderPath, Password);
                         }
-                        catch (CryptographicException)
+                        catch (CryptographicException e)
                         {
-                            //
-                            // CryptographicException is thrown when any error
-                            // occurs inside the crypto class library. It has a
-                            // protected member HResult that indicates the exact
-                            // error but it is not available outside the class.
-                            // Thus we have to assume that the above exception
-                            // was thrown because the pfx file is password
-                            // protected.
-                            //
-                            SecureString password = null;
-
-                            string prompt = null;
-                            prompt = CertificateCommands.GetPfxCertPasswordPrompt;
-
-                            password = SecurityUtils.PromptForSecureString(Host.UI, prompt);
-                            try
-                            {
-                                cert = GetCertFromPfxFile(resolvedProviderPath,
-                                                          password);
-                            }
-                            catch (CryptographicException e)
-                            {
-                                //
-                                // since we cannot really figure out the
-                                // meaning of a given CryptographicException
-                                // we have to use NotSpecified category here
-                                //
-                                ErrorRecord er =
-                                    new ErrorRecord(e,
-                                                    "GetPfxCertificateUnknownCryptoError",
-                                                    ErrorCategory.NotSpecified,
-                                                    null);
-                                WriteError(er);
-                                continue;
-                            }
+                            ErrorRecord er =
+                                new ErrorRecord(e,
+                                                "GetPfxCertificateUnknownCryptoError",
+                                                ErrorCategory.NotSpecified,
+                                                null);
+                            WriteError(er);
+                            continue;
                         }
 
                         WriteObject(cert);
@@ -204,12 +204,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-        }
-
-        private static X509Certificate2 GetCertFromPfxFile(string path)
-        {
-            X509Certificate2 cert = new X509Certificate2(path);
-            return cert;
         }
 
         private static X509Certificate2 GetCertFromPfxFile(string path, SecureString password)

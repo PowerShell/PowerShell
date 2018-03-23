@@ -39,9 +39,9 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         $TXT = $encoding.GetBytes($asciiString)
         $CR  = $encoding.GetBytes($asciiCR)
         $expectedBytes = .{ $TXT; $CR }
-        $bytes.Count | should be $expectedBytes.count
+        $bytes.Count | Should -Be $expectedBytes.count
         for($i = 0; $i -lt $bytes.count; $i++) {
-            $bytes[$i] | Should be $expectedBytes[$i]
+            $bytes[$i] | Should -Be $expectedBytes[$i]
         }
     }
 
@@ -75,9 +75,9 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
             # THE TEST
             It $msg -Skip:$skipTest {
-                $observedBytes.Count | Should be $expectedBytes.Count
+                $observedBytes.Count | Should -Be $expectedBytes.Count
                 for($i = 0;$i -lt $observedBytes.Count; $i++) {
-                    $observedBytes[$i] | Should be $expectedBytes[$i]
+                    $observedBytes[$i] | Should -Be $expectedBytes[$i]
                 }
             }
 
@@ -88,10 +88,10 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
 Describe "File redirection mixed with Out-Null" -Tags CI {
     It "File redirection before Out-Null should work" {
         "some text" > $TestDrive\out.txt | Out-Null
-        Get-Content $TestDrive\out.txt | Should Be "some text"
+        Get-Content $TestDrive\out.txt | Should -BeExactly "some text"
 
         echo "some more text" > $TestDrive\out.txt | Out-Null
-        Get-Content $TestDrive\out.txt | Should Be "some more text"
+        Get-Content $TestDrive\out.txt | Should -BeExactly "some more text"
     }
 }
 
@@ -106,7 +106,7 @@ Describe "File redirection should have 'DoComplete' called on the underlying pip
 
         $redirectFileContent = Get-Content $redirectFile -Raw
         $outFileContent = Get-Content $outFile -Raw
-        $redirectFileContent | Should Be $outFileContent
+        $redirectFileContent | Should -BeExactly $outFileContent
     }
 
     It "File redirection should not mess up the original pipe" {
@@ -114,13 +114,13 @@ Describe "File redirection should have 'DoComplete' called on the underlying pip
         $otherStreamFile = Join-Path $TestDrive otherstream.txt
 
         $result = & { $(Get-Command NonExist; 1234) > $outputFile *> $otherStreamFile; "Hello" }
-        $result | Should Be "Hello"
+        $result | Should -BeExactly "Hello"
 
         $outputContent = Get-Content $outputFile -Raw
-        $outputContent.Trim() | Should Be '1234'
+        $outputContent.Trim() | Should -BeExactly '1234'
 
         $errorContent = Get-Content $otherStreamFile | ForEach-Object { $_.Trim() }
         $errorContent = $errorContent -join ""
-        $errorContent | Should Match "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+        $errorContent | Should -Match "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
     }
 }

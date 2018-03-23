@@ -23,8 +23,6 @@ class CommitNode {
 
         if ($subject -match "\(#(\d+)\)") {
             $this.PullRequest = $Matches[1]
-        } else {
-            throw "PR number is missing from the commit subject. (commit: $hash)"
         }
     }
 }
@@ -175,10 +173,13 @@ function Get-ChangeLog
                 $commit.AuthorGitHubLogin = $community_login_map[$commit.AuthorEmail]
             } else {
                 $uri = "https://api.github.com/repos/PowerShell/PowerShell/commits/$($commit.Hash)"
-                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header
-                $content = ConvertFrom-Json -InputObject $response.Content
-                $commit.AuthorGitHubLogin = $content.author.login
-                $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+                $response = Invoke-WebRequest -Uri $uri -Method Get -Headers $header -ErrorAction SilentlyContinue
+                if($response)
+                {
+                    $content = ConvertFrom-Json -InputObject $response.Content
+                    $commit.AuthorGitHubLogin = $content.author.login
+                    $community_login_map[$commit.AuthorEmail] = $commit.AuthorGitHubLogin
+                }
             }
             $commit.ChangeLogMessage = "- {0} (Thanks @{1}!)" -f $commit.Subject, $commit.AuthorGitHubLogin
         }
@@ -247,4 +248,54 @@ function Get-NewOfficalPackage
     }
 }
 
-Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage
+##############################
+#.SYNOPSIS
+# Update the version number in code
+#
+#.PARAMETER NewReleaseTag
+# The new Release Tag
+#
+#.PARAMETER NextReleaseTag
+# The next Release Tag
+#
+#.PARAMETER Path
+# The path to the root of where you want to update
+#
+##############################
+function Update-PsVersionInCode
+{
+    param(
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [String]
+        $NewReleaseTag,
+
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [String]
+        $NextReleaseTag,
+
+        [String]
+        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+    )
+
+    $metaDataPath = (Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json')
+    $metaData = Get-Content -Path $metaDataPath | convertfrom-json
+    $currentTag = $metaData.ReleaseTag
+
+    $currentVersion = $currentTag -replace '^v'
+    $newVersion = $NewReleaseTag -replace '^v'
+    $metaData.NextReleaseTag = $NextReleaseTag
+    Set-Content -path $metaDataPath -Encoding ascii -Force -Value ($metaData | convertto-json)
+
+    Get-ChildItem -Path $Path -Recurse -File |
+        Where-Object {$_.Extension -notin '.icns','.svg' -and $_.NAME -ne 'CHANGELOG.md' -and $_.DirectoryName -notmatch '[\\/]docs|demos[\\/]'} |
+            Where-Object {$_ | Select-String -SimpleMatch $currentVersion -List} |
+                Foreach-Object {
+                    $content = Get-Content -Path $_.FullName -Raw -ReadCount 0
+                    $newContent = $content.Replace($currentVersion,$newVersion)
+                    Set-Content -path $_.FullName -Encoding ascii -Force -Value $newContent -NoNewline
+                }
+}
+
+Export-ModuleMember -Function Get-ChangeLog, Get-NewOfficalPackage, Update-PsVersionInCode

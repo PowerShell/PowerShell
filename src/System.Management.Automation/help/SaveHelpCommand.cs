@@ -41,6 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = PathParameterSetName)]
         [ValidateNotNull]
+        [Alias("Path")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DestinationPath
         {

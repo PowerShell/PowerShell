@@ -261,7 +261,7 @@ function CompareCounterSets
         $setB
     )
 
-    $setA.Length | Should Be $setB.Length
+    $setA.Length | Should -Be $setB.Length
 
     # Depending on the kinds of counters used, the first record in
     # exported counters are likely to have embty items, so we'll
@@ -272,17 +272,17 @@ function CompareCounterSets
     # PDH functions that perform the actual exporting of counter data.
     for ($i = 1; $i -lt $setA.Length; $i++)
     {
-        $setA[$i].CounterSamples.Length | Should Be $setB[$i].CounterSamples.Length
+        $setA[$i].CounterSamples.Length | Should -Be $setB[$i].CounterSamples.Length
         $samplesA = ($setA[$i].CounterSamples | sort -Property Path)
         $samplesB = ($setB[$i].CounterSamples | sort -Property Path)
-        (DateTimesAreEqualish $setA[$i].TimeStamp $setB[$i].TimeStamp) | Should Be $true
+        (DateTimesAreEqualish $setA[$i].TimeStamp $setB[$i].TimeStamp) | Should -BeTrue
         for ($j = 0; $j -lt $samplesA.Length; $j++)
         {
             $sampleA = $samplesA[$j]
             $sampleB = $samplesB[$j]
-            (DateTimesAreEqualish $sampleA.TimeStamp $sampleB.TimeStamp) | Should Be $true
-            $sampleA.Path | Should Be $sampleB.Path
-            $sampleA.CookedValue | Should Be $sampleB.CookedValue
+            (DateTimesAreEqualish $sampleA.TimeStamp $sampleB.TimeStamp) | Should -BeTrue
+            $sampleA.Path | Should -BeExactly $sampleB.Path
+            $sampleA.CookedValue | Should -Be $sampleB.CookedValue
         }
     }
 }

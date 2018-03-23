@@ -13,7 +13,7 @@ Describe "Additional static method tests" -Tags "CI" {
                 static Foo() { [Foo]::Name = Get-Name }
             }
 
-            [Foo]::Name | Should Be "Yes"
+            [Foo]::Name | Should -Be "Yes"
         }
 
         It "test basic static method" {
@@ -21,7 +21,7 @@ Describe "Additional static method tests" -Tags "CI" {
                 static [string] GetName() { return (Get-Name) }
             }
 
-            [Foo]::GetName() | Should Be "Yes"
+            [Foo]::GetName() | Should -Be "Yes"
         }
     }
 
@@ -84,22 +84,22 @@ class Foo
             ## The static constructor is triggered by accessing '[Foo]::Name' which happens in the current Runspace.
             ## The class 'Foo' has been defined in the current Runspace, so it uses the current Runspace to run the
             ## static constructor.
-            [Foo]::Name | Should Be "Default Runspace - Name"
+            [Foo]::Name | Should -BeExactly "Default Runspace - Name"
 
             ## Static constructor runs only once, so accessing the Name property in the PS1 Runspace will just return
             ## the existing value.
-            RunScriptInPS -PowerShell $ps1 -Script "[Foo]::Name" | Should Be "Default Runspace - Name"
+            RunScriptInPS -PowerShell $ps1 -Script "[Foo]::Name" | Should -BeExactly "Default Runspace - Name"
         }
 
         It "Static method use the Runspace where the call happens if the class has been defined in that Runspace" {
 
             ## We call the static method in the current Runspace. The class 'Foo' has been defined
             ## in the current Runspace, so it will use it to run the method.
-            [Foo]::GetName() | Should Be "Default Runspace - AnotherName"
+            [Foo]::GetName() | Should -BeExactly "Default Runspace - AnotherName"
 
             ## We call the static method in PS1 Runspace. The class 'Foo' has been defined in the
             ## PS1 Runspace, so it will use it to run the method.
-            RunScriptInPS -PowerShell $ps1 -Script "[Foo]::GetName()" | Should Be 'PS1 Runspace - AnotherName'
+            RunScriptInPS -PowerShell $ps1 -Script "[Foo]::GetName()" | Should -BeExactly 'PS1 Runspace - AnotherName'
         }
 
         It "Static method use the default SessionState if it's called in a Runspace where the class is not defined" {
@@ -116,7 +116,7 @@ class Foo
             ## is always the one where the class was defined most recently. In this case, the class
             ## was lastly defined in PS1 Runspace, os the method will be invoked in PS1 Runspace.
             $result = $ps2.AddCommand("Call-GetName").AddParameter("type", [Foo]).Invoke()
-            $result | Should Be 'PS1 Runspace - AnotherName'
+            $result | Should -BeExactly 'PS1 Runspace - AnotherName'
         }
     }
 }

@@ -11,7 +11,7 @@ Describe "Get-EventSubscriber" -Tags "CI" {
 	It "Should return System.Management.Automation.PSEventSubscriber as return type of New-Event" {
 	    $pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    Get-EventSubscriber | Should BeOfType System.Management.Automation.PSEventSubscriber
+	    Get-EventSubscriber | Should -BeOfType System.Management.Automation.PSEventSubscriber
 	}
     }
 
@@ -19,13 +19,13 @@ Describe "Get-EventSubscriber" -Tags "CI" {
 	It "Should return source identifier of PesterTimer " {
 	    $pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SourceIdentifier | Should Be "PesterTestRegister"
+	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SourceIdentifier | Should -BeExactly "PesterTestRegister"
 	}
 
 	It "Should return an integer greater than 0 for the SubscriptionId" {
 	    $pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SubscriptionId | Should BeGreaterThan 0
+	    (Get-EventSubscriber -SourceIdentifier PesterTestRegister).SubscriptionId | Should -BeGreaterThan 0
 
 	}
     }

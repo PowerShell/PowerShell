@@ -6,11 +6,11 @@ Describe "Pop-Location" -Tags "CI" {
     BeforeEach { Set-Location $startDirectory }
 
     It "Should be able to be called without error" {
-	{ Pop-Location } | Should Not Throw
+	{ Pop-Location } | Should -Not -Throw
     }
 
     It "Should not take a parameter" {
-	{ Pop-Location .. } | Should Throw
+	{ Pop-Location .. } | Should -Throw
     }
 
     It "Should be able pop multiple times" {
@@ -22,7 +22,7 @@ Describe "Pop-Location" -Tags "CI" {
 	Pop-Location
 	Pop-Location
 
-	$(Get-Location).Path | Should Be $startDirectory
+	$(Get-Location).Path | Should -Be $startDirectory
 
     }
 

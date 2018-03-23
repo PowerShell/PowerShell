@@ -34,15 +34,15 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
     }
 
     Function Test-Plugin($plugin, $expectedMissingProperties, $expectedMissingAttributes) {
-        $plugin.PSPath | Should Exist
+        $plugin.PSPath | Should -Exist
         $testPluginXml = [xml](winrm g winrm/config/plugin?name=$($plugin.Name) -format:xml)
         $pluginProperties = Get-ChildItem $plugin.PSPath
         $xmlElementCount = ($testPluginXml.PluginConfiguration | Get-Member -Type Properties).Count + $expectedMissingProperties.Count - $expectedMissingAttributes.Count
-        $pluginProperties.Count | Should BeExactly $xmlElementCount
+        $pluginProperties.Count | Should -BeExactly $xmlElementCount
         foreach ($pluginProperty in $pluginProperties) {
             if ($pluginProperty.Type -eq "System.String") {
-                $pluginProperty.Value | Should Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
-                (Get-Item "$($plugin.PSPath)\$($pluginProperty.Name)").Value | Should Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
+                $pluginProperty.Value | Should -Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
+                (Get-Item "$($plugin.PSPath)\$($pluginProperty.Name)").Value | Should -Be $testPluginXml.PluginConfiguration.$($pluginProperty.Name)
             }
         }
     }
@@ -60,16 +60,16 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             Remove-PSDrive -Name wsman
             { Get-PSDrive -Name wsman -ErrorAction Stop } | ShouldBeErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
             $wsmanDrive2 = $wsmanDrive | New-PSDrive -PSProvider WSMan
-            $wsmanDrive2 | Should BeOfType System.Management.Automation.PSDriveInfo
-            $wsmanDrive2.Name | Should BeExactly "WSMan"
-            $wsmanDrive2.Provider.Name | Should BeExactly "WSMan"
+            $wsmanDrive2 | Should -BeOfType System.Management.Automation.PSDriveInfo
+            $wsmanDrive2.Name | Should -BeExactly "WSMan"
+            $wsmanDrive2.Provider.Name | Should -BeExactly "WSMan"
         }
 
         It "WSMan Config Provider starts WinRM if it is stopped" {
             try {
                 Stop-Service WinRM
-                Get-ChildItem wsman:\localhost -Force | Should Not BeNullOrEmpty
-                (Get-Service WinRM).Status | Should Be 'Running'
+                Get-ChildItem wsman:\localhost -Force | Should -Not -BeNullOrEmpty
+                (Get-Service WinRM).Status | Should -Be 'Running'
             }
             finally {
                 if ((Get-Service WinRM).Status -eq 'stopped') {
@@ -88,41 +88,41 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
 
         It "Plugin InitializationParameters are correct" {
             $initializationParameters = Get-ChildItem $pluginPath\InitializationParameters
-            $initializationParameters.Count | Should Be (,$pluginXml.PluginConfiguration.InitializationParameters.Param).Count
+            $initializationParameters.Count | Should -Be (,$pluginXml.PluginConfiguration.InitializationParameters.Param).Count
             foreach ($initializationParameter in $initializationParameters) {
-                $initializationParameter.Value | Should Be ($pluginXml.PluginConfiguration.InitializationParameters | Where-Object { $_.Param.Name -eq $initializationParameter.Name }).Param.Value
-                (Get-Item $pluginPath\InitializationParameters\$($initializationParameter.Name)).Value | Should Be ($pluginXml.PluginConfiguration.InitializationParameters | Where-Object { $_.Param.Name -eq $initializationParameter.Name }).Param.Value
+                $initializationParameter.Value | Should -Be ($pluginXml.PluginConfiguration.InitializationParameters | Where-Object { $_.Param.Name -eq $initializationParameter.Name }).Param.Value
+                (Get-Item $pluginPath\InitializationParameters\$($initializationParameter.Name)).Value | Should -Be ($pluginXml.PluginConfiguration.InitializationParameters | Where-Object { $_.Param.Name -eq $initializationParameter.Name }).Param.Value
             }
         }
 
         It "Plugin Quotas are correct" {
             $quotas = Get-ChildItem $pluginPath\Quotas
-            $quotas.Count | Should Be ($pluginXml.PluginConfiguration.Quotas | Get-Member -Type Properties).Count
+            $quotas.Count | Should -Be ($pluginXml.PluginConfiguration.Quotas | Get-Member -Type Properties).Count
             foreach ($quota in $quotas) {
-                $quota.Value | Should Be $pluginXml.PluginConfiguration.Quotas.$($quota.Name)
+                $quota.Value | Should -Be $pluginXml.PluginConfiguration.Quotas.$($quota.Name)
             }
         }
 
         It "Plugin Resources are correct" {
             $resources = Get-ChildItem $pluginPath\Resources
-            $resources.Count | Should Be (,$pluginXml.PluginConfiguration.Resources.Resource).Count
+            $resources.Count | Should -Be (,$pluginXml.PluginConfiguration.Resources.Resource).Count
         }
 
         It "Plugin Security Resource is correct" {
-            (,$pluginXml.PluginConfiguration.Resources.Resource).Count | Should Be 1 # by default only Security resource should be there
+            (,$pluginXml.PluginConfiguration.Resources.Resource).Count | Should -Be 1 # by default only Security resource should be there
             $resource = Get-ChildItem "$pluginPath\Resources" | Select-Object -First 1
             $resourceUri = Get-Item "$($resource.PSPath)\ResourceUri"
-            $resourceUri.Value | Should Be "http://schemas.microsoft.com/powershell/microsoft.powershell"
+            $resourceUri.Value | Should -Be "http://schemas.microsoft.com/powershell/microsoft.powershell"
             $securityContainer = Get-ChildItem "$pluginPath\Resources\$($resource.Name)\Security" | Select-Object -First 1
             $securityProperties = Get-ChildItem $securityContainer.PSPath
             $skippedAttributes = @("ParentResourceUri","xmlns") # these are added by the WSMan Config Provider but not in the original xml
 
             # ParentResourceUri is added by the Config Provider, xmlns existing seems to be dependent on WinRM which is inconsistent
-            $securityProperties.Count | Should BeGreaterThan (($pluginXml.PluginConfiguration.Resources.Resource.Security | Get-Member -Type Properties).Count)
+            $securityProperties.Count | Should -BeGreaterThan (($pluginXml.PluginConfiguration.Resources.Resource.Security | Get-Member -Type Properties).Count)
             foreach ($securityProperty in $securityProperties) {
                 if ($skippedAttributes -notcontains $securityProperty.Name) {
-                    $securityProperty.Value | Should Be ($pluginXml.PluginConfiguration.Resources.Resource.Security.$($securityProperty.Name))
-                    (Get-Item "$($securityContainer.PSPath)\$($securityProperty.Name)").Value | Should Be ($pluginXml.PluginConfiguration.Resources.Resource.Security.$($securityProperty.Name))
+                    $securityProperty.Value | Should -Be ($pluginXml.PluginConfiguration.Resources.Resource.Security.$($securityProperty.Name))
+                    (Get-Item "$($securityContainer.PSPath)\$($securityProperty.Name)").Value | Should -Be ($pluginXml.PluginConfiguration.Resources.Resource.Security.$($securityProperty.Name))
                 }
             }
         }
@@ -145,7 +145,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $trustedHostsPath = "WSMan:\localhost\Client\TrustedHosts"
             $trustedHosts = Get-Item $trustedHostsPath
             Set-Item $trustedHostsPath "hello" -WhatIf
-            (Get-Item $trustedHostsPath).Value | Should Be $trustedHosts.Value
+            (Get-Item $trustedHostsPath).Value | Should -Be $trustedHosts.Value
         }
 
         It "Set-Item on TrustedHosts should succeed" {
@@ -153,7 +153,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $trustedHostsPath = "WSMan:\localhost\Client\TrustedHosts\"
                 $trustedHosts = Get-Item $trustedHostsPath
                 Set-Item -Path $trustedHostsPath -Value "hello" -Force
-                (Get-Item $trustedHostsPath).Value | Should Be "hello"
+                (Get-Item $trustedHostsPath).Value | Should -Be "hello"
             }
             finally {
                 Set-Item $trustedHostsPath $trustedHosts.Value -Force
@@ -165,18 +165,18 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
             $creds = [pscredential]::new((Get-Random),$password)
             $exception = { Set-Item $testPluginPath\RunAsUser $creds } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
-            $exception.Exception.Message | Should Match ".*$badCredentialError.*"
+            $exception.Exception.Message | Should -Match ".*$badCredentialError.*"
         }
 
         It "Set-Item and Clear-Item on plugin RunAsUser should succeed for valid creds" {
             $password = ConvertTo-SecureString $testPass -AsPlainText -Force
             $creds = [pscredential]::new($testUser,$password)
             Set-Item $testPluginPath\RunAsUser $creds -WarningAction SilentlyContinue
-            (Get-Item $testPluginPath\RunAsUser).Value | Should Be $testUser
-            (Get-Item $testPluginPath\RunAsPassword).Value | Should Be "System.Security.SecureString"
+            (Get-Item $testPluginPath\RunAsUser).Value | Should -Be $testUser
+            (Get-Item $testPluginPath\RunAsPassword).Value | Should -Be "System.Security.SecureString"
             Clear-Item $testPluginPath\RunAsUser -WarningAction SilentlyContinue
-            (Get-Item $testPluginPath\RunAsUser).Value | Should BeNullOrEmpty
-            (Get-Item $testPluginPath\RunAsPassword).Value | Should BeNullOrEmpty
+            (Get-Item $testPluginPath\RunAsUser).Value | Should -BeNullOrEmpty
+            (Get-Item $testPluginPath\RunAsPassword).Value | Should -BeNullOrEmpty
         }
 
         It "Set-Item on plugin RunAsUser should fail for invalid password" {
@@ -184,7 +184,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $password = ConvertTo-SecureString "My voice is my passport, verify me" -AsPlainText -Force
             $creds = [pscredential]::new($testUser,$password)
             $exception = { Set-Item $testPluginPath\RunAsUser $creds } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.SetItemCommand"
-            $exception.Exception.Message | Should Match ".*$badCredentialError.*"
+            $exception.Exception.Message | Should -Match ".*$badCredentialError.*"
         }
 
         It "Set-Item on password without user on plugin should fail for <password>" -TestCases @(
@@ -206,7 +206,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         ) {
             param ($type)
             Set-Item $testPluginPath\XmlRenderingType $type -WarningAction SilentlyContinue
-            (Get-Item $testPluginPath\XmlRenderingType).Value | Should Be $type
+            (Get-Item $testPluginPath\XmlRenderingType).Value | Should -Be $type
         }
 
         It "Set-Item on non-existent property should fail" {
@@ -220,7 +220,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             param($property, $value, $expected)
             $resource = Get-ChildItem "$testPluginPath\Resources" | Select-Object -First 1
             Set-Item "$($resource.PSPath)\$property" $value -WarningAction SilentlyContinue
-            (Get-Item "$($resource.PSPath)\$property").Value | Should BeExactly $expected
+            (Get-Item "$($resource.PSPath)\$property").Value | Should -BeExactly $expected
         }
 
         It "Set-Item on plugin Security Resource '<property>' property with '<value>' should succeed" -TestCases @(
@@ -233,7 +233,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             $resource = Get-ChildItem "$testPluginPath\Resources" | Select-Object -First 1
             $security = Get-ChildItem "$($resource.PSPath)\Security" | Select-Object -First 1
             Set-Item "$($security.PSPath)\$property" $value -WarningAction SilentlyContinue -Force
-            (Get-Item "$($security.PSPath)\$property").Value | Should Be $value
+            (Get-Item "$($security.PSPath)\$property").Value | Should -Be $value
         }
 
         It "Set-Item on plugin Security Resource '<property>' property with invalid '<value>' should fail" -TestCases @(
@@ -252,7 +252,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         ) {
             param($property, $value)
             Set-Item "$testPluginPath\InitializationParameters\$property" $value -WarningAction SilentlyContinue
-            (Get-Item "$testPluginPath\InitializationParameters\$property").Value | Should Be $value
+            (Get-Item "$testPluginPath\InitializationParameters\$property").Value | Should -Be $value
         }
 
         It "Set-Item on plugin Quotas '<property>' property with '<value>' should succeed" -TestCases @(
@@ -263,7 +263,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             ) {
             param($property, $value)
             Set-Item "$testPluginPath\Quotas\$property" $value -WarningAction SilentlyContinue
-            (Get-Item "$testPluginPath\Quotas\$property").Value | Should Be $value
+            (Get-Item "$testPluginPath\Quotas\$property").Value | Should -Be $value
         }
 
         It "Set-Item on plugin Quotas out of range on '<property>' property with '<value>' should fail" -TestCases @(
@@ -294,13 +294,13 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             try {
                 $connections = Get-ChildItem wsman:\
                 $newItem = New-Item WSMan:\$name
-                "WSMan:\$name" | Should Exist
-                (Get-ChildItem wsman:\).Count | Should Be ($connections.Count + 1)
+                "WSMan:\$name" | Should -Exist
+                (Get-ChildItem wsman:\).Count | Should -Be ($connections.Count + 1)
                 # not a .Net type so can't use BeOfType
-                $newItem.PSObject.TypeNames[0] | Should Be "Microsoft.WSMan.Management.WSManConfigContainerElement#ComputerLevel"
-                $newItem.Name | Should Be $expected
+                $newItem.PSObject.TypeNames[0] | Should -Be "Microsoft.WSMan.Management.WSManConfigContainerElement#ComputerLevel"
+                $newItem.Name | Should -Be $expected
                 Remove-Item WSMan:\$name -Recurse -Force
-                "WSMan:\$name" | Should Not Exist
+                "WSMan:\$name" | Should -Not -Exist
             }
             finally {
                 Remove-Item WSMan:\$name -Recurse -Force -ErrorAction SilentlyContinue
@@ -311,18 +311,18 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             try {
                 $newListener = New-Item -Path WSMan:\localhost\Listener\ -Address IP:127.0.0.1 -port 6666 -Transport HTTP -Enabled $false -HostName foo -URLPrefix bar -Force
                 $listenerName = $newListener.Name
-                $listenerName | Should Not BeNullOrEmpty
+                $listenerName | Should -Not -BeNullOrEmpty
                 $properties = Get-ChildItem "WSMan:\localhost\Listener\$listenerName"
                 $listenerXml = [xml](winrm g winrm/config/listener?Address=IP:127.0.0.1+Transport=HTTP -format:xml)
                 $expectedMissingAttributes = "cfg","xsi","lang"
-                $properties.Count | Should Be (($listenerXml.Listener | Get-Member -Type Properties).Count - $expectedMissingAttributes.Count)
+                $properties.Count | Should -Be (($listenerXml.Listener | Get-Member -Type Properties).Count - $expectedMissingAttributes.Count)
                 foreach ($property in $properties) {
                     if (-not $property.Name.StartsWith("ListeningOn")) { # this property is represented differently
-                        $property.Value | Should Be $listenerXml.Listener.$($property.Name)
+                        $property.Value | Should -Be $listenerXml.Listener.$($property.Name)
                     }
                 }
                 Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Recurse -Force
-                $newListener.PSPath | Should Not Exist
+                $newListener.PSPath | Should -Not -Exist
             }
             finally {
                 Remove-Item -Path "WSMan:\localhost\Listener\$listenerName" -Recurse -Force -ErrorAction SilentlyContinue
@@ -340,7 +340,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $expectedMissingProperties = @("InitializationParameters")
                 Test-Plugin -Plugin $plugin -expectedMissingProperties $expectedMissingProperties
                 Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Recurse -Force
-                "WSMan:\localhost\Plugin\TestPlugin2" | Should Not Exist
+                "WSMan:\localhost\Plugin\TestPlugin2" | Should -Not -Exist
             }
             finally {
                 Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Recurse -Force -ErrorAction SilentlyContinue
@@ -371,7 +371,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $plugin = New-Item -Path WSMan:\localhost\Plugin -File $testdrive\plugin.xml -Name TestPlugin2
                 Test-Plugin -Plugin $plugin
                 Remove-Item WSMan:\localhost\Plugin\TestPlugin2\ -Recurse -Force
-                "WSMan:\localhost\Plugin\TestPlugin2\" | Should Not Exist
+                "WSMan:\localhost\Plugin\TestPlugin2\" | Should -Not -Exist
             }
             finally {
                 Remove-Item "WSMan:\localhost\Plugin\TestPlugin2\" -Recurse -Force -ErrorAction SilentlyContinue
@@ -382,12 +382,12 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
             try {
                 $resource = New-Item -Path WSMan:\localhost\Plugin\TestPlugin\Resources\ `
                     -ResourceUri http://foo -Capability shell
-                $resource.PSPath | Should Exist
+                $resource.PSPath | Should -Exist
                 $properties = Get-ChildItem $resource.PSPath
-                ($properties | Where-Object { $_.Name -eq "ResourceUri" }).Value | Should Be "http://foo/"
-                ($properties | Where-Object { $_.Name -eq "Capability" })[0].Value | Should Be "shell"
+                ($properties | Where-Object { $_.Name -eq "ResourceUri" }).Value | Should -Be "http://foo/"
+                ($properties | Where-Object { $_.Name -eq "Capability" })[0].Value | Should -Be "shell"
                 Remove-Item $resource.PSPath -Recurse -Force
-                $resource.PSPath | Should Not Exist
+                $resource.PSPath | Should -Not -Exist
             }
             finally {
                 Remove-Item $resource.PSPath -Recurse -Force -ErrorAction SilentlyContinue
@@ -399,10 +399,10 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 $parameter = New-Item -Path WSMan:\localhost\Plugin\TestPlugin\InitializationParameters `
                     -ParamName foo -ParamValue bar
                 $parameterObj = Get-Item $parameter.PSPath
-                $parameterObj.Name | Should Be "foo"
-                $parameterObj.Value | Should Be "bar"
+                $parameterObj.Name | Should -Be "foo"
+                $parameterObj.Value | Should -Be "bar"
                 Remove-Item $parameter.PSPath -Force
-                $parameter.PSPath | Should Not Exist
+                $parameter.PSPath | Should -Not -Exist
             }
             finally {
                 Remove-Item $parameter.PSPath -Force -ErrorAction SilentlyContinue
@@ -416,11 +416,11 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
                 # remove existing security resource since the folder name is just a hash of the resource uri
                 Get-ChildItem "$($resource.PSPath)\Security" | Remove-Item -Recurse -Force
                 $security = New-Item "$($resource.PSPath)\Security" -SDDL $sddl -Force
-                $security.PSPath | Should Exist
+                $security.PSPath | Should -Exist
                 $securityObj = Get-Item $security.PSPath
-                (Get-ChildItem $securityObj.PSPath | Where-Object { $_.Name -eq 'sddl' }).Value | Should Be $sddl
+                (Get-ChildItem $securityObj.PSPath | Where-Object { $_.Name -eq 'sddl' }).Value | Should -Be $sddl
                 Remove-Item $security.PSPath -Recurse -Force
-                $security.PSPath | Should Not Exist
+                $security.PSPath | Should -Not -Exist
             }
             finally {
                 Remove-Item $security.PSPath -Recurse -Force -ErrorAction SilentlyContinue
@@ -432,7 +432,7 @@ Describe "WSMan Config Provider" -Tag Feature,RequireAdminOnWindows {
         It "Get-Help while in WSMan: drive works" {
             try {
                 Push-Location WSMan:\localhost
-                Get-Help New-Item | Should Not BeNullOrEmpty
+                Get-Help New-Item | Should -Not -BeNullOrEmpty
             }
             finally {
                 Pop-Location
