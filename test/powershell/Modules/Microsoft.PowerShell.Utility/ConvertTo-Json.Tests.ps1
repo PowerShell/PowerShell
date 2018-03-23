@@ -35,4 +35,17 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
     }
+
+    It "The result string is packed in an array symbols when AsArray parameter is used." {
+        $output = 1 | ConvertTo-Json -AsArray
+        $output | Should -BeLike "``[*1*]"
+
+        $output = 1,2 | ConvertTo-Json -AsArray
+        $output | Should -BeLike "``[*1*2*]"
+    }
+
+    It "The result string is not packed in the array symbols when there is only one input object and AsArray parameter is not used." {
+        $output = 1 | ConvertTo-Json
+        $output | Should -BeExactly '1'
+    }
 }

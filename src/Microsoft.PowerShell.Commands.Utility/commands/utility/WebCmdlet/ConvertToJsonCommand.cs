@@ -61,8 +61,17 @@ namespace Microsoft.PowerShell.Commands
         /// be converted to their string equivalent. Otherwise, enum values
         /// will be converted to their numeric equivalent.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter EnumsAsStrings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AsArray property.
+        /// If the AsArray property is set to be true, the result JSON string will
+        /// be returned with surrounding '[', ']' chars. Otherwise,
+        /// the array symbols will occur only if there is more than one input object.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter AsArray { get; set; }
 
         #endregion parameters
 
@@ -104,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_inputObjects.Count > 0)
             {
-                object objectToProcess = (_inputObjects.Count > 1) ? (_inputObjects.ToArray() as object) : (_inputObjects[0]);
+                object objectToProcess = (_inputObjects.Count > 1 || AsArray) ? (_inputObjects.ToArray() as object) : (_inputObjects[0]);
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
                 object preprocessedObject = null;
