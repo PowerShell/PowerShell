@@ -5,7 +5,8 @@
 ### Breaking Changes
 
 - Throw terminating error in `New-TemporaryFile` and make it not rely on the presence of the `TEMP` environment variable (#6182) (Thanks @bergmeister!)
-- Remove unsupported members from the enum 'Language' in `Add-Type` (#5829) (Thanks @iSazonov!)
+- Remove the unnecessary `AddTypeCommandBase` class from `Add-Type` (#5407) (Thanks @iSazonov!)
+- Remove unsupported members from the enum `Language` in `Add-Type` (#5829) (Thanks @iSazonov!)
 - Fix range operator to work better with character ranges (#5732) (Thanks @iSazonov!)
 
 ### Engine Updates and Fixes
@@ -59,7 +60,6 @@
 - Add common aliases for all `write-*` commands default message parameter (#5816) (Thanks @KevinMarquette!)
 - Make `UTF-8` the default encoding for `application/json` (#6109) (Thanks @markekraus!)
 - Enable `$env:PAGER` to work correctly if arguments are used (#6144)
-- Remove the unnecessary `AddTypeCommandBase` class (#5407) (Thanks @iSazonov!)
 
 ### Test
 
