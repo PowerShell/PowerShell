@@ -1458,7 +1458,4 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
   </data>
-  <data name="RequiresCannotBeUsedInInteractiveConsole" xml:space="preserve">
-    <value>A #requires statement cannot be used in an interactive console</value>
-  </data>
 </root>
