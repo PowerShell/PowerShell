@@ -8,10 +8,10 @@ Describe "Export-FormatData DRT Unit Tests" -Tags "CI" {
         $content = Get-Content $tempFile
         $formatViewDefinition = $fd[0].FormatViewDefinition
         $typeName = $fd[0].TypeName
-        $content.Contains($typeName) | Should Be $true
+        $content.Contains($typeName) | Should -BeTrue
         for ($i = 0; $i -lt $formatViewDefinition.Count;$i++)
         {
-            $content.Contains($formatViewDefinition[$i].Name) | Should Be $true
+            $content.Contains($formatViewDefinition[$i].Name) | Should -BeTrue
         }
     }
 }
@@ -26,7 +26,7 @@ Describe "Export-FormatData" -Tags "CI" {
 
     Context "Check Export-FormatData can be called validly." {
 	    It "Should be able to be called without error" {
-	        { Get-FormatData | Export-FormatData -Path $testOutput } | Should Not Throw
+	        { Get-FormatData | Export-FormatData -Path $testOutput } | Should -Not -Throw
 	    }
     }
 
@@ -34,13 +34,13 @@ Describe "Export-FormatData" -Tags "CI" {
 	    It "Should not return an empty xml file" {
 	        Get-FormatData | Export-FormatData -Path $testOutput
 	        $piped = Get-Content $testOutput
-	        $piped | Should Not Be ""
+	        $piped | Should -Not -BeNullOrEmpty
 	    }
 
 	    It "Should have a valid xml tag at the start of the file" {
 	        Get-FormatData | Export-FormatData -Path $testOutput
 	        $piped = Get-Content $testOutput
-	        $piped[0] | Should Be "<"
+	        $piped[0] | Should -BeExactly "<"
 	    }
     }
 }

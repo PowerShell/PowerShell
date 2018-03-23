@@ -19,8 +19,8 @@ Describe "Get-FileHash" -Tags "CI" {
         It "Should default to correct algorithm, hash and path" {
             $result = Get-FileHash $testDocument
             $result.Algorithm | Should Be "SHA256"
-            $result.Hash | Should Be "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c"
-            $result.Path | Should Be $testDocument
+            $result.Hash | Should -Be "41620f6c9f3531722efe90aed9abbc1d1b31788aa9141982030d3dde199f770c"
+            $result.Path | Should -Be $testDocument
         }
     }
 
@@ -37,49 +37,31 @@ Describe "Get-FileHash" -Tags "CI" {
         It "Should be able to get the correct hash from <algorithm> algorithm" -TestCases $testCases {
             param($algorithm, $hash)
             $algorithmResult = Get-FileHash $testDocument -Algorithm $algorithm
-            $algorithmResult.Hash | Should Be $hash
+            $algorithmResult.Hash | Should -Be $hash
         }
 
         It "Should be throw for wrong algorithm name" {
-            try {
-                Get-FileHash Get-FileHash $testDocument -Algorithm wrongAlgorithm
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash Get-FileHash $testDocument -Algorithm wrongAlgorithm } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 
     Context "Paths tests" {
         It "With '-Path': no file exist" {
-            try {
-                Get-FileHash -Path nofileexist.ttt -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "With '-LiteralPath': no file exist" {
-            try {
-                Get-FileHash -LiteralPath nofileexist.ttt -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash -LiteralPath nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "With '-Path': file exist" {
             $result = Get-FileHash -Path $testDocument
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
 
         It "With '-LiteralPath': file exist" {
             $result = Get-FileHash -LiteralPath $testDocument
-            $result.Path | Should Be $testDocument
+            $result.Path | Should -Be $testDocument
         }
     }
 }

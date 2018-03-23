@@ -24,14 +24,14 @@ Describe "Trace-Command" -tags "CI" {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
             $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         # GetStackTrace is not in .NET Core
         It "Callstack works" -Skip:$IsCoreCLR {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption Callstack -FilePath $logfile
             $log = Get-Content $logfile | Where-Object {$_ -like "*Callstack=   * System.Environment.GetStackTrace(Exception e, Boolean needFileInfo)*"}
-            $log.Count | Should BeGreaterThan 0
+            $log.Count | Should -BeGreaterThan 0
         }
 
         It "Datetime works" {
@@ -48,7 +48,7 @@ Describe "Trace-Command" -tags "CI" {
                         $actualGap = $expectedDate - $_;
                     }
 
-                    $allowedGap | Should BeGreaterThan $actualGap
+                    $allowedGap | Should -BeGreaterThan $actualGap
                 }
         }
 
@@ -56,7 +56,7 @@ Describe "Trace-Command" -tags "CI" {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption None -FilePath $actualLogfile
             Trace-Command -name * -Expression {echo Foo} -FilePath $logfile
 
-            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should BeNullOrEmpty
+            Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should -BeNullOrEmpty
         }
 
         It "ThreadID works" {
@@ -64,7 +64,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ThreadID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should Be ([threading.thread]::CurrentThread.ManagedThreadId) }
+            $results | ForEach-Object { $_ | Should -Be ([threading.thread]::CurrentThread.ManagedThreadId) }
         }
 
         It "Timestamp creates logs in ascending order" {
@@ -72,7 +72,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*Timestamp=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
             $sortedResults = $results | Sort-Object
-            $sortedResults | Should Be $results
+            $sortedResults | Should -Be $results
         }
 
         It "ProcessId logs current process Id" {
@@ -80,7 +80,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should Be $pid }
+            $results | ForEach-Object { $_ | Should -Be $pid }
         }
     }
 
@@ -101,7 +101,7 @@ Describe "Trace-Command" -tags "CI" {
         It "Set-TraceSource to file and RemoveFileListener wildcard" {
             $null = Set-TraceSource -Name "ParameterBinding" -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -PassThru
             Set-TraceSource -Name "ParameterBinding" -RemoveFileListener *
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+            Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }
 
         It "Trace-Command -Command with error" {
@@ -116,18 +116,18 @@ Describe "Trace-Command" -tags "CI" {
             $null = New-Item $filePath -Force
             Set-ItemProperty $filePath -name IsReadOnly -value $true
             Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -FilePath $filePath -Force
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+            Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }
 
         It "Trace-Command using Path parameter alias" {
             $null = New-Item $filePath -Force
             Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -Path $filePath -Force
-            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+            Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }
 
         It "Trace-Command contains wildcard characters" {
             $a = Trace-Command -Name ParameterB* -Command 'get-alias'
-            $a.count | Should BeGreaterThan 0
+            $a.count | Should -BeGreaterThan 0
         }
     }
 }
