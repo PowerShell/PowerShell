@@ -7,44 +7,44 @@ Describe "TabCompletion" -Tags CI {
 
     It 'Should complete Command' {
         $res = TabExpansion2 -inputScript 'Get-Com' -cursorColumn 'Get-Com'.Length
-        $res.CompletionMatches[0].CompletionText | Should be Get-Command
+        $res.CompletionMatches[0].CompletionText | Should -Be Get-Command
     }
 
     It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length
-        $res.CompletionMatches[0].CompletionText | Should be notepad.exe
+        $res.CompletionMatches[0].CompletionText | Should -Be notepad.exe
     }
 
     It 'Should complete dotnet method' {
         $res = TabExpansion2 -inputScript '(1).ToSt' -cursorColumn '(1).ToSt'.Length
-        $res.CompletionMatches[0].CompletionText | Should be 'ToString('
+        $res.CompletionMatches[0].CompletionText | Should -Be 'ToString('
     }
 
     It 'Should complete Magic foreach' {
         $res = TabExpansion2 -inputScript '(1..10).Fo' -cursorColumn '(1..10).Fo'.Length
-        $res.CompletionMatches[0].CompletionText | Should be 'Foreach('
+        $res.CompletionMatches[0].CompletionText | Should -Be 'Foreach('
     }
 
     It "Should complete Magic where" {
         $res = TabExpansion2 -inputScript '(1..10).wh' -cursorColumn '(1..10).wh'.Length
-        $res.CompletionMatches[0].CompletionText | Should be 'Where('
+        $res.CompletionMatches[0].CompletionText | Should -Be 'Where('
     }
 
     It 'Should complete types' {
         $res = TabExpansion2 -inputScript '[pscu' -cursorColumn '[pscu'.Length
-        $res.CompletionMatches[0].CompletionText | Should be 'pscustomobject'
+        $res.CompletionMatches[0].CompletionText | Should -Be 'pscustomobject'
     }
 
     It 'Should complete namespaces' {
         $res = TabExpansion2 -inputScript 'using namespace Sys' -cursorColumn 'using namespace Sys'.Length
-        $res.CompletionMatches[0].CompletionText | Should be 'System'
+        $res.CompletionMatches[0].CompletionText | Should -Be 'System'
     }
 
     It 'Should complete format-table hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Table @{ ' -cursorColumn 'Get-ChildItem | Format-Table @{ '.Length
-        $res.CompletionMatches.Count | Should Be 5
+        $res.CompletionMatches.Count | Should -Be 5
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' ' | Should Be 'Alignment Expression FormatString Label Width'
+        $completionText -join ' ' | Should -Be 'Alignment Expression FormatString Label Width'
     }
 
     It 'Should complete format-* hashtable on GroupBy: <cmd>' -TestCases (
@@ -55,44 +55,44 @@ Describe "TabCompletion" -Tags CI {
     ) {
         param($cmd)
         $res = TabExpansion2 -inputScript "Get-ChildItem | $cmd -GroupBy @{ " -cursorColumn "Get-ChildItem | $cmd -GroupBy @{ ".Length
-        $res.CompletionMatches.Count | Should Be 3
+        $res.CompletionMatches.Count | Should -Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' ' | Should Be 'Expression FormatString Label'
+        $completionText -join ' ' | Should -Be 'Expression FormatString Label'
     }
 
     It 'Should complete format-list hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-List @{ ' -cursorColumn 'Get-ChildItem | Format-List @{ '.Length
-        $res.CompletionMatches.Count | Should Be 3
+        $res.CompletionMatches.Count | Should -Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' ' | Should Be 'Expression FormatString Label'
+        $completionText -join ' ' | Should -Be 'Expression FormatString Label'
     }
 
     It 'Should complete format-wide hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Wide @{ ' -cursorColumn 'Get-ChildItem | Format-Wide @{ '.Length
-        $res.CompletionMatches.Count | Should Be 2
+        $res.CompletionMatches.Count | Should -Be 2
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' ' | Should Be 'Expression FormatString'
+        $completionText -join ' ' | Should -Be 'Expression FormatString'
     }
 
     It 'Should complete format-custom hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Custom @{ ' -cursorColumn 'Get-ChildItem | Format-Custom @{ '.Length
-        $res.CompletionMatches.Count | Should Be 2
+        $res.CompletionMatches.Count | Should -Be 2
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' ' | Should Be 'Depth Expression'
+        $completionText -join ' ' | Should -Be 'Depth Expression'
     }
 
     It 'Should complete Select-Object hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Select-Object @{ ' -cursorColumn 'Get-ChildItem | Select-Object @{ '.Length
-        $res.CompletionMatches.Count | Should Be 2
+        $res.CompletionMatches.Count | Should -Be 2
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' '| Should Be 'Expression Name'
+        $completionText -join ' '| Should -Be 'Expression Name'
     }
 
     It 'Should complete Sort-Object hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Sort-Object @{ ' -cursorColumn 'Get-ChildItem | Sort-Object @{ '.Length
-        $res.CompletionMatches.Count | Should Be 3
+        $res.CompletionMatches.Count | Should -Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' '| Should Be 'Ascending Descending Expression'
+        $completionText -join ' '| Should -Be 'Ascending Descending Expression'
     }
 
     It 'Should complete New-Object hashtable' {
@@ -102,22 +102,22 @@ Describe "TabCompletion" -Tags CI {
             $C
         }
         $res = TabExpansion2 -inputScript 'New-Object -TypeName X -Property @{ ' -cursorColumn 'New-Object -TypeName X -Property @{ '.Length
-        $res.CompletionMatches.Count | Should Be 3
-        $res.CompletionMatches.CompletionText -join ' ' | Should Be 'A B C'
+        $res.CompletionMatches.Count | Should -Be 3
+        $res.CompletionMatches.CompletionText -join ' ' | Should -Be 'A B C'
     }
 
     It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
         Set-StrictMode -Version latest
         $cmd = 'Get-Process -Id '
         [System.Management.Automation.CommandCompletion]$res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
-        $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should be true
-        $res.CompletionMatches[0].ListItemText -match '^\d+ -' | Should be true
-        $res.CompletionMatches[0].ToolTip -match '^\d+ -' | Should be true
+        $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should -BeTrue
+        $res.CompletionMatches[0].ListItemText -match '^\d+ -' | Should -BeTrue
+        $res.CompletionMatches[0].ToolTip -match '^\d+ -' | Should -BeTrue
     }
 
     It 'Should complete keyword' -skip {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
-        $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
+        $res.CompletionMatches[0].CompletionText | Should -Be 'namespace'
     }
 
     Context NativeCommand {
@@ -136,8 +136,8 @@ Describe "TabCompletion" -Tags CI {
             }
             $line = "$nativeCommand -"
             $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches.CompletionText | Should Be "-flag"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches.CompletionText | Should -Be "-flag"
         }
 
         It 'Completes native commands with --' {
@@ -152,8 +152,8 @@ Describe "TabCompletion" -Tags CI {
             }
             $line = "$nativeCommand --"
             $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches.CompletionText | Should Be "--flag"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches.CompletionText | Should -Be "--flag"
         }
 
         It 'Completes native commands with --f' {
@@ -168,8 +168,8 @@ Describe "TabCompletion" -Tags CI {
             }
             $line = "$nativeCommand --f"
             $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches.CompletionText | Should Be "--flag"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches.CompletionText | Should -Be "--flag"
         }
 
         It 'Completes native commands with -o' {
@@ -184,16 +184,16 @@ Describe "TabCompletion" -Tags CI {
             }
             $line = "$nativeCommand -o"
             $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches.CompletionText | Should Be "-option"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches.CompletionText | Should -Be "-option"
         }
     }
 
     It 'Should complete "Export-Counter -FileFormat" with available output formats' -Pending {
         $res = TabExpansion2 -inputScript 'Export-Counter -FileFormat ' -cursorColumn 'Export-Counter -FileFormat '.Length
-        $res.CompletionMatches.Count | Should Be 3
+        $res.CompletionMatches.Count | Should -Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-        $completionText -join ' '| Should Be 'blg csv tsv'
+        $completionText -join ' '| Should -Be 'blg csv tsv'
     }
 
     Context "File name completion" {
@@ -247,8 +247,8 @@ Describe "TabCompletion" -Tags CI {
 
             Push-Location -Path $tempDir
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $localExpected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $localExpected
         }
 
         It "Input '<inputStr>' should successfully complete with relative path '..\'" -TestCases $testCases {
@@ -257,8 +257,8 @@ Describe "TabCompletion" -Tags CI {
             Push-Location -Path $oneSubDir
             $inputStr = "..\${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $oneSubExpected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $oneSubExpected
         }
 
         It "Input '<inputStr>' should successfully complete with relative path '..\..\'" -TestCases $testCases {
@@ -267,8 +267,8 @@ Describe "TabCompletion" -Tags CI {
             Push-Location -Path $twoSubDir
             $inputStr = "../../${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $twoSubExpected
         }
 
         It "Input '<inputStr>' should successfully complete with relative path '..\..\..\ba*\'" -TestCases $testCases {
@@ -277,8 +277,8 @@ Describe "TabCompletion" -Tags CI {
             Push-Location -Path $twoSubDir
             $inputStr = "..\..\..\ba*\${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $twoSubExpected
         }
 
         It "Test relative path" {
@@ -286,8 +286,8 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "twoSubDir/../../pri"
             $afterTab = "..${separator}prime"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
         }
 
         It "Test path with both '\' and '/'" {
@@ -295,8 +295,8 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "..\../..\ba*/ab"
             $afterTab = "..${separator}..${separator}abc"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
         }
     }
 
@@ -326,7 +326,7 @@ Describe "TabCompletion" -Tags CI {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
     }
 
@@ -446,8 +446,8 @@ Describe "TabCompletion" -Tags CI {
 
             if ($null -ne $setup) { . $setup }
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
@@ -455,24 +455,24 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
         }
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
             $afterTab = 'registry::HKEY_LOCAL_MACHINE'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
         }
 
         It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
             $beforeTab = 'wsman::localh'
             $afterTab = 'wsman::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
         }
 
         It "Tab completion for filesystem provider qualified path" {
@@ -484,8 +484,8 @@ Describe "TabCompletion" -Tags CI {
                 $afterTab = 'filesystem::/usr' -f $env:SystemDrive
             }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $afterTab
         }
 
         It "Tab completion dynamic parameter of a custom function" {
@@ -512,10 +512,10 @@ Describe "TabCompletion" -Tags CI {
 
             $inputStr = "Test-DynamicParam -D"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 3
-            $res.CompletionMatches[0].CompletionText | Should Be '-DeFirst'
-            $res.CompletionMatches[1].CompletionText | Should Be '-DeSecond'
-            $res.CompletionMatches[2].CompletionText | Should Be '-DeThird'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 3
+            $res.CompletionMatches[0].CompletionText | Should -Be '-DeFirst'
+            $res.CompletionMatches[1].CompletionText | Should -Be '-DeSecond'
+            $res.CompletionMatches[2].CompletionText | Should -Be '-DeThird'
         }
 
         It "Tab completion dynamic parameter '-CodeSigningCert'" -Skip:(!$IsWindows) {
@@ -523,7 +523,7 @@ Describe "TabCompletion" -Tags CI {
                 Push-Location cert:\
                 $inputStr = "gci -co"
                 $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches[0].CompletionText | Should Be '-CodeSigningCert'
+                $res.CompletionMatches[0].CompletionText | Should -Be '-CodeSigningCert'
             } finally {
                 Pop-Location
             }
@@ -537,9 +537,9 @@ Describe "TabCompletion" -Tags CI {
 
                 $inputStr = "myf"
                 $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeExactly 2
-                $res.CompletionMatches[0].CompletionText | Should Be (Resolve-Path myf -Relative)
-                $res.CompletionMatches[1].CompletionText | Should Be "MyFunction"
+                $res.CompletionMatches.Count | Should -BeExactly 2
+                $res.CompletionMatches[0].CompletionText | Should -Be (Resolve-Path myf -Relative)
+                $res.CompletionMatches[1].CompletionText | Should -Be "MyFunction"
             } finally {
                 Remove-Item -Path myf -Force
                 Pop-Location
@@ -550,40 +550,40 @@ Describe "TabCompletion" -Tags CI {
             function foo { param([ValidateSet('cat','dog')]$p) }
             $inputStr = "foo "
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 2
-            $res.CompletionMatches[0].CompletionText | Should be 'cat'
-            $res.CompletionMatches[1].CompletionText | Should be 'dog'
+            $res.CompletionMatches.Count | Should -BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should -Be 'cat'
+            $res.CompletionMatches[1].CompletionText | Should -Be 'dog'
         }
 
         It "Tab completion for enum type parameter of a custom function" {
             function baz ([consolecolor]$name, [ValidateSet('cat','dog')]$p){}
             $inputStr = "baz -name "
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 16
-            $res.CompletionMatches[0].CompletionText | Should Be 'Black'
+            $res.CompletionMatches.Count | Should -BeExactly 16
+            $res.CompletionMatches[0].CompletionText | Should -Be 'Black'
 
             $inputStr = "baz Black "
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 2
-            $res.CompletionMatches[0].CompletionText | Should be 'cat'
-            $res.CompletionMatches[1].CompletionText | Should be 'dog'
+            $res.CompletionMatches.Count | Should -BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should -Be 'cat'
+            $res.CompletionMatches[1].CompletionText | Should -Be 'dog'
         }
 
         It "Tab completion for enum members after comma" {
             $inputStr = "Get-Command -Type Alias,c"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 2
-            $res.CompletionMatches[0].CompletionText | Should Be 'Cmdlet'
-            $res.CompletionMatches[1].CompletionText | Should Be 'Configuration'
+            $res.CompletionMatches.Count | Should -BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should -Be 'Cmdlet'
+            $res.CompletionMatches[1].CompletionText | Should -Be 'Configuration'
         }
 
         It "Test [CommandCompletion]::GetNextResult" {
             $inputStr = "Get-Command -Type Alias,c"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 2
-            $res.GetNextResult($false).CompletionText | Should Be 'Configuration'
-            $res.GetNextResult($true).CompletionText | Should Be 'Cmdlet'
-            $res.GetNextResult($true).CompletionText | Should Be 'Configuration'
+            $res.CompletionMatches.Count | Should -BeExactly 2
+            $res.GetNextResult($false).CompletionText | Should -Be 'Configuration'
+            $res.GetNextResult($true).CompletionText | Should -Be 'Cmdlet'
+            $res.GetNextResult($true).CompletionText | Should -Be 'Configuration'
         }
 
         It "Test history completion" {
@@ -597,16 +597,16 @@ Describe "TabCompletion" -Tags CI {
             }
             Add-History -InputObject $history
             $res = TabExpansion2 -inputScript "#" -cursorColumn 1
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be "Test history completion"
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be "Test history completion"
         }
 
         It "Test Attribute member completion" {
             $inputStr = "function bar { [parameter(]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf('(') + 1)
-            $res.CompletionMatches.Count | Should Be 10
+            $res.CompletionMatches.Count | Should -Be 10
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Position"
-            $entry.CompletionText | Should Be "Position"
+            $entry.CompletionText | Should -Be "Position"
         }
 
         It "Test completion with line continuation" {
@@ -615,8 +615,8 @@ dir -Recurse `
 -Lite
 '@
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be "-LiteralPath"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be "-LiteralPath"
         }
     }
 
@@ -637,22 +637,22 @@ dir -Recurse `
         It "Test complete module file name" {
             $inputStr = "using module test"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}testModule.psm1"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be ".${separator}testModule.psm1"
         }
 
         It "Test complete module name" {
             $inputStr = "using module PSRead"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be "PSReadLine"
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be "PSReadLine"
         }
 
         It "Test complete module name with wildcard" {
             $inputStr = "using module *ReadLi"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be "PSReadLine"
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be "PSReadLine"
         }
     }
 
@@ -683,30 +683,30 @@ dir -Recurse `
             $inputStr = "dir .\commaA.txt,"
             $expected = ".${separator}commaA.txt"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
 
         It "Test comma with Enum array element" {
             $inputStr = "gcm -CommandType Cmdlet,"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be ([System.Enum]::GetNames([System.Management.Automation.CommandTypes]).Count)
-            $res.CompletionMatches[0].CompletionText | Should Be "Alias"
+            $res.CompletionMatches.Count | Should -Be ([System.Enum]::GetNames([System.Management.Automation.CommandTypes]).Count)
+            $res.CompletionMatches[0].CompletionText | Should -Be "Alias"
         }
 
         It "Test redirection operator '<inputStr>'" -TestCases $redirectionTestCases {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
 
         It "Test complete the minus token to operators" {
             $inputStr = "55 -"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be ([System.Management.Automation.CompletionCompleters]::CompleteOperator("").Count)
-            $res.CompletionMatches[0].CompletionText | Should Be '-and'
+            $res.CompletionMatches.Count | Should -Be ([System.Management.Automation.CompletionCompleters]::CompleteOperator("").Count)
+            $res.CompletionMatches[0].CompletionText | Should -Be '-and'
         }
     }
 
@@ -740,15 +740,15 @@ dir -Recurse `
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
 
         It "Complete file name starting with special char" {
             $inputStr = ")"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be "& '.${separator})file.txt'"
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -Be "& '.${separator})file.txt'"
         }
     }
 
@@ -772,8 +772,8 @@ dir -Recurse `
             )
 
             $res = TabExpansion2 -ast $ast -tokens $tokens -positionOfCursor $elementAst.Extent.EndScriptPosition
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
     }
 
@@ -785,8 +785,8 @@ dir -Recurse `
 
             $inputStr = '$pid.'
             $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Overridden-TabExpansion-Function'
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -Be 'Overridden-TabExpansion-Function'
         }
 
         It "Override TabExpansion with alias" {
@@ -797,8 +797,8 @@ dir -Recurse `
 
             $inputStr = '$pid.'
             $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be "Overridden-TabExpansion-Alias"
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -Be "Overridden-TabExpansion-Alias"
         }
     }
 
@@ -815,7 +815,7 @@ dir -Recurse `
             param($inputStr)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 0
+            $res.CompletionMatches.Count | Should -BeExactly 0
         }
     }
 
@@ -879,8 +879,8 @@ dir -Recurse `
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
     }
 
@@ -919,8 +919,8 @@ dir -Recurse `
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be $expected
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -Be $expected
         }
     }
 
@@ -930,12 +930,12 @@ dir -Recurse `
         ) {
             param($cmd, $expected)
             $res = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
-            $res.CompletionMatches.Count | Should Be $expected.Count
+            $res.CompletionMatches.Count | Should -Be $expected.Count
             $completionOptions = ""
             foreach ($completion in $res.CompletionMatches) {
                 $completionOptions += $completion.ListItemText
             }
-            $completionOptions | Should Be ([string]::Join("", $expected))
+            $completionOptions | Should -Be ([string]::Join("", $expected))
         }
     }
 }
@@ -952,8 +952,8 @@ Describe "Tab completion help test" -Tags @('RequireAdminOnWindows', 'CI') {
         }
 
         $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-        $res.CompletionMatches.Count | Should Be 1
-        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_Splatting'
+        $res.CompletionMatches.Count | Should -Be 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
     }
 }
 
@@ -992,8 +992,8 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature {
     It "Input '<inputStr>' should successfully complete in remote runspace" -TestCases $testCases {
         param($inputStr, $expected)
         $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputStr.Length, $null, $powershell)
-        $res.CompletionMatches.Count | Should BeGreaterThan 0
-        $res.CompletionMatches[0].CompletionText | Should Be $expected
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should -Be $expected
     }
 
     It "Input '<inputStr>' should successfully complete via AST in remote runspace" -TestCases $testCasesWithAst {
@@ -1007,8 +1007,8 @@ Describe "Tab completion tests with remote Runspace" -Tags Feature {
         )
 
         $res = [System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $elementAst.Extent.EndScriptPosition, $null, $powershell)
-        $res.CompletionMatches.Count | Should BeGreaterThan 0
-        $res.CompletionMatches[0].CompletionText | Should Be $expected
+        $res.CompletionMatches.Count | Should -BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should -Be $expected
     }
 }
 
@@ -1027,9 +1027,9 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         $path = "wsman:\localhost\listener\listener"
         $res = TabExpansion2 -inputScript $path -cursorColumn $path.Length
         $listener = Get-ChildItem WSMan:\localhost\Listener
-        $res.CompletionMatches.Count | Should Be $listener.Count
+        $res.CompletionMatches.Count | Should -Be $listener.Count
         for ($i = 0; $i -lt $res.CompletionMatches.Count; $i++) {
-            $res.CompletionMatches[$i].ListItemText | Should Be $listener[$i].Name
+            $res.CompletionMatches[$i].ListItemText | Should -Be $listener[$i].Name
         }
     }
 
@@ -1058,12 +1058,12 @@ Describe "WSMan Config Provider tab complete tests" -Tags Feature,RequireAdminOn
         param($path, $parameter, $expected)
         $script = "new-item wsman:\$path $parameter"
         $res = TabExpansion2 -inputScript $script -cursorColumn $script.Length
-        $res.CompletionMatches.Count | Should Be $expected.Count
+        $res.CompletionMatches.Count | Should -Be $expected.Count
         $completionOptions = ""
         foreach ($completion in $res.CompletionMatches) {
             $completionOptions += $completion.ListItemText
         }
-        $completionOptions | Should Be ([string]::Join("", $expected))
+        $completionOptions | Should -Be ([string]::Join("", $expected))
     }
 
     It "Tab completion get dynamic parameters for initialization parameters" -Pending -TestCases @(

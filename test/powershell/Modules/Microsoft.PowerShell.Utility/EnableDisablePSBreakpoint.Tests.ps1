@@ -10,14 +10,14 @@ Describe "Enable and Disable PSBreakpoints" -Tag "CI" {
         $bp | remove-psbreakpoint
     }
     It "Enable-PSBreakpoint should enable the breakpoint" {
-        $bp.Enabled | should be $false
+        $bp.Enabled | Should -BeFalse
         Enable-PSBreakpoint $bp
-        $bp.Enabled | Should be $true
+        $bp.Enabled | Should -BeTrue
     }
     It "Disable-PSBreakpoint should disable the breakpoint" {
         Enable-PSBreakpoint $bp
-        $bp.Enabled | Should be $true
+        $bp.Enabled | Should -BeTrue
         Disable-PSBreakpoint $bp
-        $bp.Enabled | Should be $false
+        $bp.Enabled | Should -BeFalse
     }
 }

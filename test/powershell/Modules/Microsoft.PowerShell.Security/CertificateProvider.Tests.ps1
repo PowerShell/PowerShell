@@ -51,15 +51,15 @@ Describe "Certificate Provider tests" -Tags "CI" {
             $result | should not be null
             $result | ForEach-Object {
                 $resolvedPath = Resolve-Path $_.PSPath
-                $resolvedPath.Provider | should be $expectedResolvedPath.Provider
-                $resolvedPath.ProviderPath.TrimStart('\') | should be $expectedResolvedPath.ProviderPath.TrimStart('\')
+                $resolvedPath.Provider | Should -Be $expectedResolvedPath.Provider
+                $resolvedPath.ProviderPath.TrimStart('\') | Should -Be $expectedResolvedPath.ProviderPath.TrimStart('\')
             }
         }
         it "Should return two items at the root of the provider" {
-            (Get-Item -Path cert:\*).Count | should be 2
+            (Get-Item -Path cert:\*).Count | Should -Be 2
         }
         it "Should be able to get multiple items explictly" {
-            (get-item cert:\LocalMachine , cert:\CurrentUser).Count | should be 2
+            (get-item cert:\LocalMachine , cert:\CurrentUser).Count | Should -Be 2
         }
         it "Should return PathNotFound when getting a non-existant certificate store" {
             {Get-Item cert:\IDONTEXIST -ErrorAction Stop} | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
@@ -70,10 +70,10 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
     Context "Get-ChildItem tests"{
         it "should be able to get a container using a wildcard" {
-            (Get-ChildItem Cert:\CurrentUser\M?).PSPath | should be 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'
+            (Get-ChildItem Cert:\CurrentUser\M?).PSPath | Should -Be 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'
         }
         it "Should return two items at the root of the provider" {
-            (Get-ChildItem -Path cert:\).Count | should be 2
+            (Get-ChildItem -Path cert:\).Count | Should -Be 2
         }
     }
 }
@@ -112,7 +112,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
             $cert = (Get-item -LiteralPath $leafPath)
             $cert | should not be null
-            $cert.Thumbprint | should be $expectedThumbprint
+            $cert.Thumbprint | Should -Be $expectedThumbprint
         }
         it "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
@@ -123,9 +123,9 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert = (Get-item -LiteralPath $leafPath)
             $cert | should not be null
             $cert.DnsNameList | should not be null
-            $cert.DnsNameList.Count | should be 1
-            $cert.DnsNameList[0].Unicode | should be $expectedName
-            $cert.DnsNameList[0].Punycode | should be $expectedEncodedName
+            $cert.DnsNameList.Count | Should -Be 1
+            $cert.DnsNameList[0].Unicode | Should -Be $expectedName
+            $cert.DnsNameList[0].Punycode | Should -Be $expectedEncodedName
         }
         it "Should be able to get DNSNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
             param([string] $path)
@@ -135,9 +135,9 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert = (Get-item -LiteralPath $leafPath)
             $cert | should not be null
             $cert.EnhancedKeyUsageList | should not be null
-            $cert.EnhancedKeyUsageList.Count | should be 1
-            $cert.EnhancedKeyUsageList[0].ObjectId.Length | should not be 0
-            $cert.EnhancedKeyUsageList[0].ObjectId | should be $expectedOid
+            $cert.EnhancedKeyUsageList.Count | Should -Be 1
+            $cert.EnhancedKeyUsageList[0].ObjectId.Length | Should -Not -Be 0
+            $cert.EnhancedKeyUsageList[0].ObjectId | Should -Be $expectedOid
         }
         it "Should filter to codesign certificates" {
             $allCerts = get-item cert:\CurrentUser\My\*
@@ -145,7 +145,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $codeSignCerts | should not be null
             $allCerts | should not be null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
-            $nonCodeSignCertCount | should not be 0
+            $nonCodeSignCertCount | Should -Not -Be 0
         }
         it "Should be able to exclude by thumbprint" {
             $allCerts = get-item cert:\CurrentUser\My\*
@@ -154,7 +154,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $allCerts | should not be null
             $allCertsExceptOne | should not be null
             $countDifference = $allCerts.Count - $allCertsExceptOne.Count
-            $countDifference | should be 1
+            $countDifference | Should -Be 1
         }
     }
     Context "Get-ChildItem tests"{
@@ -164,7 +164,7 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $codeSignCerts | should not be null
             $allCerts | should not be null
             $nonCodeSignCertCount = $allCerts.Count - $codeSignCerts.Count
-            $nonCodeSignCertCount | should not be 0
+            $nonCodeSignCertCount | Should -Not -Be 0
         }
     }
 }

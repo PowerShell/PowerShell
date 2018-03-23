@@ -38,8 +38,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
  	It "Import with CliXml directive should work" {
         Get-Command export* -Type Cmdlet | Select-Object -First 3 | Export-Clixml -Path $testfile
 		$results = Import-Clixml $testfile
-		$results.Count | Should BeExactly 3
-        $results[0].PSTypeNames[0] | Should Be "Deserialized.System.Management.Automation.CmdletInfo"
+		$results.Count | Should -BeExactly 3
+        $results[0].PSTypeNames[0] | Should -Be "Deserialized.System.Management.Automation.CmdletInfo"
     }
 
 	It "Import with Rehydration should work" {
@@ -48,8 +48,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$isHiddenTestType = [IsHiddenTestType]::New($property1,$property2)
 		$isHiddenTestType | Export-Clixml $testfile
 		$results = Import-Clixml $testfile
-		$results.Property1 | Should Be $property1
-		$results.Property2 | Should Be $property2
+		$results.Property1 | Should -Be $property1
+		$results.Property2 | Should -Be $property2
     }
 
 	It "Export-Clixml StopProcessing should succeed" {
@@ -62,7 +62,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
         $null = $ps.BeginInvoke()
         Start-Sleep 1
         $null = $ps.Stop()
-        $ps.InvocationStateInfo.State | should be "Stopped"
+        $ps.InvocationStateInfo.State | Should -Be "Stopped"
         $ps.Dispose()
 	}
 
@@ -74,7 +74,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$ps.AddParameter("Path", $testfile)
 		$ps.BeginInvoke()
 		$ps.Stop()
-		$ps.InvocationStateInfo.State | Should Be "Stopped"
+		$ps.InvocationStateInfo.State | Should -Be "Stopped"
 	}
 
 	It "Export-Clixml using -Depth should work" {
@@ -98,34 +98,34 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$one = [One]::New()
 		$one | Export-Clixml -Depth 2 -Path $testfile
 		$deserialized_one = Import-Clixml -Path $testfile
-		$deserialized_one.Value | Should Be 1
-		$deserialized_one.two.Value | Should Be 2
-		$deserialized_one.two.Three | Should Not BeNullOrEmpty
-		$deserialized_one.two.three.num | Should BeNullOrEmpty
+		$deserialized_one.Value | Should -Be 1
+		$deserialized_one.two.Value | Should -Be 2
+		$deserialized_one.two.Three | Should -Not -BeNullOrEmpty
+		$deserialized_one.two.three.num | Should -BeNullOrEmpty
 	}
 
 	It "Import-Clixml should work with XML serialization from pwsh.exe" {
 		# need to create separate process so that current powershell doesn't interpret clixml output
 		Start-Process -FilePath $pshome\pwsh -RedirectStandardOutput $testfile -Args "-noprofile -nologo -outputformat xml -command get-command import-clixml" -Wait
 		$out = Import-Clixml -Path $testfile
-		$out.Name | Should Be "Import-CliXml"
-		$out.CommandType.ToString() | Should Be "Cmdlet"
-		$out.Source | Should Be "Microsoft.PowerShell.Utility"
+		$out.Name | Should -Be "Import-CliXml"
+		$out.CommandType.ToString() | Should -Be "Cmdlet"
+		$out.Source | Should -Be "Microsoft.PowerShell.Utility"
 	}
 
 	It "Import-Clixml -IncludeTotalCount always returns unknown total count" {
 		# this cmdlets supports paging, but not this switch
 		[PSCustomObject]@{foo=1;bar=@{hello="world"}} | Export-Clixml -Path $testfile
 		$out = Import-Clixml -Path $testfile -IncludeTotalCount
-		$out[0].ToString() | Should BeExactly "Unknown total count"
+		$out[0].ToString() | Should -BeExactly "Unknown total count"
 	}
 
 	It "Import-Clixml -First and -Skip work together for simple types" {
 		"one","two","three","four" | Export-Clixml -Path $testfile
 		$out = Import-Clixml -Path $testfile -First 2 -Skip 1
-		$out.Count | Should Be 2
-		$out[0] | Should BeExactly "two"
-		$out[1] | Should BeExactly "three"
+		$out.Count | Should -Be 2
+		$out[0] | Should -BeExactly "two"
+		$out[1] | Should -BeExactly "three"
 	}
 
 	It "Import-Clixml -First and -Skip work together for collections" {
@@ -133,9 +133,9 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		# order not guaranteed, even with [ordered] so we have to be smart here and compare against the full result
 		$out1 = Import-Clixml -Path $testfile	# this results in a hashtable
 		$out2 = Import-Clixml -Path $testfile -First 2 -Skip 1	# this results in a dictionary entry
-		$out2.Count | Should Be 2
-        ($out2.Name) -join ":" | should be (@($out1.Keys)[1, 2] -join ":")
-        ($out2.Value) -join ":" | should be (@($out1.Values)[1, 2] -join ":")
+		$out2.Count | Should -Be 2
+        ($out2.Name) -join ":" | Should -Be (@($out1.Keys)[1, 2] -join ":")
+        ($out2.Value) -join ":" | Should -Be (@($out1.Values)[1, 2] -join ":")
 	}
 
 	# these tests just cover aspects that aren't normally exercised being used as a cmdlet
@@ -144,19 +144,19 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
 		$cmd = [Microsoft.PowerShell.Commands.ExportClixmlCommand]::new()
 		$cmd.LiteralPath = "foo"
-		$cmd.LiteralPath | Should BeExactly "foo"
+		$cmd.LiteralPath | Should -BeExactly "foo"
 		$cmd.NoClobber = $true
-		$cmd.NoClobber | Should Be $true
+		$cmd.NoClobber | Should -BeTrue
 
 		$cmd = [Microsoft.PowerShell.Commands.ImportClixmlCommand]::new()
 		$cmd.LiteralPath = "bar"
-		$cmd.LiteralPath | Should BeExactly "bar"
+		$cmd.LiteralPath | Should -BeExactly "bar"
 
 		$cmd = [Microsoft.PowerShell.Commands.SelectXmlCommand]::new()
 		$cmd.LiteralPath = "foo"
-		$cmd.LiteralPath | Should BeExactly "foo"
+		$cmd.LiteralPath | Should -BeExactly "foo"
 		$xml = [xml]"<a/>"
 		$cmd.Xml = $xml
-		$cmd.Xml | Should Be $xml
+		$cmd.Xml | Should -Be $xml
 	}
 }

@@ -12,9 +12,9 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $properties = @{'DictObject' = $dict; 'RandomString' = 'A quick brown fox jumped over the lazy dog'}
         $object = New-Object -TypeName psobject -Property $properties
         $jsonFormat = ConvertTo-Json -InputObject $object
-        $jsonFormat | Should Match '"TestValue1": 123456'
-        $jsonFormat | Should Match '"TestValue2": 78910'
-        $jsonFormat | Should Match '"TestValue3": 99999'
+        $jsonFormat | Should -Match '"TestValue1": 123456'
+        $jsonFormat | Should -Match '"TestValue2": 78910'
+        $jsonFormat | Should -Match '"TestValue3": 99999'
     }
 
 	It "StopProcessing should succeed" {
@@ -34,5 +34,18 @@ Describe 'ConvertTo-Json' -tags "CI" {
         Start-Sleep -Milliseconds 100
         $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
+    }
+
+    It "The result string is packed in an array symbols when AsArray parameter is used." {
+        $output = 1 | ConvertTo-Json -AsArray
+        $output | Should -BeLike "``[*1*]"
+
+        $output = 1,2 | ConvertTo-Json -AsArray
+        $output | Should -BeLike "``[*1*2*]"
+    }
+
+    It "The result string is not packed in the array symbols when there is only one input object and AsArray parameter is not used." {
+        $output = 1 | ConvertTo-Json
+        $output | Should -BeExactly '1'
     }
 }
