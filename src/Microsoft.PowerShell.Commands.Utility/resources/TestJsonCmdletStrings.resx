@@ -118,12 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="InvalidJsonSchema" xml:space="preserve">
-    <value>Cannot parse the Json schema.</value>
+    <value>Cannot parse the JSON schema.</value>
   </data>
   <data name="InvalidJson" xml:space="preserve">
-    <value>Cannot parse the Json.</value>
+    <value>Cannot parse the JSON.</value>
   </data>
-  <data name="InvalidJsonAgainistSchema" xml:space="preserve">
-    <value>The Json is not valid with the schema.</value>
+  <data name="InvalidJsonAgainstSchema" xml:space="preserve">
+    <value>The JSON is not valid with the schema.</value>
   </data>
 </root>

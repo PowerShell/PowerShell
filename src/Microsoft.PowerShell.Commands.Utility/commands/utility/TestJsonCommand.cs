@@ -26,11 +26,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// A schema to validate the JSON against.
-        /// It is optional parameter.
-        /// If the parameter is absent the cmdlet only try to parse the JSON.
-        /// If the parameter present the cmdlet try to parse the JSON and
-        /// then check the JSON against the schema. Before the check
-        /// the cmdlet parse the schema doing implicitly check the schema too.
+        /// This is optional parameter.
+        /// If the parameter is absent the cmdlet only attempts to parse the JSON string.
+        /// If the parameter present the cmdlet attempts to parse the JSON string and
+        /// then validates the JSON against the schema. Before testing the JSON string,
+        /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty()]
@@ -76,12 +76,12 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = false;
 
-                        Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonAgainistSchema);
+                        Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
                         if (errorMessages != null)
                         {
                             foreach (var message in errorMessages)
                             {
-                                ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainistSchema", ErrorCategory.InvalidData, null);
+                                ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
                                 errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
                                 WriteError(errorRecord);
                             }
