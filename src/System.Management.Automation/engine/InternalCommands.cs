@@ -1201,7 +1201,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Binary operator -Not
+        /// Binary operator -Not.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Not")]
         public SwitchParameter Not
