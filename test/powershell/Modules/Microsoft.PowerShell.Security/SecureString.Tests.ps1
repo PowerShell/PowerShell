@@ -19,7 +19,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
             throw "No Exception!"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
+            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
         }
 
     }
@@ -31,18 +31,18 @@ Describe "SecureString conversion tests" -Tags "CI" {
             throw "Command did not throw exception"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "Argument,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
+            $_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
         }
     }
 
     It "Can convert to a secure string" {
         $ss = ConvertTo-SecureString -AsPlainText -Force abcd
-        $ss | Should BeOfType SecureString
+        $ss | Should -BeOfType SecureString
     }
     It "can convert back from a secure string" {
         $secret = "abcd"
         $ss1 = ConvertTo-SecureString -AsPlainText -Force $secret
         $ss2 = convertfrom-securestring $ss1 | convertto-securestring
-        [pscredential]::New("user",$ss2).GetNetworkCredential().Password | should be $secret
+        [pscredential]::New("user",$ss2).GetNetworkCredential().Password | Should -Be $secret
     }
 }

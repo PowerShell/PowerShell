@@ -113,10 +113,10 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 function Install-TestCertificates
 {
     $script:certLocation = New-GoodCertificate
-    $script:certLocation | Should Not BeNullOrEmpty | Out-Null
+    $script:certLocation | Should -Not -BeNullOrEmpty | Out-Null
 
     $script:badCertLocation = New-BadCertificate
-    $script:badCertLocation | Should Not BeNullOrEmpty | Out-Null
+    $script:badCertLocation | Should -Not -BeNullOrEmpty | Out-Null
 
     if ($IsCoreCLR -and $IsWindows)
     {
@@ -132,7 +132,7 @@ Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\
 Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
 "@
             $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
-            $certPaths.Count | Should Be 2 | Out-Null
+            $certPaths.Count | Should -Be 2 | Out-Null
 
             $script:importedCert = Get-ChildItem $certPaths[0]
             $script:testBadCert  = Get-ChildItem $certPaths[1]
