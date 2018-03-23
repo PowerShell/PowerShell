@@ -83,7 +83,7 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json write an error on invalid (<name>) Json aganist a valid schema" -TestCases @(
-        @{ name = "type"; json = $invalidTypeInJson; error = "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        @{ name = "type"; json = $invalidTypeInJson; error = "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand" }
         @{ name = "node"; json = $invalidNodeInJson; error = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
         ) {
             param($json, $error)
@@ -100,7 +100,7 @@ Describe "Test-Json" -Tags "CI" {
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should -Be 2
-        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
-        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainistSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[0].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        $errorVar[1].FullyQualifiedErrorId | Should -BeExactly "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 }
