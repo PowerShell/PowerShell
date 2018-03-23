@@ -4,8 +4,8 @@
 
 ### Breaking Changes
 
-- Throw terminating error in `New-TemporaryFile` and make it not rely on the presence of the 'TEMP' environment variable (#6182) (Thanks @bergmeister!)
-- Remove unsupported members from the enum 'Language' in Add-Type (#5829) (Thanks @iSazonov!)
+- Throw terminating error in `New-TemporaryFile` and make it not rely on the presence of the `TEMP` environment variable (#6182) (Thanks @bergmeister!)
+- Remove unsupported members from the enum 'Language' in `Add-Type` (#5829) (Thanks @iSazonov!)
 - Fix range operator to work better with character ranges (#5732) (Thanks @iSazonov!)
 
 ### Engine Updates and Fixes
@@ -91,7 +91,7 @@
 - Change Web Cmdlet tests to use `127.0.0.1` instead of `Localhost` (#6069) (Thanks @markekraus!)
 - Fix `Start-PSPester` to include or exclude `RequireSudoOnUnix` tag smartly on Unix (#6241)
 - Fix the terse output on Windows for test runs without admin privilege (#6252)
-- Add `RequireSudoOnUnix` tag for `get-help` tests. (#6223)
+- Add `RequireSudoOnUnix` tag for `Get-Help` tests. (#6223)
 - Add tests for `*-Item` Cmdlets in function provider (#6172)
 - Support running tests in root privilege on Linux. (#6145)
 
