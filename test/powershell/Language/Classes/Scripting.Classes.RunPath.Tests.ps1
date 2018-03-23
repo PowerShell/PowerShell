@@ -17,6 +17,6 @@ class MyClass { static [string]$MyProperty = 'Some value' }
 [MyClass]::MyProperty
 '@ | Out-File -FilePath $FilePath
 
-        ( . $FilePath ) | Should Match 'Some value'
+        ( . $FilePath ) | Should -Match 'Some value'
     }
 }
