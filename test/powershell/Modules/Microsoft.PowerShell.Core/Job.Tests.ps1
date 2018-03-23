@@ -9,19 +9,19 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             Get-Job | Remove-Job -Force
         }
         It "Start-Job produces a job object" {
-            $j | Should BeOfType "System.Management.Automation.Job"
-            $j.Name | Should Be "My Job"
+            $j | Should -BeOfType "System.Management.Automation.Job"
+            $j.Name | Should -BeExactly "My Job"
         }
         It "Get-Job retrieves a job object" {
-            (Get-Job -Id $j.Id) | Should BeOfType "System.Management.Automation.Job"
+            (Get-Job -Id $j.Id) | Should -BeOfType "System.Management.Automation.Job"
         }
         It "Get-Job retrieves an array of job objects" {
             Start-Job -ScriptBlock { 2 * 2 }
             $jobs = Get-Job
-            $jobs.Count | Should Be 2
+            $jobs.Count | Should -Be 2
             foreach ($job in $jobs)
             {
-                $job | Should BeOfType "System.Management.Automation.Job"
+                $job | Should -BeOfType "System.Management.Automation.Job"
             }
         }
         It "Remove-Job can remove a job" {
@@ -29,17 +29,17 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             { Get-Job $j -ErrorAction Stop } | ShouldBeErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
         }
         It "Receive-Job can retrieve job results" {
-            Wait-Job -Timeout 60 -id $j.id | Should Not BeNullOrEmpty
-            receive-job -id $j.id | Should be 2
+            Wait-Job -Timeout 60 -id $j.id | Should -Not -BeNullOrEmpty
+            receive-job -id $j.id | Should -Be 2
         }
     }
     Context "Jobs with arguments" {
         It "Start-Job accepts arguments" {
             $sb = { Write-Output $args[1]; Write-Output $args[0] }
             $j = Start-Job -ScriptBlock $sb -ArgumentList "$TestDrive", 42
-            Wait-job -Timeout (5 * 60) $j | Should Be $j
+            Wait-job -Timeout (5 * 60) $j | Should -Be $j
             $r = Receive-Job $j
-            $r -Join "," | Should Be "42,$TestDrive"
+            $r -Join "," | Should -Be "42,$TestDrive"
         }
     }
     Context "jobs which take time" {
@@ -51,28 +51,28 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Wait-Job will wait for a job" {
             $result = Wait-Job $j
-            $result | Should Be $j
-            $j.State | Should Be "Completed"
+            $result | Should -Be $j
+            $j.State | Should -BeExactly "Completed"
         }
         It "Wait-Job will timeout waiting for a job" {
             $result = Wait-Job -Timeout 2 $j
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
         It "Stop-Job will stop a job" {
             Stop-Job -Id $j.Id
-            $j.State | Should Be "Stopped"
+            $j.State | Should -BeExactly "Stopped"
         }
         It "Remove-Job will not remove a running job" {
             $id = $j.Id
             Remove-Job $j -ErrorAction SilentlyContinue
             $job = Get-Job -Id $id
-            $job | Should Be $j
+            $job | Should -Be $j
         }
         It "Remove-Job -Force will remove a running job" {
             $id = $j.Id
             Remove-Job $j -Force
             $job = Get-Job -Id $id -ErrorAction SilentlyContinue
-            $job | Should Be $null
+            $job | Should -BeNullOrEmpty
         }
     }
     Context "Retrieving partial output from jobs" {
@@ -130,13 +130,13 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         It "Receive-Job will retrieve partial output" {
             $result1 = GetResults $j 5 $false
             $result2 = GetResults $j 5 $false
-            CheckContent ($result1 + $result2) | Should Be $true
+            CheckContent ($result1 + $result2) | Should -BeTrue
         }
         It "Receive-Job will retrieve partial output, including -Keep results" {
             $result1 = GetResults $j 5 $true
             $result2 = GetResults $j ($result1.Count + 5) $false
-            Compare-Object -SyncWindow 0 -PassThru $result1 $result2[0..($result1.Count-1)] | Should Be $null
-            $result2[$result1.Count - 1] + 1 | Should Be $result2[$result1.Count]
+            Compare-Object -SyncWindow 0 -PassThru $result1 $result2[0..($result1.Count-1)] | Should -BeNullOrEmpty
+            $result2[$result1.Count - 1] + 1 | Should -Be $result2[$result1.Count]
         }
     }
 }
@@ -158,13 +158,13 @@ Describe "Debug-job test" -tag "Feature" {
     It "Debug-Job will break into debugger" -pending {
         $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { sleep 1 } }').Invoke()
         $ps.Commands.Clear()
-        $ps.Runspace.Debugger.GetCallStack() | Should BeNullOrEmpty
+        $ps.Runspace.Debugger.GetCallStack() | Should -BeNullOrEmpty
         Start-Sleep 3
         $asyncResult = $ps.AddScript('debug-job $job').BeginInvoke()
         $ps.commands.clear()
         Start-Sleep 2
         $result = $ps.runspace.Debugger.GetCallStack()
-        $result.Command | Should be "<ScriptBlock>"
+        $result.Command | Should -BeExactly "<ScriptBlock>"
     }
 }
 
@@ -175,7 +175,7 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "Background with & produces a job object" {
             $j = Write-Output Hi &
-            $j | Should BeOfType System.Management.Automation.Job
+            $j | Should -BeOfType System.Management.Automation.Job
         }
     }
     Context "Variable tests" {
@@ -185,38 +185,38 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         It "doesn't cause error when variable is missing" {
             Remove-Item variable:name -ErrorAction Ignore
             $j = write-output "Hi $name" &
-            Receive-Job $j -Wait | Should BeExactly "Hi "
+            Receive-Job $j -Wait | Should -BeExactly "Hi "
         }
         It "Copies variables to the child process" {
             $n1 = "Bob"
             $n2 = "Mary"
             ${n 3} = "Bill"
             $j = Write-Output "Hi $n1! Hi ${n2}! Hi ${n 3}!" &
-            Receive-Job $j -Wait | Should BeExactly "Hi Bob! Hi Mary! Hi Bill!"
+            Receive-Job $j -Wait | Should -BeExactly "Hi Bob! Hi Mary! Hi Bill!"
         }
         It 'Make sure that $PID from the parent process does not overwrite $PID in the child process' {
             $j = Write-Output $pid &
             $cpid = Receive-Job $j -Wait
-            $pid | Should Not BeExactly $cpid
+            $pid | Should -Not -BeExactly $cpid
         }
         It 'Make sure that $global:PID from the parent process does not overwrite $global:PID in the child process' {
             $j = Write-Output $global:pid &
             $cpid = Receive-Job -Wait $j
-            $pid | Should Not BeExactly $cpid
+            $pid | Should -Not -BeExactly $cpid
         }
         It "starts in the current directory" {
             $j = Get-Location | Foreach-Object -MemberName Path &
-            Receive-Job -Wait $j | Should Be ($pwd.Path)
+            Receive-Job -Wait $j | Should -Be ($pwd.Path)
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
-            Receive-Job -Wait $j | Should Be $null
-            Get-Content $TESTDRIVE/hello.txt | Should BeExactly "hello"
+            Receive-Job -Wait $j | Should -BeNullOrEmpty
+            Get-Content $TESTDRIVE/hello.txt | Should -BeExactly "hello"
         }
         It "Test that error redirection is done in the background job" {
             $j = Write-Error MyError 2> $TESTDRIVE/myerror.txt &
-            Receive-Job -Wait $j | Should Be $null
-            Get-Content -Raw $TESTDRIVE/myerror.txt | Should Match "MyError"
+            Receive-Job -Wait $j | Should -BeNullOrEmpty
+            Get-Content -Raw $TESTDRIVE/myerror.txt | Should -Match "MyError"
         }
     }
     Context "Backgrounding expressions" {
@@ -225,11 +225,11 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "handles backgrounding expressions" {
             $j = 2+3 &
-            Receive-Job $j -Wait | Should Be 5
+            Receive-Job $j -Wait | Should -Be 5
         }
         It "handles backgrounding mixed expressions" {
             $j = 1..10 | ForEach-Object -Begin {$s=0} -Process {$s += $_} -End {$s} &
-            Receive-Job -Wait $j | Should Be 55
+            Receive-Job -Wait $j | Should -Be 55
         }
     }
 }
