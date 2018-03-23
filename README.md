@@ -52,7 +52,7 @@ You can download and install a PowerShell package for any of the following platf
 
 You can also download the PowerShell binary archives for Windows, macOS and Linux.
 
-| Platform                            | Downloads                                        | Downloads (preview)                             | How to Install                                 |
+| Platform                            | Downloads (stable)                               | Downloads (preview)                             | How to Install                                 |
 | ------------------------------------| ------------------------------------------------ | ------------------------------------------------| -----------------------------------------------|
 | Windows                             | [32-bit][rl-winx86-zip]/[64-bit][rl-winx64-zip]  | [32-bit][pv-winx86-zip]/[64-bit][pv-winx64-zip] | [Instructions][in-windows-zip]                 |
 | macOS                               | [64-bit][rl-macos-tar]                           | [64-bit][pv-macos-tar]                          | [Instructions][in-tar]                         |
