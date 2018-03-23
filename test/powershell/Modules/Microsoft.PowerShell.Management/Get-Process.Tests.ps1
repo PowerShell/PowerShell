@@ -13,9 +13,22 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         }
     }
 
-    It "Should support -FileVersionInfo" -Skip:(!$IsWindows) {
+    It "Should support -FileVersionInfo" {
         $pwshVersion = Get-Process -Id $pid -FileVersionInfo
-        $PSVersionTable.PSVersion | Should -Match $pwshVersion.FileVersion
+        if ($IsWindows) {
+            $pwshVersion.FileVersion | Should -BeExactly $PSVersionTable.PSVersion
+        } else {
+            $pwshVersion.FileVersion | Should -BeNullOrEmpty
+        }
+    }
+
+    It "Run with parameter -FileVersionInfo should not hang on non Windows platform also when process' main module is null." -Skip:$IsWindows {
+        # Main module for idle process can be null on non-Windows platforms
+        { $pwshVersion = Get-Process -Id 0 -FileVersionInfo -ErrorAction Stop } | Should -Not -Throw
+    }
+
+    It "Run with parameter -FileVersionInfo for idle process should throw on Windows." -Skip:(!$IsWindows) {
+        { $pwshVersion = Get-Process -Id 0 -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 }
 
