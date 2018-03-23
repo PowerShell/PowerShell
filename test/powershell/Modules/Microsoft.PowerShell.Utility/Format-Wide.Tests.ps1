@@ -15,6 +15,8 @@ Describe "Format-Wide" -Tags "CI" {
 
     It "Should be able to use the autosize switch" {
         { Get-ChildItem | Format-Wide -Autosize } | Should -Not -Throw
+        # Test for #6471
+        { Get-ChildItem | Format-Wide -Autosize | Out-String } | Should -Not -Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {
