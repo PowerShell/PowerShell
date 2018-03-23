@@ -19,7 +19,7 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
     It "Works with NoEnumerate switch" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
         [string]$s = Write-Output $objectWritten -NoEnumerate 6>&1
-        $s | Should -Be  '1 2.2 System.Object[] abc'
+        $s | Should -Be '1 2.2 System.Object[] abc'
     }
 }
 

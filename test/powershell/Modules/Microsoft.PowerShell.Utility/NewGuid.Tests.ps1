@@ -4,7 +4,7 @@ Describe "New-Guid" -Tags "CI" {
 
     It "returns a new guid" {
         $guid = New-Guid
-        $guid | Should -BeOfType     System.Guid
+        $guid | Should -BeOfType System.Guid
     }
 
     It "should not be all zeros" {

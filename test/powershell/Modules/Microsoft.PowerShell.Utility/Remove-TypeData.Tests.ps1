@@ -50,7 +50,7 @@ Describe "Remove-TypeData DRT Unit Tests" -Tags "CI" {
     It "Remove With Pipe line Input Pass Type Shortcut String" {
         $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value TestNote -TypeName int").Invoke()
         $ps.Commands.Clear()
-        $ps.AddScript("(Get-TypeData System.Int32).TypeName").Invoke() | Should -Be  System.Int32
+        $ps.AddScript("(Get-TypeData System.Int32).TypeName").Invoke() | Should -Be System.Int32
         $ps.Commands.Clear()
         $null = $ps.AddScript("'int' | Remove-TypeData").Invoke()
         $ps.HadErrors | Should -BeFalse

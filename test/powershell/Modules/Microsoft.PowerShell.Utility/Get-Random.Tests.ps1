@@ -65,9 +65,9 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         param($maximum, $minimum, $greaterThan, $lessThan, $type)
 
         $result = Get-Random -Maximum $maximum -Minimum $minimum
-        $result | Should -BeGreaterThan  $greaterThan
-        $result | Should -BeLessThan  $lessThan
-        $result | Should -BeOfType  $type
+        $result | Should -BeGreaterThan $greaterThan
+        $result | Should -BeLessThan $lessThan
+        $result | Should -BeOfType $type
 
     }
 
@@ -93,23 +93,23 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
 
 Describe "Get-Random" -Tags "CI" {
     It "Should return a random number greater than -1 " {
-	Get-Random | Should -BeGreaterThan  -1
+	Get-Random | Should -BeGreaterThan -1
     }
     It "Should return a random number less than 100 " {
-	Get-Random -Maximum 100 | Should -BeLessThan  100
-	Get-Random -Maximum 100 | Should -BeGreaterThan  -1
+	Get-Random -Maximum 100 | Should -BeLessThan 100
+	Get-Random -Maximum 100 | Should -BeGreaterThan -1
     }
 
     It "Should return a random number less than 100 and greater than -100 " {
 	$randomNumber = Get-Random -Minimum -100 -Maximum 100
-	$randomNumber | Should -BeLessThan  100
-	$randomNumber | Should -BeGreaterThan  -101
+	$randomNumber | Should -BeLessThan 100
+	$randomNumber | Should -BeGreaterThan -101
     }
 
     It "Should return a random number less than 20.93 and greater than 10.7 " {
 	$randomNumber = Get-Random -Minimum 10.7 -Maximum 20.93
-	$randomNumber | Should -BeLessThan  20.93
-	$randomNumber | Should -BeGreaterThan  10.7
+	$randomNumber | Should -BeLessThan 20.93
+	$randomNumber | Should -BeGreaterThan 10.7
     }
 
     It "Should return same number for both Get-Random when switch SetSeed is used " {
@@ -126,7 +126,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return an array " {
 	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
     $randomNumber.Count | Should -Be 3
-	,$randomNumber | Should -BeOfType  "System.Array"
+	,$randomNumber | Should -BeOfType "System.Array"
     }
 
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {
@@ -155,8 +155,8 @@ Describe "Get-Random" -Tags "CI" {
 
     It "Should return a number for hexadecimal " {
 	$randomNumber = Get-Random 0x07FFFFFFFFF
-	$randomNumber | Should -BeLessThan  549755813887
-	$randomNumber | Should -BeGreaterThan  0
+	$randomNumber | Should -BeLessThan 549755813887
+	$randomNumber | Should -BeGreaterThan 0
     }
 
     It "Should return false, check two random numbers are not equal when not using the SetSeed switch " {

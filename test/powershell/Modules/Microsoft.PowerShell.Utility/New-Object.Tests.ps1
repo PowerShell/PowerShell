@@ -200,7 +200,7 @@ try
             param($Name, $Property, $Type)
             $comObject = New-Object -ComObject $name
             $comObject.$Property | Should -Not -BeNullOrEmpty
-            $comObject.$Property | Should -beoftype  $Type
+            $comObject.$Property | Should -beoftype $Type
         }
 
         It "Should fail with correct error when creating a COM object that dose not exist" {
