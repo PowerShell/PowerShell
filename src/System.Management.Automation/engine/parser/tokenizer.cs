@@ -492,6 +492,7 @@ namespace System.Management.Automation.Language
         internal string Script;
         internal int TokenStart;
         internal int CurrentIndex;
+        internal Token FirstToken;
         internal Token LastToken;
         internal BitArray SkippedCharOffsets;
         internal List<Token> TokenList;
@@ -687,6 +688,7 @@ namespace System.Management.Automation.Language
                 NestedTokensAdjustment = _nestedTokensAdjustment,
                 Script = _script,
                 TokenStart = _tokenStart,
+                FirstToken = FirstToken,
                 LastToken = LastToken,
                 SkippedCharOffsets = _skippedCharOffsets,
                 TokenList = TokenList,
@@ -708,6 +710,7 @@ namespace System.Management.Automation.Language
             _nestedTokensAdjustment = ts.NestedTokensAdjustment;
             _script = ts.Script;
             _tokenStart = ts.TokenStart;
+            FirstToken = ts.FirstToken;
             LastToken = ts.LastToken;
             _skippedCharOffsets = ts.SkippedCharOffsets;
             TokenList = ts.TokenList;

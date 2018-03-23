@@ -76,6 +76,14 @@ namespace System.Management.Automation
 
             if (interactiveCommand)
             {
+                if (ast.ScriptRequirements != null)
+                {
+                    errors = new []
+                    {
+                        new ParseError(ast.Extent, nameof(ParserStrings.RequiresCannotBeUsedInInteractiveConsole),
+                                       ParserStrings.RequiresCannotBeUsedInInteractiveConsole)
+                    };
+                }
                 EngineParser.SetPreviousFirstLastToken(Context);
             }
 
