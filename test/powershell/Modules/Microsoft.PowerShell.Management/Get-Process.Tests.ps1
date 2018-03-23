@@ -16,7 +16,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -FileVersionInfo" {
         $pwshVersion = Get-Process -Id $pid -FileVersionInfo
         if ($IsWindows) {
-            $pwshVersion.FileVersion | Should -MatchExactly $PSVersionTable.PSVersion
+            $PSVersionTable.PSVersion | Should -MatchExactly $pwshVersion.FileVersion
             $pwshVersion.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId.Replace("v","")
         } else {
             $pwshVersion.FileVersion | Should -BeNullOrEmpty
