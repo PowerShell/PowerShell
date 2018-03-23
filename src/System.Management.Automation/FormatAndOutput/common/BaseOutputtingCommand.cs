@@ -1132,10 +1132,23 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // get the header info and the view hint
                 WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint() as WideFormattingHint;
 
+                int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
+                if (columnsOnTheScreen == int.MaxValue)
+                {
+                    try
+                    {
+                        columnsOnTheScreen = Console.WindowWidth;
+                    }
+                    catch
+                    {
+                        columnsOnTheScreen = 120;
+                    }
+                }
+
                 // give a preference to the hint, if there
                 if (hint != null && hint.maxWidth > 0)
                 {
-                    itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, this.InnerCommand._lo.ColumnNumber);
+                    itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, columnsOnTheScreen);
                 }
                 else if (this.CurrentWideHeaderInfo.columns > 0)
                 {
@@ -1155,7 +1168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize(0, this.InnerCommand._lo.ColumnNumber, columnWidths, alignment, false);
+                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false);
             }
 
             /// <summary>
