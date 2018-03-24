@@ -24,7 +24,6 @@ staleLabel: Review - Abandoned
 # Comment to post when marking as stale. Set to `false` to disable
 markComment: >
   This PR has been automatically marked as stale because it has not had activity in the last 30 days.
-
   It will be closed if no further activity occurs within 10 days.
 
   Thank you for your contributions.
@@ -42,7 +41,6 @@ closeComment: >
   If you wish to continue working on the PR, please first update the PR, then reopen it.
 
   Thanks again for your contribution.
-
 
   Community members are welcome to grab these works.
 
