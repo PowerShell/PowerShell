@@ -206,7 +206,7 @@ Describe "Runspace Debugging API tests" -tag CI {
 
         it "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
             $monitorInfo.Runspace.InstanceId | Should -Be $InstanceId
-            $monitorInfo.RunspaceType | Should -BeExactly "StandAlone"
+            $monitorInfo.RunspaceType | Should -BeExactly "Standalone"
             $monitorInfo.NestedDebugger | Should -BeNullOrEmpty
         }
 
