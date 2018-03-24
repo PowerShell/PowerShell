@@ -20,7 +20,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Clear-Variable", "Export-Clixml", "Import-Clixml", "Import-PowerShellDataFile", "ConvertTo-Xml", "Select-Xml", "Write-Debug",
     "Write-Verbose", "Write-Warning", "Write-Error", "Write-Information", "Write-Output", "Set-PSBreakpoint",
     "Get-PSBreakpoint", "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
-    "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-FileHash",
+    "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-Hash",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "New-TemporaryFile", "Get-Verb", "Format-Hex", "Remove-Alias"
 FunctionsToExport= "Import-PowerShellDataFile"

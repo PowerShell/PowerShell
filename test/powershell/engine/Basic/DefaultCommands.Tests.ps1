@@ -62,6 +62,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",  "gcm",                                "Get-Command",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
 "Alias",  "gcs",                                "Get-PSCallStack",                    $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
 "Alias",  "gdr",                                "Get-PSDrive",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
+"Alias",  "Get-FileHash",                       "Get-Hash",                           $(             $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
 "Alias",  "ghy",                                "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
 "Alias",  "gi",                                 "Get-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         ""
 "Alias",  "gin",                                "Get-ComputerInfo",                   $($FullCLR -or $CoreWindows              ),   "",                 ""
@@ -258,7 +259,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Get-EventLog",                                       ,                     $($FullCLR                               )
 "Cmdlet", "Get-EventSubscriber",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-ExecutionPolicy",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Get-FileHash",                                       ,                     $(             $CoreWindows -or $CoreUnix)
+"Cmdlet", "Get-Hash",                                           ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-FormatData",                                     ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-Help",                                           ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Get-History",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
