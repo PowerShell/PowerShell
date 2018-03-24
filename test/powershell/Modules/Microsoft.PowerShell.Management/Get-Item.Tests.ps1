@@ -141,5 +141,24 @@ Describe "Get-Item" -Tags "CI" {
 
             (get-item env:\testvar).Value | Should -BeExactly $expectedValue
         }
+
+        It "get-item reports the effective value among accidental case-variant duplicates on Windows" -skip:(-not $isWindows) {
+            if (-not (Get-Command -ErrorAction Ignore node.exe)) {
+                Write-Warning "Test skipped, because Node.js is required to run it."
+            } else {
+                $valDirect, $valGetItem, $unused = node.exe -pe @"
+                    env = {}
+                    env.testVar = process.env.testVar // include the original case variant with its original value.
+                    env.TESTVAR = 'c' // redefine with a case variant name and different value
+                    // Note: Which value will win is not deterministic(!); what matters, however, is that both
+                    //       $env:testvar and Get-Item env:testvar report the same value.
+                    //       The nondeterministic behavior makes it hard to prove that the values are *always* the
+                    //       same, however.
+                    require('child_process').execSync(\"\\\"$($PSHOME -replace '\\', '/')/pwsh.exe\\\" -noprofile -command `$env:testvar, (Get-Item env:testvar).Value\", { env: env }).toString()
+"@
+                $valGetItem | Should -BeExactly $valDirect
+
+            }
+        }
     }
 }
