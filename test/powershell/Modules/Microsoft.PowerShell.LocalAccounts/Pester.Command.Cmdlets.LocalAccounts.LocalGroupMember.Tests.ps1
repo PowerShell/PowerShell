@@ -66,9 +66,9 @@ try {
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
-            $result -contains "Add-LocalGroupMember" | Should Be $true
-            $result -contains "Get-LocalGroupMember" | Should Be $true
-            $result -contains "Remove-LocalGroupMember" | Should Be $true
+            $result | Should -Contain 'Add-LocalGroupMember'
+            $result | Should -Contain 'Get-LocalGroupMember'
+            $result | Should -Contain 'Remove-LocalGroupMember'
         }
     }
 

@@ -53,13 +53,13 @@ try {
         It "Test command presence" {
             $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
-            $result -contains "New-LocalUser" | Should Be $true
-            $result -contains "Set-LocalUser" | Should Be $true
-            $result -contains "Get-LocalUser" | Should Be $true
-            $result -contains "Rename-LocalUser" | Should Be $true
-            $result -contains "Remove-LocalUser" | Should Be $true
-            $result -contains "Enable-LocalUser" | Should Be $true
-            $result -contains "Disable-LocalUser" | Should Be $true
+            $result | Should -Contain 'New-LocalUser'
+            $result | Should -Contain 'Set-LocalUser'
+            $result | Should -Contain 'Get-LocalUser'
+            $result | Should -Contain 'Rename-LocalUser'
+            $result | Should -Contain 'Remove-LocalUser'
+            $result | Should -Contain 'Enable-LocalUser'
+            $result | Should -Contain 'Disable-LocalUser'
         }
     }
 
@@ -68,21 +68,21 @@ try {
         It "Test command presence" {
             $result = get-alias | ForEach-Object { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
 
-            $result.Name -contains "algm" | Should Be $true
-            $result.Name -contains "dlu" | Should Be $true
-            $result.Name -contains "elu" | Should Be $true
-            $result.Name -contains "glg" | Should Be $true
-            $result.Name -contains "glgm" | Should Be $true
-            $result.Name -contains "glu" | Should Be $true
-            $result.Name -contains "nlg" | Should Be $true
-            $result.Name -contains "nlu" | Should Be $true
-            $result.Name -contains "rlg" | Should Be $true
-            $result.Name -contains "rlgm" | Should Be $true
-            $result.Name -contains "rlu" | Should Be $true
-            $result.Name -contains "rnlg" | Should Be $true
-            $result.Name -contains "rnlu" | Should Be $true
-            $result.Name -contains "slg" | Should Be $true
-            $result.Name -contains "slu" | Should Be $true
+            $result.Name | Should -Contain 'algm'
+            $result.Name | Should -Contain 'dlu'
+            $result.Name | Should -Contain 'elu'
+            $result.Name | Should -Contain 'glg'
+            $result.Name | Should -Contain 'glgm'
+            $result.Name | Should -Contain 'glu'
+            $result.Name | Should -Contain 'nlg'
+            $result.Name | Should -Contain 'nlu'
+            $result.Name | Should -Contain 'rlg'
+            $result.Name | Should -Contain 'rlgm'
+            $result.Name | Should -Contain 'rlu'
+            $result.Name | Should -Contain 'rnlg'
+            $result.Name | Should -Contain 'rnlu'
+            $result.Name | Should -Contain 'slg'
+            $result.Name | Should -Contain 'slu'
         }
     }
 
@@ -463,16 +463,16 @@ try {
             $result = Get-LocalUser TestUserGet*
 
             $result.Count -eq 2 | Should Be $true
-            $result.Name -contains "TestUserGet1" | Should Be $true
-            $result.Name -contains "TestUserGet2" | Should Be $true
+            $result.Name | Should -Contain 'TestUserGet1'
+            $result.Name | Should -Contain 'TestUserGet2'
         }
 
         It "Can get a user by array of names" {
             $result = Get-LocalUser @("TestUserGet1", "TestUserGet2")
 
             $result.Count -eq 2 | Should Be $true
-            $result.Name -contains "TestUserGet1" | Should Be $true
-            $result.Name -contains "TestUserGet2" | Should Be $true
+            $result.Name | Should -Contain 'TestUserGet1'
+            $result.Name | Should -Contain 'TestUserGet2'
         }
 
         It "Can get a user by array of SIDs" {
@@ -481,8 +481,8 @@ try {
             $result = Get-LocalUser -SID @($sid1, $sid2)
 
             $result.Count -eq 2 | Should Be $true
-            $result.Name -contains "TestUserGet1" | Should Be $true
-            $result.Name -contains "TestUserGet2" | Should Be $true
+            $result.Name | Should -Contain 'TestUserGet1'
+            $result.Name | Should -Contain 'TestUserGet2'
         }
 
         It "Can respond to -ErrorAction Stop" {
