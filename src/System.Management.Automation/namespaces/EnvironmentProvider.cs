@@ -198,11 +198,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary environmentTable = Environment.GetEnvironmentVariables();
             foreach (DictionaryEntry entry in environmentTable)
             {
-                try
-                {
-                    providerTable.Add((string)entry.Key, entry);
-                }
-                catch (System.ArgumentException)
+                if (!providerTable.TryAdd((string)entry.Key, entry))
                 {   // Windows only: duplicate key (variable name that differs only in case)
                     // NOTE: Even though this shouldn't happen, it can, e.g. when npm
                     //       creates duplicate environment variables that differ only in case -
