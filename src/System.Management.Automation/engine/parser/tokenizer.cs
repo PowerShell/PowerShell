@@ -980,38 +980,40 @@ namespace System.Management.Automation.Language
 
             if (_beginSignatureExtent.StartOffset < ast.Extent.StartOffset)
             {
-                ReportError(ast.Extent, () => ParserStrings.TokenAfterEndOfValidScriptText);
+                ReportError(ast.Extent,
+                    nameof(ParserStrings.TokenAfterEndOfValidScriptText),
+                    ParserStrings.TokenAfterEndOfValidScriptText);
             }
         }
 
-        private void ReportError(int errorOffset, Expression<Func<string>> message, params object[] args)
+        private void ReportError(int errorOffset, string errorId, string errorMsg, params object[] args)
         {
-            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset + 1), message, args);
+            _parser.ReportError(NewScriptExtent(errorOffset, errorOffset + 1), errorId, errorMsg, args);
         }
 
-        private void ReportError(IScriptExtent extent, Expression<Func<string>> message)
+        private void ReportError(IScriptExtent extent, string errorId, string errorMsg)
         {
-            _parser.ReportError(extent, message);
+            _parser.ReportError(extent, errorId, errorMsg);
         }
 
-        private void ReportError(IScriptExtent extent, Expression<Func<string>> message, object arg)
+        private void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg)
         {
-            _parser.ReportError(extent, message, arg);
+            _parser.ReportError(extent, errorId, errorMsg, arg);
         }
 
-        private void ReportError(IScriptExtent extent, Expression<Func<string>> message, object arg1, object arg2)
+        private void ReportError(IScriptExtent extent, string errorId, string errorMsg, object arg1, object arg2)
         {
-            _parser.ReportError(extent, message, arg1, arg2);
+            _parser.ReportError(extent, errorId, errorMsg, arg1, arg2);
         }
 
-        private void ReportIncompleteInput(int errorOffset, Expression<Func<string>> message)
+        private void ReportIncompleteInput(int errorOffset, string errorId, string errorMsg)
         {
-            _parser.ReportIncompleteInput(NewScriptExtent(errorOffset, _currentIndex), message);
+            _parser.ReportIncompleteInput(NewScriptExtent(errorOffset, _currentIndex), errorId, errorMsg);
         }
 
-        private void ReportIncompleteInput(int errorOffset, Expression<Func<string>> message, object arg)
+        private void ReportIncompleteInput(int errorOffset, string errorId, string errorMsg, object arg)
         {
-            _parser.ReportIncompleteInput(NewScriptExtent(errorOffset, _currentIndex), message, arg);
+            _parser.ReportIncompleteInput(NewScriptExtent(errorOffset, _currentIndex), errorId, errorMsg, arg);
         }
 
         private InternalScriptExtent NewScriptExtent(int start, int end)
@@ -1259,7 +1261,9 @@ namespace System.Management.Automation.Language
                 UngetChar();
 
                 IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
-                ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
+                ReportError(errorExtent,
+                    nameof(ParserStrings.InvalidUnicodeEscapeSequence),
+                    ParserStrings.InvalidUnicodeEscapeSequence);
                 return s_invalidChar;
             }
 
@@ -1278,7 +1282,9 @@ namespace System.Management.Automation.Language
                         // Sequence must have at least one hex char.
                         Release(sb);
                         IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
-                        ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
+                        ReportError(errorExtent,
+                            nameof(ParserStrings.InvalidUnicodeEscapeSequence),
+                            ParserStrings.InvalidUnicodeEscapeSequence);
                         return s_invalidChar;
                     }
 
@@ -1289,10 +1295,18 @@ namespace System.Management.Automation.Language
                     UngetChar();
 
                     Release(sb);
-                    ReportError(_currentIndex,
-                        i < s_maxNumberOfUnicodeHexDigits
-                            ? (Expression<Func<string>>)(() => ParserStrings.InvalidUnicodeEscapeSequence)
-                            : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    if (i < s_maxNumberOfUnicodeHexDigits)
+                    {
+                        ReportError(_currentIndex,
+                            nameof(ParserStrings.InvalidUnicodeEscapeSequence),
+                            ParserStrings.InvalidUnicodeEscapeSequence);
+                    }
+                    else
+                    {
+                        ReportError(_currentIndex,
+                            nameof(ParserStrings.MissingUnicodeEscapeSequenceTerminator),
+                            ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    }
                     return s_invalidChar;
                 }
                 else if (i == s_maxNumberOfUnicodeHexDigits) {
