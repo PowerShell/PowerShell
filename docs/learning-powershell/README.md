@@ -80,7 +80,7 @@ Map Book for Experienced Bash users
 ----
 
 The table below lists the usage of some basic commands to help you get started on PowerShell faster.
-Note that all bash commands should continue working on PowerShell session.
+Note that all bash commands should continue working on PowerShell session. You can find a more detailed comparison of how PowerShell compares to other environments at the [Command Line Rosetta Stone](https://certsimple.com/rosetta-stone). 
 
 
 | Bash                | PowerShell                  | Description
