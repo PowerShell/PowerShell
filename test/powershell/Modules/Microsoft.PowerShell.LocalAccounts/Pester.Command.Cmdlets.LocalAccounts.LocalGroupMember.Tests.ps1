@@ -169,32 +169,32 @@ try {
             Add-LocalGroupMember TestGroup1 -Member @("TestUser1", "TestUser2")
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should Be $true
+            $result[0].Name | Should -Match ($OptDomainPrefix + "TestUser1")
+            $result[1].Name | Should -Match ($OptDomainPrefix + "TestUser2")
         }
 
         It "Can add array of user SIDs to group" {
             Add-LocalGroupMember TestGroup1 -Member @($user1sid, $user2sid)
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should Be $true
+            $result[0].Name | Should -Match ($OptDomainPrefix + "TestUser1")
+            $result[1].Name | Should -Match ($OptDomainPrefix + "TestUser2")
         }
 
         It "Can add array of users names or SIDs to group" {
             Add-LocalGroupMember TestGroup1 -Member @($user1sid, "TestUser2")
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should Be $true
+            $result[0].Name | Should -Match ($OptDomainPrefix + "TestUser1")
+            $result[1].Name | Should -Match ($OptDomainPrefix + "TestUser2")
         }
 
         It "Can add array of user names using pipeline" {
             @("TestUser1", "TestUser2") | Add-LocalGroupMember TestGroup1
             $result = Get-LocalGroupMember TestGroup1
 
-            $result[0].Name -match ($OptDomainPrefix + "TestUser1") | Should Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUser2") | Should Be $true
+            $result[0].Name | Should -Match ($OptDomainPrefix + "TestUser1")
+            $result[1].Name | Should -Match ($OptDomainPrefix + "TestUser2")
         }
 
         It "Can add array of existent and nonexistent users names to group" {
@@ -204,7 +204,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroup1
-            $result.Name -match ($OptDomainPrefix + "TestUser1") | Should Be $true
+            $result.Name | Should -Match ($OptDomainPrefix + "TestUser1")
             $result.Name -match ($OptDomainPrefix + "TestUser2") | Should Be $false
         }
 
@@ -241,7 +241,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroup1
-            $result.Name -match ($OptDomainPrefix + "TestUser1") | Should Be $true
+            $result.Name | Should -Match ($OptDomainPrefix + "TestUser1")
         }
     }
 
@@ -385,8 +385,8 @@ try {
         It "Can get group members by wildcard" {
             $result = Get-LocalGroupMember TestGroupGet1 -Member TestUserGet*
             $result.Count -eq 2 | Should Be $true
-            $result[0].Name -match ($OptDomainPrefix+"TestUserGet1") | Should Be $true
-            $result[1].Name -match ($OptDomainPrefix + "TestUserGet2") | Should Be $true
+            $result[0].Name | Should -Match ($OptDomainPrefix+"TestUserGet1")
+            $result[1].Name | Should -Match ($OptDomainPrefix + "TestUserGet2")
         }
 
         It "Errors on group name being nonexistent" {
@@ -590,7 +590,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroupRemove1 2>&1
-            $result.Name -match ($OptDomainPrefix + "TestUserRemove2") | Should Be $true
+            $result.Name | Should -Match ($OptDomainPrefix + "TestUserRemove2")
         }
     }
 }
