@@ -97,7 +97,7 @@ try {
         It "Can create New-LocalUser with only name" {
             $result = New-LocalUser TestUserNew1 -NoPassword
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -118,7 +118,7 @@ try {
             $userName = "S-1-5-32-545"
             $result = New-LocalUser $userName -NoPassword
 
-            $result.Name | Should BeExactly $userName
+            $result.Name | Should -BeExactly $userName
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -212,7 +212,7 @@ try {
             $expiration = $dateInFuture
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountExpires $expiration
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -224,7 +224,7 @@ try {
             $expiration = $dateInPast
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountExpires $expiration
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -243,7 +243,7 @@ try {
         It "Can set AccountNeverExpires to create a user with null for AccountExpires date" {
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountNeverExpires
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -261,8 +261,8 @@ try {
         It "Can set empty string for Description" {
             $result = New-LocalUser TestUserNew1 -NoPassword -Description ""
 
-            $result.Name | Should BeExactly TestUserNew1
-            $result.Description | Should BeExactly ""
+            $result.Name | Should -BeExactly 'TestUserNew1'
+            $result.Description | Should -BeExactly ""
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
@@ -271,8 +271,8 @@ try {
         It "Can set with description at max 48" {
             $result = New-LocalUser TestUserNew1 -NoPassword -Description ("A"*48)
 
-            $result.Name | Should BeExactly TestUserNew1
-            $result.Description | Should BeExactly ("A"*48)
+            $result.Name | Should -BeExactly 'TestUserNew1'
+            $result.Description | Should -BeExactly ("A"*48)
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
@@ -281,13 +281,13 @@ try {
         It "Can set with description over max 48" {
             $result = New-LocalUser TestUserNew1 -NoPassword -Description ("A"*257)
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
         }
 
         It "Enabled is true by default" {
             $result = New-LocalUser TestUserNew1 -NoPassword
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -297,7 +297,7 @@ try {
         It "Can set enabled to false" {
             $result = New-LocalUser TestUserNew1 -NoPassword -Disabled
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $false
             $result.SID | Should Not BeNullOrEmpty
@@ -307,7 +307,7 @@ try {
         It "Can set empty string for FullName" {
             $result = New-LocalUser TestUserNew1 -NoPassword -FullName ""
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -318,12 +318,12 @@ try {
         It "Can set string for FullName at 256 characters" {
             $result = New-LocalUser TestUserNew1 -NoPassword -FullName ("A"*256)
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
-            $result.FullName | Should BeExactly ("A"*256)
+            $result.FullName | Should -BeExactly ("A"*256)
         }
 
         It "Errors when Password is an empty string" {
@@ -336,7 +336,7 @@ try {
         It "Can set Password value at max 256" {
             $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString ("135@"+"A"*252) -AsPlainText -Force)
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -364,7 +364,7 @@ try {
         It "Can set UserMayNotChangePassword" {
             $result = New-LocalUser TestUserNew1 -NoPassword -UserMayNotChangePassword
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -376,7 +376,7 @@ try {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
             $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "p@ssw0rd" -Asplaintext -Force) -PasswordNeverExpires
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.PasswordExpires | Should BeNullOrEmpty
         }
 
@@ -390,7 +390,7 @@ try {
         It "UserMayChangePassword is true by default" {
             $result = New-LocalUser TestUserNew1 -NoPassword
 
-            $result.Name | Should BeExactly TestUserNew1
+            $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -556,11 +556,11 @@ try {
 
             $result = New-LocalUser TestUserGet3 -NoPassword -AccountExpires $AccountExpires -Description $Description -Disabled -FullName $FullName -UserMayNotChangePassword
 
-            $result.Name | Should BeExactly $Name
+            $result.Name | Should -BeExactly $Name
             $result.AccountExpires | Should Be ([DateTime]$AccountExpires)
-            $result.Description | Should BeExactly $Description
+            $result.Description | Should -BeExactly $Description
             $result.Enabled | Should Be $false
-            $result.FullName | Should BeExactly $FullName
+            $result.FullName | Should -BeExactly $FullName
             $result.ObjectClass -eq "User" | Should be true
             $result.UserMayChangePassword | Should Be $false
             $result.SID | Should Not BeNullOrEmpty
@@ -594,7 +594,7 @@ try {
             Set-LocalUser -Name TestUserSet1 -Description "Test User Set 1 new description"
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Description | Should BeExactly "Test User Set 1 new description"
+            $result.Description | Should -BeExactly "Test User Set 1 new description"
         }
     }
 
@@ -624,7 +624,7 @@ try {
             Set-LocalUser -SID $user1SID -Description "Test User Set 1 new description"
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Description | Should BeExactly "Test User Set 1 new description"
+            $result.Description | Should -BeExactly "Test User Set 1 new description"
         }
 
         It "Can set user description by -InputObject" {
@@ -632,14 +632,14 @@ try {
             Set-LocalUser -InputObject $user -Description "Test User Set 1 new description"
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Description | Should BeExactly "Test User Set 1 new description"
+            $result.Description | Should -BeExactly "Test User Set 1 new description"
         }
 
         It "Can set user description by pipeline" {
             Get-LocalUser -Name TestUserSet1 | Set-LocalUser -Description "Test User Set 1 new description"
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Description | Should BeExactly "Test User Set 1 new description"
+            $result.Description | Should -BeExactly "Test User Set 1 new description"
         }
 
         It "Errors on nonexistent user name" {
@@ -661,8 +661,8 @@ try {
             Set-LocalUser -Name TestUserSet1 -AccountExpires $expiration
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
-            $result.Description | Should BeExactly "Test User Set 1 Description"
+            $result.Name | Should -BeExactly 'TestUserSet1'
+            $result.Description | Should -BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
@@ -674,8 +674,8 @@ try {
             Set-LocalUser -Name TestUserSet1 -AccountExpires $expiration
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
-            $result.Description | Should BeExactly "Test User Set 1 Description"
+            $result.Name | Should -BeExactly 'TestUserSet1'
+            $result.Description | Should -BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
@@ -695,7 +695,7 @@ try {
             Set-LocalUser -Name TestUserSet1 -AccountNeverExpires
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
+            $result.Name | Should -BeExactly 'TestUserSet1'
             $result.AccountExpires | Should BeNullOrEmpty
         }
 
@@ -710,22 +710,22 @@ try {
             Set-LocalUser -Name TestUserSet1 -Description ""
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Description | Should BeExactly ""
+            $result.Description | Should -BeExactly ""
         }
 
         It "Can set empty string for Description" {
             Set-LocalUser -Name TestUserSet1 -Description ""
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Description | Should BeExactly ""
+            $result.Description | Should -BeExactly ""
         }
 
         It "Can set string for Description at max 48" {
             Set-LocalUser TestUserSet1 -Description ("A"*48)
             $result = Get-LocalUser TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
-            $result.Description | Should BeExactly ("A"*48)
+            $result.Name | Should -BeExactly 'TestUserSet1'
+            $result.Description | Should -BeExactly ("A"*48)
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
@@ -734,15 +734,15 @@ try {
             Set-LocalUser -Name TestUserSet1 -FullName ""
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.FullName | Should BeExactly ""
+            $result.FullName | Should -BeExactly ""
         }
 
         It "Can set string for FullName at 256" {
             Set-LocalUser TestUserSet1 -FullName ("A"*256)
             $result = Get-LocalUser TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
-            $result.FullName | Should BeExactly ("A"*256)
+            $result.Name | Should -BeExactly 'TestUserSet1'
+            $result.FullName | Should -BeExactly ("A"*256)
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
@@ -765,7 +765,7 @@ try {
             Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("123@"+"A"*252) -asplaintext -Force)
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
+            $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
@@ -784,7 +784,7 @@ try {
             $user | Set-LocalUser -PasswordNeverExpires:$true
             $result = Get-LocalUser TestUserSet2
 
-            $result.Name | Should BeExactly TestUserSet2
+            $result.Name | Should -BeExactly 'TestUserSet2'
             $result.PasswordExpires | Should BeNullOrEmpty
         }
 
@@ -794,7 +794,7 @@ try {
             $user | Set-LocalUser -PasswordNeverExpires:$false
             $result = Get-LocalUser TestUserSet2
 
-            $result.Name | Should BeExactly TestUserSet2
+            $result.Name | Should -BeExactly 'TestUserSet2'
             $result.PasswordExpires | Should Not BeNullOrEmpty
         }
 
@@ -802,7 +802,7 @@ try {
             Set-LocalUser TestUserSet1 -UserMayChangePassword $true
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
+            $result.Name | Should -BeExactly 'TestUserSet1'
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.UserMayChangePassword | Should Be $true
@@ -812,7 +812,7 @@ try {
             Set-LocalUser TestUserSet1 -UserMayChangePassword $false
             $result = Get-LocalUser -Name TestUserSet1
 
-            $result.Name | Should BeExactly TestUserSet1
+            $result.Name | Should -BeExactly 'TestUserSet1'
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.UserMayChangePassword | Should Be $false
@@ -845,7 +845,7 @@ try {
             Rename-LocalUser -Name TestUserRename1 -NewName TestUserRename2
             $result = Get-LocalUser -SID $user1SID
 
-            $result.Name | Should BeExactly TestUserRename2
+            $result.Name | Should -BeExactly 'TestUserRename2'
         }
     }
 
@@ -875,7 +875,7 @@ try {
             Rename-LocalUser -SID $user1SID -NewName TestUserRename2
             $result = Get-LocalUser -SID $user1SID
 
-            $result.Name | Should BeExactly TestUserRename2
+            $result.Name | Should -BeExactly 'TestUserRename2'
         }
 
         It "Can rename using -InputObject" {
@@ -883,16 +883,16 @@ try {
             Rename-LocalUser -InputObject $user -NewName TestUserRename2
             $result = Get-LocalUser -SID $user1SID
 
-            $result.Name | Should BeExactly TestUserRename2
-            $result.SID | Should BeExactly $user1SID
+            $result.Name | Should -BeExactly 'TestUserRename2'
+            $result.SID | Should -BeExactly $user1SID
         }
 
         It "Can rename using pipeline" {
             Get-LocalUser -SID $user1SID | Rename-LocalUser -NewName TestUserRename2
             $result = Get-LocalUser -SID $user1SID
 
-            $result.Name | Should BeExactly TestUserRename2
-            $result.SID | Should BeExactly $user1SID
+            $result.Name | Should -BeExactly 'TestUserRename2'
+            $result.SID | Should -BeExactly $user1SID
         }
 
         It "Errors on no name or SID specified" {
@@ -989,7 +989,7 @@ try {
             Rename-LocalUser -Name TestUserRename1 -NewName TestUserRename2
             $result = Get-LocalUser -SID $user1SID
 
-            $result.Name | Should BeExactly TestUserRename2
+            $result.Name | Should -BeExactly 'TestUserRename2'
         }
 
         It "Errors when NewName over max 20" {

@@ -68,7 +68,7 @@ try {
         It "Creates New-LocalGroup using only name" {
             $result = New-LocalGroup -Name TestGroupAddRemove
 
-            $result.Name | Should BeExactly TestGroupAddRemove
+            $result.Name | Should -BeExactly 'TestGroupAddRemove'
             $result.ObjectClass | Should Be Group
         }
     }
@@ -84,8 +84,8 @@ try {
         It "Creates New-LocalGroup with name and description" {
             $result = New-LocalGroup -Name TestGroupAddRemove -Description "Test Group New 1 Description"
 
-            $result.Name | Should BeExactly TestGroupAddRemove
-            $result.Description | Should BeExactly "Test Group New 1 Description"
+            $result.Name | Should -BeExactly 'TestGroupAddRemove'
+            $result.Description | Should -BeExactly "Test Group New 1 Description"
             $result.SID | Should Not BeNullOrEmpty
             $result.ObjectClass | Should Be Group
         }
@@ -104,8 +104,8 @@ try {
                 $result = New-LocalGroup -Name $sidName
 
                 $result | Should Not BeNullOrEmpty
-                $result.Name | Should BeExactly $sidName
-                $result.SID | Should Not BeExactly $sidName
+                $result.Name | Should -BeExactly $sidName
+                $result.SID | Should -Not -BeExactly $sidName
                 $result.ObjectClass | Should Be Group
             }
             finally {
@@ -125,8 +125,8 @@ try {
             try {
                 $result = New-LocalGroup -Name $nameMax -Description $desc
 
-                $result.Name | Should BeExactly $nameMax
-                $result.Description | Should BeExactly $desc
+                $result.Name | Should -BeExactly $nameMax
+                $result.Description | Should -BeExactly $desc
                 $result.SID | Should Not BeNullOrEmpty
                 $result.ObjectClass | Should Be Group
             }
@@ -156,7 +156,7 @@ try {
             $descMax = "Test Group Add Description that is longer than 48 characters"
             $result = New-LocalGroup -Name TestGroupAddRemove -Description $descMax
 
-            $result.Description | Should BeExactly $descMax
+            $result.Description | Should -BeExactly $descMax
         }
 
         It "Errors on Invalid characters" {
@@ -394,7 +394,7 @@ try {
             Set-LocalGroup -Name TestGroupSet1 -Description "Test Group Set 1 new description"
             $result = Get-LocalGroup -Name TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 new description"
+            $result.Description | Should -BeExactly "Test Group Set 1 new description"
         }
     }
 
@@ -423,7 +423,7 @@ try {
             Set-LocalGroup -SID $group1SID -Description "Test Group Set 1 newer description"
             $result = Get-LocalGroup -Name TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 newer description"
+            $result.Description | Should -BeExactly "Test Group Set 1 newer description"
         }
 
         It "Can Set-LocalGroup using -InputObject" {
@@ -431,14 +431,14 @@ try {
             Set-LocalGroup -InputObject $group -Description "Test Group Set 1 newer still description"
             $result = Get-LocalGroup TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 newer still description"
+            $result.Description | Should -BeExactly "Test Group Set 1 newer still description"
         }
 
         It "Can Set-LocalGroup using pipeline" {
             Get-LocalGroup TestGroupSet1 | Set-LocalGroup -Description "Test Group Set 1 newer still description"
             $result = Get-LocalGroup TestGroupSet1
 
-            $result.Description | Should BeExactly "Test Group Set 1 newer still description"
+            $result.Description | Should -BeExactly "Test Group Set 1 newer still description"
         }
 
         It "Errors on Set-LocalGroup without specifying a Group" {
@@ -468,7 +468,7 @@ try {
             Set-LocalGroup -Name TestGroupSet1 -Description $desc
             $result = Get-LocalGroup -Name TestGroupSet1
 
-            $result.Description | Should BeExactly $desc
+            $result.Description | Should -BeExactly $desc
         }
     }
 
@@ -505,7 +505,7 @@ try {
             Rename-LocalGroup TestGroupRename1 TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
     }
 
@@ -542,7 +542,7 @@ try {
             Rename-LocalGroup -SID $group1SID TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
 
         It "Can Rename-LocalGroup using a valid group -InputObject" {
@@ -551,7 +551,7 @@ try {
             Rename-LocalGroup -InputObject $group -NewName TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
 
         It "Can Rename-LocalGroup using a valid group sent using pipeline" {
@@ -559,7 +559,7 @@ try {
             Get-LocalGroup TestGroupRename1 | Rename-LocalGroup -NewName TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly TestGroupRename1x
+            $result.Name | Should -BeExactly 'TestGroupRename1x'
         }
 
         It "Errors on Rename-LocalGroup without specifying a Group" {
@@ -595,8 +595,8 @@ try {
             $group1Name = (Get-LocalGroup -SID $group1SID).Name
             $group2Name = (Get-LocalGroup -SID $group2SID).Name
 
-            $group1Name | Should BeExactly TestGroupRename1
-            $group2Name | Should BeExactly $newName
+            $group1Name | Should -BeExactly 'TestGroupRename1'
+            $group2Name | Should -BeExactly $newName
         }
 
         It "Errors on Invalid characters" {
@@ -668,7 +668,7 @@ try {
             Rename-LocalGroup TestGroupRename1 $newName
             $result = Get-LocalGroup -SID $group1SID
 
-            $result.Name | Should BeExactly $newName
+            $result.Name | Should -BeExactly $newName
         }
 
         It "Errors on Rename-LocalGroup using a valid group name over max length 256" {
@@ -678,7 +678,7 @@ try {
             }
             VerifyFailingTest $sb "InvalidName,Microsoft.PowerShell.Commands.RenameLocalGroupCommand"
 
-            (Get-LocalGroup -SID $group1SID).Name | Should BeExactly TestGroupRename1
+            (Get-LocalGroup -SID $group1SID).Name | Should -BeExactly 'TestGroupRename1'
         }
     }
 
