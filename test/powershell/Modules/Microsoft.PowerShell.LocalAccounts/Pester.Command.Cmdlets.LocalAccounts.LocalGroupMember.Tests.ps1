@@ -434,7 +434,7 @@ try {
             Remove-LocalGroupMember TestGroupRemove1 -Member TestUserRemove1
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
     }
 
@@ -524,21 +524,21 @@ try {
             Remove-LocalGroupMember TestGroupRemove1 -Member @("TestUserRemove1", "TestUserRemove2")
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
 
         It "Can remove array of user SIDs from group" {
             Remove-LocalGroupMember TestGroupRemove1 -Member @($user1sid, $user2sid)
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
 
         It "Can remove array of users names or SIDs from group" {
             Remove-LocalGroupMember TestGroupRemove1 -Member @($user1sid, "TestUserRemove2")
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
 
         It "Can remove array of user names using pipeline" {
@@ -547,7 +547,7 @@ try {
             @($name1, $name2) | Remove-LocalGroupMember TestGroupRemove1
             $result = Get-LocalGroupMember TestGroupRemove1
 
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
 
         It "Errors on remove nonexistent user from group" {
@@ -573,7 +573,7 @@ try {
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroupRemove2
-            $result | Should Be $null
+            $result | Should -BeNullOrEmpty
         }
 
         It "Errors on remove user from nonexistent group" {
