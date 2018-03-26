@@ -98,9 +98,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
     }
@@ -119,9 +119,9 @@ try {
             $result = New-LocalUser $userName -NoPassword
 
             $result.Name | Should -BeExactly $userName
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -213,9 +213,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountExpires $expiration
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
@@ -225,9 +225,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountExpires $expiration
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
@@ -244,11 +244,11 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountNeverExpires
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
-            $result.AccountExpires | Should BeNullOrEmpty
+            $result.AccountExpires | Should -BeNullOrEmpty
         }
 
          It "Errors on both AccountExpires and AccountNeverExpires being set" {
@@ -264,7 +264,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should -BeExactly ""
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -274,7 +274,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserNew1'
             $result.Description | Should -BeExactly ("A"*48)
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -288,9 +288,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -298,9 +298,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword -Disabled
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $false
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -308,20 +308,20 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword -FullName ""
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
-            $result.FullName | Should BeNullOrEmpty
+            $result.FullName | Should -BeNullOrEmpty
         }
 
         It "Can set string for FullName at 256 characters" {
             $result = New-LocalUser TestUserNew1 -NoPassword -FullName ("A"*256)
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.FullName | Should -BeExactly ("A"*256)
         }
@@ -337,9 +337,9 @@ try {
             $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString ("135@"+"A"*252) -AsPlainText -Force)
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -365,9 +365,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword -UserMayNotChangePassword
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.UserMayChangePassword | Should Be $false
         }
@@ -377,7 +377,7 @@ try {
             $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "p@ssw0rd" -Asplaintext -Force) -PasswordNeverExpires
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.PasswordExpires | Should BeNullOrEmpty
+            $result.PasswordExpires | Should -BeNullOrEmpty
         }
 
         It "Errors on both NoPassword and PasswordNeverExpires being set" {
@@ -391,9 +391,9 @@ try {
             $result = New-LocalUser TestUserNew1 -NoPassword
 
             $result.Name | Should -BeExactly 'TestUserNew1'
-            $result.Description | Should BeNullOrEmpty
+            $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.UserMayChangePassword | Should Be $true
         }
@@ -448,7 +448,7 @@ try {
             $result = Get-LocalUser TestUserGet1
             $resultBySID = Get-LocalUser -SID $result.SID
 
-            $resultBySID.SID | Should Not BeNullOrEmpty
+            $resultBySID.SID | Should -Not -BeNullOrEmpty
             $resultBySID.Name | Should Be TestUserGet1
         }
 
@@ -563,7 +563,7 @@ try {
             $result.FullName | Should -BeExactly $FullName
             $result.ObjectClass -eq "User" | Should be true
             $result.UserMayChangePassword | Should Be $false
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
     }
@@ -664,7 +664,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Description | Should -BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
@@ -677,7 +677,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Description | Should -BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
@@ -696,7 +696,7 @@ try {
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Name | Should -BeExactly 'TestUserSet1'
-            $result.AccountExpires | Should BeNullOrEmpty
+            $result.AccountExpires | Should -BeNullOrEmpty
         }
 
         It "Errors on both AccountExpires and AccountNeverExpires being set" {
@@ -726,7 +726,7 @@ try {
 
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Description | Should -BeExactly ("A"*48)
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -743,7 +743,7 @@ try {
 
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.FullName | Should -BeExactly ("A"*256)
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -767,7 +767,7 @@ try {
 
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Enabled | Should Be $true
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
         }
 
@@ -785,7 +785,7 @@ try {
             $result = Get-LocalUser TestUserSet2
 
             $result.Name | Should -BeExactly 'TestUserSet2'
-            $result.PasswordExpires | Should BeNullOrEmpty
+            $result.PasswordExpires | Should -BeNullOrEmpty
         }
 
         It 'Can use PasswordNeverExpires:$false to activate a PasswordExpires date' {
@@ -795,7 +795,7 @@ try {
             $result = Get-LocalUser TestUserSet2
 
             $result.Name | Should -BeExactly 'TestUserSet2'
-            $result.PasswordExpires | Should Not BeNullOrEmpty
+            $result.PasswordExpires | Should -Not -BeNullOrEmpty
         }
 
         It "Can set UserMayChangePassword to true" {
@@ -803,7 +803,7 @@ try {
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Name | Should -BeExactly 'TestUserSet1'
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.UserMayChangePassword | Should Be $true
         }
@@ -813,7 +813,7 @@ try {
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Name | Should -BeExactly 'TestUserSet1'
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be User
             $result.UserMayChangePassword | Should Be $false
         }
@@ -1027,7 +1027,7 @@ try {
             $initialCount -gt 1 | Should Be $true
 
             $removeResult = Remove-LocalUser TestUserRemove1 2>&1
-            $removeResult | Should BeNullOrEmpty
+            $removeResult | Should -BeNullOrEmpty
 
             $sb = {
                 Get-LocalUser -SID $user1SID
@@ -1105,10 +1105,10 @@ try {
         }
 
         It "Can remove by SID" {
-            $user1SID | Should Not BeNullOrEmpty
+            $user1SID | Should -Not -BeNullOrEmpty
             $sb = {
                 $result = Remove-LocalUser -SID $user1SID 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -1117,7 +1117,7 @@ try {
             $sb = {
                 $user = Get-LocalUser -SID $user1SID
                 $result = Remove-LocalUser -InputObject $user 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -1125,7 +1125,7 @@ try {
         It "Can remove using pipeline" {
             $sb = {
                 $result = Get-LocalUser -SID $user1SID | Remove-LocalUser 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -1140,7 +1140,7 @@ try {
         It "Can remove by array of names" {
             $sb = {
                 $result = Remove-LocalUser @("TestUserRemove1", "TestUserRemove2") 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -1148,7 +1148,7 @@ try {
         It "Can remove by array of SIDs" {
             $sb = {
                 $result = Remove-LocalUser -SID @($user1SID, $user2SID) 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -1157,7 +1157,7 @@ try {
             $sb = {
                 $users = Get-LocalUser @("TestUserRemove1", "TestUserRemove2")
                 $results = Remove-LocalUser -InputObject $users 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -1165,7 +1165,7 @@ try {
         It "Can remove by array using pipeline" {
             $sb = {
                 $result = Get-LocalUser @("TestUserRemove1", "TestUserRemove2") | Remove-LocalUser 2>&1
-                $result | Should BeNullOrEmpty
+                $result | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }

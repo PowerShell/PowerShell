@@ -86,7 +86,7 @@ try {
 
             $result.Name | Should -BeExactly 'TestGroupAddRemove'
             $result.Description | Should -BeExactly "Test Group New 1 Description"
-            $result.SID | Should Not BeNullOrEmpty
+            $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should Be Group
         }
 
@@ -103,10 +103,10 @@ try {
             try {
                 $result = New-LocalGroup -Name $sidName
 
-                $result | Should Not BeNullOrEmpty
+                $result | Should -Not -BeNullOrEmpty
                 $result.Name | Should -BeExactly $sidName
                 $result.SID | Should -Not -BeExactly $sidName
-                $result.ObjectClass | Should Be Group
+                $result.ObjectClass | Should -BeExactly 'Group'
             }
             finally {
                 RemoveTestGroups -basename $sidName
@@ -127,8 +127,8 @@ try {
 
                 $result.Name | Should -BeExactly $nameMax
                 $result.Description | Should -BeExactly $desc
-                $result.SID | Should Not BeNullOrEmpty
-                $result.ObjectClass | Should Be Group
+                $result.SID | Should -Not -BeNullOrEmpty
+                $result.ObjectClass | Should -BeExactly 'Group'
             }
             finally {
                 RemoveTestGroups -basename $nameMax
@@ -277,7 +277,7 @@ try {
             $result = Get-LocalGroup TestGroupGet1
             $resultBySID = Get-LocalGroup -SID $result.SID
 
-            $resultBySID.SID | Should Not BeNullOrEmpty
+            $resultBySID.SID | Should -Not -BeNullOrEmpty
             $resultBySID.Name | Should Be TestGroupGet1
         }
 
@@ -501,7 +501,7 @@ try {
         }
 
         It "Can Rename-LocalGroup using a valid group name" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             Rename-LocalGroup TestGroupRename1 TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
@@ -538,7 +538,7 @@ try {
         }
 
         It "Can Rename-LocalGroup using a valid group SID" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             Rename-LocalGroup -SID $group1SID TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
@@ -546,7 +546,7 @@ try {
         }
 
         It "Can Rename-LocalGroup using a valid group -InputObject" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             $group = Get-LocalGroup TestGroupRename1
             Rename-LocalGroup -InputObject $group -NewName TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
@@ -555,7 +555,7 @@ try {
         }
 
         It "Can Rename-LocalGroup using a valid group sent using pipeline" {
-            $group1SID | Should Not BeNullOrEmpty
+            $group1SID | Should -Not -BeNullOrEmpty
             Get-LocalGroup TestGroupRename1 | Rename-LocalGroup -NewName TestGroupRename1x
             $result = Get-LocalGroup -SID $group1SID
 
@@ -708,7 +708,7 @@ try {
             $initialCount -gt 1 | Should Be true
 
             $removeResult = Remove-LocalGroup TestGroupRemove1 2>&1
-            $removeResult | Should BeNullOrEmpty
+            $removeResult | Should -BeNullOrEmpty
 
             $sb = {
                 Get-LocalGroup -SID $group1SID
@@ -788,7 +788,7 @@ try {
         It "Can Remove-LocalGroup by SID" {
             $sb = {
                 $removeResult = Remove-LocalGroup -SID $group1SID 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -797,7 +797,7 @@ try {
             $sb = {
                 $group = Get-LocalGroup TestGroupRemove1
                 $removeResult = Remove-LocalGroup -InputObject $group 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -805,7 +805,7 @@ try {
         It "Can Remove-LocalGroup using pipeline" {
             $sb = {
                 $removeResult = Get-LocalGroup TestGroupRemove1 | Remove-LocalGroup 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyBasicRemoval $sb
         }
@@ -813,7 +813,7 @@ try {
         It "Can Remove-LocalGroup by array of names" {
             $sb = {
                 $removeResult = Remove-LocalGroup @("TestGroupRemove1","TestGroupRemove2") 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -821,7 +821,7 @@ try {
         It "Can Remove-LocalGroup by array of SIDs" {
             $sb = {
                 $removeResult = Remove-LocalGroup -SID @($group1SID, $group2SID) 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -830,7 +830,7 @@ try {
             $sb = {
                 $groups = Get-LocalGroup -Name @("TestGroupRemove1","TestGroupRemove2")
                 $removeResult = Remove-LocalGroup -InputObject $groups 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -838,7 +838,7 @@ try {
         It "Can Remove-LocalGroup by array using pipeline" {
             $sb = {
                 $removeResult = Get-LocalGroup -Name @("TestGroupRemove1","TestGroupRemove2") | Remove-LocalGroup 2>&1
-                $removeResult | Should BeNullOrEmpty
+                $removeResult | Should -BeNullOrEmpty
             }
             VerifyArrayRemoval $sb
         }
@@ -855,7 +855,7 @@ try {
             $initialCount -gt 1 | Should Be true
 
             $removeResult = Remove-LocalGroup TestGroupRemove1 2>&1
-            $removeResult | Should BeNullOrEmpty
+            $removeResult | Should -BeNullOrEmpty
 
             #clean-up
             Remove-LocalUser TestUserRemove1 | Out-Null
