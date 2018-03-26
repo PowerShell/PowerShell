@@ -69,7 +69,7 @@ try {
             $result = New-LocalGroup -Name TestGroupAddRemove
 
             $result.Name | Should -BeExactly 'TestGroupAddRemove'
-            $result.ObjectClass | Should Be Group
+            $result.ObjectClass | Should -BeExactly 'Group'
         }
     }
 
@@ -87,7 +87,7 @@ try {
             $result.Name | Should -BeExactly 'TestGroupAddRemove'
             $result.Description | Should -BeExactly "Test Group New 1 Description"
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be Group
+            $result.ObjectClass | Should -BeExactly 'Group'
         }
 
         It "Errors on New-LocalGroup with name collision" {
@@ -245,9 +245,9 @@ try {
         It "Can Get-LocalGroup by specific group name" {
             $result = Get-LocalGroup TestGroupGet1
 
-            $result.Name | Should Be "TestGroupGet1"
-            $result.Description | Should Be "Test Group Get 1 Description"
-            $result.ObjectClass | Should Be "Group"
+            $result.Name | Should -BeExactly "TestGroupGet1"
+            $result.Description | Should -BeExactly "Test Group Get 1 Description"
+            $result.ObjectClass | Should -BeExactly "Group"
         }
     }
 
@@ -278,14 +278,14 @@ try {
             $resultBySID = Get-LocalGroup -SID $result.SID
 
             $resultBySID.SID | Should -Not -BeNullOrEmpty
-            $resultBySID.Name | Should Be TestGroupGet1
+            $resultBySID.Name | Should -BeExactly 'TestGroupGet1'
         }
 
         It "Can Get-LocalGroup of a well-known group by SID string" {
             $sid = New-Object System.Security.Principal.SecurityIdentifier -ArgumentList BG
             $guestGroup = Get-LocalGroup -SID BG
 
-            $guestGroup.SID | Should Be $sid.Value
+            $guestGroup.SID | Should -Be $sid.Value
         }
 
         It "Can Get-LocalGroup by wildcard" {

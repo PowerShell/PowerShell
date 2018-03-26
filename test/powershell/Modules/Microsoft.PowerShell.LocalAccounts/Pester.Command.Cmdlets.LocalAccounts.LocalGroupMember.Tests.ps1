@@ -271,7 +271,7 @@ try {
             $result.SID | Should Be $user1sid
             if (IsWin10OrHigher)
             {
-                $result.PrincipalSource | Should Be Local
+                $result.PrincipalSource | Should -BeExactly 'Local'
             }
             $result.ObjectClass | Should -BeExactly 'User'
         }
@@ -312,14 +312,14 @@ try {
             $result[0].SID | Should Be $user1sid
             if (IsWin10OrHigher)
             {
-                $result[0].PrincipalSource | Should Be Local
+                $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
-                $result[1].PrincipalSource | Should Be Local
+                $result[1].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[1].ObjectClass | Should -BeExactly 'User'
         }
@@ -331,14 +331,14 @@ try {
             $result[0].SID | Should Be $user1sid
             if (IsWin10OrHigher)
             {
-                $result[0].PrincipalSource | Should Be Local
+                $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
-                $result[1].PrincipalSource | Should Be Local
+                $result[1].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[1].ObjectClass | Should -BeExactly 'User'
         }
@@ -351,14 +351,14 @@ try {
             $result[0].SID | Should Be $user1sid
             if (IsWin10OrHigher)
             {
-                $result[0].PrincipalSource | Should Be Local
+                $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
-                $result[1].PrincipalSource | Should Be Local
+                $result[1].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[1].ObjectClass | Should -BeExactly 'User'
         }
@@ -370,14 +370,14 @@ try {
             $result[0].SID | Should Be $user1sid
             if (IsWin10OrHigher)
             {
-                $result[0].PrincipalSource | Should Be Local
+                $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
-                $result[1].PrincipalSource | Should Be Local
+                $result[1].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[1].ObjectClass | Should -BeExactly 'User'
         }
@@ -403,7 +403,7 @@ try {
             $result.SID | Should Be $user1sid
             if (IsWin10OrHigher)
             {
-                $result.PrincipalSource | Should Be Local
+                $result.PrincipalSource | Should -BeExactly 'Local'
             }
             $result.ObjectClass | Should -BeExactly 'User'
         }

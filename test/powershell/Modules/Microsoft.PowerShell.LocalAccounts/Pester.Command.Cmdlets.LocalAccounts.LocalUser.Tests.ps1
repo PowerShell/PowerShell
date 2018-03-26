@@ -417,9 +417,9 @@ try {
         It "Can Get-LocalUser by only name" {
             $result = Get-LocalUser TestUserGet1
 
-            $result.Name | Should Be "TestUserGet1"
-            $result.Description | Should Be "Test User Get 1 Description"
-            $result.ObjectClass | Should Be "User"
+            $result.Name | Should -BeExactly "TestUserGet1"
+            $result.Description | Should -BeExactly "Test User Get 1 Description"
+            $result.ObjectClass | Should -BeExactly "User"
         }
     }
 
@@ -449,7 +449,7 @@ try {
             $resultBySID = Get-LocalUser -SID $result.SID
 
             $resultBySID.SID | Should -Not -BeNullOrEmpty
-            $resultBySID.Name | Should Be TestUserGet1
+            $resultBySID.Name | Should -BeExactly 'TestUserGet1'
         }
 
         It "Can get a well-known user by SID string" {
