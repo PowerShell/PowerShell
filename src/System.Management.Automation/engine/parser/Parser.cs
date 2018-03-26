@@ -6772,7 +6772,6 @@ namespace System.Management.Automation.Language
             if (rCurly.Kind != TokenKind.RCurly)
             {
                 UngetToken(rCurly);
-                // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
                 string errorId;
                 string errorMsg;
                 if (parsingSchemaElement)
