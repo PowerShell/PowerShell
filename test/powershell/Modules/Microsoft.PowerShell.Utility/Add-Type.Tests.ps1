@@ -182,9 +182,9 @@ public class AttributeTest$guid : PSCmdlet
 
         # Add-Type show parse and compile errors and then finish with an terminationg error.
         # Catch non-termination information error.
-        { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
         # Catch final terminationg error.
-        { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction SilentlyContinue } | ShouldBeErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -MemberDefinition $sourceCode -Name $sourceType -Namespace $sourceNS -Language $sourceLanguage -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
         $returnedTypes = Add-Type -MemberDefinition $sourceCode -Name $sourceType -UsingNamespace $sourceUsingNS -Namespace $sourceNS -Language $sourceLanguage -PassThru
         ([type]$sourceRunType)::TestString() | Should BeExactly $expectedResult
@@ -244,22 +244,22 @@ public class AttributeTest$guid : PSCmdlet
         # In the tests the error is that 'using System.Text;' is missing.
         #
         # Catch non-termination information error.
-        { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
         # Catch final terminationg error.
-        { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction SilentlyContinue } | ShouldBeErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -MemberDefinition "public static string TestString() { return UTF8Encoding.UTF8.ToString();}" -Name "TestType1" -Namespace "TestNS" -ErrorAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
 
         # Catch non-termination information error for CompilerOptions.
-        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
-        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language VisualBasic -MemberDefinition "Public Shared Function TestString() As String `n Return `"`" `n End Function" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | ShouldBeErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language CSharp -MemberDefinition "public static string TestString() { return ""}" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -CompilerOptions "/platform:anycpuERROR" -Language VisualBasic -MemberDefinition "Public Shared Function TestString() As String `n Return `"`" `n End Function" -Name "TestType1" -Namespace "TestNS" -ErrorAction Stop } | Should -Throw -ErrorId "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "OutputType parameter requires that the OutputAssembly parameter be specified." {
         $code = "public static string TestString() {}"
-        { Add-Type -TypeDefinition $code -OutputType Library } | ShouldBeErrorId "OUTPUTTYPE_REQUIRES_ASSEMBLY,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -TypeDefinition $code -OutputType Library } | Should -Throw -ErrorId "OUTPUTTYPE_REQUIRES_ASSEMBLY,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "By default Add-Type treats 'warnings as errors'." {
-        { Add-Type -TypeDefinition $codeWarning -WarningAction SilentlyContinue } | ShouldBeErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
+        { Add-Type -TypeDefinition $codeWarning -WarningAction SilentlyContinue } | Should -Throw -ErrorId "COMPILER_ERRORS,Microsoft.PowerShell.Commands.AddTypeCommand"
     }
 
     It "IgnoreWarnings suppress 'warnings as errors'." {
