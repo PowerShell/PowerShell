@@ -915,4 +915,17 @@ foo``u{2195}abc
         # Issue #2780
         { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should Not Throw
     }
+
+    Context "#requires nested scan tokenizer tests" {
+        $testCases = @(
+            @{ script = "#requires"; firstToken = $null; lastToken = $null },
+            @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
+            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
+            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "'Hello'"}
+        )
+
+        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $testCases {
+            param($script, $firstToken, $lastToken)
+        }
+    }
 }
