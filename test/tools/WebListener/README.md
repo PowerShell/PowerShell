@@ -613,3 +613,72 @@ Body:
     "x-header-01": "value01"
 }
 ```
+
+### /Resume/
+
+This endpoint simulates the download of a 20 byte file with support for resuming with the use of the `Range` HTTP request header.
+The bytes returned are numbered 1 to 20 inclusive.
+If the `Range` header is greater than 20, the endpoint will return a `416 Requested Range Not Satisfiable` response.
+The endpoint also returns an `X-WebListener-Has-Range` response header containing `true` or `false` if the HTTP Request contains a `Range` request header.
+The endpoint will also return an `X-WebListener-Request-Range` response header which contains the `Range` header value if one was present.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Resume'
+$response = Invoke-WebRequest -Uri $uri -Headers @{"Range" = "bytes=0-"}
+```
+
+Response Headers:
+
+```none
+HTTP/1.1 206 PartialContent
+Date: Tue, 20 Mar 2018 08:45:42 GMT
+Server: Kestrel
+X-WebListener-Has-Range: true
+X-WebListener-Request-Range: bytes=0-
+Content-Length: 20
+Content-Type: application/octet-stream
+Content-Range: bytes 0-19/20
+```
+
+### /Resume/Bytes/{NumberBytes}
+
+This endpoint emulates a partial download of the same 20 bytes provided by the `/Resume/` endpoint.
+The endpoint will return `{NumberBytes}` bytes of the 20 bytes.
+For example `/Resume/Bytes/5` will return bytes 1 through 5 inclusive of the 20 byte file.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'Bytes/5'
+$response = Invoke-WebRequest -Uri $uri
+```
+
+Response Headers:
+
+```none
+HTTP/1.1 200 OK
+Date: Tue, 20 Mar 2018 08:50:57 GMT
+Server: Kestrel
+Content-Length: 5
+Content-Type: application/octet-stream
+```
+
+### /Resume/NoResume
+
+This endpoint is the same as `/Resume/` with the exception that it ignores the `Range` HTTP request header.
+This endpoint always returns the full 20 bytes and a `200` status.
+The `X-WebListener-Has-Range` and `X-WebListener-Request-Range` headers are also returned the same as the `/Resume/` endpoint.
+
+```powershell
+$uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
+$response = Invoke-WebRequest -Uri $uri
+```
+
+Response Headers:
+
+```none
+HTTP/1.1 200 OK
+Date: Tue, 20 Mar 2018 08:48:21 GMT
+Server: Kestrel
+X-WebListener-Has-Range: false
+Content-Length: 20
+Content-Type: application/octet-stream
+```
