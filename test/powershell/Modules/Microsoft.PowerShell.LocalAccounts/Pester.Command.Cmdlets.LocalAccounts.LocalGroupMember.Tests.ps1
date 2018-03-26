@@ -93,7 +93,7 @@ try {
             $result = Get-LocalGroupMember TestGroup1
 
             $result.Name.EndsWith("TestUser1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
         }
     }
 
@@ -124,7 +124,7 @@ try {
             $result = Get-LocalGroupMember TestGroup1
 
             $result.Name.EndsWith("TestUser1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
         }
 
         It "Can add user to group using group object" {
@@ -133,7 +133,7 @@ try {
             $result = Get-LocalGroupMember TestGroup1
 
             $result.Name.EndsWith("TestUser1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
         }
 
         It "Can add user to group using pipeline" {
@@ -141,7 +141,7 @@ try {
             $result = Get-LocalGroupMember TestGroup1
 
             $result.Name.EndsWith("TestUser1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
         }
 
         It "Errors on missing group parameter value missing" {
@@ -217,7 +217,7 @@ try {
 
             $result = Get-LocalGroupMember TestGroup1
             $result.Name.EndsWith("TestUser1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
         }
 
         It "Errors on adding nonexistent user to group" {
@@ -268,7 +268,7 @@ try {
             $result = Get-LocalGroupMember TestGroupGet1
 
             $result.Name.EndsWith("TestUserGet1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result.PrincipalSource | Should -BeExactly 'Local'
@@ -309,14 +309,14 @@ try {
             $result = Get-LocalGroupMember TestGroupGet1
 
             $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
-            $result[0].SID | Should Be $user1sid
+            $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
-            $result[1].SID | Should Be $user2sid
+            $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should -BeExactly 'Local'
@@ -328,14 +328,14 @@ try {
             $result = Get-LocalGroupMember -SID $group1sid
 
             $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
-            $result[0].SID | Should Be $user1sid
+            $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
-            $result[1].SID | Should Be $user2sid
+            $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should -BeExactly 'Local'
@@ -348,14 +348,14 @@ try {
             $result = Get-LocalGroupMember -Group $group
 
             $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
-            $result[0].SID | Should Be $user1sid
+            $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
-            $result[1].SID | Should Be $user2sid
+            $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should -BeExactly 'Local'
@@ -367,14 +367,14 @@ try {
             $result = Get-LocalGroup TestGroupGet1 | Get-LocalGroupMember
 
             $result[0].Name.EndsWith("TestUserGet1") | Should -BeTrue
-            $result[0].SID | Should Be $user1sid
+            $result[0].SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result[0].PrincipalSource | Should -BeExactly 'Local'
             }
             $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should -BeTrue
-            $result[1].SID | Should Be $user2sid
+            $result[1].SID | Should -Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should -BeExactly 'Local'
@@ -400,7 +400,7 @@ try {
             $result = Get-LocalGroupMember TestGroupGet1 -Member TestUserGet1
 
             $result.Name.EndsWith("TestUserGet1") | Should -BeTrue
-            $result.SID | Should Be $user1sid
+            $result.SID | Should -Be $user1sid
             if (IsWin10OrHigher)
             {
                 $result.PrincipalSource | Should -BeExactly 'Local'

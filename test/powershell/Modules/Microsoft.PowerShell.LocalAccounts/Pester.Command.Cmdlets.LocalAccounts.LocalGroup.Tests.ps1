@@ -908,7 +908,7 @@ try {
             }
 
             # Confirm that the expected errors were caught
-            $errCount | Should Be 2
+            $errCount | Should -Be 2
             $fqeid | Should Be "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             # confirm that the first group was removed

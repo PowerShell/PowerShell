@@ -557,7 +557,7 @@ try {
             $result = New-LocalUser TestUserGet3 -NoPassword -AccountExpires $AccountExpires -Description $Description -Disabled -FullName $FullName -UserMayNotChangePassword
 
             $result.Name | Should -BeExactly $Name
-            $result.AccountExpires | Should Be ([DateTime]$AccountExpires)
+            $result.AccountExpires | Should -Be ([DateTime]$AccountExpires)
             $result.Description | Should -BeExactly $Description
             $result.Enabled | Should -BeFalse
             $result.FullName | Should -BeExactly $FullName
@@ -666,7 +666,7 @@ try {
             $result.Enabled | Should -BeTrue
             $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should -BeExactly 'User'
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Can set AccountExpires to the past" {
@@ -679,7 +679,7 @@ try {
             $result.Enabled | Should -BeTrue
             $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should -BeExactly 'User'
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Errors on AccountExpires being set to invalid date" {
