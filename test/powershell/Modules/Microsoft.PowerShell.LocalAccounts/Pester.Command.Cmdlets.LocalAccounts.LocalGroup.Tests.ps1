@@ -185,7 +185,7 @@ try {
             }
 
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be true
+            $failedCharacters | Should -HaveCount 0
         }
 
         It "Error on names containing only spaces" {
@@ -292,16 +292,16 @@ try {
             $result = Get-LocalGroup TestGroupGet*
 
             $result.Count -eq 2 | Should -BeTrue
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can Get-LocalGroup gets by array of names" {
             $result = Get-LocalGroup @("TestGroupGet1", "TestGroupGet2")
 
-            $result.Count -eq 2 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can Get-LocalGroups by array of SIDs" {
@@ -309,18 +309,18 @@ try {
             $sid2 = (Get-LocalGroup TestGroupGet2).SID
             $result = Get-LocalGroup -SID @($sid1, $sid2)
 
-            $result.Count -eq 2 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 2
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can Get-LocalGroups by pipe of an array of Group objects" {
             $testGroups = Get-LocalGroup TestGroupGet*
             $result = @($testGroups, $testGroups) | Get-LocalGroup
 
-            $result.Count -eq 4 | Should Be true
-            $result.Name -contains "TestGroupGet1" | Should Be true
-            $result.Name -contains "TestGroupGet2" | Should Be true
+            $result | Should -HaveCount 4
+            $result.Name | Should -Contain 'TestGroupGet1'
+            $result.Name | Should -Contain 'TestGroupGet2'
         }
 
         It "Can respond to -ErrorAction Stop" {
@@ -627,7 +627,7 @@ try {
 
             #Assert
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be true
+            $failedCharacters | Should -HaveCount 0
         }
 
         It "Error on names containing only spaces" {

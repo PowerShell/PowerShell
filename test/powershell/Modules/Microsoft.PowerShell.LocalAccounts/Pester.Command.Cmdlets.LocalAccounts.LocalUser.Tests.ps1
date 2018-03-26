@@ -161,7 +161,7 @@ try {
 
             #Assert
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be $true
+            $failedCharacters | Should -HaveCount 0
         }
 
         It "Errors on names containing only spaces or periods" {
@@ -462,7 +462,7 @@ try {
         It "Can get users by wildcard" {
             $result = Get-LocalUser TestUserGet*
 
-            $result.Count -eq 2 | Should Be $true
+            $result | Should -HaveCount 2
             $result.Name | Should -Contain 'TestUserGet1'
             $result.Name | Should -Contain 'TestUserGet2'
         }
@@ -470,7 +470,7 @@ try {
         It "Can get a user by array of names" {
             $result = Get-LocalUser @("TestUserGet1", "TestUserGet2")
 
-            $result.Count -eq 2 | Should Be $true
+            $result | Should -HaveCount 2
             $result.Name | Should -Contain 'TestUserGet1'
             $result.Name | Should -Contain 'TestUserGet2'
         }
@@ -480,7 +480,7 @@ try {
             $sid2 = (Get-LocalUser TestUserGet2).SID
             $result = Get-LocalUser -SID @($sid1, $sid2)
 
-            $result.Count -eq 2 | Should Be $true
+            $result | Should -HaveCount 2
             $result.Name | Should -Contain 'TestUserGet1'
             $result.Name | Should -Contain 'TestUserGet2'
         }
@@ -492,7 +492,7 @@ try {
             Catch {
                 # Ignore the execption
             }
-            $outErr.Count -eq 1 | Should Be $true
+            $outErr | Should -HaveCount 1
             $outErr[0].ErrorRecord.CategoryInfo.Reason | Should -Match "UserNotFound"
             $outOut.Name | Should -Match "TestUserGet1"
         }
@@ -958,7 +958,7 @@ try {
 
             #Assert
             if ($failedCharacters.Count -gt 0) { Write-Host "characters causing test fail: $failedCharacters" }
-            $failedCharacters.Count -eq 0 | Should Be $true
+            $failedCharacters | Should -HaveCount 0
         }
 
         It "Errors on names containing only spaces or periods" {

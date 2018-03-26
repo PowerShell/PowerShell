@@ -384,7 +384,7 @@ try {
 
         It "Can get group members by wildcard" {
             $result = Get-LocalGroupMember TestGroupGet1 -Member TestUserGet*
-            $result.Count -eq 2 | Should Be $true
+            $result | Should -HaveCount 2
             $result[0].Name | Should -Match ($OptDomainPrefix+"TestUserGet1")
             $result[1].Name | Should -Match ($OptDomainPrefix + "TestUserGet2")
         }
