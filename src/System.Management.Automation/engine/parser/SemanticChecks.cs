@@ -63,10 +63,8 @@ namespace System.Management.Automation.Language
             return (bool)ast.Accept(visitor);
         }
 
-        private Tuple<string, string> GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
+        private void GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor, out string errorId, out string errorMsg)
         {
-            string errorId;
-            string errorMsg;
             if (visitor.CheckingClassAttributeArguments)
             {
                 errorId = nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstant);
@@ -77,8 +75,6 @@ namespace System.Management.Automation.Language
                 errorId = nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock);
                 errorMsg = ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock;
             }
-
-            return new Tuple<string, string>(errorId, errorMsg);
         }
 
         private void CheckForDuplicateParameters(ReadOnlyCollection<ParameterAst> parameters)
@@ -252,8 +248,10 @@ namespace System.Management.Automation.Language
 
                     if (!namedArg.ExpressionOmitted && !IsValidAttributeArgument(namedArg.Argument, constantValueVisitor))
                     {
-                        Tuple<string, string> errorInfo = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
-                        _parser.ReportError(namedArg.Argument.Extent, errorInfo.Item1, errorInfo.Item2);
+                        string errorId;
+                        string errorMsg;
+                        GetNonConstantAttributeArgErrorExpr(constantValueVisitor, out errorId, out errorMsg);
+                        _parser.ReportError(namedArg.Argument.Extent, errorId, errorMsg);
                     }
                 }
             }
@@ -262,8 +260,10 @@ namespace System.Management.Automation.Language
             {
                 if (!IsValidAttributeArgument(posArg, constantValueVisitor))
                 {
-                    Tuple<string, string> errorInfo = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
-                    _parser.ReportError(posArg.Extent, errorInfo.Item1, errorInfo.Item2);
+                    string errorId;
+                    string errorMsg;
+                    GetNonConstantAttributeArgErrorExpr(constantValueVisitor, out errorId, out errorMsg);
+                    _parser.ReportError(posArg.Extent, errorId, errorId);
                 }
             }
 
@@ -804,7 +804,8 @@ namespace System.Management.Automation.Language
                                             _parser.ReportError(ast.Extent,
                                                 nameof(ParserStrings.AssignmentStatementToAutomaticNotSupported),
                                                 ParserStrings.AssignmentStatementToAutomaticNotSupported,
-                                                varPath.UnqualifiedPath, expectedType);
+                                                varPath.UnqualifiedPath,
+                                                expectedType);
                                         }
                                         break;
                                     }
@@ -1319,7 +1320,8 @@ namespace System.Management.Automation.Language
                     _parser.ReportError(dynamicKeywordStatementAst.Extent,
                         nameof(ParserStrings.DynamicKeywordSemanticCheckException),
                         ParserStrings.DynamicKeywordSemanticCheckException,
-                        dynamicKeywordStatementAst.Keyword.ResourceName, e.ToString());
+                        dynamicKeywordStatementAst.Keyword.ResourceName,
+                        e.ToString());
                 }
             }
             DynamicKeyword keyword = dynamicKeywordStatementAst.Keyword;
@@ -1337,15 +1339,19 @@ namespace System.Management.Automation.Language
                         _parser.ReportError(keyValueTuple.Item1.Extent,
                             nameof(ParserStrings.ConfigurationInvalidPropertyName),
                             ParserStrings.ConfigurationInvalidPropertyName,
-                            dynamicKeywordStatementAst.FunctionName.Extent, keyValueTuple.Item1.Extent);
+                            dynamicKeywordStatementAst.FunctionName.Extent,
+                            keyValueTuple.Item1.Extent);
                     }
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
+                        IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
+                            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase);
+
                         _parser.ReportError(propName.Extent,
                             nameof(ParserStrings.InvalidInstanceProperty),
                             ParserStrings.InvalidInstanceProperty,
                             propName.Value,
-                            string.Join("', '", keyword.Properties.Keys.OrderBy(key => key, StringComparer.OrdinalIgnoreCase)));
+                            String.Join("', '", tableKeys));
                     }
                 }
             }

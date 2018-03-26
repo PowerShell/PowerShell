@@ -775,7 +775,8 @@ namespace System.Management.Automation.Language
                         var parameters = functionMemberAst.Parameters;
                         if (parameters.Count > 0)
                         {
-                            _parser.ReportError(Parser.ExtentOf(parameters.First(), parameters.Last()),
+                            IScriptExtent errorExtent = Parser.ExtentOf(parameters.First(), parameters.Last());
+                            _parser.ReportError(errorExtent,
                                 nameof(ParserStrings.StaticConstructorCantHaveParameters),
                                 ParserStrings.StaticConstructorCantHaveParameters);
                             return;
