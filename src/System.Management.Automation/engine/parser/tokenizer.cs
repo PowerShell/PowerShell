@@ -1664,8 +1664,8 @@ namespace System.Management.Automation.Language
                     if (!string.Equals(commandName, "requires", StringComparison.OrdinalIgnoreCase))
                     {
                         ReportError(commandAst.Extent,
-                            nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
-                            DiscoveryExceptions.ScriptRequiresInvalidFormat);
+                            nameof(ParserStrings.ScriptRequiresInvalidFormat),
+                            ParserStrings.ScriptRequiresInvalidFormat);
                     }
 
                     var snapinSpecified = false;
@@ -1697,8 +1697,8 @@ namespace System.Management.Automation.Language
                         else
                         {
                             ReportError(commandAst.CommandElements[i].Extent,
-                                nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
-                                DiscoveryExceptions.ScriptRequiresInvalidFormat);
+                                nameof(ParserStrings.ScriptRequiresInvalidFormat),
+                                ParserStrings.ScriptRequiresInvalidFormat);
                         }
                     }
                     if (snapinName != null)
@@ -1944,8 +1944,8 @@ namespace System.Management.Automation.Language
             else
             {
                 ReportError(parameter.Extent,
-                    nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
-                    DiscoveryExceptions.ScriptRequiresInvalidFormat);
+                    nameof(ParserStrings.ScriptRequiresInvalidFormat),
+                    ParserStrings.ScriptRequiresInvalidFormat);
             }
         }
 

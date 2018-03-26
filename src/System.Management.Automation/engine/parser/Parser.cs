@@ -752,35 +752,6 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        // Collect types that keep .resx file strings
-        // for errors thrown with "SaveError"
-        private static readonly Type[] s_resxTypes = new []
-        {
-            typeof(ParserStrings),
-            typeof(ExtendedTypeSystem),
-            typeof(DiscoveryExceptions)
-        };
-
-        /// <summary>
-        /// Given an errorId and an errorMsg, verify that they correspond to one another
-        /// in some .resx file
-        /// </summary>
-        /// <param name="errorId">the ID (or RESX key) of the error</param>
-        /// <param name="errorMsg">the message (or RESX value) of the error</param>
-        /// <returns>true if the ID and message are paired in some .resx file, false otherwise</returns>
-        private static bool ErrorIdCorrespondsToMsg(string errorId, string errorMsg)
-        {
-            foreach (Type resxType in s_resxTypes)
-            {
-                if (errorMsg.Equals(resxType.GetProperty(errorId)?.GetValue(null)))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         #endregion Utilities
 
         #region Statements
@@ -7310,7 +7281,8 @@ namespace System.Management.Automation.Language
 
         private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
         {
-            Diagnostics.Assert(ErrorIdCorrespondsToMsg(errorId, errorMsg), "ErrorMsg must correspond the the ErrorId in ParserStrings");
+            Diagnostics.Assert(errorMsg.Equals(typeof(ParserStrings).GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic, null, typeof(string), new Type[0], null)?.GetValue(null, null)),
+                "ErrorMsg must correspond the the ErrorId in ParserStrings");
 
             if (args != null && args.Any())
             {

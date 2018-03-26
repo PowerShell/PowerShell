@@ -3667,9 +3667,9 @@ namespace System.Management.Automation
 
             if (adapterData.readOnly)
             {
-                throw new SetValueException("ReadOnlyProperty",
+                throw new SetValueException(nameof(ParserStrings.ReadOnlyProperty),
                     null,
-                    ExtendedTypeSystem.ReadOnlyProperty,
+                    ParserStrings.ReadOnlyProperty,
                     adapterData.member.Name);
             }
 
