@@ -1157,7 +1157,11 @@ namespace Microsoft.PowerShell.Commands
             public override void VisitNamespace(INamespaceSymbol symbol)
             {
                 // Main cycle.
-                symbol.GetMembers().AsParallel().ForAll(s => s.Accept(this));
+                // For large files we could use symbol.GetMembers().AsParallel().ForAll(s => s.Accept(this));
+                foreach (var member in symbol.GetMembers())
+                {
+                    member.Accept(this);
+                }
             }
 
             public override void VisitNamedType(INamedTypeSymbol symbol)
