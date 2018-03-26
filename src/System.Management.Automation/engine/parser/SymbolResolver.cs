@@ -670,10 +670,7 @@ namespace System.Management.Automation.Language
                                 errorId = nameof(ParserStrings.TypeNotFound);
                                 errorMsg = ParserStrings.TypeNotFound;
                             }
-                            _parser.ReportError(typeName.Extent,
-                                errorId,
-                                errorMsg,
-                                typeName.Name);
+                            _parser.ReportError(typeName.Extent, errorId, errorMsg, typeName.Name);
                         }
                     }
                 }

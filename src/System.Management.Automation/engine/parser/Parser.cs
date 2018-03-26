@@ -2431,6 +2431,7 @@ namespace System.Management.Automation.Language
 
                     ReportIncompleteInput(rParen.Extent,
                         nameof(ParserStrings.MissingStatementBlock),
+                        ParserStrings.MissingStatementBlock,
                         keyword.Text);
                     return new ErrorStatementAst(ExtentOf(ifToken, rParen), componentAsts);
                 }

@@ -63,18 +63,16 @@ namespace System.Management.Automation.Language
             return (bool)ast.Accept(visitor);
         }
 
-        private void GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor, out string errorId, out string errorMsg)
+        (string id, string msg) GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
         {
             if (visitor.CheckingClassAttributeArguments)
             {
-                errorId = nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstant);
-                errorMsg = ParserStrings.ParameterAttributeArgumentNeedsToBeConstant;
+                return (nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstant),
+                    ParserStrings.ParameterAttributeArgumentNeedsToBeConstant);
             }
-            else
-            {
-                errorId = nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock);
-                errorMsg = ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock;
-            }
+
+            return (nameof(ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock),
+                ParserStrings.ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock);
         }
 
         private void CheckForDuplicateParameters(ReadOnlyCollection<ParameterAst> parameters)
@@ -248,9 +246,7 @@ namespace System.Management.Automation.Language
 
                     if (!namedArg.ExpressionOmitted && !IsValidAttributeArgument(namedArg.Argument, constantValueVisitor))
                     {
-                        string errorId;
-                        string errorMsg;
-                        GetNonConstantAttributeArgErrorExpr(constantValueVisitor, out errorId, out errorMsg);
+                        (string errorId, string errorMsg) = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
                         _parser.ReportError(namedArg.Argument.Extent, errorId, errorMsg);
                     }
                 }
@@ -260,9 +256,7 @@ namespace System.Management.Automation.Language
             {
                 if (!IsValidAttributeArgument(posArg, constantValueVisitor))
                 {
-                    string errorId;
-                    string errorMsg;
-                    GetNonConstantAttributeArgErrorExpr(constantValueVisitor, out errorId, out errorMsg);
+                    (string errorId, string errorMsg) = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
                     _parser.ReportError(posArg.Extent, errorId, errorId);
                 }
             }
@@ -1085,10 +1079,7 @@ namespace System.Management.Automation.Language
                             errorMsg = ParserStrings.DuplicateKeyInHashLiteral;
                         }
 
-                        _parser.ReportError(entry.Item1.Extent,
-                            errorId,
-                            errorMsg,
-                            keyStr);
+                        _parser.ReportError(entry.Item1.Extent, errorId, errorMsg, keyStr);
                     }
                     else
                     {
