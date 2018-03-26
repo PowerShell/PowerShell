@@ -150,9 +150,6 @@
   <data name="ParameterNotInParameterSet" xml:space="preserve">
     <value>Parameter '{1}' cannot be specified in parameter set '{6}'.</value>
   </data>
-  <data name="ParameterAlreadyBound" xml:space="preserve">
-    <value>Cannot bind parameter because parameter '{1}' is specified more than once. To provide multiple values to parameters that can accept multiple values, use the array syntax. For example, "-parameter value1,value2,value3".</value>
-  </data>
   <data name="ScriptBlockArgumentNoInput" xml:space="preserve">
     <value>Cannot evaluate parameter '{1}' because its argument is specified as a script block and there is no input. A script block cannot be evaluated without input.</value>
   </data>

@@ -123,9 +123,6 @@
   <data name="NoPSSnapInsFound" xml:space="preserve">
     <value>No PowerShell snap-ins matching the pattern '{0}' were found. Check the pattern and then try the command again.</value>
   </data>
-  <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
-  </data>
   <data name="LoadSystemSnapinAsModule" xml:space="preserve">
     <value>Cannot add PowerShell snap-in {0} because it is a system PowerShell module. Use Import-Module to load the module.</value>
   </data>

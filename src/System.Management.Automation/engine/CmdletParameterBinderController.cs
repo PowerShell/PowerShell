@@ -1136,8 +1136,8 @@ namespace System.Management.Automation
                                 argument.ParameterName,
                                 null,
                                 null,
-                                ParameterBinderStrings.ParameterAlreadyBound,
-                                "ParameterAlreadyBound");
+                                ParserStrings.ParameterAlreadyBound,
+                                nameof(ParserStrings.ParameterAlreadyBound));
 
                         // Multiple values assigned to the same parameter.
                         // Not caused by default parameter binding

@@ -191,8 +191,8 @@ namespace System.Management.Automation
                                 argument.ParameterName,
                                 null,
                                 null,
-                                ParameterBinderStrings.ParameterAlreadyBound,
-                                "ParameterAlreadyBound");
+                                ParserStrings.ParameterAlreadyBound,
+                                nameof(ParserStrings.ParameterAlreadyBound));
 
                         throw bindingException;
                     }

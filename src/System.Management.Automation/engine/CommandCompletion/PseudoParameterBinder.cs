@@ -586,8 +586,8 @@ namespace System.Management.Automation.Language
                     duplicateParameter.ParameterName,
                     null,
                     null,
-                    ParameterBinderStrings.ParameterAlreadyBound,
-                    "ParameterAlreadyBound");
+                    ParserStrings.ParameterAlreadyBound,
+                    nameof(ParserStrings.ParameterAlreadyBound));
             // if the duplicated Parameter Name appears more than twice, we will ignore as we already have similar bindingException.
             if (!BindingExceptions.ContainsKey(duplicateParameter.ParameterName))
             {

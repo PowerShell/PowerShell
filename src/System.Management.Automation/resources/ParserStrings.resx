@@ -1477,4 +1477,10 @@ The #requires statement must be in one of the following formats:
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
+  <data name="InvalidPSSnapInName" xml:space="preserve">
+    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
+  </data>
+  <data name="ParameterAlreadyBound" xml:space="preserve">
+    <value>Cannot bind parameter because parameter '{1}' is specified more than once. To provide multiple values to parameters that can accept multiple values, use the array syntax. For example, "-parameter value1,value2,value3".</value>
+  </data>
 </root>

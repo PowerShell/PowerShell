@@ -453,8 +453,8 @@ namespace System.Management.Automation
             // argument exception
             if (!IsPSSnapinIdValid(psSnapinId))
             {
-                throw PSTraceSource.NewArgumentException("mshSnapInId",
-                    MshSnapInCmdletResources.InvalidPSSnapInName,
+                throw PSTraceSource.NewArgumentException(nameof(psSnapinId),
+                    ParserStrings.InvalidPSSnapInName,
                     psSnapinId);
             }
 
