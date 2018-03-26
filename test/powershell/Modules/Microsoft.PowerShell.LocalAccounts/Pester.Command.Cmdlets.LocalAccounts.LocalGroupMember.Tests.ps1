@@ -273,7 +273,7 @@ try {
             {
                 $result.PrincipalSource | Should Be Local
             }
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
     }
 
@@ -314,14 +314,14 @@ try {
             {
                 $result[0].PrincipalSource | Should Be Local
             }
-            $result[0].ObjectClass | Should Be User
+            $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should Be Local
             }
-            $result[1].ObjectClass | Should Be User
+            $result[1].ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can get all group members by SID" {
@@ -333,14 +333,14 @@ try {
             {
                 $result[0].PrincipalSource | Should Be Local
             }
-            $result[0].ObjectClass | Should Be User
+            $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should Be Local
             }
-            $result[1].ObjectClass | Should Be User
+            $result[1].ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can get all group members by Group object" {
@@ -353,14 +353,14 @@ try {
             {
                 $result[0].PrincipalSource | Should Be Local
             }
-            $result[0].ObjectClass | Should Be User
+            $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should Be Local
             }
-            $result[1].ObjectClass | Should Be User
+            $result[1].ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can get all group members by pipeline" {
@@ -372,14 +372,14 @@ try {
             {
                 $result[0].PrincipalSource | Should Be Local
             }
-            $result[0].ObjectClass | Should Be User
+            $result[0].ObjectClass | Should -BeExactly 'User'
             $result[1].Name.EndsWith("TestUserGet2") | Should Be $true
             $result[1].SID | Should Be $user2sid
             if (IsWin10OrHigher)
             {
                 $result[1].PrincipalSource | Should Be Local
             }
-            $result[1].ObjectClass | Should Be User
+            $result[1].ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can get group members by wildcard" {
@@ -405,7 +405,7 @@ try {
             {
                 $result.PrincipalSource | Should Be Local
             }
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         #TODO: 10.A valid user attempts to get membership from a group to which they don't have access

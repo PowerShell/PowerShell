@@ -101,7 +101,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
     }
 
@@ -122,7 +122,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Errors on Name argument of empty string or null" {
@@ -216,7 +216,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
 
@@ -228,7 +228,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
 
@@ -247,7 +247,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.AccountExpires | Should -BeNullOrEmpty
         }
 
@@ -265,7 +265,7 @@ try {
             $result.Description | Should -BeExactly ""
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can set with description at max 48" {
@@ -275,7 +275,7 @@ try {
             $result.Description | Should -BeExactly ("A"*48)
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can set with description over max 48" {
@@ -291,7 +291,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can set enabled to false" {
@@ -301,7 +301,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $false
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can set empty string for FullName" {
@@ -311,7 +311,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.FullName | Should -BeNullOrEmpty
         }
 
@@ -322,7 +322,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.FullName | Should -BeExactly ("A"*256)
         }
 
@@ -340,7 +340,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Errors when Password over max 257" {
@@ -368,7 +368,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.UserMayChangePassword | Should Be $false
         }
 
@@ -394,7 +394,7 @@ try {
             $result.Description | Should -BeNullOrEmpty
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.UserMayChangePassword | Should Be $true
         }
     }
@@ -564,7 +564,7 @@ try {
             $result.ObjectClass -eq "User" | Should be true
             $result.UserMayChangePassword | Should Be $false
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
     }
 
@@ -665,7 +665,7 @@ try {
             $result.Description | Should -BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
 
@@ -678,7 +678,7 @@ try {
             $result.Description | Should -BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.AccountExpires | Should Be ([DateTime]$expiration)
         }
 
@@ -727,7 +727,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Description | Should -BeExactly ("A"*48)
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Can set empty string for FullName" {
@@ -744,7 +744,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.FullName | Should -BeExactly ("A"*256)
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Errors when Password is an empty string" {
@@ -768,7 +768,7 @@ try {
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.Enabled | Should Be $true
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
         }
 
         It "Errors when Password over max 257" {
@@ -804,7 +804,7 @@ try {
 
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.UserMayChangePassword | Should Be $true
         }
 
@@ -814,7 +814,7 @@ try {
 
             $result.Name | Should -BeExactly 'TestUserSet1'
             $result.SID | Should -Not -BeNullOrEmpty
-            $result.ObjectClass | Should Be User
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.UserMayChangePassword | Should Be $false
         }
     }
