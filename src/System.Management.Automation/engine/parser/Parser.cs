@@ -4305,11 +4305,18 @@ namespace System.Management.Automation.Language
                 case TokenKind.Public:
                     if (publicToken != null)
                     {
-                        ReportError(token.Extent, () => ParserStrings.DuplicateQualifier, token.Text);
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.DuplicateQualifier),
+                            ParserStrings.DuplicateQualifier,
+                            token.Text);
                     }
                     if (privateToken != null)
                     {
-                        ReportError(token.Extent, () => ParserStrings.ModifiersCannotBeCombined, privateToken.Text, token.Text);
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.ModifiersCannotBeCombined),
+                            ParserStrings.ModifiersCannotBeCombined,
+                            privateToken.Text,
+                            token.Text);
                     }
                     publicToken = token;
                     SkipToken();
@@ -4318,11 +4325,18 @@ namespace System.Management.Automation.Language
                 case TokenKind.Private:
                     if (privateToken != null)
                     {
-                        ReportError(token.Extent, () => ParserStrings.DuplicateQualifier, token.Text);
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.DuplicateQualifier),
+                            ParserStrings.DuplicateQualifier,
+                            token.Text);
                     }
                     if (publicToken != null)
                     {
-                        ReportError(token.Extent, () => ParserStrings.ModifiersCannotBeCombined, publicToken.Text, token.Text);
+                        ReportError(token.Extent,
+                            nameof(ParserStrings.ModifiersCannotBeCombined),
+                            ParserStrings.ModifiersCannotBeCombined,
+                            publicToken.Text,
+                            token.Text);
                     }
                     privateToken = token;
                     SkipToken();
