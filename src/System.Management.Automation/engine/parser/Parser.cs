@@ -7267,10 +7267,7 @@ namespace System.Management.Automation.Language
 
         private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
         {
-            if (String.IsNullOrEmpty(errorId))
-            {
-                errorId = "ParserError";
-            }
+            Diagnostics.Assert(!String.IsNullOrEmpty(errorId), "Errors must have IDs");
 
             if (args != null && args.Any())
             {
