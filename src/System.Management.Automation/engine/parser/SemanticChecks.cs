@@ -63,7 +63,7 @@ namespace System.Management.Automation.Language
             return (bool)ast.Accept(visitor);
         }
 
-        (string id, string msg) GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
+        private (string id, string msg) GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
         {
             if (visitor.CheckingClassAttributeArguments)
             {
@@ -246,8 +246,8 @@ namespace System.Management.Automation.Language
 
                     if (!namedArg.ExpressionOmitted && !IsValidAttributeArgument(namedArg.Argument, constantValueVisitor))
                     {
-                        (string errorId, string errorMsg) = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
-                        _parser.ReportError(namedArg.Argument.Extent, errorId, errorMsg);
+                        var error = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
+                        _parser.ReportError(namedArg.Argument.Extent, error.id, error.msg);
                     }
                 }
             }
@@ -256,8 +256,8 @@ namespace System.Management.Automation.Language
             {
                 if (!IsValidAttributeArgument(posArg, constantValueVisitor))
                 {
-                    (string errorId, string errorMsg) = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
-                    _parser.ReportError(posArg.Extent, errorId, errorId);
+                    var error = GetNonConstantAttributeArgErrorExpr(constantValueVisitor);
+                    _parser.ReportError(posArg.Extent, error.id, error.msg);
                 }
             }
 
