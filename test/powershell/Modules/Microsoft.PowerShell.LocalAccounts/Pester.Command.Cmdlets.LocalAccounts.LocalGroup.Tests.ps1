@@ -27,11 +27,7 @@ function VerifyFailingTest
     $script:ErrorActionPreference = "Stop"
 
     try {
-        & $sb
-        throw "Expected FullyQualifiedErrorId: $expectedFqeid"
-    }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
+        {& $sb} | Should -Throw -ErrorId $expectedFqeid
     }
     finally {
         $script:ErrorActionPreference = $backupEAP
@@ -140,11 +136,8 @@ try {
             $desc = "D"*129
 
             try {
-                $shouldBeNull = New-LocalGroup -Name $name -Description $desc
-                throw "An error was expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewLocalGroupCommand"
+                {$shouldBeNull = New-LocalGroup -Name $name -Description $desc} |
+                    Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewLocalGroupCommand"
             }
             finally {
                 #clean up erroneous creation

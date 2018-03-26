@@ -44,11 +44,7 @@ function VerifyFailingTest
     $script:ErrorActionPreference = "Stop"
 
     try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
-    }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
+        {& $sb} | Should -Throw -ErrorId $expectedFqeid
     }
     finally {
         $script:ErrorActionPreference = $backupEAP

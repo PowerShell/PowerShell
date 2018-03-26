@@ -31,11 +31,7 @@ function VerifyFailingTest
     $script:ErrorActionPreference = "Stop"
 
     try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
-    }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
+        {& $sb} | Should -Throw -ErrorId $expectedFqeid
     }
     finally {
         $script:ErrorActionPreference = $backupEAP
@@ -1205,8 +1201,8 @@ try {
             catch {
                 # Nothing to do here
             }
-            $outError.Count | Should Be 2
-            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should Be "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
+            $outError | Should -HaveCount 2
+            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserGet1 2>&1
             $getResult.FullyQualifiedErrorId | Should -Match "UserNotFound"
@@ -1376,8 +1372,8 @@ try {
             Catch {
                 # do nothing
             }
-            $outError.Count | Should Be 2
-            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should Be "UserNotFound,Microsoft.PowerShell.Commands.EnableLocalUserCommand"
+            $outError | Should -HaveCount 2
+            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "UserNotFound,Microsoft.PowerShell.Commands.EnableLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserDisabled1 2>&1
             $getResult.Enabled | Should -BeTrue
@@ -1544,8 +1540,8 @@ try {
             Catch {
                 # Do nothing here
             }
-            $outError.Count | Should Be 2
-            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should Be "UserNotFound,Microsoft.PowerShell.Commands.DisableLocalUserCommand"
+            $outError | Should -HaveCount 2
+            $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "UserNotFound,Microsoft.PowerShell.Commands.DisableLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserEnabled1 2>&1
             $getResult.Enabled | Should -BeFalse
