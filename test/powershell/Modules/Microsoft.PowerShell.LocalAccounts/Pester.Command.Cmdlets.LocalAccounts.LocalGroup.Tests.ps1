@@ -328,13 +328,13 @@ try {
             if ($null -eq $result)
             {
                 # Force failing the test because an unexpected outcome occurred
-                $false | Should Be $true
+                $false | Should -BeTrue
             }
             else
             {
-                $result[0] -eq 1 | Should Be true
-                $result[1] -match "GroupNotFound" | Should Be true
-                $result[2] -match "TestGroupGet1" | Should Be true
+                $result[0] | Should -Be 1
+                $result[1] | Should -Match "GroupNotFound"
+                $result[2] | Should -match "TestGroupGet1"
             }
         }
 
@@ -358,7 +358,7 @@ try {
             $localGroupName = 'TestGroupGetNameThatDoesntExist'
             $result = (Get-LocalGroup $localGroupName*).Count
 
-            $result -eq 0 | Should Be true
+            $result | Should -Be 0
         }
     }
 
@@ -709,7 +709,7 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount + 1 | Should Be true
+            $initialCount | Should -Be ($finalCount + 1)
         }
     }
 
@@ -735,7 +735,7 @@ try {
                     VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
                     $finalCount = (Get-LocalGroup).Count
-                    $initialCount -eq $finalCount + 1 | Should Be true
+                    $initialCount | Should -Be ($finalCount + 1)
                 }
 
                 function VerifyArrayRemoval {
@@ -758,7 +758,7 @@ try {
                     VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
                     $finalCount = (Get-LocalGroup).Count
-                    $initialCount -eq $finalCount + 2 | Should Be $true
+                    $initialCount | Should -Be ($finalCount + 2)
                 }
             }
         }
@@ -859,7 +859,7 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.GetLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount + 1 | Should Be true
+            $initialCount | Should -Be ($finalCount + 1)
         }
 
         It "Errors on Remove-LocalGroup by invalid name" {
@@ -872,7 +872,7 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount | Should Be true
+            $initialCount | Should -Be $finalCount
         }
 
         It "Errors on Remove-LocalGroup by invalid SID" {
@@ -886,7 +886,7 @@ try {
             VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             $finalCount = (Get-LocalGroup).Count
-            $initialCount -eq $finalCount + 1 | Should Be $true
+            $initialCount | Should -Be ($finalCount + 1)
         }
 
         It "Can respond to -ErrorAction Stop" {
@@ -902,7 +902,7 @@ try {
 
             # Confirm that the expected errors were caught
             $errCount | Should -Be 2
-            $fqeid | Should Be "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
+            $fqeid | Should -BeExactly "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupCommand"
 
             # confirm that the first group was removed
             $sb = {

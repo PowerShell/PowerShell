@@ -213,7 +213,7 @@ try {
             $result.Enabled | Should -BeTrue
             $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should -BeExactly 'User'
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Can set AccountExpires to the past" {
@@ -225,7 +225,7 @@ try {
             $result.Enabled | Should -BeTrue
             $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should -BeExactly 'User'
-            $result.AccountExpires | Should Be ([DateTime]$expiration)
+            $result.AccountExpires | Should -Be ([DateTime]$expiration)
         }
 
         It "Errors on AccountExpires being set to invalid date" {
@@ -452,7 +452,7 @@ try {
             $sid = New-Object System.Security.Principal.SecurityIdentifier -ArgumentList LG
             $guestUser = Get-LocalUser -SID LG
 
-            $guestUser.SID | Should Be $sid.Value
+            $guestUser.SID | Should -Be $sid.Value
         }
 
         It "Can get users by wildcard" {
@@ -557,7 +557,7 @@ try {
             $result.Description | Should -BeExactly $Description
             $result.Enabled | Should -BeFalse
             $result.FullName | Should -BeExactly $FullName
-            $result.ObjectClass -eq "User" | Should be true
+            $result.ObjectClass | Should -BeExactly 'User'
             $result.UserMayChangePassword | Should -BeFalse
             $result.SID | Should -Not -BeNullOrEmpty
             $result.ObjectClass | Should -BeExactly 'User'
@@ -1031,7 +1031,7 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
 
             $finalCount = (Get-LocalUser).Count
-            $initialCount -eq $finalCount + 1 | Should Be $true
+            $initialCount | Should -Be ($finalCount + 1)
         }
     }
 
@@ -1057,7 +1057,7 @@ try {
                     VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
 
                     $finalCount = (Get-LocalUser).Count
-                    $initialCount -eq $finalCount + 1 | Should Be true
+                    $initialCount | Should -Be ($finalCount + 1)
                 }
 
                 function VerifyArrayRemoval {
@@ -1080,7 +1080,7 @@ try {
                     VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
 
                     $finalCount = (Get-LocalUser).Count
-                    $initialCount -eq $finalCount + 2 | Should Be $true
+                    $initialCount | Should -Be ($finalCount + 2)
                 }
             }
         }
@@ -1176,7 +1176,7 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $finalCount = (Get-LocalUser).Count
-            $initialCount -eq $finalCount | Should Be $true
+            $initialCount | Should -Be $finalCount
         }
 
         It "Errors on remove by invalid SID" {
@@ -1191,7 +1191,7 @@ try {
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $finalCount = (Get-LocalUser).Count
-            $initialCount -eq $finalCount | Should Be $true
+            $initialCount | Should -Be $finalCount
         }
 
         It "Can respond to -ErrorAction Stop" {
