@@ -2952,7 +2952,8 @@ namespace System.Management.Automation.Language
                         // This shouldn't happen - the system classes should always be good, but just in case,
                         // we'll catch the exception and report it as an error.
                         ReportError(configurationKeywordToken.Extent,
-                            "ParserError",
+                            nameof(ParserStrings.ParserError),
+                            ParserStrings.ParserError,
                             e.ToString());
                         return null;
                     }
@@ -3140,7 +3141,8 @@ namespace System.Management.Automation.Language
             {
                 // In theory this should never happen so if it does, we'll report the actual exception rather than introducing a new message
                 ReportError(configurationKeywordToken.Extent,
-                    "ParserError",
+                    nameof(ParserStrings.ParserError),
+                    ParserStrings.ParserError,
                     "ConfigurationStatementToken: " + e);
                 return null;
             }
@@ -7281,7 +7283,7 @@ namespace System.Management.Automation.Language
 
         private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
         {
-            Diagnostics.Assert(errorMsg.Equals(typeof(ParserStrings).GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic, null, typeof(string), new Type[0], null)?.GetValue(null, null)),
+            Diagnostics.Assert(String.Equals(errorMsg, typeof(ParserStrings).GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string, StringComparison.CurrentCulture),
                 "ErrorMsg must correspond the the ErrorId in ParserStrings");
 
             if (args != null && args.Any())
