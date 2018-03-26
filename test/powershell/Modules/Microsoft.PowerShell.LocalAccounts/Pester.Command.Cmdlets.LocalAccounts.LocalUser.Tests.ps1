@@ -437,7 +437,7 @@ try {
         It "Get-LocalUser gets all users"  {
             $result = Get-LocalUser
 
-            $result.Count -gt 2 | Should -BeTrue
+            $result.Count | Should -BeGreaterThan 2
         }
 
         It "Can get a specific user by SID" {
@@ -1020,7 +1020,7 @@ try {
 
         It "Can Remove-LocalUser with only name" {
             $initialCount = (Get-LocalUser).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $removeResult = Remove-LocalUser TestUserRemove1 2>&1
             $removeResult | Should -BeNullOrEmpty
@@ -1047,7 +1047,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalUser).Count
-                    $initialCount -gt 1 | Should -BeTrue
+                    $initialCount | Should -BeGreaterThan 1
 
                     & $removalAction
 
@@ -1065,7 +1065,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalUser).Count
-                    $initialCount -gt 1 | Should -BeTrue
+                    $initialCount | Should -BeGreaterThan 1
 
                     & $removalAction
 
@@ -1168,7 +1168,7 @@ try {
 
         It "Errors on remove by invalid name" {
             $initialCount =  (Get-LocalUser).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $sb = {
                 Remove-LocalUser TestUserRemove1NameThatDoesntExist
@@ -1183,7 +1183,7 @@ try {
             Remove-LocalUser -SID $user1SID
             # This test verifies that it cannot be removed a second time
             $initialCount =  (Get-LocalUser).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $sb = {
                 Remove-LocalUser -SID $user1SID

@@ -263,7 +263,7 @@ try {
         It "Can Get-LocalGroup of all groups"  {
             $result = Get-LocalGroup
 
-            $result.Count -gt 2 | Should -BeTrue
+            $result.Count | Should -BeGreaterThan 2
         }
 
         It "Can Get-LocalGroup of a specific group by SID" {
@@ -284,7 +284,7 @@ try {
         It "Can Get-LocalGroup by wildcard" {
             $result = Get-LocalGroup TestGroupGet*
 
-            $result.Count -eq 2 | Should -BeTrue
+            $result | Should -HaveCount 2
             $result.Name | Should -Contain 'TestGroupGet1'
             $result.Name | Should -Contain 'TestGroupGet2'
         }
@@ -698,7 +698,7 @@ try {
 
         It "Can Remove-LocalGroup by name" {
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $removeResult = Remove-LocalGroup TestGroupRemove1 2>&1
             $removeResult | Should -BeNullOrEmpty
@@ -725,7 +725,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalGroup).Count
-                    $initialCount -gt 1 | Should -BeTrue
+                    $initialCount | Should -BeGreaterThan 1
 
                     & $removalAction
 
@@ -743,7 +743,7 @@ try {
                         [scriptblock]$removalAction
                     )
                     $initialCount = (Get-LocalGroup).Count
-                    $initialCount -gt 1 | Should -BeTrue
+                    $initialCount | Should -BeGreaterThan 1
 
                     & $removalAction
 
@@ -845,7 +845,7 @@ try {
             New-LocalUser TestUserRemove1 -NoPassword | Out-Null
             Add-LocalGroupMember TestGroupRemove1 -Member TestUserRemove1 | Out-Null
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $removeResult = Remove-LocalGroup TestGroupRemove1 2>&1
             $removeResult | Should -BeNullOrEmpty
@@ -864,7 +864,7 @@ try {
 
         It "Errors on Remove-LocalGroup by invalid name" {
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $sb = {
                 Remove-LocalGroup TestGroupRemove1NameThatDoesntExist
@@ -877,7 +877,7 @@ try {
 
         It "Errors on Remove-LocalGroup by invalid SID" {
             $initialCount = (Get-LocalGroup).Count
-            $initialCount -gt 1 | Should -BeTrue
+            $initialCount | Should -BeGreaterThan 1
 
             $sb = {
                 Remove-LocalGroup -SID $group1SID
