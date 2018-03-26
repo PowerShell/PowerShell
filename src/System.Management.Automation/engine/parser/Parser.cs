@@ -7284,7 +7284,7 @@ namespace System.Management.Automation.Language
         private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
         {
             Diagnostics.Assert(String.Equals(errorMsg, typeof(ParserStrings).GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string, StringComparison.CurrentCulture),
-                "ErrorMsg must correspond the the ErrorId in ParserStrings");
+                String.Format("ErrorMsg \"{0}\" must correspond the the ErrorId \"{1}\" in ParserStrings", errorMsg, errorId));
 
             if (args != null && args.Any())
             {
