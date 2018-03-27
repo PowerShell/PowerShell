@@ -32,7 +32,6 @@ namespace System.Management.Automation.Tracing
 
         internal static void LogConsoleStartup()
         {
-            // Set ETW activity Id
             Guid activityId = EtwActivity.GetActivityId();
 
             if (activityId == Guid.Empty)

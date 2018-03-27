@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.using namespace System.Text
+# Licensed under the MIT License.
+using namespace System.Text
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
