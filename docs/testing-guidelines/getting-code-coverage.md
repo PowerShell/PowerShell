@@ -1,9 +1,10 @@
 Getting Code Coverage Analysis for PowerShell
 ===
 
-**Note: Code coverage is currently only supported on Windows, since we use OpenCover**
+**Note: Code coverage is currently only supported on Windows, since we use OpenCover.**
 
-The PowerShell code base is configured to build with code coverage support using [OpenCover](https://github.com/OpenCover/opencover). You can see the testing coverage of the current [`master`](https://github.com/PowerShell/PowerShell) branch build at any time at [codecov.io](https://codecov.io/gh/PowerShell/PowerShell).
+The PowerShell code base is configured to build with code coverage support using [OpenCover](https://github.com/OpenCover/opencover). You can see the testing coverage of the current [`master`](https://github.com/PowerShell/PowerShell)
+branch build at any time at [codecov.io](https://codecov.io/gh/PowerShell/PowerShell).
 
 To run test coverage analysis of PowerShell on your own branch/machine
 however, you will need to take the following steps (and be aware that running
@@ -32,6 +33,9 @@ PS> $psDir = Split-Path -Parent (Get-PSOutput)
 
 # Now ensure Pester is installed
 PS> Restore-PSPester
+
+# We also need to build the test executor
+PS> Publish-PSTestTools
 
 # Import the OpenCover module
 PS> Import-Module $PWD\test\tools\OpenCover
