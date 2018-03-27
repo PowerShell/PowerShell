@@ -1461,26 +1461,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
   </data>
-  <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
-    <value>Cannot process the #requires statement because it is not in the correct format.
-The #requires statement must be in one of the following formats:
- "#requires -shellid &lt;shellID&gt;"
- "#requires -version &lt;major.minor&gt;"
- "#requires -psedition &lt;edition&gt;"
- "#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
- "#requires -modules &lt;ModuleSpecification&gt;"
- "#requires -runasadministrator"</value>
-  </data>
-  <data name="ReadOnlyProperty" xml:space="preserve">
-    <value>"{0}" is a ReadOnly property.</value>
-  </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
-  </data>
-  <data name="InvalidPSSnapInName" xml:space="preserve">
-    <value>The format of the specified snap-in name was not valid.  PowerShell snap-in names can only contain alpha-numeric characters, dashes, underscores and periods. Correct the name and then try the operation again.</value>
-  </data>
-  <data name="ParameterAlreadyBound" xml:space="preserve">
-    <value>Cannot bind parameter because parameter '{1}' is specified more than once. To provide multiple values to parameters that can accept multiple values, use the array syntax. For example, "-parameter value1,value2,value3".</value>
   </data>
 </root>

@@ -1664,8 +1664,8 @@ namespace System.Management.Automation.Language
                     if (!string.Equals(commandName, "requires", StringComparison.OrdinalIgnoreCase))
                     {
                         ReportError(commandAst.Extent,
-                            nameof(ParserStrings.ScriptRequiresInvalidFormat),
-                            ParserStrings.ScriptRequiresInvalidFormat);
+                            nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
+                            DiscoveryExceptions.ScriptRequiresInvalidFormat);
                     }
 
                     var snapinSpecified = false;
@@ -1697,8 +1697,8 @@ namespace System.Management.Automation.Language
                         else
                         {
                             ReportError(commandAst.CommandElements[i].Extent,
-                                nameof(ParserStrings.ScriptRequiresInvalidFormat),
-                                ParserStrings.ScriptRequiresInvalidFormat);
+                                nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
+                                DiscoveryExceptions.ScriptRequiresInvalidFormat);
                         }
                     }
                     if (snapinName != null)
@@ -1788,8 +1788,8 @@ namespace System.Management.Automation.Language
                 if (requiredShellId != null)
                 {
                     ReportError(parameter.Extent,
-                        nameof(ParserStrings.ParameterAlreadyBound),
-                        ParserStrings.ParameterAlreadyBound,
+                        nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                        ParameterBinderStrings.ParameterAlreadyBound,
                         null,
                         shellIDToken);
                     return;
@@ -1817,8 +1817,8 @@ namespace System.Management.Automation.Language
                 if (snapinName != null)
                 {
                     ReportError(parameter.Extent,
-                        nameof(ParserStrings.ParameterAlreadyBound),
-                        ParserStrings.ParameterAlreadyBound,
+                        nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                        ParameterBinderStrings.ParameterAlreadyBound,
                         null,
                         PSSnapinToken);
                     return;
@@ -1826,8 +1826,8 @@ namespace System.Management.Automation.Language
                 if (!PSSnapInInfo.IsPSSnapinIdValid((string)argumentValue))
                 {
                     ReportError(argumentAst.Extent,
-                        nameof(ParserStrings.InvalidPSSnapInName),
-                        ParserStrings.InvalidPSSnapInName);
+                        nameof(MshSnapInCmdletResources.InvalidPSSnapInName),
+                        MshSnapInCmdletResources.InvalidPSSnapInName);
                     return;
                 }
 
@@ -1838,8 +1838,8 @@ namespace System.Management.Automation.Language
                 if (requiredEditions != null)
                 {
                     ReportError(parameter.Extent,
-                        nameof(ParserStrings.ParameterAlreadyBound),
-                        ParserStrings.ParameterAlreadyBound,
+                        nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                        ParameterBinderStrings.ParameterAlreadyBound,
                         null,
                         editionToken);
                     return;
@@ -1874,8 +1874,8 @@ namespace System.Management.Automation.Language
                     if (snapinVersion != null)
                     {
                         ReportError(parameter.Extent,
-                            nameof(ParserStrings.ParameterAlreadyBound),
-                            ParserStrings.ParameterAlreadyBound,
+                            nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                            ParameterBinderStrings.ParameterAlreadyBound,
                             null,
                             versionToken);
                         return;
@@ -1887,8 +1887,8 @@ namespace System.Management.Automation.Language
                     if (requiredVersion != null && !requiredVersion.Equals(version))
                     {
                         ReportError(parameter.Extent,
-                            nameof(ParserStrings.ParameterAlreadyBound),
-                            ParserStrings.ParameterAlreadyBound,
+                            nameof(ParameterBinderStrings.ParameterAlreadyBound),
+                            ParameterBinderStrings.ParameterAlreadyBound,
                             null,
                             versionToken);
                         return;
@@ -1944,8 +1944,8 @@ namespace System.Management.Automation.Language
             else
             {
                 ReportError(parameter.Extent,
-                    nameof(ParserStrings.ScriptRequiresInvalidFormat),
-                    ParserStrings.ScriptRequiresInvalidFormat);
+                    nameof(DiscoveryExceptions.ScriptRequiresInvalidFormat),
+                    DiscoveryExceptions.ScriptRequiresInvalidFormat);
             }
         }
 

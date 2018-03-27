@@ -7283,8 +7283,7 @@ namespace System.Management.Automation.Language
 
         private void SaveError(IScriptExtent extent, string errorId, string errorMsg, bool incompleteInput, params object[] args)
         {
-            Diagnostics.Assert(String.Equals(errorMsg, typeof(ParserStrings).GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string, StringComparison.CurrentCulture),
-                String.Format("ErrorMsg \"{0}\" must correspond the the ErrorId \"{1}\" in ParserStrings", errorMsg, errorId));
+            AssertErrorIdCorrespondsToMsgString(errorId, errorMsg);
 
             if (args != null && args.Any())
             {
@@ -7293,6 +7292,40 @@ namespace System.Management.Automation.Language
 
             ParseError errorToSave = new ParseError(extent, errorId, errorMsg, incompleteInput);
             SaveError(errorToSave);
+        }
+
+        /// <summary>
+        /// Assertion to ensure that .resx resource files are where all errors
+        /// saved by the parser are stored. Goes through the known resource types
+        /// and checks that the given error ID and message match some entry in one of them
+        /// </summary>
+        /// <param name="errorId">The error ID string (.resx key)</param>
+        /// <param name="errorMsg">The error message, which may be a template string (.resx value)</param>
+        [System.Diagnostics.Conditional("DEBUG")]
+        [System.Diagnostics.Conditional("ASSERTIONS_TRACE")]
+        private static void AssertErrorIdCorrespondsToMsgString(string errorId, string errorMsg)
+        {
+            Type[] resxTypes = new []
+            {
+                typeof(ParserStrings),
+                typeof(DiscoveryExceptions),
+                typeof(ExtendedTypeSystem),
+                typeof(MshSnapInCmdletResources),
+                typeof(ParameterBinderStrings)
+            };
+
+            bool msgCorrespondsToString = false;
+            foreach (Type resxType in resxTypes)
+            {
+                string resxErrorBody = resxType.GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string;
+                if (String.Equals(errorMsg, resxErrorBody))
+                {
+                    msgCorrespondsToString = true;
+                    break;
+                }
+            }
+
+            Diagnostics.Assert(msgCorrespondsToString, String.Format("Parser error ID \"{0}\" must correspond to the error message \"{1}\"", errorId, errorMsg));
         }
 
         private static object[] arrayOfOneArg

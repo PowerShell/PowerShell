@@ -210,8 +210,8 @@ namespace System.Management.Automation.Language
                             if (propertyInfo.GetSetMethod() == null)
                             {
                                 _parser.ReportError(namedArg.Extent,
-                                    nameof(ParserStrings.ReadOnlyProperty),
-                                    ParserStrings.ReadOnlyProperty,
+                                    nameof(ExtendedTypeSystem.ReadOnlyProperty),
+                                    ExtendedTypeSystem.ReadOnlyProperty,
                                     name);
                             }
 
@@ -222,8 +222,8 @@ namespace System.Management.Automation.Language
                         if (fieldInfo.IsInitOnly || fieldInfo.IsLiteral)
                         {
                             _parser.ReportError(namedArg.Extent,
-                                nameof(ParserStrings.ReadOnlyProperty),
-                                ParserStrings.ReadOnlyProperty,
+                                nameof(ExtendedTypeSystem.ReadOnlyProperty),
+                                ExtendedTypeSystem.ReadOnlyProperty,
                                 name);
                         }
                     }

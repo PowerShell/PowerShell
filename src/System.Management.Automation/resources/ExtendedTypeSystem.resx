@@ -228,6 +228,9 @@
   <data name="WriteOnlyProperty" xml:space="preserve">
     <value>Cannot get property value because "{0}" is a write-only property.</value>
   </data>
+  <data name="ReadOnlyProperty" xml:space="preserve">
+    <value>"{0}" is a ReadOnly property.</value>
+  </data>
   <data name="XmlNodeSetShouldBeAString" xml:space="preserve">
     <value>Cannot set "{0}" because only strings can be used as values to set XmlNode properties.</value>
   </data>

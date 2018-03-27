@@ -160,6 +160,16 @@ Check the spelling of the name, or if a path was included, verify that the path 
   <data name="DuplicateScriptName" xml:space="preserve">
     <value>A script named '{0}' already exists. Scripts must have unique names.</value>
   </data>
+  <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
+    <value>Cannot process the #requires statement because it is not in the correct format.
+The #requires statement must be in one of the following formats:
+ "#requires -shellid &lt;shellID&gt;"
+ "#requires -version &lt;major.minor&gt;"
+ "#requires -psedition &lt;edition&gt;"
+ "#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
+ "#requires -modules &lt;ModuleSpecification&gt;"
+ "#requires -runasadministrator"</value>
+  </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
     <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
   </data>
