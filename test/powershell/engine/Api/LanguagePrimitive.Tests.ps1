@@ -43,7 +43,7 @@ Describe "Language Primitive Tests" -Tags "CI" {
 
         [System.Management.Automation.LanguagePrimitives]::IsObjectEnumerable($dt) | Should -BeTrue
         $count = 0
-        [System.Management.Automation.LanguagePrimitives]::GetEnumerable($dt) | ForEach-Object { $cnt++ }
+        [System.Management.Automation.LanguagePrimitives]::GetEnumerable($dt) | ForEach-Object { $count++ }
         $count | Should -Be 2
     }
 }
