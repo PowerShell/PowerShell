@@ -339,4 +339,191 @@ Left Center Right
 			$output = $ps.Invoke()
 			$output.Replace("`n","").Replace("`r","") | Should -BeExactly $expected
 		}
+
+		It "Format-Table should correctly render headers that span multiple rows: <variation>" -TestCases @(
+			@{
+				variation = "4 row, 1 row, 2 row";
+				ps1xml = @"
+<Configuration>
+	<ViewDefinitions>
+		<View>
+			<Name>Test.Format</Name>
+			<ViewSelectedBy>
+				<TypeName>Test.Format</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>LongLongHeader</Label>
+						<Width>4</Width>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Header2</Label>
+						<Width>7</Width>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Header3</Label>
+						<Width>4</Width>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>First</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Second</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Third</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
+"@; expectedTable = @"
+
+Long Header2 Head
+Long         er3
+Head
+er
+---- ------- ----
+1    2       3
+
+
+
+"@ },
+			@{
+				variation = "4 row, 2 row, 1 row";
+				ps1xml = @"
+<Configuration>
+	<ViewDefinitions>
+		<View>
+			<Name>Test.Format</Name>
+			<ViewSelectedBy>
+				<TypeName>Test.Format</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>LongLongHeader</Label>
+						<Width>4</Width>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Header2</Label>
+						<Width>4</Width>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Header3</Label>
+						<Width>7</Width>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>First</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Second</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Third</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
+"@; expectedTable = @"
+
+Long Head Header3
+Long er2
+Head
+er
+---- ---- -------
+1    2    3
+
+
+
+"@ },
+			@{
+				variation = "1 row, 1 row, 3 row";
+				ps1xml = @"
+<Configuration>
+	<ViewDefinitions>
+		<View>
+		<Name>Test.Format</Name>
+		<ViewSelectedBy>
+			<TypeName>Test.Format</TypeName>
+		</ViewSelectedBy>
+		<TableControl>
+			<TableHeaders>
+				<TableColumnHeader>
+					<Label>Header1</Label>
+					<Width>7</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>Header2</Label>
+					<Width>7</Width>
+				</TableColumnHeader>
+				<TableColumnHeader>
+					<Label>LongHeader3</Label>
+					<Width>4</Width>
+				</TableColumnHeader>
+			</TableHeaders>
+			<TableRowEntries>
+				<TableRowEntry>
+					<TableColumnItems>
+						<TableColumnItem>
+							<PropertyName>First</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Second</PropertyName>
+						</TableColumnItem>
+						<TableColumnItem>
+							<PropertyName>Third</PropertyName>
+						</TableColumnItem>
+					</TableColumnItems>
+				</TableRowEntry>
+			</TableRowEntries>
+		</TableControl>
+		</View>
+	</ViewDefinitions>
+</Configuration>
+"@; expectedTable = @"
+
+Header1 Header2 Long
+                Head
+                er3
+------- ------- ----
+1       2       3
+
+
+
+"@ }
+		) {
+			param($ps1xml, $expectedTable)
+			$ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+			Set-Content -Path $ps1xmlPath -Value $ps1xml
+			# run in own runspace so not affect global sessionstate
+			$ps = [powershell]::Create()
+			$ps.AddScript( {
+				param($ps1xmlPath)
+				Update-FormatData -AppendPath $ps1xmlPath
+				$a = [PSCustomObject]@{First=1;Second=2;Third=3}
+				$a.PSObject.TypeNames.Insert(0,"Test.Format")
+				$a | Out-String
+			} ).AddArgument($ps1xmlPath) | Out-Null
+			$output = $ps.Invoke()
+
+			$ps.HadErrors | Should -BeFalse
+			$output.Replace("`r","").Replace(" ",".").Replace("`n","``") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","``")
+		}
 }
