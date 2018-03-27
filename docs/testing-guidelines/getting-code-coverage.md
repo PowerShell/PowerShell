@@ -1,22 +1,23 @@
-Getting Code Coverage Analysis for PowerShell
-===
+# Getting Code Coverage Analysis for PowerShell
 
 **Note: Code coverage is currently only supported on Windows, since we use OpenCover.**
 
-The PowerShell code base is configured to build with code coverage support using [OpenCover](https://github.com/OpenCover/opencover). You can see the testing coverage of the current [`master`](https://github.com/PowerShell/PowerShell)
+The PowerShell code base is configured to build with code coverage support using [OpenCover](https://github.com/OpenCover/opencover).
+
+You can see the testing coverage of the current [`master`](https://github.com/PowerShell/PowerShell)
 branch build at any time at [codecov.io](https://codecov.io/gh/PowerShell/PowerShell).
 
-To run test coverage analysis of PowerShell on your own branch/machine
-however, you will need to take the following steps (and be aware that running
+To run test coverage analysis of PowerShell on your own branch/machine,
+you will need to take the following steps (and be aware that running
 the tests under code coverage analysis can take as long as 8 hours).
 
-Running tests with code coverage analysis
----
+## Running tests with code coverage analysis
 
-**First**: Open PowerShell in an **Administrator** session. OpenCover
-needs Administrator privileges to work.
+**First**: Open PowerShell in an **elevated** session. OpenCover
+needs elevated privileges to work.
 
 Now, in PowerShell:
+
 ```powershell
 # Go to your PowerShell build directory root
 PS> Set-Location "C:\Path\to\powershell\build\dir"
@@ -53,14 +54,14 @@ PS> Invoke-OpenCover `
 >> -PowerShellExeDirectory $psDir
 ```
 
-Examining the code coverage data
----
+## Examining the code coverage data
 
 Once the code coverage test run is done, you'll want to examine the data:
 
 ```powershell
 # Collect the coverage data using Get-CodeCoverage from the OpenCover
-# module that was imported above
+# module that was imported above. This operation is generally expensive
+# to compute, so worth storing in a variable.
 PS> $coverageData = Get-CodeCoverage .\coverage.xml
 
 # Take a look at a summary of the results
@@ -96,8 +97,7 @@ Microsoft.WSMan.Runtime                   80.95  80.33
 Microsoft.PowerShell.Commands.Diagnostics 0      0
 ```
 
-Visualizing code coverage
----
+## Visualizing code coverage
 
 For a more detailed, graphical representation of the code coverage results,
 you can use the ReportGenerator package. This generates an HTML report of
