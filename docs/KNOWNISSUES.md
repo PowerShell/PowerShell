@@ -84,7 +84,7 @@ We are working to support UTF-8 without a BOM and potentially changing the encod
 There is no job-control support in PowerShell on Linux/macOS.
 The `fg` and `bg` commands are not available.
 
-For the time being, you can use [PowerShell jobs](https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/about/about_jobs) which do work across all platforms.
+For the time being, you can use [PowerShell jobs](https://msdn.microsoft.com/powershell/reference/5.1/microsoft.powershell.core/about/about_jobs) which do work across all platforms.
 
 ### Remoting Support
 
@@ -94,7 +94,7 @@ Currently, PowerShell Core supports PowerShell Remoting (PSRP) over WSMan with B
 The work for WSMan-based remoting is being done in the [psl-omi-provider](https://github.com/PowerShell/psl-omi-provider) repo.
 
 PowerShell Core also supports PowerShell Remoting (PSRP) over SSH on all platforms (Windows, macOS, and Linux).
-While this is not currently supported in production, you can learn more about setting this up [here](https://github.com/PowerShell/PowerShell/tree/master/demos/SSHRemoting).
+While this is not currently supported in production, you can learn more about setting this up [here](https://docs.microsoft.com/powershell/scripting/core-powershell/ssh-remoting-in-powershell-core).
 
 ### Just-Enough-Administration (JEA) Support
 

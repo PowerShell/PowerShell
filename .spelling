@@ -466,39 +466,6 @@ _script.ps1.
 rest.ps1
 #endregion
 
-#region demos/SSHRemoting/README.md Overrides
- - demos/SSHRemoting/README.md
-_config
-2kCbnhT2dUE6WCGgVJ8Hyfu1z2wE4lifaJXLO7QJy0Y
-com.openssh.sshd
-ComputerName
-ComputerType
-ConfigurationName
-Enter-PSSession
-HostName
-KeyFilePath
-KeyPath
-launchctl
-New-PSSession
-NoLogo
-NoProfile
-openssh-client
-openssh-server
-PasswordAuthentication
-PSCredential
-PSSessions
-PubkeyAuthentication
-RSAAuthentication
-ssh.exe
-sshd
-sshd.exe
-sshs
-TestUser
-UbuntuVM1
-UbuntuVM1s
-usr
-#endregion
-
 #region demos/SystemD/readme.md Overrides
  - demos/SystemD/readme.md
 Get-SystemDJournal
