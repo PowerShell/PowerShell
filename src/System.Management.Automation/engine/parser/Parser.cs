@@ -7295,9 +7295,8 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Assertion to ensure that .resx resource files are where all errors
-        /// saved by the parser are stored. Goes through the known resource types
-        /// and checks that the given error ID and message match some entry in one of them
+        /// Debug assertion to ensure that all errors saved by the parser come
+        /// from resource (.resx) files.
         /// </summary>
         /// <param name="errorId">The error ID string (.resx key)</param>
         /// <param name="errorMsg">The error message, which may be a template string (.resx value)</param>
@@ -7305,6 +7304,8 @@ namespace System.Management.Automation.Language
         [System.Diagnostics.Conditional("ASSERTIONS_TRACE")]
         private static void AssertErrorIdCorrespondsToMsgString(string errorId, string errorMsg)
         {
+            // These types are the ones known to contain
+            // strings used by the parser as errors
             Type[] resxTypes = new []
             {
                 typeof(ParserStrings),
@@ -7314,11 +7315,12 @@ namespace System.Management.Automation.Language
                 typeof(ParameterBinderStrings)
             };
 
+            // Go through each resource type and see if the errorId key is in it, and whether the value corresponds to the errorMsg
             bool msgCorrespondsToString = false;
             foreach (Type resxType in resxTypes)
             {
                 string resxErrorBody = resxType.GetProperty(errorId, BindingFlags.Static | BindingFlags.NonPublic)?.GetValue(null) as string;
-                if (String.Equals(errorMsg, resxErrorBody))
+                if (String.Equals(errorMsg, resxErrorBody, StringComparison.Ordinal))
                 {
                     msgCorrespondsToString = true;
                     break;
