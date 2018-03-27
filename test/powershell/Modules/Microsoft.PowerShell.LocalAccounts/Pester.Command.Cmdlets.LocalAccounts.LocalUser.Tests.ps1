@@ -489,8 +489,8 @@ try {
                 # Ignore the execption
             }
             $outErr | Should -HaveCount 1
-            $outErr[0].ErrorRecord.CategoryInfo.Reason | Should -Match "UserNotFound"
-            $outOut.Name | Should -Match "TestUserGet1"
+            $outErr[0].ErrorRecord.CategoryInfo.Reason | Should -MatchExactly "UserNotFound"
+            $outOut.Name | Should -MatchExactly "TestUserGet1"
         }
 
         It "Error on Name not being supplied an argument" {
@@ -1205,7 +1205,7 @@ try {
             $outError[0].ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "UserNotFound,Microsoft.PowerShell.Commands.RemoveLocalUserCommand"
 
             $getResult = Get-LocalUser TestUserGet1 2>&1
-            $getResult.FullyQualifiedErrorId | Should -Match "UserNotFound"
+            $getResult.FullyQualifiedErrorId | Should -MatchExactly "UserNotFound"
         }
     }
 

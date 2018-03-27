@@ -333,8 +333,8 @@ try {
             else
             {
                 $result[0] | Should -Be 1
-                $result[1] | Should -Match "GroupNotFound"
-                $result[2] | Should -match "TestGroupGet1"
+                $result[1] | Should -MatchExactly "GroupNotFound"
+                $result[2] | Should -MatchExactly "TestGroupGet1"
             }
         }
 
