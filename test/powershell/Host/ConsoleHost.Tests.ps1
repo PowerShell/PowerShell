@@ -672,7 +672,7 @@ Describe "Pwsh exe resources tests" -Tag CI {
             $fileVersion = $fileVersion.Split("-")[0]
         }
         $pwsh.VersionInfo.FileVersion | Should -BeExactly $fileVersion
-        $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId.Replace("v","")
+        "v" + $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
         $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
     }
 
