@@ -674,7 +674,6 @@ Describe "Pwsh exe resources tests" -Tag CI {
 
     It "Manifest contains compatibility section" -Skip:(!$IsWindows) {
         $osversion = [System.Environment]::OSVersion.Version
-        $osversionString = $psversiontable.os -replace "^Microsoft Windows (\d+\.\d+).*$",'$1'
-        "$($osversion.Major).$($osversion.Minor)" | Should -BeExactly $osversionString
+        $psversiontable.os | Should -Match "$($osversion.Major).$($osversion.Minor)"
     }
 }
