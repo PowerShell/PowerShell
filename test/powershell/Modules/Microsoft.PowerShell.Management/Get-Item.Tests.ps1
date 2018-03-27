@@ -141,9 +141,7 @@ Describe "Get-Item" -Tags "CI" {
 
             (get-item env:\testvar).Value | Should -BeExactly $expectedValue
         }
-
     }
-
 }
 
 Describe "Get-Item environment provider on Windows with accidental case-variant duplicates" -Tags "Scenario" {
