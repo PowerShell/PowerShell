@@ -24,14 +24,14 @@ function VerifyFailingTest
     )
 
     $backupEAP = $script:ErrorActionPreference
-    $script:ErrorActionPreference = "Stop"
-
-    try {
-        {& $sb} | Should -Throw -ErrorId $expectedFqeid
-    }
-    finally {
-        $script:ErrorActionPreference = $backupEAP
-    }
+    {
+        $script:ErrorActionPreference = "Stop"
+        try {
+            & $sb
+        } finally {
+             $script:ErrorActionPreference = $backupEAP
+        }
+    } | Should -Throw -ErrorId $expectedFqeid
 }
 
 try {
