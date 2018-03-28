@@ -124,9 +124,7 @@ namespace System.Management.Automation
                         }
                         else if (scriptCommandInfo != null &&
                                   (nestedModule.ExportedFunctions.ContainsKey(commandInfo.Name) ||
-                                    nestedModule.ExportedWorkflows.ContainsKey(commandInfo.Name) ||
-                                    (testWithoutPrefix && nestedModule.ExportedFunctions.ContainsKey(cmdNameWithoutPrefix)) ||
-                                    (testWithoutPrefix && nestedModule.ExportedWorkflows.ContainsKey(cmdNameWithoutPrefix))))
+                                    (testWithoutPrefix && nestedModule.ExportedFunctions.ContainsKey(cmdNameWithoutPrefix))))
                         {
                             nestedModulePath = nestedModule.Path;
                             break;
