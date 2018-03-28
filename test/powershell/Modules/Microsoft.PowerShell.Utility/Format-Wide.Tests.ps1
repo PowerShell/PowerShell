@@ -1,35 +1,39 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 Describe "Format-Wide" -Tags "CI" {
+	BeforeAll {
+		1..10 | ForEach-Object { New-Item -Path ("TestDrive:\Testdir{0:00}" -f $_) -ItemType Directory }
+		1..10 | ForEach-Object { New-Item -Path ("TestDrive:\TestFile{0:00}.txt" -f $_) -ItemType File }
+	}
 
     It "Should have the same output between the alias and the unaliased function" {
-        $nonaliased = Get-ChildItem | Format-Wide
-        $aliased    = Get-ChildItem | fw
+        $nonaliased = Get-ChildItem $TestDrive | Format-Wide
+        $aliased    = Get-ChildItem $TestDrive | fw
 
         $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should -Be 0
     }
 
     It "Should be able to specify the columns in output using the column switch" {
-        { Get-ChildItem | Format-Wide -Column 3 } | Should -Not -Throw
+        { Get-ChildItem $TestDrive | Format-Wide -Column 3 } | Should -Not -Throw
     }
 
     It "Should be able to use the autosize switch" {
-        { Get-ChildItem | Format-Wide -Autosize } | Should -Not -Throw
+        { Get-ChildItem $TestDrive | Format-Wide -Autosize } | Should -Not -Throw
 		# 'Format-Wide -AutoSize | Out-String' fails on PowerShell Core 6.0.1. (issue #6471)
 		# so we add a new test for that.
-        { Get-ChildItem | Format-Wide -Autosize | Out-String } | Should -Not -Throw
+        { Get-ChildItem $TestDrive | Format-Wide -Autosize | Out-String } | Should -Not -Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {
-        { Format-Wide -InputObject $(Get-ChildItem) } | Should -Not -Throw
+        { Format-Wide -InputObject $(Get-ChildItem $TestDrive) } | Should -Not -Throw
     }
 
     It "Should be able to use the property switch" {
-        { Format-Wide -InputObject $(Get-ChildItem) -Property Mode } | Should -Not -Throw
+        { Format-Wide -InputObject $(Get-ChildItem $TestDrive) -Property Mode } | Should -Not -Throw
     }
 
     It "Should throw an error when property switch and view switch are used together" {
-	{ Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu } |
+	{ Format-Wide -InputObject $(Get-ChildItem $TestDrive) -Property CreationTime -View aoeu } |
 	    Should -Throw -ErrorId "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
     }
 
@@ -39,7 +43,7 @@ Describe "Format-Wide" -Tags "CI" {
 }
 
 Describe "Format-Wide DRT basic functionality" -Tags "CI" {
-  It "Format-Wide with array should work" {
+	It "Format-Wide with array should work" {
 		$al = (0..255)
 		$info = @{}
 		$info.array = $al
@@ -79,7 +83,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$result | Should -Match "Line2"
 	}
 
-   It "Format-Wide with complex object for End-To-End should work" {
+    It "Format-Wide with complex object for End-To-End should work" {
 		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thu,Fri,Sat}"
 		$eto = New-Object MyDayOfWeek
 		$info = @{}
