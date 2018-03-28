@@ -11,7 +11,7 @@ Describe "ProviderIntrinsics Tests" -tags "CI" {
         $ExecutionContext.InvokeProvider.ChildItem.HasChild("$TESTDRIVE/TestDir") | Should -BeFalse
     }
     It 'If the path does not exist, HasChild throws an exception' {
-        {$ExecutionContext.InvokeProvider.ChildItem.HasChild("TESTDRIVE/ThisDirectoryDoesNotExist")} |
+        { $ExecutionContext.InvokeProvider.ChildItem.HasChild("TESTDRIVE/ThisDirectoryDoesNotExist") } |
             Should -Throw -ErrorId 'ItemNotFoundException'
     }
 }

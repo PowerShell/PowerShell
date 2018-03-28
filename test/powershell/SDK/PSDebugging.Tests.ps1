@@ -200,7 +200,7 @@ Describe "Runspace Debugging API tests" -tag CI {
         }
 
         It "PSStandaloneMonitorRunspaceInfo should throw when called with a null argument to the constructor" {
-            {[PSStandaloneMonitorRunspaceInfo]::new($null)} |
+            { [PSStandaloneMonitorRunspaceInfo]::new($null) } |
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
@@ -229,20 +229,20 @@ Describe "Runspace Debugging API tests" -tag CI {
         }
 
         It "DebuggerUtils StartMonitoringRunspace requires non-null debugger" {
-            {[DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo)} |
+            { [DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo) } |
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
         It "DebuggerUtils StartMonitoringRunspace requires non-null runspaceInfo" {
-            {[DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null)} |
+            { [DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null) } |
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
         It "DebuggerUtils EndMonitoringRunspace requires non-null debugger" {
-            {[DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo)} |
+            { [DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo) } |
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
         It "DebuggerUtils EndMonitoringRunspace requires non-null runspaceInfo" {
-            {[DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null)} |
+            { [DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null) } |
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
