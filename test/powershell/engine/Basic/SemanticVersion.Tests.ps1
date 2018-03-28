@@ -245,4 +245,10 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $des.ToString() | Should -Be $expectedResult
         }
     }
+
+    Context "Formatting" {
+        It "Should not throw when default format-table is used" {
+            { $PSVersionTable.PSVersion | Format-Table | Out-String } | Should -Not -Throw
+        }
+    }
 }
