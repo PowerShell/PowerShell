@@ -4,6 +4,9 @@
   <?define FileArchitecture = "$(env.FileArchitecture)" ?>
     <Fragment>
         <DirectoryRef Id="$(var.ProductDirectoryName)">
+            <Component Id="cmp3CC027D3F160412C9F0044EBED3115DD" Guid="{8D7CAA67-8F28-422C-85FB-BDE04902E64F}">
+                <File Id="filFD2EF6BC74AF459D1BB52CA1E8C6E33B" KeyPath="yes" Source="$(env.ProductSourcePath)\NJsonSchema.dll" />
+            </Component>
             <Component Id="cmp3B130879A26D2E954251BB81E8948069" Guid="{CD268615-4603-4A5F-B126-340ADF2EDDD5}">
                 <File Id="filAACDEEE28FEA076C73D082A0AD21B8E0" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.CSharp.dll" />
             </Component>
@@ -1818,6 +1821,7 @@
     </Fragment>
     <Fragment>
         <ComponentGroup Id="$(var.ProductDirectoryName)">
+            <ComponentRef Id="cmp3CC027D3F160412C9F0044EBED3115DD" />
             <ComponentRef Id="cmp3B130879A26D2E954251BB81E8948069" />
             <ComponentRef Id="cmp02ABBE4A3EDBEBFD05DC17A009A2B79D" />
             <ComponentRef Id="cmpAA10498DF244C013CB5043C62E3AA83A" />

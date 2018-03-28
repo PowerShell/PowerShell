@@ -616,7 +616,8 @@ Fix steps:
 
         Start-NativeExecution { & "~/.rcedit/rcedit-x64.exe" $pwshPath --set-icon "$PSScriptRoot\assets\Powershell_black.ico" `
             --set-file-version $fileVersion --set-product-version $ReleaseVersion --set-version-string "ProductName" "PowerShell Core 6" `
-            --set-requested-execution-level "asInvoker" --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." } | Write-Verbose
+            --set-version-string "LegalCopyright" "(C) Microsoft Corporation.  All Rights Reserved." `
+            --application-manifest "$PSScriptRoot\assets\pwsh.manifest" } | Write-Verbose
     }
 
     # download modules from powershell gallery.
@@ -628,6 +629,41 @@ Fix steps:
     # Restore the Pester module
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+    }
+}
+
+function Restore-PSPackage
+{
+    param(
+        [ValidateNotNullOrEmpty()]
+        [Parameter()]
+        [string[]] $ProjectDirs,
+
+        [ValidateNotNullOrEmpty()]
+        [Parameter()]
+        $Options = (Get-PSOptions -DefaultToNew),
+
+        [switch] $Force
+    )
+
+    if (-not $ProjectDirs)
+    {
+        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
+    }
+
+    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
+
+        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
+        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
+            $RestoreArguments += "detailed"
+        } else {
+            $RestoreArguments += "quiet"
+        }
+
+        $ProjectDirs | ForEach-Object {
+            Write-Log "Run dotnet restore $_ $RestoreArguments"
+            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
+        }
     }
 }
 

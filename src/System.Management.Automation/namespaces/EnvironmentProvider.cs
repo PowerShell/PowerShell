@@ -198,15 +198,29 @@ namespace Microsoft.PowerShell.Commands
             IDictionary environmentTable = Environment.GetEnvironmentVariables();
             foreach (DictionaryEntry entry in environmentTable)
             {
-                // Windows only: duplicate key (variable name that differs only in case)
-                // NOTE: Even though this shouldn't happen, it can, e.g. when npm
-                //       creates duplicate environment variables that differ only in case -
-                //       see https://github.com/PowerShell/PowerShell/issues/6305.
-                //       However, because retrieval *by name* later is invariably
-                //       case-Insensitive, in effect only a *single* variable exists.
-                //       We simply ask Environment.GetEnvironmentVariable() which value is
-                //       the effective one, and use that.
-                providerTable.TryAdd((string)entry.Key, entry);
+                if (!providerTable.TryAdd((string)entry.Key, entry))
+                {   // Windows only: duplicate key (variable name that differs only in case)
+                    // NOTE: Even though this shouldn't happen, it can, e.g. when npm
+                    //       creates duplicate environment variables that differ only in case -
+                    //       see https://github.com/PowerShell/PowerShell/issues/6305.
+                    //       However, because retrieval *by name* later is invariably
+                    //       case-INsensitive, in effect only a *single* variable exists.
+                    //       We simply ask Environment.GetEnvironmentVariable() for the effective value 
+                    //       and use that as the only entry, because for a given key 'foo' (and all its case variations),
+                    //       that is guaranteed to match what $env:FOO and [environment]::GetEnvironmentVariable('foo') return. 
+                    //       (If, by contrast, we just used `entry` as-is every time a duplicate is encountered,
+                    //        it could - intermittently - represent a value *other* than the effective one.)
+                    string effectiveValue = Environment.GetEnvironmentVariable((string)entry.Key);
+                    if (((string)entry.Value).Equals(effectiveValue, StringComparison.Ordinal)) { // We've found the effective definition.
+                        // Note: We *recreate* the entry so that the specific name casing of the
+                        //       effective definition is also reflected. However, if the case variants
+                        //       define the same value, it is unspecified which name variant is reflected
+                        //       in Get-Item env: output; given the always case-insensitive nature of the retrieval, 
+                        //       that shouldn't matter.
+                        providerTable.Remove((string)entry.Key);
+                        providerTable.Add((string)entry.Key, entry);
+                    }
+                }
             }
 
             return providerTable;

@@ -813,6 +813,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "CaseSensitiveNotInSet")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "IsSet")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "IsNotSet")]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Not")]
         [ValidateNotNullOrEmpty]
         public string Property
         {
@@ -1199,6 +1200,16 @@ namespace Microsoft.PowerShell.Commands
             get { return _binaryOperator == TokenKind.IsNot; }
         }
 
+        /// <summary>
+        /// Binary operator -Not.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Not")]
+        public SwitchParameter Not
+        {
+            set { _binaryOperator = TokenKind.Not; }
+            get { return _binaryOperator == TokenKind.Not; }
+        }
+
         #endregion binary operator parameters
 
         private readonly CallSite<Func<CallSite, object, bool>> _toBoolSite =
@@ -1209,6 +1220,16 @@ namespace Microsoft.PowerShell.Commands
         {
             var site = CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(expressionType, ignoreCase));
             return (x, y) => site.Target.Invoke(site, x, y);
+        }
+
+        private static Func<object, object, object> GetCallSiteDelegateBoolean(ExpressionType expressionType, bool ignoreCase)
+        {
+            // flip 'lval' and 'rval' in the scenario '... | Where-Object property' so as to make it
+            // equivalent to '... | Where-Object {$true -eq property}'. Because we want the property to
+            // be compared under the bool context. So that '"string" | Where-Object Length' would behave
+            // just like '"string" | Where-Object {$_.Length}'.
+            var site = CallSite<Func<CallSite, object, object, object>>.Create(binder: PSBinaryOperationBinder.Get(expressionType, ignoreCase));
+            return (x, y) => site.Target.Invoke(site, y, x);
         }
 
         private static Tuple<CallSite<Func<CallSite, object, IEnumerator>>, CallSite<Func<CallSite, object, object, object>>> GetContainsCallSites(bool ignoreCase)
@@ -1261,12 +1282,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // flip 'lval' and 'rval' in the scenario '... | Where-Object property' so as to make it
-                        // equivalent to '... | Where-Object {$true -eq property}'. Because we want the property to
-                        // be compared under the bool context. So that '"string" | Where-Object Length' would behave
-                        // just like '"string" | Where-Object {$_.Length}'.
-                        var site = CallSite<Func<CallSite, object, object, object>>.Create(PSBinaryOperationBinder.Get(ExpressionType.Equal, true));
-                        _operationDelegate = (x, y) => site.Target.Invoke(site, y, x);
+                        _operationDelegate = GetCallSiteDelegateBoolean(ExpressionType.Equal, ignoreCase: true);
                     }
                     break;
                 case TokenKind.Ceq:
@@ -1337,6 +1353,9 @@ namespace Microsoft.PowerShell.Commands
                     CheckLanguageMode();
                     _operationDelegate =
                         (lval, rval) => ParserOps.MatchOperator(Context, PositionUtilities.EmptyExtent, lval, rval, notMatch: true, ignoreCase: false);
+                    break;
+                case TokenKind.Not:
+                    _operationDelegate = GetCallSiteDelegateBoolean(ExpressionType.NotEqual, ignoreCase: true);
                     break;
                 // the second to last parameter in ContainsOperator has flipped semantics compared to others.
                 // "true" means "contains" while "false" means "notcontains"
@@ -1463,7 +1482,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Both -Property and -Value need to be specified if the user specifies the binary operation
-                if (_valueNotSpecified && (_binaryOperator != TokenKind.Ieq || !_forceBooleanEvaluation))
+                if (_valueNotSpecified && ((_binaryOperator != TokenKind.Ieq && _binaryOperator != TokenKind.Not) || !_forceBooleanEvaluation))
                 {
                     // The binary operation is specified explicitly by the user and the -Value parameter is
                     // not specified

@@ -143,3 +143,29 @@ Describe "Get-Item" -Tags "CI" {
         }
     }
 }
+
+Describe "Get-Item environment provider on Windows with accidental case-variant duplicates" -Tags "Scenario" {
+    BeforeAll {
+        $env:testVar = 'a' # Note: Even though PSScriptAnalyzer can't detect it, this variable *is* used below, namely via Node.js.
+    }
+    AfterAll {
+        $env:testVar = $null
+    }
+    It "Reports the effective value among accidental case-variant duplicates on Windows" -skip:$skipNotWindows {
+        if (-not (Get-Command -ErrorAction Ignore node.exe)) {
+            Write-Warning "Test skipped, because prerequisite Node.js is not installed."
+        } else {
+            $valDirect, $valGetItem, $unused = node.exe -pe @"
+                env = {}
+                env.testVar = process.env.testVar // include the original case variant with its original value.
+                env.TESTVAR = 'b' // redefine with a case variant name and different value
+                // Note: Which value will win is not deterministic(!); what matters, however, is that both
+                //       $env:testvar and Get-Item env:testvar report the same value.
+                //       The nondeterministic behavior makes it hard to prove that the values are *always* the
+                //       same, however.
+                require('child_process').execSync(\"\\\"$($PSHOME -replace '\\', '/')/pwsh.exe\\\" -noprofile -command `$env:testvar, (Get-Item env:testvar).Value\", { env: env }).toString()
+"@
+            $valGetItem | Should -BeExactly $valDirect
+        }
+    }
+}

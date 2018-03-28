@@ -78,6 +78,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.7.0" />
+    <PackageReference Include="NJsonSchema" Version="9.9.10" />
   </ItemGroup>
 
 </Project>
