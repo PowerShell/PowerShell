@@ -15,7 +15,8 @@ Describe "Format-Wide" -Tags "CI" {
 
     It "Should be able to use the autosize switch" {
         { Get-ChildItem | Format-Wide -Autosize } | Should -Not -Throw
-        # Test for #6471
+		# 'Format-Wide -AutoSize | Out-String' fails on PowerShell Core 6.0.1. (issue #6471)
+		# so we add a new test for that.
         { Get-ChildItem | Format-Wide -Autosize | Out-String } | Should -Not -Throw
     }
 
