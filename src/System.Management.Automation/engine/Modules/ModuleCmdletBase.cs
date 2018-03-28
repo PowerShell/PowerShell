@@ -1514,12 +1514,35 @@ namespace Microsoft.PowerShell.Commands
 
             string actualRootModule = moduleToProcess ?? rootModule;
 
+            // If the root module is a workflow module, the 'actualRootModule' is nulled out.
+            // We need to save this name so that we can assign this to the RootModule property of ModuleInfo.
+            string savedActualRootModule = actualRootModule;
+
             if (string.Equals(System.IO.Path.GetExtension(actualRootModule),
                 StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                throw PSTraceSource.NewNotSupportedException(
-                    Modules.WorkflowModuleNotSupportedInPowerShellCore,
-                    ModuleIntrinsics.GetModuleName(moduleManifestPath));
+                if (WildcardPattern.ContainsWildcardCharacters(actualRootModule))
+                {
+                    PSInvalidOperationException invalidOperation = PSTraceSource.NewInvalidOperationException(
+                        Modules.WildCardNotAllowedInModuleToProcessAndInNestedModules,
+                        moduleManifestPath);
+                    invalidOperation.SetErrorId("Modules_WildCardNotAllowedInModuleToProcessAndInNestedModules");
+                    throw invalidOperation;
+                }
+
+                if (writingErrors)
+                {
+                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, actualRootModule);
+                    WriteError(new ErrorRecord(
+                                   new NotSupportedException(message),
+                                   "Modules_WorkflowModuleNotSupported",
+                                   ErrorCategory.PermissionDenied, null));
+                }
+
+                // Null out 'actualRootModule' so don't attempt to process the file like a non-workflow module later.
+                actualRootModule = null;
+                containedErrors = true;
+                if (bailOnFirstError) { return null; }
             }
 
             // extract defaultCommandPrefix from the manifest
@@ -2030,9 +2053,17 @@ namespace Microsoft.PowerShell.Commands
                     if (string.Equals(System.IO.Path.GetExtension(s.Name),
                         StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
                     {
-                        throw PSTraceSource.NewNotSupportedException(
-                            Modules.WorkflowModuleNotSupportedInPowerShellCore,
-                            ModuleIntrinsics.GetModuleName(moduleManifestPath));
+                        if (writingErrors)
+                        {
+                            message = StringUtil.Format(Modules.WorkflowModuleNotSupported, s.Name);
+                            WriteError(new ErrorRecord(
+                                           new NotSupportedException(message),
+                                           "Modules_WorkflowModuleNotSupported",
+                                           ErrorCategory.PermissionDenied, null));
+                        }
+
+                        containedErrors = true;
+                        if (bailOnFirstError) { return null; }
                     }
                     else
                     {
@@ -2465,8 +2496,8 @@ namespace Microsoft.PowerShell.Commands
                     manifestInfo.AddScript(s);
                 }
             }
-            manifestInfo.RootModule = actualRootModule;
-            manifestInfo.RootModuleForManifest = actualRootModule;
+            manifestInfo.RootModule = savedActualRootModule;
+            manifestInfo.RootModuleForManifest = savedActualRootModule;
             if (manifestGuid != null)
             {
                 manifestInfo.SetGuid((Guid)manifestGuid);
@@ -5414,11 +5445,8 @@ namespace Microsoft.PowerShell.Commands
                                 }
 
                                 // Add it to the all module tables
-                                if (importingModule)
-                                {
-                                    ImportModuleMembers(module, prefix, options);
-                                    AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
-                                }
+                                ImportModuleMembers(module, prefix, options);
+                                AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
 
                                 found = true;
                                 if (BaseAsCustomObject)
@@ -5611,12 +5639,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                else if (ext.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    throw PSTraceSource.NewNotSupportedException(
-                            Modules.WorkflowModuleNotSupportedInPowerShellCore,
-                            ModuleIntrinsics.GetModuleName(fileName));
-                }
                 else if (ext.Equals(StringLiterals.PowerShellCmdletizationFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     found = true;
@@ -5694,6 +5716,15 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(e.ErrorRecord);
                         }
                     }
+                }
+                else if (ext.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    found = true;
+                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, fileName);
+                    WriteError(new ErrorRecord(
+                                   new NotSupportedException(message),
+                                   "Modules_WorkflowModuleNotSupported",
+                                   ErrorCategory.PermissionDenied, null));
                 }
                 else
                 {

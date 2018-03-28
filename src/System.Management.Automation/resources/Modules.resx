@@ -597,7 +597,7 @@
   <data name="ModuleNotFoundForGetModule" xml:space="preserve">
     <value>The specified module '{0}' was not found. Update the Name parameter to point to a valid path, and then try again. </value>
   </data>
-  <data name="WorkflowModuleNotSupportedInPowerShellCore" xml:space="preserve">
+  <data name="WorkflowModuleNotSupported" xml:space="preserve">
     <value>Cannot load the workflow module '{0}'. Workflow is not supported in PowerShell Core.</value>
   </data>
   <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
