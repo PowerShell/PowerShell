@@ -2,10 +2,10 @@
 
 **Note: Code coverage is currently only supported on Windows, since we use OpenCover.**
 
-The PowerShell code base is configured to build with code coverage support using [OpenCover](https://github.com/OpenCover/opencover).
+The PowerShell code base is configured to build with code coverage support using [OpenCover].
 
-You can see the testing coverage of the current [`master`](https://github.com/PowerShell/PowerShell)
-branch build at any time at [codecov.io](https://codecov.io/gh/PowerShell/PowerShell).
+You can see the testing coverage of the current [`master`]
+branch build at any time at [codecov.io].
 
 To run test coverage analysis of PowerShell on your own branch/machine,
 you will need to take the following steps (and be aware that running
@@ -61,7 +61,7 @@ Once the code coverage test run is done, you'll want to examine the data:
 ```powershell
 # Collect the coverage data using Get-CodeCoverage from the OpenCover
 # module that was imported above. This operation is generally expensive
-# to compute, so worth storing in a variable.
+# to compute, so worth storing in a variable
 PS> $coverageData = Get-CodeCoverage .\coverage.xml
 
 # Take a look at a summary of the results
@@ -129,3 +129,7 @@ This should open a screen in the browser like this:
 The main report, which is below the summary and risk hotspots, has
 a filter functionality as well (when "Enable Filtering" is clicked on):
 ![Coverage report with filter on](Images/CoverageReportFilter.png)
+
+[OpenCover]: https://github.com/OpenCover/opencover
+[codecov.io]: https://codecov.io
+[`master`]: https://github.com/PowerShell/PowerShell
