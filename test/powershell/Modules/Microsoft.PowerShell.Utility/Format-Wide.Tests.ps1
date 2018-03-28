@@ -7,13 +7,6 @@ Describe "Format-Wide" -Tags "CI" {
         $pathList = Get-ChildItem $TestDrive
     }
 
-    It "Should have the same output between the alias and the unaliased function" {
-        $nonaliased = $pathList | Format-Wide
-        $aliased = $pathList | fw
-
-        $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should -Be 0
-    }
-
     It "Should be able to specify the columns in output using the column switch" {
         { $pathList | Format-Wide -Column 3 } | Should -Not -Throw
     }
