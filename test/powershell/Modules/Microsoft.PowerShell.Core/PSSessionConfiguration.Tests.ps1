@@ -841,7 +841,9 @@ namespace PowershellTestConfigNamespace
 
     Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
         BeforeAll {
-            Enable-PSRemoting
+            if ($IsNotSkipped) {
+                Enable-PSRemoting
+            }
         }
 
         It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
