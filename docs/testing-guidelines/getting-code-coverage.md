@@ -4,17 +4,15 @@
 
 The PowerShell code base is configured to build with code coverage support using [OpenCover].
 
-You can see the testing coverage of the current [`master`]
-branch build at any time at [codecov.io].
+You can see the testing coverage of the current [`master`] branch build at any time at [codecov.io].
 
 To run test coverage analysis of PowerShell on your own branch/machine,
-you will need to take the following steps (and be aware that running
-the tests under code coverage analysis can take as long as 8 hours).
+you will need to take the following steps
+(and be aware that running the code coverage analysis can take as long as 8 hours).
 
 ## Running tests with code coverage analysis
 
-**First**: Open PowerShell in an **elevated** session. OpenCover
-needs elevated privileges to work.
+**First**: Open PowerShell in an **elevated** session. OpenCover needs elevated privileges to work.
 
 Now, in PowerShell:
 
@@ -100,9 +98,10 @@ Microsoft.PowerShell.Commands.Diagnostics 0      0
 ## Visualizing code coverage
 
 For a more detailed, graphical representation of the code coverage results,
-you can use the ReportGenerator package. This generates an HTML report of
-the coverage from the XML file and will provide much more detail about the
-coverage analysis. The package is available [on NuGet](https://www.nuget.org/packages/ReportGenerator/),
+you can use the ReportGenerator package.
+This generates an HTML report of the coverage from the XML file
+and will provide much more detail about the coverage analysis.
+The package is available on [NuGet],
 and you can install and run it as follows:
 
 ```powershell
@@ -133,3 +132,4 @@ a filter functionality as well (when "Enable Filtering" is clicked on):
 [OpenCover]: https://github.com/OpenCover/opencover
 [codecov.io]: https://codecov.io
 [`master`]: https://github.com/PowerShell/PowerShell
+[NuGet]: https://nuget.org/packages/ReportGenerator
