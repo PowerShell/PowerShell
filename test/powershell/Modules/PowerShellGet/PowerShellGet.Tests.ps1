@@ -131,7 +131,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
         Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope CurrentUser
         $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
 
-        $installedModuleInfo | Should -Not-BeNullOrEmpty
+        $installedModuleInfo | Should -Not -BeNullOrEmpty
         $installedModuleInfo.Name | Should -Be $ContosoServer
         $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
