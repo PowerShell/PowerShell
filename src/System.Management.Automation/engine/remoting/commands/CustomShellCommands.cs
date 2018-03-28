@@ -4895,10 +4895,6 @@ param(
             # first try to enable all the sessions
             Enable-PSSessionConfiguration @PSBoundParameters
 
-            # Create the default PSSession configuration, not tied to any specific PowerShell version.
-            $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(""."")
-            Register-Endpoint (""PowerShell."" + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos))
-
             #
             # This cmdlet will make sure default powershell end points exist upon successful completion.
             #
@@ -4925,6 +4921,10 @@ param(
             {{
                 Register-Endpoint {0}
             }}
+
+            # Create the default PSSession configuration, not tied to any specific PowerShell version.
+            $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(""."")
+            Register-Endpoint (""PowerShell."" + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos))
 
             # PowerShell Workflow and WOW are not supported for PowerShell Core
             if (![System.Management.Automation.Platform]::IsCoreCLR)
