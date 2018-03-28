@@ -129,7 +129,7 @@ try
                     $Result = Get-PSSessionConfiguration
 
                     $Result.Name -contains $endpointName | Should -BeTrue
-                    $Result.PSVersion | Should -BeExactly $expectedPSVersion
+                    $Result.PSVersion -contains $expectedPSVersion | Should -BeTrue
                 }
 
                 It "Get-PSSessionConfiguration with Name parameter" {
@@ -147,7 +147,7 @@ try
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
                     $Result.Name -contains $endpointName | Should -BeTrue
-                    $Result.PSVersion | Should -BeExactly $expectedPSVersion
+                    $Result.PSVersion -contains $expectedPSVersion | Should -BeTrue
                 }
 
                 It "Get-PSSessionConfiguration -Name with Non-Existent session configuration" {
