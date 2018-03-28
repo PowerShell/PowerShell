@@ -667,11 +667,7 @@ Describe "Console host api tests" -Tag CI {
 Describe "Pwsh exe resources tests" -Tag CI {
     It "Resource strings are embedded in the executable" -Skip:(!$IsWindows) {
         $pwsh = Get-Item -Path "$PSHOME\pwsh.exe"
-        $fileVersion = $PSVersionTable.PSVersion.ToString()
-        if ($fileVersion.Contains("-")) {
-            $fileVersion = $fileVersion.Split("-")[0]
-        }
-        $pwsh.VersionInfo.FileVersion | Should -BeExactly $fileVersion
+        $pwsh.VersionInfo.FileVersion | Should -BeExactly $PSVersionTable.PSVersion.ToString().Split("-")[0]
         "v" + $pwsh.VersionInfo.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId
         $pwsh.VersionInfo.ProductName | Should -BeExactly "PowerShell Core 6"
     }
