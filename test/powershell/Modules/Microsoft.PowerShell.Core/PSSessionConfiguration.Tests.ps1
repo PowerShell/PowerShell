@@ -838,6 +838,25 @@ namespace PowershellTestConfigNamespace
             $result | Should -BeTrue
         }
     }
+
+    Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
+        BeforeAll {
+            Enable-PSRemoting
+        }
+
+        It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
+            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId
+            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+            $matchedEndpoint | Should -Not -BeNullOrEmpty
+        }
+
+        It "Enable-PSSession Cmdlet creates a default PSSession configuration untied to a specific PowerShell version." {
+            $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(".")
+            $endpointName = "PowerShell." + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos)
+            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+            $matchedEndpoint | Should -Not -BeNullOrEmpty
+        }
+    }
 }
 finally
 {
