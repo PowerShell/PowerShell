@@ -743,6 +743,27 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _formattingHint = hint;
         }
 
+        static private int TryGetColumnsOnTheScreen(int columnNumber)
+        {
+            // Tables and Wides need to use spaces for padding to maintain table look even if console window is resized.
+            // For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
+            // If we detect that int.MaxValue is used, first we try to get the current console window width.
+            // However, if we can't read that (for example, implicit remoting has no console window), we default
+            // to something reasonable: 120 columns.
+            if (columnNumber == int.MaxValue)
+            {
+                try
+                {
+                    return Console.WindowWidth;
+                }
+                catch
+                {
+                    return 120;
+                }
+            }
+            return columnNumber;
+        }
+
         /// <summary>
         /// base class for all the formatting hints
         /// </summary>
@@ -910,23 +931,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     columnWidthsHint = tableHint.columnWidths;
                 }
 
-                int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
-                // Tables need to use spaces for padding to maintain table look even if console window is resized.
-                // For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
-                // If we detect that int.MaxValue is used, first we try to get the current console window width.
-                // However, if we can't read that (for example, implicit remoting has no console window), we default
-                // to something reasonable: 120 columns.
-                if (columnsOnTheScreen == int.MaxValue)
-                {
-                    try
-                    {
-                        columnsOnTheScreen = Console.WindowWidth;
-                    }
-                    catch
-                    {
-                        columnsOnTheScreen = 120;
-                    }
-                }
+                int columnsOnTheScreen = TryGetColumnsOnTheScreen(this.InnerCommand._lo.ColumnNumber);
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)
@@ -1132,18 +1137,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // get the header info and the view hint
                 WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint() as WideFormattingHint;
 
-                int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
-                if (columnsOnTheScreen == int.MaxValue)
-                {
-                    try
-                    {
-                        columnsOnTheScreen = Console.WindowWidth;
-                    }
-                    catch
-                    {
-                        columnsOnTheScreen = 120;
-                    }
-                }
+                int columnsOnTheScreen = TryGetColumnsOnTheScreen(this.InnerCommand._lo.ColumnNumber);
 
                 // give a preference to the hint, if there
                 if (hint != null && hint.maxWidth > 0)
