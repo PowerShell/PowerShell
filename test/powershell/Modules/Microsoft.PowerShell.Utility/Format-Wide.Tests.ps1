@@ -2,38 +2,37 @@
 # Licensed under the MIT License.
 Describe "Format-Wide" -Tags "CI" {
     BeforeAll {
-        1..10 | ForEach-Object { New-Item -Path ("TestDrive:\Testdir{0:00}" -f $_) -ItemType Directory }
-        1..10 | ForEach-Object { New-Item -Path ("TestDrive:\TestFile{0:00}.txt" -f $_) -ItemType File }
+        1..2 | ForEach-Object { New-Item -Path ("TestDrive:\Testdir{0:00}" -f $_) -ItemType Directory }
+        1..2 | ForEach-Object { New-Item -Path ("TestDrive:\TestFile{0:00}.txt" -f $_) -ItemType File }
+        $pathList = Get-ChildItem $TestDrive
     }
 
     It "Should have the same output between the alias and the unaliased function" {
-        $nonaliased = Get-ChildItem $TestDrive | Format-Wide
-        $aliased = Get-ChildItem $TestDrive | fw
+        $nonaliased = $pathList | Format-Wide
+        $aliased = $pathList | fw
 
         $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should -Be 0
     }
 
     It "Should be able to specify the columns in output using the column switch" {
-        { Get-ChildItem $TestDrive | Format-Wide -Column 3 } | Should -Not -Throw
+        { $pathList | Format-Wide -Column 3 } | Should -Not -Throw
     }
 
     It "Should be able to use the autosize switch" {
-        { Get-ChildItem $TestDrive | Format-Wide -Autosize } | Should -Not -Throw
-        # 'Format-Wide -AutoSize | Out-String' fails on PowerShell Core 6.0.1. (issue #6471)
-        # so we add a new test for that.
-        { Get-ChildItem $TestDrive | Format-Wide -Autosize | Out-String } | Should -Not -Throw
+        { $pathList | Format-Wide -Autosize } | Should -Not -Throw
+        { $pathList | Format-Wide -Autosize | Out-String } | Should -Not -Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {
-        { Format-Wide -InputObject $(Get-ChildItem $TestDrive) } | Should -Not -Throw
+        { Format-Wide -InputObject $pathList } | Should -Not -Throw
     }
 
     It "Should be able to use the property switch" {
-        { Format-Wide -InputObject $(Get-ChildItem $TestDrive) -Property Mode } | Should -Not -Throw
+        { Format-Wide -InputObject $pathList -Property Mode } | Should -Not -Throw
     }
 
     It "Should throw an error when property switch and view switch are used together" {
-        { Format-Wide -InputObject $(Get-ChildItem $TestDrive) -Property CreationTime -View aoeu } |
+        { Format-Wide -InputObject $pathList -Property CreationTime -View aoeu } |
             Should -Throw -ErrorId "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
     }
 
