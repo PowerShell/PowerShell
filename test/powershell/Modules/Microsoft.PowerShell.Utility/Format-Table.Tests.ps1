@@ -341,51 +341,7 @@ Left Center Right
 		}
 
 		It "Format-Table should correctly render headers that span multiple rows: <variation>" -TestCases @(
-			@{
-				variation = "4 row, 1 row, 2 row";
-				ps1xml = @"
-<Configuration>
-	<ViewDefinitions>
-		<View>
-			<Name>Test.Format</Name>
-			<ViewSelectedBy>
-				<TypeName>Test.Format</TypeName>
-			</ViewSelectedBy>
-			<TableControl>
-				<TableHeaders>
-					<TableColumnHeader>
-						<Label>LongLongHeader</Label>
-						<Width>4</Width>
-					</TableColumnHeader>
-					<TableColumnHeader>
-						<Label>Header2</Label>
-						<Width>7</Width>
-					</TableColumnHeader>
-					<TableColumnHeader>
-						<Label>Header3</Label>
-						<Width>4</Width>
-					</TableColumnHeader>
-				</TableHeaders>
-				<TableRowEntries>
-					<TableRowEntry>
-						<TableColumnItems>
-							<TableColumnItem>
-								<PropertyName>First</PropertyName>
-							</TableColumnItem>
-							<TableColumnItem>
-								<PropertyName>Second</PropertyName>
-							</TableColumnItem>
-							<TableColumnItem>
-								<PropertyName>Third</PropertyName>
-							</TableColumnItem>
-						</TableColumnItems>
-					</TableRowEntry>
-				</TableRowEntries>
-			</TableControl>
-		</View>
-	</ViewDefinitions>
-</Configuration>
-"@; expectedTable = @"
+			@{ view = "Default"; widths = 4,7,4; variation = "4 row, 1 row, 2 row"; expectedTable = @"
 
 Long Header2 Head
 Long         er3
@@ -397,13 +353,48 @@ er
 
 
 "@ },
-			@{
-				variation = "4 row, 2 row, 1 row";
-				ps1xml = @"
+			@{ view = "Default"; widths = 4,4,7; variation = "4 row, 2 row, 1 row"; expectedTable = @"
+
+Long Head Header3
+Long er2
+Head
+er
+---- ---- -------
+1    2    3
+
+
+
+"@ },
+			@{ view = "Default"; widths = 14,7,3; variation = "1 row, 1 row, 3 row"; expectedTable = @"
+
+LongLongHeader Header2 Hea
+                       der
+                       3
+-------------- ------- ---
+1              2       3
+
+
+
+"@ },
+			@{ view = "One"; widths = 4,1,1; variation = "1 column"; expectedTable = @"
+
+Long
+Long
+Head
+er
+----
+1
+
+
+
+"@ }
+		) {
+			param($view, $widths, $expectedTable)
+			$ps1xml = @"
 <Configuration>
 	<ViewDefinitions>
 		<View>
-			<Name>Test.Format</Name>
+			<Name>Default</Name>
 			<ViewSelectedBy>
 				<TypeName>Test.Format</TypeName>
 			</ViewSelectedBy>
@@ -411,15 +402,15 @@ er
 				<TableHeaders>
 					<TableColumnHeader>
 						<Label>LongLongHeader</Label>
-						<Width>4</Width>
+						<Width>{0}</Width>
 					</TableColumnHeader>
 					<TableColumnHeader>
 						<Label>Header2</Label>
-						<Width>4</Width>
+						<Width>{1}</Width>
 					</TableColumnHeader>
 					<TableColumnHeader>
 						<Label>Header3</Label>
-						<Width>7</Width>
+						<Width>{2}</Width>
 					</TableColumnHeader>
 				</TableHeaders>
 				<TableRowEntries>
@@ -439,90 +430,49 @@ er
 				</TableRowEntries>
 			</TableControl>
 		</View>
-	</ViewDefinitions>
-</Configuration>
-"@; expectedTable = @"
-
-Long Head Header3
-Long er2
-Head
-er
----- ---- -------
-1    2    3
-
-
-
-"@ },
-			@{
-				variation = "1 row, 1 row, 3 row";
-				ps1xml = @"
-<Configuration>
-	<ViewDefinitions>
 		<View>
-		<Name>Test.Format</Name>
-		<ViewSelectedBy>
-			<TypeName>Test.Format</TypeName>
-		</ViewSelectedBy>
-		<TableControl>
-			<TableHeaders>
-				<TableColumnHeader>
-					<Label>Header1</Label>
-					<Width>7</Width>
-				</TableColumnHeader>
-				<TableColumnHeader>
-					<Label>Header2</Label>
-					<Width>7</Width>
-				</TableColumnHeader>
-				<TableColumnHeader>
-					<Label>LongHeader3</Label>
-					<Width>4</Width>
-				</TableColumnHeader>
-			</TableHeaders>
-			<TableRowEntries>
-				<TableRowEntry>
-					<TableColumnItems>
-						<TableColumnItem>
-							<PropertyName>First</PropertyName>
-						</TableColumnItem>
-						<TableColumnItem>
-							<PropertyName>Second</PropertyName>
-						</TableColumnItem>
-						<TableColumnItem>
-							<PropertyName>Third</PropertyName>
-						</TableColumnItem>
-					</TableColumnItems>
-				</TableRowEntry>
-			</TableRowEntries>
-		</TableControl>
+			<Name>One</Name>
+			<ViewSelectedBy>
+				<TypeName>Test.Format</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>LongLongHeader</Label>
+						<Width>{0}</Width>
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>First</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
 		</View>
 	</ViewDefinitions>
 </Configuration>
-"@; expectedTable = @"
-
-Header1 Header2 Long
-                Head
-                er3
-------- ------- ----
-1       2       3
-
-
-
-"@ }
-		) {
-			param($ps1xml, $expectedTable)
+"@
+			$ps1xml = $ps1xml.Replace("{0}", $widths[0]).Replace("{1}", $widths[1]).Replace("{2}", $widths[2])
 			$ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
 			Set-Content -Path $ps1xmlPath -Value $ps1xml
 			# run in own runspace so not affect global sessionstate
 			$ps = [powershell]::Create()
 			$ps.AddScript( {
-				param($ps1xmlPath)
+				param($ps1xmlPath, $view)
 				Update-FormatData -AppendPath $ps1xmlPath
 				$a = [PSCustomObject]@{First=1;Second=2;Third=3}
 				$a.PSObject.TypeNames.Insert(0,"Test.Format")
-				$a | Out-String
-			} ).AddArgument($ps1xmlPath) | Out-Null
+				$a | Format-Table -View $view | Out-String
+			} ).AddArgument($ps1xmlPath).AddArgument($view) | Out-Null
 			$output = $ps.Invoke()
-
+			foreach ($e in $ps.Streams.Error)
+			{
+				Write-Verbose $e.ToString() -Verbose
+			}
 			$ps.HadErrors | Should -BeFalse
 			$output.Replace("`r","").Replace(" ",".").Replace("`n","``") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","``")
 		}
