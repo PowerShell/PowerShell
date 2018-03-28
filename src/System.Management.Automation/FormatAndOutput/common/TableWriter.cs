@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //
             // To ensure we don't add whitespace to the end, we need to determine the last column in each row with content
 
-            int[] lastColWithContent = new int[screenRows];
+            System.Span<int> lastColWithContent = stackalloc int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
                 for (int col = scArray.Length - 1; col > 0; col--)
