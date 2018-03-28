@@ -1,4 +1,4 @@
-FROM ubuntu:zesty
+FROM ubuntu:artful
 
 ARG PSVERSIONSTUB=6.0.2
 ARG PSVERSIONSTUBRPM=6.0.2
