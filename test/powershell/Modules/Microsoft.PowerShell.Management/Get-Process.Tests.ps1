@@ -17,7 +17,9 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
         $pwshVersion = Get-Process -Id $pid -FileVersionInfo
         if ($IsWindows) {
             $PSVersionTable.PSVersion | Should -MatchExactly $pwshVersion.FileVersion
-            $pwshVersion.ProductVersion.Replace("-dirty","") | Should -BeExactly $PSVersionTable.GitCommitId.Replace("v","")
+            $gitCommitId = $PSVersionTable.GitCommitId
+            if ($gitCommitId.StartsWith("v")) { $gitCommitId = $gitCommitId.Substring(1) }
+            $pwshVersion.ProductVersion.Replace("-dirty","") | Should -BeExactly $gitCommitId
         } else {
             $pwshVersion.FileVersion | Should -BeNullOrEmpty
         }
