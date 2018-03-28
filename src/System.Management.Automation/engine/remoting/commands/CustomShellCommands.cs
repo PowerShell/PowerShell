@@ -4923,8 +4923,12 @@ param(
             }}
 
             # Create the default PSSession configuration, not tied to any specific PowerShell version.
-            $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(""."")
-            Register-Endpoint (""PowerShell."" + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos))
+            $powershellNr = $PSVersionTable.PSVersion.ToString()
+            $dotPos = $powershellNr.IndexOf(""."")
+            if ($dotPos -ne -1) {{
+                $powershellNr = $powershellNr.Substring(0, $dotPos)
+            }}
+            Register-Endpoint (""PowerShell."" + $powershellNr)
 
             # PowerShell Workflow and WOW are not supported for PowerShell Core
             if (![System.Management.Automation.Platform]::IsCoreCLR)
