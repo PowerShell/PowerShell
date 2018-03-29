@@ -390,6 +390,30 @@ stuntguy3000
 SwarfegaGit
 v6.0.2
 diddledan
+v6.1.0
+preview.1
+tandasat
+kwkam
+stknohg
+CloudyDino
+KevinMarquette
+tomconte
+DarqueWarrior
+Pawamoy
+strawgate
+CallmeJoeBob
+maertendMSFT
+seemethere
+zackJKnight
+brianbunke
+timothywlewis
+rpalo
+kanjibates
+kasper3
+ppadmavilasom
+Stanzilla
+mababio
+v4
 #endregion
 
 #region CODE_OF_CONDUCT.md Overrides
@@ -1104,6 +1128,8 @@ v6.0.
 #region test/tools/WebListener/README.md Overrides
  - test/tools/WebListener/README.md
 Auth
+NoResume
 NTLM
+NumberBytes
 ResponseHeaders
 #endregion

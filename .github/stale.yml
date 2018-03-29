@@ -25,7 +25,10 @@ staleLabel: Review - Abandoned
 markComment: >
   This PR has been automatically marked as stale because it has not had activity in the last 30 days.
   It will be closed if no further activity occurs within 10 days.
+
   Thank you for your contributions.
+
+  Community members are welcome to grab these works.
 
 # Comment to post when removing the stale label.
 # unmarkComment: >
@@ -34,8 +37,11 @@ markComment: >
 # Comment to post when closing a stale Issue or Pull Request.
 closeComment: >
   This PR has be automatically close because it is stale.
-  If you wish to continue working on the PR, please first update the PR,
-  then reopen it.  Thanks again for your contribution.
+  If you wish to continue working on the PR, please first update the PR, then reopen it.
+
+  Thanks again for your contribution.
+
+  Community members are welcome to grab these works.
 
 # Limit the number of actions per hour, from 1-30. Default is 30
 limitPerRun: 30

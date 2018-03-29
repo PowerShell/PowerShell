@@ -14,9 +14,4 @@ namespace mvc.Controllers
         public const string NoUrlLinkHeader = "<>; rel=\"next\"";
 
     }
-
-    internal static class StatusCodes
-    {
-        public const Int32 ApplicationError = 500;
-    }
 }

@@ -36,7 +36,10 @@ namespace System.Management.Automation.Language
             }
             if (!LanguagePrimitives.TryConvertTo(arg, type, out result))
             {
-                parser.ReportError(errorExtent, () => ParserStrings.CannotConvertValue, ToStringCodeMethods.Type(type));
+                parser.ReportError(errorExtent,
+                    nameof(ParserStrings.CannotConvertValue),
+                    ParserStrings.CannotConvertValue,
+                    ToStringCodeMethods.Type(type));
                 return false;
             }
             return true;
@@ -307,7 +310,10 @@ namespace System.Management.Automation.Language
 
                     if (firstBaseTypeAst.TypeName.IsArray)
                     {
-                        parser.ReportError(firstBaseTypeAst.Extent, () => ParserStrings.SubtypeArray, firstBaseTypeAst.TypeName.FullName);
+                        parser.ReportError(firstBaseTypeAst.Extent,
+                            nameof(ParserStrings.SubtypeArray),
+                            ParserStrings.SubtypeArray,
+                            firstBaseTypeAst.TypeName.FullName);
                         // fall to the default base type
                     }
                     else
@@ -315,7 +321,10 @@ namespace System.Management.Automation.Language
                         baseClass = firstBaseTypeAst.TypeName.GetReflectionType();
                         if (baseClass == null)
                         {
-                            parser.ReportError(firstBaseTypeAst.Extent, () => ParserStrings.TypeNotFound, firstBaseTypeAst.TypeName.FullName);
+                            parser.ReportError(firstBaseTypeAst.Extent,
+                                nameof(ParserStrings.TypeNotFound),
+                                ParserStrings.TypeNotFound,
+                                firstBaseTypeAst.TypeName.FullName);
                             // fall to the default base type
                         }
                         else
@@ -323,13 +332,19 @@ namespace System.Management.Automation.Language
                         {
                             if (baseClass.GetTypeInfo().IsSealed)
                             {
-                                parser.ReportError(firstBaseTypeAst.Extent, () => ParserStrings.SealedBaseClass, baseClass.Name);
+                                parser.ReportError(firstBaseTypeAst.Extent,
+                                    nameof(ParserStrings.SealedBaseClass),
+                                    ParserStrings.SealedBaseClass,
+                                    baseClass.Name);
                                 // ignore base type if it's sealed.
                                 baseClass = null;
                             }
                             else if (baseClass.GetTypeInfo().IsGenericType && !baseClass.IsConstructedGenericType)
                             {
-                                parser.ReportError(firstBaseTypeAst.Extent, () => ParserStrings.SubtypeUnclosedGeneric, baseClass.Name);
+                                parser.ReportError(firstBaseTypeAst.Extent,
+                                    nameof(ParserStrings.SubtypeUnclosedGeneric),
+                                    ParserStrings.SubtypeUnclosedGeneric,
+                                    baseClass.Name);
                                 // ignore base type, we cannot inherit from unclosed generic.
                                 baseClass = null;
                             }
@@ -361,7 +376,10 @@ namespace System.Management.Automation.Language
                     {
                         if (baseTypeAsts[i].TypeName.IsArray)
                         {
-                            parser.ReportError(baseTypeAsts[i].Extent, () => ParserStrings.SubtypeArray, baseTypeAsts[i].TypeName.FullName);
+                            parser.ReportError(baseTypeAsts[i].Extent,
+                                nameof(ParserStrings.SubtypeArray),
+                                ParserStrings.SubtypeArray,
+                                baseTypeAsts[i].TypeName.FullName);
                             this.HasFatalErrors = true;
                         }
                     }
@@ -370,14 +388,20 @@ namespace System.Management.Automation.Language
                     {
                         if (baseTypeAsts[i].TypeName.IsArray)
                         {
-                            parser.ReportError(baseTypeAsts[i].Extent, () => ParserStrings.SubtypeArray, baseTypeAsts[i].TypeName.FullName);
+                            parser.ReportError(baseTypeAsts[i].Extent,
+                                nameof(ParserStrings.SubtypeArray),
+                                ParserStrings.SubtypeArray,
+                                baseTypeAsts[i].TypeName.FullName);
                         }
                         else
                         {
                             Type interfaceType = baseTypeAsts[i].TypeName.GetReflectionType();
                             if (interfaceType == null)
                             {
-                                parser.ReportError(baseTypeAsts[i].Extent, () => ParserStrings.TypeNotFound, baseTypeAsts[i].TypeName.FullName);
+                                parser.ReportError(baseTypeAsts[i].Extent,
+                                    nameof(ParserStrings.TypeNotFound),
+                                    ParserStrings.TypeNotFound,
+                                    baseTypeAsts[i].TypeName.FullName);
                             }
                             else
                             {
@@ -387,7 +411,10 @@ namespace System.Management.Automation.Language
                                 }
                                 else
                                 {
-                                    parser.ReportError(baseTypeAsts[i].Extent, () => ParserStrings.InterfaceNameExpected, interfaceType.Name);
+                                    parser.ReportError(baseTypeAsts[i].Extent,
+                                        nameof(ParserStrings.InterfaceNameExpected),
+                                        ParserStrings.InterfaceNameExpected,
+                                        interfaceType.Name);
                                 }
                             }
                         }
@@ -494,7 +521,10 @@ namespace System.Management.Automation.Language
                 {
                     if (!instanceCtors.Any())
                     {
-                        _parser.ReportError(_typeDefinitionAst.Extent, () => ParserStrings.BaseClassNoDefaultCtor, _typeBuilder.BaseType.Name);
+                        _parser.ReportError(_typeDefinitionAst.Extent,
+                            nameof(ParserStrings.BaseClassNoDefaultCtor),
+                            ParserStrings.BaseClassNoDefaultCtor,
+                            _typeBuilder.BaseType.Name);
                         this.HasFatalErrors = true;
                     }
                 }
@@ -504,7 +534,10 @@ namespace System.Management.Automation.Language
             {
                 if (_definedProperties.ContainsKey(propertyMemberAst.Name))
                 {
-                    _parser.ReportError(propertyMemberAst.Extent, () => ParserStrings.MemberAlreadyDefined, propertyMemberAst.Name);
+                    _parser.ReportError(propertyMemberAst.Extent,
+                        nameof(ParserStrings.MemberAlreadyDefined),
+                        ParserStrings.MemberAlreadyDefined,
+                        propertyMemberAst.Name);
                     return;
                 }
 
@@ -658,7 +691,9 @@ namespace System.Management.Automation.Language
                                 !functionMemberAst.IsConstructor)
                             {
                                 _parser.ReportError(functionMemberAst.NameExtent ?? functionMemberAst.Extent,
-                                    () => ParserStrings.MemberAlreadyDefined, functionMemberAst.Name);
+                                    nameof(ParserStrings.MemberAlreadyDefined),
+                                    ParserStrings.MemberAlreadyDefined,
+                                    functionMemberAst.Name);
                                 return true;
                             }
                         }
@@ -687,12 +722,17 @@ namespace System.Management.Automation.Language
                                         : typeof(object);
                     if (paramType == null)
                     {
-                        _parser.ReportError(typeConstraint.Extent, () => ParserStrings.TypeNotFound, typeConstraint.TypeName.FullName);
+                        _parser.ReportError(typeConstraint.Extent,
+                            nameof(ParserStrings.TypeNotFound),
+                            ParserStrings.TypeNotFound,
+                            typeConstraint.TypeName.FullName);
                         anyErrors = true;
                     }
                     else if (paramType == typeof(void) || paramType.GetTypeInfo().IsGenericTypeDefinition)
                     {
-                        _parser.ReportError(typeConstraint.Extent, () => ParserStrings.TypeNotAllowedForParameter,
+                        _parser.ReportError(typeConstraint.Extent,
+                            nameof(ParserStrings.TypeNotAllowedForParameter),
+                            ParserStrings.TypeNotAllowedForParameter,
                             typeConstraint.TypeName.FullName);
                         anyErrors = true;
                     }
@@ -735,7 +775,10 @@ namespace System.Management.Automation.Language
                         var parameters = functionMemberAst.Parameters;
                         if (parameters.Count > 0)
                         {
-                            _parser.ReportError(Parser.ExtentOf(parameters.First(), parameters.Last()), () => ParserStrings.StaticConstructorCantHaveParameters);
+                            IScriptExtent errorExtent = Parser.ExtentOf(parameters.First(), parameters.Last());
+                            _parser.ReportError(errorExtent,
+                                nameof(ParserStrings.StaticConstructorCantHaveParameters),
+                                ParserStrings.StaticConstructorCantHaveParameters);
                             return;
                         }
                         methodAttributes |= Reflection.MethodAttributes.Static;
@@ -763,7 +806,10 @@ namespace System.Management.Automation.Language
                 var returnType = functionMemberAst.GetReturnType();
                 if (returnType == null)
                 {
-                    _parser.ReportError(functionMemberAst.ReturnType.Extent, () => ParserStrings.TypeNotFound, functionMemberAst.ReturnType.TypeName.FullName);
+                    _parser.ReportError(functionMemberAst.ReturnType.Extent,
+                        nameof(ParserStrings.TypeNotFound),
+                        ParserStrings.TypeNotFound,
+                        functionMemberAst.ReturnType.TypeName.FullName);
                     return;
                 }
                 var method = _typeBuilder.DefineMethod(functionMemberAst.Name, attributes, returnType, parameterTypes);
@@ -1019,7 +1065,9 @@ namespace System.Management.Automation.Language
                     {
                         if (!result.Contains(helper))
                         {
-                            parser.ReportError(helper._enumDefinitionAst.Extent, () => ParserStrings.CycleInEnumInitializers);
+                            parser.ReportError(helper._enumDefinitionAst.Extent,
+                                nameof(ParserStrings.CycleInEnumInitializers),
+                                ParserStrings.CycleInEnumInitializers);
                         }
                     }
                 }
@@ -1057,11 +1105,15 @@ namespace System.Management.Automation.Language
                                     if (constValue != null &&
                                         LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constValue.GetType())))
                                     {
-                                        _parser.ReportError(enumerator.InitialValue.Extent, () => ParserStrings.EnumeratorValueTooLarge);
+                                        _parser.ReportError(enumerator.InitialValue.Extent,
+                                            nameof(ParserStrings.EnumeratorValueTooLarge),
+                                            ParserStrings.EnumeratorValueTooLarge);
                                     }
                                     else
                                     {
-                                        _parser.ReportError(enumerator.InitialValue.Extent, () => ParserStrings.CannotConvertValue,
+                                        _parser.ReportError(enumerator.InitialValue.Extent,
+                                            nameof(ParserStrings.CannotConvertValue),
+                                            ParserStrings.CannotConvertValue,
                                             ToStringCodeMethods.Type(typeof(int)));
                                     }
                                 }
@@ -1069,17 +1121,24 @@ namespace System.Management.Automation.Language
                         }
                         else
                         {
-                            _parser.ReportError(enumerator.InitialValue.Extent, () => ParserStrings.EnumeratorValueMustBeConstant);
+                            _parser.ReportError(enumerator.InitialValue.Extent,
+                                nameof(ParserStrings.EnumeratorValueMustBeConstant),
+                                ParserStrings.EnumeratorValueMustBeConstant);
                         }
                     }
                     else if (valueTooBig)
                     {
-                        _parser.ReportError(enumerator.Extent, () => ParserStrings.EnumeratorValueTooLarge);
+                        _parser.ReportError(enumerator.Extent,
+                            nameof(ParserStrings.EnumeratorValueTooLarge),
+                            ParserStrings.EnumeratorValueTooLarge);
                     }
 
                     if (definedEnumerators.Contains(enumerator.Name))
                     {
-                        _parser.ReportError(enumerator.Extent, () => ParserStrings.MemberAlreadyDefined, enumerator.Name);
+                        _parser.ReportError(enumerator.Extent,
+                            nameof(ParserStrings.MemberAlreadyDefined),
+                            ParserStrings.MemberAlreadyDefined,
+                            enumerator.Name);
                     }
                     else
                     {
@@ -1204,8 +1263,11 @@ namespace System.Management.Automation.Language
                         //
                         // Presumably this catch could go away when we will not create Type at parse time.
                         // Error checking should be moved/added to semantic checks.
-                        parser.ReportError(helper._typeDefinitionAst.Extent, () => ParserStrings.TypeCreationError,
-                            helper._typeBuilder.Name, e.Message);
+                        parser.ReportError(helper._typeDefinitionAst.Extent,
+                            nameof(ParserStrings.TypeCreationError),
+                            ParserStrings.TypeCreationError,
+                            helper._typeBuilder.Name,
+                            e.Message);
                     }
                 }
 

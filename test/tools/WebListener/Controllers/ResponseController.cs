@@ -74,7 +74,7 @@ namespace mvc.Controllers
                 catch (Exception ex)
                 {
                     output = JsonConvert.SerializeObject(ex);
-                    Response.StatusCode = StatusCodes.ApplicationError;
+                    Response.StatusCode = StatusCodes.Status500InternalServerError;
                     contentType = Constants.ApplicationJson;
                 }
             }

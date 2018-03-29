@@ -2039,6 +2039,177 @@ function Get-NugetSemanticVersion
     $packageSemanticVersion
 }
 
+# Get the paths to various WiX tools
+function Get-WixPath
+{
+    ## AppVeyor base image might update the version for Wix. Hence, we should
+    ## not hard code version numbers.
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
+
+    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
+    if (-not (Test-Path $wixToolsetBinPath))
+    {
+        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
+    }
+
+    ## Get the latest if multiple versions exist.
+    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
+
+    Write-Verbose "Initialize Wix executables..."
+    $wixHeatExePath = Join-Path $wixToolsetBinPath "heat.exe"
+    $wixMeltExePath = Join-Path $wixToolsetBinPath "melt.exe"
+    $wixTorchExePath = Join-Path $wixToolsetBinPath "torch.exe"
+    $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
+    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
+    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+
+    return [PSCustomObject] @{
+        WixHeatExePath = $wixHeatExePath
+        WixMeltExePath = $wixMeltExePath
+        WixTorchExePath = $wixTorchExePath
+        WixPyroExePath = $wixPyroExePath
+        WixCandleExePath = $wixCandleExePath
+        WixLightExePath = $wixLightExePath
+    }
+
+}
+
+<#
+    .Synopsis
+        Creates a Windows installer MSP package from two MSIs and WIXPDB files
+        This only works on a Windows machine due to the usage of WiX.
+    .EXAMPLE
+        # This example shows how to produce a x64 patch from 6.0.2 to a theoretical 6.0.3
+        cd $RootPathOfPowerShellRepo
+        Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
+        New-MSIPatch -NewVersion 6.0.1 -BaselineMsiPath .\PowerShell-6.0.2-win-x64.msi -BaselineWixPdbPath .\PowerShell-6.0.2-win-x64.wixpdb -PatchMsiPath .\PowerShell-6.0.3-win-x64.msi -PatchWixPdbPath .\PowerShell-6.0.3-win-x64.wixpdb
+#>
+function New-MSIPatch
+{
+    param(
+        [Parameter(Mandatory, HelpMessage='The version of the fixed or patch MSI.')]
+        [ValidatePattern("^\d+\.\d+\.\d+$")]
+        [string] $NewVersion,
+
+        [Parameter(Mandatory, HelpMessage='The path to the original or baseline MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
+        [string] $BaselineMsiPath,
+
+        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the original or baseline MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
+        [string] $BaselineWixPdbPath,
+
+        [Parameter(Mandatory, HelpMessage='The path to the fixed or patch MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.msi'})]
+        [string] $PatchMsiPath,
+
+        [Parameter(Mandatory, HelpMessage='The path to the WIXPDB for the fixed or patch MSI.')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {(Test-Path $_) -and $_ -like '*.wixpdb'})]
+        [string] $PatchWixPdbPath,
+
+        [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript( {Test-Path $_})]
+        [string] $PatchWxsPath = "$PSScriptRoot\..\..\assets\patch-template.wxs",
+
+        [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
+        [switch] $Delta
+    )
+
+    $mspName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.fullpath.msp')
+    $mspDeltaName = (Split-Path -Path $PatchMsiPath -Leaf).Replace('.msi','.deltapatch.msp')
+
+    $wixPatchXmlPath = Join-Path $env:Temp "patch.wxs"
+    $wixBaselineOriginalPdbPath = Join-Path $env:Temp "baseline.original.wixpdb"
+    $wixBaselinePdbPath = Join-Path $env:Temp "baseline.wixpdb"
+    $wixBaselineBinariesPath = Join-Path $env:Temp "baseline.binaries"
+    $wixPatchOriginalPdbPath = Join-Path $env:Temp "patch.original.wixpdb"
+    $wixPatchPdbPath = Join-Path $env:Temp "patch.wixpdb"
+    $wixPatchBinariesPath = Join-Path $env:Temp "patch.binaries"
+    $wixPatchMstPath = Join-Path $env:Temp "patch.wixmst"
+    $wixPatchObjPath = Join-Path $env:Temp "patch.wixobj"
+    $wixPatchWixMspPath = Join-Path $env:Temp "patch.wixmsp"
+
+    $filesToCleanup = @(
+        $wixPatchXmlPath
+        $wixBaselinePdbPath
+        $wixBaselineBinariesPath
+        $wixPatchPdbPath
+        $wixPatchBinariesPath
+        $wixPatchMstPath
+        $wixPatchObjPath
+        $wixPatchWixMspPath
+        $wixPatchOriginalPdbPath
+        $wixBaselineOriginalPdbPath
+    )
+
+    # cleanup from previous builds
+    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
+
+    # Melt changes the original, so copy before running melt
+    Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
+    Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
+
+    [xml] $filesAssetXml = Get-Content -Raw -Path "$PSScriptRoot\..\..\assets\files.wxs"
+    [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
+
+    # Update the patch version
+    $patchFamilyNode = $patchTemplateXml.Wix.Fragment.PatchFamily
+    $patchFamilyNode.SetAttribute('Version', $NewVersion)
+
+    # get all the file components from the files.wxs
+    $components = $filesAssetXml.GetElementsByTagName('Component')
+
+    # add all the file components to the patch
+    foreach($component in $components)
+    {
+        $id = $component.Id
+        $componentRef = $patchTemplateXml.CreateElement('ComponentRef','http://schemas.microsoft.com/wix/2006/wi')
+        $idAttribute = $patchTemplateXml.CreateAttribute('Id')
+        $idAttribute.Value = $id
+        $null = $componentRef.Attributes.Append($idAttribute)
+        $null = $patchFamilyNode.AppendChild($componentRef)
+    }
+
+    # save the updated patch xml
+    $patchTemplateXml.Save($wixPatchXmlPath)
+
+    $wixPaths = Get-WixPath
+
+    Write-Log "Processing baseline msi..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $BaselineMsiPath $wixBaselinePdbPath -pdb $wixBaselineOriginalPdbPath -x $wixBaselineBinariesPath}
+
+    Write-Log "Processing patch msi..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixMeltExePath -nologo $PatchMsiPath $wixPatchPdbPath -pdb $wixPatchOriginalPdbPath -x $wixPatchBinariesPath}
+
+    Write-Log  "generate diff..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixTorchExePath -nologo -p -xi $wixBaselinePdbPath $wixPatchPdbPath -out $wixPatchMstPath}
+
+    Write-Log  "Compiling patch..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixCandleExePath -nologo $wixPatchXmlPath -out $wixPatchObjPath}
+
+    Write-Log  "Linking patch..."
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -nologo $wixPatchObjPath -out $wixPatchWixMspPath}
+
+    if($Delta.IsPresent)
+    {
+        Write-Log  "Generating delta msp..."
+        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspDeltaName -t RTM $wixPatchMstPath }
+    }
+    else
+    {
+        Write-Log  "Generating full msp..."
+        Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixPyroExePath -nologo $wixPatchWixMspPath -out $mspName -t RTM $wixPatchMstPath }
+    }
+
+    # cleanup temporary files
+    Remove-Item -Path $filesToCleanup -Force -Recurse -ErrorAction SilentlyContinue
+}
+
 <#
     .Synopsis
         Creates a Windows installer MSI package and assumes that the binaries are already built using 'Start-PSBuild'.
@@ -2106,23 +2277,7 @@ function New-MSIPackage
         [Switch] $Force
     )
 
-    ## AppVeyor base image might update the version for Wix. Hence, we should
-    ## not hard code version numbers.
-    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
-
-    Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
-    if (-not (Test-Path $wixToolsetBinPath))
-    {
-        throw "The latest version of Wix Toolset 3.11 is required to create MSI package. Please install it from https://github.com/wixtoolset/wix3/releases"
-    }
-
-    ## Get the latest if multiple versions exist.
-    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
-
-    Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
-    $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
-    $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
-    $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+    $wixPaths = Get-WixPath
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $isPreview = $ProductSemanticVersion -like '*-*'
@@ -2190,16 +2345,16 @@ function New-MSIPackage
     }
 
     Write-Log "verifying no new files have been added or removed..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
 
     Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
 
     Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    Start-NativeExecution -VerboseOutputOnError {& $wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
