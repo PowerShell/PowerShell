@@ -92,7 +92,10 @@ namespace System.Management.Automation.Language
                 }
                 else
                 {
-                    parser.ReportError(typeDefinitionAst.Extent, () => ParserStrings.MemberAlreadyDefined, typeDefinitionAst.Name);
+                    parser.ReportError(typeDefinitionAst.Extent,
+                        nameof(ParserStrings.MemberAlreadyDefined),
+                        ParserStrings.MemberAlreadyDefined,
+                        typeDefinitionAst.Name);
                 }
             }
             else
@@ -125,7 +128,10 @@ namespace System.Management.Automation.Language
             string fullName = SymbolResolver.GetModuleQualifiedName(moduleInfo.Name, typeDefinitionAst.Name);
             if (_typeTable.TryGetValue(fullName, out result))
             {
-                parser.ReportError(typeDefinitionAst.Extent, () => ParserStrings.MemberAlreadyDefined, fullName);
+                parser.ReportError(typeDefinitionAst.Extent,
+                    nameof(ParserStrings.MemberAlreadyDefined),
+                    ParserStrings.MemberAlreadyDefined,
+                    fullName);
             }
             else
             {
@@ -393,12 +399,21 @@ namespace System.Management.Automation.Language
                             {
                                 var typeAst = _symbolTable.GetCurrentTypeDefinitionAst();
                                 Diagnostics.Assert(typeAst != null, "Method scopes can exist only inside type definitions.");
-                                _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.MissingTypeInStaticPropertyAssignment,
-                                    String.Format(CultureInfo.InvariantCulture, "[{0}]::", typeAst.Name), propertyMember.Name);
+
+                                string typeString = String.Format(CultureInfo.InvariantCulture, "[{0}]::", typeAst.Name);
+                                _parser.ReportError(variableExpressionAst.Extent,
+                                    nameof(ParserStrings.MissingTypeInStaticPropertyAssignment),
+                                    ParserStrings.MissingTypeInStaticPropertyAssignment,
+                                    typeString,
+                                    propertyMember.Name);
                             }
                             else
                             {
-                                _parser.ReportError(variableExpressionAst.Extent, () => ParserStrings.MissingThis, "$this.", propertyMember.Name);
+                                _parser.ReportError(variableExpressionAst.Extent,
+                                    nameof(ParserStrings.MissingThis),
+                                    ParserStrings.MissingThis,
+                                    "$this.",
+                                    propertyMember.Name);
                             }
                         }
                     }
@@ -521,16 +536,23 @@ namespace System.Management.Automation.Language
                 var moduleInfo = GetModulesFromUsingModule(usingStatementAst, out exception, out wildcardCharactersUsed, out isConstant);
                 if (!isConstant)
                 {
-                    _parser.ReportError(usingStatementAst.Extent, () => ParserStrings.RequiresArgumentMustBeConstant);
+                    _parser.ReportError(usingStatementAst.Extent,
+                        nameof(ParserStrings.RequiresArgumentMustBeConstant),
+                        ParserStrings.RequiresArgumentMustBeConstant);
                 }
                 else if (exception != null)
                 {
                     // we re-using RequiresModuleInvalid string, semantic is very similar so it's fine to do that.
-                    _parser.ReportError(usingStatementAst.Extent, () => ParserStrings.RequiresModuleInvalid, exception.Message);
+                    _parser.ReportError(usingStatementAst.Extent,
+                        nameof(ParserStrings.RequiresModuleInvalid),
+                        ParserStrings.RequiresModuleInvalid,
+                        exception.Message);
                 }
                 else if (wildcardCharactersUsed)
                 {
-                    _parser.ReportError(usingStatementAst.Extent, () => ParserStrings.WildCardModuleNameError);
+                    _parser.ReportError(usingStatementAst.Extent,
+                        nameof(ParserStrings.WildCardModuleNameError),
+                        ParserStrings.WildCardModuleNameError);
                 }
                 else if (moduleInfo != null && moduleInfo.Count > 0)
                 {
@@ -549,7 +571,10 @@ namespace System.Management.Automation.Language
                 {
                     // if there is no exception, but we didn't find the module then it's not present
                     string moduleText = usingStatementAst.Name != null ? usingStatementAst.Name.Value : usingStatementAst.ModuleSpecification.Extent.Text;
-                    _parser.ReportError(usingStatementAst.Extent, () => ParserStrings.ModuleNotFoundDuringParse, moduleText);
+                    _parser.ReportError(usingStatementAst.Extent,
+                        nameof(ParserStrings.ModuleNotFoundDuringParse),
+                        ParserStrings.ModuleNotFoundDuringParse,
+                        moduleText);
                 }
             }
 
@@ -607,7 +632,9 @@ namespace System.Management.Automation.Language
 
             if (classDefn != null && classDefn.IsAmbiguous())
             {
-                _parser.ReportError(typeName.Extent, () => ParserStrings.AmbiguousTypeReference,
+                _parser.ReportError(typeName.Extent,
+                    nameof(ParserStrings.AmbiguousTypeReference),
+                    ParserStrings.AmbiguousTypeReference,
                     typeName.Name,
                     GetModuleQualifiedName(classDefn.ExternalNamespaces[0], typeName.Name),
                     GetModuleQualifiedName(classDefn.ExternalNamespaces[1], typeName.Name));
@@ -631,10 +658,19 @@ namespace System.Management.Automation.Language
                         // [ordered] is an attribute, but it's looks like a type constraint.
                         if (!typeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
                         {
-                            _parser.ReportError(typeName.Extent,
-                                isAttribute
-                                    ? (Expression<Func<string>>)(() => ParserStrings.CustomAttributeTypeNotFound)
-                                    : () => ParserStrings.TypeNotFound, typeName.Name);
+                            string errorId;
+                            string errorMsg;
+                            if (isAttribute)
+                            {
+                                errorId = nameof(ParserStrings.CustomAttributeTypeNotFound);
+                                errorMsg = ParserStrings.CustomAttributeTypeNotFound;
+                            }
+                            else
+                            {
+                                errorId = nameof(ParserStrings.TypeNotFound);
+                                errorMsg = ParserStrings.TypeNotFound;
+                            }
+                            _parser.ReportError(typeName.Extent, errorId, errorMsg, typeName.Name);
                         }
                     }
                 }
