@@ -11,26 +11,26 @@ Describe "Json.NET LINQ Parsing" -tags "CI" {
     }
 
     It "Should return data via Item()" {
-	[string]$json.Item("Name") | Should Be "Zaphod Beeblebrox"
+	[string]$json.Item("Name") | Should -BeExactly "Zaphod Beeblebrox"
     }
 
     It "Should return data via []" {
-	[string]$json["Planet"] | Should Be "Betelgeuse"
+	[string]$json["Planet"] | Should -BeExactly "Betelgeuse"
     }
 
     It "Should return nested data via Item().Item()" {
-	[int]$json.Item("Appendages").Item("Heads") | Should Be 2
+	[int]$json.Item("Appendages").Item("Heads") | Should -Be 2
     }
 
     It "Should return nested data via [][]" {
-	[int]$json["Appendages"]["Arms"] | Should Be 3
+	[int]$json["Appendages"]["Arms"] | Should -Be 3
     }
 
     It "Should return correct array count" {
-	$json["Achievements"].Count | Should Be 4
+	$json["Achievements"].Count | Should -Be 4
     }
 
     It "Should return array data via [n]" {
-	[string]$json["Achievements"][3] | Should Be "One hoopy frood"
+	[string]$json["Achievements"][3] | Should -BeExactly "One hoopy frood"
     }
 }
