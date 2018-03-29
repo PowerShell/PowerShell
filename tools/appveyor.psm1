@@ -489,7 +489,7 @@ function Invoke-AppveyorFinish
         # the packaging tests find the MSI package using env:PSMsiX64Path
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
 
-        # Install the lastest Pester and import it
+        # Install the latest Pester and import it
         Install-Module Pester -Force -SkipPublisherCheck
         Import-Module Pester -Force
 
@@ -499,7 +499,7 @@ function Invoke-AppveyorFinish
         # fail the CI job if the tests failed, or nothing passed
         if($packagingTestResult.FailedCount -ne 0 -or !$packagingTestResult.PassedCount)
         {
-            throw "Packaging tests failed"
+            throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
         }
 
         # only publish assembly nuget packages if it is a daily build and tests passed
