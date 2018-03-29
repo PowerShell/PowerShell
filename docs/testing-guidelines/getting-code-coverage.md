@@ -28,9 +28,6 @@ PS> Import-Module .\build.psm1
 # -ResGen, -Restore or -PSModuleRestore
 PS> Start-PSBuild -Configuration CodeCoverage
 
-# Save the built executable's location for later use
-PS> $psDir = Split-Path -Parent (Get-PSOutput)
-
 # Now ensure Pester is installed
 PS> Restore-PSPester
 
@@ -46,11 +43,7 @@ PS> Install-OpenCover -TargetDirectory $env:TEMP -Force
 # Finally, run the tests with code coverage analysis.
 # If you want to run only the continuous integration tests,
 # add -CIOnly, which will take less time
-PS> Invoke-OpenCover `
->> -OutputLog coverage.xml `
->> -TestPath $PWD\test\powershell `
->> -OpenCoverPath $env:TEMP\OpenCover `
->> -PowerShellExeDirectory $psDir
+PS> Invoke-OpenCover -OutputLog coverage.xml -OpenCoverPath $env:TEMP\OpenCover
 ```
 
 ## Examining the code coverage data
