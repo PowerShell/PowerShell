@@ -476,12 +476,10 @@ namespace System.Management.Automation
             return null;
         }
 
-#if !CORECLR
         private static IEnumerable DataTableEnumerable(object obj)
         {
             return (((DataTable)obj).Rows);
         }
-#endif
 
         private static IEnumerable TypicalEnumerable(object obj)
         {
@@ -517,12 +515,10 @@ namespace System.Management.Automation
 
         private static GetEnumerableDelegate CalculateGetEnumerable(Type objectType)
         {
-#if !CORECLR
             if (typeof(DataTable).IsAssignableFrom(objectType))
             {
                 return LanguagePrimitives.DataTableEnumerable;
             }
-#endif
 
             // Don't treat IDictionary or XmlNode as enumerable...
             if (typeof(IEnumerable).IsAssignableFrom(objectType)
