@@ -225,8 +225,15 @@ namespace System.Management.Automation.Internal
         internal static IntPtr FdiOpen(string filename, int oflag, int pmode)
         {
             FileMode mode = CabinetNativeApi.ConvertOpflagToFileMode(oflag);
+
             FileAccess access = CabinetNativeApi.ConvertPermissionModeToFileAccess(pmode);
             FileShare share = CabinetNativeApi.ConvertPermissionModeToFileShare(pmode);
+
+            if(mode == FileMode.Open || mode == FileMode.OpenOrCreate)
+            {
+                access = FileAccess.Read;
+                share = FileShare.Read;
+            }
 
             try
             {

@@ -177,7 +177,7 @@ function ValidateInstalledHelpContent
         [switch]$UserScope
     )
 
-    if($Scope)
+    if($UserScope)
     {
         $params = @{ Path = $testCases[$moduleName].HelpInstallationPathHome }
     }
@@ -202,7 +202,7 @@ function RunUpdateHelpTests
     param (
         [string]$tag = "CI",
         [switch]$useSourcePath,
-        [switch]$Scope
+        [switch]$userscope
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -210,10 +210,9 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName' with scope as '$Scope'" {
+            It "Validate Update-Help for module '$moduleName' with scope as '$userscope'" {
 
-                # If the help file is already installed, delete it.
-                if($Scope)
+                if($userscope)
                 {
                     $params = @{Path = $testCases[$moduleName].HelpInstallationPathHome}
                     $updateScope = @{Scope = 'CurrentUser'}
@@ -232,6 +231,7 @@ function RunUpdateHelpTests
 
                 $params += $commonParam
 
+                # If the help file is already installed, delete it.
                 Get-ChildItem @params |
                     Remove-Item -Force -ErrorAction SilentlyContinue
 
@@ -258,13 +258,13 @@ function RunUpdateHelpTests
                     }
                 }
 
-                if($Scope -eq 'AllUsers')
+                if($userscope)
                 {
-                    ValidateInstalledHelpContent -moduleName $moduleName
+                    ValidateInstalledHelpContent -moduleName $moduleName -UserScope
                 }
                 else
                 {
-                    ValidateInstalledHelpContent -moduleName $moduleName -Scope
+                    ValidateInstalledHelpContent -moduleName $moduleName
                 }
             }
 
