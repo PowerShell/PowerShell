@@ -12,7 +12,8 @@ you will need to take the following steps
 
 ## Running tests with code coverage analysis
 
-**First**: Open PowerShell in an **elevated** session. OpenCover needs elevated privileges to work.
+**First**: Open PowerShell in an **elevated** session.
+OpenCover needs elevated privileges to work.
 
 Now, in PowerShell:
 
