@@ -21,6 +21,7 @@ function Invoke-Msiexec {
         [Switch]$Uninstall,
 
         [Parameter(Mandatory)]
+        [ValidateScript({Test-Path -Path $_})]
         [String]$MsiPath,
 
         [Parameter(ParameterSetName = 'Install')]
@@ -41,62 +42,63 @@ function Invoke-Msiexec {
         }
     }
 
-    $argumentList = "$switch $MsiPath /quiet /l*vx $script:msiLog $additionalOptions"
+    $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
     $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
     if ($msiExecProcess.ExitCode -ne 0) {
         $exitCode = $msiExecProcess.ExitCode
-        throw "$action MSI failed and returned error code $exitCode. MSI Log was uploaded as artifact."
+        throw "$action MSI failed and returned error code $exitCode."
     }
 }
 
 Describe -Name "Windows MSI" -Fixture {
     BeforeAll {
-        $script:msiX64Path = $env:PsMsiX64Path
-        $script:beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
+        $msiX64Path = $env:PsMsiX64Path
+
+        # Get any existing powershell core in the path
+        $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files\powershell*'})
 
-        $resolvedTestDrive = (Resolve-Path "Testdrive:\").providerPath
-        $script:msiLog = Join-Path -Path $resolvedTestDrive -ChildPath 'msilog.txt'
+        $msiLog = Join-Path -Path $TestDrive -ChildPath 'msilog.txt'
 
-        foreach ($pathPart in $script:beforePath) {
+        foreach ($pathPart in $beforePath) {
             Write-Warning "Found existing PowerShell path: $pathPart"
         }
 
         if (!(Test-Elevated)) {
             Write-Warning "Tests must be elevated"
         }
-        $script:uploadedLog = $false
+        $uploadedLog = $false
     }
     BeforeEach {
         $Error.Clear()
     }
     AfterEach {
-        if ($Error.Count -ne 0 -and !$script:uploadedLog) {
+        if ($Error.Count -ne 0 -and !$uploadedLog) {
             if ($env:APPVEYOR) {
                 Push-AppveyorArtifact $msiLog
             } else {
-                Copy-Item -Path $script:msiLog -Destination $env:temp -Force
+                Copy-Item -Path $msiLog -Destination $env:temp -Force
                 Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
             }
-            $script:uploadedLog = $true
+            $uploadedLog = $true
         }
     }
 
     Context "Add Path disabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated) -or !$script:msiX64Path) {
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0}
             } | Should -Not -Throw
         }
 
-        It -name "MSI should have not be updated path" -Skip:(!(Test-Elevated) -or !$script:msiX64Path) -test {
+        It "MSI should have not be updated path" -Skip:(!(Test-Elevated)) {
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
 
             $psPath | Should -BeNullOrEmpty
         }
 
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated) -or !$script:msiX64Path) {
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
             } | Should -Not -Throw
@@ -104,20 +106,20 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Add Path enabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated) -or !$script:msiX64Path) {
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 1}
             } | Should -Not -Throw
         }
 
-        It -name "MSI should have updated path" -Skip:(!(Test-Elevated) -or !$script:msiX64Path) -test {
+        It "MSI should have updated path" -Skip:(!(Test-Elevated)) {
             $psPath = ([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
 
             $psPath | Should -Not -BeNullOrEmpty
         }
 
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated) -or !$script:msiX64Path) {
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
             } | Should -Not -Throw
