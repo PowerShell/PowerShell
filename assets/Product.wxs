@@ -6,14 +6,13 @@
   <?define InfoURL="https://github.com/PowerShell/PowerShell" ?>
   <?define ProductName = "$(env.ProductName)" ?>
   <?define ProductCode = "$(env.ProductCode)" ?>
+  <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.SimpleProductVersion) ($(sys.BUILDARCH))"?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
   <?if $(sys.BUILDARCH)=x64?>
     <?define UpgradeCode = "$(env.UpgradeCodeX64)" ?>
-    <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.SimpleProductVersion)"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.SimpleProductVersion)"?>
   <?else?>
     <?define UpgradeCode = "$(env.UpgradeCodeX86)" ?>
-    <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.SimpleProductVersion) ($(sys.BUILDARCH))"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.SimpleProductVersion) ($(sys.BUILDARCH))"?>
   <?endif?>
   <?define ProductDirectoryName = "$(env.ProductDirectoryName)" ?>
