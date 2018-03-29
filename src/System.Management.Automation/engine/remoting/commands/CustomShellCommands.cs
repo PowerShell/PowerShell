@@ -4870,7 +4870,10 @@ param(
 function Register-EndpointIfNotPresent
 {{
 param(
-    [Parameter()] [string] $configurationName
+    [Parameter()] [string] $Name,
+    [Parameter()] [bool] $Force,
+    [Parameter()] [string] $queryForRegisterDefault,
+    [Parameter()] [string] $captionForRegisterDefault
 )
     #
     # This cmdlet will make sure default powershell end points exist upon successful completion.
@@ -4883,7 +4886,7 @@ param(
     #   PowerShell.<version ID>
     #
     $errorCount = $error.Count
-    $endPoint = Get-PSSessionConfiguration $configurationName -Force:$Force -ErrorAction silentlycontinue 2>&1
+    $endPoint = Get-PSSessionConfiguration $Name -Force:$Force -ErrorAction silentlycontinue 2>&1
     $newErrorCount = $error.Count
 
     # remove the 'No Session Configuration matches criteria' errors
@@ -4892,11 +4895,11 @@ param(
         $error.RemoveAt(0)
     }}
 
-    $qMessage = $queryForRegisterDefault -f ""$configurationName"",""Register-PSSessionConfiguration {0} -force""
+    $qMessage = $queryForRegisterDefault -f ""$Name"",""Register-PSSessionConfiguration {0} -force""
     if ((!$endpoint) -and
         ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
     {{
-        Register-Endpoint $configurationName
+        Register-Endpoint $Name
     }}
 }}
 
@@ -4928,7 +4931,7 @@ param(
             # first try to enable all the sessions
             Enable-PSSessionConfiguration @PSBoundParameters
 
-            Register-EndpointIfNotPresent {0}
+            Register-EndpointIfNotPresent -Name {0} $Force $queryForRegisterDefault $captionForRegisterDefault
 
             # Create the default PSSession configuration, not tied to any specific PowerShell version.
             $powershellNr = $PSVersionTable.PSVersion.ToString()
@@ -4936,7 +4939,7 @@ param(
             if ($dotPos -ne -1) {{
                 $powershellNr = $powershellNr.Substring(0, $dotPos)
             }}
-            Register-EndpointIfNotPresent (""PowerShell."" + $powershellNr)
+            Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellNr) $Force $queryForRegisterDefault $captionForRegisterDefault
 
             # PowerShell Workflow and WOW are not supported for PowerShell Core
             if (![System.Management.Automation.Platform]::IsCoreCLR)
