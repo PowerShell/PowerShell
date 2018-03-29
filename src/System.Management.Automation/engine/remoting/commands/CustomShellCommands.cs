@@ -4867,6 +4867,39 @@ param(
     restart-service winrm -confirm:$false
 }}
 
+function Register-EndpointIfNotPresent
+{{
+param(
+    [Parameter()] [string] $configurationName
+)
+    #
+    # This cmdlet will make sure default powershell end points exist upon successful completion.
+    #
+    # Windows PowerShell:
+    #   Microsoft.PowerShell
+    #   Microsoft.PowerShell32 (wow64)
+    #
+    # PowerShell Core:
+    #   PowerShell.<version ID>
+    #
+    $errorCount = $error.Count
+    $endPoint = Get-PSSessionConfiguration $configurationName -Force:$Force -ErrorAction silentlycontinue 2>&1
+    $newErrorCount = $error.Count
+
+    # remove the 'No Session Configuration matches criteria' errors
+    for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
+    {{
+        $error.RemoveAt(0)
+    }}
+
+    $qMessage = $queryForRegisterDefault -f ""$configurationName"",""Register-PSSessionConfiguration {0} -force""
+    if ((!$endpoint) -and
+        ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
+    {{
+        Register-Endpoint $configurationName
+    }}
+}}
+
 function Enable-PSRemoting
 {{
 [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
@@ -4895,32 +4928,7 @@ param(
             # first try to enable all the sessions
             Enable-PSSessionConfiguration @PSBoundParameters
 
-            #
-            # This cmdlet will make sure default powershell end points exist upon successful completion.
-            #
-            # Windows PowerShell:
-            #   Microsoft.PowerShell
-            #   Microsoft.PowerShell32 (wow64)
-            #
-            # PowerShell Core:
-            #   PowerShell.<version ID>
-            #
-            $errorCount = $error.Count
-            $endPoint = Get-PSSessionConfiguration {0} -Force:$Force -ErrorAction silentlycontinue 2>&1
-            $newErrorCount = $error.Count
-
-            # remove the 'No Session Configuration matches criteria' errors
-            for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
-            {{
-                $error.RemoveAt(0)
-            }}
-
-            $qMessage = $queryForRegisterDefault -f ""{0}"",""Register-PSSessionConfiguration {0} -force""
-            if ((!$endpoint) -and
-                ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
-            {{
-                Register-Endpoint {0}
-            }}
+            Register-EndpointIfNotPresent {0}
 
             # Create the default PSSession configuration, not tied to any specific PowerShell version.
             $powershellNr = $PSVersionTable.PSVersion.ToString()
@@ -4928,7 +4936,7 @@ param(
             if ($dotPos -ne -1) {{
                 $powershellNr = $powershellNr.Substring(0, $dotPos)
             }}
-            Register-Endpoint (""PowerShell."" + $powershellNr)
+            Register-EndpointIfNotPresent (""PowerShell."" + $powershellNr)
 
             # PowerShell Workflow and WOW are not supported for PowerShell Core
             if (![System.Management.Automation.Platform]::IsCoreCLR)
