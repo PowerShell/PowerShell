@@ -743,6 +743,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _formattingHint = hint;
         }
 
+        static private int _failedToReadConsoleWidth = 0;
+
         static private int GetConsoleWindowWidth(int columnNumber)
         {
             if (columnNumber == int.MaxValue)
@@ -752,13 +754,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // If we detect that int.MaxValue is used, first we try to get the current console window width.
                 // However, if we can't read that (for example, implicit remoting has no console window), we default
                 // to something reasonable: 120 columns.
+                if (_failedToReadConsoleWidth > 0)
+                {
+                    return _failedToReadConsoleWidth;
+                }
                 try
                 {
                     return Console.WindowWidth;
                 }
                 catch
                 {
-                    return 120;
+                    _failedToReadConsoleWidth = 120;
+                    return _failedToReadConsoleWidth;
                 }
             }
             return columnNumber;
