@@ -4844,6 +4844,10 @@ param(
     # Section 1:
     # Move pwrshplugin.dll from $PSHOME to the endpoint directory
     #
+    # The plugin directory pattern for endpoint configuration is:
+    # '$env:WINDIR\System32\PowerShell\' + powershell_version,
+    # so we call Copy-PluginToEndpoint function only with the PowerShell version argument.
+
     $pwshVersion = $configurationName.Replace(""PowerShell."", """")
     $resolvedPluginInstallPath = Copy-PluginToEndpoint $pwshVersion
     if (!$resolvedPluginInstallPath) {{
@@ -4933,7 +4937,8 @@ param(
 
             Register-EndpointIfNotPresent -Name {0} $Force $queryForRegisterDefault $captionForRegisterDefault
 
-            # Create the default PSSession configuration, not tied to any specific PowerShell version.
+            # Create the default PSSession configuration, not tied to specific PowerShell version
+            # e. g. 'PowerShell.6'.
             $powershellNr = $PSVersionTable.PSVersion.ToString()
             $dotPos = $powershellNr.IndexOf(""."")
             if ($dotPos -ne -1) {{

@@ -135,6 +135,9 @@ function Install-PluginEndpoint {
         $targetPsVersion = $PSVersionTable.PSVersion.ToString()
     }
 
+    # For default, not tied to the specific version endpoint, we apply
+    # only first number in the PSVersion string to the endpoint name.
+    # Example name: 'PowerShell.6'.
     if ($VersionIndependent) {
         $dotPos = $targetPsVersion.IndexOf(".")
         if ($dotPos -ne -1) {
