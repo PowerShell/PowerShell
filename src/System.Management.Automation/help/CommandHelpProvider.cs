@@ -512,7 +512,7 @@ namespace System.Management.Automation
                     // we have to search only in the application base for a mshsnapin...
                     // if you create an absolute path for helpfile, then MUIFileSearcher
                     // will look only in that path.
-                    
+
                     searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                     searchPaths.Add(mshSnapInInfo.ApplicationBase);
                 }

@@ -148,7 +148,7 @@ namespace System.Management.Automation
                                     {
                                         //Remove the new file as higher version item is already in dictionary.
                                         matchedFilesToRemove.Add(fileFullName);
-                                    }                                                                      
+                                    }
                                 }
                             }
                             else
@@ -185,7 +185,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            
+
             return matchedFilesToRemove;
         }
 
@@ -348,7 +348,7 @@ namespace System.Management.Automation
 
             // Add the CurrentUser help path.
             searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
-            
+
             // Add modules that are not loaded. Since using 'get-module -listavailable' is very expensive,
             // we load all the directories (which are not empty) under the module path.
             foreach (string psModulePath in ModuleIntrinsics.GetModulePath(false, this.HelpSystem.ExecutionContext))

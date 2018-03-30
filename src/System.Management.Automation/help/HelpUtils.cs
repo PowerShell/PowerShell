@@ -58,7 +58,7 @@ namespace System.Management.Automation
             }
             else
             {
-                //This module is inbox module, help should be under <userHelpPath> 
+                //This module is inbox module, help should be under <userHelpPath>
                 newModuleBase = userHelpPath;
             }
 

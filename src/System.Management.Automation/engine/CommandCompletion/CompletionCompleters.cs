@@ -5922,7 +5922,7 @@ namespace System.Management.Automation
             var searchPaths = new List<string>();
             var currentCulture = CultureInfo.CurrentCulture.Name;
             var directorySeparatorChar = Path.DirectorySeparatorChar;
-            
+
             // Add the user scope path first, since it is searched in order.
             var userHelpRoot = HelpUtils.GetUserHomeHelpSearchPath() + directorySeparatorChar + currentCulture;
 
