@@ -954,10 +954,6 @@ namespace Microsoft.PowerShell.Commands
                         csharpCompilationOptions = csharpCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
                     }
 
-                    if (UsingNamespace.Length > 0)
-                    {
-                        csharpCompilationOptions = csharpCompilationOptions.WithUsings(UsingNamespace);
-                    }
                     return csharpCompilationOptions;
 
                 case Language.VisualBasic:
@@ -969,10 +965,6 @@ namespace Microsoft.PowerShell.Commands
                         vbCompilationOptions = vbCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
                     }
 
-                    if (UsingNamespace.Length > 0)
-                    {
-                        vbCompilationOptions = vbCompilationOptions.WithGlobalImports(GlobalImport.Parse(UsingNamespace));
-                    }
                     return vbCompilationOptions;
 
                 default:
@@ -1017,16 +1009,16 @@ namespace Microsoft.PowerShell.Commands
 
                 compilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
 
-                if (!IgnoreWarnings.IsPresent)
-                {
-                    compilationOptions = arguments.CompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                }
-
                 emitOptions = arguments.EmitOptions;
             }
             else
             {
                 compilationOptions = GetDefaultCompilationOptions();
+            }
+
+            if (!IgnoreWarnings.IsPresent)
+            {
+                compilationOptions = compilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
             }
 
             SourceText sourceText;
@@ -1207,6 +1199,9 @@ namespace Microsoft.PowerShell.Commands
                 using (var ms = new MemoryStream())
                 {
                     emitResult = compilation.Emit(peStream: ms, options: emitOptions);
+
+                    HandleCompilerErrors(emitResult.Diagnostics);
+
                     if (emitResult.Success)
                     {
                         // TODO:  We could use Assembly.LoadFromStream() in future.
@@ -1232,6 +1227,8 @@ namespace Microsoft.PowerShell.Commands
                     emitResult = compilation.Emit(peStream: fs, options: emitOptions);
                 }
 
+                HandleCompilerErrors(emitResult.Diagnostics);
+
                 if (emitResult.Success)
                 {
                     if (PassThru.IsPresent)
@@ -1248,8 +1245,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-
-            HandleCompilerErrors(emitResult.Diagnostics);
         }
 
         private void HandleCompilerErrors(ImmutableArray<Diagnostic> compilerDiagnostics)
@@ -1265,7 +1260,11 @@ namespace Microsoft.PowerShell.Commands
                     //      CS1562: Outputs without source must have the /out option specified
                     //      CS2008: No inputs specified
                     //      BC2008: No inputs specified
-                    if (diagnisticRecord.IsSuppressed ||
+                    //
+                    // On emit phase some warnings (like CS8019/BS50001) don't suppressed
+                    // and present in diagnostic report with DefaultSeverity equal to Hidden
+                    // so we skip them explicitly here too.
+                    if (diagnisticRecord.IsSuppressed || diagnisticRecord.DefaultSeverity == DiagnosticSeverity.Hidden ||
                         String.Equals(diagnisticRecord.Id, "CS2008", StringComparison.InvariantCulture) ||
                         String.Equals(diagnisticRecord.Id, "CS1562", StringComparison.InvariantCulture) ||
                         String.Equals(diagnisticRecord.Id, "BC2008", StringComparison.InvariantCulture))
