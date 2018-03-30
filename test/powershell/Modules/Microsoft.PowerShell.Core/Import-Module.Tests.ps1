@@ -201,7 +201,7 @@ Describe "Import-Module should be case insensitive" -Tags 'CI' {
     }
 }
 
-Describe "Workflow .Xaml module is not supported in PSCore" -tags "CI" {
+Describe "Workflow .Xaml module is not supported in PSCore" -tags "Feature" {
     BeforeAll {
         $xamlFile = Join-Path $TestDrive "XamlTest.xaml"
         New-Item -Path $xamlFile -ItemType File -Force

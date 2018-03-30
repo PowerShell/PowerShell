@@ -1536,7 +1536,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(
                                    new NotSupportedException(message),
                                    "Modules_WorkflowModuleNotSupported",
-                                   ErrorCategory.PermissionDenied, null));
+                                   ErrorCategory.InvalidOperation, null));
                 }
 
                 // Null out 'actualRootModule' so don't attempt to process the file like a non-workflow module later.
@@ -2059,7 +2059,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(new ErrorRecord(
                                            new NotSupportedException(message),
                                            "Modules_WorkflowModuleNotSupported",
-                                           ErrorCategory.PermissionDenied, null));
+                                           ErrorCategory.InvalidOperation, null));
                         }
 
                         containedErrors = true;
@@ -5724,7 +5724,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(
                                    new NotSupportedException(message),
                                    "Modules_WorkflowModuleNotSupported",
-                                   ErrorCategory.PermissionDenied, null));
+                                   ErrorCategory.InvalidOperation, null));
                 }
                 else
                 {
@@ -5732,7 +5732,7 @@ namespace Microsoft.PowerShell.Commands
                     message = StringUtil.Format(Modules.InvalidModuleExtension, ext, fileName);
                     InvalidOperationException invalidOp = new InvalidOperationException(message);
                     ErrorRecord er = new ErrorRecord(invalidOp, "Modules_InvalidModuleExtension",
-                        ErrorCategory.PermissionDenied, null);
+                        ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                 }
             }
