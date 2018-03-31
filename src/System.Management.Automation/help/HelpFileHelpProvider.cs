@@ -343,8 +343,18 @@ namespace System.Management.Automation
         {
             Collection<String> searchPaths = GetSearchPaths();
 
-            // Add $PSHome path. This ensures that default.help.txt is picked before other help content for 'Get-Help'
-            searchPaths.Add(GetDefaultShellSearchPath());
+            // Add $pshome at the top of the list
+            String defaultShellSearchPath = GetDefaultShellSearchPath();
+
+            int index = searchPaths.IndexOf(defaultShellSearchPath);
+            if (index != 0)
+            {
+                if (index > 0)
+                {
+                    searchPaths.RemoveAt(index);
+                }
+                searchPaths.Insert(0, defaultShellSearchPath);
+            }
 
             // Add the CurrentUser help path.
             searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());

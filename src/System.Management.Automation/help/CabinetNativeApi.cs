@@ -229,6 +229,9 @@ namespace System.Management.Automation.Internal
             FileAccess access = CabinetNativeApi.ConvertPermissionModeToFileAccess(pmode);
             FileShare share = CabinetNativeApi.ConvertPermissionModeToFileShare(pmode);
 
+            // This method is used for opening the cab file as well as saving the extracted files.
+            // When we are opening the cab file we only need read permissions.
+            // We force read permissions so that non-elevated users can extract cab files.
             if(mode == FileMode.Open || mode == FileMode.OpenOrCreate)
             {
                 access = FileAccess.Read;

@@ -5921,17 +5921,16 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
             var searchPaths = new List<string>();
             var currentCulture = CultureInfo.CurrentCulture.Name;
-            var directorySeparatorChar = Path.DirectorySeparatorChar;
 
             // Add the user scope path first, since it is searched in order.
-            var userHelpRoot = HelpUtils.GetUserHomeHelpSearchPath() + directorySeparatorChar + currentCulture;
+            var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
 
             if(Directory.Exists(userHelpRoot))
             {
                 searchPaths.Add(userHelpRoot);
             }
 
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + directorySeparatorChar + currentCulture;
+            var dirPath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), currentCulture);
             searchPaths.Add(dirPath);
 
             var wordToComplete = context.WordToComplete + "*";
