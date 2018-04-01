@@ -755,7 +755,9 @@ namespace System.Management.Automation
             if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock != null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
-                parser.ReportError(errorAst.Extent, () => ParserStrings.InvalidScriptBlockInDataSection);
+                parser.ReportError(errorAst.Extent,
+                    nameof(ParserStrings.InvalidScriptBlockInDataSection),
+                    ParserStrings.InvalidScriptBlockInDataSection);
             }
 
             if (HasEndBlock)

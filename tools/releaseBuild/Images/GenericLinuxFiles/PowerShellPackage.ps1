@@ -42,7 +42,7 @@ try {
     if ($TarArm) {
         ## Build 'linux-arm' and create 'tar.gz' package for it.
         ## Note that 'linux-arm' can only be built on Ubuntu environment.
-        Start-PSBuild -Runtime linux-arm -PSModuleRestore @releaseTagParam
+        Start-PSBuild -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
         Start-PSPackage -Type tar-arm @releaseTagParam
     }
 }

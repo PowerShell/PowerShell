@@ -156,11 +156,11 @@ function ValidateInstalledHelpContent
 
     $helpFilesInstalled = @(GetFiles -path $testCases[$moduleName].HelpInstallationPath | ForEach-Object {Split-Path $_ -Leaf})
     $expectedHelpFiles = @($testCases[$moduleName].HelpFiles)
-    $helpFilesInstalled.Count | Should Be $expectedHelpFiles.Count
+    $helpFilesInstalled.Count | Should -Be $expectedHelpFiles.Count
 
     foreach ($fileName in $expectedHelpFiles)
     {
-        $helpFilesInstalled -contains $fileName | Should Be $true
+        $helpFilesInstalled -contains $fileName | Should -BeTrue
     }
 }
 
@@ -168,8 +168,7 @@ function RunUpdateHelpTests
 {
     param (
         [string]$tag = "CI",
-        [switch]$useSourcePath,
-        [switch]$Pending
+        [switch]$useSourcePath
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -177,7 +176,7 @@ function RunUpdateHelpTests
         if ($powershellCoreModules -contains $moduleName)
         {
 
-            It "Validate Update-Help for module '$moduleName'" -Pending:$Pending {
+            It "Validate Update-Help for module '$moduleName'" {
 
                 # If the help file is already installed, delete it.
                 Get-ChildItem $testCases[$moduleName].HelpInstallationPath -Include @("*help.xml") -Recurse -ea SilentlyContinue |
@@ -220,8 +219,7 @@ function RunUpdateHelpTests
 function RunSaveHelpTests
 {
     param (
-        [string]$tag = "CI",
-        [switch]$Pending
+        [string]$tag = "CI"
     )
 
     foreach ($moduleName in $modulesInBox)
@@ -233,7 +231,7 @@ function RunSaveHelpTests
                 $saveHelpFolder = Join-Path $TestDrive (Get-Random).ToString()
                 New-Item  $saveHelpFolder -Force -ItemType Directory
 
-                It "Validate Save-Help for the '$moduleName' module" -Pending:$Pending {
+                It "Validate Save-Help for the '$moduleName' module" {
 
                     if ((Get-UICulture).Name -ne "en-Us")
                     {
@@ -269,14 +267,14 @@ function ValidateSaveHelp
 
     $compressedFile = GetFiles -fileType "*$extension" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedCompressedFile = $testCases[$moduleName].CompressedFiles
-    $expectedCompressedFile | Should Be $compressedFile
+    $expectedCompressedFile | Should -Be $compressedFile
 
     $helpInfoFile = GetFiles -fileType "*HelpInfo.xml" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedHelpInfoFile = $testCases[$moduleName].HelpInfoFiles
-    $expectedHelpInfoFile | Should Be $helpInfoFile
+    $expectedHelpInfoFile | Should -Be $helpInfoFile
 }
 
-Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -285,10 +283,10 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module." -Ta
         $ProgressPreference = $SavedProgressPreference
     }
 
-    RunUpdateHelpTests -tag "CI" -Pending
+    RunUpdateHelpTests -tag "CI"
 }
 
-Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -300,7 +298,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules." -T
     RunUpdateHelpTests -tag "Feature"
 }
 
-Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -312,7 +310,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tag
     RunUpdateHelpTests -tag "CI" -useSourcePath
 }
 
-Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
@@ -332,7 +330,7 @@ Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules."
     AfterAll {
         $ProgressPreference = $SavedProgressPreference
     }
-    RunSaveHelpTests -tag "CI" -Pending
+    RunSaveHelpTests -tag "CI"
 }
 
 Describe "Validate 'Save-Help -DestinationPath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {

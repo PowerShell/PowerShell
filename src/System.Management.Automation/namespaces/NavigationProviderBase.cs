@@ -663,7 +663,7 @@ namespace System.Management.Automation.Provider
                 // See if the base and the path are already the same. We resolve this to
                 // ..\Leaf, since resolving "." to "." doesn't offer much information.
                 if (String.Equals(normalizedPath, normalizedBasePath, StringComparison.OrdinalIgnoreCase) &&
-                    (!originalPath.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)))
+                    (!originalPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
                 {
                     string childName = GetChildName(path);
                     result = MakePath("..", childName);
@@ -703,7 +703,7 @@ namespace System.Management.Automation.Provider
                     if (!String.IsNullOrEmpty(commonBase))
                     {
                         if (String.Equals(normalizedPath, commonBase, StringComparison.OrdinalIgnoreCase) &&
-                            (!normalizedPath.EndsWith("" + StringLiterals.DefaultPathSeparator, StringComparison.OrdinalIgnoreCase)))
+                            (!normalizedPath.EndsWith(StringLiterals.DefaultPathSeparatorString, StringComparison.OrdinalIgnoreCase)))
                         {
                             string childName = GetChildName(path);
                             result = MakePath("..", result);

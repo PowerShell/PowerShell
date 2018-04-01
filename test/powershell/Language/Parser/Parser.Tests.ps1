@@ -90,11 +90,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$shellfile = Join-Path -Path $TestDrive -ChildPath "testfile.cmd"
 		$testfolder1 = Join-Path -Path $TestDrive -ChildPath "dir1"
 		$testfolder2 = Join-Path -Path $testfolder1 -ChildPath "dir2"
-		if(-not(Test-Path $testfolder1))
+		if(-Not(Test-Path $testfolder1))
 		{
 			New-Item $testfolder1 -Type Directory
 		}
-		if(-not(Test-Path $testfolder2))
+		if(-Not(Test-Path $testfolder2))
 		{
 			New-Item $testfolder2 -Type Directory
 		}
@@ -143,7 +143,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
 	}
 
@@ -153,7 +153,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
     }
 
@@ -163,15 +163,15 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
 	It "Throws an CommandNotFoundException exception if using a label in front of an if statement is not allowed. (line 225)"{
         $PowerShell.Streams.Error.Clear()
         ExecuteCommand ":foo if ($x -eq 3) { 1 }"
-		$PowerShell.HadErrors | should be $true
-        $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "CommandNotFoundException"
+		$PowerShell.HadErrors | Should -BeTrue
+        $PowerShell.Streams.Error.FullyQualifiedErrorId | Should -Be "CommandNotFoundException"
     }
 
 	It "Pipe an expression into a value expression. (line 237)" {
@@ -180,7 +180,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
 
 		try {
@@ -188,7 +188,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
 
 		try {
@@ -196,7 +196,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -207,7 +207,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
                 throw "Execution OK"
             }
             catch {
-                $_.FullyQualifiedErrorId | Should be "ParseException"
+                $_.FullyQualifiedErrorId | Should -Be "ParseException"
             }
         }
     }
@@ -218,57 +218,57 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
     }
 
 	It "Test that invoke has a higher precedence for a script than for an executable. (line 279)" {
 		"1">$testfile
         $result = ExecuteCommand ". $testfile"
-		$result | should be 1
+		$result | Should -Be 1
     }
 
 	It "This test will check that a path is correctly interpreted when using '..' and '.'  (line 364)" {
         $result = ExecuteCommand "set-location $TestDrive; get-childitem dir1\.\.\.\..\dir1\.\dir2\..\..\dir1\.\dir2"
-		$result.Count | should be 2
-		$result[0].Name | should be "testdirfile1.txt"
-		$result[1].Name | should be "testdirfile2.txt"
+		$result.Count | Should -Be 2
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test will check that the parser can handle a mix of forward slashes and back slashes in the path (line 417)" {
         $result = ExecuteCommand "get-childitem $TestDrive/dir1/./.\.\../dir1/.\dir2\../..\dir1\.\dir2"
-		$result.Count | should be 2
-		$result[0].Name | should be "testdirfile1.txt"
-		$result[1].Name | should be "testdirfile2.txt"
+		$result.Count | Should -Be 2
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test checks that the asterisk globs as expected. (line 545)" {
         $result = ExecuteCommand "get-childitem $TestDrive/dir1\dir2\*.txt"
-		$result.Count | should be 2
-		$result[0].Name | should be "testdirfile1.txt"
-		$result[1].Name | should be "testdirfile2.txt"
+		$result.Count | Should -Be 2
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test checks that we can use a range for globbing: [1-2] (line 557)" {
         $result = ExecuteCommand "get-childitem $TestDrive/dir1\dir2\testdirfile[1-2].txt"
-		$result.Count | should be 2
-		$result[0].Name | should be "testdirfile1.txt"
-		$result[1].Name | should be "testdirfile2.txt"
+		$result.Count | Should -Be 2
+		$result[0].Name | Should -BeExactly "testdirfile1.txt"
+		$result[1].Name | Should -BeExactly "testdirfile2.txt"
     }
 
 	It "This test will check that escaping the $ sigil inside single quotes simply returns the $ character. (line 583)" {
         $result = ExecuteCommand "'`$'"
-		$result | should be "`$"
+		$result | Should -BeExactly "`$"
     }
 
 	It "Test that escaping a space just returns that space. (line 593)" {
         $result = ExecuteCommand '"foo` bar"'
-		$result | should be "foo bar"
+		$result | Should -BeExactly "foo bar"
     }
 
     It "Test that escaping the character 'e' returns the ESC character (0x1b)." {
         $result = ExecuteCommand '"`e"'
-        $result | should be ([char]0x1b)
+        $result | Should -BeExactly ([char]0x1b)
     }
 
     Context "Test Unicode escape sequences." {
@@ -276,38 +276,38 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         # PowerShell without a BOM, the file is incorrectly interpreted as ASCII.
         It 'Test that the bracketed Unicode escape sequence `u{0} returns minimum char.' {
             $result = ExecuteCommand '"`u{0}"'
-            [int]$result[0] | should be 0
+            [int]$result[0] | Should -Be 0
         }
 
         It 'Test that the bracketed Unicode escape sequence `u{10FFFF} returns maximum surrogate char pair.' {
             $result = ExecuteCommand '"`u{10FFFF}"'
-            [int]$result[0] | should be 0xDBFF # max value for high surrogate of surrogate pair
-            [int]$result[1] | should be 0xDFFF # max value for low surrogate of surrogate pair
+            [int]$result[0] | Should -BeExactly 0xDBFF # max value for high surrogate of surrogate pair
+            [int]$result[1] | Should -BeExactly 0xDFFF # max value for low surrogate of surrogate pair
         }
 
         It 'Test that the bracketed Unicode escape sequence `u{a9} returns the © character.' {
             $result = ExecuteCommand '"`u{a9}"'
-            $result | should be '©'
+            $result | Should -BeExactly '©'
         }
 
         It 'Test that Unicode escape sequence `u{2195} in string returns the ↕ character.' {
             $result = ExecuteCommand '"foo`u{2195}abc"'
-            $result | should be "foo↕abc"
+            $result | Should -BeExactly "foo↕abc"
         }
 
         It 'Test that the bracketed Unicode escape sequence `u{1f44d} returns surrogate pair for emoji 👍 character.' {
             $result = ExecuteCommand '"`u{1f44d}"'
-            $result | should be "👍"
+            $result | Should -BeExactly "👍"
         }
 
         It 'Test that Unicode escape sequence `u{2195} in here string returns the ↕ character.' {
             $result = ExecuteCommand ("@`"`n`n" + 'foo`u{2195}abc' + "`n`n`"@")
-            $result | should be "`nfoo↕abc`n"
+            $result | Should -BeExactly "`nfoo↕abc`n"
         }
 
         It 'Test that Unicode escape sequence in single quoted is not processed.' {
             $result = ExecuteCommand '''foo`u{2195}abc'''
-            $result | should be 'foo`u{2195}abc'
+            $result | Should -BeExactly 'foo`u{2195}abc'
         }
 
         It 'Test that Unicode escape sequence in single quoted here string is not processed.' {
@@ -318,38 +318,38 @@ foo``u{2195}abc
 
 '@
 "@
-            $result | should match "\r?\nfoo``u\{2195\}abc\r?\n"
+            $result | Should -Match "\r?\nfoo``u\{2195\}abc\r?\n"
         }
 
         It "Test that two consecutive Unicode escape sequences are tokenized correctly." {
             $result = ExecuteCommand '"`u{007b}`u{007d}"'
-            $result | should be '{}'
+            $result | Should -Be '{}'
         }
 
         It "Test that a Unicode escape sequence can be used in a command name." {
             function xyzzy`u{2195}($p) {$p}
             $cmd = Get-Command xyzzy`u{2195} -ErrorAction SilentlyContinue
-            $cmd | should not BeNullOrEmpty
-            $cmd.Name | should be 'xyzzy↕'
-            xyzzy`u{2195} 42 | should be 42
+            $cmd | Should -Not -BeNullOrEmpty
+            $cmd.Name | Should -BeExactly 'xyzzy↕'
+            xyzzy`u{2195} 42 | Should -Be 42
         }
 
         It "Test that a Unicode escape sequence can be used in a variable name." {
             ${fooxyzzy`u{2195}} = 42
             $var = Get-Variable -Name fooxyzzy* -ErrorAction SilentlyContinue
-            $var | should not BeNullOrEmpty
-            $var.Name | should be "fooxyzzy↕"
-            $var.Value | should be 42
+            $var | Should -Not -BeNullOrEmpty
+            $var.Name | Should -BeExactly "fooxyzzy↕"
+            $var.Value | Should -Be 42
         }
 
         It "Test that a Unicode escape sequence can be used in an argument." {
-            Write-Output `u{a9}` Acme` Inc | should be "© Acme Inc"
+            Write-Output `u{a9}` Acme` Inc | Should -BeExactly "© Acme Inc"
         }
     }
 
 	It "Test that escaping any character with no special meaning just returns that char. (line 602)" {
         $result = ExecuteCommand '"fo`obar"'
-		$result | should be "foobar"
+		$result | Should -BeExactly "foobar"
     }
 
 	Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
@@ -371,39 +371,39 @@ foo``u{2195}abc
 		It "C# escape sequence <sequence> is supported using `` instead of \. (line 613)" -TestCases $tests {
 			param ( $sequence, $expected )
 			$result = ExecuteCommand $sequence
-			$result | should be $expected
+			$result | Should -BeExactly $expected
 		}
     }
 
 	It "This test checks that array substitution occurs inside double quotes. (line 646)" {
         $result = ExecuteCommand '$MyArray = "a","b";"Hello $MyArray"'
-		$result | should be "Hello a b"
+		$result | Should -BeExactly "Hello a b"
     }
 
 	It "This tests declaring an array in nested variable tables. (line 761)" {
         $result = ExecuteCommand "`$Variable:vtbl1:vtbl2:b=@(5,6);`$Variable:vtbl1:vtbl2:b"
-		$result.Count | should be 2
-		$result[0] | should be 5
-		$result[1] | should be 6
+		$result.Count | Should -Be 2
+		$result[0] | Should -Be 5
+		$result[1] | Should -Be 6
     }
 
 	It "Test a simple multiple assignment. (line 773)" {
         $result = ExecuteCommand '$one,$two = 1,2,3; "One = $one"; "Two = $two"'
-		$result.Count | should be 2
-		$result[0] | should be "One = 1"
-		$result[1] | should be "Two = 2 3"
+		$result.Count | Should -Be 2
+		$result[0] | Should -Be "One = 1"
+		$result[1] | Should -Be "Two = 2 3"
     }
 
 	It "Tests script, global and local scopes from a function inside a script. (line 824)" {
 		"`$var = 'script';function func { `$var; `$var = 'local'; `$local:var; `$script:var; `$global:var };func;`$var;">$testfile
 		ExecuteCommand "`$var = 'global'"
         $result = ExecuteCommand "$testfile"
-		$result.Count | should be 5
-		$result[0] | should be "script"
-		$result[1] | should be "local"
-		$result[2] | should be "script"
-		$result[3] | should be "global"
-		$result[4] | should be "script"
+		$result.Count | Should -Be 5
+		$result[0] | Should -BeExactly "script"
+		$result[1] | Should -BeExactly "local"
+		$result[2] | Should -BeExactly "script"
+		$result[3] | Should -BeExactly "global"
+		$result[4] | Should -BeExactly "script"
     }
 
 	It "Use break inside of a loop that is inside another loop. (line 945)" {
@@ -415,7 +415,7 @@ foo``u{2195}abc
 		for(;$i -lt $commands.Count;$i++)
 		{
 			$result = ExecuteCommand $commands[$i]
-			$result | should be $results
+			$result | Should -Be $results
 		}
     }
 
@@ -428,7 +428,7 @@ foo``u{2195}abc
 		for(;$i -lt $commands.Count;$i++)
 		{
 			$result = ExecuteCommand $commands[$i]
-			$result | should be $results
+			$result | Should -Be $results
 		}
     }
 
@@ -437,11 +437,11 @@ foo``u{2195}abc
                 " for (`$a = 0;`$a -lt 2; `$a += 1) { 9; continue; 3; } ",
                 " foreach(`$a in 0,1) { `$a; continue; 2; } "
 		$result = ExecuteCommand $commands[0]
-		$result | should be "0", "1"
+		$result | Should -Be "0", "1"
 		$result = ExecuteCommand $commands[1]
-		$result | should be "9", "9"
+		$result | Should -Be "9", "9"
 		$result = ExecuteCommand $commands[2]
-		$result | should be "0", "1"
+		$result | Should -Be "0", "1"
     }
 
 	It "Use a label to continue an inner loop. (line 1059)" {
@@ -449,11 +449,11 @@ foo``u{2195}abc
                 " for (`$x = 0;`$x -lt 1;`$x += 1) { 1; :foo for(`$a = 0; `$a -lt 2; `$a += 1) { `$a; continue foo; 3; }; 4; continue; 5; } ",
                 " foreach(`$a in 1) { 1; :foo foreach( `$b in 1,2 ) { `$b; continue foo; 3; }; 4; continue; 5; } "
 		$result = ExecuteCommand $commands[0]
-		$result | should be "1", "1", "2", "4"
+		$result | Should -Be "1", "1", "2", "4"
 		$result = ExecuteCommand $commands[1]
-		$result | should be "1", "0", "1", "4"
+		$result | Should -Be "1", "0", "1", "4"
 		$result = ExecuteCommand $commands[2]
-		$result | should be "1", "1", "2", "4"
+		$result | Should -Be "1", "1", "2", "4"
     }
 
 	It "Use continue with a label on a nested loop. (line 1059)" {
@@ -461,11 +461,11 @@ foo``u{2195}abc
                 " :foo for (`$x = 0;`$x -lt 2;`$x += 1) { 1; :bar for(;;) { 2; continue foo; 3; }; 4; continue; 5; } ",
                 " :foo foreach(`$a in 1,2) { 1; :bar foreach( `$b in 1,2,3 ) { 2; continue foo; 3; }; 4; continue; 5; } "
 		$result = ExecuteCommand $commands[0]
-		$result | should be "0", "2", "1", "2"
+		$result | Should -Be "0", "2", "1", "2"
 		$result = ExecuteCommand $commands[1]
-		$result | should be "1", "2", "1", "2"
+		$result | Should -Be "1", "2", "1", "2"
 		$result = ExecuteCommand $commands[2]
-		$result | should be "1", "2", "1", "2"
+		$result | Should -Be "1", "2", "1", "2"
     }
 
 	It "This test will check that it is a syntax error to use if without a code block. (line 1141)" {
@@ -474,7 +474,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
     }
 
@@ -484,7 +484,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
     }
 
@@ -494,7 +494,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -504,7 +504,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -514,7 +514,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
     }
 
@@ -524,7 +524,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -534,7 +534,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -544,60 +544,60 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
 	It "Test that if an exception is thrown from the try block it will be caught in the appropropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
         $result = ExecuteCommand 'try { try { throw (new-object System.ArgumentException) } catch [System.DivideByZeroException] { } finally { "Finally" } } catch { $_.Exception.GetType().FullName }'
-		$result | should be "Finally", "System.ArgumentException"
+		$result | Should -Be "Finally", "System.ArgumentException"
     }
 
 	It "Test that null can be passed to a method that expects a reference type. (line 1439)" {
         $result = ExecuteCommand '$test = "String";$test.CompareTo($())'
-		$result | should be 1
+		$result | Should -Be 1
     }
 
 	It "Tests that command expansion operators can be used as a parameter to an object method. (line 1507)" {
         $result = ExecuteCommand '$test = "String";$test.SubString($("hello" | foreach-object { $_.length - 2 } ))'
-		$result | should be "ing"
+		$result | Should -Be "ing"
     }
 
 	It "Test that & can be used as a parameter as long as it is quoted. (line 1606)" {
         $result = ExecuteCommand 'testcmd-parserbvt `&get-childitem'
-		$result | should be "&get-childitem;unset;unset"
+		$result | Should -Be "&get-childitem;unset;unset"
 		$result = ExecuteCommand 'testcmd-parserbvt `&*'
-		$result | should be "&*;unset;unset"
+		$result | Should -Be "&*;unset;unset"
     }
 
 	It "Run a command with parameters. (line 1621)" {
         $result = ExecuteCommand 'testcmd-parserBVT -Property1 set'
-		$result | should be "set;unset;unset"
+		$result | Should -Be "set;unset;unset"
     }
 
 	It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
-		$result | should be "3"
-		$result.gettype() |should be ([int])
+		$result | Should -Be "3"
+		$result.gettype() |should -Be ([int])
     }
 
 	It "This test will check that an msh script can be run without invoking. (line 1641)" {
         "1">$testfile
         $result = ExecuteCommand ". $testfile"
-		$result | should be 1
+		$result | Should -Be 1
     }
 
 	It "Test that an alias is resolved before a function. (line 1657)" {
         $result = ExecuteCommand 'set-alias parserInvokeTest testcmd-parserBVT;function parserInvokeTest { 3 };parserInvokeTest'
-		$result | should be "unset;unset;unset"
+		$result | Should -Be "unset;unset;unset"
     }
 
 	It "Test that functions are resolved before cmdlets. (line 1678)"{
         $result_cmdlet = $PowerShell.AddScript('function test-parserfunc { [CmdletBinding()] Param() PROCESS { "cmdlet" } };test-parserfunc').Invoke()
         $result_func = ExecuteCommand 'function test-parserfunc { "func" };test-parserfunc'
         $PowerShell.Commands.Clear()
-        $result_cmdlet | should be "cmdlet"
-        $result_func | should be "func"
+        $result_cmdlet | Should -Be "cmdlet"
+        $result_func | Should -Be "func"
     }
 
 	It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" {
@@ -610,7 +610,7 @@ foo``u{2195}abc
         else {
             "@echo Hello, I'm a Cmd script!">$shellfile
         }
-        { ExecuteCommand "$shellfile" } | Should Not Throw
+        { ExecuteCommand "$shellfile" } | Should -Not -Throw
     }
 
 	Context "Boolean Tests (starting at line 1723 to line 1772)" {
@@ -627,7 +627,7 @@ foo``u{2195}abc
 		)
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
+            ExecuteCommand $Script | Should -Be $Expected
         }
     }
 
@@ -667,7 +667,7 @@ foo``u{2195}abc
 		)
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
+            ExecuteCommand $Script | Should -Be $Expected
         }
     }
 
@@ -698,7 +698,7 @@ foo``u{2195}abc
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
+            ExecuteCommand $Script | Should -Be $Expected
         }
     }
 
@@ -713,25 +713,25 @@ foo``u{2195}abc
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
+            ExecuteCommand $Script | Should -Be $Expected
         }
     }
 
 	It "A simple test for trapping a specific exception. Expected Result: The exception is caught and ignored. (line 2265)" {
-        { ExecuteCommand "trap [InvalidCastException] { continue;  }; [int] 'abc'" } | Should Not Throw
+        { ExecuteCommand "trap [InvalidCastException] { continue;  }; [int] 'abc'" } | Should -Not -Throw
     }
 
 	It "Test that assign to input var and use then execute a script block with piped input. (line 2297)"{
         $result = ExecuteCommand '$input = 1,2,3;4,-5,6 | & { $input }'
-		 $result -join "" | should be (4,-5,6 -join "")
+		 $result -join "" | Should -Be (4,-5,6 -join "")
     }
 
 	It "Test that pipe objects into a script and use arguments. (line 2313)"{
 		"`$input; `$args;">$testfile
         $result = ExecuteCommand "1,2,3 | $testfile"
-		$result -join "" | should be (1, 2, 3 -join "")
+		$result -join "" | Should -Be (1, 2, 3 -join "")
 		$result = ExecuteCommand "$testfile 4 -5 6 -blah -- foo -bar"
-		$result | should be "4", "-5", "6", "-blah", "foo", "-bar"
+		$result | Should -BeExactly "4", "-5", "6", "-blah", "foo", "-bar"
     }
 
 	Context "Numerical Notations Tests (starting at line 2374 to line 2452)" {
@@ -772,13 +772,13 @@ foo``u{2195}abc
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
+            ExecuteCommand $Script | Should -Be $Expected
         }
     }
 
 	It "This is a simple test of the concatenation of two arrays. (line 2460)"{
         $result = ExecuteCommand '1,2,3 + 4,5,6'
-		$result -join "" | should be (1, 2, 3, 4, 5, 6 -join "")
+		$result -join "" | Should -Be (1, 2, 3, 4, 5, 6 -join "")
     }
 
 	It "Test that an incomplete parse exception is thrown if the array is unfinished. (line 2473)"{
@@ -787,7 +787,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
+            $_.FullyQualifiedErrorId | Should -Be "IncompleteParseException"
         }
     }
 
@@ -797,7 +797,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -807,20 +807,20 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
 	It "Tests the assignment to a read-only property (line 2593)"{
 		$result = ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A.rank =5;$A.rank'
-        $result | Should be "1"
+        $result | Should -Be "1"
     }
 
 	It 'Tests accessing using null as index. (line 2648)'{
         $PowerShell.Streams.Error.Clear()
 		ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[$NONEXISTING_VARIABLE];'
-        $PowerShell.HadErrors | should be $true
-        $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "NullArrayIndex"
+        $PowerShell.HadErrors | Should -BeTrue
+        $PowerShell.Streams.Error.FullyQualifiedErrorId | Should -Be "NullArrayIndex"
     }
 
 	It 'Tests the parser response to ArrayName[. (line 2678)'{
@@ -829,7 +829,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -839,7 +839,7 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
@@ -851,31 +851,31 @@ foo``u{2195}abc
                 " script:func; " +
                 " global:func; ">$testfile
         $result = ExecuteCommand "function func { 'notcalled' };. $testfile"
-		$result -join "" | should be ("default", "default", "global" -join "")
+		$result -join "" | Should -Be ("default", "default", "global" -join "")
 		$result = ExecuteCommand "func"
-		$result | should be "global"
+		$result | Should -Be "global"
     }
 
 	It 'Test piping arguments to a script block. The objects should be accessible from "$input". (line 2870)'{
 		ExecuteCommand '$script = { $input; };$results = @(0,0),-1 | &$script'
 		$result = ExecuteCommand '$results[0][0]'
-        $result | Should be "0"
+        $result | Should -Be "0"
 		$result = ExecuteCommand '$results[0][1]'
-        $result | Should be "0"
+        $result | Should -Be "0"
 		$result = ExecuteCommand '$results[1]'
-        $result | Should be "-1"
+        $result | Should -Be "-1"
     }
 
 	It 'Test piping null into a scriptblock. The script block should not be passed anything. (line 2903)'{
 		$result = ExecuteCommand '$() | &{ $count = 0; foreach ($i in $input) { $count++ }; $count }'
-        $result | Should be "1"
+        $result | Should -Be "1"
 		$result = ExecuteCommand '$() | &{ $input }'
-        $result | Should BeNullOrEmpty
+        $result | Should -BeNullOrEmpty
     }
 
 	It 'Test that types in System.dll are found automatically. (line 2951)'{
 		$result = ExecuteCommand '[   System.IO.FileInfo]'
-        $result | Should be "System.IO.FileInfo"
+        $result | Should -Be "System.IO.FileInfo"
     }
 
 	Context "Mathematical Operations Tests (starting at line 2975 to line 3036)" {
@@ -892,13 +892,13 @@ foo``u{2195}abc
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
-            ExecuteCommand $Script | Should be $Expected
+            ExecuteCommand $Script | Should -Be $Expected
         }
     }
 
 	It 'This test will call a cmdlet that returns an array and assigns it to a variable.  Then it will concatenate this array with itself and check that what results is an array of double the size of the original. (line 3148)'{
 		$result = ExecuteCommand '$list=$(testcmd-parserBVT -ReturnType "array"); $list = $list + $list;$list.length'
-        $result | Should be 6
+        $result | Should -Be 6
     }
 
     It "A here string must have one line (line 3266)" {
@@ -907,12 +907,28 @@ foo``u{2195}abc
             throw "Execution OK"
         }
         catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
+            $_.FullyQualifiedErrorId | Should -Be "ParseException"
         }
     }
 
     It "A here string should not throw on '`$herestr=@`"``n'`"'``n`"@'" {
         # Issue #2780
-        { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should Not Throw
+        { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should -Not -Throw
+    }
+
+    It "Throw better error when statement should be put in named blocks - <name>" -TestCases @(
+        @{ script = "Function foo { [CmdletBinding()] param() DynamicParam {} Hi"; name = "function" }
+        @{ script = "{ begin {} Hi"; name = "script-block" }
+        @{ script = "begin {} Hi"; name = "script-file" }
+    ) {
+        param($script)
+
+        $err = { ExecuteCommand $script } | Should -Throw -ErrorId "ParseException" -PassThru
+        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingNamedBlocks"
+    }
+
+    It "IncompleteParseException should be thrown when only ending curly is missing" {
+        $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} " } | Should -Throw -ErrorId "IncompleteParseException" -PassThru
+        $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBrace"
     }
 }

@@ -10,10 +10,10 @@ Describe "Native Command Arguments" -tags "CI" {
     It "Should handle quoted spaces correctly" {
         $a = 'a"b c"d'
         $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
-        $lines.Count | Should Be 3
-        $lines[0] | Should Be 'Arg 0 is <ab cd>'
-        $lines[1] | Should Be 'Arg 1 is <ab cd>'
-        $lines[2] | Should Be 'Arg 2 is <ab cd>'
+        $lines.Count | Should -Be 3
+        $lines[0] | Should -BeExactly 'Arg 0 is <ab cd>'
+        $lines[1] | Should -BeExactly 'Arg 1 is <ab cd>'
+        $lines[2] | Should -BeExactly 'Arg 2 is <ab cd>'
     }
 
     # In order to pass '"' characters so they are actually part of command line
@@ -29,9 +29,9 @@ Describe "Native Command Arguments" -tags "CI" {
     # looking at how it got the arguments.
     It "Should handle spaces between escaped quotes" {
         $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
-        $lines.Count | Should Be 2
-        $lines[0] | Should Be 'Arg 0 is <a"b c"d>'
-        $lines[1] | Should Be 'Arg 1 is <a"b c"d>'
+        $lines.Count | Should -Be 2
+        $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
+        $lines[1] | Should -BeExactly 'Arg 1 is <a"b c"d>'
     }
 
     It "Should correctly quote paths with spaces: <arguments>" -TestCases @(
@@ -40,9 +40,9 @@ Describe "Native Command Arguments" -tags "CI" {
     ) {
         param($arguments, $expected)
         $lines = Invoke-Expression "testexe -echoargs $arguments"
-        $lines.Count | Should Be $expected.Count
+        $lines.Count | Should -Be $expected.Count
         for ($i = 0; $i -lt $lines.Count; $i++) {
-            $lines[$i] | Should Be "Arg $i is <$($expected[$i])>"
+            $lines[$i] | Should -BeExactly "Arg $i is <$($expected[$i])>"
         }
     }
 
@@ -58,9 +58,9 @@ Describe "Native Command Arguments" -tags "CI" {
     ) {
         param($arguments, $expected)
         $lines = @(Invoke-Expression "testexe -echoargs $arguments")
-        $lines.Count | Should Be $expected.Count
+        $lines.Count | Should -Be $expected.Count
         for ($i = 0; $i -lt $expected.Count; $i++) {
-            $lines[$i] | Should Be "Arg $i is <$($expected[$i])>"
+            $lines[$i] | Should -BeExactly "Arg $i is <$($expected[$i])>"
         }
     }
 }

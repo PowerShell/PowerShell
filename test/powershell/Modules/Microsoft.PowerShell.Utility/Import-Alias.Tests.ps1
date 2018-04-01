@@ -24,42 +24,22 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {
-			$ErrorActionPreference = "Stop"
-		try {
-			Import-Alias *
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+		{ Import-Alias * -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
 	}
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException" {
-			$ErrorActionPreference = "Stop"
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
-		try {
-			Import-Alias $fulltestpath
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+		{ Export-Alias  $fulltestpath abcd* } | Should -Not -Throw
+		{ Import-Alias $fulltestpath -ErrorAction Stop } | Should -Throw -ErrorId "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
 	It "Import-Alias Into Invalid Scope should throw PSArgumentException"{
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
-		try {
-			Import-Alias $fulltestpath -scope bogus
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+		{ Export-Alias  $fulltestpath abcd* } | Should -Not -Throw
+		{ Import-Alias $fulltestpath -scope bogus } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist using force should not throw"{
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
-		{Import-Alias $fulltestpath  -Force}| Should Not Throw
+		{Export-Alias  $fulltestpath abcd*} | Should -Not -Throw
+		{Import-Alias $fulltestpath  -Force} | Should -Not -Throw
     }
 }
 
@@ -84,20 +64,20 @@ Describe "Import-Alias" -Tags "CI" {
 	}
 
 	It "Should be able to import an alias file successfully" {
-	    { Import-Alias $pesteraliasfile } | Should Not throw
+	    { Import-Alias $pesteraliasfile } | Should -Not -throw
 	}
 
 	It "Should be able to import file via the Import-Alias alias of ipal" {
-	    { ipal $pesteraliasfile } | Should Not throw
+	    { ipal $pesteraliasfile } | Should -Not -throw
 	}
 
 	It "Should be able to import an alias file and perform imported aliased echo cmd" {
 	    (Import-Alias $pesteraliasfile)
-	    (pesterecho pestertesting) | Should Be "pestertesting"
+	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
 	}
 
 	It "Should be able to use ipal alias to import an alias file and perform cmd" {
 	    (ipal $pesteraliasfile)
-	    (pesterecho pestertesting) | Should be "pestertesting"
+	    (pesterecho pestertesting) | Should -BeExactly "pestertesting"
 	}
 }

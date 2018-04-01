@@ -6,39 +6,32 @@ Describe "Format-Wide" -Tags "CI" {
         $nonaliased = Get-ChildItem | Format-Wide
         $aliased    = Get-ChildItem | fw
 
-        $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should Be 0
+        $($nonaliased | Out-String).CompareTo($($aliased | Out-String)) | Should -Be 0
     }
 
     It "Should be able to specify the columns in output using the column switch" {
-        { Get-ChildItem | Format-Wide -Column 3 } | Should Not Throw
+        { Get-ChildItem | Format-Wide -Column 3 } | Should -Not -Throw
     }
 
     It "Should be able to use the autosize switch" {
-        { Get-ChildItem | Format-Wide -Autosize } | Should Not Throw
+        { Get-ChildItem | Format-Wide -Autosize } | Should -Not -Throw
     }
 
     It "Should be able to take inputobject instead of pipe" {
-        { Format-Wide -InputObject $(Get-ChildItem) } | Should Not Throw
+        { Format-Wide -InputObject $(Get-ChildItem) } | Should -Not -Throw
     }
 
     It "Should be able to use the property switch" {
-        { Format-Wide -InputObject $(Get-ChildItem) -Property Mode } | Should Not Throw
+        { Format-Wide -InputObject $(Get-ChildItem) -Property Mode } | Should -Not -Throw
     }
 
     It "Should throw an error when property switch and view switch are used together" {
-        try
-		{
-			Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu
-			throw "No Exception!"
-		}
-		catch
-		{
-			$_.FullyQualifiedErrorId | Should be "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
-		}
+	{ Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu } |
+	    Should -Throw -ErrorId "FormatCannotSpecifyViewAndProperty,Microsoft.PowerShell.Commands.FormatWideCommand"
     }
 
     It "Should throw and suggest proper input when view is used with invalid input without the property switch" {
-        { Format-Wide -InputObject $(Get-Process) -View aoeu } | Should Throw
+        { Format-Wide -InputObject $(Get-Process) -View aoeu } | Should -Throw
     }
 }
 
@@ -48,39 +41,39 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$info = @{}
 		$info.array = $al
 		$result = $info | Format-Wide | Out-String
-		$result | Should Match "array"
+		$result | Should -Match "array"
 	}
 
 	It "Format-Wide with No Objects for End-To-End should work"{
 		$p = @{}
 		$result = $p | Format-Wide | Out-String
-		$result | Should BeNullOrEmpty
+		$result | Should -BeNullOrEmpty
 	}
 
 	It "Format-Wide with Null Objects for End-To-End should work"{
 		$p = $null
 		$result = $p | Format-Wide | Out-String
-		$result | Should BeNullOrEmpty
+		$result | Should -BeNullOrEmpty
 	}
 
 	It "Format-Wide with single line string for End-To-End should work"{
 		$p = "single line string"
 		$result = $p | Format-Wide | Out-String
-		$result | Should Match $p
+		$result | Should -Match $p
 	}
 
 	It "Format-Wide with multiple line string for End-To-End should work"{
 		$p = "Line1\nLine2"
 		$result = $p | Format-Wide | Out-String
-		$result | Should Match "Line1"
-		$result | Should Match "Line2"
+		$result | Should -Match "Line1"
+		$result | Should -Match "Line2"
 	}
 
 	It "Format-Wide with string sequence for End-To-End should work"{
 		$p = "Line1","Line2"
 		$result = $p |Format-Wide | Out-String
-		$result | Should Match "Line1"
-		$result | Should Match "Line2"
+		$result | Should -Match "Line1"
+		$result | Should -Match "Line2"
 	}
 
    It "Format-Wide with complex object for End-To-End should work" {
@@ -92,10 +85,10 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$info.enumerable = [MyDayOfWeek]$eto
 		$info.enumerableTestObject = $eto
 		$result = $info|Format-Wide|Out-String
-		$result | Should Match "intArray"
-		$result | Should Match "arrayList"
-		$result | Should Match "enumerable"
-		$result | Should Match "enumerableTestObject"
+		$result | Should -Match "intArray"
+		$result | Should -Match "arrayList"
+		$result | Should -Match "enumerable"
+		$result | Should -Match "enumerableTestObject"
 	}
 
 	It "Format-Wide with multiple same class object with grouping should work"{
@@ -108,9 +101,9 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$testobject1.GroupingKey = "bar"
 		$testobjects = @($testobject1,$testobject2,$testobject3)
 		$result = $testobjects|Format-Wide -GroupBy GroupingKey|Out-String
-		$result | Should Match "GroupingKey: bar"
-		$result | Should Match "name1"
-		$result | Should Match " GroupingKey:"
-		$result | Should Match "name2\s+name3"
+		$result | Should -Match "GroupingKey: bar"
+		$result | Should -Match "name1"
+		$result | Should -Match " GroupingKey:"
+		$result | Should -Match "name2\s+name3"
 	}
 }

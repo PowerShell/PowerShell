@@ -493,6 +493,9 @@ The correct form is: foreach ($a in $b) {...}</value>
   <data name="DuplicateScriptCommandClause" xml:space="preserve">
     <value>Script command clause '{0}' has already been defined.</value>
   </data>
+  <data name="MissingNamedBlocks" xml:space="preserve">
+    <value>unexpected token '{0}', expected 'begin', 'process', 'end', or 'dynamicparam'.</value>
+  </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
     <value>Missing closing '}' in statement block or type definition.</value>
   </data>
@@ -1457,5 +1460,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
+  </data>
+  <data name="ParserError" xml:space="preserve">
+    <value>{0}</value>
   </data>
 </root>

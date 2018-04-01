@@ -9,12 +9,12 @@ Describe "Get-Member" -Tags "CI" {
 	$e = "anoeduntodeu" #test strings
 	$f = 'asntoheusth' #test strings
 
-	Get-Member -InputObject $a | Should Not BeNullOrEmpty
-	Get-Member -InputObject $b | Should Not BeNullOrEmpty
-	Get-Member -InputObject $c | Should Not BeNullOrEmpty
-	Get-Member -InputObject $d | Should Not BeNullOrEmpty
-	Get-Member -InputObject $e | Should Not BeNullOrEmpty
-	Get-Member -InputObject $f | Should Not BeNullOrEmpty
+	Get-Member -InputObject $a | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $b | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $c | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $d | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $e | Should -Not -BeNullOrEmpty
+	Get-Member -InputObject $f | Should -Not -BeNullOrEmpty
     }
 
     It "Should be able to extract a field from string objects, ints, arrays, etc" {
@@ -25,12 +25,12 @@ Describe "Get-Member" -Tags "CI" {
 	$e = "anoeduntodeu" #test strings
 	$f = 'asntoheusth' #test strings
 
-	$a | Should BeOfType 'Int32'
-	$b | Should BeOfType 'Double'
-	$c | Should BeOfType 'Boolean'
-	,$d | Should BeOfType 'Object[]'
-	$e | Should BeOfType 'String'
-	$f | Should BeOfType 'String'
+	$a | Should -BeOfType 'Int32'
+	$b | Should -BeOfType 'Double'
+	$c | Should -BeOfType 'Boolean'
+	,$d | Should -BeOfType 'Object[]'
+	$e | Should -BeOfType 'String'
+	$f | Should -BeOfType 'String'
     }
 
     It "Should be able to be called on a newly created PSObject" {
@@ -38,7 +38,7 @@ Describe "Get-Member" -Tags "CI" {
 	# this creates a dependency on the Add-Member cmdlet.
 	Add-Member -InputObject $o -MemberType NoteProperty -Name proppy -Value "superVal"
 
-	Get-Member -InputObject $o | Should Not BeNullOrEmpty
+	Get-Member -InputObject $o | Should -Not -BeNullOrEmpty
     }
 }
 
@@ -149,31 +149,23 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         Update-TypeData -AppendPath $fileToDeleteName
 
         It "Fail to get member without any input" {
-            try
-            {
-                Get-Member -MemberType All -ErrorAction Stop
-                Throw "Execution OK"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
-            }
+            { Get-Member -MemberType All -ErrorAction Stop } | Should -Throw -ErrorId 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
         }
 
         It 'Get the expected Properties of "Employee" object' {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $results = $emps | Get-Member -MemberType Property
-            $results.Length | Should Be 3
-            $results[0].Name | Should Be "FirstName"
-            $results[1].Name | Should Be "LastName"
-            $results[2].Name | Should Be "YearsInMS"
+            $results.Length | Should -Be 3
+            $results[0].Name | Should -BeExactly "FirstName"
+            $results[1].Name | Should -BeExactly "LastName"
+            $results[2].Name | Should -BeExactly "YearsInMS"
         }
 
         It 'Get the Public Methods of "Employee" object' {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $methodList = "GetHashCode", "Equals", "ToString", "GetType"
             $results = $emps | Get-Member -MemberType Method
-            $results.Length | Should Be $methodList.Length
+            $results.Length | Should -Be $methodList.Length
             $methodFound = @()
 
             for ($i = 0;$i -lt $methodList.Length;$i++)
@@ -189,16 +181,16 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
 
             for ($i = 0;$i -lt $methodList.Length;$i++)
             {
-                $methodFound[$i] | Should Be $true
+                $methodFound[$i] | Should -BeTrue
             }
         }
 
         It 'Get property sets defined in private members' {
             $emps = [Employee]::New("john", "smith", 5), [Employee]::New("joesph", "smith", 15), [Employee]::New("john", "smyth", 2)
             $results = $emps | Get-Member -MemberType PropertySet
-            $results.Length | Should Be 2
-            $results[0].Name | Should Be "FullSet"
-            $results[1].Name | Should Be "PropertySetName"
+            $results.Length | Should -Be 2
+            $results[0].Name | Should -BeExactly "FullSet"
+            $results[1].Name | Should -BeExactly "PropertySetName"
         }
     }
 
@@ -256,9 +248,9 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
     Context "Verify Get-Member with other parameters" {
         It 'works with View Parameter' {
             $results = [xml]'<a>some text</a>' | Get-Member -view adapted
-            $results | Where-Object Name -eq a | Should Not BeNullOrEmpty
-            $results | Where-Object Name -eq CreateElement | Should Not BeNullOrEmpty
-            $results | Where-Object Name -eq CreateNode | Should Not BeNullOrEmpty
+            $results | Where-Object Name -eq a | Should -Not -BeNullOrEmpty
+            $results | Where-Object Name -eq CreateElement | Should -Not -BeNullOrEmpty
+            $results | Where-Object Name -eq CreateNode | Should -Not -BeNullOrEmpty
         }
 
         It 'Get hidden members'{

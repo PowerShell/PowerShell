@@ -165,6 +165,12 @@ namespace Microsoft.PowerShell.Commands
                 Encoding encoding = null;
                 // fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+
+                if (String.IsNullOrEmpty(characterSet) && ContentHelper.IsJson(contentType))
+                {
+                    characterSet = Encoding.UTF8.HeaderName;
+                }
+
                 this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
                 this.Encoding = encoding;
             }

@@ -55,7 +55,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             {
                 $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
             }
-            $fullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
+            $fullyQualifiedErrorId | Should -Be 'CouldNotFindRoleCapabilityFile'
         }
     }
 
@@ -78,7 +78,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             {
                 $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
             }
-            $fullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
+            $fullyQualifiedErrorId | Should -Be 'InvalidRoleCapabilityFileExtension'
         }
     }
 
@@ -93,20 +93,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         [powershell] $ps = [powershell]::Create($iss)
         $null = $ps.AddCommand('Get-Service')
 
-        $exceptionTypeName = ""
-        try
-        {
-            $ps.Invoke()
-            throw 'No Exception!'
-        }
-        catch
-        {
-            if ($null -ne $_.Exception.InnerException)
-            {
-                $exceptionTypeName = $_.Exception.InnerException.GetType().FullName
-            }
-            $exceptionTypeName | Should Be 'System.Management.Automation.CommandNotFoundException'
-        }
+        { $ps.Invoke() } | Should -Throw -ErrorId 'CommandNotFoundException'
 
         $ps.Dispose()
     }

@@ -46,7 +46,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal virtual bool SiteBinderCanOptimize { get { return false; } }
+        internal virtual bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return false; }
 
         protected static IEnumerable<string> GetDotNetTypeNameHierarchy(Type type)
         {
@@ -3519,7 +3519,7 @@ namespace System.Management.Automation
 
         #region member
 
-        internal override bool SiteBinderCanOptimize { get { return true; } }
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn) { return true; }
 
         private static ConcurrentDictionary<Type, ConsolidatedString> s_typeToTypeNameDictionary =
             new ConcurrentDictionary<Type, ConsolidatedString>();
@@ -3667,7 +3667,7 @@ namespace System.Management.Automation
 
             if (adapterData.readOnly)
             {
-                throw new SetValueException("ReadOnlyProperty",
+                throw new SetValueException(nameof(ExtendedTypeSystem.ReadOnlyProperty),
                     null,
                     ExtendedTypeSystem.ReadOnlyProperty,
                     adapterData.member.Name);
@@ -4545,7 +4545,24 @@ namespace System.Management.Automation
     /// </summary>
     internal abstract class PropertyOnlyAdapter : DotNetAdapter
     {
-        internal override bool SiteBinderCanOptimize { get { return false; } }
+        /// <summary>
+        /// For a PropertyOnlyAdapter, the property may come from various sources,
+        /// but methods, including parameterized properties, still come from DotNetAdapter.
+        /// So, the binder can optimize on method calls for objects that map to a
+        /// custom PropertyOnlyAdapter.
+        /// </summary>
+        internal override bool CanSiteBinderOptimize(MemberTypes typeToOperateOn)
+        {
+            switch (typeToOperateOn)
+            {
+                case MemberTypes.Property:
+                    return false;
+                case MemberTypes.Method:
+                    return true;
+                default:
+                    throw new InvalidOperationException("Should be unreachable. Update code if other member types need to be handled here.");
+            }
+        }
 
         protected override ConsolidatedString GetInternedTypeNameHierarchy(object obj)
         {

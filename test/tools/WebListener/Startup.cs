@@ -45,6 +45,10 @@ namespace mvc
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "resume_bytes",
+                    template: "Resume/Bytes/{NumberBytes?}",
+                    defaults: new {controller = "Resume", action = "Bytes"});
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
                 routes.MapRoute(

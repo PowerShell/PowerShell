@@ -190,7 +190,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
             AddParameter("RemoteDebug", $true).
             AddParameter("AsJob", $true)
         $result = $ps.Invoke()
-        $testDebugger.DebugStopCount | Should Be 0
+        $testDebugger.DebugStopCount | Should -Be 0
     }
 
     It "Verifies that synchronous 'Invoke-Command -RemoteDebug' invokes debugger" {
@@ -200,14 +200,14 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
             AddParameter("ScriptBlock", $sb).
             AddParameter("RemoteDebug", $true)
         $result = $ps.Invoke()
-        $testDebugger.RunspaceDebugProcessingCount | Should Be 1
-        $testDebugger.DebugStopCount | Should Be 1
+        $testDebugger.RunspaceDebugProcessingCount | Should -Be 1
+        $testDebugger.DebugStopCount | Should -Be 1
     }
 
     It "Verifies the debugger 'CancelDebuggerProcessing' API method" {
 
         $rs.Debugger.CancelDebuggerProcessing()
-        $testDebugger.RunspaceDebugProcessCancelled | Should Be $true
+        $testDebugger.RunspaceDebugProcessCancelled | Should -BeTrue
     }
 
     It "Verifies that 'Invoke-Command -RemoteDebug' running in a runspace without PSHost is ignored" {
@@ -217,6 +217,6 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
             AddParameter("ScriptBlock", $sb).
             AddParameter("RemoteDebug", $true)
         $result = $ps2.Invoke()
-        $result | Should Be "Hello!"
+        $result | Should -Be "Hello!"
     }
 }

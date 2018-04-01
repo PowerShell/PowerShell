@@ -8,14 +8,15 @@
   <?define ProductCode = "$(env.ProductCode)" ?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
   <?if $(sys.BUILDARCH)=x64?>
-    <?define UpgradeCode = "31ab5147-9a97-4452-8443-d9709f0516e1" ?>
+    <?define UpgradeCode = "$(env.UpgradeCodeX64)" ?>
     <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion)"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.ProductSemanticVersion)"?>
   <?else?>
-    <?define UpgradeCode = "1d00683b-0f84-4db8-a64f-2f98ad42fe06" ?>
+    <?define UpgradeCode = "$(env.UpgradeCodeX86)" ?>
     <?define ProductSemanticVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.ProductSemanticVersion) ($(sys.BUILDARCH))"?>
   <?endif?>
+  <?define ProductDirectoryName = "$(env.ProductDirectoryName)" ?>
   <?define ProductVersion = "$(env.ProductVersion)" ?>
   <?define ProductSemanticVersion = "$(env.ProductSemanticVersion)" ?>
   <?define ProductVersionWithName = "$(var.ProductName)_$(var.ProductVersion)"?>
@@ -25,7 +26,13 @@
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
   <!-- The ProductCode is Product Id and needs to be unique for every PowerShell version to allow SxS install: http://wixtoolset.org/documentation/manual/v3/xsd/wix/product.html -->
-  <Product Id="$(var.ProductCode)" Name="$(var.ProductSemanticVersionWithName)-$(sys.BUILDARCH)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Microsoft Corporation" UpgradeCode="$(var.UpgradeCode)">
+  <Product 
+    Id="$(var.ProductCode)" 
+    Name="PowerShell 6-$(sys.BUILDARCH)" 
+    Language="1033" 
+    Version="$(var.ProductVersion)" 
+    Manufacturer="Microsoft Corporation" 
+    UpgradeCode="$(var.UpgradeCode)">
     <!-- Properties About The Package -->
     <Package Id="*" Keywords="Installer" Platform="$(sys.BUILDARCH)" InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Description="PowerShell package" Comments="PowerShell for every system" />
     <!-- Add PowerShell icon for executable -->
@@ -41,20 +48,37 @@
     <WixVariable Id="WixUIInfoIco" Value="assets\WixUIInfoIco.bmp" />
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
     <!-- Default value of Checkbox of starting PowerShell after installation -->
-    <Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
+    <Property Id="WixShellExecTarget" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
     <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
-    <CustomAction Id="SaveShortcutPath" Property="ShortcutPath" Value="[$ApplicationProgramsMenuShortcut]$(var.ProductSemanticVersionWithNameAndOptionalArchitecture).lnk" />
-    <CustomAction Id="FixShortcutWorkingDirectory" Script="vbscript" HideTarget="no" Impersonate="no">
-      shortcutPath = Session.Property("ShortcutPath")
-      Set fso = CreateObject("Scripting.FileSystemObject")
-      if (fso.FileExists(shortcutPath)) Then
-        Set wshShell = CreateObject("WSCript.Shell")
-        Set shortcut = wshShell.CreateShortcut(shortcutPath)
 
-        shortcut.workingdirectory = "%HOMEDRIVE%%HOMEPATH%"
-        shortcut.save
-      End If
-    </CustomAction>
+    <SetProperty Id="RegisterManifest"
+                 Before="RegisterManifest"
+                 Sequence="execute"
+                 Value="&quot;[$(var.ProductDirectoryName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[$(var.ProductDirectoryName)]RegisterManifest.ps1&quot;" />
+    <CustomAction Id="RegisterManifest"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
+    <SetProperty Id="EnablePSRemoting"
+                 Before="EnablePSRemoting"
+                 Sequence="execute"
+                 Value="&quot;[$(var.ProductDirectoryName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;Enable-PSRemoting&quot;" />
+    <CustomAction Id="EnablePSRemoting"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
+    <InstallExecuteSequence>
+      <Custom Action="RegisterManifest" After="InstallFiles">
+        <![CDATA[NOT Installed AND (REGISTER_MANIFEST=1)]]>
+      </Custom>
+      <Custom Action="EnablePSRemoting" After="InstallFiles">
+        <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
+      </Custom>
+    </InstallExecuteSequence>
     <UI>
       <Dialog Id="MyExitDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
         <Control Id="LaunchCheckBox" Type="CheckBox" X="10" Y="243" Width="170" Height="17" Property="LAUNCHAPPONEXIT" Hidden="yes" CheckBoxValue="1" Text="Launch $(env.ProductName)">
@@ -78,7 +102,7 @@
       <Publish Dialog="MyExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
     </UI>
     <UI>
-      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
+      <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT=1</Publish>
     </UI>
     <!-- Prerequisites -->
     <Condition Message="Supported only on Windows 7 and above">
@@ -92,7 +116,7 @@
     <UIRef Id="CustomWixUI_InstallDir" />
     <!-- Features are mandatory.  Need At Least One. -->
     <Feature Id="ProductFeature" Title="PowerShell" Level="1">
-      <ComponentGroupRef Id="$(var.ProductVersionWithName)"/>
+      <ComponentGroupRef Id="$(var.ProductDirectoryName)"/>
       <ComponentRef Id="ProductVersionFolder"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
       <ComponentRef Id="RegistryEntries"/>
@@ -124,7 +148,7 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.ProductProgFilesDir)">
         <Directory Id="INSTALLFOLDER" Name="PowerShell">
-          <Directory Id="$(var.ProductVersionWithName)" Name="$(var.ProductSemanticVersion)">
+          <Directory Id="$(var.ProductDirectoryName)" Name="$(var.ProductSemanticVersion)">
             <Component Id="ProductVersionFolder" Guid="{e1a7f05e-0cd6-4227-80a8-e4fb311f045c}">
               <CreateFolder/>
             </Component>
@@ -132,60 +156,60 @@
                 <!-- create key for easy detection of a particular version of a powershell core package 
                      The upgrade code is used in the key because it will change when we allow SxS       -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)"/>
+                    <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion"/>
                 </RegistryKey>
                 <!-- register ourselves in application registry so can be started using just Win+R `pwsh.exe` -->
                 <RegistryKey Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pwsh.exe" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
-                    <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe"/>
+                    <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe"/>
                 </RegistryKey>
             </Component>
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
-            <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}">
-              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductVersionWithName)]"/>
+            <Component Id="SetPath" Guid="{9dbb7763-7baf-48e7-b025-3bdedcb0632f}" KeyPath="yes">
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[$(var.ProductDirectoryName)]"/>
             </Component>
             <!-- Explorer context menu with 2 submenus to open PowerShell normally or as an Administator.
                  See https://blogs.msdn.microsoft.com/andrew_richards/2017/03/01/enhancing-the-open-command-prompt-here-shift-right-click-context-menu-experience/ for details -->
-            <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}">
+            <Component Id="ExplorerContextMenu" Guid="{df82e941-fced-4de9-aef8-c81a2946dd68}" KeyPath="yes">
               <Condition>ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL</Condition>
               <!-- When clicking on background in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\Background\shell\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When clicking on Drive in Explorer -->
               <RegistryKey Root="HKCR" Key="Drive\shell\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When clicking on Desktop background in Explorer -->
               <RegistryKey Root="HKCR" Key="DesktopBackground\shell\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- When clicking on folder in Explorer -->
               <RegistryKey Root="HKCR" Key="Directory\shell\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Name="ExtendedSubCommandsKey" Value="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)"/>
               </RegistryKey>
               <!-- Sub menus to open PowerShell at the current location either as a normal shell or as Administrator -->
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)\shell\open">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)\shell\open\command">
-                <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
+                <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)\shell\runas">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuElevatedDialogText)"/>
-                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductVersionWithName)]assets\Powershell_black.ico"/>
+                <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
                 <RegistryValue Type="string" Value="" Name="HasLUAShield"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(env.ProductSemanticVersion)$(sys.BUILDARCH)\shell\runas\command">
-                <RegistryValue Type="string" Value="[$(var.ProductVersionWithName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
+                <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
               </RegistryKey>
             </Component>
           </Directory>
@@ -194,36 +218,38 @@
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ApplicationProgramsFolder" Name="$(var.ProductName)">
           <Component Id="ApplicationProgramsMenuShortcut" Guid="{A77507A7-F970-4618-AC30-20AFE36EE2EB}">
-            <Shortcut Id="PowerShell_ProgramsMenuShortcut" Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Description="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" Target="[$(var.ProductVersionWithName)]pwsh.exe" WorkingDirectory="$(var.ProductVersionWithName)"
-              Icon = "PowerShellExe.ico" />
+            <Shortcut Id="PowerShell_ProgramsMenuShortcut" 
+                      Name="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" 
+                      Description="$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)" 
+                      Target="[$(var.ProductDirectoryName)]pwsh.exe" 
+                      WorkingDirectory="$(var.ProductDirectoryName)"
+                      Icon = "PowerShellExe.ico" />
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-            <RegistryValue Root="HKLM" Key="Software\Microsoft\$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+            <!-- HKMU is HKLM when installing perMachine and HKCU when installing perUser-->
+            <RegistryValue Root="HKMU" Key="Software\Microsoft\$(var.ProductSemanticVersionWithNameAndOptionalArchitecture)\ProgramsMenuShortcut" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
           </Component>
         </Directory>
       </Directory>
     </Directory>
-    <InstallExecuteSequence>
-      <Custom Action="SaveShortcutPath" After="InstallFinalize" />
-      <Custom Action="FixShortcutWorkingDirectory" After="SaveShortcutPath">
-        NOT Installed OR NOT REMOVE OR UPGRADINGPRODUCTCODE
-      </Custom>
-    </InstallExecuteSequence>
   </Product>
 
 <!-- Explorer Context Menu Dialog -->
 <Fragment>
  <UI>
+    <Property Id="REGISTER_MANIFEST" Value="1" />
     <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
-    <!-- If the checkbox is defined first, then the checkbox can be ticked and unticked using the spacebar -->
-      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
+      <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="60" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
+      <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
+      <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
       <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
 
-      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Explorer Context Menu"/>
-      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Open $(var.ProductName) via right-click in Explorer."/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions"/>
+      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Initialization and Customization"/>
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)"/>
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0"/>
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0"/>        
@@ -274,8 +300,6 @@
       
       <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
       <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
-
-      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg">NOT Installed</Publish>
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>

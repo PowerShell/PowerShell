@@ -35,6 +35,7 @@ dotnet-uninstall-debian-packages.sh
 # Ignore binaries and symbols
 *.pdb
 *.dll
+*.wixpdb
 
 # Ignore packages
 *.deb
@@ -65,3 +66,4 @@ TestsResults*.xml
 
 # Resharper settings
 PowerShell.sln.DotSettings.user
+*.msp

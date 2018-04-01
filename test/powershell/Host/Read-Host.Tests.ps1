@@ -16,7 +16,7 @@ Describe "Read-Host" -Tags "Slow","Feature" {
 
         It @ItArgs "Should output correctly" {
             & (Join-Path $assetsDir "Read-Host.Output.expect") $powershell | Out-Null
-            $LASTEXITCODE | Should Be 0
+            $LASTEXITCODE | Should -Be 0
         }
     }
 }

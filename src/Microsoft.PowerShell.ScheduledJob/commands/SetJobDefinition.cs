@@ -42,6 +42,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// File path for script to be run in job.
         /// </summary>
         [Parameter(ParameterSetName = SetScheduledJobCommand.FilePathParameterSet)]
+        [Alias("Path")]
         [ValidateNotNullOrEmpty]
         public string FilePath
         {
