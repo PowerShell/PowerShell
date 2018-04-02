@@ -743,21 +743,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _formattingHint = hint;
         }
 
-        // In cases like implicit remoting, there is no console so reading the console width results in an exception.
-        // We cache this value rather than handling the exception (on the target) everytime as a performance improvement.
+        /// <summary>
+        /// In cases like implicit remoting, there is no console so reading the console width results in an exception. 
+        /// Instead of handling exception every time we cache this value to increase performance. 
+        /// </summary>
         static private bool _noConsole = false;
 
+        /// <summary>
+        /// Tables and Wides need to use spaces for padding to maintain table look even if console window is resized.
+        /// For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
+        /// If we detect that int.MaxValue is used, first we try to get the current console window width.
+        /// However, if we can't read that (for example, implicit remoting has no console window), we default
+        /// to something reasonable: 120 columns.
+        /// </summary>
         static private int GetConsoleWindowWidth(int columnNumber)
         {
             const int defaultConsoleWidth = 120;
 
             if (columnNumber == int.MaxValue)
             {
-                // Tables and Wides need to use spaces for padding to maintain table look even if console window is resized.
-                // For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
-                // If we detect that int.MaxValue is used, first we try to get the current console window width.
-                // However, if we can't read that (for example, implicit remoting has no console window), we default
-                // to something reasonable: 120 columns.
                 if (_noConsole)
                 {
                     return defaultConsoleWidth;
