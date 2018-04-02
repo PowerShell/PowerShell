@@ -246,10 +246,6 @@ namespace System.Management.Automation
 
         private static class NativeMethods
         {
-            // Important:
-            // this clone has a clone in SMA in admin\monad\src\m3p\product\ServiceCore\WorkflowCore\WorkflowRuntimeCompilation.cs
-            // if you are making any changes specific to this class then update the clone as well.
-
             internal const ushort PROCESSOR_ARCHITECTURE_INTEL = 0;
             internal const ushort PROCESSOR_ARCHITECTURE_ARM = 5;
             internal const ushort PROCESSOR_ARCHITECTURE_IA64 = 6;
