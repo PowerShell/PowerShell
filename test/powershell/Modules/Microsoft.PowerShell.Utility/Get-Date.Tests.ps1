@@ -23,8 +23,13 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date:"Jan 1, 2020"  -Format:"MMM-dd-yy" | Should -Be "Jan-01-20"
     }
 
-    It "using -uformat produces the correct output" {
-        Get-date -Date:"Jan 1, 2020"  -UFormat:"%s"  | Should -Be "1577836800"
+    It "using -uformat %s produces the correct output" {
+        $seconds = Get-date -Date:"Jan 1, 2020Z" -UFormat:"%s"
+
+        $seconds | Should -Be "1577836800"
+        if ($isLinux) {
+            $seconds | Should -Be (date --date='01/01/2020 UTC' +%s)
+        }
     }
 
     It "using -uformat 'ymdH' produces the correct output" {
@@ -32,11 +37,24 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'aAbBcCdDehHIkljmMpr' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0 00010100AM12:00:00 AM"
+        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0120010100AM12:00:00 AM"
     }
 
     It "using -uformat 'sStTuUVwWxXyYZ' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %s%S%T%u%U%V%w%W%x%X%y%Y%% | Should -Be "-612204480000000:00:002012001/01/3000:00:00300030%"
+        Get-date -Date 1/1/0030 -uformat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
+    }
+
+    It "using -uformat 'V' produces the correct output" {
+        Get-date -Date 1/1/0030 -uformat %V | Should -BeExactly "01"
+
+        # .Net Core Bug - Should -Be "01"
+        # See 'Last week' in https://en.wikipedia.org/wiki/ISO_week_date#Relation_with_the_Gregorian_calendar
+        # > If 31 December is on a Monday, Tuesday or Wednesday, it is in week 01 of the next year.
+        # '12/31/2007' is 'Monday, December 31, 2007 12:00:00 AM'
+        # There is an indefinite number of similar problems.
+        Get-date -Date 12/31/2007 -uformat %V | Should -BeExactly "53"
+
+        Get-date -Date 1/1/2011 -uformat %V | Should -BeExactly "52"
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(

@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'l':
-                            sb.Append(StringUtil.Format("{0,2:0}", dateTime.Hour%12));
+                            sb.Append("{0:%h}");
                             break;
 
                         case 'M':
@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 's':
-                            sb.Append(StringUtil.Format("{0:0}", dateTime.Subtract(epoch).TotalSeconds));
+                            sb.Append(StringUtil.Format("{0:0}", dateTime.ToUniversalTime().Subtract(epoch).TotalSeconds));
                             break;
 
                         case 'T':
@@ -449,7 +449,11 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'V':
-                            sb.Append((dateTime.DayOfYear / 7) + 1);
+                            // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
+                            var calender = System.Threading.Thread.CurrentThread.CurrentCulture.Calendar;
+                            sb.Append(StringUtil.Format("{0:00}",calender.GetWeekOfYear(dateTime,
+                                                                                        CalendarWeekRule.FirstFourDayWeek,
+                                                                                        DayOfWeek.Monday)));
                             break;
 
                         case 'G':
