@@ -667,41 +667,6 @@ function Restore-PSPackage
     }
 }
 
-function Restore-PSPackage
-{
-    param(
-        [ValidateNotNullOrEmpty()]
-        [Parameter()]
-        [string[]] $ProjectDirs,
-
-        [ValidateNotNullOrEmpty()]
-        [Parameter()]
-        $Options = (Get-PSOptions -DefaultToNew),
-
-        [switch] $Force
-    )
-
-    if (-not $ProjectDirs)
-    {
-        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
-    }
-
-    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
-
-        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "detailed"
-        } else {
-            $RestoreArguments += "quiet"
-        }
-
-        $ProjectDirs | ForEach-Object {
-            Write-Log "Run dotnet restore $_ $RestoreArguments"
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
-        }
-    }
-}
-
 function Restore-PSModuleToBuild
 {
     param(
