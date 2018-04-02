@@ -229,9 +229,16 @@ function RunSaveHelpTests
             try
             {
                 $saveHelpFolder = Join-Path $TestDrive (Get-Random).ToString()
-                New-Item  $saveHelpFolder -Force -ItemType Directory
+                New-Item  $saveHelpFolder -Force -ItemType Directory > $null
 
-                It "Validate Save-Help for the '$moduleName' module" {
+                ## Save help has intermittent connectivity issues for downloading PackageManagement help content.
+                ## Hence the test has been marked as Pending.
+                if($moduleName -eq 'PackageManagement')
+                {
+                    $pending = $true
+                }
+
+                It "Validate Save-Help for the '$moduleName' module" -Pending:$pending {
 
                     if ((Get-UICulture).Name -ne "en-Us")
                     {
@@ -243,6 +250,12 @@ function RunSaveHelpTests
                     }
 
                     ValidateSaveHelp -moduleName $moduleName -path $saveHelpFolder
+                }
+
+                ## Reset pending state.
+                if($pending)
+                {
+                    $pending = $false
                 }
 
                 if ($tag -eq "CI")
