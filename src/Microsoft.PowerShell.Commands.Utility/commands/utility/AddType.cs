@@ -548,10 +548,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 case Language.CSharp:
                     return
+                        "using System;\n" +
+                        "using System.Runtime.InteropServices;\n" +
                         "{0}" +
                         "\n";
                 case Language.VisualBasic:
                     return
+                        "Imports System\n" +
+                        "Imports System.Runtime.InteropServices\n" +
                         "{0}" +
                         "\n";
             }
