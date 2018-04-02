@@ -317,7 +317,8 @@ namespace System.Management.Automation
                 // and the nested module that implements the command
                 GetModulePaths(commandInfo, out moduleName, out moduleDir, out nestedModulePath);
 
-                Collection<String> searchPaths = new Collection<String>();
+                Collection<String> searchPaths = new Collection<String>(){ HelpUtils.GetUserHomeHelpSearchPath() };
+
                 if (!String.IsNullOrEmpty(moduleDir))
                 {
                     searchPaths.Add(moduleDir);
@@ -511,14 +512,18 @@ namespace System.Management.Automation
                     // we have to search only in the application base for a mshsnapin...
                     // if you create an absolute path for helpfile, then MUIFileSearcher
                     // will look only in that path.
-                    helpFileToLoad = Path.Combine(mshSnapInInfo.ApplicationBase, helpFile);
+
+                    searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
+                    searchPaths.Add(mshSnapInInfo.ApplicationBase);
                 }
                 else if (cmdletInfo.Module != null && !string.IsNullOrEmpty(cmdletInfo.Module.Path))
                 {
-                    helpFileToLoad = Path.Combine(cmdletInfo.Module.ModuleBase, helpFile);
+                    searchPaths.Add(HelpUtils.GetModuleBaseForUserHelp(cmdletInfo.Module.ModuleBase, cmdletInfo.Module.Name));
+                    searchPaths.Add(cmdletInfo.Module.ModuleBase);
                 }
                 else
                 {
+                    searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
                     searchPaths.Add(GetDefaultShellSearchPath());
                     searchPaths.Add(GetCmdletAssemblyPath(cmdletInfo));
                 }
