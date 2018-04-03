@@ -1004,9 +1004,7 @@ namespace Microsoft.PowerShell.Commands
                 HandleCompilerErrors(arguments.Errors);
 
                 parseOptions = arguments.ParseOptions;
-
                 compilationOptions = arguments.CompilationOptions.WithOutputKind(OutputAssemblyTypeToOutputKind(OutputType));
-
                 emitOptions = arguments.EmitOptions;
             }
             else
