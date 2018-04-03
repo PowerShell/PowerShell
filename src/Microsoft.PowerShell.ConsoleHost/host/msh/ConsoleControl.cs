@@ -2771,7 +2771,13 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            return str.Length - offset - escapeSequenceAdjustment;
+            var totalWidthInCells = 0;
+            for (int i = offset; i < str.Length; i++)
+            {
+                totalWidthInCells += LengthInBufferCells(str[i]);
+            }
+
+            return totalWidthInCells - escapeSequenceAdjustment;
         }
 
 #if !UNIX
@@ -2785,9 +2791,10 @@ namespace Microsoft.PowerShell
         {
             codePage = NativeMethods.GetConsoleOutputCP();
             return codePage == 932 || // Japanese
-                codePage == 936 || // Simplified Chinese
-                codePage == 949 || // Korean
-                codePage == 950;  // Traditional Chinese
+                   codePage == 936 || // Simplified Chinese
+                   codePage == 949 || // Korean
+                   codePage == 950 || // Traditional Chinese
+                   codePage == 65001; // UTF-8
         }
 
 #endif
@@ -2950,6 +2957,8 @@ namespace Microsoft.PowerShell
 
 #endregion helper
 
+#endif
+
 #region
 
         internal static int LengthInBufferCells(char c)
@@ -2976,6 +2985,8 @@ namespace Microsoft.PowerShell
         }
 
 #endregion
+
+#if !UNIX
 
 #region SendInput
 
