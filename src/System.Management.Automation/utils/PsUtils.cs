@@ -59,13 +59,12 @@ namespace System.Management.Automation
         internal static ProcessModule GetMainModule(Process targetProcess)
         {
             int caughtCount = 0;
-            ProcessModule mainModule = null;
 
-            while (mainModule == null)
+            while (true)
             {
                 try
                 {
-                    mainModule = targetProcess.MainModule;
+                    return targetProcess.MainModule;
                 }
                 catch (System.ComponentModel.Win32Exception e)
                 {
@@ -81,8 +80,6 @@ namespace System.Management.Automation
                         throw;
                 }
             }
-
-            return mainModule;
         }
 
         // Cache of the current process' parentId
