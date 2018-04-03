@@ -938,22 +938,29 @@ dir -Recurse `
             $completionOptions | Should -Be ([string]::Join("", $expected))
         }
     }
-}
 
-Describe "Tab completion help test" -Tags @('RequireAdminOnWindows', 'CI') {
-    It 'Should complete about help topic' {
-
-        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
-
-        ## If help content does not exist, tab completion will not work. So update it first.
-        if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt")))
-        {
-            Update-Help -Force -ErrorAction SilentlyContinue
+    Context "Tab completion help test" {
+        BeforeAll {
+            if ([System.Management.Automation.Platform]::IsWindows) {
+                $userHelpRoot = Join-Path $HOME "Documents/PowerShell/Help/"
+            } else {
+                $userModulesRoot = [System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::USER_MODULES)
+                $userHelpRoot = Join-Path $userModulesRoot -ChildPath ".." -AdditionalChildPath "Help"
+            }
         }
 
-        $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
-        $res.CompletionMatches.Count | Should -Be 1
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+        It 'Should complete about help topic' {
+            $aboutHelpPath = Join-Path $userHelpRoot (Get-Culture).Name
+
+            ## If help content does not exist, tab completion will not work. So update it first.
+            if (-not (Test-Path (Join-Path $aboutHelpPath "about_Splatting.help.txt"))) {
+                Update-Help -Force -ErrorAction SilentlyContinue -Scope 'CurrentUser'
+            }
+
+            $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+            $res.CompletionMatches.Count | Should -Be 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+        }
     }
 }
 
