@@ -32,6 +32,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.WSMan.Runtime", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "powershell-unix", "src\powershell-unix\powershell-unix.csproj", "{73EA0BE6-C0C5-4B56-A5AA-DADA4C01D690}"
 EndProject
+# Configuration mapping comment
+# All global configurations must be mapped to project configurations
+#
+# 4BC19063-1F66-467B-87DE-80449C72BCD6 - Microsoft.PowerShell.SDK
+# 8359D422-E0C4-4A0D-94EB-3C9DD16B7932 - PowerShell-Win
+# Linux is invalid and mapped to Release
+#
+# 73EA0BE6-C0C5-4B56-A5AA-DADA4C01D690 - powershell-unix
+# Only Linux is valid, all configurations mapped to Linux
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CodeCoverage|Any CPU = CodeCoverage|Any CPU
