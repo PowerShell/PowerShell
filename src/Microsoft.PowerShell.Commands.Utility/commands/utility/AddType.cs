@@ -923,7 +923,7 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-        private SyntaxTree ParseText(SourceText sourceText, ParseOptions parseOptions, String path = "")
+        private SyntaxTree ParseText(SourceText sourceText, ParseOptions parseOptions, string path = "")
         {
             switch (Language)
             {
