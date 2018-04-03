@@ -674,11 +674,11 @@ namespace Microsoft.PowerShell.Commands
         private static string[] s_writeInformationTags = new string[] { "PSHOST" };
         private int _syntaxTreesHash;
 
-        private  const string FromMemberParameterSetName = "FromMember";
-        private  const string FromSourceParameterSetName = "FromSource";
-        private  const string FromPathParameterSetName = "FromPath";
-        private  const string FromLiteralPathParameterSetName = "FromLiteralPath";
-        private  const string FromAssemblyNameParameterSetName = "FromAssemblyName";
+        private const string FromMemberParameterSetName = "FromMember";
+        private const string FromSourceParameterSetName = "FromSource";
+        private const string FromPathParameterSetName = "FromPath";
+        private const string FromLiteralPathParameterSetName = "FromLiteralPath";
+        private const string FromAssemblyNameParameterSetName = "FromAssemblyName";
 
         private void LoadAssemblies(IEnumerable<string> assemblies)
         {
