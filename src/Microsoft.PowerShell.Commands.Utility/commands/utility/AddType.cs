@@ -946,8 +946,7 @@ namespace Microsoft.PowerShell.Commands
             switch (Language)
             {
                 case Language.CSharp:
-                    CSharpCompilationOptions csharpCompilationOptions;
-                    csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
+                    var csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
 
                     if (!IgnoreWarnings.IsPresent)
                     {
@@ -957,8 +956,7 @@ namespace Microsoft.PowerShell.Commands
                     return csharpCompilationOptions;
 
                 case Language.VisualBasic:
-                    VisualBasicCompilationOptions vbCompilationOptions;
-                    vbCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
+                    var vbCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
 
                     if (!IgnoreWarnings.IsPresent)
                     {
