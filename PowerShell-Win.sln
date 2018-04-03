@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
+# https://github.com/dotnet/project-system/blob/master/docs/opening-with-new-project-system.md#project-type-guids
 VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "powershell-win-core", "src\powershell-win-core\powershell-win-core.csproj", "{8359D422-E0C4-4A0D-94EB-3C9DD16B7932}"
