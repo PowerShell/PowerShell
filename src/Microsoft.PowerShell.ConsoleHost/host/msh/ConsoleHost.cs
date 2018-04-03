@@ -1612,6 +1612,7 @@ namespace Microsoft.PowerShell
                     OpenConsoleRunspace(consoleRunspace, staMode);
                 }
 
+                Runspace.PrimaryRunspace = consoleRunspace;
                 _runspaceRef = new RunspaceRef(consoleRunspace);
 
                 if (psReadlineFailed)
@@ -1656,10 +1657,8 @@ namespace Microsoft.PowerShell
 #endif
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
-            Runspace.PrimaryRunspace = runspace;
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
-
             runspace.Open();
         }
 
