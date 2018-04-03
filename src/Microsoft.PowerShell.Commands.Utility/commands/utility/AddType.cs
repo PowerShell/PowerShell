@@ -948,20 +948,10 @@ namespace Microsoft.PowerShell.Commands
                 case Language.CSharp:
                     var csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
 
-                    if (!IgnoreWarnings.IsPresent)
-                    {
-                        csharpCompilationOptions = csharpCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                    }
-
                     return csharpCompilationOptions;
 
                 case Language.VisualBasic:
                     var vbCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
-
-                    if (!IgnoreWarnings.IsPresent)
-                    {
-                        vbCompilationOptions = vbCompilationOptions.WithGeneralDiagnosticOption(defaultDiagnosticOption);
-                    }
 
                     return vbCompilationOptions;
 
