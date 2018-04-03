@@ -412,11 +412,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to pass the resulting types along.
         /// </summary>
-        [Parameter(ParameterSetName = FromSourceParameterSetName)]
-        [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [Parameter(ParameterSetName = FromPathParameterSetName)]
-        [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
-        [Parameter(ParameterSetName = FromAssemblyNameParameterSetName)]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
