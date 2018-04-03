@@ -437,6 +437,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Suspend-Job",                                        ,                     $($FullCLR                               )
 "Cmdlet", "Suspend-Service",                                    ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Tee-Object",                                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "Test-Connection",                                    ,                     $(             $CoreWindows -or $CoreUnix)
 "Cmdlet", "Test-ComputerSecureChannel",                         ,                     $($FullCLR                               )
 "Cmdlet", "Test-FileCatalog",                                   ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Test-ModuleManifest",                                ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
