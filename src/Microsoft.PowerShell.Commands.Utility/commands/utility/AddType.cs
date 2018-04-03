@@ -412,6 +412,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Flag to pass the resulting types along.
         /// </summary>
+        [Parameter()]
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
