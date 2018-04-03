@@ -459,6 +459,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
+        [ValidateNotNullOrEmpty]
         public string[] CompilerOptions { get; set; }
 
         #endregion Parameters
