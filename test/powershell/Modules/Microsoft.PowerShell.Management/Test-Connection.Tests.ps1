@@ -265,5 +265,5 @@ Describe "Test-Connection" -tags "CI" {
         It "Test connection to unreachable host port 80" {
             Test-Connection $UnreachableAddress -TCPPort 80 -TimeOut 1 | Should -BeFalse
         }
-        }
+    }
 } 
