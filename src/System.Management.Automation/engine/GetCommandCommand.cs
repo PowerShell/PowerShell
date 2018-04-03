@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "Command", DefaultParameterSetName = "CmdletSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113309")]
     [OutputType(typeof(AliasInfo), typeof(ApplicationInfo), typeof(FunctionInfo),
                 typeof(CmdletInfo), typeof(ExternalScriptInfo), typeof(FilterInfo),
-                typeof(WorkflowInfo), typeof(string), typeof(PSObject))]
+                typeof(string), typeof(PSObject))]
     public sealed class GetCommandCommand : PSCmdlet
     {
         #region Definitions of cmdlet parameters

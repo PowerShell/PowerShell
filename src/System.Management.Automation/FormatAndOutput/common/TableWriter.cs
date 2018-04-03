@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
-                    // skipping the first ones, add a separator for catenation
+                    // skipping the first ones, add a separator for concatenation
                     for (int j = 0; j < scArray[k].Count; j++)
                     {
                         scArray[k][j] = StringUtil.Padding(ScreenInfo.separatorCharacterCount) + scArray[k][j];
@@ -289,22 +289,64 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     screenRows = scArray[k].Count;
             }
 
-            // add padding for the columns that are shorter
-            for (int col = 0; col < scArray.Length-1; col++)
+            // column headers can span multiple rows if the width of the column is shorter than the header text like:
+            //
+            // Long Header2 Head
+            // Head         er3
+            // er
+            // ---- ------- ----
+            // 1    2       3
+            //
+            // To ensure we don't add whitespace to the end, we need to determine the last column in each row with content
+
+            System.Span<int> lastColWithContent = stackalloc int[screenRows];
+            for (int row = 0; row < screenRows; row++)
             {
-                int paddingBlanks = _si.columnInfo[validColumnArray[col]].width;
-                if (col > 0)
-                    paddingBlanks += ScreenInfo.separatorCharacterCount;
-                else
+                for (int col = scArray.Length - 1; col > 0; col--)
                 {
-                    paddingBlanks += _startColumn;
+                    int colWidth = _si.columnInfo[validColumnArray[col]].width;
+                    int headerLength = values[col].Length;
+                    if (headerLength / colWidth >= row && headerLength % colWidth > 0)
+                    {
+                        lastColWithContent[row] = col;
+                        break;
+                    }
                 }
+            }
+
+            // add padding for the columns that are shorter
+            for (int col = 0; col < scArray.Length; col++)
+            {
+                int paddingBlanks = 0;
+
+                // don't pad if last column
+                if (col < scArray.Length - 1)
+                {
+                    paddingBlanks = _si.columnInfo[validColumnArray[col]].width;
+                    if (col > 0)
+                    {
+                        paddingBlanks += ScreenInfo.separatorCharacterCount;
+                    }
+                    else
+                    {
+                        paddingBlanks += _startColumn;
+                    }
+                }
+
                 int paddingEntries = screenRows - scArray[col].Count;
                 if (paddingEntries > 0)
                 {
-                    for (int j = 0; j < paddingEntries; j++)
+                    for (int row = screenRows - paddingEntries; row < screenRows; row++)
                     {
-                        scArray[col].Add(StringUtil.Padding(paddingBlanks));
+                        // if the column is beyond the last column with content, just use empty string
+                        if (col > lastColWithContent[row])
+                        {
+                            scArray[col].Add("");
+                        }
+                        else
+                        {
+                            scArray[col].Add(StringUtil.Padding(paddingBlanks));
+                        }
                     }
                 }
             }
@@ -314,10 +356,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int row = 0; row < rows.Length; row++)
             {
                 StringBuilder sb = new StringBuilder();
-                // for a give row, walk the columns
+                // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
-                    sb.Append(scArray[col][row]);
+                    // if the column is the last column with content, we need to trim trailing whitespace
+                    if (col == lastColWithContent[row])
+                    {
+                        sb.Append(scArray[col][row].TrimEnd());
+                    }
+                    else
+                    {
+                        sb.Append(scArray[col][row]);
+                    }
                 }
                 rows[row] = sb.ToString();
             }

@@ -456,9 +456,6 @@
   <data name="VariablesToExport" xml:space="preserve">
     <value>Variables to export from this module</value>
   </data>
-  <data name="WorkflowsToExport" xml:space="preserve">
-    <value>Commands to export from this module as workflows</value>
-  </data>
   <data name="DscResourcesToExport" xml:space="preserve">
     <value>DSC resources to export from this module</value>
   </data>
@@ -480,9 +477,6 @@
   <data name="PowerShellHostVersion" xml:space="preserve">
     <value>Minimum version of the PowerShell host required by this module</value>
   </data>
-  <data name="LoadingWorkflow" xml:space="preserve">
-    <value>Loading workflow {0}</value>
-  </data>
   <data name="HelpInfoURI" xml:space="preserve">
     <value>HelpInfo URI of this module</value>
   </data>
@@ -494,9 +488,6 @@
   </data>
   <data name="ModuleDriveInUse" xml:space="preserve">
     <value>Because the {0} module is providing the PSDrive in the current PowerShell session, no modules were removed. Change the current PSDrive provider, and then try removing modules again.</value>
-  </data>
-  <data name="InvalidWorkflowExtensionDuringManifestProcessing" xml:space="preserve">
-    <value>The workflow file name extension is not valid. The workflow file name {0} that is listed in the WorkflowsToProcess key of the module manifest does not have the required .XAML or .DLL file name extension. Edit the module manifest and correct the workflow file name. If you are using a .DLL file extension, then provide only one assembly name.</value>
   </data>
   <data name="ImportModuleNoClobberForCmdlet" xml:space="preserve">
     <value>The cmdlet '{0}' was not imported because there is a member with the same name in the current scope.</value>
@@ -546,26 +537,14 @@
   <data name="RemoteDiscoveryWorksOnlyInListAvailableMode" xml:space="preserve">
     <value>Running the Get-Module cmdlet against a remote computer can only list available modules. Add the ListAvailable parameter to your command, and then try again.</value>
   </data>
-  <data name="ExportAsWorkflowInvalidCommand" xml:space="preserve">
-    <value>The command cannot be exported as workflow '{0}'.</value>
-  </data>
   <data name="ExportingWorkflow" xml:space="preserve">
     <value>Exporting workflow '{0}'.</value>
-  </data>
-  <data name="ImportingWorkflow" xml:space="preserve">
-    <value>Importing command as workflow '{0}'.</value>
-  </data>
-  <data name="ImportModuleNoClobberForWorkflow" xml:space="preserve">
-    <value>The command '{0}' was not imported as a workflow because there is a member with the same name in the current scope.</value>
   </data>
   <data name="ModuleLoadedAsASnapin" xml:space="preserve">
     <value>The '{0}' module was not imported because the '{0}' snap-in was already imported.</value>
   </data>
   <data name="WildCardNotAllowedInRequiredAssemblies" xml:space="preserve">
     <value>Wildcard characters are not allowed in the member 'RequiredAssemblies' in the module manifest '{0}'.</value>
-  </data>
-  <data name="ExportingCommandAsWorkflow" xml:space="preserve">
-    <value>Exporting command as workflow '{0}'.</value>
   </data>
   <data name="CmdletizationDoesSupportRexportingNestedModules" xml:space="preserve">
     <value>The value of the {0} key in {1} is {2} and the module has nested modules. When a CDXML file is the root module, the Import-Module command fails because the commands in nested modules cannot be exported. Move the CDXML file to the NestedModules key and try the command again.</value>
@@ -591,9 +570,6 @@
   <data name="RemoteDiscoveryProviderNotFound" xml:space="preserve">
     <value>A CIM provider for module discovery was not found on the CIM server.  {0}</value>
     <comment>{0} is a placeholder for a more detailed error message</comment>
-  </data>
-  <data name="XamlWorkflowsNotSupported" xml:space="preserve">
-    <value>Cannot load the workflow. Only signed in-box XAML-based workflows or script-based workflows are supported in the current language mode.</value>
   </data>
   <data name="CannotDetectNetFrameworkVersion" xml:space="preserve">
     <value>Cannot verify the Microsoft .NET Framework version {0} because it is not included in the list of permitted versions.</value>
@@ -621,7 +597,7 @@
   <data name="ModuleNotFoundForGetModule" xml:space="preserve">
     <value>The specified module '{0}' was not found. Update the Name parameter to point to a valid path, and then try again. </value>
   </data>
-  <data name="WorkflowModuleNotSupportedInPowerShellCore" xml:space="preserve">
+  <data name="WorkflowModuleNotSupported" xml:space="preserve">
     <value>Cannot load the workflow module '{0}'. Workflow is not supported in PowerShell Core.</value>
   </data>
   <data name="PopulatingRepositorySourceLocation" xml:space="preserve">
