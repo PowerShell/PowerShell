@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Generate an error if they've specified an output
             // assembly type without an output assembly
-            if (String.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey("OutputType"))
+            if (String.IsNullOrEmpty(_outputAssembly) && this.MyInvocation.BoundParameters.ContainsKey(nameof(OutputType)))
             {
                 ErrorRecord errorRecord = new ErrorRecord(
                     new Exception(
