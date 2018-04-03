@@ -1052,12 +1052,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    WriteVerbose(AddTypeStrings.AlreadyCompiledandLoaded);
+
                     if (PassThru)
                     {
                         WriteTypes(assembly);
                     }
-
-                    WriteVerbose(AddTypeStrings.AlreadyCompiledandLoaded);
                 }
             }
         }
