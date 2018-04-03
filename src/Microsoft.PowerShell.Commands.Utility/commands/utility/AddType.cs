@@ -1217,17 +1217,14 @@ namespace Microsoft.PowerShell.Commands
 
                 if (emitResult.Success)
                 {
-                    if (PassThru.IsPresent)
+                    Assembly assembly = Assembly.LoadFrom(_outputAssembly);
+
+                    CacheNewTypes(newTypes);
+                    CacheAssemply(assembly);
+
+                    if (PassThru)
                     {
-                        Assembly assembly = Assembly.LoadFrom(_outputAssembly);
-
-                        CacheNewTypes(newTypes);
-                        CacheAssemply(assembly);
-
-                        if (PassThru)
-                        {
-                            WriteTypes(assembly);
-                        }
+                        WriteTypes(assembly);
                     }
                 }
             }
