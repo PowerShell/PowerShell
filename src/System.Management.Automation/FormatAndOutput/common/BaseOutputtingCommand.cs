@@ -744,6 +744,42 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
+        /// In cases like implicit remoting, there is no console so reading the console width results in an exception. 
+        /// Instead of handling exception every time we cache this value to increase performance. 
+        /// </summary>
+        static private bool _noConsole = false;
+
+        /// <summary>
+        /// Tables and Wides need to use spaces for padding to maintain table look even if console window is resized.
+        /// For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
+        /// If we detect that int.MaxValue is used, first we try to get the current console window width.
+        /// However, if we can't read that (for example, implicit remoting has no console window), we default
+        /// to something reasonable: 120 columns.
+        /// </summary>
+        static private int GetConsoleWindowWidth(int columnNumber)
+        {
+            const int defaultConsoleWidth = 120;
+
+            if (columnNumber == int.MaxValue)
+            {
+                if (_noConsole)
+                {
+                    return defaultConsoleWidth;
+                }
+                try
+                {
+                    return Console.WindowWidth;
+                }
+                catch
+                {
+                    _noConsole = true;
+                    return defaultConsoleWidth;
+                }
+            }
+            return columnNumber;
+        }
+
+        /// <summary>
         /// base class for all the formatting hints
         /// </summary>
         private abstract class FormattingHint
@@ -910,23 +946,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     columnWidthsHint = tableHint.columnWidths;
                 }
 
-                int columnsOnTheScreen = this.InnerCommand._lo.ColumnNumber;
-                // Tables need to use spaces for padding to maintain table look even if console window is resized.
-                // For all other output, we use int.MaxValue if the user didn't explicitly specify a width.
-                // If we detect that int.MaxValue is used, first we try to get the current console window width.
-                // However, if we can't read that (for example, implicit remoting has no console window), we default
-                // to something reasonable: 120 columns.
-                if (columnsOnTheScreen == int.MaxValue)
-                {
-                    try
-                    {
-                        columnsOnTheScreen = Console.WindowWidth;
-                    }
-                    catch
-                    {
-                        columnsOnTheScreen = 120;
-                    }
-                }
+                int columnsOnTheScreen = GetConsoleWindowWidth(this.InnerCommand._lo.ColumnNumber);
 
                 int columns = this.CurrentTableHeaderInfo.tableColumnInfoList.Count;
                 if (columns == 0)
@@ -1132,10 +1152,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // get the header info and the view hint
                 WideFormattingHint hint = this.InnerCommand.RetrieveFormattingHint() as WideFormattingHint;
 
+                int columnsOnTheScreen = GetConsoleWindowWidth(this.InnerCommand._lo.ColumnNumber);
+
                 // give a preference to the hint, if there
                 if (hint != null && hint.maxWidth > 0)
                 {
-                    itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, this.InnerCommand._lo.ColumnNumber);
+                    itemsPerRow = TableWriter.ComputeWideViewBestItemsPerRowFit(hint.maxWidth, columnsOnTheScreen);
                 }
                 else if (this.CurrentWideHeaderInfo.columns > 0)
                 {
@@ -1155,7 +1177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize(0, this.InnerCommand._lo.ColumnNumber, columnWidths, alignment, false);
+                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false);
             }
 
             /// <summary>
