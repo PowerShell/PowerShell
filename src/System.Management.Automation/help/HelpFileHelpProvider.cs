@@ -164,6 +164,28 @@ namespace System.Management.Automation
                 }
             }
 
+            // Deduplicate by filename to compensate for two sources, currentuser scope and allusers scope.
+            // This is done after the version check filtering to ensure we do not remove later version files.
+            HashSet<string> fileNameHash = new HashSet<string>();
+
+            foreach(var file in filesMatched)
+            {
+                string fileName = Path.GetFileName(file);
+
+                if(!fileNameHash.Contains(fileName))
+                {
+                    fileNameHash.Add(fileName);
+                }
+                else
+                {
+                    // If the file need to be removed, add it to matchedFilesToRemove, if not already present.
+                    if(!matchedFilesToRemove.Contains(file))
+                    {
+                        matchedFilesToRemove.Add(file);
+                    }
+                }
+            }
+
             return matchedFilesToRemove;
         }
 
@@ -323,6 +345,7 @@ namespace System.Management.Automation
 
             // Add $pshome at the top of the list
             String defaultShellSearchPath = GetDefaultShellSearchPath();
+
             int index = searchPaths.IndexOf(defaultShellSearchPath);
             if (index != 0)
             {
@@ -332,6 +355,9 @@ namespace System.Management.Automation
                 }
                 searchPaths.Insert(0, defaultShellSearchPath);
             }
+
+            // Add the CurrentUser help path.
+            searchPaths.Add(HelpUtils.GetUserHomeHelpSearchPath());
 
             // Add modules that are not loaded. Since using 'get-module -listavailable' is very expensive,
             // we load all the directories (which are not empty) under the module path.
@@ -366,6 +392,7 @@ namespace System.Management.Automation
                     catch (System.Security.SecurityException) { }
                 }
             }
+
             return searchPaths;
         }
 

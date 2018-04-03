@@ -72,10 +72,6 @@ namespace System.Management.Automation
                 {
                     result = AnalyzeCdxmlModule(modulePath, context, lastWriteTime);
                 }
-                else if (extension.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    result = AnalyzeXamlModule(modulePath, context, lastWriteTime);
-                }
                 else if (extension.Equals(".dll", StringComparison.OrdinalIgnoreCase))
                 {
                     result = AnalyzeDllModule(modulePath, context, lastWriteTime);
@@ -364,11 +360,6 @@ namespace System.Management.Automation
             s_cacheData.Entries[modulePath] = moduleCacheEntry;
 
             return result;
-        }
-
-        private static ConcurrentDictionary<string, CommandTypes> AnalyzeXamlModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)
-        {
-            return AnalyzeTheOldWay(modulePath, context, lastWriteTime);
         }
 
         private static ConcurrentDictionary<string, CommandTypes> AnalyzeCdxmlModule(string modulePath, ExecutionContext context, DateTime lastWriteTime)

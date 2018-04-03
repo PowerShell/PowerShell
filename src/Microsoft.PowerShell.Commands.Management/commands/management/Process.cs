@@ -650,7 +650,10 @@ namespace Microsoft.PowerShell.Commands
                     //if fileversion of each process is to be displayed
                     try
                     {
-                        WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
+                        ProcessModule mainModule = PsUtils.GetMainModule(process);
+                        if (mainModule != null) {
+                            WriteObject(mainModule.FileVersionInfo, true);
+                        }
                     }
                     catch (InvalidOperationException exception)
                     {

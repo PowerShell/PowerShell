@@ -4,6 +4,7 @@
     <Description>PowerShell Core's System.Management.Automation project</Description>
     <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,7 @@
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0" />
+    <PackageReference Include="System.Memory" Version="4.5.0-*"/>
     <PackageReference Include="System.Security.AccessControl" Version="4.4.1" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0" />
     <PackageReference Include="System.Security.Permissions" Version="4.4.1" />
