@@ -1255,7 +1255,11 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    IsError |= diagnisticRecord.Severity == DiagnosticSeverity.Error || (diagnisticRecord.IsWarningAsError && diagnisticRecord.Severity == DiagnosticSeverity.Warning);
+                    if (!IsError)
+                    {
+                        IsError = diagnisticRecord.Severity == DiagnosticSeverity.Error ||
+                                 (diagnisticRecord.IsWarningAsError && diagnisticRecord.Severity == DiagnosticSeverity.Warning);
+                    }
 
                     string errorText = BuildErrorMessage(diagnisticRecord);
 
