@@ -1189,7 +1189,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // TODO:  We could use Assembly.LoadFromStream() in future.
                         // See https://github.com/dotnet/corefx/issues/26994
-                        ms.Flush();
                         ms.Seek(0, SeekOrigin.Begin);
                         Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
 
