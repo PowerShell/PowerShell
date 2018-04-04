@@ -828,11 +828,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # for a redirect response which does not contain a Location header
         # the correct redirect status code should be included in the exception message
         $StatusCode = [System.Net.HttpStatusCode]$redirectType
-        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode.value__}
         $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
-        $response.Error | Should -Not -BeNullOrEmpty
         $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $response.Error.Exception.Message | Should -Be "Response status code does not indicate success: $(StatusCode.value__) ($StatusCode)."
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
@@ -2160,11 +2159,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         # for a redirect response which does not contain a Location header
         # the correct redirect status code should be included in the exception message
         $StatusCode = [System.Net.HttpStatusCode]$redirectType
-        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode.value__}
         $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
-        $response.Error | Should -Not -BeNullOrEmpty
         $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
         $response.Error.Exception.Message | Should -Be "Response status code does not indicate success: $(StatusCode.value__) ($StatusCode)."
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
