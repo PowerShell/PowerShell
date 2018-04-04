@@ -296,8 +296,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = FromSourceParameterSetName)]
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
-        [Parameter(ParameterSetName = FromPathParameterSetName)]
-        [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
         public Language Language { get; set; } = Language.CSharp;
 
         /// <summary>
