@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <?define ProductDirectoryName = "$(env.ProductDirectoryName)" ?>
   <?define FileArchitecture = "$(env.FileArchitecture)" ?>
@@ -6,6 +6,12 @@
         <DirectoryRef Id="$(var.ProductDirectoryName)">
             <Component Id="cmp3CC027D3F160412C9F0044EBED3115DD" Guid="{8D7CAA67-8F28-422C-85FB-BDE04902E64F}">
                 <File Id="filFD2EF6BC74AF459D1BB52CA1E8C6E33B" KeyPath="yes" Source="$(env.ProductSourcePath)\NJsonSchema.dll" />
+            </Component>
+            <Component Id="cmp85032A09199C30E63F9F2CF55B6FA9B9" Guid="{D3414CD0-7366-4008-A406-DC9E69224F42}">
+                <File Id="fil85032A09199C30E63F9F2CF55B6FA9B9" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Memory.dll" />
+            </Component>
+            <Component Id="cmp12FFA2A71C4F95630792652F192DAAB3" Guid="{9F6FF303-33C5-4C51-9092-B03BC1593AEF}">
+                <File Id="fil12FFA2A71C4F95630792652F192DAAB3" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Runtime.CompilerServices.Unsafe.dll" />
             </Component>
             <Component Id="cmp3B130879A26D2E954251BB81E8948069" Guid="{CD268615-4603-4A5F-B126-340ADF2EDDD5}">
                 <File Id="filAACDEEE28FEA076C73D082A0AD21B8E0" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.CSharp.dll" />
@@ -1822,6 +1828,8 @@
     <Fragment>
         <ComponentGroup Id="$(var.ProductDirectoryName)">
             <ComponentRef Id="cmp3CC027D3F160412C9F0044EBED3115DD" />
+            <ComponentRef Id="cmp85032A09199C30E63F9F2CF55B6FA9B9" />
+            <ComponentRef Id="cmp12FFA2A71C4F95630792652F192DAAB3" />
             <ComponentRef Id="cmp3B130879A26D2E954251BB81E8948069" />
             <ComponentRef Id="cmp02ABBE4A3EDBEBFD05DC17A009A2B79D" />
             <ComponentRef Id="cmpAA10498DF244C013CB5043C62E3AA83A" />

@@ -486,36 +486,20 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
-        # Save any PowerShell paths, so we can exclude them
-        # When we verify we updated the path
-        $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
-            Where-Object {$_ -like '*files\powershell*'})
+        # the packaging tests find the MSI package using env:PSMsiX64Path
+        $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
 
-        foreach($pathPart in $beforePath)
+        # Install the latest Pester and import it
+        Install-Module Pester -Force -SkipPublisherCheck
+        Import-Module Pester -Force
+
+        # start the packaging tests and get the results
+        $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
+
+        # fail the CI job if the tests failed, or nothing passed
+        if($packagingTestResult.FailedCount -ne 0 -or !$packagingTestResult.PassedCount)
         {
-            Write-Log "Found existing PowerShell path: $pathPart"
-        }
-
-        # Smoke Test MSI installer
-        Write-Log "Smoke-Testing MSI installer"
-        $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
-        $msiLog = Join-Path (Get-Location) 'msilog.txt'
-        $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
-        if ($msiExecProcess.ExitCode -ne 0)
-        {
-            Push-AppveyorArtifact msiLog.txt
-            $exitCode = $msiExecProcess.ExitCode
-            throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
-        }
-        Write-Log "MSI smoke test was successful"
-
-        # Verify path was updated by MSI
-        $psPath = ([System.Environment]::GetEnvironmentVariable('PATH','MACHINE')) -split ';' |
-            Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
-
-        if(!$psPath)
-        {
-            throw "MSI did not add powershell to path"
+            throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
         }
 
         # only publish assembly nuget packages if it is a daily build and tests passed

@@ -69,7 +69,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
     It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
-        @{rootModuleValue = "foo.xaml"; error = "NotSupported"}   # not supported on PowerShell Core
+        @{rootModuleValue = "foo.xaml"; error = "Modules_WorkflowModuleNotSupported"}   # not supported on PowerShell Core
     ) {
 
         param($rootModuleValue, $error)
@@ -231,7 +231,7 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
     It "Test-ModuleManifest should not load unnessary modules" {
 
         $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:UserModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
-        
+
         $verbose = $job.ChildJobs[0].Verbose.ReadAll()
         # Before the fix, all modules under $pshome will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
         $verbose.Count | Should -BeLessThan 15

@@ -366,7 +366,7 @@ namespace System.Management.Automation
             };
 
         /// <summary>
-        /// Is true the PSScheduledJob and PSWorkflow modules are loaded for this runspace
+        /// Is true if the PSScheduledJob module is loaded for this runspace
         /// </summary>
         internal bool IsModuleWithJobSourceAdapterLoaded
         {

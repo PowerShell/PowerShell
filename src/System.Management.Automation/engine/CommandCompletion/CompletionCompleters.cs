@@ -5919,7 +5919,20 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + StringLiterals.DefaultPathSeparator + CultureInfo.CurrentCulture.Name;
+            var searchPaths = new List<string>();
+            var currentCulture = CultureInfo.CurrentCulture.Name;
+
+            // Add the user scope path first, since it is searched in order.
+            var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
+
+            if(Directory.Exists(userHelpRoot))
+            {
+                searchPaths.Add(userHelpRoot);
+            }
+
+            var dirPath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), currentCulture);
+            searchPaths.Add(dirPath);
+
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
             List<string> files = new List<string>();
@@ -5928,11 +5941,14 @@ namespace System.Management.Automation
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
 
-                foreach(var file in Directory.GetFiles(dirPath))
+                foreach (var dir in searchPaths)
                 {
-                    if(wildcardPattern.IsMatch(Path.GetFileName(file)))
+                    foreach (var file in Directory.GetFiles(dir))
                     {
-                        files.Add(file);
+                        if (wildcardPattern.IsMatch(Path.GetFileName(file)))
+                        {
+                            files.Add(file);
+                        }
                     }
                 }
             }

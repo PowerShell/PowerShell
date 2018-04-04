@@ -16,7 +16,9 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable var1
 
-	$var1 | Should -Be #nothing.  it should be Nothing at all.
+	$var1 | Should -BeNullOrEmpty
+	{ Get-Variable var1 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
     }
 
     It "Should not throw error when used with the Name field, and named variable is specified and exists" {
@@ -24,7 +26,9 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable -Name var1
 
-	$var1 | Should -Be #nothing.  it should be Nothing at all.
+	$var1 | Should -BeNullOrEmpty
+	{ Get-Variable var1 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
     }
 
     It "Should throw error when used with Name field, and named variable does not exist" {
@@ -42,9 +46,16 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable -Name tmp*
 
-	$tmpvar1   | Should -Be #nothing.  it should be Nothing at all.
-	$tmpvar2   | Should -Be #nothing.  it should be Nothing at all.
-	$tmpmyvar1 | Should -Be #nothing.  it should be Nothing at all.
+	$tmpvar1   | Should -BeNullOrEmpty
+	$tmpvar2   | Should -BeNullOrEmpty
+	$tmpmyvar1 | Should -BeNullOrEmpty
+
+	{ Get-Variable tmpvar1 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
+	{ Get-Variable tmpvar2 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
+	{ Get-Variable tmpmyvar1 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
     }
 
     It "Should be able to exclude a set of variables to remove using the Exclude switch" {
@@ -58,9 +69,14 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	Remove-Variable -Name tmp* -Exclude *my*
 
-	$tmpvar1   | Should -Be #nothing.  it should be Nothing at all.
-	$tmpvar2   | Should -Be #nothing.  it should be Nothing at all.
+	$tmpvar1   | Should -BeNullOrEmpty
+	$tmpvar2   | Should -BeNullOrEmpty
 	$tmpmyvar1 | Should -Be 234
+
+	{ Get-Variable tmpvar1 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
+	{ Get-Variable tmpvar2 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
     }
 
     It "Should be able to include a set of variables to remove using the Include switch" {
@@ -78,8 +94,11 @@ Describe "Remove-Variable" -Tags "CI" {
 
 	$tmpvar1   | Should -BeExactly "tempvalue"
 	$tmpvar2   | Should -Be 2
-	$tmpmyvar1 | Should -Be #nothing.  it should be Nothing at all.
+	$tmpmyvar1 | Should -BeNullOrEmpty
 	$thevar    | Should -Be 1
+
+	{ Get-Variable tmpmyvar1 -ErrorAction stop } |
+		Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
 
 	Remove-Variable tmpvar1
 	Remove-Variable tmpvar2
