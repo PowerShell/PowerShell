@@ -4798,8 +4798,9 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
         private const string enableRemotingSbFormat = @"
 Set-StrictMode -Version Latest
 
-function Generate-PluginConfigFile
+function New-PluginConfigFile
 {{
+[CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
 param(
     [Parameter()] [string] $pluginInstallPath
 )
@@ -4827,7 +4828,7 @@ param(
     }}
     if (!(Test-Path $resolvedPluginInstallPath\{5}))
     {{
-        Copy-Item $PSHOME\{5} $resolvedPluginInstallPath -Force
+        Copy-Item -Path $PSHOME\{5} -Destination $resolvedPluginInstallPath -Force
         if (!(Test-Path $resolvedPluginInstallPath\{5}))
         {{
             Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
@@ -4860,7 +4861,7 @@ param(
     # Section 2:
     # Generate the Plugin Configuration File
     #
-    Generate-PluginConfigFile $resolvedPluginInstallPath
+    New-PluginConfigFile $resolvedPluginInstallPath
 
     #
     # Section 3:
@@ -4875,6 +4876,7 @@ param(
 
 function Register-EndpointIfNotPresent
 {{
+[CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
 param(
     [Parameter()] [string] $Name,
     [Parameter()] [bool] $Force,
