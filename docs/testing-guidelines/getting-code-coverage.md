@@ -119,7 +119,7 @@ Invoke-Item C:\temp\Coverage\index.htm
 This should open a screen in the browser like this:
 ![Coverage report browser page](Images/CoverageReportTop.png)
 
-The main report, which is below the summary and risk hotspots, has
+The main report, which is below the summary and risk hot spots, has
 a filter functionality as well (when "Enable Filtering" is clicked on):
 ![Coverage report with filter on](Images/CoverageReportFilter.png)
 
