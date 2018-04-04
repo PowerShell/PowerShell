@@ -52,8 +52,8 @@ Describe "Add-Type" -Tags "CI" {
             End Class
         End Namespace
 "@
-        $VBFile1 = Join-Path -Path $TestDrive -ChildPath "VBFile1.cs"
-        $VBFile2 = Join-Path -Path $TestDrive -ChildPath "VBFile2.cs"
+        $VBFile1 = Join-Path -Path $TestDrive -ChildPath "VBFile1.vb"
+        $VBFile2 = Join-Path -Path $TestDrive -ChildPath "VBFile2.vb"
 
         Set-Content -Path $VBFile1 -Value $VBCode1 -Force
         Set-Content -Path $VBFile2 -Value $VBCode2 -Force
@@ -141,7 +141,7 @@ public class AttributeTest$guid : PSCmdlet
         $type1 -as [type] | Should BeNullOrEmpty
         $type2 -as [type] | Should BeNullOrEmpty
 
-        $returnedTypes = Add-Type -Path $file1,$file2 -Language $sourceLanguage -PassThru
+        $returnedTypes = Add-Type -Path $file1,$file2 -PassThru
 
         $type1 = Invoke-Expression -Command $type1
         $type2 = Invoke-Expression -Command $type2
