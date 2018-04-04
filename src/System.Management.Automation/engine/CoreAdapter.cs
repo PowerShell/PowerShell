@@ -4252,7 +4252,7 @@ namespace System.Management.Automation
             // are ignored.
             if (typeof(T) == typeof(PSMemberInfo))
             {
-                T returnValue = PSObject.dotNetInstanceAdapter.GetDotNetMethod<T>(obj, memberName);
+                T returnValue = base.GetDotNetMethod<T>(obj, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (returnValue != null && property == null)
@@ -4263,7 +4263,7 @@ namespace System.Management.Automation
 
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                PSParameterizedProperty parameterizedProperty = PSObject.dotNetInstanceAdapter.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
+                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -4604,7 +4604,7 @@ namespace System.Management.Automation
 
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)))
             {
-                T returnValue = PSObject.dotNetInstanceAdapter.GetDotNetMethod<T>(obj, memberName);
+                T returnValue = base.GetDotNetMethod<T>(obj, memberName);
                 // We only return a method if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (returnValue != null && property == null)
@@ -4614,7 +4614,7 @@ namespace System.Management.Automation
             }
             if (IsTypeParameterizedProperty(typeof(T)))
             {
-                PSParameterizedProperty parameterizedProperty = PSObject.dotNetInstanceAdapter.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
+                PSParameterizedProperty parameterizedProperty = base.GetDotNetProperty<PSParameterizedProperty>(obj, memberName);
                 // We only return a parameterized property if there is no property by the same name
                 // to match the behavior we have in GetMembers
                 if (parameterizedProperty != null && property == null)
@@ -4644,11 +4644,11 @@ namespace System.Management.Automation
             {
                 DoAddAllProperties<T>(obj, returnValue);
             }
-            PSObject.dotNetInstanceAdapter.AddAllMethods(obj, returnValue, true);
+            base.AddAllMethods(obj, returnValue, true);
             if (IsTypeParameterizedProperty(typeof(T)))
             {
                 var parameterizedProperties = new PSMemberInfoInternalCollection<PSParameterizedProperty>();
-                PSObject.dotNetInstanceAdapter.AddAllProperties(obj, parameterizedProperties, true);
+                base.AddAllProperties(obj, parameterizedProperties, true);
                 foreach (PSParameterizedProperty parameterizedProperty in parameterizedProperties)
                 {
                     try
