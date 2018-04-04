@@ -98,8 +98,8 @@ function New-PluginConfigFile
 
     # This always overwrites the file with a new version of it if the
     # script is invoked multiple times.
-    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$targetPsHomeDir"
-    Add-Content -Path $pluginFile -Value "CORECLRDIR=$targetPsHomeDir"
+    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$targetPsHomeDir" -ErrorAction Stop
+    Add-Content -Path $pluginFile -Value "CORECLRDIR=$targetPsHomeDir" -ErrorAction Stop
 
     Write-Verbose "Created Plugin Config File: $pluginFile" -Verbose
 }
@@ -179,7 +179,7 @@ function Install-PluginEndpoint {
     $pluginPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
 
     # This is forced to ensure the the file is placed correctly
-    Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
+    Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose -ErrorAction Stop
 
     $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
     New-PluginConfigFile $pluginFile (Resolve-Path $targetPsHome)
