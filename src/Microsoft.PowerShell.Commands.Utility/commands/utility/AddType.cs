@@ -422,7 +422,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = FromMemberParameterSetName)]
         [Parameter(ParameterSetName = FromPathParameterSetName)]
         [Parameter(ParameterSetName = FromLiteralPathParameterSetName)]
-        [Alias("IW")]
         public SwitchParameter IgnoreWarnings { get; set; }
 
         /// <summary>
