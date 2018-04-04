@@ -835,17 +835,29 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="port">resolved target port</param>
         protected void ParseSshHostName(string hostname, out string host, out string userName, out int port)
         {
-            var uri = new System.Uri("ssh://" + hostname);
-            host = uri.Host;
-            userName = uri.UserInfo;
-            if (userName == String.Empty)
+            host = hostname;
+            userName = this.UserName;
+            port = this.Port;
+            try
             {
-                userName = this.UserName;
+                Uri uri = new System.Uri("ssh://" + hostname);
+                host = ResolveComputerName(uri.Host);
+                ValidateComputerName(new string[]{host});
+                if (uri.UserInfo != String.Empty)
+                {
+                    userName = uri.UserInfo;
+                }
+                if (uri.Port != -1)
+                {
+                    port = uri.Port;
+                }
             }
-            port = uri.Port;
-            if (port == -1)
+            catch (UriFormatException)
             {
-                port = this.Port;
+                ThrowTerminatingError(new ErrorRecord(
+                    new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.InvalidComputerName)), "PSSessionInvalidComputerName",
+                            ErrorCategory.InvalidArgument, hostname));
             }
         }
 
