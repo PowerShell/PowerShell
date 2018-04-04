@@ -943,14 +943,10 @@ namespace Microsoft.PowerShell.Commands
             switch (Language)
             {
                 case Language.CSharp:
-                    var csharpCompilationOptions = new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
-
-                    return csharpCompilationOptions;
+                    return new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType));
 
                 case Language.VisualBasic:
-                    var vbCompilationOptions = new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
-
-                    return vbCompilationOptions;
+                    return new VisualBasicCompilationOptions(outputKind: OutputAssemblyTypeToOutputKind(OutputType));
 
                 default:
                     Diagnostics.Assert(false, "GetDefaultCompilationOptions: Unsupported language family.");
