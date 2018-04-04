@@ -913,25 +913,25 @@ namespace Microsoft.PowerShell.Commands
                 case Language.VisualBasic:
                     return VisualBasicCommandLineParser.Default.Parse(args, baseDirectory, sdkDirectory, additionalReferenceDirectories);
                 default:
-                    Diagnostics.Assert(false, "ParseText: Unsupported language family.");
+                    Diagnostics.Assert(false, "ParseCompilerOption: Unsupported language family.");
                     break;
             }
 
             return null;
         }
 
-        private SyntaxTree ParseText(SourceText sourceText, ParseOptions parseOptions, string path = "")
+        private SyntaxTree ParseSourceText(SourceText sourceText, ParseOptions parseOptions, string path = "")
         {
             switch (Language)
             {
                 case Language.CSharp:
-                    return CSharpSyntaxTree.ParseText(sourceText, (CSharpParseOptions) parseOptions, path);
+                    return CSharpSyntaxTree.ParseSourceText(sourceText, (CSharpParseOptions) parseOptions, path);
 
                 case Language.VisualBasic:
-                    return VisualBasicSyntaxTree.ParseText(sourceText, (VisualBasicParseOptions) parseOptions, path);
+                    return VisualBasicSyntaxTree.ParseSourceText(sourceText, (VisualBasicParseOptions) parseOptions, path);
 
                 default:
-                    Diagnostics.Assert(false, "ParseText: Unsupported language family.");
+                    Diagnostics.Assert(false, "ParseSourceText: Unsupported language family.");
                     break;
             }
 
@@ -1012,7 +1012,7 @@ namespace Microsoft.PowerShell.Commands
                         using (var sourceFile = new FileStream(filePath, FileMode.Open))
                         {
                             sourceText = SourceText.From(sourceFile);
-                            syntaxTrees.Add(ParseText(sourceText, parseOptions, path: filePath));
+                            syntaxTrees.Add(ParseSourceText(sourceText, parseOptions, path: filePath));
                         }
                     }
                     break;
@@ -1020,11 +1020,11 @@ namespace Microsoft.PowerShell.Commands
                     _sourceCode = GenerateTypeSource(Namespace, Name, _sourceCode, Language);
 
                     sourceText = SourceText.From(_sourceCode);
-                    syntaxTrees.Add(ParseText(sourceText, parseOptions));
+                    syntaxTrees.Add(ParseSourceText(sourceText, parseOptions));
                     break;
                 case FromSourceParameterSetName:
                     sourceText = SourceText.From(_sourceCode);
-                    syntaxTrees.Add(ParseText(sourceText, parseOptions));
+                    syntaxTrees.Add(ParseSourceText(sourceText, parseOptions));
                     break;
                 default:
                     Diagnostics.Assert(false, "Invalid parameter set: {0}", this.ParameterSetName);

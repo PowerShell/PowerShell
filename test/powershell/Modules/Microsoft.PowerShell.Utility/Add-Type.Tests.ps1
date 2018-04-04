@@ -225,6 +225,9 @@ public class AttributeTest$guid : PSCmdlet
         $cmdlet = "Get-CompileThing$guid"
 
         Add-Type -TypeDefinition $code -OutputAssembly $outFile | Should -BeNullOrEmpty
+        # Without -PassThru we don't load output assembly
+        { [type]"System.Management.Automation.AttributeTest$guid" } | Should -Throw
+
         $outFile | Should -Exist
         $types = Add-Type -TypeDefinition $code -OutputAssembly $outFile2 -PassThru
         $types[0].Name | Should -BeExactly "AttributeTest$guid"
