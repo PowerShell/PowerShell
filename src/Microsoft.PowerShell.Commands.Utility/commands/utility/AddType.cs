@@ -632,9 +632,8 @@ namespace Microsoft.PowerShell.Commands
                 // File extension is ".DLL" (ParameterSetName = FromPathParameterSetName or FromLiteralPathParameterSetName).
                 LoadAssemblies(_paths);
             }
-            else if (AssemblyName != null && AssemblyName.Length > 0)
+            else if (ParameterSetName == FromAssemblyNameParameterSetName)
             {
-                // ParameterSetName = FromAssemblyNameParameterSetName.
                 LoadAssemblies(AssemblyName);
             }
             else
