@@ -27,6 +27,12 @@ param
 )
 
 Set-StrictMode -Version Latest
+
+if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
+    Write-Error "WinRM registration requires Administrator rights. To run this cmdlet, start PowerShell with the `"Run as administrator`" option."
+    return
+}
 function Register-WinRmPlugin
 {
     param
@@ -117,12 +123,6 @@ function Install-PluginEndpoint {
     # Install the plugin #
     #                    #
     ######################
-
-    if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-    {
-        Write-Error "WinRM registration requires Administrator rights. To run this cmdlet, start PowerShell with the `"Run as administrator`" option."
-        Break
-    }
 
     if ($PsCmdlet.ParameterSetName -eq "ByPath")
     {
