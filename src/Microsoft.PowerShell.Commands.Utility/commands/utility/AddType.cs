@@ -1207,17 +1207,14 @@ namespace Microsoft.PowerShell.Commands
 
                 HandleCompilerErrors(emitResult.Diagnostics);
 
-                if (emitResult.Success)
+                if (emitResult.Success && PassThru)
                 {
                     Assembly assembly = Assembly.LoadFrom(_outputAssembly);
 
                     CacheNewTypes(newTypes);
                     CacheAssemply(assembly);
 
-                    if (PassThru)
-                    {
-                        WriteTypes(assembly);
-                    }
+                    WriteTypes(assembly);
                 }
             }
         }
