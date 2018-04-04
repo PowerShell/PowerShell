@@ -106,7 +106,6 @@ function Generate-PluginConfigFile
 function Install-PluginEndpoint {
     param (
         [switch]
-        # [parameter()]
         $VersionIndependent
     )
 
@@ -147,7 +146,7 @@ function Install-PluginEndpoint {
 
     Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
 
-    $pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $targetPsVersion
+    $pluginBasePath = Join-Path ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell") $targetPsVersion
 
     $resolvedPluginAbsolutePath = ""
     if (! (Test-Path $pluginBasePath))

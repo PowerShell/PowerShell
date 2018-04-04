@@ -4814,7 +4814,7 @@ param(
     [Parameter()] [string] $endpointDir
 )
     $resolvedPluginInstallPath = """"
-    $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" $endpointDir
+    $pluginInstallPath = Join-Path ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + ""\System32\PowerShell"") $endpointDir
     if (!(Test-Path $pluginInstallPath))
     {{
         $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
@@ -4939,12 +4939,12 @@ param(
 
             # Create the default PSSession configuration, not tied to specific PowerShell version
             # e. g. 'PowerShell.6'.
-            $powershellNr = $PSVersionTable.PSVersion.ToString()
-            $dotPos = $powershellNr.IndexOf(""."")
+            $powershellVersionMajor = $PSVersionTable.PSVersion.ToString()
+            $dotPos = $powershellVersionMajor.IndexOf(""."")
             if ($dotPos -ne -1) {{
-                $powershellNr = $powershellNr.Substring(0, $dotPos)
+                $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
             }}
-            Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellNr) $Force $queryForRegisterDefault $captionForRegisterDefault
+            Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
             # PowerShell Workflow and WOW are not supported for PowerShell Core
             if (![System.Management.Automation.Platform]::IsCoreCLR)
