@@ -1,5 +1,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+    <PropertyGroup>
+      <LangVersion>Latest</LangVersion>
+    </PropertyGroup>
+
   <!--
       The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
       *before* any targets get a chance to execute.
