@@ -4807,8 +4807,8 @@ param(
     $pluginConfigFile = Join-Path $pluginInstallPath ""RemotePowerShellConfig.txt""
 
     # This always overwrites the file with a new version of it (if it already exists)
-    Set-Content -Path $pluginConfigFile -Value ""PSHOMEDIR=$PSHOME""
-    Add-Content -Path $pluginConfigFile -Value ""CORECLRDIR=$PSHOME""
+    Set-Content -Path $pluginConfigFile -Value ""PSHOMEDIR=$PSHOME"" -ErrorAction Stop
+    Add-Content -Path $pluginConfigFile -Value ""CORECLRDIR=$PSHOME"" -ErrorAction Stop
 }}
 
 function Copy-PluginToEndpoint
@@ -4828,7 +4828,7 @@ param(
     }}
     if (!(Test-Path $resolvedPluginInstallPath\{5}))
     {{
-        Copy-Item -Path $PSHOME\{5} -Destination $resolvedPluginInstallPath -Force
+        Copy-Item -Path $PSHOME\{5} -Destination $resolvedPluginInstallPath -Force -ErrorAction Stop
         if (!(Test-Path $resolvedPluginInstallPath\{5}))
         {{
             Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
@@ -4867,7 +4867,7 @@ param(
     # Section 3:
     # Register the endpoint
     #
-    $null = Register-PSSessionConfiguration -Name $configurationName -force
+    $null = Register-PSSessionConfiguration -Name $configurationName -force -ErrorAction Stop
 
     set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\$configurationName\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
     set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\$configurationName\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
