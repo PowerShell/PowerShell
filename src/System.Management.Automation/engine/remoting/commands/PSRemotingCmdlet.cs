@@ -826,6 +826,30 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
+        /// Parse a hostname used with SSH Transport to get embedded
+        /// username and/or port.
+        /// </summary>
+        /// <param name="hostname">host name to parse</param>
+        /// <param name="host">resolved target host</param>
+        /// <param name="userName">resolved target user name</param>
+        /// <param name="port">resolved target port</param>
+        protected void ParseSshHostName(string hostname, out string host, out string userName, out int port)
+        {
+            var uri = new System.Uri("ssh://" + hostname);
+            host = uri.Host;
+            userName = uri.UserInfo;
+            if (userName == String.Empty)
+            {
+                userName = this.UserName;
+            }
+            port = uri.Port;
+            if (port == -1)
+            {
+                port = this.Port;
+            }
+        }
+
+        /// <summary>
         /// Parse the Connection parameter HashTable array.
         /// </summary>
         /// <returns>Array of SSHConnection objects</returns>
@@ -856,8 +880,16 @@ namespace Microsoft.PowerShell.Commands
                     if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
                     {
                         var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
-                        ValidateComputerName(new string[] { resolvedComputerName });
-                        connectionInfo.ComputerName = resolvedComputerName;
+                        ParseSshHostName(resolvedComputerName, out string host, out string userName, out int port);
+                        connectionInfo.ComputerName = host;
+                        if (userName != String.Empty)
+                        {
+                            connectionInfo.UserName = userName;
+                        }
+                        if (port != -1)
+                        {
+                            connectionInfo.Port = port;
+                        }
                     }
                     else if (paramName.Equals(UserNameParameter, StringComparison.OrdinalIgnoreCase))
                     {
@@ -1337,11 +1369,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected void CreateHelpersForSpecifiedSSHComputerNames()
         {
-            ValidateComputerName(ResolvedComputerNames);
-
             foreach (string computerName in ResolvedComputerNames)
             {
-                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath, this.Port);
+                ParseSshHostName(computerName, out string host, out string userName, out int port);
+
+                var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
