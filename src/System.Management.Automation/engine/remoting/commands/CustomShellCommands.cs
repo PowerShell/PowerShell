@@ -4796,6 +4796,8 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
 
         //TODO: CLR4: Remove the logic for setting the MaxMemoryPerShellMB to 200 MB once IPMO->Get-Command->Get-Help memory usage issue is fixed.
         private const string enableRemotingSbFormat = @"
+Set-StrictMode -Version Latest
+
 function Generate-PluginConfigFile
 {{
 param(

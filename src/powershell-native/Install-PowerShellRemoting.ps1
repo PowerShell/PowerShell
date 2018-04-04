@@ -25,6 +25,7 @@ param
     $PowerShellHome
 )
 
+Set-StrictMode -Version Latest
 function Register-WinRmPlugin
 {
     param
