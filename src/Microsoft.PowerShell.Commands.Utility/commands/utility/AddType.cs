@@ -925,10 +925,10 @@ namespace Microsoft.PowerShell.Commands
             switch (Language)
             {
                 case Language.CSharp:
-                    return CSharpSyntaxTree.ParseSourceText(sourceText, (CSharpParseOptions) parseOptions, path);
+                    return CSharpSyntaxTree.ParseText(sourceText, (CSharpParseOptions) parseOptions, path);
 
                 case Language.VisualBasic:
-                    return VisualBasicSyntaxTree.ParseSourceText(sourceText, (VisualBasicParseOptions) parseOptions, path);
+                    return VisualBasicSyntaxTree.ParseText(sourceText, (VisualBasicParseOptions) parseOptions, path);
 
                 default:
                     Diagnostics.Assert(false, "ParseSourceText: Unsupported language family.");
