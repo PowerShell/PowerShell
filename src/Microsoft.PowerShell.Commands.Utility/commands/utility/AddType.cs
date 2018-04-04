@@ -900,7 +900,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private CommandLineArguments DefaultArgsParse(IEnumerable<string> args)
+        private CommandLineArguments ParseCompilerOption(IEnumerable<string> args)
         {
             string sdkDirectory = s_defaultSdkDirectory;
             string baseDirectory = this.SessionState.Path.CurrentLocation.Path;
@@ -982,7 +982,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (CompilerOptions != null)
             {
-                var arguments = DefaultArgsParse(CompilerOptions);
+                var arguments = ParseCompilerOption(CompilerOptions);
 
                 HandleCompilerErrors(arguments.Errors);
 
