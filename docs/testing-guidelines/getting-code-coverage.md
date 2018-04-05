@@ -25,8 +25,8 @@ PS> Set-Location "C:\Path\to\powershell\build\dir"
 PS> Import-Module .\build.psm1
 
 # Build PowerShell. You may need to add other flags here like
-# -ResGen, -Restore or -PSModuleRestore
-PS> Start-PSBuild -Configuration CodeCoverage
+# -ResGen or -Restore
+PS> Start-PSBuild -Configuration CodeCoverage -Clean -PsModuleRestore
 
 # Now ensure Pester is installed
 PS> Restore-PSPester
@@ -87,6 +87,49 @@ Microsoft.PowerShell.Commands.Management  43.05  43.39
 Microsoft.WSMan.Management                52.58  56.98
 Microsoft.WSMan.Runtime                   80.95  80.33
 Microsoft.PowerShell.Commands.Diagnostics 0      0
+```
+
+If you have made changes to tests or code
+and run a second code coverage run,
+you can also compare code coverage results:
+
+```powershell
+PS> $cov1 = Get-CodeCoverage ./coverage1.xml
+PS> $cov2 = Get-CodeCoverage ./coverage2.xml
+PS> Compare-CodeCoverage -Run1 $cov1 -Run2 $cov2
+
+AssemblyName                              Sequence SequenceDelta Branch BranchDelta
+------------                              -------- ------------- ------ -----------
+Microsoft.PowerShell.Security                20.09        -30.12  17.32      -31.63
+Microsoft.PowerShell.Commands.Management     43.39          9.10  43.05       11.59
+System.Management.Automation                 45.04        -10.63  41.23      -11.07
+Microsoft.PowerShell.Commands.Utility        21.39        -47.22  20.14      -46.47
+Microsoft.PowerShell.Commands.Diagnostics        0        -51.91      0      -48.62
+Microsoft.PowerShell.ConsoleHost             23.32        -22.28  21.58      -22.47
+pwsh                                           100          0.00    100        0.00
+Microsoft.WSMan.Management                   57.73         48.23  53.02       43.22
+Microsoft.WSMan.Runtime                      80.33        -19.67  80.95      -19.05
+Microsoft.PowerShell.CoreCLR.Eventing         2.03        -32.74   1.88      -26.01
+```
+
+To get file-specific coverage data,
+you can use `Compare-FileCoverage`:
+
+```powershell
+PS> Compare-FileCoverage -ReferenceCoverage $cov2 -DifferenceCoverage $cov1 -FileName LanguagePrimitives.cs
+
+FileName              ReferenceCoverage DifferenceCoverage CoverageDelta
+--------              ----------------- ------------------ -------------
+LanguagePrimitives.cs 53.68             69.03              15.34
+```
+
+You can see more ways to use `Compare-CodeCoverage` and `Compare-FileCoverage`
+by running:
+
+```powershell
+PS> Get-Help Compare-CodeCoverage -Full
+# Or
+PS> Get-Help Compare-FileCoverage -Full
 ```
 
 ## Visualizing code coverage
