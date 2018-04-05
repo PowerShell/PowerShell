@@ -44,17 +44,31 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date 1/1/0030 -uformat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
     }
 
-    It "using -uformat 'V' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %V | Should -BeExactly "01"
-
-        # .Net Core Bug - Should -Be "01"
-        # See 'Last week' in https://en.wikipedia.org/wiki/ISO_week_date#Relation_with_the_Gregorian_calendar
-        # > If 31 December is on a Monday, Tuesday or Wednesday, it is in week 01 of the next year.
-        # '12/31/2007' is 'Monday, December 31, 2007 12:00:00 AM'
-        # There is an indefinite number of similar problems.
-        Get-date -Date 12/31/2007 -uformat %V | Should -BeExactly "53"
-
-        Get-date -Date 1/1/2011 -uformat %V | Should -BeExactly "52"
+    # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
+    It "using -uformat 'V' produces the correct output" -TestCases @(
+        @{date="2005-01-01"; week = "53"},
+        @{date="2005-01-02"; week = "53"},
+        @{date="2005-12-31"; week = "52"},
+        @{date="2006-01-01"; week = "52"},
+        @{date="2006-01-02"; week = "01"},
+        @{date="2006-12-31"; week = "52"},
+        @{date="2007-01-01"; week = "01"},
+        @{date="2007-12-30"; week = "52"},
+        @{date="2007-12-31"; week = "01"},
+        @{date="2008-01-01"; week = "01"},
+        @{date="2008-12-28"; week = "52"},
+        @{date="2008-12-29"; week = "01"},
+        @{date="2008-12-30"; week = "01"},
+        @{date="2008-12-31"; week = "01"},
+        @{date="2009-01-01"; week = "01"},
+        @{date="2009-12-31"; week = "53"},
+        @{date="2010-01-01"; week = "53"},
+        @{date="2010-01-02"; week = "53"},
+        @{date="2010-01-03"; week = "53"},
+        @{date="2010-01-04"; week = "01"}
+    ) {
+        param($date, $week)
+        Get-date -Date $date -uformat %V | Should -BeExactly $week
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(

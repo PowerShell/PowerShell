@@ -449,9 +449,32 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'V':
+                            // .Net Core doesn't implement ISO 8601.
+                            // So we use workaround from https://blogs.msdn.microsoft.com/shawnste/2006/01/24/iso-8601-week-of-year-format-in-microsoft-net/
+                            // with corrections from comments
+
+                            // Culture doesn't matter since we specify start day of week
+                            var calender = CultureInfo.InvariantCulture.Calendar;
+                            var day = calender.GetDayOfWeek(dateTime);
+                            var normalizedDatetime = dateTime;
+
+                            switch (day)
+                            {
+                                case DayOfWeek.Monday:
+                                case DayOfWeek.Tuesday:
+                                case DayOfWeek.Wednesday:
+                                    normalizedDatetime = dateTime.AddDays(3);
+                                    break;
+
+                                case DayOfWeek.Friday:
+                                case DayOfWeek.Saturday:
+                                case DayOfWeek.Sunday:
+                                    normalizedDatetime = dateTime.AddDays(-3);
+                                    break;
+                            }
+
                             // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
-                            var calender = System.Threading.Thread.CurrentThread.CurrentCulture.Calendar;
-                            sb.Append(StringUtil.Format("{0:00}",calender.GetWeekOfYear(dateTime,
+                            sb.Append(StringUtil.Format("{0:00}",calender.GetWeekOfYear(normalizedDatetime,
                                                                                         CalendarWeekRule.FirstFourDayWeek,
                                                                                         DayOfWeek.Monday)));
                             break;
