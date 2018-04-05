@@ -822,18 +822,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
-    It "Validates Invoke-WebRequest handles redirect responses without Location header correctly" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest handles responses without Location header correctly for redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         # PowerShell should throw an HTTP Response Exception
         # for a redirect response which does not contain a Location header
         # the correct redirect status code should be included in the exception message
-        $StatusCode = [System.Net.HttpStatusCode]$redirectType
-        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode.value__}
+        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
         $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
         $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
-        $response.Error.Exception.Message | Should -Be "Response status code does not indicate success: $(StatusCode.value__) ($StatusCode)."
+        $response.Error.Exception.Message | Should -Match "Response status code does not indicate success: $StatusCode"
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
@@ -2153,18 +2153,18 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
-    It "Validates Invoke-RestMethod handles redirect responses without Location header correctly" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod handles responses without Location header correctly for redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         # PowerShell should throw an HTTP Response Exception
         # for a redirect response which does not contain a Location header
         # the correct redirect status code should be included in the exception message
-        $StatusCode = [System.Net.HttpStatusCode]$redirectType
-        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode.value__}
+        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
         $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
         $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
-        $response.Error.Exception.Message | Should -Be "Response status code does not indicate success: $(StatusCode.value__) ($StatusCode)."
+        $response.Error.Exception.Message | Should -Match "Response status code does not indicate success: $StatusCode"
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
