@@ -824,6 +824,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Validates Invoke-WebRequest handles responses without Location header correctly for redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
+        # Skip relative test as it is not a valid response type.
+        if ($redirectType -eq 'relative'){ return }
+
         # PowerShell should throw an HTTP Response Exception
         # for a redirect response which does not contain a Location header
         # the correct redirect status code should be included in the exception message
@@ -833,7 +836,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response = ExecuteWebCommand -command $command
 
         $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
-        $response.Error.Exception.Message | Should -Match "Response status code does not indicate success: $StatusCode"
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
@@ -2155,6 +2157,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validates Invoke-RestMethod handles responses without Location header correctly for redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
+        # Skip relative test as it is not a valid response type.
+        if ($redirectType -eq 'relative'){ return }
+
         # PowerShell should throw an HTTP Response Exception
         # for a redirect response which does not contain a Location header
         # the correct redirect status code should be included in the exception message
@@ -2164,7 +2169,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response = ExecuteWebCommand -command $command
 
         $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
-        $response.Error.Exception.Message | Should -Match "Response status code does not indicate success: $StatusCode"
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
