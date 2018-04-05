@@ -91,7 +91,7 @@ Describe "Control Service cmdlet tests" -Tags "Feature","RequireAdminOnWindows" 
     @{script={Restart-Service $(new-guid) -ErrorAction Stop};errorid="NoServiceFoundForGivenName,Microsoft.PowerShell.Commands.RestartServiceCommand"}
   ) {
       param($script,$errorid)
-      { & $script } | ShouldBeErrorId $errorid
+      { & $script } | Should -Throw -ErrorId $errorid
   }
 
 }
