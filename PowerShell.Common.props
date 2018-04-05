@@ -1,9 +1,5 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-    <PropertyGroup>
-      <LangVersion>Latest</LangVersion>
-    </PropertyGroup>
-
   <!--
       The 'version' property is populated with the default value in 'Microsoft.NET.DefaultAssemblyInfo.targets'
       *before* any targets get a chance to execute.
@@ -99,6 +95,7 @@
 
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeFrameworkVersion>2.0.6</RuntimeFrameworkVersion>
+    <LangVersion>Latest</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
