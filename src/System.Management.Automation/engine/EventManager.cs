@@ -2029,7 +2029,7 @@ namespace System.Management.Automation
 
         internal void RegisterJob()
         {
-            // And this event subscriber to the job repository if it's not a support event.
+            // Add this event subscriber to the job repository if it's not a support event.
             if (!SupportEvent)
             {
                 if (this.Action != null)

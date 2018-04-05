@@ -12,6 +12,7 @@
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
     <Content Include="..\System.Management.Automation\powershell.config.json">
       <Link>powershell.config.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*">
