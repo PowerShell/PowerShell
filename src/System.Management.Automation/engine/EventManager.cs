@@ -13,12 +13,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 
-#if !CORECLR
-// StackFrame and SymbolStore related types are not available in CoreCLR.
-using System.Diagnostics.SymbolStore;
-using System.Diagnostics;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -359,9 +353,6 @@ namespace System.Management.Automation
         private AssemblyBuilder _eventAssembly = null;
         private ModuleBuilder _eventModule = null;
         private int _typeId = 0;
-#if !CORECLR
-        private bool debugMode = false;
-#endif
 
         /// <summary>
         /// Gets the list of event subscribers.
@@ -673,22 +664,10 @@ namespace System.Management.Automation
 
             if (_eventAssembly == null)
             {
-#if !CORECLR
-                // Define the assembly that will hold our event handlers
-                StackFrame callStack = new StackFrame(0, true);
-                debugMode = (callStack.GetFileName() != null);
-#endif
                 _eventAssembly = AssemblyBuilder.DefineDynamicAssembly(
                     new AssemblyName("PSEventHandler"),
                     AssemblyBuilderAccess.Run);
-            }
-            if (_eventModule == null)
-            {
-#if CORECLR
                 _eventModule = _eventAssembly.DefineDynamicModule("PSGenericEventModule");
-#else
-                _eventModule = _eventAssembly.DefineDynamicModule("PSGenericEventModule", debugMode);
-#endif
             }
 
             string engineEventSourceIdentifier = null;
@@ -748,14 +727,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-#if !CORECLR
-                // If it is a ManagementEventWatcher, enable it
-                ManagementEventWatcher eventWatcher = source as ManagementEventWatcher;
-                if (eventWatcher != null)
-                {
-                    eventWatcher.Start();
-                }
-#endif
+
                 // Get its invoke method, and register ourselves as a handler
                 MethodInfo invokeMethod = eventInfo.EventHandlerType.GetMethod("Invoke");
 
@@ -767,7 +739,6 @@ namespace System.Management.Automation
                 if (invokeMethod.ReturnType != typeof(void))
                 {
                     string errorMessage = EventingResources.NonVoidDelegateNotSupported;
-
                     throw new ArgumentException(errorMessage, "eventName");
                 }
 
@@ -1423,16 +1394,7 @@ namespace System.Management.Automation
         private Type GenerateEventHandler(MethodInfo invokeSignature)
         {
             int parameterCount = invokeSignature.GetParameters().Length;
-#if !CORECLR
-            StackFrame callStack = new StackFrame(0, true);
 
-            // Get the filename to associate with the debug symbols
-            ISymbolDocumentWriter doc = null;
-            if (debugMode)
-            {
-                doc = _eventModule.DefineDocument(callStack.GetFileName(), Guid.Empty, Guid.Empty, Guid.Empty);
-            }
-#endif
             // Define the type that will respond to the event. It
             // derives from PSEventHandler so that complex
             // functionality can go into its base class.
@@ -1445,21 +1407,6 @@ namespace System.Management.Automation
                 typeof(PSEventHandler).GetConstructor(
                     new Type[] { typeof(PSEventManager), typeof(Object), typeof(string), typeof(PSObject) });
 
-#if !CORECLR
-            if (debugMode)
-            {
-                // Mark as debuggable
-                Type debugAttributeType = typeof(DebuggableAttribute);
-                ConstructorInfo debugAttributeCtor = debugAttributeType.GetConstructor(new Type[] { typeof(DebuggableAttribute.DebuggingModes) });
-
-                CustomAttributeBuilder debugAttributeBuilder = new CustomAttributeBuilder(debugAttributeCtor,
-                    new object[] {
-                        DebuggableAttribute.DebuggingModes.DisableOptimizations |
-                        DebuggableAttribute.DebuggingModes.Default
-                    });
-                _eventAssembly.SetCustomAttribute(debugAttributeBuilder);
-            }
-#endif
             // Define the new constructor
             // public TestEventHandler(PSEventManager eventManager, Object sender, string sourceIdentifier, PSObject extraData)
             // : base(eventManager, sender, sourceIdentifier, extraData)
@@ -1499,35 +1446,19 @@ namespace System.Management.Automation
 
             ILGenerator methodContents = eventMethod.GetILGenerator();
 
-            // Object[] args =
-            LocalBuilder argsBuilder = methodContents.DeclareLocal(typeof(object[]));
+            // Declare a local variable of the type 'object[]' at index 0, say 'object[] args'
+            methodContents.DeclareLocal(typeof(object[]));
 
-#if !CORECLR
-            if (debugMode)
-            {
-                argsBuilder.SetLocalSymInfo("args");
-
-                //     new Object[ invokeSignature.GetParameters().Length ]
-                methodContents.MarkSequencePoint(doc, callStack.GetFileLineNumber() - 1, 1, callStack.GetFileLineNumber(), 100);
-            }
-#endif
             methodContents.Emit(OpCodes.Ldc_I4, parameterCount);
             methodContents.Emit(OpCodes.Newarr, typeof(Object));
 
-            // Retrieve the args variable from local variable index 0
+            // Store the new array to the local variable 'args'
             methodContents.Emit(OpCodes.Stloc_0);
 
             // Inline, this converts into a series of setting args[n] to
             // the argument at the same parameter index
             for (int counter = 1; counter <= parameterCount; counter++)
             {
-#if !CORECLR
-                if (debugMode)
-                {
-                    // args[n] = argument[n]
-                    methodContents.MarkSequencePoint(doc, callStack.GetFileLineNumber() - 1, 1, callStack.GetFileLineNumber(), 100);
-                }
-#endif
                 methodContents.Emit(OpCodes.Ldloc_0);
                 methodContents.Emit(OpCodes.Ldc_I4, counter - 1);
                 methodContents.Emit(OpCodes.Ldarg, counter);
@@ -1572,16 +1503,9 @@ namespace System.Management.Automation
 
             // Finally, invoke the method
             MethodInfo generateEventMethod = typeof(PSEventManager).GetMethod(
-                "GenerateEvent",
-                new Type[] { typeof(string), typeof(object), typeof(object[]), typeof(PSObject) }
-                );
-#if !CORECLR
-            if (debugMode)
-            {
-                // GenerateEvent(sourceIdentifier, args, extraData);
-                methodContents.MarkSequencePoint(doc, callStack.GetFileLineNumber() - 1, 1, callStack.GetFileLineNumber(), 100);
-            }
-#endif
+                nameof(PSEventManager.GenerateEvent),
+                new Type[] { typeof(string), typeof(object), typeof(object[]), typeof(PSObject) });
+
             methodContents.Emit(OpCodes.Callvirt, generateEventMethod);
 
             // Discard the return value, and return
