@@ -155,7 +155,7 @@ function Install-PluginEndpoint {
     # If endpoint exists and -Force parameter was not used, the endpoint would not be overwritten.
     if ($endpoint -and !$Force)
     {
-        Write-Host "Endpoint $pluginEndpointName already exists." -foregroundcolor Magenta
+        Write-Error "Endpoint $pluginEndpointName already exists."
         return
     }
 
