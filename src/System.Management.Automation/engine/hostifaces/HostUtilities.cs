@@ -943,7 +943,7 @@ namespace System.Management.Automation
                 [string] $PSEditFunction
             )
 
-            Register-EngineEvent -SourceIdentifier PSISERemoteSessionOpenFile -Forward
+            Register-EngineEvent -SourceIdentifier PSISERemoteSessionOpenFile -Forward -SupportEvent
 
             if ((Test-Path -Path 'function:\global:PSEdit') -eq $false)
             {
@@ -960,7 +960,7 @@ namespace System.Management.Automation
                 Remove-Item -Path 'function:\global:PSEdit' -Force
             }
 
-            Unregister-Event -SourceIdentifier PSISERemoteSessionOpenFile -ErrorAction Ignore
+            Unregister-Event -SourceIdentifier PSISERemoteSessionOpenFile -Force -ErrorAction Ignore
         ";
 
         /// <summary>
