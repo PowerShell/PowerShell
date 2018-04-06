@@ -124,10 +124,6 @@
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Xml_cmdletsOverObjectsXsd" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\..\..\src\cimSupport\cmdletization\xml\cmdlets-over-objects.xsd;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-    <comment>{Locked}</comment>
-  </data>
   <data name="CimJob_MethodDescription" xml:space="preserve">
     <value>CIM method {1} on the {0} CIM object</value>
     <comment>{0} is a placeholder for a CIM path. Example: \\SERVER1\ROOT\cimv2:Win32_Process.Handle="11828"

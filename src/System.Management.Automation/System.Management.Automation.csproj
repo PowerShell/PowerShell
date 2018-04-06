@@ -4,7 +4,6 @@
     <Description>PowerShell Core's System.Management.Automation project</Description>
     <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
-    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
