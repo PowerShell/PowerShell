@@ -1090,45 +1090,9 @@ namespace System.Management.Automation
 
             try
             {
-                ProviderInfo provider = null;
-                string resolvedPath = null;
-                if (WildcardPattern.ContainsWildcardCharacters(path))
-                {
-                    // Let PowerShell resolve relative path with wildcards.
-                    Provider.CmdletProvider providerInstance;
-                    Collection<string> resolvedPaths = _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
-                        path,
-                        false,
-                        out provider,
-                        out providerInstance);
-
-                    if (resolvedPaths.Count == 0)
-                    {
-                        resolvedPath = null;
-
-                        CommandDiscovery.discoveryTracer.TraceError(
-                           "The relative path with wildcard did not resolve to valid path. {0}",
-                           path);
-                    }
-                    else if (resolvedPaths.Count > 1)
-                    {
-                        resolvedPath = null;
-
-                        CommandDiscovery.discoveryTracer.TraceError(
-                        "The relative path with wildcard resolved to multiple paths. {0}",
-                        path);
-                    }
-                    else
-                    {
-                        resolvedPath = resolvedPaths[0];
-                    }
-                }
-
-                // Revert to previous path resolver if wildcards produces no results.
-                if ((resolvedPath == null) || (provider == null))
-                {
-                    resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
-                }
+                // Let PowerShell resolve relative path.
+                ProviderInfo provider;
+                string resolvedPath = _context.LocationGlobber.GetProviderPath(path, out provider);
 
                 // Verify the path was resolved to a file system path
                 if (provider.NameEquals(_context.ProviderNames.FileSystem))
