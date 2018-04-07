@@ -822,10 +822,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
-    It "Validates Invoke-WebRequest handles responses without Location header correctly for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         # Skip relative test as it is not a valid response type.
-        if ($redirectType -eq 'relative'){ return }
+        if ($redirectType -eq 'relative') { return }
 
         # When an Authorization request header is present,
         # and -PreserveAuthorizationOnRedirect is not present,
@@ -2158,10 +2158,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
-    It "Validates Invoke-RestMethod handles responses without Location header correctly for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         # Skip relative test as it is not a valid response type.
-        if ($redirectType -eq 'relative'){ return }
+        if ($redirectType -eq 'relative') { return }
 
         # When an Authorization request header is present,
         # and -PreserveAuthorizationOnRedirect is not present,
