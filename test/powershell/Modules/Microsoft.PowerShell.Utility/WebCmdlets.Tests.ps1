@@ -1618,6 +1618,116 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
     }
 
+    Context "Invoke-WebRequest File Resume Feature" {
+        BeforeAll {
+            $outFile = Join-Path $TestDrive "resume.txt"
+
+            # Download the entire file to reference in tests
+            $referenceFile = Join-Path $TestDrive "reference.txt"
+            $resumeUri = Get-WebListenerUrl -Test 'Resume'
+            Invoke-WebRequest -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
+            $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
+            $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
+        }
+
+        AfterEach {
+            Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
+        }
+
+        It "Invoke-WebRequest -Resume requires -OutFile" {
+            { Invoke-WebRequest -Resume -Uri $resumeUri -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+        }
+
+        It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly 'bytes=0-'
+            $response.StatusCode | Should -Be 206
+            $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes 0-$($referenceFileSize-1)/$referenceFileSize"
+        }
+
+        It "Invoke-WebRequest -Resume overwrites an existing file that is larger than the remote file" {
+            # Create a file larger than the download file
+            $largerFileSize = $referenceFileSize + 20
+            1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
+            $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'false'
+            $response.StatusCode | Should -Be 200
+            $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
+        }
+
+        It "Invoke-WebRequest -Resume overwrites existing file when remote server does not support resume" {
+            # Create a file larger than the download file
+            $largerFileSize = $referenceFileSize + 20
+            1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
+            $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
+            $response = Invoke-WebRequest -Uri $uri -OutFile $outFile -Resume -PassThru
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
+            $response.StatusCode | Should -Be 200
+            $response.Headers.ContainsKey('Content-Range') | Should -BeFalse
+        }
+
+        It "Invoke-WebRequest -Resume resumes downloading from <bytes> bytes" -TestCases @(
+            @{bytes = 4}
+            @{bytes = 8}
+            @{bytes = 12}
+            @{bytes = 16}
+        ) {
+            param($bytes, $statuscode)
+            # Simulate partial download
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue "Bytes/$bytes"
+            $null = Invoke-WebRequest -uri $uri -OutFile $outFile
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
+
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
+            $response.StatusCode | Should -Be 206
+            $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes $bytes-$($referenceFileSize-1)/$referenceFileSize"
+        }
+
+        It "Invoke-WebRequest -Resume assumes the file was successfully completed when the local and remote file are the same size." {
+            # Download the entire file
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
+            $null = Invoke-WebRequest -uri $uri -OutFile $outFile
+            $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $response.Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $response.Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
+            # The web cmdlets special case 416 as a success code when the local file and remote file are the same size
+            $response.StatusCode | Should -Be 416
+            $response.Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
+        }
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -2776,6 +2886,114 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $query['body'] = "           null         `n"
             $uri = Get-WebListenerUrl -Test 'Response' -Query $query
             Invoke-RestMethod -Uri $uri | Should -Be $null
+        }
+    }
+
+    Context "Invoke-RestMethod File Resume Feature" {
+        BeforeAll {
+            $outFile = Join-Path $TestDrive "resume.txt"
+
+            # Download the entire file to reference in tests
+            $referenceFile = Join-Path $TestDrive "reference.txt"
+            $resumeUri = Get-WebListenerUrl -Test 'Resume'
+            Invoke-RestMethod -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
+            $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
+            $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
+        }
+
+        AfterEach {
+            Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
+        }
+
+        It "Invoke-RestMethod -Resume requires -OutFile" {
+            { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
+                Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+        }
+
+        It "Invoke-RestMethod -Resume Downloads the whole file when the file does not exist" {
+            # ensure the file does not exist
+            Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
+
+            Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly 'bytes=0-'
+            $Headers.'Content-Range'[0] | Should -BeExactly "bytes 0-$($referenceFileSize-1)/$referenceFileSize"
+        }
+
+        It "Invoke-RestMethod -Resume overwrites an existing file that is larger than the remote file" {
+            # Create a file larger than the download file
+            $largerFileSize = $referenceFileSize + 20
+            1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
+            $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'false'
+            $Headers.ContainsKey('Content-Range') | Should -BeFalse
+        }
+
+        It "Invoke-RestMethod -Resume overwrites existing file when remote server does not support resume" {
+            # Create a file larger than the download file
+            $largerFileSize = $referenceFileSize + 20
+            1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
+            $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
+            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -BeLessThan $largerFileSize
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$largerFileSize-"
+            $Headers.ContainsKey('Content-Range') | Should -BeFalse
+        }
+
+        It "Invoke-RestMethod -Resume resumes downloading from <bytes> bytes" -TestCases @(
+            @{bytes = 4}
+            @{bytes = 8}
+            @{bytes = 12}
+            @{bytes = 16}
+        ) {
+            param($bytes)
+            # Simulate partial download
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue "Bytes/$bytes"
+            $null = Invoke-RestMethod -uri $uri -OutFile $outFile
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
+
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
+            $Headers.'Content-Range'[0] | Should -BeExactly "bytes $bytes-$($referenceFileSize-1)/$referenceFileSize"
+        }
+
+        It "Invoke-RestMethod -Resume assumes the file was successfully completed when the local and remote file are the same size." {
+            # Download the entire file
+            $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
+            $null = Invoke-RestMethod -uri $uri -OutFile $outFile
+            $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
+
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+
+            $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
+            Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
+            $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
+            $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$fileSize-"
+            $Headers.'Content-Range'[0] | Should -BeExactly "bytes */$referenceFileSize"
         }
     }
 

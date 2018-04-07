@@ -1281,7 +1281,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceForSSHSession()
         {
-            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, ResolveComputerName(HostName), this.KeyFilePath, this.Port);
+            ParseSshHostName(HostName, out string host, out string userName, out int port);
+            var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
             // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.

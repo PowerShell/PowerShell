@@ -58,12 +58,11 @@ namespace System.Management.Automation
         /// <param name="providerEntry"></param>
         internal void AddSessionStateEntry(SessionStateProviderEntry providerEntry)
         {
-            ProviderInfo provider = AddProvider(providerEntry.ImplementingType,
-                            providerEntry.Name,
-                            providerEntry.HelpFileName,
-                            providerEntry.PSSnapIn,
-                            providerEntry.Module
-            );
+            AddProvider(providerEntry.ImplementingType,
+                        providerEntry.Name,
+                        providerEntry.HelpFileName,
+                        providerEntry.PSSnapIn,
+                        providerEntry.Module);
         }
 
         private ProviderInfo AddProvider(Type implementingType, string name, string helpFileName, PSSnapInInfo psSnapIn, PSModuleInfo module)

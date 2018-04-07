@@ -10,7 +10,7 @@ Describe "Write-Debug tests" -Tags "CI" {
         $DebugPreference = "Continue"
         try {
             $out = Write-Debug $text 5>&1
-            $out | Should BeExactly $text
+            $out | Should -BeExactly $text
         }
         finally {
             $DebugPreference = $origDebugPref

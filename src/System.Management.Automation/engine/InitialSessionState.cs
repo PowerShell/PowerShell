@@ -5219,7 +5219,7 @@ if($paths) {
                 {
                     clone[entry.Key] = (SessionStateProviderEntry)entry.Value.Clone();
                 }
-                s_providerCache.Value[assembly] = providers;
+                s_providerCache.Value[assembly] = clone;
             }
         }
 

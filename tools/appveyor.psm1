@@ -486,18 +486,21 @@ function Invoke-AppveyorFinish
             $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
-        # Smoke Test MSI installer
-        Write-Log "Smoke-Testing MSI installer"
-        $msi = $artifacts | Where-Object { $_.EndsWith(".msi")}
-        $msiLog = Join-Path (Get-Location) 'msilog.txt'
-        $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList "/I $msi /quiet /l*vx $msiLog" -NoNewWindow -PassThru
-        if ($msiExecProcess.ExitCode -ne 0)
+        # the packaging tests find the MSI package using env:PSMsiX64Path
+        $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
+
+        # Install the latest Pester and import it
+        Install-Module Pester -Force -SkipPublisherCheck
+        Import-Module Pester -Force
+
+        # start the packaging tests and get the results
+        $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
+
+        # fail the CI job if the tests failed, or nothing passed
+        if($packagingTestResult.FailedCount -ne 0 -or !$packagingTestResult.PassedCount)
         {
-            Push-AppveyorArtifact msiLog.txt
-            $exitCode = $msiExecProcess.ExitCode
-            throw "MSI installer failed and returned error code $exitCode. MSI Log was uploaded as artifact."
+            throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
         }
-        Write-Log "MSI smoke test was successful"
 
         # only publish assembly nuget packages if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')

@@ -512,7 +512,7 @@ namespace System.Management.Automation.Runspaces
                     .AddHeader(width: 6)
                     .AddHeader(width: 6)
                     .AddHeader(width: 6)
-                    .AddHeader(width: 9)
+                    .AddHeader(width: 15)
                     .AddHeader(width: 11)
                     .StartRowDefinition()
                         .AddPropertyColumn("Major")

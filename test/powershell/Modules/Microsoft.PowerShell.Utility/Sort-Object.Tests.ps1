@@ -3,22 +3,22 @@
 Describe "Sort-Object" -Tags "CI" {
 
     It "should be able to sort object in ascending with using Property switch" {
-        { Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length } | Should Not Throw
+        { Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length } | Should -Not -Throw
 
         $firstLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length | Select-Object -First 1).Length
         $lastLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length | Select-Object -Last 1).Length
 
-        $firstLen -lt $lastLen | Should be $true
+        $firstLen -lt $lastLen | Should -BeTrue
 
     }
 
     It "should be able to sort object in descending with using Descending switch" {
-        { Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length -Descending } | Should Not Throw
+        { Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length -Descending } | Should -Not -Throw
 
         $firstLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length -Descending | Select-Object -First 1).Length
         $lastLen = (Get-ChildItem -Path $PSScriptRoot -Include *.ps1 -Recurse | Sort-Object -Property Length -Descending | Select-Object -Last 1).Length
 
-        $firstLen -gt $lastLen | Should be $true
+        $firstLen -gt $lastLen | Should -BeTrue
     }
 }
 
@@ -31,20 +31,20 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3,$employee4)
 		$results = $employees | Sort-Object -Property YearsInMS
 
-		$results[0].FirstName | Should Be "Minus"
-		$results[0].LastName | Should Be "Two"
-		$results[0].YearsInMS | Should Be -2
+		$results[0].FirstName | Should -BeExactly "Minus"
+		$results[0].LastName | Should -BeExactly "Two"
+		$results[0].YearsInMS | Should -Be -2
 
-		$results[1].FirstName | Should Be "Eight"
-		$results[1].YearsInMS | Should BeNullOrEmpty
+		$results[1].FirstName | Should -BeExactly "Eight"
+		$results[1].YearsInMS | Should -BeNullOrEmpty
 
-		$results[2].FirstName | Should Be "One"
-		$results[2].LastName | Should Be "One"
-		$results[2].YearsInMS | Should Be 1
+		$results[2].FirstName | Should -BeExactly "One"
+		$results[2].LastName | Should -BeExactly "One"
+		$results[2].YearsInMS | Should -Be 1
 
-		$results[3].FirstName | Should Be "Eight"
-		$results[3].LastName | Should Be "Eight"
-		$results[3].YearsInMS | Should Be 8
+		$results[3].FirstName | Should -BeExactly "Eight"
+		$results[3].LastName | Should -BeExactly "Eight"
+		$results[3].YearsInMS | Should -Be 8
 	}
 
 	It "Sort-Object with Non Conflicting Order Entry Keys should work"{
@@ -55,9 +55,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$ht = @{"e"="YearsInMS"; "descending"=$false; "ascending"=$true}
 		$results = $employees | Sort-Object -Property $ht -Descending
 
-		$results[0] | Should Be $employees[2]
-		$results[1] | Should Be $employees[0]
-		$results[2] | Should Be $employees[1]
+		$results[0] | Should -Be $employees[2]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[1]
 	}
 
 	It "Sort-Object with Conflicting Order Entry Keys should work"{
@@ -68,9 +68,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$ht = @{"e"="YearsInMS"; "descending"=$false; "ascending"=$false}
 		$results = $employees | Sort-Object -Property $ht -Descending
 
-		$results[0] | Should Be $employees[1]
-		$results[1] | Should Be $employees[0]
-		$results[2] | Should Be $employees[2]
+		$results[0] | Should -Be $employees[1]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[2]
 	}
 
 	It "Sort-Object with One Order Entry Key should work"{
@@ -81,9 +81,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$ht = @{"e"="YearsInMS"; "descending"=$false}
 		$results = $employees | Sort-Object -Property $ht -Descending
 
-		$results[0] | Should Be $employees[2]
-		$results[1] | Should Be $employees[0]
-		$results[2] | Should Be $employees[1]
+		$results[0] | Should -Be $employees[2]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[1]
 	}
 
 	It "Sort-Object with HistoryInfo object should work"{
@@ -97,9 +97,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 
 		$results = $historyInfos | Sort-Object
 
-		$results[0] | Should Be $historyInfos[0]
-		$results[1] | Should Be $historyInfos[1]
-		$results[2] | Should Be $historyInfos[2]
+		$results[0] | Should -Be $historyInfos[0]
+		$results[1] | Should -Be $historyInfos[1]
+		$results[2] | Should -Be $historyInfos[2]
 	}
 
 	It "Sort-Object with Non Existing And Null Script Property should work"{
@@ -111,10 +111,10 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$a = new-object microsoft.powershell.commands.newobjectcommand
 		$a.TypeName = 'atype'
 		$results = $n, $d, $b, 'b', $a | Sort-Object -proper {$_.TypeName}
-		$results.Count | Should Be 5
-		$results[2] | Should Be $a
-		$results[3] | Should Be $b
-		$results[4] | Should Be $d
+		$results.Count | Should -Be 5
+		$results[2] | Should -Be $a
+		$results[3] | Should -Be $b
+		$results[4] | Should -Be $d
 		#results[0] and [1] can be any order
 	}
 
@@ -128,12 +128,12 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$a = new-object microsoft.powershell.commands.newobjectcommand
 		$a.TypeName = 'atype'
 		$results = $n, $d, $b, 'b', $a | Sort-Object -prop TypeName
-		$results.Count | Should Be 5
-		$results[0] | Should Be $n
-		$results[1] | Should Be $a
-		$results[2] | Should Be $b
-		$results[3] | Should Be $d
-		$results[4] | Should Be 'b'
+		$results.Count | Should -Be 5
+		$results[0] | Should -Be $n
+		$results[1] | Should -Be $a
+		$results[2] | Should -Be $b
+		$results[3] | Should -Be $d
+		$results[4] | Should -Be 'b'
 	}
 
 	It "Sort-Object with Non Case-Sensitive Unique should work"{
@@ -143,9 +143,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName" -Descending -Unique
 
-		$results[0] | Should Be $employees[2]
-		$results[1] | Should Be $employees[1]
-		$results[2] | Should BeNullOrEmpty
+		$results[0] | Should -Be $employees[2]
+		$results[1] | Should -Be $employees[1]
+		$results[2] | Should -BeNullOrEmpty
 	}
 
 	It "Sort-Object with Case-Sensitive Unique should work"{
@@ -155,9 +155,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending -Unique -CaseSensitive
 
-		$results[0] | Should Be $employees[2]
-		$results[1] | Should Be $employees[0]
-		$results[2] | Should Be $employees[1]
+		$results[0] | Should -Be $employees[2]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[1]
 	}
 
 	It "Sort-Object with Two Order Entry Keys should work"{
@@ -169,9 +169,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$ht2 = @{"expression"="FirstName"; "ascending"=$true}
 		$results = $employees | Sort-Object -Property @($ht1,$ht2) -Descending
 
-		$results[0] | Should Be $employees[2]
-		$results[1] | Should Be $employees[1]
-		$results[2] | Should Be $employees[0]
+		$results[0] | Should -Be $employees[2]
+		$results[1] | Should -Be $employees[1]
+		$results[2] | Should -Be $employees[0]
 	}
 
 	It "Sort-Object with -Descending:$false and Two Order Entry Keys should work"{
@@ -181,9 +181,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending:$false
 
-		$results[0] | Should Be $employees[1]
-		$results[1] | Should Be $employees[0]
-		$results[2] | Should Be $employees[2]
+		$results[0] | Should -Be $employees[1]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[2]
 	}
 
 	It "Sort-Object with -Descending and Two Order Entry Keys should work"{
@@ -193,9 +193,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Property "LastName","FirstName" -Descending
 
-		$results[0] | Should Be $employees[2]
-		$results[1] | Should Be $employees[0]
-		$results[2] | Should Be $employees[1]
+		$results[0] | Should -Be $employees[2]
+		$results[1] | Should -Be $employees[0]
+		$results[2] | Should -Be $employees[1]
 	}
 
 	It "Sort-Object with Two Order Entry Keys with asc=true should work"{
@@ -207,9 +207,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$ht2 = @{"e"="LastName";}
 		$results = $employees | Sort-Object -Property @($ht1,$ht2) -Descending
 
-		$results[0] | Should Be $employees[1]
-		$results[1] | Should Be $employees[2]
-		$results[2] | Should Be $employees[0]
+		$results[0] | Should -Be $employees[1]
+		$results[1] | Should -Be $employees[2]
+		$results[2] | Should -Be $employees[0]
 	}
 
 	It "Sort-Object with Descending No Property should work"{
@@ -219,9 +219,9 @@ Describe "Sort-Object DRT Unit Tests" -Tags "CI" {
 		$employees = @($employee1,$employee2,$employee3)
 		$results = $employees | Sort-Object -Descending
 
-		$results[0] | Should Be 3
-		$results[1] | Should Be 2
-		$results[2] | Should Be 1
+		$results[0] | Should -Be 3
+		$results[1] | Should -Be 2
+		$results[2] | Should -Be 1
 	}
 }
 
@@ -234,9 +234,9 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 		if ($nSortEntry -is [System.Array]) {
 			# Arrays are compared using reference equality to ensure that the original array was
 			# moved to the correct position in both sorts; value equality doesn't verify this
-			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should Be $true
+			[object]::ReferenceEquals($nSortEntry, $fullSortEntry) | Should -BeTrue
 		} else {
-			$nSortEntry | Should Be $fullSortEntry
+			$nSortEntry | Should -Be $fullSortEntry
 		}
 	}
 
@@ -251,8 +251,8 @@ Describe 'Sort-Object Top and Bottom Unit Tests' -Tags 'CI' {
 		$nSortResults = $unsortedData | Sort-Object @baseSortParameters @nSortParameters
 		# Verify the counts when not doing a -Unique sort
 		if (-not $baseSortParameters.ContainsKey('Unique')) {
-			$nSortResults.Count | Should Be $(if ($nSortParameters[$nSortType] -gt $unsortedData.Length) {$unsortedData.Length} else {$nSortParameters[$nSortType]})
-			$fullSortResults.Count | Should Be $unsortedData.Length
+			$nSortResults.Count | Should -Be $(if ($nSortParameters[$nSortType] -gt $unsortedData.Length) {$unsortedData.Length} else {$nSortParameters[$nSortType]})
+			$fullSortResults.Count | Should -Be $unsortedData.Length
 		}
 		# Compare the n-sort result entries with their corresponding full sort result entries
 		if ($nSortType -eq 'Top') {

@@ -32,4 +32,18 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $a[0] = $a = [PSObject](,1)
         [System.Management.Automation.LanguagePrimitives]::IsTrue($a) | Should -BeTrue
     }
+
+    It "LanguagePrimitives.GetEnumerable should treat 'DataTable' as Enumerable" {
+        $dt = [System.Data.DataTable]::new("test")
+        $dt.Columns.Add("Name", [string]) > $null
+        $dt.Columns.Add("Age", [string]) > $null
+        $dr = $dt.NewRow(); $dr["Name"] = "John"; $dr["Age"] = "20"
+        $dr2 = $dt.NewRow(); $dr["Name"] = "Susan"; $dr["Age"] = "25"
+        $dt.Rows.Add($dr); $dt.Rows.Add($dr2)
+
+        [System.Management.Automation.LanguagePrimitives]::IsObjectEnumerable($dt) | Should -BeTrue
+        $count = 0
+        [System.Management.Automation.LanguagePrimitives]::GetEnumerable($dt) | ForEach-Object { $count++ }
+        $count | Should -Be 2
+    }
 }

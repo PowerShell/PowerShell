@@ -122,10 +122,6 @@
     <comment>{0} is a placeholder for a name of a CIM class.  Example: "ROOT\cimv2\Win32_Process"</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Xml_cmdletsOverObjectsXsd" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\..\src\cimSupport\cmdletization\xml\cmdlets-over-objects.xsd;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
-    <comment>{Locked}</comment>
-  </data>
   <data name="ScriptWriter_DuplicateQueryParameterName" xml:space="preserve">
     <value>Two cmdlet parameters defined within the {0} element have the same name: {1}.  Resolve the conflict in the Cmdlet Definition XML and retry.</value>
     <comment>{StrContains="CmdletParameterMetadata"} {StrContains="PSName"}

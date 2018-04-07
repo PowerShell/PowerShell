@@ -192,7 +192,7 @@ namespace System.Management.Automation
                                 null,
                                 null,
                                 ParameterBinderStrings.ParameterAlreadyBound,
-                                "ParameterAlreadyBound");
+                                nameof(ParameterBinderStrings.ParameterAlreadyBound));
 
                         throw bindingException;
                     }

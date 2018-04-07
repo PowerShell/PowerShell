@@ -10,15 +10,15 @@ Describe "Import-Csv DRT Unit Tests" -Tags "CI" {
         $delimiter = ';'
         $psObject | Export-Csv -Path $fileToGenerate -Delimiter $delimiter
         $returnObject = Import-Csv -Path $fileToGenerate -Delimiter $delimiter
-        $returnObject.First | Should Be 1
-        $returnObject.Second | Should Be 2
+        $returnObject.First | Should -Be 1
+        $returnObject.Second | Should -Be 2
     }
 
     It "Test import-csv with UseCulture parameter" {
         $psObject | Export-Csv -Path $fileToGenerate -UseCulture
         $returnObject = Import-Csv -Path $fileToGenerate -UseCulture
-        $returnObject.First | Should Be 1
-        $returnObject.Second | Should Be 2
+        $returnObject.First | Should -Be 1
+        $returnObject.Second | Should -Be 2
     }
 }
 
@@ -55,21 +55,21 @@ Describe "Import-Csv File Format Tests" -Tags "CI" {
             It "Should be able to import all fields" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
                 $actualfields = $actual[0].psobject.Properties.Name
-                $actualfields | Should Be $orginalHeader
+                $actualfields | Should -Be $orginalHeader
             }
 
             It "Should be able to import all fields with custom header" {
                 $actual = Import-Csv -Path $testCsv @CustomHeaderParams
                 $actualfields = $actual[0].psobject.Properties.Name
-                $actualfields | Should Be $customHeader
+                $actualfields | Should -Be $customHeader
             }
 
             It "Should be able to import correct values" {
                 $actual = Import-Csv -Path $testCsv @HeaderParams
-                $actual.count         | Should Be 4
-                $actual[0].'Column1'  | Should Be "data1"
-                $actual[0].'Column2'  | Should Be "1"
-                $actual[0].'Column 3' | Should Be "A"
+                $actual.count         | Should -Be 4
+                $actual[0].'Column1'  | Should -BeExactly "data1"
+                $actual[0].'Column2'  | Should -BeExactly "1"
+                $actual[0].'Column 3' | Should -BeExactly "A"
             }
 
         }
@@ -87,12 +87,12 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
 
     It "Test import-csv import Object" {
         $importObjectList = Import-Csv -Path $testfile
-        $processlist.Count | Should Be $importObjectList.Count
+        $processlist.Count | Should -Be $importObjectList.Count
 
         $importTypes = $importObjectList[0].psobject.TypeNames
-        $importTypes.Count | Should Be $expectedProcessTypes.Count
-        $importTypes[0] | Should Be $expectedProcessTypes[0]
-        $importTypes[1] | Should Be $expectedProcessTypes[1]
+        $importTypes.Count | Should -Be $expectedProcessTypes.Count
+        $importTypes[0] | Should -Be $expectedProcessTypes[0]
+        $importTypes[1] | Should -Be $expectedProcessTypes[1]
     }
 }
 
@@ -107,12 +107,12 @@ Describe "Import-Csv with different newlines" -Tags "CI" {
         $delimiter = ','
         "h1,h2,h3$($newline)11,12,13$($newline)21,22,23$($newline)" | Out-File -FilePath $csvFile
         $returnObject = Import-Csv -Path $csvFile -Delimiter $delimiter
-        $returnObject.Count | Should Be 2
-        $returnObject[0].h1 | Should Be 11
-        $returnObject[0].h2 | Should Be 12
-        $returnObject[0].h3 | Should Be 13
-        $returnObject[1].h1 | Should Be 21
-        $returnObject[1].h2 | Should Be 22
-        $returnObject[1].h3 | Should Be 23
+        $returnObject.Count | Should -Be 2
+        $returnObject[0].h1 | Should -Be 11
+        $returnObject[0].h2 | Should -Be 12
+        $returnObject[0].h3 | Should -Be 13
+        $returnObject[1].h1 | Should -Be 21
+        $returnObject[1].h2 | Should -Be 22
+        $returnObject[1].h3 | Should -Be 23
     }
 }

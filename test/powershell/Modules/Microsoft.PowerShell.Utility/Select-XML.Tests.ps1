@@ -23,8 +23,8 @@ Describe "Select-XML DRT Unit Tests" -Tags "CI" {
 
 	It "Select-XML should work"{
 		$results = Select-XML -Path $testfile -XPath "/bookstore/book/title"
-		$results.Count | Should Be 2
-		$results[0].Node."#text" | Should Be "Harry Potter"
-		$results[1].Node."#text" | Should Be "Learning XML"
+		$results.Count | Should -Be 2
+		$results[0].Node."#text" | Should -BeExactly "Harry Potter"
+		$results[1].Node."#text" | Should -BeExactly "Learning XML"
 	}
 }

@@ -187,7 +187,10 @@
     <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the PassThru parameter, then retry.</value>
+    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
+  </data>
+  <data name="OutFileWritingSkipped" xml:space="preserve">
+    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
@@ -248,6 +251,9 @@
   </data>
   <data name="WebMethodInvocationVerboseMsg" xml:space="preserve">
     <value>{0} {1} with {2}-byte payload</value>
+  </data>
+  <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
+    <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
   </data>
   <data name="WebResponseVerboseMsg" xml:space="preserve">
     <value>received {0}-byte response of content type {1}</value>

@@ -185,6 +185,12 @@ namespace Microsoft.PowerShell
 
                 s_cpp.Parse(tempArgs);
 
+#if UNIX
+                // On Unix, logging has to be deferred until after command-line parsing
+                // completes to allow overriding logging options.
+                PSEtwLog.LogConsoleStartup();
+#endif
+
                 if (s_cpp.ShowVersion)
                 {
                     // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
@@ -1606,6 +1612,7 @@ namespace Microsoft.PowerShell
                     OpenConsoleRunspace(consoleRunspace, staMode);
                 }
 
+                Runspace.PrimaryRunspace = consoleRunspace;
                 _runspaceRef = new RunspaceRef(consoleRunspace);
 
                 if (psReadlineFailed)
@@ -1650,10 +1657,8 @@ namespace Microsoft.PowerShell
 #endif
             runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             runspace.EngineActivityId = EtwActivity.GetActivityId();
-            Runspace.PrimaryRunspace = runspace;
 
             s_runspaceInitTracer.WriteLine("Calling Runspace.Open");
-
             runspace.Open();
         }
 
