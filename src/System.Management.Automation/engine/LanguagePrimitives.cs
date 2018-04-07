@@ -11,6 +11,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation.Language;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -20,7 +21,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Reflection.Emit;
+using MethodCacheEntry = System.Management.Automation.DotNetAdapter.MethodCacheEntry;
 
 #if !CORECLR
 // System.DirectoryServices are not in CoreCLR
@@ -3210,31 +3211,24 @@ namespace System.Management.Automation
                                                       IFormatProvider formatProvider,
                                                       TypeTable backupTable)
         {
-            PSMethod psMethod;
+            // We can only possibly convert PSMethod instance of the type PSMethod<T>.
+            // Such a PSMethod essentially represents a set of .NET method overloads.
+            var psMethod = (PSMethod)valueToConvert;
+
             try
             {
-                psMethod = (PSMethod) valueToConvert;
-
-                var maybeType = psMethod.instance as Type;
-                var methodInfoCandiates = maybeType != null
-                    ? maybeType.GetMethods(BindingFlags.Static | BindingFlags.Public)
-                    : psMethod.instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
-
+                var methods = (MethodCacheEntry)psMethod.adapterData;
+                var isStatic = psMethod.instance is Type;
                 var targetMethodInfo = resultType.GetMethod("Invoke");
-
                 var comparator = new DelegateArgsComparator(targetMethodInfo);
 
-                foreach (var candidate in methodInfoCandiates)
+                foreach (var methodInformation in methods.methodInformationStructures)
                 {
-                    if (candidate.Name != psMethod.Name)
-                    {
-                        continue;
-                    }
+                    var candidate = (MethodInfo)methodInformation.method;
                     if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
                     {
-                        return maybeType != null
-                            ? candidate.CreateDelegate(resultType)
-                            : candidate.CreateDelegate(resultType, psMethod.instance);
+                        return isStatic ? candidate.CreateDelegate(resultType)
+                                        : candidate.CreateDelegate(resultType, psMethod.instance);
                     }
                 }
             }
@@ -3246,12 +3240,12 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), e.Message);
             }
 
-            var msg = String.Format(ExtendedTypeSystem.PSMethodToDelegateNoMatchingOverLoad,  psMethod, resultType);
+            var msg = String.Format(ExtendedTypeSystem.PSMethodToDelegateNoMatchingOverLoad, psMethod, resultType);
             typeConversion.WriteLine($"PSMethod to Delegate exception: \"{msg}\".");
             throw new PSInvalidCastException("InvalidCastExceptionPSMethodToDelegate", null,
                 ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
                 valueToConvert.ToString(), resultType.ToString(), msg);
-    }
+        }
 
         private static object ConvertToNullable(object valueToConvert,
                                                 Type resultType,
@@ -4789,7 +4783,6 @@ namespace System.Management.Automation
                 while (signatureEnumerator.MoveNext())
                 {
                     var candidate = signatureEnumerator.Current.GetMethod("Invoke");
-
                     if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
                     {
                         return CacheConversion<Delegate>(fromType, toType, LanguagePrimitives.ConvertPSMethodInfoToDelegate, ConversionRank.Language);
@@ -4824,7 +4817,7 @@ namespace System.Management.Automation
             private bool ParameterTypesMatches(ParameterInfo[] arguments)
             {
                 var argsCount = _targetParametersInfos.Length;
-                // void is encoded as typeof(Unit) in the PSMethod<MethodGroup<>> as the last parameter
+                // void is encoded as typeof(VOID) in the PSMethod<MethodGroup<>> as the last parameter
                 if (arguments.Length != argsCount)
                 {
                     return false;
