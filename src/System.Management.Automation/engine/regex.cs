@@ -278,6 +278,70 @@ namespace System.Management.Automation
             return result;
         }
 
+        /// FIXME
+        /// For invalid wildcard pattern, it currently only check if there is
+        /// unclosed bracket. Need to find a better solution and rewrite this.
+        ///
+        /// <summary>
+        /// Checks to see if the given string might contains wildcard pattern.
+        /// </summary>
+        /// <param name="pattern">
+        /// String which needs to be checked
+        /// </param>
+        /// <returns>
+        /// true if the string does not contain invalid wildcard pattern,
+        /// false otherwise.
+        /// </returns>
+        /// <remarks>
+        /// Currently string contains { '*', '?' } or both { '[', ']' } is
+        /// considered to be properly a wildcard pattern and
+        /// '`' is the escape character.
+        /// </remarks>
+        internal static bool ContainsValidWildcardPattern(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                return false;
+            }
+
+            bool hasWildcard = false;
+            bool openBracket = false;
+
+            for (int index = 0; index < pattern.Length; ++index)
+            {
+                switch (pattern[index])
+                {
+                    case '*':
+                    case '?':
+                        hasWildcard = true;
+                        break;
+
+                    case '[':
+                        hasWildcard = true;
+                        openBracket = true;
+                        break;
+
+                    case ']':
+                        // ']' is wildcard only if '[' exists
+                        // so we do not set hasWildcard here
+                        openBracket = false;
+                        break;
+
+                    // If it is an escape character then advance past
+                    // the next character
+                    case escapeChar:
+                        ++index;
+                        break;
+                }
+            }
+
+            if (openBracket) {
+                return false;
+            }
+
+            return hasWildcard;
+        }
+
         /// <summary>
         /// Unescapes any escaped characters in the input string.
         /// </summary>

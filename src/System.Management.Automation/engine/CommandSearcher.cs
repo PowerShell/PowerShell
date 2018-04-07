@@ -1142,7 +1142,7 @@ namespace System.Management.Automation
                     resolvedPath = GetNextLiteralPathThatExists(path, out provider);
                 }
 
-                if (WildcardPattern.ContainsWildcardCharacters(path) &&
+                if (WildcardPattern.ContainsValidWildcardPattern(path) &&
                     ((resolvedPath == null) || (provider == null)))
                 {
                     // Let PowerShell resolve relative path with wildcards.

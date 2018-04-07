@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string commandName in value)
                     {
-                        if (WildcardPattern.ContainsWildcardCharacters(commandName))
+                        if (WildcardPattern.ContainsValidWildcardPattern(commandName))
                         {
                             _nameContainsWildcard = true;
                             break;
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
                         moduleName = this.Module[0];
                     }
 
-                    bool isPattern = WildcardPattern.ContainsWildcardCharacters(plainCommandName) || UseAbbreviationExpansion || UseFuzzyMatching;
+                    bool isPattern = WildcardPattern.ContainsValidWildcardPattern(plainCommandName) || UseAbbreviationExpansion || UseFuzzyMatching;
                     if (isPattern)
                     {
                         options |= SearchResolutionOptions.CommandNameIsPattern;
