@@ -24,11 +24,6 @@ Describe "Clear-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       { Remove-EventLog -LogName TestLog -ErrorAction Stop }      | Should -Not -Throw
     }
 
-    It "should throw 'The Log name 'MissingTestLog' does not exist' exception message when asked to clear a log that does not exist" -Pending:($True) {
-      Remove-EventLog -LogName MissingTestLog -ErrorAction Ignore
-      { Clear-EventLog -LogName MissingTestLog -ErrorAction Stop } | Should -Throw -ExpectedMessage 'The Log name "MissingTestLog" does not exist'
-    }
-
     It "should throw 'System.InvalidOperationException' when asked to clear a log that does not exist" -Pending:($True) {
       { Clear-EventLog -LogName MissingTestLog -ErrorAction Stop } | Should -Throw -ExceptionType "System.InvalidOperationException"
     }
