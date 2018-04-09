@@ -638,6 +638,11 @@ namespace Microsoft.PowerShell.Commands
 
                             if (!found)
                             {
+                                // If the path ends with a directory separator, remove it
+                                if (rootedPath.EndsWith(Path.DirectorySeparatorChar))
+                                {
+                                    rootedPath = Path.GetDirectoryName(rootedPath);
+                                }
                                 // If the path is a directory, double up the end of the string
                                 // then try to load that using extensions...
                                 rootedPath = Path.Combine(rootedPath, Path.GetFileName(rootedPath));

@@ -30,6 +30,12 @@ Describe "Import-Module" -Tags "CI" {
         (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
+    It "should be able to load a module with a trailing directory separator" {
+        $modulePath = (Get-Module -ListAvailable $moduleName).ModuleBase + [System.IO.Path]::DirectorySeparatorChar
+        Import-Module -Name $modulePath
+        (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
+    }
+
     It "should be able to add a module with using ModuleInfo switch" {
         $a = Get-Module -ListAvailable $moduleName
         { Import-Module -ModuleInfo $a } | Should -Not -Throw
