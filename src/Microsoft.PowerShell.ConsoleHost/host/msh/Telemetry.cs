@@ -66,8 +66,7 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                // if the semaphore file exists, try to send telemetry
-                var enabled = GetEnvironmentVariableAsBool(TelemetryOptoutEnvVar, false);
+                var enabled = !GetEnvironmentVariableAsBool(name : TelemetryOptoutEnvVar, defaultValue : false);
 
                 if (!enabled)
                 {

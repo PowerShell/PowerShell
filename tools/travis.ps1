@@ -224,9 +224,6 @@ elseif($Stage -eq 'Build')
         $pesterParam['IncludeFailingTest'] = $true
     }
 
-    # Disable telemetry in CI
-    $env:POWERSHELL_TELEMETRY_OPTOUT = 1
-
     # Running tests which do not require sudo.
     $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
 
