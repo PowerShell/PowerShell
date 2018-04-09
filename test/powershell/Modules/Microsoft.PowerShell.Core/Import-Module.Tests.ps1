@@ -32,7 +32,8 @@ Describe "Import-Module" -Tags "CI" {
 
     It "should be able to load a module with a trailing directory separator" {
         $modulePath = (Get-Module -ListAvailable $moduleName).ModuleBase + [System.IO.Path]::DirectorySeparatorChar
-        Import-Module -Name $modulePath
+        Remove-Module $moduleName
+        { Import-Module -Name $modulePath -ErrorAction Stop } | Should -Not -Throw
         (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
     }
 
