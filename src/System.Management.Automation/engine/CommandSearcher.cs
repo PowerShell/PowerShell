@@ -1029,27 +1029,17 @@ namespace System.Management.Automation
             {
                 ProviderInfo provider = null;
                 string resolvedPath = null;
-                if (WildcardPattern.ContainsWildcardCharacters(path))
+                if (WildcardPattern.MayBeWildcardPattern(path))
                 {
                     // Let PowerShell resolve relative path with wildcards.
-                    Collection<string> resolvedPaths = null;
-                    try
-                    {
-                        Provider.CmdletProvider providerInstance;
-                        resolvedPaths = _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
-                            path,
-                            false,
-                            out provider,
-                            out providerInstance);
-                    }
-                    catch (WildcardPatternException)
-                    {
-                        CommandDiscovery.discoveryTracer.TraceError(
-                           "The relative path with wildcard contains invalid pattern. {0}",
-                           path);
-                    }
+                    Provider.CmdletProvider providerInstance;
+                    Collection<string> resolvedPaths = _context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
+                        path,
+                        false,
+                        out provider,
+                        out providerInstance);
 
-                    if (resolvedPaths == null || resolvedPaths.Count == 0)
+                    if (resolvedPaths.Count == 0)
                     {
                         CommandDiscovery.discoveryTracer.TraceError(
                            "The relative path with wildcard did not resolve to valid path. {0}",
