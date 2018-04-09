@@ -188,14 +188,13 @@ function Register-PSSessionConfiguration
                     }}
                }}
                if (([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Local.Equals($accessMode) -or
-                    ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode)-and $disableNetworkExists)) -and
-                   !$haveDisableACE)
+                    ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode))) -and !$haveDisableACE)
                {{
-                    # Add network deny ACE for local access or remote access with PSRemoting disabled ($disableNetworkExists)
+                    # Add network deny ACE for local access or remote access with PSRemoting disabled.
                     $sd.DiscretionaryAcl.AddAccess(""deny"", $networkSID, 268435456, ""None"", ""None"")
                     $newSDDL = $sd.GetSddlForm(""all"")
                }}
-               if ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode) -and -not $disableNetworkExists -and $haveDisableACE)
+               if ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode) -and $haveDisableACE)
                {{
                     # Remove the specific ACE
                     $sd.discretionaryacl.RemoveAccessSpecific('Deny', $securityIdentifierToPurge, 268435456, 'none', 'none')
@@ -4796,6 +4795,8 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
 
         //TODO: CLR4: Remove the logic for setting the MaxMemoryPerShellMB to 200 MB once IPMO->Get-Command->Get-Help memory usage issue is fixed.
         private const string enableRemotingSbFormat = @"
+Set-StrictMode -Version Latest
+
 function New-PluginConfigFile
 {{
 [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
