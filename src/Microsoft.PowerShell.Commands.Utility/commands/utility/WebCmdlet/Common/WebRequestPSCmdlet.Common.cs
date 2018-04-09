@@ -1287,7 +1287,7 @@ namespace Microsoft.PowerShell.Commands
             _cancelToken = new CancellationTokenSource();
             HttpResponseMessage response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
 
-            if (stripAuthorization && IsRedirectCode(response.StatusCode))
+            if (stripAuthorization && IsRedirectCode(response.StatusCode) && response.Headers.Location != null)
             {
                 _cancelToken.Cancel();
                 _cancelToken = null;
