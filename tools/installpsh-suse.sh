@@ -136,7 +136,7 @@ $SUDO zypper --non-interactive install \
 
 echo
 echo "*** Installing PowerShell Core for $DistroBasedOn..."
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
+release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
 
 #REPO BASED (Not ready yet)
 #echo "*** Setting up PowerShell Core repo..."
