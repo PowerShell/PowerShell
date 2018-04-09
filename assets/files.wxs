@@ -193,9 +193,6 @@
             <Component Id="cmp06E8C21C125E29603C631488D5EBC1CA" Guid="{41159F5F-FED9-4C2E-8671-57C9CD46A5CF}">
                 <File Id="fil33FE96846639CB621C7B04A56ED64E24" KeyPath="yes" Source="$(env.ProductSourcePath)\hostfxr.dll" />
             </Component>
-            <Component Id="cmp15A47D494DF254A3900DDEF6D2CDFBA2" Guid="{36E0C8A2-F015-400B-83B1-55B72A856270}">
-                <File Id="fil9347D9464088FAEC056F05E3CD93CFFD" KeyPath="yes" Source="$(env.ProductSourcePath)\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY" />
-            </Component>
             <Component Id="cmp18FD8ABAE1B131CE3834F0E2BB07E5B8" Guid="{3F9A0E71-7848-49E3-BD35-D5DD1C838B9E}">
                 <File Id="fil4107C2714D75DB3C2AFC183E124E17DB" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.Management.Infrastructure.Native.Unmanaged.dll" />
             </Component>
@@ -1890,7 +1887,6 @@
             <ComponentRef Id="cmp28A6204649AC15DA0210CE3067308BDE" />
             <ComponentRef Id="cmpA4C6AF97A7B02D8D55E1E09AB7F74558" />
             <ComponentRef Id="cmp06E8C21C125E29603C631488D5EBC1CA" />
-            <ComponentRef Id="cmp15A47D494DF254A3900DDEF6D2CDFBA2" />
             <ComponentRef Id="cmp18FD8ABAE1B131CE3834F0E2BB07E5B8" />
             <ComponentRef Id="cmp8552B147D2AAFD164533C72368BFB61C" />
             <ComponentRef Id="cmp33AA41435A9FDD75B7D5FA6869C6F441" />

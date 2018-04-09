@@ -453,9 +453,6 @@ function Start-PSBuild {
         }
     }
 
-    # create the telemetry flag file
-    $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
-
     # Add .NET CLI tools to PATH
     Find-Dotnet
 

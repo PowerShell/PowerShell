@@ -224,11 +224,8 @@ elseif($Stage -eq 'Build')
         $pesterParam['IncludeFailingTest'] = $true
     }
 
-    # Remove telemetry semaphore file in CI
-    $telemetrySemaphoreFilepath = Join-Path $output DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
-    if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
-        Remove-Item -force ${telemetrySemaphoreFilepath}
-    }
+    # Disable telemetry in CI
+    $env:POWERSHELL_TELEMETRY_OPTOUT = 1
 
     # Running tests which do not require sudo.
     $pesterPassThruNoSudoObject = Start-PSPester @pesterParam
