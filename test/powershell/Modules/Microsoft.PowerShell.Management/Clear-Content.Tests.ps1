@@ -4,17 +4,17 @@
 # get a random string of characters a-z and A-Z
 function Get-RandomString
 {
-    param ( [int]$length = 8 )
+    param ( [int]$Length = 8 )
     $chars = .{ ([int][char]'a')..([int][char]'z');([int][char]'A')..([int][char]'Z') }
-    ([char[]]($chars | Get-Random -Count $length)) -join ""
+    ([char[]]($chars | Get-Random -Count $Length)) -join ""
 }
 
 # get a random string which is not the name of an existing provider
 function Get-NonExistantProviderName
 {
-   param ( [int]$length = 8 )
+   param ( [int]$Length = 8 )
    do {
-       $providerName = Get-RandomString -length $length
+       $providerName = Get-RandomString -Length $Length
    } until ( $null -eq (Get-PSProvider -PSProvider $providername -ErrorAction SilentlyContinue) )
    $providerName
 }
@@ -22,9 +22,9 @@ function Get-NonExistantProviderName
 # get a random string which is not the name of an existing drive
 function Get-NonExistantDriveName
 {
-    param ( [int]$length = 8 )
+    param ( [int]$Length = 8 )
     do {
-        $driveName = Get-RandomString -length $length
+        $driveName = Get-RandomString -Length $Length
     } until ( $null -eq (Get-PSDrive $driveName -ErrorAction SilentlyContinue) )
     $drivename
 }
@@ -32,9 +32,9 @@ function Get-NonExistantDriveName
 # get a random string which is not the name of an existing function
 function Get-NonExistantFunctionName
 {
-    param ( [int]$length = 8 )
+    param ( [int]$Length = 8 )
     do {
-        $functionName = Get-RandomString -length $length
+        $functionName = Get-RandomString -Length $Length
     } until ( (Test-Path -Path function:$functionName) -eq $false )
     $functionName
 }
