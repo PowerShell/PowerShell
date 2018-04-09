@@ -283,6 +283,55 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Checks to see if the given string may be wildcard pattern.
+        /// </summary>
+        /// <param name="pattern">
+        /// String which needs to be checked if it may be wildcard pattern
+        /// </param>
+        /// <returns> true if the string may be wildcard pattern, false otherwise. </returns>
+        /// <remarks>
+        /// Currently string contains { '*', '?' } or both { '[', ']' } is
+        /// considered to be possibly a wildcard pattern and
+        /// '`' is the escape character.
+        /// </remarks>
+        public static bool MayBeWildcardPattern(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern))
+            {
+                return false;
+            }
+
+            bool result = false;
+            bool opened = false;
+
+            for (int index = 0; index < pattern.Length; ++index)
+            {
+                if (IsWildcardChar(pattern[index]))
+                {
+                    result = true;
+                }
+
+                switch (pattern[index])
+                {
+                    case '[':
+                        opened = true;
+                        break;
+
+                    case ']':
+                        opened = false;
+                        break;
+
+                    // If it is an escape character then advance past
+                    // the next character
+                    case escapeChar:
+                        ++index;
+                        break;
+                }
+            }
+            return result && !opened;
+        }
+
+        /// <summary>
         /// Unescapes any escaped characters in the input string.
         /// </summary>
         /// <param name="pattern">
