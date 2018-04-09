@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'l':
-                            sb.Append("{0:%h}");
+                            sb.Append("{0,2:%h}");
                             break;
 
                         case 'M':
