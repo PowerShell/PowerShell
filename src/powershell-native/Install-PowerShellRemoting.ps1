@@ -155,7 +155,7 @@ function Install-PluginEndpoint {
     # If endpoint exists and -Force parameter was not used, the endpoint would not be overwritten.
     if ($endpoint -and !$Force)
     {
-        Write-Error "Endpoint $pluginEndpointName already exists."
+        Write-Error -Category ResourceExists -ErrorId "PSSessionConfigurationExists" -Message "Endpoint $pluginEndpointName already exists."
         return
     }
 
