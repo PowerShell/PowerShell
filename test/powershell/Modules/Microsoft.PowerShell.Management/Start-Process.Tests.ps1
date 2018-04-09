@@ -122,7 +122,19 @@ Describe "Start-Process" -Tags @("Feature") {
 
     It "Should return null when using -WhatIf switch with -PassThru" {
         Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
-   }
+    }
+
+   It "Should run without errors when -ArgumentList is null" {
+        $process = Start-Process $pingCommand -ArgumentList $null -PassThru -WindowStyle Hidden
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+    }
+
+    It "Should run without errors when -ArgumentList is empty" {
+        $process = Start-Process $pingCommand -ArgumentList $null -PassThru -WindowStyle Hidden
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+    }
 }
 
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
