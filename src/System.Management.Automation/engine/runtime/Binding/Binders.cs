@@ -410,7 +410,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions newRestrictions = binder.Restrictions;
             newRestrictions = args.Aggregate(newRestrictions, (current, arg) =>
             {
-                if (arg.LimitType.GetTypeInfo().IsValueType)
+                if (arg.LimitType.IsValueType)
                 {
                     return current.Merge(arg.GetSimpleTypeRestriction());
                 }
@@ -646,7 +646,7 @@ namespace System.Management.Automation.Language
 
                 foreach (var i in targetValue.GetType().GetInterfaces())
                 {
-                    if (i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                     {
                         return (new DynamicMetaObject(
                             MaybeDebase(this, e => Expression.Call(
@@ -689,7 +689,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            if (type.GetTypeInfo().IsSealed && !typeof(IEnumerable).IsAssignableFrom(type) && !typeof(IEnumerator).IsAssignableFrom(type))
+            if (type.IsSealed && !typeof(IEnumerable).IsAssignableFrom(type) && !typeof(IEnumerator).IsAssignableFrom(type))
             {
                 return false;
             }
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Language
             if (enumerable == null)
             {
                 var bindingResult = PSVariableAssignmentBinder.Get().Bind(target, Utils.EmptyArray<DynamicMetaObject>());
-                var restrictions = target.LimitType.GetTypeInfo().IsValueType
+                var restrictions = target.LimitType.IsValueType
                     ? bindingResult.Restrictions
                     : target.PSGetTypeRestriction();
                 return (new DynamicMetaObject(
@@ -1871,7 +1871,7 @@ namespace System.Management.Automation.Language
                 {
                     var baseObjType = baseObject.GetType();
                     restrictions = restrictions.Merge(BindingRestrictions.GetTypeRestriction(baseObjExpr, baseObjType));
-                    if (baseObjType.GetTypeInfo().IsValueType)
+                    if (baseObjType.IsValueType)
                     {
                         expr = GetExprForValueType(baseObjType, Expression.Convert(baseObjExpr, baseObjType), expr, ref restrictions);
                     }
@@ -1888,7 +1888,7 @@ namespace System.Management.Automation.Language
             }
 
             var type = value.GetType();
-            if (type.GetTypeInfo().IsValueType)
+            if (type.IsValueType)
             {
                 var expr = target.Expression;
                 var restrictions = target.PSGetTypeRestriction();
@@ -2032,7 +2032,7 @@ namespace System.Management.Automation.Language
 
         internal static void NoteTypeHasInstanceMemberOrTypeName(Type type)
         {
-            if (!type.GetTypeInfo().IsValueType || !IsValueTypeMutable(type))
+            if (!type.IsValueType || !IsValueTypeMutable(type))
             {
                 return;
             }
@@ -2457,7 +2457,7 @@ namespace System.Management.Automation.Language
                            catchExpr);
             }
 
-            if (target.LimitType.GetTypeInfo().IsEnum)
+            if (target.LimitType.IsEnum)
             {
                 // Make sure the result type is an enum unless we were expecting a bool.
                 switch (Operation)
@@ -2558,7 +2558,7 @@ namespace System.Management.Automation.Language
             }
 
             bool boolToDecimal = false;
-            if (arg.LimitType.IsNumericOrPrimitive() && !arg.LimitType.GetTypeInfo().IsEnum)
+            if (arg.LimitType.IsNumericOrPrimitive() && !arg.LimitType.IsEnum)
             {
                 if (!(targetType == typeof(Decimal) && arg.LimitType == typeof(bool)))
                 {
@@ -2573,7 +2573,7 @@ namespace System.Management.Automation.Language
 
             // ConstrainedLanguage note - calls to this conversion only target numeric types.
             var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out debase);
-            if (conversion.Rank == ConversionRank.ImplicitCast || boolToDecimal || arg.LimitType.GetTypeInfo().IsEnum)
+            if (conversion.Rank == ConversionRank.ImplicitCast || boolToDecimal || arg.LimitType.IsEnum)
             {
                 return new DynamicMetaObject(
                     PSConvertBinder.InvokeConverter(conversion, arg.Expression, targetType, debase, ExpressionCache.InvariantCulture),
@@ -2887,8 +2887,8 @@ namespace System.Management.Automation.Language
                 return new DynamicMetaObject(ExpressionCache.Constant(0).Cast(typeof(object)), target.CombineRestrictions(arg));
             }
 
-            var targetUnderlyingType = (target.LimitType.GetTypeInfo().IsEnum) ? Enum.GetUnderlyingType(target.LimitType) : target.LimitType;
-            var argUnderlyingType = (arg.LimitType.GetTypeInfo().IsEnum) ? Enum.GetUnderlyingType(arg.LimitType) : arg.LimitType;
+            var targetUnderlyingType = (target.LimitType.IsEnum) ? Enum.GetUnderlyingType(target.LimitType) : target.LimitType;
+            var argUnderlyingType = (arg.LimitType.IsEnum) ? Enum.GetUnderlyingType(arg.LimitType) : arg.LimitType;
 
             if (targetUnderlyingType.IsNumericOrPrimitive() || argUnderlyingType.IsNumericOrPrimitive())
             {
@@ -2952,7 +2952,7 @@ namespace System.Management.Automation.Language
                     var expr = exprGenerator(numericTarget.Expression.Cast(numericTarget.LimitType).Cast(opType),
                                              numericArg.Expression.Cast(numericArg.LimitType).Cast(opType));
 
-                    if (target.LimitType.GetTypeInfo().IsEnum)
+                    if (target.LimitType.IsEnum)
                     {
                         expr = expr.Cast(target.LimitType);
                     }
@@ -3271,7 +3271,7 @@ namespace System.Management.Automation.Language
             {
                 foreach (var i in target.Value.GetType().GetInterfaces())
                 {
-                    if (i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IComparable<>))
+                    if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IComparable<>))
                     {
                         return new DynamicMetaObject(
                             toResult(Expression.Call(Expression.Convert(target.Expression, i),
@@ -3523,7 +3523,7 @@ namespace System.Management.Automation.Language
                 var typeCode = LanguagePrimitives.GetTypeCode(target.LimitType);
                 if (typeCode < TypeCode.Int32)
                 {
-                    targetExpr = target.LimitType.GetTypeInfo().IsEnum
+                    targetExpr = target.LimitType.IsEnum
                         ? target.Expression.Cast(Enum.GetUnderlyingType(target.LimitType))
                         : target.Expression.Cast(target.LimitType);
                     targetExpr = targetExpr.Cast(typeof(int));
@@ -3531,7 +3531,7 @@ namespace System.Management.Automation.Language
                 else if (typeCode <= TypeCode.UInt64)
                 {
                     var targetConvertType = target.LimitType;
-                    if (targetConvertType.GetTypeInfo().IsEnum)
+                    if (targetConvertType.IsEnum)
                     {
                         targetConvertType = Enum.GetUnderlyingType(targetConvertType);
                     }
@@ -3551,7 +3551,7 @@ namespace System.Management.Automation.Language
             if (targetExpr != null)
             {
                 Expression result = Expression.OnesComplement(targetExpr);
-                if (target.LimitType.GetTypeInfo().IsEnum)
+                if (target.LimitType.IsEnum)
                 {
                     result = result.Cast(target.LimitType);
                 }
@@ -3809,7 +3809,7 @@ namespace System.Management.Automation.Language
             {
                 return conv;
             }
-            if (resultType.GetTypeInfo().IsValueType && Nullable.GetUnderlyingType(resultType) == null)
+            if (resultType.IsValueType && Nullable.GetUnderlyingType(resultType) == null)
             {
                 return Expression.Unbox(conv, resultType);
             }
@@ -3925,7 +3925,7 @@ namespace System.Management.Automation.Language
 
             foreach (var i in target.LimitType.GetInterfaces())
             {
-                if (i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                 {
                     var result = GetIndexDictionary(target, indexes, i);
                     if (result != null)
@@ -4041,7 +4041,7 @@ namespace System.Management.Automation.Language
             }
 
             // target implements IList<T>?
-            return limitType.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
+            return limitType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
         }
 
         private DynamicMetaObject IndexWithNegativeChecks(
@@ -5085,7 +5085,7 @@ namespace System.Management.Automation.Language
                         var adapterData = property.adapterData as DotNetAdapter.PropertyCacheEntry;
                         Diagnostics.Assert(adapterData != null, "We have an unknown PSProperty that we aren't correctly optimizing.");
 
-                        if (!adapterData.member.DeclaringType.GetTypeInfo().IsGenericTypeDefinition)
+                        if (!adapterData.member.DeclaringType.IsGenericTypeDefinition)
                         {
                             // For static property access, the target expr must be null.  For non-static, we must convert
                             // because target.Expression is typeof(object) because this is a dynamic site.
@@ -5199,7 +5199,7 @@ namespace System.Management.Automation.Language
             bool isGeneric = false;
             foreach (var i in value.GetType().GetInterfaces())
             {
-                if (i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                 {
                     isGeneric = true;
                     var genericArguments = i.GetGenericArguments();
@@ -5252,7 +5252,7 @@ namespace System.Management.Automation.Language
                 // In case that castToType is System.Object and expr.Type is Nullable<ValueType>, expr.Cast(System.Object) will
                 // get the underlying value by default. So "GetTargetExpr(target).Cast(typeof(Object))" is actually the same as
                 // "GetTargetExpr(target, typeof(Object))".
-                expr = type.GetTypeInfo().IsValueType
+                expr = type.IsValueType
                            ? (Nullable.GetUnderlyingType(expr.Type) != null
                                   ? (Expression)Expression.Property(expr, "Value")
                                   : Expression.Unbox(expr, type))
@@ -6026,7 +6026,7 @@ namespace System.Management.Automation.Language
                     {
                         Expression expr;
 
-                        if (data.member.DeclaringType.GetTypeInfo().IsGenericTypeDefinition)
+                        if (data.member.DeclaringType.IsGenericTypeDefinition)
                         {
                             Expression innerException = Expression.New(CachedReflectionInfo.SetValueException_ctor,
                                 Expression.Constant("PropertyAssignmentException"),
@@ -6689,7 +6689,7 @@ namespace System.Management.Automation.Language
 
                 // Likewise, when calling methods in types defined by PowerShell, we don't
                 // want to wrap the exception.
-                if (methodInfo.DeclaringType.GetTypeInfo().Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
+                if (methodInfo.DeclaringType.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
                 {
                     return new DynamicMetaObject(expr, restrictions);
                 }
