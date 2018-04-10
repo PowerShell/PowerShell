@@ -1756,12 +1756,11 @@ namespace Microsoft.PowerShell
             if (s_cpp != null && s_cpp.WorkingDirectory != null)
             {
                 Pipeline tempPipeline = exec.CreatePipeline();
-                Command c = new Command("Set-Location");
-                c.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
-                tempPipeline.Commands.Add(c);
+                var command = new Command("Set-Location");
+                command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
+                tempPipeline.Commands.Add(command);
 
                 Exception e1;
-
                 if (IsRunningAsync)
                 {
                     exec.ExecuteCommandAsyncHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
