@@ -3067,6 +3067,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 }
 
 Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
+    BeforeAll {
+        $WebListener = Start-WebListener
+    }
+
     Context "InFile parameter negative tests" {
         BeforeAll {
             $uri = Get-WebListenerUrl -Test 'Post'
