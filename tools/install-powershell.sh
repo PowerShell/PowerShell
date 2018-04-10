@@ -22,10 +22,10 @@ install(){
 
     #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
-    VERSION="1.1.1"
-    gitreposubpath="PowerShell/PowerShell/master"
-    gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
-    gitscriptname="install-powershell.psh"
+    local VERSION="1.1.1"
+    local gitreposubpath="PowerShell/PowerShell/master"
+    local gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
+    local gitscriptname="install-powershell.psh"
 
     echo "Get-PowerShell Core MASTER Installer Version $VERSION"
     echo "Installs PowerShell Core and Optional The Development Environment"
@@ -48,6 +48,10 @@ install(){
     local OS=`lowercase \`uname\``
     local KERNEL=`uname -r`
     local MACH=`uname -m`
+    local DIST
+    local DistroBasedOn
+    local PSUEDONAME
+    local REV
 
     if [ "${OS}" == "windowsnt" ]; then
         OS=windows
@@ -103,10 +107,6 @@ install(){
             fi
             OS=`lowercase $OS`
             DistroBasedOn=`lowercase $DistroBasedOn`
-            local DIST
-            local DistroBasedOn
-            local PSUEDONAME
-            local REV
         fi
     fi
 
