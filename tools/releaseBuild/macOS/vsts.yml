@@ -1,3 +1,6 @@
+resources:
+- repo: self
+  clean: true
 steps:
 #- task: <task type name>@<version>
 #  inputs:
