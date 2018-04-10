@@ -21,10 +21,18 @@
 param
 (
     [parameter(Mandatory = $true, ParameterSetName = "ByPath")]
+    [switch]$Force,
     [string]
     $PowerShellHome
 )
 
+Set-StrictMode -Version Latest
+
+if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
+    Write-Error "WinRM registration requires Administrator rights. To run this cmdlet, start PowerShell with the `"Run as administrator`" option."
+    return
+}
 function Register-WinRmPlugin
 {
     param
@@ -48,8 +56,6 @@ function Register-WinRmPlugin
     )
 
     $regKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WSMAN\Plugin\$pluginEndpointName"
-
-    $regKeyName = '"ConfigXML"="{0}"'
 
     $pluginArchitecture = "64"
     if ($env:PROCESSOR_ARCHITECTURE -match "x86" -or $env:PROCESSOR_ARCHITECTURE -eq "ARM")
@@ -80,8 +86,9 @@ function Register-WinRmPlugin
     New-ItemProperty -Path $regKey -Name ConfigXML -Value $valueString > $null
 }
 
-function Generate-PluginConfigFile
+function New-PluginConfigFile
 {
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact="Medium")]
     param
     (
         [string]
@@ -97,89 +104,118 @@ function Generate-PluginConfigFile
 
     # This always overwrites the file with a new version of it if the
     # script is invoked multiple times.
-    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$targetPsHomeDir"
-    Add-Content -Path $pluginFile -Value "CORECLRDIR=$targetPsHomeDir"
+    Set-Content -Path $pluginFile -Value "PSHOMEDIR=$targetPsHomeDir" -ErrorAction Stop
+    Add-Content -Path $pluginFile -Value "CORECLRDIR=$targetPsHomeDir" -ErrorAction Stop
 
     Write-Verbose "Created Plugin Config File: $pluginFile" -Verbose
 }
 
-######################
-#                    #
-# Install the plugin #
-#                    #
-######################
+function Install-PluginEndpoint {
+    [CmdletBinding(SupportsShouldProcess, ConfirmImpact="Medium")]
+    param (
+        [Parameter()] [bool] $Force,
+        [switch]
+        $VersionIndependent
+    )
 
-if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{
-    Write-Error "WinRM registration requires Administrator rights. To run this cmdlet, start PowerShell with the `"Run as administrator`" option."
-    Break
+    ######################
+    #                    #
+    # Install the plugin #
+    #                    #
+    ######################
+
+    if ($PsCmdlet.ParameterSetName -eq "ByPath")
+    {
+        $targetPsHome = $PowerShellHome
+        $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
+    }
+    else
+    {
+        ## Get the PSHome and PSVersion using the current powershell instance
+        $targetPsHome = $PSHOME
+        $targetPsVersion = $PSVersionTable.PSVersion.ToString()
+    }
+
+    # For default, not tied to the specific version endpoint, we apply
+    # only first number in the PSVersion string to the endpoint name.
+    # Example name: 'PowerShell.6'.
+    if ($VersionIndependent) {
+        $dotPos = $targetPsVersion.IndexOf(".")
+        if ($dotPos -ne -1) {
+            $targetPsVersion = $targetPsVersion.Substring(0, $dotPos)
+        }
+    }
+
+    Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
+
+    $pluginEndpointName = "PowerShell.$targetPsVersion"
+
+    $endPoint = Get-PSSessionConfiguration $pluginEndpointName -Force:$Force -ErrorAction silentlycontinue 2>&1
+
+    # If endpoint exists and -Force parameter was not used, the endpoint would not be overwritten.
+    if ($endpoint -and !$Force)
+    {
+        Write-Error -Category ResourceExists -ErrorId "PSSessionConfigurationExists" -Message "Endpoint $pluginEndpointName already exists."
+        return
+    }
+
+    if (!$PSCmdlet.ShouldProcess($pluginEndpointName)) {
+        return
+    }
+
+    $pluginBasePath = Join-Path ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + "\System32\PowerShell") $targetPsVersion
+
+    $resolvedPluginAbsolutePath = ""
+    if (! (Test-Path $pluginBasePath))
+    {
+        Write-Verbose "Creating $pluginBasePath"
+        $resolvedPluginAbsolutePath = New-Item -Type Directory -Path $pluginBasePath
+    }
+    else
+    {
+        $resolvedPluginAbsolutePath = Resolve-Path $pluginBasePath
+    }
+
+    $pluginPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
+
+    # This is forced to ensure the the file is placed correctly
+    Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose -ErrorAction Stop
+
+    $pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
+    New-PluginConfigFile $pluginFile (Resolve-Path $targetPsHome)
+
+    # Register the plugin
+    Register-WinRmPlugin $pluginPath $pluginEndpointName
+
+    ####################################################################
+    #                                                                  #
+    # Validations to confirm that everything was registered correctly. #
+    #                                                                  #
+    ####################################################################
+
+    if (! (Test-Path $pluginFile))
+    {
+        throw "WinRM Plugin configuration file not created. Expected = $pluginFile"
+    }
+
+    if (! (Test-Path $resolvedPluginAbsolutePath\pwrshplugin.dll))
+    {
+        throw "WinRM Plugin DLL missing. Expected = $resolvedPluginAbsolutePath\pwrshplugin.dll"
+    }
+
+    try
+    {
+        Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -foregroundcolor "green"
+        Get-PSSessionConfiguration $pluginEndpointName -ErrorAction Stop
+    }
+    catch [Microsoft.PowerShell.Commands.WriteErrorException]
+    {
+        throw "No remoting session configuration matches the name $pluginEndpointName."
+    }
 }
 
-if ($PsCmdlet.ParameterSetName -eq "ByPath")
-{
-    $targetPsHome = $PowerShellHome
-    $targetPsVersion = & "$targetPsHome\pwsh" -NoProfile -Command '$PSVersionTable.PSVersion.ToString()'
-}
-else
-{
-    ## Get the PSHome and PSVersion using the current powershell instance
-    $targetPsHome = $PSHOME
-    $targetPsVersion = $PSVersionTable.PSVersion.ToString()
-}
-
-Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
-
-$pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $targetPsVersion
-
-$resolvedPluginAbsolutePath = ""
-if (! (Test-Path $pluginBasePath))
-{
-    Write-Verbose "Creating $pluginBasePath"
-    $resolvedPluginAbsolutePath = New-Item -Type Directory -Path $pluginBasePath
-}
-else
-{
-    $resolvedPluginAbsolutePath = Resolve-Path $pluginBasePath
-}
-
-$pluginPath = Join-Path $resolvedPluginAbsolutePath "pwrshplugin.dll"
-
-# This is forced to ensure the the file is placed correctly
-Copy-Item $targetPsHome\pwrshplugin.dll $resolvedPluginAbsolutePath -Force -Verbose
-
-$pluginFile = Join-Path $resolvedPluginAbsolutePath "RemotePowerShellConfig.txt"
-Generate-PluginConfigFile $pluginFile (Resolve-Path $targetPsHome)
-
-$pluginEndpointName = "powershell.$targetPsVersion"
-
-# Register the plugin
-Register-WinRmPlugin $pluginPath $pluginEndpointName
-
-####################################################################
-#                                                                  #
-# Validations to confirm that everything was registered correctly. #
-#                                                                  #
-####################################################################
-
-if (! (Test-Path $pluginFile))
-{
-    throw "WinRM Plugin configuration file not created. Expected = $pluginFile"
-}
-
-if (! (Test-Path $resolvedPluginAbsolutePath\pwrshplugin.dll))
-{
-    throw "WinRM Plugin DLL missing. Expected = $resolvedPluginAbsolutePath\pwrshplugin.dll"
-}
-
-try
-{
-    Write-Host "`nGet-PSSessionConfiguration $pluginEndpointName" -foregroundcolor "green"
-    Get-PSSessionConfiguration $pluginEndpointName -ErrorAction Stop
-}
-catch [Microsoft.PowerShell.Commands.WriteErrorException]
-{
-    throw "No remoting session configuration matches the name $pluginEndpointName."
-}
+Install-PluginEndpoint -Force $Force
+Install-PluginEndpoint -Force $Force -VersionIndependent
 
 Write-Host "Restarting WinRM to ensure that the plugin configuration change takes effect.`nThis is required for WinRM running on Windows SKUs prior to Windows 10." -foregroundcolor Magenta
 Restart-Service winrm

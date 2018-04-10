@@ -129,7 +129,7 @@ try
                     $Result = Get-PSSessionConfiguration
 
                     $Result.Name -contains $endpointName | Should -BeTrue
-                    $Result.PSVersion | Should -BeExactly $expectedPSVersion
+                    $Result.PSVersion -contains $expectedPSVersion | Should -BeTrue
                 }
 
                 It "Get-PSSessionConfiguration with Name parameter" {
@@ -147,7 +147,7 @@ try
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
                     $Result.Name -contains $endpointName | Should -BeTrue
-                    $Result.PSVersion | Should -BeExactly $expectedPSVersion
+                    $Result.PSVersion -contains $expectedPSVersion | Should -BeTrue
                 }
 
                 It "Get-PSSessionConfiguration -Name with Non-Existent session configuration" {
@@ -836,6 +836,27 @@ namespace PowershellTestConfigNamespace
             }
 
             $result | Should -BeTrue
+        }
+    }
+
+    Describe "Validate Enable-PSSession Cmdlet" -Tags @("Feature", 'RequireAdminOnWindows') {
+        BeforeAll {
+            if ($IsNotSkipped) {
+                Enable-PSRemoting
+            }
+        }
+
+        It "Enable-PSSession Cmdlet creates a PSSession configuration with a name tied to PowerShell version." {
+            $endpointName = "PowerShell." + $PSVersionTable.GitCommitId
+            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+            $matchedEndpoint | Should -Not -BeNullOrEmpty
+        }
+
+        It "Enable-PSSession Cmdlet creates a default PSSession configuration untied to a specific PowerShell version." {
+            $dotPos = $PSVersionTable.PSVersion.ToString().IndexOf(".")
+            $endpointName = "PowerShell." + $PSVersionTable.PSVersion.ToString().Substring(0, $dotPos)
+            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
+            $matchedEndpoint | Should -Not -BeNullOrEmpty
         }
     }
 }
