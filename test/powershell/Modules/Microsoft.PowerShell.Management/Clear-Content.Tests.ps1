@@ -4,38 +4,38 @@
 # get a random string of characters a-z and A-Z
 function Get-RandomString
 {
-    param ( [int]$length = 8 )
+    param ( [int]$Length = 8 )
     $chars = .{ ([int][char]'a')..([int][char]'z');([int][char]'A')..([int][char]'Z') }
-    ([char[]]($chars | get-random -count $length)) -join ""
+    ([char[]]($chars | Get-Random -Count $Length)) -join ""
 }
 
 # get a random string which is not the name of an existing provider
 function Get-NonExistantProviderName
 {
-   param ( [int]$length = 8 )
+   param ( [int]$Length = 8 )
    do {
-       $providerName = get-randomstring -length $length
-   } until ( $null -eq (get-psprovider -PSProvider $providername -erroraction silentlycontinue) )
+       $providerName = Get-RandomString -Length $Length
+   } until ( $null -eq (Get-PSProvider -PSProvider $providername -ErrorAction SilentlyContinue) )
    $providerName
 }
 
 # get a random string which is not the name of an existing drive
 function Get-NonExistantDriveName
 {
-    param ( [int]$length = 8 )
+    param ( [int]$Length = 8 )
     do {
-        $driveName = Get-RandomString -length $length
-    } until ( $null -eq (get-psdrive $driveName -erroraction silentlycontinue) )
+        $driveName = Get-RandomString -Length $Length
+    } until ( $null -eq (Get-PSDrive $driveName -ErrorAction SilentlyContinue) )
     $drivename
 }
 
 # get a random string which is not the name of an existing function
 function Get-NonExistantFunctionName
 {
-    param ( [int]$length = 8 )
+    param ( [int]$Length = 8 )
     do {
-        $functionName = Get-RandomString -length $length
-    } until ( (test-path function:$functionName) -eq $false )
+        $functionName = Get-RandomString -Length $Length
+    } until ( (Test-Path -Path function:$functionName) -eq $false )
     $functionName
 }
 
@@ -54,59 +54,59 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
   }
 
   Context "Clear-Content should actually clear content" {
-    It "should clear-Content of testdrive:\$file1" {
-      set-content -path testdrive:\$file1 -value "ExpectedContent" -passthru | Should -BeExactly "ExpectedContent"
-      clear-content -Path testdrive:\$file1
+    It "should clear-Content of TestDrive:\$file1" {
+      Set-Content -Path TestDrive:\$file1 -Value "ExpectedContent" -PassThru | Should -BeExactly "ExpectedContent"
+      Clear-Content -Path TestDrive:\$file1
     }
 
-    It "shouldn't get any content from testdrive:\$file1" {
-      $result = get-content -path testdrive:\$file1
+    It "shouldn't get any content from TestDrive:\$file1" {
+      $result = Get-Content -Path TestDrive:\$file1
       $result | Should -BeNullOrEmpty
     }
 
     # we could suppress the WhatIf output here if we use the testhost, but it's not necessary
     It "The filesystem provider supports should process" -skip:(!$IsWindows) {
-      clear-content TESTDRIVE:\$file2 -WhatIf
-      "TESTDRIVE:\$file2" | Should -FileContentMatch "This is content"
+      Clear-Content -Path TestDrive:\$file2 -WhatIf
+      "TestDrive:\$file2" | Should -FileContentMatch "This is content"
     }
 
     It "The filesystem provider should support ShouldProcess (reference ProviderSupportsShouldProcess member)" {
-      $cci = ((get-command clear-content).ImplementingType)::new()
+      $cci = ((Get-Command -Name Clear-Content).ImplementingType)::new()
       $cci.SupportsShouldProcess | Should -BeTrue
     }
 
     It "Alternate streams should be cleared with clear-content" -skip:(!$IsWindows) {
       # make sure that the content is correct
       # this is here rather than BeforeAll because only windows can write to an alternate stream
-      set-content -path "TESTDRIVE:/$file3" -stream $streamName -value $streamContent
-      get-content -path "TESTDRIVE:/$file3" | Should -BeExactly $content2
-      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -BeExactly $streamContent
-      clear-content -PATH "TESTDRIVE:/$file3" -stream $streamName
-      get-content -Path "TESTDRIVE:/$file3" | Should -BeExactly $content2
-      get-content -Path "TESTDRIVE:/$file3" -stream $streamName | Should -BeNullOrEmpty
+      Set-Content -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent
+      Get-Content -Path "TestDrive:/$file3" | Should -BeExactly $content2
+      Get-Content -Path "TestDrive:/$file3" -Stream $streamName | Should -BeExactly $streamContent
+      Clear-Content -Path "TestDrive:/$file3" -Stream $streamName
+      Get-Content -Path "TestDrive:/$file3" | Should -BeExactly $content2
+      Get-Content -Path "TestDrive:/$file3" -Stream $streamName | Should -BeNullOrEmpty
     }
 
     It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {
       try {
-        push-location TESTDRIVE:
-        (get-command clear-content -stream foo).parameters.keys -eq "stream" | Should -Be "stream"
+        Push-Location -Path TestDrive:
+        (Get-Command Clear-Content -Stream foo).parameters.keys -eq "stream" | Should -Be "stream"
       }
       finally {
-        pop-location
+        Pop-Location
       }
     }
 
-    It "the '-stream' dynamic parameter should not be visible to get-command in the function provider" {
+    It "the '-Stream' dynamic parameter should not be visible to get-command in the function provider" {
       try {
-        push-location function:
-        get-command clear-content -stream $streamName
+        Push-Location -Path function:
+        Get-Command Clear-Content -Stream $streamName
         throw "ExpectedExceptionNotDelivered"
       }
       catch {
         $_.FullyQualifiedErrorId | Should -Be "NamedParameterNotFound,Microsoft.PowerShell.Commands.GetCommandCommand"
       }
       finally {
-        pop-location
+        Pop-Location
       }
     }
   }
@@ -114,61 +114,66 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
   Context "Proper errors should be delivered when bad locations are specified" {
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$null" {
       try {
-        clear-content -path $null -ErrorAction Stop
+        Clear-Content -Path $null -ErrorAction Stop
         throw "expected exception was not delivered"
       }
       catch {
         $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
+
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$()" {
       try {
-        clear-content -path $() -ErrorAction Stop
+        Clear-Content -Path $() -ErrorAction Stop
         throw "expected exception was not delivered"
       }
       catch {
         $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
+
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you clear-content to an unsupported provider" {
       $functionName = Get-NonExistantFunctionName
-      $null = new-item function:$functionName -Value { 1 }
+      $null = New-Item -Path function:$functionName -Value { 1 }
       try {
-        clear-content -path function:$functionName -ErrorAction Stop
+        Clear-Content -Path function:$functionName -ErrorAction Stop
         throw "Expected exception was not thrown"
       }
       catch {
         $_.FullyQualifiedErrorId | Should -Be "NotSupported,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
+
     It "should throw FileNotFound error when referencing a non-existant file" {
       try {
-        $badFile = "TESTDRIVE:/badfilename.txt"
-        clear-content -path $badFile -ErrorAction Stop
+        $badFile = "TestDrive:/badfilename.txt"
+        Clear-Content -Path $badFile -ErrorAction Stop
         throw "ExpectedExceptionNotDelivered"
       }
       catch {
         $_.FullyQualifiedErrorId | Should -Be "PathNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
       }
     }
+
     It "should throw DriveNotFound error when referencing a non-existant drive" {
        try {
          $badDrive = "{0}:/file.txt" -f (Get-NonExistantDriveName)
-         clear-content -path $badDrive -ErrorAction Stop
-         thow "ExpectedExceptionNotDelivered"
+         Clear-Content -Path $badDrive -ErrorAction Stop
+         throw "ExpectedExceptionNotDelivered"
        }
        catch {
          $_.FullyQualifiedErrorId | Should -Be "DriveNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"
        }
     }
+
     # we'll use a provider qualified path to produce this error
     It "should throw ProviderNotFound error when referencing a non-existant provider" {
        try {
          $badProviderPath = "{0}::C:/file.txt" -f (Get-NonExistantProviderName)
-         clear-content -path $badProviderPath -ErrorAction Stop
-         thow "ExpectedExceptionNotDelivered"
+         Clear-Content -Path $badProviderPath -ErrorAction Stop
+         throw "ExpectedExceptionNotDelivered"
        }
        catch {
          $_.FullyQualifiedErrorId | Should -Be "ProviderNotFound,Microsoft.PowerShell.Commands.ClearContentCommand"

@@ -2642,11 +2642,17 @@ namespace System.Management.Automation
 
         internal static PSMethod Create(string name, DotNetAdapter dotNetInstanceAdapter, object baseObject, DotNetAdapter.MethodCacheEntry method, bool isSpecial, bool isHidden)
         {
-            if (method.psmethodCtor == null)
+            if (method[0].method is ConstructorInfo)
             {
-                method.psmethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
+                // Constructor cannot be converted to a delegate, so just return a simple PSMethod instance
+                return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
-            return method.psmethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
+
+            if (method.PSMethodCtor == null)
+            {
+                method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
+            }
+            return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
 
         static Type GetMethodGroupType(MethodInfo methodInfo)
@@ -2697,7 +2703,7 @@ namespace System.Management.Automation
         {
             if (type == typeof(void))
             {
-                return typeof(Unit);
+                return typeof(VOID);
             }
             if (type == typeof(TypedReference))
             {
@@ -2742,7 +2748,7 @@ namespace System.Management.Automation
                 sourceType = sourceType.GenericTypeArguments[0];
             }
 
-            if (targetType == typeof(void) && sourceType == typeof(Unit))
+            if (targetType == typeof(void) && sourceType == typeof(VOID))
             {
                 return true;
             }
@@ -2783,21 +2789,14 @@ namespace System.Management.Automation
 
         private static Func<string, DotNetAdapter, object, object, bool, bool, PSMethod> CreatePSMethodConstructor(MethodInformation[] methods)
         {
+            // Produce the PSMethod creator for MethodInfo objects
             var types = new Type[methods.Length];
             for (int i = 0; i < methods.Length; i++)
             {
-                var mb = methods[i].method;
-
-                if (mb is MethodInfo mi)
-                {
-                    types[i] = GetMethodGroupType(mi);
-                }
-                else
-                {
-                    types[i] = typeof(Unit);
-                }
+                types[i] = GetMethodGroupType((MethodInfo)methods[i].method);
             }
-            var methodGroupType =  CreateMethodGroup(types, 0, types.Length);
+
+            var methodGroupType = CreateMethodGroup(types, 0, types.Length);
             Type psMethodType = typeof(PSMethod<>).MakeGenericType(methodGroupType);
             var delegateType = typeof(Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>);
             return (Func<string, DotNetAdapter, object, object, bool, bool, PSMethod>)Delegate.CreateDelegate(delegateType, psMethodType.GetMethod("Create", BindingFlags.NonPublic|BindingFlags.Static));
@@ -2946,9 +2945,9 @@ namespace System.Management.Automation
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> : MethodGroup { }
     internal class MethodGroup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32> : MethodGroup { }
 
-    class Unit
+    class VOID
     {
-        private Unit() { }
+        private VOID() { }
     }
 
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
