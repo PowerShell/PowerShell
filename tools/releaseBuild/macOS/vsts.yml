@@ -1,6 +1,8 @@
 resources:
 - repo: self
   clean: true
+queue:
+  name: Hosted macOS Preview
 steps:
 #- task: <task type name>@<version>
 #  inputs:
