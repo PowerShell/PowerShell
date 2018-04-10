@@ -23,8 +23,13 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date:"Jan 1, 2020"  -Format:"MMM-dd-yy" | Should -Be "Jan-01-20"
     }
 
-    It "using -uformat produces the correct output" {
-        Get-date -Date:"Jan 1, 2020"  -UFormat:"%s"  | Should -Be "1577836800"
+    It "using -uformat %s produces the correct output" {
+        $seconds = Get-date -Date:"Jan 1, 2020Z" -UFormat:"%s"
+
+        $seconds | Should -Be "1577836800"
+        if ($isLinux) {
+            $seconds | Should -Be (date --date='01/01/2020 UTC' +%s)
+        }
     }
 
     It "using -uformat 'ymdH' produces the correct output" {
@@ -32,11 +37,38 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'aAbBcCdDehHIkljmMpr' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0 00010100AM12:00:00 AM"
+        Get-date -Date 1/1/0030 -uformat "%a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r" | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0120010100AM12:00:00 AM"
     }
 
     It "using -uformat 'sStTuUVwWxXyYZ' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %s%S%T%u%U%V%w%W%x%X%y%Y%% | Should -Be "-612204480000000:00:002012001/01/3000:00:00300030%"
+        Get-date -Date 1/1/0030 -uformat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
+    }
+
+    # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
+    It "using -uformat 'V' produces the correct output" -TestCases @(
+        @{date="2005-01-01"; week = "53"},
+        @{date="2005-01-02"; week = "53"},
+        @{date="2005-12-31"; week = "52"},
+        @{date="2006-01-01"; week = "52"},
+        @{date="2006-01-02"; week = "01"},
+        @{date="2006-12-31"; week = "52"},
+        @{date="2007-01-01"; week = "01"},
+        @{date="2007-12-30"; week = "52"},
+        @{date="2007-12-31"; week = "01"},
+        @{date="2008-01-01"; week = "01"},
+        @{date="2008-12-28"; week = "52"},
+        @{date="2008-12-29"; week = "01"},
+        @{date="2008-12-30"; week = "01"},
+        @{date="2008-12-31"; week = "01"},
+        @{date="2009-01-01"; week = "01"},
+        @{date="2009-12-31"; week = "53"},
+        @{date="2010-01-01"; week = "53"},
+        @{date="2010-01-02"; week = "53"},
+        @{date="2010-01-03"; week = "53"},
+        @{date="2010-01-04"; week = "01"}
+    ) {
+        param($date, $week)
+        Get-date -Date $date -uformat %V | Should -BeExactly $week
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
