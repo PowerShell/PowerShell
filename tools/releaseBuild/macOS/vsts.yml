@@ -3,7 +3,7 @@ resources:
   clean: true
 queue:
   name: Hosted macOS Preview
-name: macOS_$(Build.SourceBranchName)_$(Rev:.rrr)
+name: macOS_$(Build.SourceBranchName)_$(Build.BuildId)
 steps:
 #- task: <task type name>@<version>
 #  inputs:
