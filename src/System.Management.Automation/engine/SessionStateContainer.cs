@@ -1642,7 +1642,7 @@ namespace System.Management.Automation
                 string originalPath = path;
                 path =
                     Globber.GetProviderPath(
-                        path,
+                        context.SuppressWildcardExpansion ? path : WildcardPattern.Unescape(path),
                         context,
                         out provider,
                         out drive);
@@ -1650,11 +1650,6 @@ namespace System.Management.Automation
                 if (drive != null)
                 {
                     context.Drive = drive;
-                }
-
-                if (!context.SuppressWildcardExpansion)
-                {
-                    path = String.IsNullOrEmpty(path) ? path : WildcardPattern.Unescape(path);
                 }
 
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
@@ -2694,7 +2689,7 @@ namespace System.Management.Automation
 
                 string providerPath =
                     Globber.GetProviderPath(
-                        path,
+                        context.SuppressWildcardExpansion ? path : WildcardPattern.Unescape(path),
                         context,
                         out provider,
                         out drive);
