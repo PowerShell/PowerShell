@@ -1752,6 +1752,33 @@ namespace Microsoft.PowerShell
             TelemetryAPI.ReportStartupTelemetry(this);
 #endif
 
+            // If working directory was specified, set it
+            if (s_cpp != null && s_cpp.WorkingDirectory != null)
+            {
+                Pipeline tempPipeline = exec.CreatePipeline();
+                Command c = new Command("Set-Location");
+                c.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
+                tempPipeline.Commands.Add(c);
+
+                Exception e1;
+
+                if (IsRunningAsync)
+                {
+                    exec.ExecuteCommandAsyncHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
+                }
+                else
+                {
+                    exec.ExecuteCommandHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
+                }
+
+                if (e1 != null)
+                {
+                    // Remember last exception
+                    _lastRunspaceInitializationException = e1;
+                    ReportException(e1, exec);
+                }
+            }
+
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)
             {
