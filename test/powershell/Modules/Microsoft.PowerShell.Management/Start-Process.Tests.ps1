@@ -124,14 +124,20 @@ Describe "Start-Process" -Tags @("Feature") {
         Start-Process $pingCommand -ArgumentList $pingParam -PassThru -WhatIf | Should -BeNullOrEmpty
     }
 
-   It "Should run without errors when -ArgumentList is null" {
+    It "Should run without errors when -ArgumentList is `$null" {
         $process = Start-Process $pingCommand -ArgumentList $null -PassThru -WindowStyle Hidden
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
     }
 
-    It "Should run without errors when -ArgumentList is empty" {
-        $process = Start-Process $pingCommand -ArgumentList $null -PassThru -WindowStyle Hidden
+    It "Should run without errors when -ArgumentList is @()" {
+        $process = Start-Process $pingCommand -ArgumentList @() -PassThru -WindowStyle Hidden
+        $process.Length      | Should -Be 1
+        $process.Id          | Should -BeGreaterThan 1
+    }
+
+    It "Should run without errors when -ArgumentList is ''" {
+        $process = Start-Process $pingCommand -ArgumentList '' -PassThru -WindowStyle Hidden
         $process.Length      | Should -Be 1
         $process.Id          | Should -BeGreaterThan 1
     }
