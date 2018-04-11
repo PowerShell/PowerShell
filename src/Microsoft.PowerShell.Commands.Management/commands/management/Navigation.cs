@@ -3612,17 +3612,36 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            {
+                if (base.SuppressWildcardExpansion)
+                {
+                    RenameItem(Path, literalPath: true);
+                }
+                else
+                {
+                    {
+                        string unescapedPath = WildcardPattern.Unescape(Path);
+                        RenameItem(unescapedPath, literalPath: true);
+                    }
+                }
+            }
+
+        } // ProcessRecord
+
+        private void RenameItem(string path, bool literalPath)
+        {
             CmdletProviderContext currentContext = CmdletProviderContext;
+            currentContext.SuppressWildcardExpansion = literalPath;
 
             try
             {
-                if (!InvokeProvider.Item.Exists(Path, currentContext))
+                if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
                         (PSInvalidOperationException)
                         PSTraceSource.NewInvalidOperationException(
                             NavigationResources.RenameItemDoesntExist,
-                            Path);
+                            path);
 
                     WriteError(
                         new ErrorRecord(
@@ -3668,7 +3687,7 @@ namespace Microsoft.PowerShell.Commands
             bool isCurrentLocationOrAncestor = false;
             try
             {
-                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(_path, currentContext);
+                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(path, currentContext);
             }
             catch (PSNotSupportedException notSupported)
             {
@@ -3709,7 +3728,7 @@ namespace Microsoft.PowerShell.Commands
                     (PSInvalidOperationException)
                     PSTraceSource.NewInvalidOperationException(
                         NavigationResources.RenamedItemInUse,
-                        Path);
+                        path);
 
                 WriteError(
                     new ErrorRecord(
@@ -3723,12 +3742,12 @@ namespace Microsoft.PowerShell.Commands
 
             currentContext.PassThru = PassThru;
 
-            tracer.WriteLine("Rename {0} to {1}", Path, NewName);
+            tracer.WriteLine("Rename {0} to {1}", path, NewName);
 
             try
             {
                 // Now do the rename
-                InvokeProvider.Item.Rename(Path, NewName, currentContext);
+                InvokeProvider.Item.Rename(path, NewName, currentContext);
             }
             catch (PSNotSupportedException notSupported)
             {
@@ -3762,7 +3781,7 @@ namespace Microsoft.PowerShell.Commands
                         pathNotFound));
                 return;
             }
-        } // ProcessRecord
+        }
         #endregion Command code
 
     } // RenameItemCommand
