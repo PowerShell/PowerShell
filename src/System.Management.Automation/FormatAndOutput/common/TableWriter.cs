@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // NOTE: we can do this because "-" is a single cell character
                 // on all devices. If changed to some other character, this assumption
                 // would be invalidated
-                breakLine[k] = new string('-', count);
+                breakLine[k] = StringUtil.DashPadding(count);
             }
             GenerateRow(breakLine, lo, false, null, lo.DisplayCells);
         }
