@@ -377,55 +377,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add all of the default built-in functions to this session state instance...
-        /// </summary>
-        internal void AddBuiltInEntries(bool addSetStrictMode)
-        {
-            // Other built-in variables
-            AddBuiltInVariables();
-            AddBuiltInFunctions();
-            AddBuiltInAliases();
-            if (addSetStrictMode)
-            {
-                SessionStateFunctionEntry f = new SessionStateFunctionEntry("Set-StrictMode", "");
-                this.AddSessionStateEntry(f);
-            }
-        }
-
-        /// <summary>
-        /// Add the built-in variables to this instance of session state...
-        /// </summary>
-        internal void AddBuiltInVariables()
-        {
-            foreach (SessionStateVariableEntry e in InitialSessionState.BuiltInVariables)
-            {
-                this.AddSessionStateEntry(e);
-            }
-        }
-
-        /// <summary>
-        /// Add the built-in functions to this instance of session state...
-        /// </summary>
-        internal void AddBuiltInFunctions()
-        {
-            foreach (SessionStateFunctionEntry f in InitialSessionState.BuiltInFunctions)
-            {
-                this.AddSessionStateEntry(f);
-            }
-        }
-
-        /// <summary>
-        /// Add the built-in aliases to this instance of session state...
-        /// </summary>
-        internal void AddBuiltInAliases()
-        {
-            foreach (SessionStateAliasEntry ae in InitialSessionState.BuiltInAliases)
-            {
-                this.AddSessionStateEntry(ae, StringLiterals.Global);
-            }
-        }
-
-        /// <summary>
         /// Check to see if an application is allowed to be run.
         /// </summary>
         /// <param name="applicationPath">The path to the application to check</param>
