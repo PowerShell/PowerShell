@@ -3,7 +3,10 @@
 Describe "Remove-Item" -Tags "CI" {
     $testpath = $TestDrive
     $testfile = "testfile.txt"
+    $testfileSpName = "[testfile].txt"
+    $testfileSp = "``[testfile``].txt"
     $testfilepath = Join-Path -Path $testpath -ChildPath $testfile
+    $testfilepathSp = Join-Path -Path $testpath -ChildPath $testfileSp
     Context "File removal Tests" {
 	BeforeEach {
 	    New-Item -Name $testfile -Path $testpath -ItemType "file" -Value "lorem ipsum" -Force
@@ -109,6 +112,14 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path (Join-Path -Path $testpath -ChildPath file1.wav) | Should -BeFalse
 	    Test-Path (Join-Path -Path $testpath -ChildPath file2.wav) | Should -BeFalse
 	}
+
+        It "Should be able to remove file when path contains special char" {
+            New-Item -Path $testpath -Name $testfileSpName -ItemType File -Force
+            $testfilepathSp | Should -Exist
+
+            Remove-Item -Path $testfilepathSp
+            $testfilepathSp | Should -Not -Exist
+        }
     }
 
     Context "Directory Removal Tests" {
