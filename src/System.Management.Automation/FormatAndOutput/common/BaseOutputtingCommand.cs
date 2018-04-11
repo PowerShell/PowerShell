@@ -744,8 +744,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// In cases like implicit remoting, there is no console so reading the console width results in an exception. 
-        /// Instead of handling exception every time we cache this value to increase performance. 
+        /// In cases like implicit remoting, there is no console so reading the console width results in an exception.
+        /// Instead of handling exception every time we cache this value to increase performance.
         /// </summary>
         static private bool _noConsole = false;
 
@@ -955,8 +955,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // create arrays for widths and alignment
-                int[] columnWidths = new int[columns];
-                int[] alignment = new int[columns];
+                Span<int> columnWidths = stackalloc int[columns];
+                Span<int> alignment = stackalloc int[columns];
                 int k = 0;
 
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
@@ -1006,11 +1006,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // need to make sure we have matching counts: the header count will have to prevail
                 string[] values = new string[headerColumns];
-                int[] alignment = new int[headerColumns];
+                Span<int> alignment = stackalloc int[headerColumns];
 
                 int fieldCount = tre.formatPropertyFieldList.Count;
 
-                for (int k = 0; k < headerColumns; k++)
+                for (int k = 0; k < values.Length; k++)
                 {
                     if (k < fieldCount)
                     {
@@ -1168,8 +1168,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _buffer = new StringValuesBuffer(itemsPerRow);
 
                 // initialize the writer
-                int[] columnWidths = new int[itemsPerRow];
-                int[] alignment = new int[itemsPerRow];
+                Span<int> columnWidths = stackalloc int[itemsPerRow];
+                Span<int> alignment = stackalloc int[itemsPerRow];
 
                 for (int k = 0; k < itemsPerRow; k++)
                 {

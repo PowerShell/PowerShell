@@ -699,13 +699,22 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #endif
         internal static string TruncateAtNewLine(string s)
         {
-            if (string.IsNullOrEmpty(s))
+            if (s == null)
+            {
+                return "";
+            }
+
+            if (s == string.Empty)
+            {
                 return s;
+            }
 
             int lineBreak = s.IndexOfAny(s_lineBreakChars);
 
             if (lineBreak < 0)
+            {
                 return s;
+            }
 
             return s.Substring(0, lineBreak) + PSObjectHelper.ellipses;
         }
