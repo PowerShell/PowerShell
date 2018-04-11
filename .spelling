@@ -674,6 +674,7 @@ windir
  - docs/KNOWNISSUES.md
 cp
 globbing
+New-PSSession
 pipelining
 psl-omi-provider
 Register-WmiEvent
@@ -801,6 +802,7 @@ Enable-RunspaceDebug
 Enable-WSManCredSSP
 Enable-WSManTrace
 Enter-PSHostProcess
+Enter-PSSession
 Exit-PSHostProcess
 Exit-PSSession
 Export-BinaryMiLog
@@ -866,6 +868,7 @@ New-LocalGroup
 New-LocalUser
 New-ModuleManifest
 New-PSDrive
+New-PSSession
 New-PSRoleCapabilityFile
 New-PSSessionConfigurationFile
 New-ScriptFileInfo
