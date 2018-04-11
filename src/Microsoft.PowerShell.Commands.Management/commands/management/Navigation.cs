@@ -3295,7 +3295,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (base.SuppressWildcardExpansion)
                 {
-                    MoveItem(path);
+                    MoveItem(path, literalPath: true);
                 }
                 else
                 {
@@ -3304,173 +3304,165 @@ namespace Microsoft.PowerShell.Commands
                     foreach (PathInfo resolvedPathInfo in resolvedPaths)
                     {
                         string resolvedPath = resolvedPathInfo.Path;
-                        MoveItem(resolvedPath);
+                        MoveItem(resolvedPath, literalPath: true);
                     }
                 }
             }
-        } // ProcessRecord
+        }
 
-        private void MoveItem(string path)
+        private void MoveItem(string path, bool literalPath = false)
         {
             CmdletProviderContext currentContext = CmdletProviderContext;
+            currentContext.SuppressWildcardExpansion = literalPath;
 
-            do
+            try
             {
-                try
-                {
-                    string escapedPath = path;
-                    if (!base.SuppressWildcardExpansion) { escapedPath = WildcardPattern.Escape(path); }
-                    if (!InvokeProvider.Item.Exists(escapedPath, currentContext))
-                    {
-                        PSInvalidOperationException invalidOperation =
-                            (PSInvalidOperationException)
-                            PSTraceSource.NewInvalidOperationException(
-                                NavigationResources.MoveItemDoesntExist,
-                                path);
-
-                        WriteError(
-                            new ErrorRecord(
-                                invalidOperation.ErrorRecord,
-                                invalidOperation));
-                        continue;
-                    }
-                }
-                catch (PSNotSupportedException notSupported)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            notSupported.ErrorRecord,
-                            notSupported));
-                    continue;
-                }
-                catch (DriveNotFoundException driveNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            driveNotFound.ErrorRecord,
-                            driveNotFound));
-                    continue;
-                }
-                catch (ProviderNotFoundException providerNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            providerNotFound.ErrorRecord,
-                            providerNotFound));
-                    continue;
-                }
-                catch (ItemNotFoundException pathNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            pathNotFound.ErrorRecord,
-                            pathNotFound));
-                    continue;
-                }
-
-                // See if the item to be moved is in use.
-                bool isCurrentLocationOrAncestor = false;
-                try
-                {
-                    isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(path, currentContext);
-                }
-                catch (PSNotSupportedException notSupported)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            notSupported.ErrorRecord,
-                            notSupported));
-                    continue;
-                }
-                catch (DriveNotFoundException driveNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            driveNotFound.ErrorRecord,
-                            driveNotFound));
-                    continue;
-                }
-                catch (ProviderNotFoundException providerNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            providerNotFound.ErrorRecord,
-                            providerNotFound));
-                    continue;
-                }
-                catch (ItemNotFoundException pathNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            pathNotFound.ErrorRecord,
-                            pathNotFound));
-                    continue;
-                }
-
-                if (isCurrentLocationOrAncestor)
+                if (!InvokeProvider.Item.Exists(path, currentContext))
                 {
                     PSInvalidOperationException invalidOperation =
                         (PSInvalidOperationException)
                         PSTraceSource.NewInvalidOperationException(
-                            NavigationResources.MoveItemInUse,
+                            NavigationResources.MoveItemDoesntExist,
                             path);
 
                     WriteError(
                         new ErrorRecord(
                             invalidOperation.ErrorRecord,
                             invalidOperation));
-                    continue;
-                }
-
-                // Default to the CmdletProviderContext that will direct output to
-                // the pipeline.
-
-                CmdletProviderContext currentCommandContext = currentContext;
-                currentCommandContext.PassThru = PassThru;
-
-                tracer.WriteLine("Moving {0} to {1}", path, Destination);
-
-                try
-                {
-                    // Now do the move
-                    string escapedPath = path;
-                    if (!base.SuppressWildcardExpansion) { escapedPath = WildcardPattern.Escape(path); }
-                    InvokeProvider.Item.Move(escapedPath, Destination, currentCommandContext);
-                }
-                catch (PSNotSupportedException notSupported)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            notSupported.ErrorRecord,
-                            notSupported));
-                    continue;
-                }
-                catch (DriveNotFoundException driveNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            driveNotFound.ErrorRecord,
-                            driveNotFound));
-                    continue;
-                }
-                catch (ProviderNotFoundException providerNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            providerNotFound.ErrorRecord,
-                            providerNotFound));
-                    continue;
-                }
-                catch (ItemNotFoundException pathNotFound)
-                {
-                    WriteError(
-                        new ErrorRecord(
-                            pathNotFound.ErrorRecord,
-                            pathNotFound));
-                    continue;
+                    return;
                 }
             }
-            while (false);
+            catch (PSNotSupportedException notSupported)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
+                return;
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        driveNotFound.ErrorRecord,
+                        driveNotFound));
+                return;
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        providerNotFound.ErrorRecord,
+                        providerNotFound));
+                return;
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        pathNotFound.ErrorRecord,
+                        pathNotFound));
+                return;
+            }
+
+            // See if the item to be moved is in use.
+            bool isCurrentLocationOrAncestor = false;
+            try
+            {
+                isCurrentLocationOrAncestor = SessionState.Path.IsCurrentLocationOrAncestor(path, currentContext);
+            }
+            catch (PSNotSupportedException notSupported)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
+                return;
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        driveNotFound.ErrorRecord,
+                        driveNotFound));
+                return;
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        providerNotFound.ErrorRecord,
+                        providerNotFound));
+                return;
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        pathNotFound.ErrorRecord,
+                        pathNotFound));
+                return;
+            }
+
+            if (isCurrentLocationOrAncestor)
+            {
+                PSInvalidOperationException invalidOperation =
+                    (PSInvalidOperationException)
+                    PSTraceSource.NewInvalidOperationException(
+                        NavigationResources.MoveItemInUse,
+                        path);
+
+                WriteError(
+                    new ErrorRecord(
+                        invalidOperation.ErrorRecord,
+                        invalidOperation));
+                return;
+            }
+
+            // Default to the CmdletProviderContext that will direct output to
+            // the pipeline.
+
+            currentContext.PassThru = PassThru;
+
+            tracer.WriteLine("Moving {0} to {1}", path, Destination);
+
+            try
+            {
+                // Now do the move
+                InvokeProvider.Item.Move(path, Destination, currentContext);
+            }
+            catch (PSNotSupportedException notSupported)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
+                return;
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        driveNotFound.ErrorRecord,
+                        driveNotFound));
+                return;
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        providerNotFound.ErrorRecord,
+                        providerNotFound));
+                return;
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        pathNotFound.ErrorRecord,
+                        pathNotFound));
+                return;
+            }
         }
         #endregion Command code
 
