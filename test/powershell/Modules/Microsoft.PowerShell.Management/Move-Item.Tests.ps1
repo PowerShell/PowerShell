@@ -6,7 +6,7 @@ Describe "Move-Item tests" -Tag "CI" {
         Setup -f originalfile.txt -content "This is content"
         $source = "$TESTDRIVE/originalfile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenMoved.txt"
-        Setup -f [original]file.txt -content "This is not content"
+        Setup -f [orig-file].txt -content "This is not content"
         $sourceSp = "$TESTDRIVE/``[original``]file.txt"
         $targetSpName = "$TESTDRIVE/ItemWhichHasBeen[Moved].txt"
         $targetSp = "$TESTDRIVE/ItemWhichHasBeen``[Moved``].txt"
