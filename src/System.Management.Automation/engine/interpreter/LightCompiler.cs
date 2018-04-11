@@ -381,7 +381,7 @@ namespace System.Management.Automation.Interpreter
         {
             if (type != typeof(void))
             {
-                if (type.GetTypeInfo().IsValueType)
+                if (type.IsValueType)
                 {
                     object value = ScriptingRuntimeHelpers.GetPrimitiveDefaultValue(type);
                     if (value != null)
@@ -790,7 +790,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileEqual(Expression left, Expression right)
         {
             Debug.Assert(left.Type == right.Type ||
-                         !left.Type.GetTypeInfo().IsValueType && !right.Type.GetTypeInfo().IsValueType);
+                         !left.Type.IsValueType && !right.Type.IsValueType);
             Compile(left);
             Compile(right);
             _instructions.EmitEqual(left.Type);
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Interpreter
         private void CompileNotEqual(Expression left, Expression right)
         {
             Debug.Assert(left.Type == right.Type ||
-                         !left.Type.GetTypeInfo().IsValueType && !right.Type.GetTypeInfo().IsValueType);
+                         !left.Type.IsValueType && !right.Type.IsValueType);
             Compile(left);
             Compile(right);
             _instructions.EmitNotEqual(left.Type);
@@ -1550,9 +1550,9 @@ namespace System.Management.Automation.Interpreter
             // force compilation for now for ref types
             // also could be a mutable value type, Delegate.CreateDelegate and MethodInfo.Invoke both can't handle this, we
             // need to generate code.
-            var declaringTypeInfo = node.Method.DeclaringType.GetTypeInfo();
+            var declaringType = node.Method.DeclaringType;
             if (!parameters.TrueForAll(p => !p.ParameterType.IsByRef) ||
-                (!node.Method.IsStatic && declaringTypeInfo.IsValueType && !declaringTypeInfo.IsPrimitive))
+                (!node.Method.IsStatic && declaringType.IsValueType && !declaringType.IsPrimitive))
             {
                 _forceCompile = true;
             }
@@ -1595,7 +1595,7 @@ namespace System.Management.Automation.Interpreter
             }
             else
             {
-                Debug.Assert(expr.Type.GetTypeInfo().IsValueType);
+                Debug.Assert(expr.Type.IsValueType);
                 _instructions.EmitDefaultValue(node.Type);
             }
         }
@@ -1844,7 +1844,7 @@ namespace System.Management.Automation.Interpreter
             Compile(node.Expression);
 
             // use TypeEqual for sealed types:
-            if (node.TypeOperand.GetTypeInfo().IsSealed)
+            if (node.TypeOperand.IsSealed)
             {
                 _instructions.EmitLoad(node.TypeOperand);
                 _instructions.EmitTypeEquals();

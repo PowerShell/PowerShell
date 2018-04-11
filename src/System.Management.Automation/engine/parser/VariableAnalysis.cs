@@ -290,7 +290,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.SkipChildren;
         }
 
-        // Return true if the variable is newly allocated and should be allocated in the locals tuple.
+        // Add a variable to the variable dictionary
         private void NoteVariable(string variableName, int index, Type type, bool automatic = false, bool preferenceVariable = false)
         {
             if (!_variables.ContainsKey(variableName))
@@ -504,7 +504,7 @@ namespace System.Management.Automation.Language
         {
             _variables = FindAllVariablesVisitor.Visit(exprAst);
 
-            // We disable optimizations for trap because it simplifies what we need to do when invoking
+            // We disable optimizations for expression because it simplifies what we need to do when invoking
             // the default argument, and it's assumed that the code inside a default argument rarely, if ever, actually creates
             // any local variables.
             _disableOptimizations = true;
@@ -731,7 +731,7 @@ namespace System.Management.Automation.Language
             //     $value.Property = 42
             // We make sure we never allocate an instance of such mutable types in the MutableType.
 
-            return (type.GetTypeInfo().IsValueType && PSVariableAssignmentBinder.IsValueTypeMutable(type)) && typeof(SwitchParameter) != type;
+            return (type.IsValueType && PSVariableAssignmentBinder.IsValueTypeMutable(type)) && typeof(SwitchParameter) != type;
         }
 
         private static void FixTupleIndex(Ast ast, int newIndex)

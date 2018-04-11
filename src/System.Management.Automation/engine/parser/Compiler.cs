@@ -596,7 +596,7 @@ namespace System.Management.Automation.Language
                 return Expression.Convert(expr, type);
             }
 
-            if (type.GetTypeInfo().ContainsGenericParameters)
+            if (type.ContainsGenericParameters)
             {
                 return Expression.Call(
                     CachedReflectionInfo.LanguagePrimitives_ThrowInvalidCastException,
@@ -614,7 +614,7 @@ namespace System.Management.Automation.Language
                 return expr;
             }
 
-            if ((expr.Type.IsFloating() || expr.Type == typeof(Decimal)) && type.GetTypeInfo().IsPrimitive)
+            if ((expr.Type.IsFloating() || expr.Type == typeof(Decimal)) && type.IsPrimitive)
             {
                 // Convert correctly handles most "primitive" conversions for PowerShell,
                 // but it does not correctly handle floating point.
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            if (type.GetTypeInfo().IsClass)
+            if (type.IsClass)
             {
                 value = null;
                 return true;
@@ -1531,7 +1531,7 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            if (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type)) && !type.GetTypeInfo().IsEnum)
+            if (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(type)) && !type.IsEnum)
             {
                 value = 0;
                 return true;
@@ -4856,7 +4856,7 @@ namespace System.Management.Automation.Language
                         var isType = (Type)((ConstantExpression)rhs).Value;
                         if (!(isType == typeof(PSCustomObject)) && !(isType == typeof(PSObject)))
                         {
-                            lhs = lhs.Type.GetTypeInfo().IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
+                            lhs = lhs.Type.IsValueType ? lhs : Expression.Call(CachedReflectionInfo.PSObject_Base, lhs);
                             if (binaryExpressionAst.Operator == TokenKind.Is)
                                 return Expression.TypeIs(lhs, isType);
                             return Expression.Not(Expression.TypeIs(lhs, isType));
@@ -5162,7 +5162,7 @@ namespace System.Management.Automation.Language
                 var newValue = DynamicExpression.Dynamic(PSUnaryOperationBinder.Get(valueToAdd == 1 ? ExpressionType.Increment : ExpressionType.Decrement),
                                                          typeof(object), tmp);
                 exprs.Add(av.SetValue(this, newValue));
-                if (tmp.Type.GetTypeInfo().IsValueType)
+                if (tmp.Type.IsValueType)
                 {
                     // This is the result of the expression - it might be unused, but we don't bother knowing if it is used or not.
                     exprs.Add(tmp);
@@ -5363,7 +5363,7 @@ namespace System.Management.Automation.Language
             if (memberExpressionAst.Static && (memberExpressionAst.Expression is TypeExpressionAst))
             {
                 var type = ((TypeExpressionAst)memberExpressionAst.Expression).TypeName.GetReflectionType();
-                if (type != null && !type.GetTypeInfo().IsGenericTypeDefinition)
+                if (type != null && !type.IsGenericTypeDefinition)
                 {
                     var member = memberExpressionAst.Member as StringConstantExpressionAst;
                     if (member != null)
@@ -5419,7 +5419,7 @@ namespace System.Management.Automation.Language
             TypeDefinitionAst typeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(invokeMemberExpressionAst);
             if (typeDefinitionAst != null)
             {
-                targetTypeConstraint = (typeDefinitionAst as TypeDefinitionAst).Type.GetTypeInfo().BaseType;
+                targetTypeConstraint = (typeDefinitionAst as TypeDefinitionAst).Type.BaseType;
             }
             else
             {
