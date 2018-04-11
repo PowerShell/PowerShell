@@ -188,14 +188,13 @@ function Register-PSSessionConfiguration
                     }}
                }}
                if (([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Local.Equals($accessMode) -or
-                    ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode)-and $disableNetworkExists)) -and
-                   !$haveDisableACE)
+                    ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode))) -and !$haveDisableACE)
                {{
-                    # Add network deny ACE for local access or remote access with PSRemoting disabled ($disableNetworkExists)
+                    # Add network deny ACE for local access or remote access with PSRemoting disabled.
                     $sd.DiscretionaryAcl.AddAccess(""deny"", $networkSID, 268435456, ""None"", ""None"")
                     $newSDDL = $sd.GetSddlForm(""all"")
                }}
-               if ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode) -and -not $disableNetworkExists -and $haveDisableACE)
+               if ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode) -and $haveDisableACE)
                {{
                     # Remove the specific ACE
                     $sd.discretionaryacl.RemoveAccessSpecific('Deny', $securityIdentifierToPurge, 268435456, 'none', 'none')
@@ -4796,16 +4795,119 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
 
         //TODO: CLR4: Remove the logic for setting the MaxMemoryPerShellMB to 200 MB once IPMO->Get-Command->Get-Help memory usage issue is fixed.
         private const string enableRemotingSbFormat = @"
-function Generate-PluginConfigFile
+Set-StrictMode -Version Latest
+
+function New-PluginConfigFile
 {{
+[CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
 param(
     [Parameter()] [string] $pluginInstallPath
 )
     $pluginConfigFile = Join-Path $pluginInstallPath ""RemotePowerShellConfig.txt""
 
     # This always overwrites the file with a new version of it (if it already exists)
-    Set-Content -Path $pluginConfigFile -Value ""PSHOMEDIR=$PSHOME""
-    Add-Content -Path $pluginConfigFile -Value ""CORECLRDIR=$PSHOME""
+    Set-Content -Path $pluginConfigFile -Value ""PSHOMEDIR=$PSHOME"" -ErrorAction Stop
+    Add-Content -Path $pluginConfigFile -Value ""CORECLRDIR=$PSHOME"" -ErrorAction Stop
+}}
+
+function Copy-PluginToEndpoint
+{{
+param(
+    [Parameter()] [string] $endpointDir
+)
+    $resolvedPluginInstallPath = """"
+    $pluginInstallPath = Join-Path ([System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows) + ""\System32\PowerShell"") $endpointDir
+    if (!(Test-Path $pluginInstallPath))
+    {{
+        $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
+    }}
+    else
+    {{
+        $resolvedPluginInstallPath = Resolve-Path $pluginInstallPath
+    }}
+    if (!(Test-Path $resolvedPluginInstallPath\{5}))
+    {{
+        Copy-Item -Path $PSHOME\{5} -Destination $resolvedPluginInstallPath -Force -ErrorAction Stop
+        if (!(Test-Path $resolvedPluginInstallPath\{5}))
+        {{
+            Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
+            return $null
+        }}
+    }}
+    return $resolvedPluginInstallPath
+}}
+
+function Register-Endpoint
+{{
+param(
+    [Parameter()] [string] $configurationName
+)
+    #
+    # Section 1:
+    # Move pwrshplugin.dll from $PSHOME to the endpoint directory
+    #
+    # The plugin directory pattern for endpoint configuration is:
+    # '$env:WINDIR\System32\PowerShell\' + powershell_version,
+    # so we call Copy-PluginToEndpoint function only with the PowerShell version argument.
+
+    $pwshVersion = $configurationName.Replace(""PowerShell."", """")
+    $resolvedPluginInstallPath = Copy-PluginToEndpoint $pwshVersion
+    if (!$resolvedPluginInstallPath) {{
+        return
+    }}
+
+    #
+    # Section 2:
+    # Generate the Plugin Configuration File
+    #
+    New-PluginConfigFile $resolvedPluginInstallPath
+
+    #
+    # Section 3:
+    # Register the endpoint
+    #
+    $null = Register-PSSessionConfiguration -Name $configurationName -force -ErrorAction Stop
+
+    set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\$configurationName\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
+    set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\$configurationName\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
+    restart-service winrm -confirm:$false
+}}
+
+function Register-EndpointIfNotPresent
+{{
+[CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
+param(
+    [Parameter()] [string] $Name,
+    [Parameter()] [bool] $Force,
+    [Parameter()] [string] $queryForRegisterDefault,
+    [Parameter()] [string] $captionForRegisterDefault
+)
+    #
+    # This cmdlet will make sure default powershell end points exist upon successful completion.
+    #
+    # Windows PowerShell:
+    #   Microsoft.PowerShell
+    #   Microsoft.PowerShell32 (wow64)
+    #
+    # PowerShell Core:
+    #   PowerShell.<version ID>
+    #
+    $errorCount = $error.Count
+    $endPoint = Get-PSSessionConfiguration $Name -Force:$Force -ErrorAction silentlycontinue 2>&1
+    $newErrorCount = $error.Count
+
+    # remove the 'No Session Configuration matches criteria' errors
+    for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
+    {{
+        $error.RemoveAt(0)
+    }}
+
+    $qMessage = $queryForRegisterDefault -f ""$Name"",""Register-PSSessionConfiguration {0} -force""
+    if ((!$endpoint) -and
+        ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
+    {{
+        Register-Endpoint $Name
+    }}
 }}
 
 function Enable-PSRemoting
@@ -4836,70 +4938,16 @@ param(
             # first try to enable all the sessions
             Enable-PSSessionConfiguration @PSBoundParameters
 
-            #
-            # This cmdlet will make sure default powershell end points exist upon successful completion.
-            #
-            # Windows PowerShell:
-            #   Microsoft.PowerShell
-            #   Microsoft.PowerShell32 (wow64)
-            #
-            # PowerShell Core:
-            #   PowerShell.<version ID>
-            #
-            $errorCount = $error.Count
-            $endPoint = Get-PSSessionConfiguration {0} -Force:$Force -ErrorAction silentlycontinue 2>&1
-            $newErrorCount = $error.Count
+            Register-EndpointIfNotPresent -Name {0} $Force $queryForRegisterDefault $captionForRegisterDefault
 
-            # remove the 'No Session Configuration matches criteria' errors
-            for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
-            {{
-                $error.RemoveAt(0)
+            # Create the default PSSession configuration, not tied to specific PowerShell version
+            # e. g. 'PowerShell.6'.
+            $powershellVersionMajor = $PSVersionTable.PSVersion.ToString()
+            $dotPos = $powershellVersionMajor.IndexOf(""."")
+            if ($dotPos -ne -1) {{
+                $powershellVersionMajor = $powershellVersionMajor.Substring(0, $dotPos)
             }}
-
-            $qMessage = $queryForRegisterDefault -f ""{0}"",""Register-PSSessionConfiguration {0} -force""
-            if ((!$endpoint) -and
-                ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
-            {{
-                $resolvedPluginInstallPath = """"
-                #
-                # Section 1:
-                # Move pwrshplugin.dll from $PSHOME to the endpoint directory
-                #
-                $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" $psversiontable.GitCommitId
-                if (!(Test-Path $pluginInstallPath))
-                {{
-                    $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
-                }}
-                else
-                {{
-                    $resolvedPluginInstallPath = Resolve-Path $pluginInstallPath
-                }}
-                if (!(Test-Path $resolvedPluginInstallPath\{5}))
-                {{
-                    Copy-Item $PSHOME\{5} $resolvedPluginInstallPath -Force
-                    if (!(Test-Path $resolvedPluginInstallPath\{5}))
-                    {{
-                        Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
-                        return
-                    }}
-                }}
-
-                #
-                # Section 2:
-                # Generate the Plugin Configuration File
-                #
-                Generate-PluginConfigFile $resolvedPluginInstallPath
-
-                #
-                # Section 3:
-                # Register the endpoint
-                #
-                $null = Register-PSSessionConfiguration -Name {0} -force
-
-                set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
-                set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
-                restart-service winrm -confirm:$false
-            }}
+            Register-EndpointIfNotPresent -Name (""PowerShell."" + $powershellVersionMajor) $Force $queryForRegisterDefault $captionForRegisterDefault
 
             # PowerShell Workflow and WOW are not supported for PowerShell Core
             if (![System.Management.Automation.Platform]::IsCoreCLR)
