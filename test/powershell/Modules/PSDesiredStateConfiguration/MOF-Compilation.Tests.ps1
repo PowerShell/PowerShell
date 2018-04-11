@@ -27,7 +27,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig1
-"@) | should not throw
+"@) | Should -Not -Throw
 
         "TestDrive:\DscTestConfig1\localhost.mof" | Should -Exist
     }
@@ -49,7 +49,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig2
-"@) | should not throw
+"@) | Should -Not -Throw
 
         "TestDrive:\DscTestConfig2\localhost.mof" | Should -Exist
     }
@@ -158,7 +158,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
 
     }
         WordPressServer -OutputPath TestDrive:\DscTestConfig3
-"@) | should not throw
+"@) | Should -Not -Throw
 
         "TestDrive:\DscTestConfig3\CentOS.mof" | Should -Exist
     }
@@ -178,7 +178,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig4
-"@) | should not throw
+"@) | Should -Not -Throw
 
         "TestDrive:\DscTestConfig4\localhost.mof" | Should -Exist
     }
@@ -208,7 +208,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         }
 
         DSCTestConfig -OutputPath TestDrive:\DscTestConfig5
-"@) | should not throw
+"@) | Should -Not -Throw
 
         "TestDrive:\DscTestConfig5\localhost.mof" | Should -Exist
     }
