@@ -1924,7 +1924,7 @@ namespace System.Management.Automation.Runspaces
             ValidatePortInRange(port);
 
             this.Port = (port != 0) ? port : DefaultPort;
-            this.Subsystem = (subsystem != String.Empty) ? subsystem : DefaultSubsystem;
+            this.Subsystem = (subsystem != null) ? subsystem : DefaultSubsystem;
         }
 
         #endregion

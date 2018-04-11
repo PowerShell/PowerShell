@@ -158,9 +158,14 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = NewPSSessionCommand.SSHHostParameterSet)]
         public String ConfigurationName { get; set; }
+
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public String Subsystem { get; set; }
 
         #endregion Parameters
 
@@ -1109,7 +1114,7 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
                     sshConnection.Port,
-                    sshConnection.ConfigurationName);
+                    sshConnection.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;

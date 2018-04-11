@@ -287,8 +287,6 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         public override String ConfigurationName
         {
             get
@@ -298,6 +296,23 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 base.ConfigurationName = value;
+            }
+        }
+
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public override String Subsystem
+        {
+            get
+            {
+                return base.Subsystem;
+            }
+            set
+            {
+                base.Subsystem = value;
             }
         }
 

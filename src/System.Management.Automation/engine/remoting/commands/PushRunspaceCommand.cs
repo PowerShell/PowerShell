@@ -182,9 +182,14 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = EnterPSSessionCommand.VMIdParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = EnterPSSessionCommand.SSHHostParameterSet)]
         public String ConfigurationName { get; set; }
+
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public String Subsystem { get; set; }
 
         #region Suppress PSRemotingBaseCmdlet SSH hash parameter set
 
@@ -1284,7 +1289,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace GetRunspaceForSSHSession()
         {
             ParseSshHostName(HostName, out string host, out string userName, out int port);
-            var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.ConfigurationName);
+            var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.Subsystem);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
             // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.
