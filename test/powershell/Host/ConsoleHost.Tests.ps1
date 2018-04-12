@@ -564,7 +564,7 @@ foo
 
     Context "-WorkingDirectory parameter" {
         BeforeAll {
-            $folderName = (New-Guid).ToString();
+            $folderName = (New-Guid).ToString() + " test";
             New-Item -Path ~/$folderName -ItemType Directory
             $ExitCodeBadCommandLineParameter = 64
         }
@@ -575,7 +575,8 @@ foo
 
         It "Can set working directory to '<value>'" -TestCases @(
             @{ value = "~"            ; expectedPath = $((Get-Item ~).FullName) },
-            @{ value = "~/$folderName"; expectedPath = $((Get-Item ~/$folderName).FullName) }
+            @{ value = "~/$folderName"; expectedPath = $((Get-Item ~/$folderName).FullName) },
+            @{ value = "~\$folderName"; expectedPath = $((Get-Item ~\$folderName).FullName) }
         ) {
             param($value, $expectedPath)
             $output = & $powershell -WorkingDirectory "$value" -Command "`$pwd.Path"
