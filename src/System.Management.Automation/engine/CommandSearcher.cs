@@ -1080,36 +1080,36 @@ namespace System.Management.Automation
                         path);
                 }
             }
+            catch (InvalidOperationException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "The home path was not specified for the provider. {0}",
+                    path);
+            }
+            catch (ProviderInvocationException providerInvocationException)
+            {
+                CommandDiscovery.discoveryTracer.TraceError(
+                    "While resolving the path, \"{0}\", an error was encountered by the provider: {1}",
+                    path,
+                    providerInvocationException.Message);
+            }
             catch (ItemNotFoundException)
             {
                 CommandDiscovery.discoveryTracer.TraceError(
-                    "The path could not be found: {0}",
+                    "The path does not exist: {0}",
                     path);
             }
-            catch (DriveNotFoundException)
+            catch (DriveNotFoundException driveNotFound)
             {
                 CommandDiscovery.discoveryTracer.TraceError(
-                    "A drive could not be found for the path: {0}",
-                    path);
+                    "The drive does not exist: {0}",
+                    driveNotFound.ItemName);
             }
             catch (ProviderNotFoundException)
             {
                 CommandDiscovery.discoveryTracer.TraceError(
                     "A provider could not be found for the path: {0}",
                     path);
-            }
-            catch (InvalidOperationException)
-            {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The path specified a home directory, but the provider home directory was not set. {0}",
-                    path);
-            }
-            catch (ProviderInvocationException providerException)
-            {
-                CommandDiscovery.discoveryTracer.TraceError(
-                    "The provider associated with the path '{0}' encountered an error: {1}",
-                    path,
-                    providerException.Message);
             }
             catch (PSNotSupportedException)
             {
