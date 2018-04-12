@@ -697,7 +697,7 @@ namespace System.Management.Automation
 
             // Process the attributes on the cmdlet
 
-            var customAttributes = CommandType.GetTypeInfo().GetCustomAttributes(false);
+            var customAttributes = CommandType.GetCustomAttributes(false);
 
             foreach (Attribute attribute in customAttributes)
             {

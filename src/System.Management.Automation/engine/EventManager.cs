@@ -1464,7 +1464,7 @@ namespace System.Management.Automation
                 methodContents.Emit(OpCodes.Ldarg, counter);
 
                 // Box the value type if necessary
-                if (parameterTypes[counter - 1].GetTypeInfo().IsValueType)
+                if (parameterTypes[counter - 1].IsValueType)
                 {
                     methodContents.Emit(OpCodes.Box, parameterTypes[counter - 1]);
                 }
