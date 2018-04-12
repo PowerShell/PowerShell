@@ -175,11 +175,13 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
         $date2 = Get-date -Date "2030-4-15 13:2:3"
         $date3 = Get-date -Date "2030-4-15 21:2:3"
 
+        # 5 come from $date1 - 2030-4-5 is Friday - 5th day (the enum starts with 0 - Sunday)
         $shortDay1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.AbbreviatedDayNames[5]
         $fullDay1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.DayNames[5]
 
-        $shortMonth1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.AbbreviatedMonthNames[4 - 1]
-        $fullMonth1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.MonthNames[4 - 1]
+        # 3 come from $date1 - 2030-4-5 is April - 4th month (the enum starts with 0)
+        $shortMonth1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.AbbreviatedMonthNames[3]
+        $fullMonth1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.MonthNames[3]
 
         $fullDate1 = $date1.ToString("$([System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.ShortDatePattern)")
         $fullTime1 = $date1.ToString("$([System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.LongTimePattern)")
