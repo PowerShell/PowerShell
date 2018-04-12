@@ -374,7 +374,7 @@ namespace System.Management.Automation
             private void CreateGetEnumerator()
             {
                 _getEnumerator = new DynamicMethod("GetEnumerator", typeof(object),
-                    new Type[] { typeof(object) }, typeof(LanguagePrimitives).GetTypeInfo().Module, true);
+                    new Type[] { typeof(object) }, typeof(LanguagePrimitives).Module, true);
 
                 ILGenerator emitter = _getEnumerator.GetILGenerator();
 
@@ -399,8 +399,7 @@ namespace System.Management.Automation
         {
             foreach (Type i in obj.GetType().GetInterfaces())
             {
-                TypeInfo typeinfo = i.GetTypeInfo();
-                if (typeinfo.IsGenericType && typeinfo.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
                     return new EnumerableTWrapper(obj, i);
                 }
@@ -1211,7 +1210,7 @@ namespace System.Management.Automation
             // - TimeSpan part of "datetime"
             // - <classname> ref
             TypeCode typeCode = LanguagePrimitives.GetTypeCode(type);
-            if (LanguagePrimitives.IsCimIntrinsicScalarType(typeCode) && !type.GetTypeInfo().IsEnum)
+            if (LanguagePrimitives.IsCimIntrinsicScalarType(typeCode) && !type.IsEnum)
             {
                 return true;
             }
@@ -1281,8 +1280,7 @@ namespace System.Management.Automation
         {
             foreach (Type i in dictionary.GetType().GetInterfaces())
             {
-                TypeInfo typeInfo = i.GetTypeInfo();
-                if (typeInfo.IsGenericType && typeInfo.GetGenericTypeDefinition() == typeof(IDictionary<,>))
+                if (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
                 {
                     // If we get here, we know the target implements IDictionary.  We will assume
                     // that the non-generic implementation of the indexer property just forwards
@@ -1366,7 +1364,7 @@ namespace System.Management.Automation
                 return typesXmlConverter;
             }
 
-            var typeConverters = type.GetTypeInfo().GetCustomAttributes(typeof(TypeConverterAttribute), false);
+            var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
             foreach (var typeConverter in typeConverters)
             {
                 var attr = (TypeConverterAttribute)typeConverter;
@@ -1829,7 +1827,7 @@ namespace System.Management.Automation
 
                     // See if the [Flag] attribute is set on this type...
                     // MemberInfo.GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR.
-                    bool hasFlagsAttribute = enumType.GetTypeInfo().GetCustomAttributes(typeof(FlagsAttribute), false).Any();
+                    bool hasFlagsAttribute = enumType.GetCustomAttributes(typeof(FlagsAttribute), false).Any();
 
                     returnValue = new EnumHashEntry(Enum.GetNames(enumType), values, allValues, hasNegativeValue, hasFlagsAttribute);
                     s_enumTable.Add(enumType, returnValue);
@@ -1839,7 +1837,7 @@ namespace System.Management.Automation
 
             public override bool CanConvertFrom(object sourceValue, Type destinationType)
             {
-                return sourceValue is string && destinationType.GetTypeInfo().IsEnum;
+                return sourceValue is string && destinationType.IsEnum;
             }
 
             /// <summary>
@@ -1967,7 +1965,7 @@ namespace System.Management.Automation
                         ExtendedTypeSystem.InvalidCastException,
                         sourceValue, ObjectToTypeNameString(sourceValue), destinationType);
                 }
-                Diagnostics.Assert(destinationType.GetTypeInfo().IsEnum, "EnumSingleTypeConverter is only applied to enumerations");
+                Diagnostics.Assert(destinationType.IsEnum, "EnumSingleTypeConverter is only applied to enumerations");
                 if (sourceValueString.Length == 0)
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromEmptyString", null,
@@ -4579,7 +4577,7 @@ namespace System.Management.Automation
             string errorId, errorMsg;
             if (PSObject.Base(valueToConvert) == null)
             {
-                if (resultType.GetTypeInfo().IsEnum)
+                if (resultType.IsEnum)
                 {
                     typeConversion.WriteLine("Issuing an error message about not being able to convert null to an Enum type.");
                     // a nice error message specifically for null being converted to enum
@@ -4649,11 +4647,11 @@ namespace System.Management.Automation
                 {
                     converter = LanguagePrimitives.ConvertIListToBool;
                 }
-                else if (fromType.GetTypeInfo().IsEnum)
+                else if (fromType.IsEnum)
                 {
                     converter = LanguagePrimitives.CreateNumericToBoolConverter(fromType);
                 }
-                else if (fromType.GetTypeInfo().IsValueType)
+                else if (fromType.IsValueType)
                 {
                     converter = LanguagePrimitives.ConvertValueToBool;
                 }
@@ -4666,7 +4664,7 @@ namespace System.Management.Automation
 
             if (toType == typeof(string))
             {
-                Dbg.Assert(!LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(fromType)) || fromType.GetTypeInfo().IsEnum,
+                Dbg.Assert(!LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(fromType)) || fromType.IsEnum,
                     "Number to string should be cached on initialization of cache table");
                 return CacheConversion<string>(fromType, toType, LanguagePrimitives.ConvertNonNumericToString, ConversionRank.ToString);
             }
@@ -4769,7 +4767,7 @@ namespace System.Management.Automation
             }
 
             TypeCode fromTypeCode = LanguagePrimitives.GetTypeCode(fromType);
-            if (LanguagePrimitives.IsInteger(fromTypeCode) && toType.GetTypeInfo().IsEnum)
+            if (LanguagePrimitives.IsInteger(fromTypeCode) && toType.IsEnum)
             {
                 return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertIntegerToEnum, ConversionRank.Language);
             }
@@ -4852,7 +4850,7 @@ namespace System.Management.Automation
 
         private static PSConverter<object> FigureParseConversion(Type fromType, Type toType)
         {
-            if (toType.GetTypeInfo().IsEnum)
+            if (toType.IsEnum)
             {
                 if (fromType == typeof(string))
                 {
@@ -4923,8 +4921,7 @@ namespace System.Management.Automation
         internal static Tuple<PSConverter<object>, ConversionRank> FigureIEnumerableConstructorConversion(Type fromType, Type toType)
         {
             // Win8: 653180. If toType is an Abstract type then we cannot construct it anyway. So, bailing out fast.
-            TypeInfo toTypeInfo = toType.GetTypeInfo();
-            if (toTypeInfo.IsAbstract == true)
+            if (toType.IsAbstract == true)
             {
                 return null;
             }
@@ -4936,7 +4933,7 @@ namespace System.Management.Automation
                 Type elementType = null;
                 ConstructorInfo resultConstructor = null;
 
-                if (toTypeInfo.IsGenericType && !toTypeInfo.ContainsGenericParameters &&
+                if (toType.IsGenericType && !toType.ContainsGenericParameters &&
                     (typeof(IList).IsAssignableFrom(toType) ||
                      typeof(ICollection).IsAssignableFrom(toType) ||
                      typeof(IEnumerable).IsAssignableFrom(toType)))
@@ -5077,7 +5074,7 @@ namespace System.Management.Automation
             {
                 ParameterInfo[] targetParams = resultConstructor.GetParameters();
                 Type targetParamType = targetParams[0].ParameterType;
-                bool useExplicitConversion = targetParamType.GetTypeInfo().IsValueType && fromType != targetParamType && Nullable.GetUnderlyingType(targetParamType) == null;
+                bool useExplicitConversion = targetParamType.IsValueType && fromType != targetParamType && Nullable.GetUnderlyingType(targetParamType) == null;
                 converter.TargetCtorLambda = CreateCtorLambdaClosure<object, object>(resultConstructor, targetParamType, useExplicitConversion);
             }
             catch (Exception e)
@@ -5105,8 +5102,7 @@ namespace System.Management.Automation
 
         internal static PSConverter<object> FigurePropertyConversion(Type fromType, Type toType, ref ConversionRank rank)
         {
-            TypeInfo toTypeInfo = toType.GetTypeInfo();
-            if ((!typeof(PSObject).IsAssignableFrom(fromType)) || (toTypeInfo.IsAbstract))
+            if ((!typeof(PSObject).IsAssignableFrom(fromType)) || (toType.IsAbstract))
             {
                 return null;
             }
@@ -5125,7 +5121,7 @@ namespace System.Management.Automation
                 typeConversion.WriteLine("Exception finding Constructor: \"{0}\".", e.Message);
             }
 
-            if (toConstructor == null && !toTypeInfo.IsValueType)
+            if (toConstructor == null && !toType.IsValueType)
             {
                 return null;
             }
@@ -5195,7 +5191,7 @@ namespace System.Management.Automation
             }
 
             // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
-            var typeConverters = type.GetTypeInfo().GetCustomAttributes(typeof(TypeConverterAttribute), false);
+            var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
             if (typeConverters.Any())
             {
                 return true;
@@ -5270,17 +5266,16 @@ namespace System.Management.Automation
                     }
                 }
             }
-#if CORECLR
+
             // Assemblies in CoreCLR might not allow reflection execution on their internal types.
-            TypeInfo typeInfo = toType.GetTypeInfo();
-            if (!TypeResolver.IsPublic(typeInfo) && DotNetAdapter.DisallowPrivateReflection(typeInfo))
+            if (!TypeResolver.IsPublic(toType) && DotNetAdapter.DisallowPrivateReflection(toType))
             {
                 // If the type is non-public and reflection execution is not allowed on it, then we return
                 // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set
                 // properties on an instance of this type through reflection.
                 return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
             }
-#endif
+
             PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
             ConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
@@ -5305,7 +5300,7 @@ namespace System.Management.Automation
                         {
                             if (typeof(IConvertible).IsAssignableFrom(fromType))
                             {
-                                if (LanguagePrimitives.IsNumeric(GetTypeCode(fromType)) && !fromType.GetTypeInfo().IsEnum)
+                                if (LanguagePrimitives.IsNumeric(GetTypeCode(fromType)) && !fromType.IsEnum)
                                 {
                                     if (!toType.IsArray)
                                     {
@@ -5332,8 +5327,7 @@ namespace System.Management.Automation
                                 // So, we need to check only for the first condition
                                 ConstructorInfo resultConstructor = toType.GetConstructor(PSTypeExtensions.EmptyTypes);
 
-                                TypeInfo toTypeInfo = toType.GetTypeInfo();
-                                if (resultConstructor != null || (toTypeInfo.IsValueType && !toTypeInfo.IsPrimitive))
+                                if (resultConstructor != null || (toType.IsValueType && !toType.IsPrimitive))
                                 {
                                     ConvertViaNoArgumentConstructor noArgumentConstructorConverter = new ConvertViaNoArgumentConstructor(resultConstructor, toType);
                                     converter = noArgumentConstructorConverter.Convert;
@@ -5416,7 +5410,7 @@ namespace System.Management.Automation
             {
                 return CacheConversion<object>(typeof(Null), toType, LanguagePrimitives.ConvertNullToNullable, ConversionRank.NullToValue);
             }
-            else if (!toType.GetTypeInfo().IsValueType)
+            else if (!toType.IsValueType)
             {
                 return CacheConversion<object>(typeof(Null), toType, LanguagePrimitives.ConvertNullToRef, ConversionRank.NullToRef);
             }
