@@ -764,6 +764,13 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public String Subsystem { get; set; }
+
         #endregion
 
         #endregion Properties
@@ -823,7 +830,6 @@ namespace Microsoft.PowerShell.Commands
         private const string KeyFilePathParameter = "KeyFilePath";
         private const string IdentityFilePathAlias = "IdentityFilePath";
         private const string PortParameter = "Port";
-        private const string ConfigurationNameParameter = "ConfigurationName";
         private const string SubsystemParameter = "Subsystem";
 
         #endregion
@@ -1311,13 +1317,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         public virtual String ConfigurationName { get; set; }
-
-        /// <summary>
-        /// This parameter specifies the SSH subsystem to use for the remote connection.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        public virtual String Subsystem { get; set; }
 
         #endregion Parameters
 

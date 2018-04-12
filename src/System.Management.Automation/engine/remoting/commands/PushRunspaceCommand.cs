@@ -184,13 +184,6 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
         public String ConfigurationName { get; set; }
 
-        /// <summary>
-        /// This parameter specifies the SSH subsystem to use for the remote connection.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        public String Subsystem { get; set; }
-
         #region Suppress PSRemotingBaseCmdlet SSH hash parameter set
 
         /// <summary>

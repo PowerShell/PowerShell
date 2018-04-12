@@ -300,23 +300,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specifies the SSH subsystem to use for the remote connection.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        public override String Subsystem
-        {
-            get
-            {
-                return base.Subsystem;
-            }
-            set
-            {
-                base.Subsystem = value;
-            }
-        }
-
-        /// <summary>
         /// This parameters specifies the appname which identifies the connection
         /// end point on the remote machine. If this parameter is not specified
         /// then the value specified in DEFAULTREMOTEAPPNAME will be used. If thats
