@@ -187,7 +187,8 @@ function Register-PSSessionConfiguration
                         $securityIdentifierToPurge = $_.securityidentifier
                     }}
                }}
-               if (![System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Disabled.Equals($accessMode) -and $haveDisableACE)
+               if (([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode) -or
+                    [System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Remote.Equals($accessMode)) -and $haveDisableACE)
                {{
                     # Add network deny ACE for local access or remote access with PSRemoting disabled.
                     $sd.DiscretionaryAcl.AddAccess(""deny"", $networkSID, 268435456, ""None"", ""None"")
