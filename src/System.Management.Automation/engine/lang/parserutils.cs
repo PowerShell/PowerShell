@@ -440,7 +440,7 @@ namespace System.Management.Automation
             Type lvalType = lval != null ? lval.GetType() : null;
             Type rvalType = rval != null ? rval.GetType() : null;
             Type opType;
-            if (lvalType == null || (lvalType.GetTypeInfo().IsPrimitive))
+            if (lvalType == null || (lvalType.IsPrimitive))
             {
                 // Prefer the LHS type when looking for the operator, but attempt the right
                 // the lhs can't have an operator.
@@ -449,7 +449,7 @@ namespace System.Management.Automation
                 // would look for overloads in both types, but this logic covers the most common
                 // cases.
 
-                opType = (rvalType == null || rvalType.GetTypeInfo().IsPrimitive) ? null : rvalType;
+                opType = (rvalType == null || rvalType.IsPrimitive) ? null : rvalType;
             }
             else
             {

@@ -4796,7 +4796,7 @@ namespace Microsoft.PowerShell.Commands
                                 ProviderInfo pi = pl.Value[i];
 
                                 // If it was implemented by this module, remove it
-                                string implAssemblyLocation = pi.ImplementingType.GetTypeInfo().Assembly.Location;
+                                string implAssemblyLocation = pi.ImplementingType.Assembly.Location;
                                 if (implAssemblyLocation.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // Remove all drives from the top level session state
