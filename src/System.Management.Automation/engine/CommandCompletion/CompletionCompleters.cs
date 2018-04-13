@@ -4056,10 +4056,8 @@ namespace System.Management.Automation
                 var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
                 var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
 
-                if (useLiteralPath && LocationGlobber.StringContainsGlobCharacters(wordToComplete))
-                {
-                    wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
-                }
+                // We should always escape '[' and ']' if present.
+                wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
 
                 if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
                 {
@@ -4068,6 +4066,43 @@ namespace System.Management.Automation
                     executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
 
+#if UNIX
+                // We use globbing to get completions.
+                // Globbing is based on system functions which is case-sensitive on Unix.
+                // To make globbing on Unix case-insensitive we transform every char from the input string:
+                // "alias:dir" -> "alias:[dD][iI][rR]"
+                if (context.GetOption("UnixCaseInsensitiveGlobbing", @default: true) == true)
+                {
+                    StringBuilder sb = new StringBuilder(wordToComplete.Length * 4);
+
+                    //wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.Brackets);
+
+                    // Copy a provider name "as is" without transformation.
+                    var providerPrefixIndex = wordToComplete.IndexOf(':') + 1;
+                    int i;
+                    for (i=0; i < providerPrefixIndex; i++)
+                    {
+                        sb.Append(wordToComplete[i]);
+                    }
+
+                    // Transform rest of input string after a provider prefix.
+                    for (var j=i; j < wordToComplete.Length; j++)
+                    {
+                        var lch = Char.ToLower(wordToComplete[j]);
+                        var uch = Char.ToUpper(wordToComplete[j]);
+                        if (lch != uch)
+                        {
+                            sb.Append('[').Append(lch).Append(uch).Append(']');
+                        }
+                        else
+                        {
+                            sb.Append(wordToComplete[j]);
+                        }
+                    }
+
+                    wordToComplete = sb.ToString();
+                }
+#endif
                 var powerShellExecutionHelper = context.Helper;
                 powerShellExecutionHelper
                     .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
@@ -4210,7 +4245,7 @@ namespace System.Management.Automation
                     }
 
                     // Sorting the results by the path
-                    var sortedPsobjs = psobjs.OrderBy(a => a, new ItemPathComparer());
+                    var sortedPsobjs = psobjs.OrderBy(a => a, new ItemPathComparer(wordToComplete));
 
                     foreach (PSObject psobj in sortedPsobjs)
                     {
@@ -6648,6 +6683,13 @@ namespace System.Management.Automation
 
         private class ItemPathComparer : IComparer<PSObject>
         {
+            private String _baseWord;
+
+            public ItemPathComparer(String baseWord)
+            {
+                _baseWord = baseWord + ".*";
+            }
+
             public int Compare(PSObject x, PSObject y)
             {
                 var xPathInfo = PSObject.Base(x) as PathInfo;
@@ -6677,7 +6719,21 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(xPath) || string.IsNullOrEmpty(yPath))
                     Diagnostics.Assert(false, "Base object of item PSObject should be either PathInfo or FileSystemInfo");
 
-                return String.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
+                var result = String.Compare(xPath, yPath, StringComparison.CurrentCultureIgnoreCase);
+#if UNIX
+                if (result == 0)
+                {
+                    if (Regex.IsMatch(xPath, _baseWord))
+                    {
+                        return -1;
+                    }
+                    else
+                    {
+                        return 1;
+                    }
+                }
+#endif
+                return result;
             }
         }
 

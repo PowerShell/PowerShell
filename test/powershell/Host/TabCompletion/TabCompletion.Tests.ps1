@@ -198,8 +198,12 @@ Describe "TabCompletion" -Tags CI {
 
     Context "File name completion" {
         BeforeAll {
+            $oneSubDirLowerTest = "onesubd"
+            $oneSubDirUpperTest = "oneSubD"
+            $oneSubDirTest = "onesubdir"
+
             $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
-            $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
+            $oneSubDir = Join-Path -Path $tempDir -ChildPath $oneSubDirTest
             $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
             $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
 
@@ -207,6 +211,13 @@ Describe "TabCompletion" -Tags CI {
             New-Item -Path $oneSubDir -ItemType Directory -Force > $null
             New-Item -Path $oneSubDirPrime -ItemType Directory -Force > $null
             New-Item -Path $twoSubDir -ItemType Directory -Force > $null
+
+            if (!$IsWindows) {
+                $oneSubDirTest2 = "oneSubDir"
+                $oneSubDir2 = Join-Path -Path $tempDir -ChildPath $oneSubDirTest2
+                New-Item -Path $oneSubDir2 -ItemType Directory -Force > $null
+            }
+
 
             $testCases = @(
                 @{ inputStr = "ab"; name = "abc"; localExpected = ".${separator}abc"; oneSubExpected = "..${separator}abc"; twoSubExpected = "..${separator}..${separator}abc" }
@@ -240,6 +251,28 @@ Describe "TabCompletion" -Tags CI {
 
         AfterEach {
             Pop-Location
+        }
+
+        It "TabCompletion should be case-insensitive for file names on Windows" -Skip:(!$IsWindows) {
+            Push-Location -Path $tempDir
+            $res = TabExpansion2 -inputScript $oneSubDirLowerTest -cursorColumn $oneSubDirLowerTest.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}$oneSubDirTest"
+
+            $res = TabExpansion2 -inputScript $oneSubDirUpperTest -cursorColumn $oneSubDirUpperTest.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}$oneSubDirTest"
+        }
+
+        It "TabCompletion should be case-sensitive for file names on Unix" -Skip:($IsWindows) {
+            Push-Location -Path $tempDir
+            $res = TabExpansion2 -inputScript $oneSubDirLowerTest -cursorColumn $oneSubDirLowerTest.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should BeExactly ".${separator}$oneSubDirTest"
+
+            $res = TabExpansion2 -inputScript $oneSubDirUpperTest -cursorColumn $oneSubDirUpperTest.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should BeExactly ".${separator}$oneSubDirTest2"
         }
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
@@ -480,8 +513,8 @@ Describe "TabCompletion" -Tags CI {
                 $beforeTab = 'filesystem::{0}\Wind' -f $env:SystemDrive
                 $afterTab = 'filesystem::{0}\Windows' -f $env:SystemDrive
             } else {
-                $beforeTab = 'filesystem::/us' -f $env:SystemDrive
-                $afterTab = 'filesystem::/usr' -f $env:SystemDrive
+                $beforeTab = 'filesystem::/sbi' -f $env:SystemDrive
+                $afterTab = 'filesystem::/sbin' -f $env:SystemDrive
             }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
