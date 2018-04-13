@@ -216,9 +216,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (multiLine)
             {
-                foreach (var line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
+                string[] lines = GenerateTableRow(values, currentAlignment, lo.DisplayCells);
+
+                for (int k = 0; k < lines.Length; k++)
                 {
-                    lo.WriteLine(line);
+                    lo.WriteLine(lines[k]);
                 }
             }
             else
@@ -227,7 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private IEnumerable<string> GenerateTableRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells ds)
+        private string[] GenerateTableRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells ds)
         {
             // select the active columns (skip hidden ones)
             Span<int> validColumnArray = stackalloc int[_si.columnInfo.Length];
@@ -242,7 +244,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (validColumnCount == 0)
             {
-                yield break;
+                return null;
             }
 
             StringCollection[] scArray = new StringCollection[validColumnCount];
@@ -353,7 +355,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            // finally, build an row by row
+            // finally, build an array of strings
+            string[] rows = new string[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
                 StringBuilder sb = new StringBuilder();
@@ -370,10 +373,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         sb.Append(scArray[col][row]);
                     }
                 }
-                yield return sb.ToString();
+                rows[row] = sb.ToString();
             }
 
-            yield break;
+            return rows;
         }
 
         private StringCollection GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc, bool addPadding)
