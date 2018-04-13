@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Cim
 
             if (baseObject != null)
             {
-                for (Type type = baseObject.GetType(); type != null; type = type.GetTypeInfo().BaseType)
+                for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
                 {
                     result.Add(type.FullName);
                 }

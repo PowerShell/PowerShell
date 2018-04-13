@@ -306,19 +306,19 @@ namespace System.Management.Automation.Help
                 }
                 else
                 {
-                    if (parameter.ParameterType.GetTypeInfo().IsEnum && (Enum.GetNames(parameter.ParameterType) != null))
+                    if (parameter.ParameterType.IsEnum && (Enum.GetNames(parameter.ParameterType) != null))
                     {
                         AddParameterValueGroupProperties(mshObject, Enum.GetNames(parameter.ParameterType));
                     }
                     else if (parameter.ParameterType.IsArray)
                     {
-                        if (parameter.ParameterType.GetElementType().GetTypeInfo().IsEnum &&
+                        if (parameter.ParameterType.GetElementType().IsEnum &&
                             Enum.GetNames(parameter.ParameterType.GetElementType()) != null)
                         {
                             AddParameterValueGroupProperties(mshObject, Enum.GetNames(parameter.ParameterType.GetElementType()));
                         }
                     }
-                    else if (parameter.ParameterType.GetTypeInfo().IsGenericType)
+                    else if (parameter.ParameterType.IsGenericType)
                     {
                         Type[] types = parameter.ParameterType.GetGenericArguments();
 
@@ -326,13 +326,13 @@ namespace System.Management.Automation.Help
                         {
                             Type type = types[0];
 
-                            if (type.GetTypeInfo().IsEnum && (Enum.GetNames(type) != null))
+                            if (type.IsEnum && (Enum.GetNames(type) != null))
                             {
                                 AddParameterValueGroupProperties(mshObject, Enum.GetNames(type));
                             }
                             else if (type.IsArray)
                             {
-                                if (type.GetElementType().GetTypeInfo().IsEnum &&
+                                if (type.GetElementType().IsEnum &&
                                     Enum.GetNames(type.GetElementType()) != null)
                                 {
                                     AddParameterValueGroupProperties(mshObject, Enum.GetNames(type.GetElementType()));

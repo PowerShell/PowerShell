@@ -107,7 +107,7 @@ namespace System.Management.Automation
                 if (_helpTracer.HelpSystem.VerboseHelpErrors && _errors.Count > 0)
                 {
                     ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("Help Load Error"), "HelpLoadError", ErrorCategory.SyntaxError, null);
-                    errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpErrorTracer).GetTypeInfo().Assembly, "HelpErrors", "HelpLoadError", _helpFile, _errors.Count);
+                    errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpErrorTracer).Assembly, "HelpErrors", "HelpLoadError", _helpFile, _errors.Count);
                     _helpTracer.HelpSystem.LastErrors.Add(errorRecord);
 
                     foreach (ErrorRecord error in _errors)
