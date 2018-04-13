@@ -1614,7 +1614,7 @@ namespace System.Management.Automation
         {
             if (null == value)
             {
-                if (typeof(T).GetTypeInfo().IsValueType)
+                if (typeof(T).IsValueType)
                 {
                     throw PSTraceSource.NewArgumentNullException("value", PSDataBufferStrings.ValueNullReference);
                 }

@@ -101,7 +101,7 @@ namespace System.Management.Automation.Runspaces
             // no useful information anyway.
             if (!String.IsNullOrEmpty(_PSSnapin) && !String.IsNullOrEmpty(_reason))
             {
-                Assembly currentAssembly = typeof(PSSnapInException).GetTypeInfo().Assembly;
+                Assembly currentAssembly = typeof(PSSnapInException).Assembly;
 
                 if (_warning)
                 {

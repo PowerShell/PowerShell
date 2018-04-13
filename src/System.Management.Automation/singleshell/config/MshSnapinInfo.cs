@@ -901,7 +901,7 @@ namespace System.Management.Automation
             // the assemblies is patched. ie., all monad assemblies should have the
             // same version number.
 
-            Assembly currentAssembly = typeof(PSSnapInReader).GetTypeInfo().Assembly;
+            Assembly currentAssembly = typeof(PSSnapInReader).Assembly;
             assemblyVersion = currentAssembly.GetName().Version;
             byte[] publicTokens = currentAssembly.GetName().GetPublicKeyToken();
             if (publicTokens.Length == 0)
