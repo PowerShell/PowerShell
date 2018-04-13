@@ -453,9 +453,6 @@ function Start-PSBuild {
         }
     }
 
-    # create the telemetry flag file
-    $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
-
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
@@ -1054,7 +1051,9 @@ Restore the module to '$Pester' by running:
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $command = ""
+
+    # Disable telemetry for all startups of pwsh in tests
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 1;"
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
@@ -1155,6 +1154,8 @@ Restore the module to '$Pester' by running:
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
+        $originalTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
+        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         if ($Unelevate)
         {
             Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
@@ -1231,6 +1232,7 @@ Restore the module to '$Pester' by running:
         }
     } finally {
         $env:PSModulePath = $originalModulePath
+        $env:POWERSHELL_TELEMETRY_OPTOUT = $originalTelemetry
         if ($Unelevate)
         {
             Remove-Item $outputBufferFilePath

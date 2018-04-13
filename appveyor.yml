@@ -10,6 +10,9 @@ cache:
 nuget:
   project_feed: true
 
+environment:
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
 install:
   - git submodule update --init
   - ps: Import-Module .\tools\Appveyor.psm1
