@@ -139,28 +139,18 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal static bool IsPublic(Type type)
         {
-            TypeInfo typeInfo = type.GetTypeInfo();
-            return IsPublic(typeInfo);
-        }
-
-        /// <summary>
-        /// A typeInfo is public if IsPublic or (IsNestedPublic and is nested in public type(s))
-        /// </summary>
-        internal static bool IsPublic(TypeInfo typeInfo)
-        {
-            if (typeInfo.IsPublic)
+            if (type.IsPublic)
             {
                 return true;
             }
-            if (!typeInfo.IsNestedPublic)
+            if (!type.IsNestedPublic)
             {
                 return false;
             }
-            Type type;
-            while ((type = typeInfo.DeclaringType) != null)
+
+            while ((type = type.DeclaringType) != null)
             {
-                typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic))
+                if (!(type.IsPublic || type.IsNestedPublic))
                 {
                     return false;
                 }
@@ -820,14 +810,13 @@ namespace System.Management.Automation
             {
                 return true;
             }
-            var inputTypeInfo = inputType.GetTypeInfo();
-            if (inputTypeInfo.IsEnum)
+            if (inputType.IsEnum)
             {
                 return true;
             }
-            if (inputTypeInfo.IsGenericType)
+            if (inputType.IsGenericType)
             {
-                var genericTypeDefinition = inputTypeInfo.GetGenericTypeDefinition();
+                var genericTypeDefinition = inputType.GetGenericTypeDefinition();
                 return genericTypeDefinition == typeof(Nullable<>) || genericTypeDefinition == typeof(FlagsExpression<>);
             }
             return (inputType.IsArray && Contains(inputType.GetElementType()));
