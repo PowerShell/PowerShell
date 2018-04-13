@@ -629,6 +629,12 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (Directory.Exists(rootedPath))
                         {
+                            // If the path ends with a directory separator, remove it
+                            if (rootedPath.EndsWith(Path.DirectorySeparatorChar))
+                            {
+                                rootedPath = Path.GetDirectoryName(rootedPath);
+                            }
+
                             // Load the latest valid version if it is a multi-version module directory
                             foundModule = LoadUsingMultiVersionModuleBase(rootedPath,
                                                                             ManifestProcessingFlags.LoadElements |

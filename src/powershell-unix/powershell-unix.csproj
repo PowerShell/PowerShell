@@ -16,7 +16,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY">
+    <Content Include="..\..\license_thirdparty_proprietary.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

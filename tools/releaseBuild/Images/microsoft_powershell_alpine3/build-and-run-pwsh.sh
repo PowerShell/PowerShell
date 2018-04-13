@@ -53,9 +53,6 @@ make -j
 cd ../..
 dotnet restore $dotnetArguments
 
-# Add telemetry file
-touch DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
-
 # run ResGen
 cd src/ResGen
 dotnet run
