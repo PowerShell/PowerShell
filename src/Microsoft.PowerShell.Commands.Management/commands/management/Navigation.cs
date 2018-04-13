@@ -3670,11 +3670,11 @@ namespace Microsoft.PowerShell.Commands
                             PSTraceSource.NewInvalidOperationException(
                                 NavigationResources.RenameMultipleItemError,
                                 Path);
-
                         WriteError(
                             new ErrorRecord(
                                 invalidOperation.ErrorRecord,
                                 invalidOperation));
+                        break;
                 }
             } while (false);
 
