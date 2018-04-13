@@ -3643,22 +3643,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            do
             {
                 if (base.SuppressWildcardExpansion)
                 {
                     RenameItem(Path, literalPath: true);
+                    continue;
                 }
-                else
-                {
-                    Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
 
-                    if (resolvedPaths.Count == 1)
-                    {
+                Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
+
+                switch (resolvedPaths.Count)
+                {
+                    case 0:
+                        // Do nothing
+                        break;
+
+                    case 1:
                         string resolvedPath = resolvedPaths[0].Path;
                         RenameItem(resolvedPath, literalPath: true);
-                    }
-                    else
-                    {
+                        break;
+
+                    default:
                         PSInvalidOperationException invalidOperation =
                             (PSInvalidOperationException)
                             PSTraceSource.NewInvalidOperationException(
@@ -3669,9 +3675,8 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 invalidOperation.ErrorRecord,
                                 invalidOperation));
-                    }
                 }
-            }
+            } while (false);
 
         } // ProcessRecord
 
