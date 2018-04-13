@@ -185,7 +185,7 @@ namespace System.Management.Automation
             }
             else
             {
-                bool isNullable = boolType.GetTypeInfo().IsGenericType &&
+                bool isNullable = boolType.IsGenericType &&
                     boolType.GetGenericTypeDefinition() == typeof(Nullable<>);
 
                 if (!isNullable && LanguagePrimitives.IsBooleanType(boolType))
