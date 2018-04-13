@@ -1,4 +1,3 @@
-
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -333,7 +332,7 @@ try
 
             $exception.FullyQualifiedErrorId | Should -Match "CannotSetBreakpointInconsistentLanguageMode"
         }
-        
+
         It "Verifies that a debugging breakpoint can be set in constrained language with system lockdown" {
 
             try
