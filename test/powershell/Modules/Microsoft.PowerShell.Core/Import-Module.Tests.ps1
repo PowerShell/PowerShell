@@ -18,6 +18,7 @@ Describe "Import-Module" -Tags "CI" {
     BeforeEach {
         Remove-Module -Name $moduleName -Force
         (Get-Module -Name $moduleName).Name | Should -BeNullOrEmpty
+        Remove-Module -Name TestModule -Force -ErrorAction SilentlyContinue
     }
 
     AfterEach {
@@ -28,6 +29,15 @@ Describe "Import-Module" -Tags "CI" {
     It "should be able to add a module with using Name switch" {
         { Import-Module -Name $moduleName } | Should -Not -Throw
         (Get-Module -Name $moduleName).Name | Should -BeExactly $moduleName
+    }
+
+    It "should be able to load a module with a trailing directory separator: <modulePath>" -TestCases @(
+        @{ modulePath = (Get-Module -ListAvailable $moduleName).ModuleBase + [System.IO.Path]::DirectorySeparatorChar; expectedName = $moduleName },
+        @{ modulePath = Join-Path -Path $TestDrive -ChildPath "\Modules\TestModule\"; expectedName = "TestModule" }
+    ) {
+        param( $modulePath, $expectedName )
+        { Import-Module -Name $modulePath -ErrorAction Stop } | Should -Not -Throw
+        (Get-Module -Name $expectedName).Name | Should -BeExactly $expectedName
     }
 
     It "should be able to add a module with using ModuleInfo switch" {
