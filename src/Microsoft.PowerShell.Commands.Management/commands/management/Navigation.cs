@@ -3599,6 +3599,45 @@ namespace Microsoft.PowerShell.Commands
 
         #region Command code
 
+        private Collection<PathInfo> GetResolvedPaths(string path)
+        {
+            Collection<PathInfo> results = new Collection<PathInfo>();
+            try
+            {
+                results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
+            }
+            catch (PSNotSupportedException notSupported)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        notSupported.ErrorRecord,
+                        notSupported));
+            }
+            catch (DriveNotFoundException driveNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        driveNotFound.ErrorRecord,
+                        driveNotFound));
+            }
+            catch (ProviderNotFoundException providerNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        providerNotFound.ErrorRecord,
+                        providerNotFound));
+            }
+            catch (ItemNotFoundException pathNotFound)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        pathNotFound.ErrorRecord,
+                        pathNotFound));
+            }
+
+            return results;
+        }
+
         /// <summary>
         /// Moves the specified item to the specified destination
         /// </summary>
@@ -3611,9 +3650,25 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
+                    Collection<PathInfo> resolvedPaths = GetResolvedPaths(Path);
+
+                    if (resolvedPaths.Count == 1)
                     {
-                        string unescapedPath = WildcardPattern.Unescape(Path);
-                        RenameItem(unescapedPath, literalPath: true);
+                        string resolvedPath = resolvedPaths[0].Path;
+                        RenameItem(resolvedPath, literalPath: true);
+                    }
+                    else
+                    {
+                        PSInvalidOperationException invalidOperation =
+                            (PSInvalidOperationException)
+                            PSTraceSource.NewInvalidOperationException(
+                                NavigationResources.RenameMultipleItemError,
+                                Path);
+
+                        WriteError(
+                            new ErrorRecord(
+                                invalidOperation.ErrorRecord,
+                                invalidOperation));
                     }
                 }
             }
