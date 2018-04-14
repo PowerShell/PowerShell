@@ -1010,7 +1010,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 int fieldCount = tre.formatPropertyFieldList.Count;
 
-                for (int k = 0; k < values.Length; k++)
+                for (int k = 0; k < headerColumns; k++)
                 {
                     if (k < fieldCount)
                     {
