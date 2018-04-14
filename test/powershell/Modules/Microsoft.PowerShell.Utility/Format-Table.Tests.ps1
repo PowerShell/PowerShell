@@ -18,9 +18,7 @@ Describe "Format-Table" -Tags "CI" {
                 $v2 = (Get-Date | Format-Table -Property Hour)
                 $v3 = (Get-Date | Format-Table -GroupBy Hour)
         }
-}
 
-Describe "Format-Table DRT Unit Tests" -Tags "CI" {
         It "Format-Table with not existing table with force should throw PipelineStoppedException"{
                 $obj = New-Object -typename PSObject
                 $e = { $obj | Format-Table -view bar -force -EA Stop } |
