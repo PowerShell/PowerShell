@@ -699,14 +699,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #endif
         internal static string TruncateAtNewLine(string s)
         {
-            if (s == null)
+            if (string.IsNullOrEmpty(s))
             {
                 return "";
-            }
-
-            if (s == string.Empty)
-            {
-                return s;
             }
 
             int lineBreak = s.IndexOfAny(s_lineBreakChars);
