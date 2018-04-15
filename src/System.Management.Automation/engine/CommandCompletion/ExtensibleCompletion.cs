@@ -207,4 +207,168 @@ namespace System.Management.Automation
             }
         }
     }
+
+
+    /// <summary>
+    ///     Base class for writing custom Argument Completers
+    /// </summary>
+    /// <para>Derived classes should override <see cref="AddCompletionsFor(string,string,IDictionary)"/> </para>
+    public abstract class ArgumentCompleterBase : IArgumentCompleter
+    {
+        private List<CompletionResult> _results;
+
+        /// <summary>
+        ///     The word to complete
+        /// </summary>
+        protected string WordToComplete { get; private set; }
+
+        /// <summary>
+        ///     The Command Ast for the command to complete
+        /// </summary>
+        protected CommandAst CommandAst { get; private set; }
+
+        private List<CompletionResult> Results => _results ?? (_results = new List<CompletionResult>());
+
+        IEnumerable<CompletionResult> IArgumentCompleter.CompleteArgument(string commandName, string parameterName,
+            string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
+        {
+            WordToComplete = wordToComplete;
+            CommandAst = commandAst;
+            AddCompletionsFor(commandName, parameterName, fakeBoundParameters);
+            return _results;
+        }
+
+        /// <summary>
+        ///     Override in child class to add completions by calling <see ref="CompleteWith"/>
+        /// </summary>
+        /// <param name="commandName">the command to complete parameters for</param>
+        /// <param name="parameterName">the parameter to complete</param>
+        /// <param name="fakeBoundParameters">previously specified command parameters</param>
+        protected abstract void AddCompletionsFor(string commandName, string parameterName, IDictionary fakeBoundParameters);
+
+        /// <summary>
+        ///     Adds a completion result to the result set
+        /// </summary>
+        /// <param name="completionResult">the completion result to add</param>
+        protected void CompleteWith(CompletionResult completionResult)
+            => Results.Add(item: completionResult);
+
+        /// <summary>
+        ///     Adds a completion result to the result set with the specified parameters
+        /// </summary>
+        /// <param name="text">the text to be used as the auto completion result</param>
+        /// <param name="listItemText">the text to be displayed in a list</param>
+        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="resultType">the type of completion result</param>
+        protected void CompleteWith(string text, string listItemText = null, string toolTip = null,
+            CompletionResultType resultType = CompletionResultType.ParameterValue)
+        {
+            var quotedText = QuoteIfSpace(text: text);
+            var completionResult = new CompletionResult(completionText: quotedText, listItemText: listItemText ?? text,
+                resultType: resultType, toolTip: toolTip ?? text);
+            Results.Add(item: completionResult);
+        }
+
+        /// <summary>
+        ///     Adds a completion result to the result set if the text starts with <see cref="WordToComplete" />
+        /// </summary>
+        /// <para>The comparison is case insensitive</para>
+        /// <param name="text">the text to be used as the auto completion result</param>
+        /// <param name="listItemText">the text to be displayed in a list</param>
+        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="resultType">the type of completion result</param>
+        protected void CompleteWithIfTextStartsWithWordToComplete(string text, string listItemText = null,
+            string toolTip = null, CompletionResultType resultType = CompletionResultType.ParameterValue)
+        {
+            if (StartWithWordToComplete(text: text))
+                CompleteWith(text: text, listItemText: listItemText ?? text, toolTip: toolTip ?? text,
+                    resultType: resultType);
+        }
+
+        /// <summary>
+        ///     Adds a completion result to the result set if the any string argument starts with <see cref="WordToComplete" />
+        /// </summary>
+        /// <para>The comparison is case insensitive</para>
+        /// <param name="text">the text to be used as the auto completion result</param>
+        /// <param name="listItemText">the text to be displayed in a list</param>
+        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="resultType">the type of completion result</param>
+        protected void CompleteWithIfAnyStartsWithWordToComplete(string text, string listItemText = null,
+            string toolTip = null, CompletionResultType resultType = CompletionResultType.ParameterValue)
+        {
+            if (StartWithWordToComplete(text: text) || StartWithWordToComplete(listItemText) || StartWithWordToComplete(toolTip))
+                CompleteWith(text: text, listItemText: listItemText ?? text, toolTip: toolTip ?? text,
+                    resultType: resultType);
+        }
+
+
+        /// <summary>
+        ///     Adds a completion result to the result set if the any string argument starts with <see cref="WordToComplete" />
+        /// </summary>
+        /// <para>The comparison is case insensitive</para>
+        /// <param name="text">the text to be used as the auto completion result</param>
+        /// <param name="listItemText">the text to be displayed in a list</param>
+        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="resultType">the type of completion result</param>
+        protected void CompleteWithIfAnyContainsWordToComplete(string text, string listItemText = null,
+            string toolTip = null, CompletionResultType resultType = CompletionResultType.ParameterValue)
+        {
+            if (ContainsWordToComplete(text) || ContainsWordToComplete(listItemText) || ContainsWordToComplete(toolTip))
+                CompleteWith(text: text, listItemText: listItemText ?? text, toolTip: toolTip ?? text,
+                    resultType: resultType);
+        }
+
+        /// <summary>
+        ///     Adds a completion result to the result set if the text contains <see cref="WordToComplete" />
+        /// </summary>
+        /// <para>The comparison is case insensitive</para>
+        /// <param name="text">the text to be used as the auto completion result</param>
+        /// <param name="listItemText">the text to be displayed in a list</param>
+        /// <param name="toolTip">the text for the tooltip with details to be displayed about the object</param>
+        /// <param name="resultType">the type of completion result</param>
+        protected void CompleteWithIfTextContainsWordToComplete(string text, string listItemText = null,
+            string toolTip = null, CompletionResultType resultType = CompletionResultType.ParameterValue)
+        {
+            if (ContainsWordToComplete(text))
+                CompleteWith(text: text, listItemText: listItemText ?? text, toolTip: toolTip ?? text,
+                    resultType: resultType);
+        }
+
+        private static string QuoteIfSpace(string text)
+            => text.Contains(" ") ? $@"""{text}""" : text;
+
+        /// <summary>
+        ///     Predicate to test if a string starts with <see cref="WordToComplete" />
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns>true if the text contains <see cref="WordToComplete" />, otherwise false</returns>
+        protected bool StartWithWordToComplete(string text)
+            => text.StartsWith(value: WordToComplete, comparisonType: StringComparison.CurrentCultureIgnoreCase);
+
+        /// <summary>
+        ///     Predicate to test if a string starts with <see cref="WordToComplete" />
+        /// </summary>
+        /// <param name="text">the text to test</param>
+        /// <param name="stringComparison">The StringComparison to use when comparing</param>
+        /// <returns>true if the text contains <see cref="WordToComplete" />, otherwise false</returns>
+        protected bool StartWithWordToComplete(string text, StringComparison stringComparison)
+            => text.StartsWith(value: WordToComplete, comparisonType: stringComparison);
+
+        /// <summary>
+        ///     Predicate to test if a string starts with <see cref="WordToComplete" />
+        /// </summary>
+        /// <param name="text">the text to test</param>
+        /// <returns>true if the text contains <see cref="WordToComplete" />, otherwise false</returns>
+        protected bool ContainsWordToComplete(string text)
+            => text.IndexOf(value: WordToComplete, comparisonType: StringComparison.CurrentCultureIgnoreCase) != -1;
+
+        /// <summary>
+        ///     Predicate to test if a string contains <see cref="WordToComplete" />
+        /// </summary>
+        /// <param name="text">the text to test</param>
+        /// <param name="stringComparison">The StringComparison to use when comparing</param>
+        /// <returns>true if the text contains <see cref="WordToComplete" />, otherwise false</returns>
+        protected bool ContainsWordToComplete(string text, StringComparison stringComparison)
+            => text.IndexOf(value: WordToComplete, comparisonType: stringComparison) != -1;
+    }
 }
