@@ -6,17 +6,17 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         It "Should return a format object data type" {
-                $val = (Get-Date | Format-Table | Get-Member )
-                $val2 = (Get-Date | Format-Table | Get-Member )
+                $val = Get-Date | Format-Table | Get-Member
+                $val2 = Get-Date | Format-Table | Get-Member
 
                 $val.TypeName | Should -Match "Microsoft.Powershell.Commands.Internal.Format"
                 $val2.TypeName | Should -Match "Microsoft.Powershell.Commands.Internal.Format"
         }
 
         It "Should be able to be called with optional parameters" {
-                $v1 = (Get-Date | Format-Table *)
-                $v2 = (Get-Date | Format-Table -Property Hour)
-                $v3 = (Get-Date | Format-Table -GroupBy Hour)
+                $v1 = Get-Date | Format-Table *
+                $v2 = Get-Date | Format-Table -Property Hour
+                $v3 = Get-Date | Format-Table -GroupBy Hour
         }
 
         It "Format-Table with not existing table with force should throw PipelineStoppedException"{
@@ -30,14 +30,14 @@ Describe "Format-Table" -Tags "CI" {
                 $al = (0..255)
                 $info = @{}
                 $info.array = $al
-                $result = $info|Format-Table|Out-String
+                $result = $info | Format-Table | Out-String
                 $result | Should -Match "array\s+{0, 1, 2, 3...}"
         }
 
         It "Format-Table with Negative Count should work" {
                 $FormatEnumerationLimit = -1
                 $result = Format-Table -inputobject @{'test'= 1, 2}
-                $resultStr = $result|Out-String
+                $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
 
@@ -45,28 +45,28 @@ Describe "Format-Table" -Tags "CI" {
         It "Format-Table with Zero Count should work" -Pending {
                 $FormatEnumerationLimit = 0
                 $result = Format-Table -inputobject @{'test'= 1, 2}
-                $resultStr = $result|Out-String
+                $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{...}"
         }
 
         It "Format-Table with Less Count should work" {
                 $FormatEnumerationLimit = 1
                 $result = Format-Table -inputobject @{'test'= 1, 2}
-                $resultStr = $result|Out-String
+                $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1...}"
         }
 
         It "Format-Table with More Count should work" {
                 $FormatEnumerationLimit = 10
                 $result = Format-Table -inputobject @{'test'= 1, 2}
-                $resultStr = $result|Out-String
+                $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
 
         It "Format-Table with Equal Count should work" {
                 $FormatEnumerationLimit = 2
                 $result = Format-Table -inputobject @{'test'= 1, 2}
-                $resultStr = $result|Out-String
+                $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
 
@@ -83,14 +83,14 @@ Describe "Format-Table" -Tags "CI" {
                 $FormatEnumerationLimit = 2
                 Remove-Variable FormatEnumerationLimit
                 $result = Format-Table -inputobject @{'test'= 1, 2}
-                $resultStr = $result|Out-String
+                $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
 
         It "Format-Table with new line should work" {
                 $info = @{}
                 $info.name = "1\n2"
-                $result = $info|Format-Table|Out-String
+                $result = $info | Format-Table | Out-String
                 $result | Should -Match "name\s+1.+2"
         }
 
@@ -102,7 +102,7 @@ Describe "Format-Table" -Tags "CI" {
                 $IPs.Add($IP2)
                 $info = @{}
                 $info.test = $IPs
-                $result = $info|Format-Table|Out-String
+                $result = $info | Format-Table | Out-String
                 $result | Should -Match "test\s+{1.1.1.1, 4fde::2:22:f376:ff3b:ab3f}"
         }
 
@@ -112,7 +112,7 @@ Describe "Format-Table" -Tags "CI" {
                 $IPs = New-Object System.Collections.ArrayList
                 $IPs.Add($IP1)
                 $IPs.Add($IP2)
-                $result = $IPs|Format-Table -Autosize|Out-String
+                $result = $IPs | Format-Table -Autosize | Out-String
                 $result | Should -Match "name size booleanValue"
                 $result | Should -Match "---- ---- ------------"
                 $result | Should -Match "Bob\s+1234\s+True"
