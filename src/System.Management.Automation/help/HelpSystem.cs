@@ -474,7 +474,7 @@ namespace System.Management.Automation
 
             try
             {
-                OnProgress(this, progress);
+                OnProgress?.Invoke(this, progress);
 
                 // algorithm:
                 // 1. Search for pattern (helpRequest.Target) in command name
@@ -526,7 +526,7 @@ namespace System.Management.Automation
                     if (this.HelpProviders.Count > 0)
                     {
                         progress.PercentComplete += (100 / this.HelpProviders.Count);
-                        OnProgress(this, progress);
+                        OnProgress?.Invoke(this, progress);
                     }
                 } while (!shouldBreak);
             }
@@ -535,7 +535,7 @@ namespace System.Management.Automation
                 progress.Completed = true;
                 progress.PercentComplete = 100;
 
-                OnProgress(this, progress);
+                OnProgress?.Invoke(this, progress);
             }
         }
 
