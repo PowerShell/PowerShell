@@ -992,7 +992,7 @@ function Start-PSPester {
         [switch]$IncludeFailingTest
     )
 
-    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | where { $_.Version -ge "4.2" } ))
+    if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where { $_.Version -ge "4.2" } ))
     {
         Write-Warning @"
 Pester module not found.
