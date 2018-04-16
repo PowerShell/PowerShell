@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -5327,7 +5328,7 @@ namespace Microsoft.PowerShell.Commands
         /// Load a module from a file...
         /// </summary>
         /// <param name="parentModule">The parent module, if any</param>
-        /// <param name="fileName">The resolved path to load the module from</param>
+        /// <param name="filePath">The resolved path to load the module from</param>
         /// <param name="moduleBase">The module base path to use for this module</param>
         /// <param name="prefix">Command name prefix</param>
         /// <param name="ss">The session state instance to use for this module - may be null in which case a session state will be allocated if necessary</param>
@@ -5337,13 +5338,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="found">True if a module was found</param>
         /// <param name="moduleFileFound">True if a module file was found</param>
         /// <returns>True if the module was successfully loaded</returns>
-        internal PSModuleInfo LoadModule(PSModuleInfo parentModule, string fileName, string moduleBase, string prefix,
+        internal PSModuleInfo LoadModule(PSModuleInfo parentModule, string filePath, string moduleBase, string prefix,
             SessionState ss, object privateData, ref ImportModuleOptions options,
             ManifestProcessingFlags manifestProcessingFlags, out bool found, out bool moduleFileFound)
         {
-            Dbg.Assert(fileName != null, "Filename argument to LoadModule() shouldn't be null");
+            Dbg.Assert(filePath != null, "Filename argument to LoadModule() shouldn't be null");
 
-            if (!Utils.NativeFileExists(fileName))
+            if (!Utils.NativeFileExists(filePath))
             {
                 found = false;
                 moduleFileFound = false;
@@ -5355,13 +5356,13 @@ namespace Microsoft.PowerShell.Commands
 
             // In case the file is a Ngen Assembly.
             string ext;
-            if (fileName.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            if (filePath.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
             {
                 ext = StringLiterals.PowerShellNgenAssemblyExtension;
             }
             else
             {
-                ext = Path.GetExtension(fileName);
+                ext = Path.GetExtension(filePath);
             }
             PSModuleInfo module = null;
 
@@ -5378,7 +5379,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the module is in memory and the versions don't match don't return it.
                 // This will allow the search to continue and load a different version of the module.
-                if (Context.Modules.ModuleTable.TryGetValue(fileName, out module))
+                if (Context.Modules.ModuleTable.TryGetValue(filePath, out module))
                 {
                     if (BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
                     {
@@ -5401,9 +5402,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Set the name of the module currently being processed...
                 Context.PreviousModuleProcessed = Context.ModuleBeingProcessed;
-                Context.ModuleBeingProcessed = fileName;
+                Context.ModuleBeingProcessed = filePath;
 
-                string message = StringUtil.Format(Modules.LoadingModule, fileName);
+                string message = StringUtil.Format(Modules.LoadingModule, filePath);
                 WriteVerbose(message);
 
                 moduleFileFound = true;
@@ -5417,13 +5418,13 @@ namespace Microsoft.PowerShell.Commands
                         if (shouldProcessModule)
                         {
                             bool force = (manifestProcessingFlags & ManifestProcessingFlags.Force) == ManifestProcessingFlags.Force;
-                            module = AnalyzeScriptFile(fileName, force, Context);
+                            module = AnalyzeScriptFile(filePath, force, Context);
                             found = true;
                         }
                     }
                     else
                     {
-                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
                         try
                         {
                             Context.Modules.IncrementModuleNestingDepth(this, scriptInfo.Path);
@@ -5431,7 +5432,7 @@ namespace Microsoft.PowerShell.Commands
                             // Create the module object...
                             try
                             {
-                                module = Context.Modules.CreateModule(fileName, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
+                                module = Context.Modules.CreateModule(filePath, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
 
                                 SetModuleLoggingInformation(module);
@@ -5492,7 +5493,7 @@ namespace Microsoft.PowerShell.Commands
                         if (shouldProcessModule)
                         {
                             bool force = (manifestProcessingFlags & ManifestProcessingFlags.Force) == ManifestProcessingFlags.Force;
-                            module = AnalyzeScriptFile(fileName, force, Context);
+                            module = AnalyzeScriptFile(filePath, force, Context);
                             found = true;
                         }
                     }
@@ -5503,11 +5504,11 @@ namespace Microsoft.PowerShell.Commands
                         // Removing the module will not remove the commands dot-sourced from the .ps1 file.
                         // This module info is created so that we can keep the behavior consistent between scripts imported as modules and other kind of modules(all of them should have a PSModuleInfo).
                         // Auto-loading expects we always have a PSModuleInfo object for any module. This is how this issue was found.
-                        module = new PSModuleInfo(ModuleIntrinsics.GetModuleName(fileName), fileName, Context, ss);
+                        module = new PSModuleInfo(ModuleIntrinsics.GetModuleName(filePath), filePath, Context, ss);
 
-                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
 
-                        message = StringUtil.Format(Modules.DottingScriptFile, fileName);
+                        message = StringUtil.Format(Modules.DottingScriptFile, filePath);
                         WriteVerbose(message);
 
                         try
@@ -5583,7 +5584,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ext.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                    scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
                     found = true;
                     Dbg.Assert(scriptInfo != null, "Scriptinfo for module manifest (.psd1) can't be null");
                     module = LoadModuleManifest(
@@ -5615,7 +5616,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ext.Equals(".dll", StringComparison.OrdinalIgnoreCase) || ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension))
                 {
-                    module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(fileName), fileName, null,
+                    module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(filePath), filePath, null,
                         moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);
                     if (found && module != null)
                     {
@@ -5627,7 +5628,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (BaseAsCustomObject)
                         {
-                            message = StringUtil.Format(Modules.CantUseAsCustomObjectWithBinaryModule, fileName);
+                            message = StringUtil.Format(Modules.CantUseAsCustomObjectWithBinaryModule, filePath);
                             InvalidOperationException invalidOp = new InvalidOperationException(message);
                             ErrorRecord er = new ErrorRecord(invalidOp, "Modules_CantUseAsCustomObjectWithBinaryModule",
                                 ErrorCategory.PermissionDenied, null);
@@ -5646,8 +5647,8 @@ namespace Microsoft.PowerShell.Commands
                     // Create the module object...
                     try
                     {
-                        string moduleName = ModuleIntrinsics.GetModuleName(fileName);
-                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
+                        string moduleName = ModuleIntrinsics.GetModuleName(filePath);
+                        scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
 
                         try
                         {
@@ -5663,7 +5664,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (!importingModule)
                             {
-                                module = new PSModuleInfo(fileName, null, null);
+                                module = new PSModuleInfo(filePath, null, null);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
                             }
@@ -5677,7 +5678,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 // proceed with regular module import
                                 List<object> results;
-                                module = Context.Modules.CreateModule(moduleName, fileName, sb, ss, out results, BaseArgumentList);
+                                module = Context.Modules.CreateModule(moduleName, filePath, sb, ss, out results, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
@@ -5692,7 +5693,7 @@ namespace Microsoft.PowerShell.Commands
                             string xmlErrorMessage = string.Format(
                                 CultureInfo.InvariantCulture, // file name is culture agnostic, we want to copy exception message verbatim
                                 CmdletizationCoreResources.ExportCimCommand_ErrorInCmdletizationXmlFile,
-                                fileName,
+                                filePath,
                                 e.Message);
                             throw new XmlException(xmlErrorMessage, e);
                         }
@@ -5720,7 +5721,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (ext.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     found = true;
-                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, fileName);
+                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, filePath);
                     WriteError(new ErrorRecord(
                                    new NotSupportedException(message),
                                    "Modules_WorkflowModuleNotSupported",
@@ -5729,7 +5730,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     found = true;
-                    message = StringUtil.Format(Modules.InvalidModuleExtension, ext, fileName);
+                    message = StringUtil.Format(Modules.InvalidModuleExtension, ext, filePath);
                     InvalidOperationException invalidOp = new InvalidOperationException(message);
                     ErrorRecord er = new ErrorRecord(invalidOp, "Modules_InvalidModuleExtension",
                         ErrorCategory.InvalidOperation, null);
@@ -5747,7 +5748,7 @@ namespace Microsoft.PowerShell.Commands
             if (PSModuleInfo.UseAppDomainLevelModuleCache && module != null && moduleBase == null && this.AddToAppDomainLevelCache)
             {
                 // Cache using the actual name specified by the user rather than the module basename
-                PSModuleInfo.AddToAppDomainLevelModuleCache(module.Name, fileName, this.BaseForce);
+                PSModuleInfo.AddToAppDomainLevelModuleCache(module.Name, filePath, this.BaseForce);
             }
 
             return module;
@@ -5782,20 +5783,15 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static object s_lockObject = new object();
-
         private void ClearAnalysisCaches()
         {
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.Clear();
-                s_scriptAnalysisCache.Clear();
-            }
+            s_binaryAnalysisCache.Clear();
+            s_scriptAnalysisCache.Clear();
         }
 
         // Analyzes a binary module implementation for its cmdlets.
-        private static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
-            new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
+        private static ConcurrentDictionary<string, BinaryModuleCacheEntry> s_binaryAnalysisCache =
+            new ConcurrentDictionary<string, BinaryModuleCacheEntry>();
 
 #if CORECLR
         /// <summary>
@@ -5807,17 +5803,26 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private static BinaryAnalysisResult GetCmdletsFromBinaryModuleImplementation(string path, ManifestProcessingFlags manifestProcessingFlags, out Version assemblyVersion)
         {
-            Tuple<BinaryAnalysisResult, Version> tuple;
+            BinaryModuleCacheEntry cacheEntry;
 
-            lock (s_lockObject)
+            s_binaryAnalysisCache.TryGetValue(path, out cacheEntry);
+
+            // Check if the DLL file has changed since last caching
+            DateTime lastFileWriteTime = DateTime.MinValue;
+            try
             {
-                s_binaryAnalysisCache.TryGetValue(path, out tuple);
+                lastFileWriteTime = new FileInfo(path).LastWriteTimeUtc;
+            }
+            catch (Exception e)
+            {
+                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTime on module {0}: {1}", path, e.Message);
             }
 
-            if (tuple != null)
+            // If the cache entry is up to date, use that
+            if (cacheEntry != null && cacheEntry.LastFileWriteTime == lastFileWriteTime)
             {
-                assemblyVersion = tuple.Item2;
-                return tuple.Item1;
+                assemblyVersion = cacheEntry.AssemblyVersion;
+                return cacheEntry.BinaryAnalysisResult;
             }
 
             BinaryAnalysisResult analysisResult = PowerShellModuleAssemblyAnalyzer.AnalyzeModuleAssembly(path, out assemblyVersion);
@@ -5830,10 +5835,7 @@ namespace Microsoft.PowerShell.Commands
 
             var resultToReturn = analysisResult ?? new BinaryAnalysisResult();
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache[path] = Tuple.Create(resultToReturn, assemblyVersion);
-            }
+            s_binaryAnalysisCache[path] = new BinaryModuleCacheEntry(lastFileWriteTime, assemblyVersion, analysisResult);
 
             return resultToReturn;
         }
@@ -5987,28 +5989,39 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         // Analyzes a script module implementation for its exports.
-        private static Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
+        private static ConcurrentDictionary<string, ScriptModuleCacheEntry> s_scriptAnalysisCache =
+            new ConcurrentDictionary<string, ScriptModuleCacheEntry>();
 
-        private PSModuleInfo AnalyzeScriptFile(string filename, bool force, ExecutionContext context)
+        private PSModuleInfo AnalyzeScriptFile(string filePath, bool force, ExecutionContext context)
         {
-            // We need to return a cloned version here.
-            // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
-            PSModuleInfo module = null;
+            ScriptModuleCacheEntry cacheEntry;
+            s_scriptAnalysisCache.TryGetValue(filePath, out cacheEntry);
 
-            lock (s_lockObject)
+            // Get the module file's last write time
+            DateTime lastFileWriteTime = DateTime.MinValue;
+            try
             {
-                s_scriptAnalysisCache.TryGetValue(filename, out module);
+                lastFileWriteTime = new FileInfo(filePath).LastWriteTimeUtc;
+            }
+            catch (Exception e)
+            {
+                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTime on module {0}: {1}", filePath, e.Message);
             }
 
-            if (module != null)
-                return module.Clone();
+            // If the cache is up to date, return its value
+            if (cacheEntry != null && cacheEntry.LastFileWriteTime == lastFileWriteTime)
+            {
+                // We need to return a cloned module info.
+                // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
+                return cacheEntry.ModuleInfo.Clone();
+            }
 
             // fake/empty manifestInfo for processing in (!loadElements) mode
-            module = new PSModuleInfo(filename, null, null);
+            var module = new PSModuleInfo(filePath, null, null);
 
             if (!force)
             {
-                var exportedCommands = AnalysisCache.GetExportedCommands(filename, true, context);
+                var exportedCommands = AnalysisCache.GetExportedCommands(filePath, true, context);
 
                 // If we have this info cached, return from the cache.
                 if (exportedCommands != null)
@@ -6036,17 +6049,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    lock (s_lockObject)
-                    {
-                        s_scriptAnalysisCache[filename] = module;
-                    }
+                    s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTime, module);
 
                     return module;
                 }
             }
 
             // We don't have this cached, analyze the file.
-            var scriptAnalysis = ScriptAnalysis.Analyze(filename, context);
+            var scriptAnalysis = ScriptAnalysis.Analyze(filePath, context);
 
             if (scriptAnalysis == null)
             {
@@ -6088,7 +6098,7 @@ namespace Microsoft.PowerShell.Commands
             // Add any files in PsScriptRoot if it added itself to the path
             if (scriptAnalysis.AddsSelfToPath)
             {
-                string baseDirectory = System.IO.Path.GetDirectoryName(filename);
+                string baseDirectory = System.IO.Path.GetDirectoryName(filePath);
 
                 try
                 {
@@ -6115,7 +6125,7 @@ namespace Microsoft.PowerShell.Commands
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {
-                    string moduleDirectory = System.IO.Path.GetDirectoryName(filename);
+                    string moduleDirectory = System.IO.Path.GetDirectoryName(filePath);
                     moduleToProcess = Path.Combine(moduleDirectory, moduleToProcess);
 
                     PSModuleInfo fileBasedModule = CreateModuleInfoForGetModule(moduleToProcess, true);
@@ -6189,10 +6199,7 @@ namespace Microsoft.PowerShell.Commands
                 ModuleIntrinsics.Tracer.WriteLine("Caching skipped for {0} because it had errors while loading.", module.Name);
             }
 
-            lock (s_lockObject)
-            {
-                s_scriptAnalysisCache[filename] = module;
-            }
+            s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTime, module);
 
             return module;
         }
@@ -6841,7 +6848,9 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (sourceModule == null)
-                throw PSTraceSource.NewArgumentNullException("sourceModule");
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(sourceModule));
+            }
 
             bool isImportModulePrivate = cmdlet.CommandInfo.Visibility == SessionStateEntryVisibility.Private ||
                 targetSessionState.DefaultCommandVisibility == SessionStateEntryVisibility.Private;
@@ -7252,6 +7261,58 @@ namespace Microsoft.PowerShell.Commands
 
             return null;
         }
+
+        /// <summary>
+        /// Entry to record script module analysis in the cache
+        /// </summary>
+        private class ScriptModuleCacheEntry
+        {
+            public ScriptModuleCacheEntry(DateTime lastFileWriteTime, PSModuleInfo moduleInfo)
+            {
+                LastFileWriteTime = lastFileWriteTime;
+                ModuleInfo = moduleInfo;
+            }
+
+            /// <summary>
+            /// The last write time of script file defining the module
+            /// </summary>
+            public DateTime LastFileWriteTime { get; }
+
+            /// <summary>
+            /// The module info describing the analyzed module
+            /// </summary>
+            /// <returns></returns>
+            public PSModuleInfo ModuleInfo { get; }
+        }
+
+        /// <summary>
+        /// Entry to record assembly module analysis in the cache
+        /// </summary>
+        private class BinaryModuleCacheEntry
+        {
+            public BinaryModuleCacheEntry(DateTime lastFileWriteTime, Version assemblyVersion, BinaryAnalysisResult binaryAnalysisResult)
+            {
+                LastFileWriteTime = lastFileWriteTime;
+                AssemblyVersion = assemblyVersion;
+                BinaryAnalysisResult = binaryAnalysisResult;
+            }
+
+            /// <summary>
+            /// The last time the DLL containing the binary module was written when analyzed
+            /// </summary>
+            public DateTime LastFileWriteTime { get; }
+
+            /// <summary>
+            /// The version of the assembly loaded
+            /// </summary>
+            public Version AssemblyVersion { get; }
+
+            /// <summary>
+            /// The binary analysis result when the module was analyzed
+            /// </summary>
+            public BinaryAnalysisResult BinaryAnalysisResult { get; }
+        }
+
     } // end ModuleCmdletBase
 
     /// <summary>
