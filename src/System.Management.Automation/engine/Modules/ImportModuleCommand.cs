@@ -411,6 +411,15 @@ namespace Microsoft.PowerShell.Commands
                     if (Context.Modules.ModuleTable.TryGetValue(module.Path, out moduleToRemove))
                     {
                         Dbg.Assert(BaseForce, "We should only remove and reload if -Force was specified");
+
+                        // First we want to remove any nested modules
+                        foreach (PSModuleInfo nestedModule in moduleToRemove.NestedModules)
+                        {
+                            // Note that RemoveModule() checks if the nested module is loaded at the top level
+                            // and will not unload it if so.
+                            RemoveModule(nestedModule);
+                        }
+
                         RemoveModule(moduleToRemove);
                     }
 
