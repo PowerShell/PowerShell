@@ -940,6 +940,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 TableFormattingHint tableHint = this.InnerCommand.RetrieveFormattingHint() as TableFormattingHint;
                 int[] columnWidthsHint = null;
+                // We expect that console width is less then 120.
+                const int columnsThresHold = 120;
 
                 if (tableHint != null)
                 {
@@ -955,10 +957,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // create arrays for widths and alignment
-                Span<int> columnWidths = stackalloc int[columns];
-                Span<int> alignment = stackalloc int[columns];
-                int k = 0;
+                Span<int> columnWidths = columns < columnsThresHold ? stackalloc int[columns] : new int[columns];
+                Span<int> alignment = columns < columnsThresHold ? stackalloc int[columns] : new int[columns];
 
+                int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
                 {
                     columnWidths[k] = (columnWidthsHint != null) ? columnWidthsHint[k] : tci.width;
