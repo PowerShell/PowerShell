@@ -5835,7 +5835,7 @@ namespace Microsoft.PowerShell.Commands
 
             var resultToReturn = analysisResult ?? new BinaryAnalysisResult();
 
-            s_binaryAnalysisCache[path] = new BinaryModuleCacheEntry(lastFileWriteTime, assemblyVersion, analysisResult);
+            s_binaryAnalysisCache[path] = new BinaryModuleCacheEntry(lastFileWriteTime, assemblyVersion, resultToReturn);
 
             return resultToReturn;
         }
