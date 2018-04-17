@@ -79,7 +79,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Verify Rename-Item will not rename to an existing name" {
-            { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | ShouldBeErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
+            { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | Should -Throw -ErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
             $Error[0].Exception | Should -BeOfType System.IO.IOException
             $testFile | Should -Exist
         }
@@ -108,7 +108,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Verify Move-Item will not move to an existing file" {
-            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | ShouldBeErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
             $Error[0].Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
         }
@@ -157,21 +157,21 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
          It "Copy-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
              foreach ($deviceName in $reservedNames)
              {
-                { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+                { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
              }
          }
 
          It "Move-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
              foreach ($deviceName in $reservedNames)
              {
-                { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | ShouldBeErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
+                { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
              }
          }
 
          It "Rename-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
              foreach ($deviceName in $reservedNames)
              {
-                { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | ShouldBeErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
+                { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | Should -Throw -ErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
              }
          }
 
@@ -399,7 +399,7 @@ Describe "Handling of globbing patterns" -Tags "CI" {
 
     Context "Handle asterisks in name" {
         It "Remove-Item -LiteralPath should fail if it contains asterisk and file doesn't exist" {
-            { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
+            { Remove-Item -LiteralPath ./foo*.txt -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.RemoveItemCommand"
         }
 
         It "Remove-Item -LiteralPath should succeed for file with asterisk in name" -Skip:($IsWindows) {
@@ -473,7 +473,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link.Target | Should -Be $nonFile
         }
         It "New-Item emits an error when path to symbolic link already exists." {
-            { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | ShouldBeErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
+            { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | Should -Throw -ErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
         }
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
@@ -720,7 +720,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
             }
             else
             {
-                { Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+                { Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
                 $Error[0].Exception | Should -BeOfType System.IO.IOException
                 $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
@@ -783,7 +783,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                     [string]$Destination
                 )
 
-                { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+                { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
                 $Error[0].Exception | Should -BeOfType System.IO.IOException
                 $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
@@ -939,7 +939,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         It "Verify -LiteralPath with wildcard fails for file that doesn't exist" {
-            { Get-Item -LiteralPath "a*b.txt" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+            { Get-Item -LiteralPath "a*b.txt" -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify -LiteralPath with wildcard succeeds for file" -Skip:($IsWindows) {
