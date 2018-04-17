@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Assert(pList.Value != null, "There should never be a null list of entries in the provider table");
                     foreach (ProviderInfo pInfo in pList.Value)
                     {
-                        string implTypeAssemblyLocation = pInfo.ImplementingType.GetTypeInfo().Assembly.Location;
+                        string implTypeAssemblyLocation = pInfo.ImplementingType.Assembly.Location;
                         if (implTypeAssemblyLocation.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                         {
                             foreach (PSDriveInfo dInfo in Context.TopLevelSessionState.GetDrivesForProvider(pInfo.FullName))

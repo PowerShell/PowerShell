@@ -153,10 +153,9 @@ namespace System.Management.Automation
             if (type == null)
                 type = typeof(object);
 
-            var typeInfo = type.GetTypeInfo();
-            var elementType = typeInfo.IsArray ? typeInfo.GetElementType() : type;
+            var elementType = type.IsArray ? type.GetElementType() : type;
 
-            if (elementType.GetTypeInfo().IsEnum)
+            if (elementType.IsEnum)
             {
                 XmlElement parameterValueGroup = _doc.CreateElement("command:parameterValueGroup", commandURI);
                 foreach (string valueName in Enum.GetNames(elementType))

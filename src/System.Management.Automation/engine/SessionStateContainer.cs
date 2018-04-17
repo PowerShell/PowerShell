@@ -2285,7 +2285,7 @@ namespace System.Management.Automation
             {
                 mi = providerType.GetMethod("GetChildItemsDynamicParameters",
                  BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-                providerType = providerType.GetTypeInfo().BaseType;
+                providerType = providerType.BaseType;
             } while (
                 (mi == null) &&
                 (providerType != null) &&

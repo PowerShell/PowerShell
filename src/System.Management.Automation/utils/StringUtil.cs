@@ -81,6 +81,24 @@ namespace System.Management.Automation.Internal
 
             return result;
         }
+
+        private const int DashCacheMax = 120;
+        private static readonly string[] DashCache = new string[DashCacheMax];
+        internal static string DashPadding(int count)
+        {
+            if (count >= DashCacheMax)
+                return new string('-', count);
+
+            var result = DashCache[count];
+
+            if (result == null)
+            {
+                Interlocked.CompareExchange(ref DashCache[count], new string('-', count), null);
+                result = DashCache[count];
+            }
+
+            return result;
+        }
     }
 }   // namespace
 

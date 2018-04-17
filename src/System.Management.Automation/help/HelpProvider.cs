@@ -214,7 +214,7 @@ namespace System.Management.Automation
         internal void ReportHelpFileError(Exception exception, string target, string helpFile)
         {
             ErrorRecord errorRecord = new ErrorRecord(exception, "LoadHelpFileForTargetFailed", ErrorCategory.OpenError, null);
-            errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpProvider).GetTypeInfo().Assembly, "HelpErrors", "LoadHelpFileForTargetFailed", target, helpFile, exception.Message);
+            errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpProvider).Assembly, "HelpErrors", "LoadHelpFileForTargetFailed", target, helpFile, exception.Message);
             this.HelpSystem.LastErrors.Add(errorRecord);
             return;
         }

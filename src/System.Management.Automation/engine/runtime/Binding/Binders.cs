@@ -1993,8 +1993,7 @@ namespace System.Management.Automation.Language
 
         internal static bool IsValueTypeMutable(Type type)
         {
-            TypeInfo typeInfo = type.GetTypeInfo();
-            if (typeInfo.IsPrimitive || typeInfo.IsEnum)
+            if (type.IsPrimitive || type.IsEnum)
             {
                 return false;
             }
@@ -5232,20 +5231,19 @@ namespace System.Management.Automation.Language
             }
 
             var type = castToType ?? ((value != null) ? value.GetType() : typeof(object));
-#if CORECLR
-            var typeInfo = type.GetTypeInfo();
+
             // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection methods on the public parent.
-            if (!TypeResolver.IsPublic(typeInfo) && DotNetAdapter.DisallowPrivateReflection(typeInfo))
+            if (!TypeResolver.IsPublic(type) && DotNetAdapter.DisallowPrivateReflection(type))
             {
-                var publicType = DotNetAdapter.GetFirstPublicParentType(typeInfo);
+                var publicType = DotNetAdapter.GetFirstPublicParentType(type);
                 if (publicType != null)
                 {
                     type = publicType;
                 }
                 // else we'll probably fail, but the error message might be more helpful than NullReferenceException
             }
-#endif
+
             if (expr.Type != type)
             {
                 // Unbox value types (or use Nullable<T>.Value) to avoid a copy in case the value is mutated.
@@ -7262,8 +7260,7 @@ namespace System.Management.Automation.Language
             var instanceType = targetValue as Type ?? targetValue.GetType();
 
             BindingRestrictions restrictions;
-            TypeInfo instanceTypeInfo = instanceType.GetTypeInfo();
-            if (_publicTypeOnly && !TypeResolver.IsPublic(instanceTypeInfo))
+            if (_publicTypeOnly && !TypeResolver.IsPublic(instanceType))
             {
                 // If 'publicTypeOnly' specified, we only support creating instance for public types.
                 restrictions = BindingRestrictions.GetExpressionRestriction(
@@ -7282,7 +7279,7 @@ namespace System.Management.Automation.Language
                                      : BindingRestrictions.GetInstanceRestriction(target.Expression, instanceType)
                                : target.PSGetTypeRestriction();
             restrictions = restrictions.Merge(BinderUtils.GetOptionalVersionAndLanguageCheckForType(this, instanceType, _version));
-            if (ctors.Length == 0 && _callInfo.ArgumentCount == 0 && instanceTypeInfo.IsValueType)
+            if (ctors.Length == 0 && _callInfo.ArgumentCount == 0 && instanceType.IsValueType)
             {
                 // No ctors, just call the default ctor
                 return new DynamicMetaObject(Expression.New(instanceType).Cast(this.ReturnType), restrictions).WriteToDebugLog(this);

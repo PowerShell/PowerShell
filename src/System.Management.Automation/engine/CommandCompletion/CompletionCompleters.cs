@@ -782,7 +782,7 @@ namespace System.Management.Automation
 
         private static string GetOperatorDescription(string op)
         {
-            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly,
+            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
                                                           "System.Management.Automation.resources.TabCompletionStrings",
                                                           op + "OperatorDescription");
         }
@@ -1639,7 +1639,7 @@ namespace System.Management.Automation
                 parameterType = parameterType.GetElementType();
             }
 
-            if (parameterType.GetTypeInfo().IsEnum)
+            if (parameterType.IsEnum)
             {
                 RemoveLastNullCompletionResult(result);
 
@@ -5468,15 +5468,13 @@ namespace System.Management.Automation
 
             protected string GetTooltipPrefix()
             {
-                TypeInfo typeInfo = Type.GetTypeInfo();
-
                 if (typeof(Delegate).IsAssignableFrom(Type))
                     return "Delegate ";
-                if (typeInfo.IsInterface)
+                if (Type.IsInterface)
                     return "Interface ";
-                if (typeInfo.IsClass)
+                if (Type.IsClass)
                     return "Class ";
-                if (typeInfo.IsEnum)
+                if (Type.IsEnum)
                     return "Enum ";
                 if (typeof(ValueType).IsAssignableFrom(Type))
                     return "Struct ";
@@ -6337,7 +6335,7 @@ namespace System.Management.Automation
                     if (strValue == null)
                     {
                         object baseObj = PSObject.Base(value);
-                        if (baseObj is string || baseObj.GetType().GetTypeInfo().IsPrimitive)
+                        if (baseObj is string || baseObj.GetType().IsPrimitive)
                         {
                             strValue = LanguagePrimitives.ConvertTo<string>(value);
                         }

@@ -2302,7 +2302,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 if (type != null)
                 {
                     ProcessMembers(type, sb, embeddedInstanceTypes, className);
-                    var t = type.GetTypeInfo().BaseType;
+                    var t = type.BaseType;
                     if (t != null)
                     {
                         bases.Enqueue(t);
@@ -2436,7 +2436,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType,
                         out embeddedInstanceType,
                         embeddedInstanceTypes);
-                    if (memberType.GetTypeInfo().IsEnum)
+                    if (memberType.IsEnum)
                     {
                         enumNames = Enum.GetNames(memberType);
                     }
@@ -2707,12 +2707,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         internal static string MapTypeToMofType(Type type, String memberName, String className, out bool isArrayType, out string embeddedInstanceType, List<object> embeddedInstanceTypes)
         {
             isArrayType = false;
-            if (type.GetTypeInfo().IsValueType)
+            if (type.IsValueType)
             {
                 type = Nullable.GetUnderlyingType(type) ?? type;
             }
 
-            if (type.GetTypeInfo().IsEnum)
+            if (type.IsEnum)
             {
                 embeddedInstanceType = null;
                 return "string";
@@ -2754,21 +2754,21 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             bool supported = false;
             bool missingDefaultConstructor = false;
-            if (type.GetTypeInfo().IsValueType)
+            if (type.IsValueType)
             {
                 if (s_mapPrimitiveDotNetTypeToMof.ContainsKey(type))
                 {
                     supported = true;
                 }
             }
-            else if (!type.GetTypeInfo().IsAbstract)
+            else if (!type.IsAbstract)
             {
                 // Must have default constructor, at least 1 public property/field, and no base classes
                 if (type.GetConstructor(PSTypeExtensions.EmptyTypes) == null)
                 {
                     missingDefaultConstructor = true;
                 }
-                else if (type.GetTypeInfo().BaseType == typeof(object) &&
+                else if (type.BaseType == typeof(object) &&
                     (type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Length > 0 ||
                          type.GetFields(BindingFlags.Instance | BindingFlags.Public).Length > 0))
                 {
@@ -2950,7 +2950,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // Friendly name is required by module validator to verify resource instance against the exclusive resource name list.
             sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
 
-            if (type.GetTypeInfo().GetCustomAttributes<DscResourceAttribute>().Any())
+            if (type.GetCustomAttributes<DscResourceAttribute>().Any())
             {
                 sb.Append(" : OMI_BaseResource");
             }
@@ -2992,7 +2992,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     embeddedInstanceTypes);
                 string arrayAffix = isArrayType ? "[]" : String.Empty;
 
-                var enumNames = memberType.GetTypeInfo().IsEnum
+                var enumNames = memberType.IsEnum
                     ? Enum.GetNames(memberType)
                     : null;
                 sb.AppendFormat(CultureInfo.InvariantCulture,
@@ -3015,7 +3015,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             IEnumerable<Type> resourceDefinitions =
-                assembly.GetTypes().Where(t => t.GetTypeInfo().GetCustomAttributes<DscResourceAttribute>().Any());
+                assembly.GetTypes().Where(t => t.GetCustomAttributes<DscResourceAttribute>().Any());
 
             foreach (var r in resourceDefinitions)
             {

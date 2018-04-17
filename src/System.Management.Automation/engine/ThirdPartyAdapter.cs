@@ -279,7 +279,7 @@ namespace System.Management.Automation
 
             Collection<string> types = new Collection<String>();
 
-            for (Type type = baseObject.GetType(); type != null; type = type.GetTypeInfo().BaseType)
+            for (Type type = baseObject.GetType(); type != null; type = type.BaseType)
             {
                 types.Add(type.FullName);
             }

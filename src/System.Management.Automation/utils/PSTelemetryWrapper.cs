@@ -27,7 +27,7 @@ namespace System.Management.Automation.Internal
                 // We build against CLR4.5 so we can run on Win7/Win8, but we want to use apis added to CLR 4.6.
                 // So we use reflection, and if that fails, we just silently skip logging our telemetry.
 
-                var diagnosticsTracingAssembly = typeof(EventSource).GetTypeInfo().Assembly;
+                var diagnosticsTracingAssembly = typeof(EventSource).Assembly;
 
                 Type eventSourceSettingsType = diagnosticsTracingAssembly.GetType("System.Diagnostics.Tracing.EventSourceSettings");
                 if (eventSourceSettingsType == null)

@@ -681,7 +681,7 @@ namespace System.Management.Automation
         private void WriteMamlInvalidChildNodeError(XmlNode node, XmlNode childNode)
         {
             ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeError"), "MamlInvalidChildNodeError", ErrorCategory.SyntaxError, null);
-            errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).GetTypeInfo().Assembly, "HelpErrors", "MamlInvalidChildNodeError", node.LocalName, childNode.LocalName, GetNodePath(node));
+            errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeError", node.LocalName, childNode.LocalName, GetNodePath(node));
             this.Errors.Add(errorRecord);
         }
 
@@ -694,7 +694,7 @@ namespace System.Management.Automation
         private void WriteMamlInvalidChildNodeCountError(XmlNode node, string childNodeName, int count)
         {
             ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeCountError"), "MamlInvalidChildNodeCountError", ErrorCategory.SyntaxError, null);
-            errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).GetTypeInfo().Assembly, "HelpErrors", "MamlInvalidChildNodeCountError", node.LocalName, childNodeName, count, GetNodePath(node));
+            errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeCountError", node.LocalName, childNodeName, count, GetNodePath(node));
             this.Errors.Add(errorRecord);
         }
 

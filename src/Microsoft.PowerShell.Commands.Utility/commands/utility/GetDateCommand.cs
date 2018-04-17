@@ -352,10 +352,6 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append("{0:MMM}");
                             break;
 
-                        case 'h':
-                            sb.Append("{0:MMM}");
-                            break;
-
                         case 'C':
                             sb.Append(dateTime.Year / 100);
                             break;
@@ -376,8 +372,20 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append(StringUtil.Format("{0,2}", dateTime.Day));
                             break;
 
+                        case 'G':
+                            sb.Append("{0:yyyy}");
+                            break;
+
+                        case 'g':
+                            sb.Append("{0:yy}");
+                            break;
+
                         case 'H':
                             sb.Append("{0:HH}");
+                            break;
+
+                        case 'h':
+                            sb.Append("{0:MMM}");
                             break;
 
                         case 'I':
@@ -432,20 +440,16 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append("{0:HH:mm:ss}");
                             break;
 
-                        case 'X':
-                            sb.Append("{0:HH:mm:ss}");
-                            break;
-
                         case 't':
                             sb.Append("\t");
                             break;
 
-                        case 'u':
-                            sb.Append((int)dateTime.DayOfWeek);
-                            break;
-
                         case 'U':
                             sb.Append(dateTime.DayOfYear / 7);
+                            break;
+
+                        case 'u':
+                            sb.Append((int)dateTime.DayOfWeek);
                             break;
 
                         case 'V':
@@ -479,14 +483,6 @@ namespace Microsoft.PowerShell.Commands
                                                                                         DayOfWeek.Monday)));
                             break;
 
-                        case 'G':
-                            sb.Append("{0:yyyy}");
-                            break;
-
-                        case 'g':
-                            sb.Append("{0:yy}");
-                            break;
-
                         case 'W':
                             sb.Append(dateTime.DayOfYear / 7);
                             break;
@@ -495,16 +491,20 @@ namespace Microsoft.PowerShell.Commands
                             sb.Append((int)dateTime.DayOfWeek);
                             break;
 
+                        case 'X':
+                            sb.Append("{0:HH:mm:ss}");
+                            break;
+
                         case 'x':
                             sb.Append("{0:MM/dd/yy}");
                             break;
 
-                        case 'y':
-                            sb.Append("{0:yy}");
-                            break;
-
                         case 'Y':
                             sb.Append("{0:yyyy}");
+                            break;
+
+                        case 'y':
+                            sb.Append("{0:yy}");
                             break;
 
                         case 'Z':

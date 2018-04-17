@@ -4976,9 +4976,9 @@ if($paths) {
             return assembly;
         }
 
-        private static T GetCustomAttribute<T>(TypeInfo decoratedType) where T : Attribute
+        private static T GetCustomAttribute<T>(Type decoratedType) where T : Attribute
         {
-            var attributes = CustomAttributeExtensions.GetCustomAttributes<T>(decoratedType, false);
+            var attributes = decoratedType.GetCustomAttributes<T>(false);
             var customAttrs = attributes.ToArray();
 
             Debug.Assert(customAttrs.Length <= 1, "CmdletAttribute and/or CmdletProviderAttribute cannot normally appear more than once");
@@ -5238,8 +5238,7 @@ if($paths) {
 
             foreach (Type type in assemblyTypes)
             {
-                var typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic) || typeInfo.IsAbstract)
+                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract)
                     continue;
 
                 // Check for cmdlets
@@ -5247,7 +5246,7 @@ if($paths) {
                 {
                     randomCmdletToCheckLinkDemand = type;
 
-                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(typeInfo);
+                    CmdletAttribute cmdletAttribute = GetCustomAttribute<CmdletAttribute>(type);
                     if (cmdletAttribute == null)
                     {
                         continue;
@@ -5275,7 +5274,7 @@ if($paths) {
                     }
                     cmdlets.Add(cmdletName, cmdlet);
 
-                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(typeInfo);
+                    var aliasAttribute = GetCustomAttribute<AliasAttribute>(type);
                     if (aliasAttribute != null)
                     {
                         if (aliases == null)
@@ -5309,7 +5308,7 @@ if($paths) {
                 {
                     randomProviderToCheckLinkDemand = type;
 
-                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(typeInfo);
+                    CmdletProviderAttribute providerAttribute = GetCustomAttribute<CmdletProviderAttribute>(type);
                     if (providerAttribute == null)
                     {
                         continue;
@@ -5453,8 +5452,7 @@ if($paths) {
             for (int i = 0; i < assemblyTypes.Length; i++)
             {
                 Type type = assemblyTypes[i];
-                TypeInfo typeInfo = type.GetTypeInfo();
-                if (!(typeInfo.IsPublic || typeInfo.IsNestedPublic) || typeInfo.IsAbstract) { continue; }
+                if (!(type.IsPublic || type.IsNestedPublic) || type.IsAbstract) { continue; }
 
                 if (isModuleLoad && typeof(IModuleAssemblyInitializer).IsAssignableFrom(type) && type != typeof(IModuleAssemblyInitializer))
                 {
