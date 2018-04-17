@@ -26,14 +26,14 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                 $ps.commands.clear()
 
                 if($expectedError) {
-                    $ps.hadErrors | Should be $true
+                    $ps.hadErrors | Should -BeTrue
                     $ps.Streams.Error.FullyQualifiedErrorId | Should be $expectedError
                 } else {
                     $ps.addscript("Get-Date").Invoke()
                     $ps.commands.clear()
                     $ps.addscript("Stop-Transcript").Invoke()
 
-                    Test-Path $outputFilePath | Should be $true
+                    Test-Path $outputFilePath | Should -BeTrue
                     $outputFilePath | should FileContentMatch "Get-Date"
                     if($append) {
                         $outputFilePath | Should FileContentMatch $content
@@ -131,7 +131,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $powerShellCommand = $powerShellPath + ' -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
         Invoke-Expression $powerShellCommand
 
-        Test-Path $transcriptFilePath | Should be $true
+        Test-Path $transcriptFilePath | Should -BeTrue
         $transcriptFilePath | Should FileContentMatch "Before Dispose"
         $transcriptFilePath | Should FileContentMatch "PowerShell transcript end"
     }
@@ -142,7 +142,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             hostname
             Stop-Transcript }
         & $script
-        Test-Path $transcriptFilePath | Should be $true
+        Test-Path $transcriptFilePath | Should -BeTrue
 
         $machineName = [System.Environment]::MachineName
         $transcriptFilePath | Should FileContentMatch $machineName
