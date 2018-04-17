@@ -684,7 +684,7 @@ ZoneId=$FileType
                 $testScript = {Import-Module -Name $module -Force}
                 if($error)
                 {
-                    $testScript | ShouldBeErrorId $error
+                    $testScript | Should -Throw -ErrorId $error
                 }
                 else
                 {
@@ -929,7 +929,7 @@ ZoneId=$FileType
                 $testScript = {Import-Module -Name $module -Force}
                 if($error)
                 {
-                    $testScript | ShouldBeErrorId $error
+                    $testScript | Should -Throw -ErrorId $error
                 }
                 else
                 {
@@ -1028,7 +1028,7 @@ ZoneId=$FileType
                 $testScript | Should -Exist
                 if($error)
                 {
-                    {& $testScript} | ShouldBeErrorId $error
+                    {& $testScript} | Should -Throw -ErrorId $error
                 }
                 else
                 {

@@ -37,7 +37,8 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     It "Verify Get-PfxCertificate wrong password" {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Test secret.")]
         $pass = ConvertTo-SecureString "wrongpass" -AsPlainText -Force
-        $e = { Get-PfxCertificate $protectedCertLocation -Password $pass -ErrorAction Stop } | ShouldBeErrorId "GetPfxCertificateUnknownCryptoError,Microsoft.PowerShell.Commands.GetPfxCertificateCommand"
+        { Get-PfxCertificate $protectedCertLocation -Password $pass -ErrorAction Stop } |
+            Should -Throw -ErrorId "GetPfxCertificateUnknownCryptoError,Microsoft.PowerShell.Commands.GetPfxCertificateCommand"
     }
 
     It "Verify CMS message recipient resolution by path" -Skip:(!$IsWindows) {
