@@ -26,7 +26,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Remove-Job can remove a job" {
             Remove-Job $j -Force
-            { Get-Job $j -ErrorAction Stop } | ShouldBeErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
+            { Get-Job $j -ErrorAction Stop } | Should -Throw -ErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
         }
         It "Receive-Job can retrieve job results" {
             Wait-Job -Timeout 60 -id $j.id | Should -Not -BeNullOrEmpty

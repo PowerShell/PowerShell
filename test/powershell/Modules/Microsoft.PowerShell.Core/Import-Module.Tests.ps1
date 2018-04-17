@@ -111,7 +111,7 @@ Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
 
         It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
             $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
-            { Import-Module $modulePath -ErrorAction SilentlyContinue } | ShouldBeErrorId 'FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand'
+            { Import-Module $modulePath -ErrorAction SilentlyContinue } | Should -Throw -ErrorId 'FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand'
         }
     }
 
