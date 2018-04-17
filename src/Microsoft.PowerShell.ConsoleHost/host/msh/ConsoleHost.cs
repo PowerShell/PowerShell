@@ -1760,21 +1760,20 @@ namespace Microsoft.PowerShell
                 command.Parameters.Add("LiteralPath", s_cpp.WorkingDirectory);
                 tempPipeline.Commands.Add(command);
 
-                Exception e1;
+                Exception exception;
                 if (IsRunningAsync)
                 {
-                    exec.ExecuteCommandAsyncHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
+                    exec.ExecuteCommandAsyncHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
                 }
                 else
                 {
-                    exec.ExecuteCommandHelper(tempPipeline, out e1, Executor.ExecutionOptions.AddOutputter);
+                    exec.ExecuteCommandHelper(tempPipeline, out exception, Executor.ExecutionOptions.AddOutputter);
                 }
 
-                if (e1 != null)
+                if (exception != null)
                 {
-                    // Remember last exception
-                    _lastRunspaceInitializationException = e1;
-                    ReportException(e1, exec);
+                    _lastRunspaceInitializationException = exception;
+                    ReportException(exception, exec);
                 }
             }
 
