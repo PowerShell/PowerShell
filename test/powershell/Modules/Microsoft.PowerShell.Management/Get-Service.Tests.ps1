@@ -89,6 +89,6 @@ Describe "Get-Service cmdlet tests" -Tags "CI" {
        ErrorId = "NoServiceFoundForGivenDisplayName,Microsoft.PowerShell.Commands.GetServiceCommand" }
   ) {
     param($script,$errorid)
-    { & $script } | ShouldBeErrorId $errorid
+    { & $script } | Should -Throw -ErrorId $errorid
   }
 }

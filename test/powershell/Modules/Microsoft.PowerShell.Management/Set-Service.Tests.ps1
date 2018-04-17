@@ -59,7 +59,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         }
     ) {
         param($script, $errorid)
-        { & $script } | ShouldBeErrorId $errorid
+        { & $script } | Should -Throw -ErrorId $errorid
     }
 
     It "Set-Service can change '<parameter>' to '<value>'" -TestCases @(
@@ -240,7 +240,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
     }
 
     It "Remove-Service cannot accept a service that does not exist" {
-        { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
+        { Remove-Service -Name "testremoveservice" -ErrorAction 'Stop' } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.RemoveServiceCommand"
     }
 
     It "Get-Service can get the '<property>' of a service" -TestCases @(
@@ -327,6 +327,6 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         if ($cmdlet -eq "New-Service") {
             $parameters += @{Binary = "$PSHOME\pwsh.exe"};
         }
-        { & $cmdlet @parameters } | ShouldBeErrorId $errorid
+        { & $cmdlet @parameters } | Should -Throw -ErrorId $errorid
     }
 }

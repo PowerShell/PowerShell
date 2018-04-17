@@ -88,16 +88,16 @@ Describe "Start-Process" -Tags @("Feature") {
 
     ## -Verb is supported in PowerShell core on Windows full desktop.
     It "Should give an error when -Verb parameter is used" -Skip:$isFullWin {
-        { Start-Process -Verb runas -FilePath $pingCommand } | ShouldBeErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        { Start-Process -Verb runas -FilePath $pingCommand } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
     ## -WindowStyle is supported in PowerShell core on Windows full desktop.
     It "Should give an error when -WindowStyle parameter is used" -Skip:$isFullWin {
-        { Start-Process -FilePath $pingCommand -WindowStyle Normal } | ShouldBeErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        { Start-Process -FilePath $pingCommand -WindowStyle Normal } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
     It "Should give an error when both -NoNewWindow and -WindowStyle are specified" -Skip:(!$isFullWin) {
-        { Start-Process -FilePath $pingCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | ShouldBeErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
+        { Start-Process -FilePath $pingCommand -NoNewWindow -WindowStyle Normal -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperationException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
     It "Should start cmd.exe with Verb 'open' and WindowStyle 'Minimized'" -Skip:(!$isFullWin) {

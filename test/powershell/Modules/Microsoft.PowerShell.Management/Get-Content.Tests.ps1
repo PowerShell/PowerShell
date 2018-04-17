@@ -91,11 +91,11 @@ Describe "Get-Content" -Tags "CI" {
     }
 
     It 'Verifies -Tail reports a TailNotSupported error for unsupported providers' {
-        {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | ShouldBeErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
+        {Get-Content -Path Variable:\PSHOME -Tail 1 -ErrorAction Stop} | Should -Throw -ErrorId 'TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand'
     }
 
     It 'Verifies using -Tail and -TotalCount together reports a TailAndHeadCannotCoexist error' {
-        { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | ShouldBeErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
+        { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | Should -Throw -ErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
     }
 
     It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
@@ -219,7 +219,7 @@ baz
 
     It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
         Set-Content "${testPath}:Stream" -Value "Foo"
-        { Test-Path "${testPath}:Stream" | ShouldBeErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
+        { Test-Path "${testPath}:Stream" | Should -Throw -ErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
         Get-Content "${testPath}:Stream" | Should -BeExactly "Foo"
         Get-Content $testPath | Should -BeExactly $testString
     }
@@ -234,7 +234,7 @@ baz
         Clear-Content -Path $testPath -Stream hello
         Get-Content -Path $testPath -Stream hello | Should -BeNullOrEmpty
         Remove-Item -Path $testPath -Stream hello
-        { Get-Content -Path $testPath -Stream hello | ShouldBeErrorId "GetContentReaderFileNotFoundError,Microsoft.PowerShell.Commands.GetContentCommand" }
+        { Get-Content -Path $testPath -Stream hello | Should -Throw -ErrorId "GetContentReaderFileNotFoundError,Microsoft.PowerShell.Commands.GetContentCommand" }
     }
 
     It "Should support colons in filename on Linux/Mac" -Skip:($IsWindows) {
@@ -266,21 +266,21 @@ baz
     It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {
         { 
         Get-Content -Path $testPath -Tail 1 -TotalCount 1 -ErrorAction Stop
-        } | ShouldBeErrorId "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
+        } | Should -Throw -ErrorId "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
     }
 
     It "Should throw TailNotSupported when -Tail used with an unsupported provider" {
         Push-Location env:
         {
         Get-Content PATH -Tail 1 -ErrorAction Stop
-        } | ShouldBeErrorId "TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
+        } | Should -Throw -ErrorId "TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
         Pop-Location
     }
 
     It "Should throw InvalidOperation when -Tail and -Raw are used" {
         {
         Get-Content -Path $testPath -Tail 1 -ErrorAction Stop -Raw
-        } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
+        } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
     }
 
     Context "Check Get-Content containing multi-byte chars" {
