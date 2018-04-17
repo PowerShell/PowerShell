@@ -26,19 +26,19 @@ Describe 'New-WinEvent' -Tags "CI" {
         }
         
         It 'No provider found error' {
-            { New-WinEvent -ProviderName NonExistingProvider -Id 0 } | ShouldBeErrorId 'System.ArgumentException,Microsoft.PowerShell.Commands.NewWinEventCommand'
+            { New-WinEvent -ProviderName NonExistingProvider -Id 0 } | Should -Throw -ErrorId 'System.ArgumentException,Microsoft.PowerShell.Commands.NewWinEventCommand'
         }
         
         It 'EmptyProviderName error' {
-            { New-WinEvent -ProviderName $null -Id 0 } | ShouldBeErrorId 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.NewWinEventCommand'
+            { New-WinEvent -ProviderName $null -Id 0 } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.NewWinEventCommand'
         }
 
         It 'IncorrectEventId error' {
-            { New-WinEvent $ProviderName -Id 999999 } | ShouldBeErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
+            { New-WinEvent $ProviderName -Id 999999 } | Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
         }
 
         It 'IncorrectEventVersion error' {
-            { New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 99 } | ShouldBeErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
+            { New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 99 } | Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
         }
         
         It 'PayloadMismatch error' {
