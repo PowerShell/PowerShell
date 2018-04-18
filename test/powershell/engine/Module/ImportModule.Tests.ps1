@@ -89,6 +89,33 @@ Describe "Import-Module by name" -Tag Feature {
         }
     }
 
+    Context "Classes in modules" {
+        It "Uses updated class definitions when the module is reloaded" {
+            $content = @'
+$passedArgs = $Args
+class Root { $passedArgs = $passedArgs }
+function Get-PassedArgsRoot { [Root]::new().passedArgs }
+function Get-PassedArgsNoRoot { $passedArgs }
+'@
+
+            $rootModName = "rootMod"
+            $rootModDir = "$TestDrive\$rootModName"
+            New-Item -Path $rootModDir -ItemType Directory
+            New-Item -Path $rootModDir -Name "$rootModName.psm1" -Value $content
+
+            Import-Module $rootModDir -ArgumentList 'value1'
+            $rootVal = Get-PassedArgsRoot
+            $noRootVal = Get-PassedArgsNoRoot
+            $rootVal | Should -BeExactly $noRootVal
+
+            Import-Module $rootModDir -ArgumentList 'value2'
+            $rootVal = Get-PassedArgsRoot
+            $rootNoVal = Get-PassedArgsNoRoot
+            $rootVal | Should -BeExactly $noRootVal
+        }
+
+    }
+
     Context "Parameter handling" {
         BeforeAll {
             $validationTests = @(
@@ -103,6 +130,10 @@ Describe "Import-Module by name" -Tag Feature {
 
         AfterAll {
             $ps.Dispose()
+        }
+
+        AfterEach {
+            $ps.Streams.ClearStreams()
         }
 
         It "Validates a null -<paramName> parameter" -TestCases $validationTests {
@@ -207,7 +238,7 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
     }
 }
 
-Describe "Import-Module with nested modules" {
+Describe "Import-Module with nested modules" -Tag Feature {
     BeforeAll {
         $modName = "nestMod"
         $modDir = "$TestDrive\$modName"
@@ -258,7 +289,7 @@ function Test-SubModuleFunc
         }
     }
 
-    It "Should resolve submodule classes with 'using module'" {
+    It "Resolves submodule classes with 'using module'" {
         $modSrc = @"
 using module $subModPath
 
@@ -325,5 +356,113 @@ function SubFunc
         Import-Module $modDir -Force
 
         MainFunc | Should -BeExactly "SECOND"
+    }
+
+    It "Uses cached class definitions in non-force-reloaded submodules" {
+        $modName = "subClassMod"
+        $subModName = "SubObj"
+        $modPath = "$TestDrive\$modName"
+
+        Remove-Module $modName -Force
+        Remove-Module $subModName -Force
+        if (Test-Path $modPath) { Remove-Item $modPath -Force -Recurse }
+
+        $mainModSrc = @"
+using module $modPath\SubObj.psm1
+function Test-SubClassMain { [SubObj]::new().Id }
+"@
+
+        $subModSrc1 = @'
+class SubObj
+{
+    [string]$Id
+
+    SubObj()
+    {
+        $this.Id = "FIRST"
+    }
+}
+'@
+
+        $subModSrc2 = @'
+class SubObj
+{
+    [string]$Id
+
+    SubObj()
+    {
+        $this.Id = "SECOND"
+    }
+}
+'@
+
+        New-Item -Path $modPath -ItemType Directory
+
+        New-Item -Path $modPath -Name "$modName.psm1" -Value $mainModSrc
+        New-Item -Path $modPath -Name "$subModName.psm1" -Value $subModSrc1
+
+        Import-Module $modPath
+
+        Test-SubClassMain | Should -BeExactly "FIRST"
+
+        Set-Content -Path "$modPath\$subModName.psm1" -Value $subModSrc2 -Force
+
+        Import-Module $modPath -Force
+
+        Test-SubClassMain | Should -BeExactly "FIRST"
+    }
+
+    It "Uses updated class definitions in force-reloaded submodules" {
+        $modName = "subClassMod"
+        $subModName = "SubObj"
+        $modPath = "$TestDrive\$modName"
+
+        Remove-Module $modName -Force
+        Remove-Module $subModName -Force
+        if (Test-Path $modPath) { Remove-Item $modPath -Force -Recurse }
+
+        $mainModSrc = @"
+using module $modPath\SubObj.psm1
+function Test-SubClassMain { [SubObj]::new().Id }
+"@
+
+        $subModSrc1 = @'
+class SubObj
+{
+    [string]$Id
+
+    SubObj()
+    {
+        $this.Id = "FIRST"
+    }
+}
+'@
+
+        $subModSrc2 = @'
+class SubObj
+{
+    [string]$Id
+
+    SubObj()
+    {
+        $this.Id = "SECOND"
+    }
+}
+'@
+
+        New-Item -Path $modPath -ItemType Directory
+
+        New-Item -Path $modPath -Name "$modName.psm1" -Value $mainModSrc
+        New-Item -Path $modPath -Name "$subModName.psm1" -Value $subModSrc1
+
+        Import-Module $modPath
+
+        Test-SubClassMain | Should -BeExactly "FIRST"
+
+        Set-Content -Path "$modPath\$subModName.psm1" -Value $subModSrc2 -Force
+
+        Import-Module $modPath
+
+        Test-SubClassMain | Should -BeExactly "SECOND"
     }
 }
