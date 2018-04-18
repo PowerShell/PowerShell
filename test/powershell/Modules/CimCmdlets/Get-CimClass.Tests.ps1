@@ -15,7 +15,7 @@ try {
         }
 
         It 'produces an error when a non-existent class is used' {
-            { Get-CimClass -ClassName thisclasstypedoesnotexist -ea stop |
+            { Get-CimClass -ClassName thisclasstypedoesnotexist -ea stop } |
                 Should -Throw -ErrorId "HRESULT 0x80041002,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
         }
         It 'produces an error when an improper namespace is used' {
