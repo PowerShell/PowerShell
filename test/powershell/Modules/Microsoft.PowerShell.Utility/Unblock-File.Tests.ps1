@@ -39,11 +39,11 @@ Describe "Unblock-File" -Tags "CI" {
     }
 
     It "With '-Path': no file exist" {
-        { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
+        { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 
     It "With '-LiteralPath': no file exist" {
-        { Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
+        { Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop } | Should -Throw -ErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 
     It "With '-Path': file exist" {
@@ -72,6 +72,6 @@ Describe "Unblock-File" -Tags "CI" {
         $TestFileCreated = Get-ChildItem $TestFile
         $TestFileCreated.IsReadOnly | Should -BeTrue
 
-        { Unblock-File -LiteralPath $TestFile -ErrorAction Stop } | ShouldBeErrorId "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.UnblockFileCommand"
+        { Unblock-File -LiteralPath $TestFile -ErrorAction Stop } | Should -Throw -ErrorId "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 }

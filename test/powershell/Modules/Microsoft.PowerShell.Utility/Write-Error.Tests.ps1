@@ -86,20 +86,7 @@ Describe "Write-Error Tests" -Tags "CI" {
     }
 
     It "Should trip an exception using the exception switch" {
-        $var = 0
-        try
-        {
-            Write-Error -Exception -Message "test throw"
-        }
-        catch [System.Exception]
-        {
-
-            $var++
-        }
-        finally
-        {
-            $var | Should -Be 1
-        }
+        { Write-Error -Exception -Message "test throw" } | Should -Throw -ErrorId "MissingArgument,Microsoft.PowerShell.Commands.WriteErrorCommand"
     }
 
     It "Should output the error message to the `$error automatic variable" {

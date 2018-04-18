@@ -14,7 +14,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works"{
 		Set-Variable foo bar -Option ReadOnly
 
-		$e = { Clear-Variable -Name foo -Scope 1 -EA Stop } | ShouldBeErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
+		$e = { Clear-Variable -Name foo -Scope 1 -EA Stop } | Should -Throw -ErrorId "VariableNotWritable,Microsoft.PowerShell.Commands.ClearVariableCommand"
 		$e.CategoryInfo | Should -Match "SessionStateUnauthorizedAccessException"
 
 		Clear-Variable -Name foo -Force
@@ -50,7 +50,7 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable foo bar -Option Private
 		&{
 			$e = { Get-Variable -Name foo -Scope local -EA Stop } |
-				ShouldBeErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+				Should -Throw -ErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			$e.CategoryInfo | Should -Match "ItemNotFoundException"
 		}
 

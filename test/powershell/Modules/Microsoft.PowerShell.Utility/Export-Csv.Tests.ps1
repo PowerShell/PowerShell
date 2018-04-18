@@ -15,7 +15,7 @@ Describe "Export-Csv" -Tags "CI" {
     }
 
     It "Should throw if an output file isn't specified" {
-        { $testObject | Export-Csv -ErrorAction Stop } | ShouldBeErrorId "CannotSpecifyPathAndLiteralPath,Microsoft.PowerShell.Commands.ExportCsvCommand"
+        { $testObject | Export-Csv -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPathAndLiteralPath,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
     It "Should be a string when exporting via pipe" {
@@ -69,7 +69,7 @@ Describe "Export-Csv" -Tags "CI" {
 
     It "Does not support -IncludeTypeInformation and -NoTypeInformation at the same time" {
         { $testObject | Export-Csv -Path $testCsv -IncludeTypeInformation -NoTypeInformation } | 
-            ShouldBeErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
+            Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 }
 
