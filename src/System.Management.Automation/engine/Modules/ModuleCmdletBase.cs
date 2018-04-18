@@ -1627,7 +1627,7 @@ namespace Microsoft.PowerShell.Commands
                     // remove the module if force is specified  (and if module is already loaded)
                     else if (Utils.NativeFileExists(rootedPath))
                     {
-                        RemoveModule(loadedModule);
+                        RemoveModuleAndNestedModules(loadedModule);
                     }
                 }
             }
@@ -4713,230 +4713,235 @@ namespace Microsoft.PowerShell.Commands
             {
                 module.Path = module.Name;
             }
-            bool shouldModuleBeRemoved = ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out isTopLevelModule);
 
-            if (shouldModuleBeRemoved)
+            if (!ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out isTopLevelModule))
             {
-                // We don't check for dups in the remove list so it may already be removed
-                if (Context.Modules.ModuleTable.ContainsKey(module.Path))
+                return;
+            }
+
+            // We don't check for dups in the remove list so it may already be removed
+            if (!Context.Modules.ModuleTable.ContainsKey(module.Path))
+            {
+                return;
+            }
+
+            // We should try to run OnRemove as the very first thing
+            if (module.OnRemove != null)
+            {
+                module.OnRemove.InvokeUsingCmdlet(
+                    contextCmdlet: this,
+                    useLocalScope: true,
+                    errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                    dollarUnder: AutomationNull.Value,
+                    input: AutomationNull.Value,
+                    scriptThis: AutomationNull.Value,
+                    args: new object[] { module });
+            }
+
+            if (module.ImplementingAssembly != null && module.ImplementingAssembly.IsDynamic == false)
+            {
+                var exportedTypes = PSSnapInHelpers.GetAssemblyTypes(module.ImplementingAssembly, module.Name);
+                foreach (var type in exportedTypes)
                 {
-                    // We should try to run OnRemove as the very first thing
-                    if (module.OnRemove != null)
+                    if (typeof(IModuleAssemblyCleanup).IsAssignableFrom(type) && type != typeof(IModuleAssemblyCleanup))
                     {
-                        module.OnRemove.InvokeUsingCmdlet(
-                            contextCmdlet: this,
-                            useLocalScope: true,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: new object[] { module });
+                        var moduleCleanup = (IModuleAssemblyCleanup)Activator.CreateInstance(type, true);
+                        moduleCleanup.OnRemove(module);
                     }
-
-                    if (module.ImplementingAssembly != null && module.ImplementingAssembly.IsDynamic == false)
-                    {
-                        var exportedTypes = PSSnapInHelpers.GetAssemblyTypes(module.ImplementingAssembly, module.Name);
-                        foreach (var type in exportedTypes)
-                        {
-                            if (typeof(IModuleAssemblyCleanup).IsAssignableFrom(type) && type != typeof(IModuleAssemblyCleanup))
-                            {
-                                var moduleCleanup = (IModuleAssemblyCleanup)Activator.CreateInstance(type, true);
-                                moduleCleanup.OnRemove(module);
-                            }
-                        }
-                    }
-
-                    // First remove cmdlets from the session state
-                    // (can't just go through module.ExportedCmdlets
-                    //  because the names of the cmdlets might have been changed by the -Prefix parameter of Import-Module)
-
-                    List<string> keysToRemoveFromCmdletCache = new List<string>();
-                    foreach (KeyValuePair<string, List<CmdletInfo>> cmdlet in Context.EngineSessionState.GetCmdletTable())
-                    {
-                        List<CmdletInfo> matches = cmdlet.Value;
-                        // If the entry's module name matches, then remove it from the list...
-                        for (int i = matches.Count - 1; i >= 0; i--)
-                        {
-                            if (matches[i].Module == null)
-                            {
-                                continue;
-                            }
-                            if (matches[i].Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                            {
-                                string name = matches[i].Name;
-                                matches.RemoveAt(i);
-                                Context.EngineSessionState.RemoveCmdlet(name, i, true);
-                            }
-                        }
-                        // And finally remove the name from the cache if the list is now empty...
-                        if (matches.Count == 0)
-                        {
-                            keysToRemoveFromCmdletCache.Add(cmdlet.Key);
-                        }
-                    }
-                    foreach (string keyToRemove in keysToRemoveFromCmdletCache)
-                    {
-                        Context.EngineSessionState.RemoveCmdletEntry(keyToRemove, true);
-                    }
-
-                    // Remove any providers imported by this module. Providers are always imported into
-                    // the top level session state. Only binary modules can import providers.
-                    if (module.ModuleType == ModuleType.Binary)
-                    {
-                        Dictionary<string, List<ProviderInfo>> providers = Context.TopLevelSessionState.Providers;
-                        List<string> keysToRemoveFromProviderTable = new List<string>();
-
-                        foreach (KeyValuePair<string, System.Collections.Generic.List<ProviderInfo>> pl in providers)
-                        {
-                            Dbg.Assert(pl.Value != null, "There should never be a null list of entries in the provider table");
-
-                            // For each provider with this name, if it was imported from the module,
-                            // remove it from the list.
-                            for (int i = pl.Value.Count - 1; i >= 0; i--)
-                            {
-                                ProviderInfo pi = pl.Value[i];
-
-                                // If it was implemented by this module, remove it
-                                string implAssemblyLocation = pi.ImplementingType.GetTypeInfo().Assembly.Location;
-                                if (implAssemblyLocation.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    // Remove all drives from the top level session state
-                                    InitialSessionState.RemoveAllDrivesForProvider(pi, Context.TopLevelSessionState);
-                                    // Remove all drives from the current module context
-                                    if (Context.EngineSessionState != Context.TopLevelSessionState)
-                                        InitialSessionState.RemoveAllDrivesForProvider(pi, Context.EngineSessionState);
-                                    // Remove drives from all other module contexts.
-                                    foreach (PSModuleInfo psmi in Context.Modules.ModuleTable.Values)
-                                    {
-                                        if (psmi.SessionState != null)
-                                        {
-                                            SessionStateInternal mssi = psmi.SessionState.Internal;
-                                            if (mssi != Context.TopLevelSessionState &&
-                                                mssi != Context.EngineSessionState)
-                                            {
-                                                InitialSessionState.RemoveAllDrivesForProvider(pi, Context.EngineSessionState);
-                                            }
-                                        }
-                                    }
-
-                                    pl.Value.RemoveAt(i);
-                                }
-                            }
-
-                            // If there are no providers left with this name, add this key to the list
-                            // of entries to remove.
-                            if (pl.Value.Count == 0)
-                            {
-                                keysToRemoveFromProviderTable.Add(pl.Key);
-                            }
-                        }
-
-                        // Finally remove all of the empty table entries.
-                        foreach (string keyToRemove in keysToRemoveFromProviderTable)
-                        {
-                            providers.Remove(keyToRemove);
-                        }
-                    }
-
-                    SessionStateInternal ss = Context.EngineSessionState;
-
-                    if (module.SessionState != null)
-                    {
-                        // Remove the imported functions from SessionState...
-                        // (can't just go through module.SessionState.Internal.ExportedFunctions,
-                        //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (DictionaryEntry entry in ss.GetFunctionTable())
-                        {
-                            FunctionInfo func = (FunctionInfo)entry.Value;
-                            if (func.Module == null)
-                            {
-                                continue;
-                            }
-                            if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                            {
-                                try
-                                {
-                                    ss.RemoveFunction(func.Name, true);
-
-                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, func.Name);
-                                    WriteVerbose(memberMessage);
-                                }
-                                catch (SessionStateUnauthorizedAccessException e)
-                                {
-                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
-                                    InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
-                                    ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
-                                                                     ErrorCategory.PermissionDenied, func.Name);
-                                    WriteError(er);
-                                }
-                            }
-                        }
-
-                        // Remove the imported variables from SessionState...
-                        foreach (PSVariable mv in module.SessionState.Internal.ExportedVariables)
-                        {
-                            PSVariable sv = ss.GetVariable(mv.Name);
-                            if (sv != null && sv == mv)
-                            {
-                                ss.RemoveVariable(sv, BaseForce);
-                                string memberMessage = StringUtil.Format(Modules.RemovingImportedVariable, sv.Name);
-                                WriteVerbose(memberMessage);
-                            }
-                        }
-
-                        // Remove the imported aliases from SessionState...
-                        // (can't just go through module.SessionState.Internal.ExportedAliases,
-                        //  because the names of the aliases might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (KeyValuePair<string, AliasInfo> entry in ss.GetAliasTable())
-                        {
-                            AliasInfo ai = entry.Value;
-                            if (ai.Module == null)
-                            {
-                                continue;
-                            }
-                            if (ai.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                            {
-                                // Remove the alias with force...
-                                ss.RemoveAlias(ai.Name, true);
-                                string memberMessage = StringUtil.Format(Modules.RemovingImportedAlias, ai.Name);
-                                WriteVerbose(memberMessage);
-                            }
-                        }
-                    }
-
-                    this.RemoveTypesAndFormatting(module.ExportedFormatFiles, module.ExportedTypeFiles);
-                    // resetting the help caches. This is needed as the help content cached is cached in process.
-                    // When a module is removed there is no need to cache the help content for the commands in
-                    // the module. The HelpSystem is not designed to track per module help content...so resetting
-                    // all of the cache. HelpSystem knows how to build this cache back when needed.
-                    Context.HelpSystem.ResetHelpProviders();
-
-                    // Remove the module from all session state module tables...
-                    foreach (KeyValuePair<string, PSModuleInfo> e in Context.Modules.ModuleTable)
-                    {
-                        PSModuleInfo m = e.Value;
-                        if (m.SessionState != null)
-                        {
-                            if (m.SessionState.Internal.ModuleTable.ContainsKey(module.Path))
-                            {
-                                m.SessionState.Internal.ModuleTable.Remove(module.Path);
-                                m.SessionState.Internal.ModuleTableKeys.Remove(module.Path);
-                            }
-                        }
-                    }
-                    if (isTopLevelModule)
-                    {
-                        // Remove it from the top level session state
-                        Context.TopLevelSessionState.ModuleTable.Remove(module.Path);
-                        Context.TopLevelSessionState.ModuleTableKeys.Remove(module.Path);
-                    }
-                    // And finally from the global module table...
-                    Context.Modules.ModuleTable.Remove(module.Path);
-
-                    // And the appdomain level module path cache.
-                    PSModuleInfo.RemoveFromAppDomainLevelCache(module.Name);
                 }
             }
+
+            // First remove cmdlets from the session state
+            // (can't just go through module.ExportedCmdlets
+            //  because the names of the cmdlets might have been changed by the -Prefix parameter of Import-Module)
+
+            List<string> keysToRemoveFromCmdletCache = new List<string>();
+            foreach (KeyValuePair<string, List<CmdletInfo>> cmdlet in Context.EngineSessionState.GetCmdletTable())
+            {
+                List<CmdletInfo> matches = cmdlet.Value;
+                // If the entry's module name matches, then remove it from the list...
+                for (int i = matches.Count - 1; i >= 0; i--)
+                {
+                    if (matches[i].Module == null)
+                    {
+                        continue;
+                    }
+                    if (matches[i].Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string name = matches[i].Name;
+                        matches.RemoveAt(i);
+                        Context.EngineSessionState.RemoveCmdlet(name, i, true);
+                    }
+                }
+                // And finally remove the name from the cache if the list is now empty...
+                if (matches.Count == 0)
+                {
+                    keysToRemoveFromCmdletCache.Add(cmdlet.Key);
+                }
+            }
+            foreach (string keyToRemove in keysToRemoveFromCmdletCache)
+            {
+                Context.EngineSessionState.RemoveCmdletEntry(keyToRemove, true);
+            }
+
+            // Remove any providers imported by this module. Providers are always imported into
+            // the top level session state. Only binary modules can import providers.
+            if (module.ModuleType == ModuleType.Binary)
+            {
+                Dictionary<string, List<ProviderInfo>> providers = Context.TopLevelSessionState.Providers;
+                List<string> keysToRemoveFromProviderTable = new List<string>();
+
+                foreach (KeyValuePair<string, System.Collections.Generic.List<ProviderInfo>> pl in providers)
+                {
+                    Dbg.Assert(pl.Value != null, "There should never be a null list of entries in the provider table");
+
+                    // For each provider with this name, if it was imported from the module,
+                    // remove it from the list.
+                    for (int i = pl.Value.Count - 1; i >= 0; i--)
+                    {
+                        ProviderInfo pi = pl.Value[i];
+
+                        // If it was implemented by this module, remove it
+                        string implAssemblyLocation = pi.ImplementingType.GetTypeInfo().Assembly.Location;
+                        if (implAssemblyLocation.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // Remove all drives from the top level session state
+                            InitialSessionState.RemoveAllDrivesForProvider(pi, Context.TopLevelSessionState);
+                            // Remove all drives from the current module context
+                            if (Context.EngineSessionState != Context.TopLevelSessionState)
+                                InitialSessionState.RemoveAllDrivesForProvider(pi, Context.EngineSessionState);
+                            // Remove drives from all other module contexts.
+                            foreach (PSModuleInfo psmi in Context.Modules.ModuleTable.Values)
+                            {
+                                if (psmi.SessionState != null)
+                                {
+                                    SessionStateInternal mssi = psmi.SessionState.Internal;
+                                    if (mssi != Context.TopLevelSessionState &&
+                                        mssi != Context.EngineSessionState)
+                                    {
+                                        InitialSessionState.RemoveAllDrivesForProvider(pi, Context.EngineSessionState);
+                                    }
+                                }
+                            }
+
+                            pl.Value.RemoveAt(i);
+                        }
+                    }
+
+                    // If there are no providers left with this name, add this key to the list
+                    // of entries to remove.
+                    if (pl.Value.Count == 0)
+                    {
+                        keysToRemoveFromProviderTable.Add(pl.Key);
+                    }
+                }
+
+                // Finally remove all of the empty table entries.
+                foreach (string keyToRemove in keysToRemoveFromProviderTable)
+                {
+                    providers.Remove(keyToRemove);
+                }
+            }
+
+            SessionStateInternal ss = Context.EngineSessionState;
+
+            if (module.SessionState != null)
+            {
+                // Remove the imported functions from SessionState...
+                // (can't just go through module.SessionState.Internal.ExportedFunctions,
+                //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
+                foreach (DictionaryEntry entry in ss.GetFunctionTable())
+                {
+                    FunctionInfo func = (FunctionInfo)entry.Value;
+                    if (func.Module == null)
+                    {
+                        continue;
+                    }
+                    if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            ss.RemoveFunction(func.Name, true);
+
+                            string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, func.Name);
+                            WriteVerbose(memberMessage);
+                        }
+                        catch (SessionStateUnauthorizedAccessException e)
+                        {
+                            string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
+                            InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
+                            ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
+                                                                ErrorCategory.PermissionDenied, func.Name);
+                            WriteError(er);
+                        }
+                    }
+                }
+
+                // Remove the imported variables from SessionState...
+                foreach (PSVariable mv in module.SessionState.Internal.ExportedVariables)
+                {
+                    PSVariable sv = ss.GetVariable(mv.Name);
+                    if (sv != null && sv == mv)
+                    {
+                        ss.RemoveVariable(sv, BaseForce);
+                        string memberMessage = StringUtil.Format(Modules.RemovingImportedVariable, sv.Name);
+                        WriteVerbose(memberMessage);
+                    }
+                }
+
+                // Remove the imported aliases from SessionState...
+                // (can't just go through module.SessionState.Internal.ExportedAliases,
+                //  because the names of the aliases might have been changed by the -Prefix parameter of Import-Module)
+                foreach (KeyValuePair<string, AliasInfo> entry in ss.GetAliasTable())
+                {
+                    AliasInfo ai = entry.Value;
+                    if (ai.Module == null)
+                    {
+                        continue;
+                    }
+                    if (ai.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Remove the alias with force...
+                        ss.RemoveAlias(ai.Name, true);
+                        string memberMessage = StringUtil.Format(Modules.RemovingImportedAlias, ai.Name);
+                        WriteVerbose(memberMessage);
+                    }
+                }
+            }
+
+            this.RemoveTypesAndFormatting(module.ExportedFormatFiles, module.ExportedTypeFiles);
+            // resetting the help caches. This is needed as the help content cached is cached in process.
+            // When a module is removed there is no need to cache the help content for the commands in
+            // the module. The HelpSystem is not designed to track per module help content...so resetting
+            // all of the cache. HelpSystem knows how to build this cache back when needed.
+            Context.HelpSystem.ResetHelpProviders();
+
+            // Remove the module from all session state module tables...
+            foreach (KeyValuePair<string, PSModuleInfo> e in Context.Modules.ModuleTable)
+            {
+                PSModuleInfo m = e.Value;
+                if (m.SessionState != null)
+                {
+                    if (m.SessionState.Internal.ModuleTable.ContainsKey(module.Path))
+                    {
+                        m.SessionState.Internal.ModuleTable.Remove(module.Path);
+                        m.SessionState.Internal.ModuleTableKeys.Remove(module.Path);
+                    }
+                }
+            }
+
+            if (isTopLevelModule)
+            {
+                // Remove it from the top level session state
+                Context.TopLevelSessionState.ModuleTable.Remove(module.Path);
+                Context.TopLevelSessionState.ModuleTableKeys.Remove(module.Path);
+            }
+
+            // And finally from the global module table...
+            Context.Modules.ModuleTable.Remove(module.Path);
+
+            // And the appdomain level module path cache.
+            PSModuleInfo.RemoveFromAppDomainLevelCache(module.Name);
         }
 
         private bool ShouldModuleBeRemoved(PSModuleInfo module, string moduleNameInRemoveModuleCmdlet, out bool isTopLevelModule)
@@ -4959,6 +4964,53 @@ namespace Microsoft.PowerShell.Commands
             }
             return false;
         }
+
+        /// <summary>
+        /// Recursively remove a module and any nested modules,
+        /// unless they are independently loaded as top-level modules.
+        /// This does not follow cyclic module dependencies
+        /// </summary>
+        /// <param name="module">the top-level module to remove</param>
+        internal void RemoveModuleAndNestedModules(PSModuleInfo module)
+        {
+            RemoveNestedModulesWithTrackingList(module, new HashSet<PSModuleInfo>());
+        }
+
+        /// <summary>
+        /// Recursively remove a module and all its nested modules
+        /// </summary>
+        /// <param name="topModule">the module to remove</param>
+        /// <param name="seenAndExcludedModules">modules that have been examined already and will be skipped</param>
+        private void RemoveNestedModulesWithTrackingList(PSModuleInfo topModule, HashSet<PSModuleInfo> seenAndExcludedModules)
+        {
+            // Mark that we've seen the top module -- we remove it at the end of this call
+            seenAndExcludedModules.Add(topModule);
+
+            // Recurse over nested modules
+            foreach (PSModuleInfo nestedModule in topModule.NestedModules)
+            {
+                // Ignore modules we've already dealt with
+                if (seenAndExcludedModules.Contains(nestedModule))
+                {
+                    continue;
+                }
+
+                // Ignore modules we shouldn't be removing (e.g. if they are also loaded at the top level)
+                bool isTopLevelModule;
+                if (!ShouldModuleBeRemoved(nestedModule, moduleNameInRemoveModuleCmdlet: null, out isTopLevelModule))
+                {
+                    seenAndExcludedModules.Add(nestedModule);
+                    continue;
+                }
+
+                // Perform the recursive call
+                RemoveNestedModulesWithTrackingList(nestedModule, seenAndExcludedModules);
+            }
+
+            // Remove the top module
+            RemoveModule(topModule);
+        }
+
 
         internal bool IsModuleAlreadyLoaded(PSModuleInfo alreadyLoadedModule)
         {
@@ -5010,7 +5062,7 @@ namespace Microsoft.PowerShell.Commands
                     if (this.BaseForce) // remove the previously imported module + return null (null = please proceed with regular import)
                     {
                         // remove the module
-                        RemoveModule(alreadyLoadedModule);
+                        RemoveModuleAndNestedModules(alreadyLoadedModule);
 
                         // proceed with regular import
                         return null;
@@ -5205,7 +5257,7 @@ namespace Microsoft.PowerShell.Commands
                     // TODO/FIXME: (for example the checks above are not lookint at this.BaseMinimumVersion)
                     //if (BaseForce && IsModuleAlreadyLoaded(module))
                     {
-                        RemoveModule(module);
+                        RemoveModuleAndNestedModules(module);
                     }
                     module = LoadModule(parentModule, fileName, moduleBase, prefix, ss, null, ref options, manifestProcessingFlags, out found, out moduleFileFound);
                     if (found)

@@ -363,8 +363,7 @@ function SubFunc
         $subModName = "SubObj"
         $modPath = "$TestDrive\$modName"
 
-        Remove-Module $modName -Force
-        Remove-Module $subModName -Force
+        Get-Module $modName | Remove-Module -Force
         if (Test-Path $modPath) { Remove-Item $modPath -Force -Recurse }
 
         $mainModSrc = @"
@@ -407,7 +406,7 @@ class SubObj
 
         Set-Content -Path "$modPath\$subModName.psm1" -Value $subModSrc2 -Force
 
-        Import-Module $modPath -Force
+        Import-Module $modPath
 
         Test-SubClassMain | Should -BeExactly "FIRST"
     }
@@ -417,8 +416,7 @@ class SubObj
         $subModName = "SubObj"
         $modPath = "$TestDrive\$modName"
 
-        Remove-Module $modName -Force
-        Remove-Module $subModName -Force
+        Get-Module $modName | Remove-Module -Force
         if (Test-Path $modPath) { Remove-Item $modPath -Force -Recurse }
 
         $mainModSrc = @"
@@ -461,7 +459,7 @@ class SubObj
 
         Set-Content -Path "$modPath\$subModName.psm1" -Value $subModSrc2 -Force
 
-        Import-Module $modPath
+        Import-Module -Force $modPath
 
         Test-SubClassMain | Should -BeExactly "SECOND"
     }
