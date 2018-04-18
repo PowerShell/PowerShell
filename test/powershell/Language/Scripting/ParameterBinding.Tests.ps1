@@ -165,7 +165,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $foo
         }
 
-        { get-foo -a a -b b c d } | ShouldBeErrorId 'AmbiguousParameterSet,get-foo'
+        { get-foo -a a -b b c d } | Should -Throw -ErrorId 'AmbiguousParameterSet,get-foo'
         ( get-foo -a a b c d ) -join ',' | Should -BeExactly 'b,c,d'
         ( get-foo -b b a c d ) -join ',' | Should -BeExactly 'a,c,d'
     }
@@ -230,7 +230,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        { get-foo -a $null } | ShouldBeErrorId 'ParameterArgumentValidationErrorNullNotAllowed,get-foo'
+        { get-foo -a $null } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorNullNotAllowed,get-foo'
 
     }
 
@@ -272,7 +272,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
             $a
         }
 
-        { get-foo -a @() } | ShouldBeErrorId 'ParameterArgumentValidationErrorEmptyArrayNotAllowed,get-foo'
+        { get-foo -a @() } | Should -Throw -ErrorId 'ParameterArgumentValidationErrorEmptyArrayNotAllowed,get-foo'
     }
 
     It 'Empty collection is allowed when allowEmptyCollection is set' {
@@ -315,7 +315,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
            $Parameter
         }
 
-        { get-foo 'a','b' } | ShouldBeErrorId 'ParameterArgumentTransformationError,get-foo'
+        { get-foo 'a','b' } | Should -Throw -ErrorId 'ParameterArgumentTransformationError,get-foo'
     }
 
     It "Binding array of string to array of bool should succeed" {

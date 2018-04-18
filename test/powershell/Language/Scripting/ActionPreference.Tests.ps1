@@ -144,7 +144,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $params += @{$switch=$true}
             { New-Item @params } | Should -Not -Throw
             $ErrorActionPreference = "Stop"
-            { New-Item @params } | ShouldBeErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
+            { New-Item @params } | Should -Throw -ErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
             Remove-Item "$testdrive\test.txt" -Force
         }
 }

@@ -210,7 +210,7 @@ Describe "Split Operator" -Tags CI {
         }
 
         It "Binary split operator doesn't works with RegexMatch,SimpleMatch" {
-            { "abc" -split "B", 0, 'RegexMatch,SimpleMatch' } | ShouldBeErrorId "InvalidSplitOptionCombination"
+            { "abc" -split "B", 0, 'RegexMatch,SimpleMatch' } | Should -Throw -ErrorId "InvalidSplitOptionCombination"
         }
     }
 
