@@ -411,7 +411,6 @@ namespace Microsoft.PowerShell.Commands
                     if (Context.Modules.ModuleTable.TryGetValue(module.Path, out moduleToRemove))
                     {
                         Dbg.Assert(BaseForce, "We should only remove and reload if -Force was specified");
-
                         RemoveModuleAndNestedModules(moduleToRemove);
                     }
 
