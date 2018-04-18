@@ -138,7 +138,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         }
 
         It "The Get-CimTest cmdlet should return the proper error if the instance does not exist" @ItSkipOrPending {
-            { Get-CimTest -ea stop -id "ThisIdDoesNotExist" } | ShouldBeErrorId "CmdletizationQuery_NotFound_Id,Get-CimTest"
+            { Get-CimTest -ea stop -id "ThisIdDoesNotExist" } | Should -Throw -ErrorId "CmdletizationQuery_NotFound_Id,Get-CimTest"
         }
 
         It "The Get-CimTest cmdlet should work as a job" @ItSkipOrPending {
@@ -230,7 +230,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 field1 = "a string"
                 field2 = "a bad string" # this needs to be an int
             }
-            { New-CimTest @instanceArgs } | ShouldBeErrorId "ParameterArgumentTransformationError,New-CimTest"
+            { New-CimTest @instanceArgs } | Should -Throw -ErrorId "ParameterArgumentTransformationError,New-CimTest"
             # just make sure that it wasn't added
             Get-CimTest -id $instanceArgs.Id -ea SilentlyContinue | Should -BeNullOrEmpty
         }

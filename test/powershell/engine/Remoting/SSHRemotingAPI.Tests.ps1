@@ -21,7 +21,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
                 "UserName",
                 [System.Management.Automation.Internal.AutomationNull]::Value,
                 [System.Management.Automation.Internal.AutomationNull]::Value,
-                0) } | ShouldBeErrorId "PSArgumentNullException"
+                0) } | Should -Throw -ErrorId "PSArgumentNullException"
         }
 
         It "SSHConnectionInfo should throw file not found exception for invalid key file path" -Skip:$skipTest {
