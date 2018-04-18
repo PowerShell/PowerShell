@@ -74,4 +74,12 @@ Describe "Write-Output" -Tags "CI" {
 	    $singleCollection | Should -Be 1
 	}
     }
+
+    Context "Scalar input" {
+        It "Write-Object -NoEnumerate should not wrap a scalar" {
+            Write-Output -NoEnumerate 1              | Should BeOfType [int]
+            Write-Output -NoEnumerate -InputObject 1 | Should BeOfType [int]
+            1 | Write-Output -NoEnumerate            | Should BeOfType [int]
+        }
+    }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Management.Automation;
+using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -13,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommunications.Write, "Output", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113427", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteOutputCommand : PSCmdlet
     {
-        private PSObject[] _inputObjects = null;
+        private object _inputObjects = null;
 
         /// <summary>
         /// Holds the list of objects to be Written
@@ -21,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         [AllowNull]
         [AllowEmptyCollection]
-        public PSObject[] InputObject
+        public object InputObject
         {
             get { return _inputObjects; }
             set { _inputObjects = value; }
@@ -36,6 +37,25 @@ namespace Microsoft.PowerShell.Commands
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// This method implements the BeginProcessing method for Write-output command
+        /// </summary>
+        protected override void BeginProcessing() {
+            // If the input is a List<object> instance with a single element,
+            // assume that it is a single argument bound via ValueFromRemainingArguments and unwrap it.
+            // Note: 
+            //  * This case is indistinguishable from something like the following:
+            //      Write-Output -NoEnumerate -InputObject ([System.Collections.Generic.List[object]]::new((, 1)))
+            //    However, this seems like an acceptable price to pay in order to prevent unexpected wrapping of
+            //    a scalar in a collection when using -NoEnumerate.
+            //  * Is the case of *multiple* ValueFromRemainingArguments values, the List<object> instance
+            //    is passed through when -NoEnumerate is specified.
+            List<object> lst;
+            if (_inputObjects is List<object> && (lst = (List<object>)_inputObjects).Count == 1) {
+                _inputObjects = lst[0];
+            }            
         }
 
         /// <summary>
