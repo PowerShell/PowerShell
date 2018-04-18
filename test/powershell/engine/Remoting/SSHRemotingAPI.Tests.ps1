@@ -26,8 +26,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
         It "SSHConnectionInfo should throw file not found exception for invalid key file path" -Skip:$skipTest {
 
-            try
-            {
+            $e = {
                 $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                     "UserName",
                     "localhost",
@@ -36,18 +35,12 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
                 $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
                 $rs.Open()
-
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.Exception.InnerException.InnerException | Should -BeOfType "System.IO.FileNotFoundException"
-            }
+            } | Should -Throw -PassThru
+            $e.Exception.InnerException.InnerException | Should -BeOfType "System.IO.FileNotFoundException"
         }
 
         It "SSHConnectionInfo should throw argument exception for invalid port (non 16bit uint)" {
-            try
-            {
+            $e = {
                 $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                     "UserName",
                     "localhost",
@@ -56,19 +49,8 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
                 $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
                 $rs.Open()
-
-                throw "No Exception!"
-            }
-            catch
-            {
-                $expectedArgumentException = $_.Exception
-                if ($null -ne $_.Exception.InnerException)
-                {
-                    $expectedArgumentException = $_.Exception.InnerException
-                }
-
-                $expectedArgumentException | Should -BeOfType "System.ArgumentException"
-            }
+            } | Should -Throw -PassThru
+            $e.Exception.InnerException | Should -BeOfType "System.ArgumentException"
         }
     }
 }

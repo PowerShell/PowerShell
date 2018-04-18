@@ -16,17 +16,8 @@ Describe "SSHTransport switch parameter value" -Tags 'Feature' {
     }
 
     It "<testName>" -TestCases $TestCasesSSHTransport {
-
         param($scriptBlock)
-        try
-        {
-            & $scriptBlock
-            throw "Parameter argument should not be valid"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Match "ParameterArgumentValidationError"
-        }
+        { & $scriptBlock } | Should -Throw -ErrorId "ParameterArgumentValidationError"
     }
 }
 
@@ -46,14 +37,6 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
 
     It "<testName>" -TestCases $TestCasesSSHConnection {
         param ($scriptBlock)
-        try
-        {
-            & $scriptBlock
-            throw "Parameter set should not be valid"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should -Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
-        }
+        { & $scriptBlock } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }
