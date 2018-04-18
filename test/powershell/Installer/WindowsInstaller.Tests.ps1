@@ -33,6 +33,6 @@ Describe "Windows Installer" -Tags "Scenario" {
             }
         }
 
-        $result | Should Not Be $null
+        $result | Should -Not -Be $null
     }
 }
