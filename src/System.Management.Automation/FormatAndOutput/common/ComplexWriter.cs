@@ -700,12 +700,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static string TruncateAtNewLine(string s)
         {
             if (string.IsNullOrEmpty(s))
-                return s;
+            {
+                return "";
+            }
 
             int lineBreak = s.IndexOfAny(s_lineBreakChars);
 
             if (lineBreak < 0)
+            {
                 return s;
+            }
 
             return s.Substring(0, lineBreak) + PSObjectHelper.ellipses;
         }
