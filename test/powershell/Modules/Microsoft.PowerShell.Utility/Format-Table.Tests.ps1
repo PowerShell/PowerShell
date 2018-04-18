@@ -479,7 +479,7 @@ er
 
 
 "@ },
-@{ view = "Default"; widths = 4,7,5; variation = "narrow values with wrap"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $true; expectedTable = @"
+            @{ view = "Default"; widths = 4,7,5; variation = "narrow values with wrap"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $true; expectedTable = @"
 
 Long*Header2*Heade
 Long*********r3
@@ -491,7 +491,7 @@ er
 
 
 "@ },
-@{ view = "Default"; widths = 4,7,5; variation = "wide values"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $false; expectedTable = @"
+            @{ view = "Default"; widths = 4,7,5; variation = "wide values"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $false; expectedTable = @"
 
 Long*Header2*Heade
 Long*********r3
@@ -516,7 +516,7 @@ er
 
 
 "@ },
-@{ view = "Default"; widths = 4,7,5; variation = "wide values with wrap"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+            @{ view = "Default"; widths = 4,7,5; variation = "wide values with wrap"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 Long*Header2*Heade
 Long*********r3
