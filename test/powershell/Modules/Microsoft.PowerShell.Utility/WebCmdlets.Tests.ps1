@@ -654,7 +654,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Test 'Get'
         #Validate that parameter sets are functioning correctly
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-        { Invoke-WebRequest -Uri $uri -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+        { Invoke-WebRequest -Uri $uri -Method GET -CustomMethod TEST } | Should -Throw -ErrorId $errorId
     }
 
     It "Validate Invoke-WebRequest CustomMethod method is used" {
@@ -927,7 +927,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest ContentType handling reports no error is returned for an invalid Content-Type header value, -Body, and -SkipHeaderValidation" {
@@ -959,7 +959,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-WebRequest -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
@@ -1375,7 +1375,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-WebRequest -Uri $uri -Form $form -Body $Body -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                Should -Throw -ErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
         It "Verifies Invoke-WebRequest -Form is mutually exclusive with -InFile" {
@@ -1383,7 +1383,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-WebRequest -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                Should -Throw -ErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
     }
 
@@ -1438,7 +1438,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction           = 'Stop'
                 SkipCertificateCheck  = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication does not support Both -Credential and -Token" {
@@ -1450,7 +1450,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication <Authentication> requires -Token" -TestCases $testCases {
@@ -1461,7 +1461,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication Basic requires -Credential" {
@@ -1471,7 +1471,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication Requires HTTPS" {
@@ -1481,7 +1481,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 Authentication = "OAuth"
                 ErrorAction    = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest -Authentication Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -1515,7 +1515,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 Credential  = $credential
                 ErrorAction = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         It "Verifies Invoke-WebRequest Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -1554,7 +1554,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 UseDefaultCredentials = $true
                 ErrorAction           = 'Stop'
             }
-            { Invoke-WebRequest @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            { Invoke-WebRequest @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
@@ -1634,7 +1634,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                     SkipCertificateCheck = $true
                     ErrorAction          = 'Stop'
                 }
-                { Invoke-WebRequest @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+                { Invoke-WebRequest @params } | Should -Throw -ErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
             }
         }
     }
@@ -2019,7 +2019,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod StandardMethod and CustomMethod parameter sets" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        { Invoke-RestMethod -Uri $uri -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+        { Invoke-RestMethod -Uri $uri -Method GET -CustomMethod TEST } | Should -Throw -ErrorId $errorId
     }
 
     It "Validate CustomMethod method is used" {
@@ -2262,7 +2262,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -Body $body -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod ContentType handling reports no error is returned for an invalid Content-Type header value, -Body, and -SkipHeaderValidation" {
@@ -2292,7 +2292,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Post'
 
             { Invoke-RestMethod -Uri $uri -Method 'Post' -ContentType $contentType -InFile $Testfile -ErrorAction 'Stop' } |
-                ShouldBeErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+                Should -Throw -ErrorId "WebCmdletContentTypeException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod default ContentType handling reports no error is returned for an invalid Content-Type header value, -Infile, and -SkipHeaderValidation" {
@@ -2493,7 +2493,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-RestMethod -Uri $uri -Form $form -Body $Body -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                Should -Throw -ErrorId 'WebCmdletBodyFormConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
 
         It "Verifies Invoke-RestMethod -Form is mutually exclusive with -InFile" {
@@ -2501,7 +2501,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Test 'Multipart'
 
             {Invoke-RestMethod -Uri $uri -Form $form -InFile $file1Path -ErrorAction 'Stop'} |
-                ShouldBeErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                Should -Throw -ErrorId 'WebCmdletFormInFileConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
     }
 
@@ -2714,7 +2714,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction           = 'Stop'
                 SkipCertificateCheck  = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication does not support Both -Credential and -Token" {
@@ -2726,7 +2726,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenConflictException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication <Authentication> requires -Token" -TestCases $testCases {
@@ -2737,7 +2737,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationTokenNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication Basic requires -Credential" {
@@ -2747,7 +2747,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 ErrorAction          = 'Stop'
                 SkipCertificateCheck = $true
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAuthenticationCredentialNotSuppliedException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication Requires HTTPS" {
@@ -2757,7 +2757,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 Authentication = "OAuth"
                 ErrorAction    = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod -Authentication Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -2789,7 +2789,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 Credential  = $credential
                 ErrorAction = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         It "Verifies Invoke-RestMethod Negotiated -Credential Can use HTTP with -AllowUnencryptedAuthentication" {
@@ -2826,7 +2826,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                 UseDefaultCredentials = $true
                 ErrorAction           = 'Stop'
             }
-            { Invoke-RestMethod @params } | ShouldBeErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            { Invoke-RestMethod @params } | Should -Throw -ErrorId "WebCmdletAllowUnencryptedAuthenticationRequiredException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
         }
 
         # UseDefaultCredentials is only reliably testable on Windows
@@ -2903,7 +2903,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
                     SkipCertificateCheck = $true
                     ErrorAction          = 'Stop'
                 }
-                { Invoke-RestMethod @params } | ShouldBeErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+                { Invoke-RestMethod @params } | Should -Throw -ErrorId 'WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
             }
         }
     }
@@ -3120,12 +3120,7 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
         It "<Name>" -TestCases $testCases {
             param ($scriptblock, $expectedFullyQualifiedErrorId)
 
-            try {
-                & $scriptblock
-                throw "No Exception!"
-            } catch {
-                $_.FullyQualifiedErrorId | Should -Be $ExpectedFullyQualifiedErrorId
-            }
+            { & $scriptblock } | Should -Throw -ErrorId $ExpectedFullyQualifiedErrorId
         }
     }
 

@@ -3,7 +3,7 @@
 Describe "New-Object" -Tags "CI" {
     It "Support 'ComObject' parameter on platforms" {
         if ($IsLinux -or $IsMacOs ) {
-            { New-Object -ComObject "Shell.Application" } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+            { New-Object -ComObject "Shell.Application" } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
         } else {
             # It works on NanoServer and IoT too
             (Get-Command "New-Object").Parameters.ContainsKey("ComObject") | Should -BeTrue
@@ -116,7 +116,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
         {
            Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
         }
-        { New-Object -TypeName Employee -EA Stop } | ShouldBeErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+        { New-Object -TypeName Employee -EA Stop } | Should -Throw -ErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 
     It "New-Object with Private Nested class should throw Exception"{
@@ -158,7 +158,7 @@ try
         }
 
         It "Should fail with correct error when creating a COM object that dose not exist" {
-            {New-Object -ComObject 'doesnotexist'} | ShouldBeErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
+            {New-Object -ComObject 'doesnotexist'} | Should -Throw -ErrorId 'NoCOMClassIdentified,Microsoft.PowerShell.Commands.NewObjectCommand'
         }
     }
 }
