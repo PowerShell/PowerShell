@@ -220,7 +220,7 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
     It "<title>" -TestCases $ParameterError {
         param($parameters, $expectedError)
 
-        { Invoke-Command @parameters } | ShouldBeErrorId $expectedError
+        { Invoke-Command @parameters } | Should -Throw -ErrorId $expectedError
     }
 
     It 'Can execute command if one of the sessions is available' {
