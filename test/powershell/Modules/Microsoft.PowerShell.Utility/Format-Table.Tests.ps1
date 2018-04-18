@@ -516,7 +516,44 @@ er
 
 
 "@ },
-            @{ view = "Default"; widths = 4,7,5; variation = "wide values with wrap"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+            @{ view = "Default"; widths = 4,8,6; variation = "wide values with wrap, 1st column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+Long**Header2*Header
+Long**********3
+Head
+er
+----**-------*------
+1234*12345678*123456
+5
+
+
+
+"@ },
+            @{ view = "Default"; widths = 5,7,6; variation = "wide values with wrap, 2nd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+LongL*Header2*Header
+ongHe*********3
+ader
+-----*-------*------
+12345*1234567*123456
+************8
+
+
+
+"@ },
+            @{ view = "Default"; widths = 5,8,5; variation = "wide values with wrap, 3rd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+LongL**Header2*Heade
+ongHe**********r3
+ader
+-----**-------*-----
+12345*12345678*12345
+***************6
+
+
+
+"@ },
+            @{ view = "Default"; widths = 4,7,5; variation = "wide values with wrap, all 3 columns"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 Long*Header2*Heade
 Long*********r3
@@ -529,7 +566,7 @@ er
 
 
 "@ },
-            @{ view = "One"; widths = 3,1,1; variation = "wide values with wrap, 1 column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+            @{ view = "One"; widths = 3,1,1; variation = "wide values with wrap, with 1 column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
 
 Lon
 gLo
