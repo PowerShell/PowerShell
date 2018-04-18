@@ -839,7 +839,7 @@ dir -Recurse `
 
         It "Input '<inputStr>' should throw in tab completion" -TestCases $testCases {
             param($inputStr, $expected)
-            $inputStr | ShouldBeErrorId $expected
+            $inputStr | Should -Throw -ErrorId $expected
         }
     }
 
