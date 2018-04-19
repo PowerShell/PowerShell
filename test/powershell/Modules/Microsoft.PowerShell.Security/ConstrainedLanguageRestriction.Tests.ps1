@@ -155,15 +155,10 @@ try
         Context "Background jobs within inconsistent mode" {
 
             It "Verifies that background job is denied when mode is inconsistent" {
-                $e = {
-                    $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                    Start-Job { [object]::Equals("A", "B") }
-                } | Should -Throw -PassThru
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                { Start-Job { [object]::Equals("A", "B") } } | Should -Throw -ErrorId "CannotStartJobInconsistentLanguageMode"
 
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-                $e.FullyQualifiedErrorId | Should -Match "CannotStartJobInconsistentLanguageMode"
             }
         }
     }
@@ -171,14 +166,10 @@ try
     Describe "Add-Type in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Add-Type fails in constrained language mode" {
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                Add-Type -TypeDefinition 'public class ConstrainedLanguageTest { public static string Hello = "HelloConstrained"; }'
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            { Add-Type -TypeDefinition 'public class ConstrainedLanguageTest { public static string Hello = "HelloConstrained"; }' } |
+                Should -Throw -ErrorId "CannotDefineNewType"
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "CannotDefineNewType"
         }
 
         It "Verifies Add-Type works back in full language mode again" {
@@ -208,16 +199,10 @@ try
             }
 
             It "Verifies New-Object throws error in constrained language for disallowed IntPtr type" {
-
-                $e = {
-                    $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                    New-Object System.IntPtr 1234
-                } | Should -Throw -PassThru
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                { New-Object System.IntPtr 1234 } | Should -Throw -ErrorId "CannotCreateTypeConstrainedLanguage"
 
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-                $e.FullyQualifiedErrorId | Should -Match "CannotCreateTypeConstrainedLanguage"
             }
 
             It "Verifies New-Object works for IntPtr type back in full language mode again" {
@@ -229,17 +214,12 @@ try
         Context "New-Object with COM types" {
 
             It "Verifies New-Object with COM types is disallowed in system lock down" {
+                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
 
-                $e = {
-                    $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                    Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
-
-                    New-Object -Com ADODB.Parameter
-                } | Should -Throw -PassThru
+                { New-Object -Com ADODB.Parameter } | Should -Throw -ErrorId "CannotCreateComTypeConstrainedLanguage"
 
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
-
-                $e.FullyQualifiedErrorId | Should -Match "CannotCreateComTypeConstrainedLanguage"
             }
 
             It "Verifies New-Object with COM types works back in full language mode again" {
@@ -253,29 +233,22 @@ try
     Describe "New-Item command on function drive in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies New-Item directory on function drive is not allowed in constrained language mode" {
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                $null = New-Item -Path function:\SomeEvilFunction -ItemType Directory -Value SomeBadScriptBlock -ErrorAction Stop
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            { $null = New-Item -Path function:\SomeEvilFunction -ItemType Directory -Value SomeBadScriptBlock -ErrorAction Stop } |
+                Should -Throw -ErrorId "NotSupported"
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-            $e.FullyQualifiedErrorId | Should -Match "NotSupported"
         }
     }
 
     Describe "Script debugging in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies that a debugging breakpoint cannot be set in constrained language and no system lockdown" {
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            function MyDebuggerFunction {}
 
-                function MyDebuggerFunction {}
-                Set-PSBreakpoint -Command MyDebuggerFunction
-            } | Should -Throw -PassThru
+            { Set-PSBreakpoint -Command MyDebuggerFunction } | Should -Throw -ErrorId "CannotSetBreakpointInconsistentLanguageMode"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "CannotSetBreakpointInconsistentLanguageMode"
         }
 
         It "Verifies that a debugging breakpoint can be set in constrained language with system lockdown" {
@@ -299,21 +272,19 @@ try
         }
 
         It "Verifies that debugger commands do not run in full language mode when system is locked down" {
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
 
-                function MyDebuggerFunction3 {}
+            function MyDebuggerFunction3 {}
+
+            {
                 $null = Set-PSBreakpoint -Command MyDebuggerFunction3 -Action { $Global:dbgResult = [object]::Equals("A", "B") }
-
                 $restoreEAPreference = $ErrorActionPreference
                 $ErrorActionPreference = "Stop"
                 MyDebuggerFunction3
-            } | Should -Throw -PassThru
+            } | Should -Throw -ErrorId "CannotSetBreakpointInconsistentLanguageMode"
 
             if ($restoreEAPreference -ne $null) { $ErrorActionPreference = $restoreEAPreference }
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should Match "CannotSetBreakpointInconsistentLanguageMode"
         }
 
         It "Verifies that debugger command injection is blocked in system lock down" {
@@ -381,14 +352,10 @@ try
             Import-Module PSDiagnostics
             $module = Get-Module PSDiagnostics
 
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-                & $module { [object]::Equals("A", "B") }
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            { & $module { [object]::Equals("A", "B") } } | Should -Throw -ErrorId "MethodInvocationNotSupportedInConstrainedLanguage"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
@@ -402,11 +369,9 @@ try
             $rs.Open()
             $pl = $rs.CreatePipeline("switch -file $testDrive/foo.txt { 'A' { 'B' } }")
 
-            $e = { $pl.Invoke() } | Should -Throw -PassThru
+            $e = { $pl.Invoke() } | Should -Throw -ErrorId "DriveNotFoundException"
 
             $rs.Dispose()
-
-            $e.FullyQualifiedErrorId | Should -Match "DriveNotFoundException"
         }
     }
 
@@ -438,11 +403,9 @@ try
             $rs.Open()
             $pl = $rs.CreatePipeline('"Hello" > c:\temp\foo.txt')
 
-            $e = { $pl.Invoke() } | Should -Throw -PassThru
+            $e = { $pl.Invoke() } | Should -Throw -ErrorId "CmdletInvocationException"
 
             $rs.Dispose()
-
-            $e.FullyQualifiedErrorId | Should -Match "CmdletInvocationException"
         }
     }
 
@@ -464,49 +427,35 @@ try
 
             param ($scriptblock)
 
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                & $scriptblock
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            { & $scriptblock } | Should -Throw -ErrorId "MethodInvocationNotSupportedInConstrainedLanguage"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
     Describe "Dynamic method invocation in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies dynamic method invocation does not bypass constrained language mode" {
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            {
                 $type = [IO.Path]
                 $method = "GetRandomFileName"
                 $type::$method()
-                throw 'No Exception!'
-            } | Should -Throw -PassThru
+            } | Should -Throw -ErrorId "MethodInvocationNotSupportedInConstrainedLanguage"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
 
         It "Verifies dynamic methods invocation does not bypass constrained language mode" {
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            {
                 $type = [IO.Path]
                 $methods = "GetRandomFileName","GetTempPath"
                 $type::($methods[0])()
-            } | Should -Throw -PassThru
+            } | Should -Throw -ErrorId "MethodInvocationNotSupportedInConstrainedLanguage"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
@@ -532,29 +481,19 @@ try
     Describe "Variable AllScope in constrained language mode" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Set-Variable cannot create AllScope in constrained language" {
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                Set-Variable -Name SetVariableAllScopeNotSupported -Value bar -Option AllScope
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            { Set-Variable -Name SetVariableAllScopeNotSupported -Value bar -Option AllScope } |
+                Should -Throw -ErrorId "NotSupported"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "NotSupported"
         }
 
         It "Verifies New-Variable cannot create AllScope in constrained language" {
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                New-Variable -Name NewVarialbeAllScopeNotSupported -Value bar -Option AllScope
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            { New-Variable -Name NewVarialbeAllScopeNotSupported -Value bar -Option AllScope } |
+                Should -Throw -ErrorId "NotSupported"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "NotSupported"
         }
     }
 
@@ -587,35 +526,26 @@ try
         }
 
         It "Verifies data section with no-constant expression Add-Type additional command is disallowed in constrained language" {
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
-                $addedCommand = "Add-Type"
-                Invoke-Expression 'data foo -SupportedCommand $addedCommand { Add-Type }'
-            } | Should -Throw -PassThru
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            $addedCommand = "Add-Type"
+            { Invoke-Expression 'data foo -SupportedCommand $addedCommand { Add-Type }' } |
+                Should -Throw -ErrorId "DataSectionAllowedCommandDisallowed"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "DataSectionAllowedCommandDisallowed"
         }
     }
 
     Describe "Import-LocalizedData additional commands in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Import-LocalizedData disallows Add-Type in constrained language" {
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            {
                 $localizedDataFileName = Join-Path $TestDrive ImportLocalizedDataAdditionalCommandsNotSupported.psd1
                 $null = New-Item -ItemType File -Path $localizedDataFileName -Force
                 Import-LocalizedData -SupportedCommand Add-Type -BaseDirectory $TestDrive -FileName ImportLocalizedDataAdditionalCommandsNotSupported
-            } | Should -Throw -PassThru
+            } | Should -Throw -ErrorId "CannotDefineSupportedCommand"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "CannotDefineSupportedCommand"
         }
     }
 
@@ -704,18 +634,14 @@ try
             param (
                 [string] $script
             )
-
-            $e = {
-                $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
-
+            $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
+            {
                 # Scriptblock must be created inside constrained language.
                 $sb = [scriptblock]::Create($script)
                 & sb
-            } | Should -Throw -PassThru
+            } | Should -Throw -ErrorId "MethodInvocationNotSupportedInConstrainedLanguage"
 
             Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
-
-            $e.FullyQualifiedErrorId | Should -Match "MethodInvocationNotSupportedInConstrainedLanguage"
         }
     }
 
