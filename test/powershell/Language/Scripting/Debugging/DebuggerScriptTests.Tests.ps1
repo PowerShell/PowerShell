@@ -278,18 +278,8 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     #
     function VerifyException([ScriptBlock] $command, [string] $exception)
     {
-        try
-        {
-            & $command
-
-            throw "No Exception!"
-        }
-        catch
-        {
-            It "Script failed expected exception '${command}'" {
-                $_.Exception.GetType().Name | Should -Be $exception
-            }
-        }
+        $e = { & $command } | Should -Throw -PassThru
+        $e.Exception.GetType().Name | Should -Be $exception
     }
 
     #
