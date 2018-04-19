@@ -34,7 +34,7 @@ Describe "Import-Module by name" -Tag Feature {
         It "Passes the imported module out when -PassThru is used" {
             $modItem = New-SimpleModule
             $mod = Import-Module $modItem.PSPath -PassThru
-            $mod.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
+            $mod.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
         }
 
         It "Passes the imported module out as a custom object when -AsCustomObject is used" {
@@ -48,9 +48,9 @@ Describe "Import-Module by name" -Tag Feature {
             $modItem = New-SimpleModule
             $module = Import-Module $modItem.PSPath -PassThru
 
-            $module.ExportedFunctions.Count | Should -BeExactly 1
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $false
+            $module.ExportedFunctions.Count | Should -Be 1
+            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
 
             New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
@@ -62,25 +62,25 @@ Describe "Import-Module by name" -Tag Feature {
             $modItem = New-SimpleModule
             $module = Import-Module $modItem.PSPath -PassThru
 
-            $module.ExportedFunctions.Count | Should -BeExactly 1
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $false
+            $module.ExportedFunctions.Count | Should -Be 1
+            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
 
             New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
             $module = Import-Module $modItem.PSPath -PassThru -Force
-            $module.ExportedFunctions.Count | Should -BeExactly 2
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $true
+            $module.ExportedFunctions.Count | Should -Be 2
+            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeTrue
         }
 
         It "Re-imports modules from file with new members when -Force is used with -AsCustomObject" {
             $modItem = New-SimpleModule
             $module = Import-Module $modItem.PSPath -PassThru
 
-            $module.ExportedFunctions.Count | Should -BeExactly 1
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $false
+            $module.ExportedFunctions.Count | Should -Be 1
+            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
 
             New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
@@ -140,15 +140,8 @@ function Get-PassedArgsNoRoot { $passedArgs }
             param($paramName)
 
             $modItem = New-SimpleModule
-            try
-            {
-                $ps.AddScript("Import-Module $($modItem.PSPath) -$paramName `$null")
-                $ps.Invoke()
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should -BeExactly "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ImportModuleCommand"
-            }
+            $ps.AddScript("Import-Module $($modItem.PSPath) -$paramName `$null")
+            $ps.Invoke() | Should -Throw -ErrorId "ParameterArgumentValidationError"
         }
 
         It "Ignores whitespace -MaximumVersion parameter" {
@@ -172,14 +165,7 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
     }
 
     It "Imports a module by moduleinfo" {
-        try
-        {
-            Test-FirstModuleFunction
-        }
-        catch
-        {
-            $_.Exception | Should -BeOfType [System.Management.Automation.CommandNotFoundException]
-        }
+        Test-FirstModuleFunction | Should -Throw -ErrorId "CommandNotFoundException"
 
         Import-Module $modInfo
         Test-FirstModuleFunction | Should -BeExactly "TESTSTRING"
@@ -187,7 +173,7 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
 
     It "Passes the imported module out when -PassThru is used" {
         $mod = Import-Module $modInfo -PassThru
-        $mod.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
+        $mod.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
     }
 
     It "Passes the imported module out as a custom object when -AsCustomObject is used" {
@@ -199,9 +185,9 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
     It "Re-imports modules from file with new members when -Force is used" {
         $module = Import-Module $modInfo -PassThru
 
-        $module.ExportedFunctions.Count | Should -BeExactly 1
-        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $false
+        $module.ExportedFunctions.Count | Should -Be 1
+        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
 
         New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
@@ -212,24 +198,24 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
     It "Re-imports modules from file with new members when -Force is used with -PassThru" {
         $module = Import-Module $modInfo -PassThru
 
-        $module.ExportedFunctions.Count | Should -BeExactly 1
-        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $false
+        $module.ExportedFunctions.Count | Should -Be 1
+        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
 
         New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
         $module = Import-Module $modInfo -PassThru -Force
-        $module.ExportedFunctions.Count | Should -BeExactly 2
-        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $true
+        $module.ExportedFunctions.Count | Should -Be 2
+        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeTrue
     }
 
     It "Re-imports modules from file with new members when -Force is used with -AsCustomObject" {
         $module = Import-Module $modInfo -PassThru
 
-        $module.ExportedFunctions.Count | Should -BeExactly 1
-        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeExactly $true
-        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeExactly $false
+        $module.ExportedFunctions.Count | Should -Be 1
+        $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+        $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
 
         New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
@@ -279,14 +265,7 @@ function Test-SubModuleFunc
 
         Test-MainModuleFunc | Should -BeExactly "SUBMODULESTRING"
 
-        try
-        {
-            Test-SubModuleFunc
-        }
-        catch
-        {
-            $_.Exception | Should -BeOfType [System.Management.Automation.CommandNotFoundException]
-        }
+        Test-SubModuleFunc | Should -Throw -ErrorId "CommandNotFoundException"
     }
 
     It "Resolves submodule classes with 'using module'" {
@@ -462,6 +441,8 @@ class SubObj
 
         Import-Module -Force $modPath
 
+        Wait-Debugger
+
         Test-SubClassMain | Should -BeExactly "SECOND"
     }
 
@@ -501,6 +482,6 @@ class Sub
         $firstTypes = $sub1.GetExportedTypeDefinitions()
         $secondTypes = $sub2.GetExportedTypeDefinitions()
 
-        $firstTypes.Sub.Equals($secondTypes.Sub) | Should -BeExactly $true
+        $firstTypes.Sub.Equals($secondTypes.Sub) | Should -BeTrue
     }
 }
