@@ -69,15 +69,8 @@ public class ABC {}
         }
 
         It "reports runtime error about non-existing assembly with relative path" {
-            $failed = $true
-            try {
-                [scriptblock]::Create("using assembly .\NonExistingAssembly.dll")
-                $failed = $false
-            } catch {
-                $_.FullyQualifiedErrorId | Should -Be 'ParseException'
-                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be 'ErrorLoadingAssembly'
-            }
-            $failed | Should -BeTrue
+            $e = { [scriptblock]::Create("using assembly .\NonExistingAssembly.dll") } | Should -Throw -ErrorId 'ParseException' -PassThru
+            $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -Be 'ErrorLoadingAssembly'
         }
 #>
         It "Assembly loaded at runtime" -pending {
