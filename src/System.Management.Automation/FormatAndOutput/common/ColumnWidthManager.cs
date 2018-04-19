@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
@@ -29,7 +31,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// with column elimination, starting from the right most column
         /// </summary>
         /// <param name="columnWidths">array of column widths to appropriately size</param>
-        internal void CalculateColumnWidths(int[] columnWidths)
+        internal void CalculateColumnWidths(Span<int> columnWidths)
         {
             if (AssignColumnWidths(columnWidths))
             {
@@ -47,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="columnWidths">columns to process</param>
         /// <returns>true if there was a fit, false if there is need for trimming</returns>
-        private bool AssignColumnWidths(int[] columnWidths)
+        private bool AssignColumnWidths(Span<int> columnWidths)
         {
             // run a quick check to see if all the columns have a specified width,
             // if so, we are done
@@ -127,7 +129,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// trim columns if the total column width is too much for the screen.
         /// </summary>
         /// <param name="columnWidths">column widths to trim</param>
-        private void TrimToFit(int[] columnWidths)
+        private void TrimToFit(Span<int> columnWidths)
         {
             while (true)
             {
@@ -166,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="columnWidths">column widths array</param>
         /// <returns></returns>
-        private int CurrentTableWidth(int[] columnWidths)
+        private int CurrentTableWidth(Span<int> columnWidths)
         {
             int sum = 0;
             int visibleColumns = 0;
@@ -188,7 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="columnWidths">column widths array</param>
         /// <returns>index of the last visible column, -1 if none</returns>
-        private static int GetLastVisibleColumn(int[] columnWidths)
+        private static int GetLastVisibleColumn(Span<int> columnWidths)
         {
             for (int k = 0; k < columnWidths.Length; k++)
             {
