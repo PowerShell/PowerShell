@@ -4865,7 +4865,7 @@ namespace Microsoft.PowerShell.Commands
                                     string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
                                     InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
                                     ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
-                                                                        ErrorCategory.PermissionDenied, func.Name);
+                                                                     ErrorCategory.PermissionDenied, func.Name);
                                     WriteError(er);
                                 }
                             }
@@ -4969,7 +4969,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="module">the top-level module to remove</param>
         internal void RemoveModuleAndNestedModules(PSModuleInfo module)
         {
-            RemoveNestedModulesWithTrackingList(module, new HashSet<PSModuleInfo>());
+            RemoveNestedModulesWithTrackingList(module, new HashSet<PSModuleInfo>(new PSModuleInfoComparer()));
         }
 
         /// <summary>
@@ -5376,7 +5376,7 @@ namespace Microsoft.PowerShell.Commands
         /// Load a module from a file...
         /// </summary>
         /// <param name="parentModule">The parent module, if any</param>
-        /// <param name="filePath">The resolved path to load the module from</param>
+        /// <param name="fileName">The resolved path to load the module from</param>
         /// <param name="moduleBase">The module base path to use for this module</param>
         /// <param name="prefix">Command name prefix</param>
         /// <param name="ss">The session state instance to use for this module - may be null in which case a session state will be allocated if necessary</param>
@@ -5386,13 +5386,13 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="found">True if a module was found</param>
         /// <param name="moduleFileFound">True if a module file was found</param>
         /// <returns>True if the module was successfully loaded</returns>
-        internal PSModuleInfo LoadModule(PSModuleInfo parentModule, string filePath, string moduleBase, string prefix,
+        internal PSModuleInfo LoadModule(PSModuleInfo parentModule, string fileName, string moduleBase, string prefix,
             SessionState ss, object privateData, ref ImportModuleOptions options,
             ManifestProcessingFlags manifestProcessingFlags, out bool found, out bool moduleFileFound)
         {
-            Dbg.Assert(filePath != null, "Filename argument to LoadModule() shouldn't be null");
+            Dbg.Assert(fileName != null, "Filename argument to LoadModule() shouldn't be null");
 
-            if (!Utils.NativeFileExists(filePath))
+            if (!Utils.NativeFileExists(fileName))
             {
                 found = false;
                 moduleFileFound = false;
@@ -5404,13 +5404,13 @@ namespace Microsoft.PowerShell.Commands
 
             // In case the file is a Ngen Assembly.
             string ext;
-            if (filePath.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
+            if (fileName.EndsWith(StringLiterals.PowerShellNgenAssemblyExtension, StringComparison.OrdinalIgnoreCase))
             {
                 ext = StringLiterals.PowerShellNgenAssemblyExtension;
             }
             else
             {
-                ext = Path.GetExtension(filePath);
+                ext = Path.GetExtension(fileName);
             }
             PSModuleInfo module = null;
 
@@ -5427,7 +5427,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // If the module is in memory and the versions don't match don't return it.
                 // This will allow the search to continue and load a different version of the module.
-                if (Context.Modules.ModuleTable.TryGetValue(filePath, out module))
+                if (Context.Modules.ModuleTable.TryGetValue(fileName, out module))
                 {
                     if (BaseMinimumVersion != null && module.Version >= BaseMinimumVersion)
                     {
@@ -5450,9 +5450,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Set the name of the module currently being processed...
                 Context.PreviousModuleProcessed = Context.ModuleBeingProcessed;
-                Context.ModuleBeingProcessed = filePath;
+                Context.ModuleBeingProcessed = fileName;
 
-                string message = StringUtil.Format(Modules.LoadingModule, filePath);
+                string message = StringUtil.Format(Modules.LoadingModule, fileName);
                 WriteVerbose(message);
 
                 moduleFileFound = true;
@@ -5466,13 +5466,13 @@ namespace Microsoft.PowerShell.Commands
                         if (shouldProcessModule)
                         {
                             bool force = (manifestProcessingFlags & ManifestProcessingFlags.Force) == ManifestProcessingFlags.Force;
-                            module = AnalyzeScriptFile(filePath, force, Context);
+                            module = AnalyzeScriptFile(fileName, force, Context);
                             found = true;
                         }
                     }
                     else
                     {
-                        scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
+                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
                         try
                         {
                             Context.Modules.IncrementModuleNestingDepth(this, scriptInfo.Path);
@@ -5480,7 +5480,7 @@ namespace Microsoft.PowerShell.Commands
                             // Create the module object...
                             try
                             {
-                                module = Context.Modules.CreateModule(filePath, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
+                                module = Context.Modules.CreateModule(fileName, scriptInfo, MyInvocation.ScriptPosition, ss, privateData, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
 
                                 SetModuleLoggingInformation(module);
@@ -5541,7 +5541,7 @@ namespace Microsoft.PowerShell.Commands
                         if (shouldProcessModule)
                         {
                             bool force = (manifestProcessingFlags & ManifestProcessingFlags.Force) == ManifestProcessingFlags.Force;
-                            module = AnalyzeScriptFile(filePath, force, Context);
+                            module = AnalyzeScriptFile(fileName, force, Context);
                             found = true;
                         }
                     }
@@ -5552,11 +5552,11 @@ namespace Microsoft.PowerShell.Commands
                         // Removing the module will not remove the commands dot-sourced from the .ps1 file.
                         // This module info is created so that we can keep the behavior consistent between scripts imported as modules and other kind of modules(all of them should have a PSModuleInfo).
                         // Auto-loading expects we always have a PSModuleInfo object for any module. This is how this issue was found.
-                        module = new PSModuleInfo(ModuleIntrinsics.GetModuleName(filePath), filePath, Context, ss);
+                        module = new PSModuleInfo(ModuleIntrinsics.GetModuleName(fileName), fileName, Context, ss);
 
-                        scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
+                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
 
-                        message = StringUtil.Format(Modules.DottingScriptFile, filePath);
+                        message = StringUtil.Format(Modules.DottingScriptFile, fileName);
                         WriteVerbose(message);
 
                         try
@@ -5632,7 +5632,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ext.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
+                    scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
                     found = true;
                     Dbg.Assert(scriptInfo != null, "Scriptinfo for module manifest (.psd1) can't be null");
                     module = LoadModuleManifest(
@@ -5664,7 +5664,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ext.Equals(".dll", StringComparison.OrdinalIgnoreCase) || ext.Equals(StringLiterals.PowerShellNgenAssemblyExtension))
                 {
-                    module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(filePath), filePath, null,
+                    module = LoadBinaryModule(false, ModuleIntrinsics.GetModuleName(fileName), fileName, null,
                         moduleBase, ss, options, manifestProcessingFlags, prefix, true, true, out found);
                     if (found && module != null)
                     {
@@ -5676,7 +5676,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (BaseAsCustomObject)
                         {
-                            message = StringUtil.Format(Modules.CantUseAsCustomObjectWithBinaryModule, filePath);
+                            message = StringUtil.Format(Modules.CantUseAsCustomObjectWithBinaryModule, fileName);
                             InvalidOperationException invalidOp = new InvalidOperationException(message);
                             ErrorRecord er = new ErrorRecord(invalidOp, "Modules_CantUseAsCustomObjectWithBinaryModule",
                                 ErrorCategory.PermissionDenied, null);
@@ -5695,8 +5695,8 @@ namespace Microsoft.PowerShell.Commands
                     // Create the module object...
                     try
                     {
-                        string moduleName = ModuleIntrinsics.GetModuleName(filePath);
-                        scriptInfo = GetScriptInfoForFile(filePath, out scriptName, true);
+                        string moduleName = ModuleIntrinsics.GetModuleName(fileName);
+                        scriptInfo = GetScriptInfoForFile(fileName, out scriptName, true);
 
                         try
                         {
@@ -5712,7 +5712,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (!importingModule)
                             {
-                                module = new PSModuleInfo(filePath, null, null);
+                                module = new PSModuleInfo(fileName, null, null);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
                             }
@@ -5726,7 +5726,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 // proceed with regular module import
                                 List<object> results;
-                                module = Context.Modules.CreateModule(moduleName, filePath, sb, ss, out results, BaseArgumentList);
+                                module = Context.Modules.CreateModule(moduleName, fileName, sb, ss, out results, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
@@ -5741,7 +5741,7 @@ namespace Microsoft.PowerShell.Commands
                             string xmlErrorMessage = string.Format(
                                 CultureInfo.InvariantCulture, // file name is culture agnostic, we want to copy exception message verbatim
                                 CmdletizationCoreResources.ExportCimCommand_ErrorInCmdletizationXmlFile,
-                                filePath,
+                                fileName,
                                 e.Message);
                             throw new XmlException(xmlErrorMessage, e);
                         }
@@ -5769,7 +5769,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (ext.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     found = true;
-                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, filePath);
+                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, fileName);
                     WriteError(new ErrorRecord(
                                    new NotSupportedException(message),
                                    "Modules_WorkflowModuleNotSupported",
@@ -5778,7 +5778,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     found = true;
-                    message = StringUtil.Format(Modules.InvalidModuleExtension, ext, filePath);
+                    message = StringUtil.Format(Modules.InvalidModuleExtension, ext, fileName);
                     InvalidOperationException invalidOp = new InvalidOperationException(message);
                     ErrorRecord er = new ErrorRecord(invalidOp, "Modules_InvalidModuleExtension",
                         ErrorCategory.InvalidOperation, null);
@@ -5796,7 +5796,7 @@ namespace Microsoft.PowerShell.Commands
             if (PSModuleInfo.UseAppDomainLevelModuleCache && module != null && moduleBase == null && this.AddToAppDomainLevelCache)
             {
                 // Cache using the actual name specified by the user rather than the module basename
-                PSModuleInfo.AddToAppDomainLevelModuleCache(module.Name, filePath, this.BaseForce);
+                PSModuleInfo.AddToAppDomainLevelModuleCache(module.Name, fileName, this.BaseForce);
             }
 
             return module;
