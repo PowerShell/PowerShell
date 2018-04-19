@@ -559,21 +559,9 @@ ZoneId=$FileType
 
                     $scriptName = $testScript
 
-                    $exception = $null
-                    try {
-                        & $scriptName
-                    }
-                    catch
-                    {
-                        $exception = $_
-                    }
+                    $exception = { & $scriptName } | Should -Throw -PassThru
 
-                    $exception.Exception | Should -Not -BeNullOrEmpty
-
-                    $exceptionType = $exception.Exception.getType()
-                    $result = $exceptionType
-
-                    $result | Should -Be "System.Management.Automation.PSSecurityException"
+                    $exception.Exception | Should -BeOfType "System.Management.Automation.PSSecurityException"
                 }
             }
 
