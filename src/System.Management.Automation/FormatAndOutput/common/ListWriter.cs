@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
@@ -36,6 +37,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="dc">instance of the DisplayCells helper object</param>
         internal void Initialize(string[] propertyNames, int screenColumnWidth, DisplayCells dc)
         {
+            const int propertiesThresHold = OutCommandInner.columnsThresHold;
+
             _columnWidth = screenColumnWidth;
             if (propertyNames == null || propertyNames.Length == 0)
             {
@@ -64,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _propertyLabelsDisplayLength = 0; // reset max
 
             // cache the cell lengths for each property
-            int[] propertyNameCellCounts = new int[propertyNames.Length];
+            Span<int> propertyNameCellCounts = propertyNames.Length <= propertiesThresHold ? stackalloc int[propertyNames.Length] : new int[propertyNames.Length];;
             for (int k = 0; k < propertyNames.Length; k++)
             {
                 Debug.Assert(propertyNames[k] != null, "propertyNames[k] is null");
