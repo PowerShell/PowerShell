@@ -14,25 +14,14 @@ Describe "SecureString conversion tests" -Tags "CI" {
     }
 
     It "using null arguments to ConvertFrom-SecureString produces an exception" {
-        try {
-            ConvertFrom-SecureString -secureString $null -key $null
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should -Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
-        }
-
+        { ConvertFrom-SecureString -secureString $null -key $null } |
+            Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
     }
 
     It "using a bad key produces an exception" {
-        try {
-            $badkey = [byte[]]@(1,2)
-            ConvertFrom-SecureString -securestring $secureString -key $badkey
-            throw "Command did not throw exception"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should -Be "Argument,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
-        }
+        $badkey = [byte[]]@(1,2)
+        { ConvertFrom-SecureString -securestring $secureString -key $badkey } |
+            Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
     }
 
     It "Can convert to a secure string" {
