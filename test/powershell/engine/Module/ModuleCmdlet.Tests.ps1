@@ -417,6 +417,7 @@ class SubObj
         $modPath = "$TestDrive\$modName"
 
         Get-Module $modName | Remove-Module -Force
+        Get-Module $subModName | Remove-Module -Force
         if (Test-Path $modPath) { Remove-Item $modPath -Force -Recurse }
 
         $mainModSrc = @"
