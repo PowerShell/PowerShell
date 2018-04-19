@@ -463,4 +463,43 @@ class SubObj
 
         Test-SubClassMain | Should -BeExactly "SECOND"
     }
+
+    It "Uses updated class definitions in later imports rather than cached values" {
+        $subSrc1 = @'
+class Sub
+{
+    [string]$Name
+
+    Sub()
+    {
+        $this.Name = "X"
+    }
+}
+'@
+
+        $subSrc2 = @'
+class Sub
+{
+    [string]$Name
+
+    Sub()
+    {
+        $this.Name = "Y"
+    }
+}
+'@
+        $subName = "subStandalone.psm1"
+        $subPath = "$TestDrive\$subName"
+
+        New-Item -Path $subPath -Value $subSrc1
+        $sub1 = Import-Module $subPath -PassThru
+
+        Set-Content -Path $subPath -Value $subSrc2
+        $sub2 = Import-Module $subPath -PassThru
+
+        $firstTypes = $sub1.GetExportedTypeDefinitions()
+        $secondTypes = $sub2.GetExportedTypeDefinitions()
+
+        $firstTypes.Sub.Equals($secondTypes.Sub) | Should -BeExactly $true
+    }
 }
