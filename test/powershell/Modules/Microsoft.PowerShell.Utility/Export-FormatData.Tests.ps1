@@ -1,11 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-Describe "Export-FormatData DRT Unit Tests" -Tags "CI" {
-    It "Test basic functionality" {
+Describe "Export-FormatData" -Tags "CI" {
+    BeforeAll {
         $fd = Get-FormatData
-        $tempFile = Join-Path $TestDrive -ChildPath "exportFormatTest.txt"
-        $results = Export-FormatData -InputObject $fd[0] -Path $tempFile
-        $content = Get-Content $tempFile
+        $testOutput = Join-Path -Path $TestDrive -ChildPath "outputfile"
+    }
+
+    AfterEach {
+        Remove-Item $testOutput -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Test basic functionality" {
+        Export-FormatData -InputObject $fd[0] -Path $testOutput
+        $content = Get-Content $testOutput -Raw
         $formatViewDefinition = $fd[0].FormatViewDefinition
         $typeName = $fd[0].TypeName
         $content.Contains($typeName) | Should -BeTrue
@@ -14,33 +21,70 @@ Describe "Export-FormatData DRT Unit Tests" -Tags "CI" {
             $content.Contains($formatViewDefinition[$i].Name) | Should -BeTrue
         }
     }
-}
 
-Describe "Export-FormatData" -Tags "CI" {
-
-    $testOutput = Join-Path -Path $TestDrive -ChildPath "outputfile"
-
-    AfterEach {
-        Remove-Item $testOutput -Force -ErrorAction SilentlyContinue
+    It "Should have a valid xml tag at the start of the file" {
+        $fd | Export-FormatData -Path $testOutput
+        $piped = Get-Content $testOutput -Raw
+        $piped[0] | Should -BeExactly "<"
     }
 
-    Context "Check Export-FormatData can be called validly." {
-	    It "Should be able to be called without error" {
-	        { Get-FormatData | Export-FormatData -Path $testOutput } | Should -Not -Throw
-	    }
-    }
+    It "Should well format output xml" {
+        $xmlContent=@"
+            <Configuration>
+            <ViewDefinitions>
+            <View>
+            <Name>ExportFormatDataName</Name>
+            <ViewSelectedBy>
+                <TypeName>ExportFormatDataTypeName</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders />
+                <TableRowEntries>
+                <TableRowEntry>
+                <TableColumnItems>
+                <TableColumnItem>
+                    <PropertyName>Guid</PropertyName>
+                </TableColumnItem>
+                </TableColumnItems>
+                </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+            </View>
+            </ViewDefinitions>
+            </Configuration>
+"@
+        $expected = @"
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>ExportFormatDataName</Name>
+      <ViewSelectedBy>
+        <TypeName>ExportFormatDataTypeName</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders />
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Guid</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+"@
+        $testfilename = [guid]::NewGuid().ToString('N')
+        $testfile = Join-Path -Path $TestDrive -ChildPath "$testfilename.ps1xml"
+        Set-Content -Path $testfile -Value $xmlContent
+        Update-FormatData -Append $testfile
+        Get-FormatData -TypeName "ExportFormatDataTypeName" | Export-FormatData -Path $testOutput
+        $content = Get-Content $testOutput -Raw
 
-    Context "Check that the output is in the correct format" {
-	    It "Should not return an empty xml file" {
-	        Get-FormatData | Export-FormatData -Path $testOutput
-	        $piped = Get-Content $testOutput
-	        $piped | Should -Not -BeNullOrEmpty
-	    }
-
-	    It "Should have a valid xml tag at the start of the file" {
-	        Get-FormatData | Export-FormatData -Path $testOutput
-	        $piped = Get-Content $testOutput
-	        $piped[0] | Should -BeExactly "<"
-	    }
+        $content | Should -BeExactly $expected
     }
 }
