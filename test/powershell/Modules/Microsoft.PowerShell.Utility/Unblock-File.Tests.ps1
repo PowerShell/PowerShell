@@ -40,7 +40,7 @@ Describe "Unblock-File" -Tags "CI" {
 
     It "With '-Path': file exist" {
         Unblock-File -Path $testfilepath
-        Test-UnblockFile
+        Test-UnblockFile | Should -BeTrue
 
         # If a file is not blocked we silently return without an error.
         { Unblock-File -Path $testfilepath -ErrorAction Stop } | Should -Not -Throw
@@ -48,7 +48,7 @@ Describe "Unblock-File" -Tags "CI" {
 
     It "With '-LiteralPath': file exist" {
         Unblock-File -LiteralPath $testfilepath
-        Test-UnblockFile
+        Test-UnblockFile | Should -BeTrue
     }
 
     It "Write an error if a file is read only" {
