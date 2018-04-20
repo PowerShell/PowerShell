@@ -67,7 +67,7 @@ It "Get-Item on a nonexisting file should have error PathNotFound" {
 
 Note that if Get-Item were to succeed, the test will fail.
 
-However, if you need to check the `InnerException` or other members of the ErrorRecord, you should use -PassThru parameter:
+However, if you need to check the `InnerException` or other members of the ErrorRecord, you should use `-PassThru` parameter:
 
 ```powershell
 	It "InnerException sample" {
