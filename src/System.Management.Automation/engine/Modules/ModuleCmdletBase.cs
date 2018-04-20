@@ -5007,7 +5007,6 @@ namespace Microsoft.PowerShell.Commands
             RemoveModule(topModule);
         }
 
-
         internal bool IsModuleAlreadyLoaded(PSModuleInfo alreadyLoadedModule)
         {
             if (alreadyLoadedModule == null)
@@ -5856,18 +5855,11 @@ namespace Microsoft.PowerShell.Commands
             s_binaryAnalysisCache.TryGetValue(path, out cacheEntry);
 
             // Check if the DLL file has changed since last caching
-            DateTime lastFileWriteTime = DateTime.MinValue;
-            try
-            {
-                lastFileWriteTime = new FileInfo(path).LastWriteTimeUtc;
-            }
-            catch (Exception e)
-            {
-                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTime on module {0}: {1}", path, e.Message);
-            }
+            DateTime lastFileWriteTimeUtc;
+            TryGetFileLastWriteTimeUtc(path, out lastFileWriteTimeUtc);
 
             // If the cache entry is up to date, use that
-            if (cacheEntry != null && cacheEntry.LastFileWriteTime == lastFileWriteTime)
+            if (cacheEntry != null && cacheEntry.LastFileWriteTimeUtc == lastFileWriteTimeUtc)
             {
                 assemblyVersion = cacheEntry.AssemblyVersion;
                 return cacheEntry.BinaryAnalysisResult;
@@ -5883,7 +5875,7 @@ namespace Microsoft.PowerShell.Commands
 
             var resultToReturn = analysisResult ?? new BinaryAnalysisResult();
 
-            s_binaryAnalysisCache[path] = new BinaryModuleCacheEntry(lastFileWriteTime, assemblyVersion, resultToReturn);
+            s_binaryAnalysisCache[path] = new BinaryModuleCacheEntry(lastFileWriteTimeUtc, assemblyVersion, resultToReturn);
 
             return resultToReturn;
         }
@@ -6046,18 +6038,11 @@ namespace Microsoft.PowerShell.Commands
             s_scriptAnalysisCache.TryGetValue(filePath, out cacheEntry);
 
             // Get the module file's last write time
-            DateTime lastFileWriteTime = DateTime.MinValue;
-            try
-            {
-                lastFileWriteTime = new FileInfo(filePath).LastWriteTimeUtc;
-            }
-            catch (Exception e)
-            {
-                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTime on module {0}: {1}", filePath, e.Message);
-            }
+            DateTime lastFileWriteTimeUtc;
+            TryGetFileLastWriteTimeUtc(filePath, out lastFileWriteTimeUtc);
 
             // If the cache is up to date, return its value
-            if (cacheEntry != null && cacheEntry.LastFileWriteTime == lastFileWriteTime)
+            if (cacheEntry != null && cacheEntry.LastFileWriteTimeUtc == lastFileWriteTimeUtc)
             {
                 // We need to return a cloned module info.
                 // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
@@ -6097,7 +6082,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTime, module);
+                    s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTimeUtc, module);
 
                     return module;
                 }
@@ -6247,7 +6232,7 @@ namespace Microsoft.PowerShell.Commands
                 ModuleIntrinsics.Tracer.WriteLine("Caching skipped for {0} because it had errors while loading.", module.Name);
             }
 
-            s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTime, module);
+            s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTimeUtc, module);
 
             return module;
         }
@@ -7310,53 +7295,68 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
+        internal static bool TryGetFileLastWriteTimeUtc(string path, out DateTime lastWriteTimeUtc)
+        {
+            try
+            {
+                lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
+                return true;
+            }
+            catch (Exception e)
+            {
+                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTimeUtc on module {0}: {1}", path, e.Message);
+                lastWriteTimeUtc = DateTime.MinValue;
+                return false;
+            }
+        }
+
         /// <summary>
-        /// Entry to record script module analysis in the cache
+        /// Entry to record script module analysis in the cache.
         /// </summary>
         private class ScriptModuleCacheEntry
         {
-            public ScriptModuleCacheEntry(DateTime lastFileWriteTime, PSModuleInfo moduleInfo)
+            public ScriptModuleCacheEntry(DateTime lastFileWriteTimeUtc, PSModuleInfo moduleInfo)
             {
-                LastFileWriteTime = lastFileWriteTime;
+                LastFileWriteTimeUtc = lastFileWriteTimeUtc;
                 ModuleInfo = moduleInfo;
             }
 
             /// <summary>
-            /// The last write time of script file defining the module
+            /// The last write time of script file defining the module.
             /// </summary>
-            public DateTime LastFileWriteTime { get; }
+            public DateTime LastFileWriteTimeUtc { get; }
 
             /// <summary>
-            /// The module info describing the analyzed module
+            /// The module info describing the analyzed module.
             /// </summary>
             /// <returns></returns>
             public PSModuleInfo ModuleInfo { get; }
         }
 
         /// <summary>
-        /// Entry to record assembly module analysis in the cache
+        /// Entry to record assembly module analysis in the cache.
         /// </summary>
         private class BinaryModuleCacheEntry
         {
-            public BinaryModuleCacheEntry(DateTime lastFileWriteTime, Version assemblyVersion, BinaryAnalysisResult binaryAnalysisResult)
+            public BinaryModuleCacheEntry(DateTime lastFileWriteTimeUtc, Version assemblyVersion, BinaryAnalysisResult binaryAnalysisResult)
             {
-                LastFileWriteTime = lastFileWriteTime;
+                LastFileWriteTimeUtc = lastFileWriteTimeUtc;
                 AssemblyVersion = assemblyVersion;
                 BinaryAnalysisResult = binaryAnalysisResult;
             }
 
             /// <summary>
-            /// The last time the DLL containing the binary module was written when analyzed
+            /// The last time the DLL containing the binary module was written when analyzed.
             /// </summary>
-            public DateTime LastFileWriteTime { get; }
+            public DateTime LastFileWriteTimeUtc { get; }
 
             /// <summary>
-            /// The version of the assembly loaded
+            /// The version of the assembly loaded.
             /// </summary>
             public Version AssemblyVersion { get; }
 
             /// <summary>
-            /// The binary analysis result when the module was analyzed
+            /// The binary analysis result when the module was analyzed.
             /// </summary>
             public BinaryAnalysisResult BinaryAnalysisResult { get; }
         }
@@ -7364,16 +7364,16 @@ namespace Microsoft.PowerShell.Commands
     } // end ModuleCmdletBase
 
     /// <summary>
-    /// Holds the result of a binary module analysis
+    /// Holds the result of a binary module analysis.
     /// </summary>
     internal class BinaryAnalysisResult
     {
         /// <summary>
-        /// The list of cmdlets detected from the binary
+        /// The list of cmdlets detected from the binary.
         /// </summary>
         internal List<string> DetectedCmdlets { get; set; }
 
-        // The list of aliases detected from the binary
+        // The list of aliases detected from the binary.
         internal List<Tuple<string, string>> DetectedAliases { get; set; }
     }
 

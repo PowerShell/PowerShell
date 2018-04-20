@@ -13,7 +13,7 @@ function Test-FirstModuleFunction
     New-Item -Force -Path $TestDrive -Name "simple.psm1" -Value $moduleContent
 }
 
-Describe "Import-Module by name" -Tag Feature {
+Describe "Import-Module by name" -Tag "Feature" {
 
     BeforeAll {
         $modPath = (New-SimpleModule).PSPath
@@ -34,13 +34,13 @@ Describe "Import-Module by name" -Tag Feature {
         It "Passes the imported module out when -PassThru is used" {
             $modItem = New-SimpleModule
             $mod = Import-Module $modItem.PSPath -PassThru
-            $mod.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
+            $mod.ExportedFunctions.Keys | Should -Contain "Test-FirstModuleFunction"
         }
 
         It "Passes the imported module out as a custom object when -AsCustomObject is used" {
             $modItem = New-SimpleModule
             $mod = Import-Module $modItem.PSPath -AsCustomObject
-            $mod.GetType() | Should -BeExactly "PSCustomObject"
+            $mod | Should -BeOfType "PSCustomObject"
             $mod.'Test-FirstModuleFunction'() | Should -BeExactly "TESTSTRING"
         }
 
@@ -49,8 +49,8 @@ Describe "Import-Module by name" -Tag Feature {
             $module = Import-Module $modItem.PSPath -PassThru
 
             $module.ExportedFunctions.Count | Should -Be 1
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction") | Should -BeTrue
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
+            $module.ExportedFunctions.Keys | Should -Contain "Test-FirstModuleFunction"
+            $module.ExportedFunctions.Keys | Should -Not -Contain "Test-SecondModuleFunction"
 
             New-Item -Force -Path $modItem.PSPath -Value (((Get-Content $modItem) | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }")
 
@@ -152,7 +152,7 @@ function Get-PassedArgsNoRoot { $passedArgs }
     }
 }
 
-Describe "Import-Module by PSModuleInfo" -Tag Feature {
+Describe "Import-Module by PSModuleInfo" -Tag "Feature" {
     BeforeAll {
         $modPath = (New-SimpleModule).PSPath
         $modRef = Import-Module $modPath -PassThru
@@ -224,7 +224,7 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
     }
 }
 
-Describe "Import-Module with nested modules" -Tag Feature {
+Describe "Import-Module with nested modules" -Tag "Feature" {
     BeforeAll {
         $modName = "nestMod"
         $modDir = "$TestDrive\$modName"
@@ -316,7 +316,10 @@ function SubFunc
         $modPath = "$TestDrive\$modName"
 
         Get-Module $modName | Remove-Module -Force
-        if (Test-Path $modPath) { Remove-Item $modPath -Force -Recurse }
+        if (Test-Path $modPath)
+        {
+            Remove-Item $modPath -Force -Recurse
+        }
 
         $mainModSrc = @"
 using module $modPath\SubObj.psm1
