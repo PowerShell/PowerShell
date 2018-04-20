@@ -2971,7 +2971,7 @@ namespace System.Management.Automation
                     startAction,
                     _context.EngineHostInterface.ExternalHost,
                     _context.SessionState.Path.CurrentLocation,
-                    GetFunctionToSourceMap());
+                    new Dictionary<string, DebugSource>());
             }
             else
             {
@@ -3020,38 +3020,6 @@ namespace System.Management.Automation
                 }
                 catch (PSNotImplementedException) { }
             }
-        }
-
-        private Dictionary<string, DebugSource> GetFunctionToSourceMap()
-        {
-            Dictionary<string, DebugSource> fnToSource = new Dictionary<string, DebugSource>();
-
-            // Get workflow function source information for workflow debugger.
-            Collection<PSObject> items = _context.SessionState.InvokeProvider.Item.Get("function:\\*");
-            foreach (var item in items)
-            {
-                var funcItem = item.BaseObject as WorkflowInfo;
-                if ((funcItem != null) &&
-                    (!string.IsNullOrEmpty(funcItem.Name)))
-                {
-                    if ((funcItem.Module != null) && (funcItem.Module.Path != null))
-                    {
-                        string scriptFile = funcItem.Module.Path;
-                        string scriptSource = GetFunctionSource(scriptFile);
-                        if (scriptSource != null)
-                        {
-                            fnToSource.Add(
-                                funcItem.Name,
-                                new DebugSource(
-                                    scriptSource,
-                                    scriptFile,
-                                    funcItem.XamlDefinition));
-                        }
-                    }
-                }
-            }
-
-            return fnToSource;
         }
 
         private string GetFunctionSource(
