@@ -28,7 +28,7 @@ Try {
            $instance.GetCimSessionInstanceId() | Should -BeOfType "Guid"
         }
         It "should produce an error for a non-existing classname" {
-            { get-ciminstance -classname thisnameshouldnotexist -ea stop } |
+            { get-ciminstance -classname thisnameshouldnotexist -ErrorAction stop } |
                 Should -Throw -ErrorId "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
         }
     }
