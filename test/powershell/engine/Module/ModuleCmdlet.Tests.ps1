@@ -140,8 +140,8 @@ function Get-PassedArgsNoRoot { $passedArgs }
             param($paramName)
 
             $modItem = New-SimpleModule
-            $ps.AddScript("Import-Module $($modItem.PSPath) -$paramName `$null")
-            $ps.Invoke() | Should -Throw -ErrorId "ParameterArgumentValidationError"
+            $sb = [scriptblock]::Create("Import-Module $($modItem.PSPath) -$paramName `$null")
+            $sb | Should -Throw -ErrorId "ParameterArgumentValidationError"
         }
 
         It "Ignores whitespace -MaximumVersion parameter" {
@@ -165,7 +165,7 @@ Describe "Import-Module by PSModuleInfo" -Tag Feature {
     }
 
     It "Imports a module by moduleinfo" {
-        Test-FirstModuleFunction | Should -Throw -ErrorId "CommandNotFoundException"
+        { Test-FirstModuleFunction } | Should -Throw -ErrorId "CommandNotFoundException"
 
         Import-Module $modInfo
         Test-FirstModuleFunction | Should -BeExactly "TESTSTRING"
@@ -239,33 +239,6 @@ Describe "Import-Module with nested modules" -Tag Feature {
     AfterEach {
         Get-Module $modName | Remove-Module -Force
         Remove-Item -Path $modDir -Recurse -Force
-    }
-
-    It "Only uses submodule code indirectly without importing members" {
-        $modSrc = @'
-Import-Module $PSScriptRoot/sub.psm1
-
-function Test-MainModuleFunc
-{
-    Test-SubModuleFunc
-}
-'@
-
-        $subModSrc = @'
-function Test-SubModuleFunc
-{
-    Write-Output "SUBMODULESTRING"
-}
-'@
-
-        New-Item -Path $modPath -Value $modSrc -Force
-        New-Item -Path $subModPath -Value $subModSrc -Force
-
-        Import-Module $modPath
-
-        Test-MainModuleFunc | Should -BeExactly "SUBMODULESTRING"
-
-        Test-SubModuleFunc | Should -Throw -ErrorId "CommandNotFoundException"
     }
 
     It "Resolves submodule classes with 'using module'" {
@@ -440,8 +413,6 @@ class SubObj
         Set-Content -Path "$modPath\$subModName.psm1" -Value $subModSrc2 -Force
 
         Import-Module -Force $modPath
-
-        Wait-Debugger
 
         Test-SubClassMain | Should -BeExactly "SECOND"
     }
