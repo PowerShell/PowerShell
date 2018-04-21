@@ -127,7 +127,7 @@ Describe "Export-FormatData" -Tags "CI" {
     </View>
   </ViewDefinitions>
 </Configuration>
-"@
+"@ -replace "`r`n?|`n", ""
         try
         {
             $testfilename = [guid]::NewGuid().ToString('N')
@@ -144,7 +144,9 @@ Describe "Export-FormatData" -Tags "CI" {
             $runspace.CreatePipeline("Update-FormatData -prependPath $testfile").Invoke()
             $runspace.CreatePipeline("Get-FormatData -TypeName 'ExportFormatDataTypeName' | Export-FormatData -Path $testOutput").Invoke()
 
-            $testOutput | Should -FileContentMatchExactly $expected
+            $content = (Get-Content $testOutput -Raw) -replace "`r`n?|`n", ""
+
+            $content | Should -BeExactly $expected
         }
         finally
         {
