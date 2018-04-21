@@ -144,9 +144,7 @@ Describe "Export-FormatData" -Tags "CI" {
             $runspace.CreatePipeline("Update-FormatData -prependPath $testfile").Invoke()
             $runspace.CreatePipeline("Get-FormatData -TypeName 'ExportFormatDataTypeName' | Export-FormatData -Path $testOutput").Invoke()
 
-            $content = Get-Content $testOutput -Raw
-
-            $content | Should -BeExactly $expected
+            $testOutput | Should -FileContentMatchExactly $expected
         }
         finally
         {
