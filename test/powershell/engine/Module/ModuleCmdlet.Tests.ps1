@@ -204,7 +204,7 @@ class MyObj
 {
     [string]$Name
 
-    Sub()
+    MyObj()
     {
         $this.Name = "X"
     }
@@ -216,7 +216,7 @@ class MyObj
 {
     [string]$Name
 
-    Sub()
+    MyObj()
     {
         $this.Name = "Y"
     }
@@ -226,7 +226,7 @@ class MyObj
 
             $mod1 = Import-Module $modData.Path -PassThru
 
-            Set-Content -Path $modData.Path -Value $subSrc2
+            Set-Content -Path $modData.Path -Value $modSrc2
             $mod2 = Import-Module $modData.Path -PassThru
 
             $firstTypes = $mod1.GetExportedTypeDefinitions()
@@ -408,21 +408,21 @@ class Sub
     }
 
     It "Refreshes nested modules when -Force is used with Import-Module" {
-$mainSrc = @'
+        $mainSrc = @'
 function MainFunc
 {
     SubFunc
 }
 '@
 
-$sub1Src = @'
+        $sub1Src = @'
 function SubFunc
 {
     "FIRST"
 }
 '@
 
-$sub2Src = @'
+        $sub2Src = @'
 function SubFunc
 {
     "SECOND"
