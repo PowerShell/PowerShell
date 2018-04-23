@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -1626,7 +1627,7 @@ namespace Microsoft.PowerShell.Commands
                     // remove the module if force is specified  (and if module is already loaded)
                     else if (Utils.NativeFileExists(rootedPath))
                     {
-                        RemoveModule(loadedModule);
+                        RemoveModuleAndNestedModules(loadedModule);
                     }
                 }
             }
@@ -4712,9 +4713,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 module.Path = module.Name;
             }
-            bool shouldModuleBeRemoved = ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out isTopLevelModule);
 
-            if (shouldModuleBeRemoved)
+            if (ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out isTopLevelModule))
             {
                 // We don't check for dups in the remove list so it may already be removed
                 if (Context.Modules.ModuleTable.ContainsKey(module.Path))
@@ -4923,12 +4923,14 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     if (isTopLevelModule)
                     {
                         // Remove it from the top level session state
                         Context.TopLevelSessionState.ModuleTable.Remove(module.Path);
                         Context.TopLevelSessionState.ModuleTableKeys.Remove(module.Path);
                     }
+
                     // And finally from the global module table...
                     Context.Modules.ModuleTable.Remove(module.Path);
 
@@ -4957,6 +4959,52 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Recursively remove a module and any nested modules,
+        /// unless they are independently loaded as top-level modules.
+        /// This does not follow cyclic module dependencies
+        /// </summary>
+        /// <param name="module">the top-level module to remove</param>
+        internal void RemoveModuleAndNestedModules(PSModuleInfo module)
+        {
+            RemoveNestedModulesWithTrackingList(module, new HashSet<PSModuleInfo>(new PSModuleInfoComparer()));
+        }
+
+        /// <summary>
+        /// Recursively remove a module and all its nested modules
+        /// </summary>
+        /// <param name="topModule">the module to remove</param>
+        /// <param name="seenAndExcludedModules">modules that have been examined already and will be skipped</param>
+        private void RemoveNestedModulesWithTrackingList(PSModuleInfo topModule, HashSet<PSModuleInfo> seenAndExcludedModules)
+        {
+            // Mark that we've seen the top module -- we remove it at the end of this call
+            seenAndExcludedModules.Add(topModule);
+
+            // Recurse over nested modules
+            foreach (PSModuleInfo nestedModule in topModule.NestedModules)
+            {
+                // Ignore modules we've already dealt with
+                if (seenAndExcludedModules.Contains(nestedModule))
+                {
+                    continue;
+                }
+
+                // Ignore modules we shouldn't be removing (e.g. if they are also loaded at the top level)
+                bool isTopLevelModule;
+                if (!ShouldModuleBeRemoved(nestedModule, moduleNameInRemoveModuleCmdlet: null, out isTopLevelModule))
+                {
+                    seenAndExcludedModules.Add(nestedModule);
+                    continue;
+                }
+
+                // Perform the recursive call
+                RemoveNestedModulesWithTrackingList(nestedModule, seenAndExcludedModules);
+            }
+
+            // Remove the top module
+            RemoveModule(topModule);
         }
 
         internal bool IsModuleAlreadyLoaded(PSModuleInfo alreadyLoadedModule)
@@ -5009,7 +5057,7 @@ namespace Microsoft.PowerShell.Commands
                     if (this.BaseForce) // remove the previously imported module + return null (null = please proceed with regular import)
                     {
                         // remove the module
-                        RemoveModule(alreadyLoadedModule);
+                        RemoveModuleAndNestedModules(alreadyLoadedModule);
 
                         // proceed with regular import
                         return null;
@@ -5204,7 +5252,7 @@ namespace Microsoft.PowerShell.Commands
                     // TODO/FIXME: (for example the checks above are not lookint at this.BaseMinimumVersion)
                     //if (BaseForce && IsModuleAlreadyLoaded(module))
                     {
-                        RemoveModule(module);
+                        RemoveModuleAndNestedModules(module);
                     }
                     module = LoadModule(parentModule, fileName, moduleBase, prefix, ss, null, ref options, manifestProcessingFlags, out found, out moduleFileFound);
                     if (found)
@@ -5782,20 +5830,15 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static object s_lockObject = new object();
-
         private void ClearAnalysisCaches()
         {
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.Clear();
-                s_scriptAnalysisCache.Clear();
-            }
+            s_binaryAnalysisCache.Clear();
+            s_scriptAnalysisCache.Clear();
         }
 
         // Analyzes a binary module implementation for its cmdlets.
-        private static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
-            new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
+        private static ConcurrentDictionary<string, BinaryModuleCacheEntry> s_binaryAnalysisCache =
+            new ConcurrentDictionary<string, BinaryModuleCacheEntry>();
 
 #if CORECLR
         /// <summary>
@@ -5807,17 +5850,19 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         private static BinaryAnalysisResult GetCmdletsFromBinaryModuleImplementation(string path, ManifestProcessingFlags manifestProcessingFlags, out Version assemblyVersion)
         {
-            Tuple<BinaryAnalysisResult, Version> tuple;
+            BinaryModuleCacheEntry cacheEntry;
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.TryGetValue(path, out tuple);
-            }
+            s_binaryAnalysisCache.TryGetValue(path, out cacheEntry);
 
-            if (tuple != null)
+            // Check if the DLL file has changed since last caching
+            DateTime lastFileWriteTimeUtc;
+            TryGetFileLastWriteTimeUtc(path, out lastFileWriteTimeUtc);
+
+            // If the cache entry is up to date, use that
+            if (cacheEntry != null && cacheEntry.LastFileWriteTimeUtc == lastFileWriteTimeUtc)
             {
-                assemblyVersion = tuple.Item2;
-                return tuple.Item1;
+                assemblyVersion = cacheEntry.AssemblyVersion;
+                return cacheEntry.BinaryAnalysisResult;
             }
 
             BinaryAnalysisResult analysisResult = PowerShellModuleAssemblyAnalyzer.AnalyzeModuleAssembly(path, out assemblyVersion);
@@ -5830,10 +5875,7 @@ namespace Microsoft.PowerShell.Commands
 
             var resultToReturn = analysisResult ?? new BinaryAnalysisResult();
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache[path] = Tuple.Create(resultToReturn, assemblyVersion);
-            }
+            s_binaryAnalysisCache[path] = new BinaryModuleCacheEntry(lastFileWriteTimeUtc, assemblyVersion, resultToReturn);
 
             return resultToReturn;
         }
@@ -5987,28 +6029,32 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         // Analyzes a script module implementation for its exports.
-        private static Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
+        private static ConcurrentDictionary<string, ScriptModuleCacheEntry> s_scriptAnalysisCache =
+            new ConcurrentDictionary<string, ScriptModuleCacheEntry>();
 
-        private PSModuleInfo AnalyzeScriptFile(string filename, bool force, ExecutionContext context)
+        private PSModuleInfo AnalyzeScriptFile(string filePath, bool force, ExecutionContext context)
         {
-            // We need to return a cloned version here.
-            // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
-            PSModuleInfo module = null;
+            ScriptModuleCacheEntry cacheEntry;
+            s_scriptAnalysisCache.TryGetValue(filePath, out cacheEntry);
 
-            lock (s_lockObject)
+            // Get the module file's last write time
+            DateTime lastFileWriteTimeUtc;
+            TryGetFileLastWriteTimeUtc(filePath, out lastFileWriteTimeUtc);
+
+            // If the cache is up to date, return its value
+            if (cacheEntry != null && cacheEntry.LastFileWriteTimeUtc == lastFileWriteTimeUtc)
             {
-                s_scriptAnalysisCache.TryGetValue(filename, out module);
+                // We need to return a cloned module info.
+                // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
+                return cacheEntry.ModuleInfo.Clone();
             }
 
-            if (module != null)
-                return module.Clone();
-
             // fake/empty manifestInfo for processing in (!loadElements) mode
-            module = new PSModuleInfo(filename, null, null);
+            var module = new PSModuleInfo(filePath, null, null);
 
             if (!force)
             {
-                var exportedCommands = AnalysisCache.GetExportedCommands(filename, true, context);
+                var exportedCommands = AnalysisCache.GetExportedCommands(filePath, true, context);
 
                 // If we have this info cached, return from the cache.
                 if (exportedCommands != null)
@@ -6036,17 +6082,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    lock (s_lockObject)
-                    {
-                        s_scriptAnalysisCache[filename] = module;
-                    }
+                    s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTimeUtc, module);
 
                     return module;
                 }
             }
 
             // We don't have this cached, analyze the file.
-            var scriptAnalysis = ScriptAnalysis.Analyze(filename, context);
+            var scriptAnalysis = ScriptAnalysis.Analyze(filePath, context);
 
             if (scriptAnalysis == null)
             {
@@ -6088,7 +6131,7 @@ namespace Microsoft.PowerShell.Commands
             // Add any files in PsScriptRoot if it added itself to the path
             if (scriptAnalysis.AddsSelfToPath)
             {
-                string baseDirectory = System.IO.Path.GetDirectoryName(filename);
+                string baseDirectory = System.IO.Path.GetDirectoryName(filePath);
 
                 try
                 {
@@ -6115,7 +6158,7 @@ namespace Microsoft.PowerShell.Commands
                     Path.HasExtension(moduleToProcess) &&
                     (!Path.IsPathRooted(moduleToProcess)))
                 {
-                    string moduleDirectory = System.IO.Path.GetDirectoryName(filename);
+                    string moduleDirectory = System.IO.Path.GetDirectoryName(filePath);
                     moduleToProcess = Path.Combine(moduleDirectory, moduleToProcess);
 
                     PSModuleInfo fileBasedModule = CreateModuleInfoForGetModule(moduleToProcess, true);
@@ -6189,10 +6232,7 @@ namespace Microsoft.PowerShell.Commands
                 ModuleIntrinsics.Tracer.WriteLine("Caching skipped for {0} because it had errors while loading.", module.Name);
             }
 
-            lock (s_lockObject)
-            {
-                s_scriptAnalysisCache[filename] = module;
-            }
+            s_scriptAnalysisCache[filePath] = new ScriptModuleCacheEntry(lastFileWriteTimeUtc, module);
 
             return module;
         }
@@ -6841,7 +6881,9 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (sourceModule == null)
-                throw PSTraceSource.NewArgumentNullException("sourceModule");
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(sourceModule));
+            }
 
             bool isImportModulePrivate = cmdlet.CommandInfo.Visibility == SessionStateEntryVisibility.Private ||
                 targetSessionState.DefaultCommandVisibility == SessionStateEntryVisibility.Private;
@@ -7252,19 +7294,86 @@ namespace Microsoft.PowerShell.Commands
 
             return null;
         }
+
+        internal static bool TryGetFileLastWriteTimeUtc(string path, out DateTime lastWriteTimeUtc)
+        {
+            try
+            {
+                lastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
+                return true;
+            }
+            catch (Exception e)
+            {
+                ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTimeUtc on module {0}: {1}", path, e.Message);
+                lastWriteTimeUtc = DateTime.MinValue;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Entry to record script module analysis in the cache.
+        /// </summary>
+        private class ScriptModuleCacheEntry
+        {
+            public ScriptModuleCacheEntry(DateTime lastFileWriteTimeUtc, PSModuleInfo moduleInfo)
+            {
+                LastFileWriteTimeUtc = lastFileWriteTimeUtc;
+                ModuleInfo = moduleInfo;
+            }
+
+            /// <summary>
+            /// The last write time of script file defining the module.
+            /// </summary>
+            public DateTime LastFileWriteTimeUtc { get; }
+
+            /// <summary>
+            /// The module info describing the analyzed module.
+            /// </summary>
+            /// <returns></returns>
+            public PSModuleInfo ModuleInfo { get; }
+        }
+
+        /// <summary>
+        /// Entry to record assembly module analysis in the cache.
+        /// </summary>
+        private class BinaryModuleCacheEntry
+        {
+            public BinaryModuleCacheEntry(DateTime lastFileWriteTimeUtc, Version assemblyVersion, BinaryAnalysisResult binaryAnalysisResult)
+            {
+                LastFileWriteTimeUtc = lastFileWriteTimeUtc;
+                AssemblyVersion = assemblyVersion;
+                BinaryAnalysisResult = binaryAnalysisResult;
+            }
+
+            /// <summary>
+            /// The last time the DLL containing the binary module was written when analyzed.
+            /// </summary>
+            public DateTime LastFileWriteTimeUtc { get; }
+
+            /// <summary>
+            /// The version of the assembly loaded.
+            /// </summary>
+            public Version AssemblyVersion { get; }
+
+            /// <summary>
+            /// The binary analysis result when the module was analyzed.
+            /// </summary>
+            public BinaryAnalysisResult BinaryAnalysisResult { get; }
+        }
+
     } // end ModuleCmdletBase
 
     /// <summary>
-    /// Holds the result of a binary module analysis
+    /// Holds the result of a binary module analysis.
     /// </summary>
     internal class BinaryAnalysisResult
     {
         /// <summary>
-        /// The list of cmdlets detected from the binary
+        /// The list of cmdlets detected from the binary.
         /// </summary>
         internal List<string> DetectedCmdlets { get; set; }
 
-        // The list of aliases detected from the binary
+        // The list of aliases detected from the binary.
         internal List<Tuple<string, string>> DetectedAliases { get; set; }
     }
 

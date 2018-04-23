@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell.Commands
                     if (Context.Modules.ModuleTable.TryGetValue(module.Path, out moduleToRemove))
                     {
                         Dbg.Assert(BaseForce, "We should only remove and reload if -Force was specified");
-                        RemoveModule(moduleToRemove);
+                        RemoveModuleAndNestedModules(moduleToRemove);
                     }
 
                     PSModuleInfo moduleToProcess = module;
@@ -457,7 +457,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (IOException)
                     {
-                        ;
                     }
                 }
             }
@@ -620,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                             PSModuleInfo moduleToRemove;
                             if (Context.Modules.ModuleTable.TryGetValue(rootedPath, out moduleToRemove))
                             {
-                                RemoveModule(moduleToRemove);
+                                RemoveModuleAndNestedModules(moduleToRemove);
                             }
 
                             foundModule = LoadModule(rootedPath, null, this.BasePrefix, null, ref importModuleOptions,

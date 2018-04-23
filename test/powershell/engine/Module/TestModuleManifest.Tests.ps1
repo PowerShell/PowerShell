@@ -113,16 +113,15 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 
     It "module manifest containing non-existing rootmodule returns error: <rootModuleValue>" -TestCases (
-        @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"}
+        @{rootModuleValue = "doesnotexist.psm1"; errorName = "Modules_InvalidRootModuleInModuleManifest"}
     ) {
-
-        param($rootModuleValue, $error)
+        param($rootModuleValue, $errorName)
 
         $testModulePath = "testdrive:/module/test.psd1"
         New-Item -ItemType Directory -Path testdrive:/module
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$errorName,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 }
 
