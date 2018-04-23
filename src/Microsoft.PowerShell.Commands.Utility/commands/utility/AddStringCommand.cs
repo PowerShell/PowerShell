@@ -13,24 +13,6 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
     {
         #region Parameters
         /// <summary>
-        /// The string to add to
-        /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
-        public string[] InputString;
-
-        /// <summary>
-        /// The string to add before the input
-        /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "wrap")]
-        public string Before;
-
-        /// <summary>
-        /// The string to add behind the input
-        /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "wrap")]
-        public string Behind;
-
-        /// <summary>
         /// The character to pad the input string with on the left side
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "padLeft")]
@@ -48,6 +30,24 @@ namespace Microsoft.PowerShell.Commands.Utility.commands.utility
         [Parameter(Mandatory = true, ParameterSetName = "padLeft")]
         [Parameter(Mandatory = true, ParameterSetName = "padRight")]
         public int PadWidth;
+
+        /// <summary>
+        /// The string to add before the input
+        /// </summary>
+        [Parameter(Position = 0, ParameterSetName = "wrap")]
+        public string Before;
+
+        /// <summary>
+        /// The string to add behind the input
+        /// </summary>
+        [Parameter(Position = 1, ParameterSetName = "wrap")]
+        public string Behind;
+
+        /// <summary>
+        /// The string to add to
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        public string[] InputString;
         #endregion Parameters
 
         #region Methods
