@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides information about a workflow that is stored in session state.
     /// </summary>
-    internal class WorkflowInfo : FunctionInfo
+    public class WorkflowInfo : FunctionInfo
     {
         #region ctor
 
