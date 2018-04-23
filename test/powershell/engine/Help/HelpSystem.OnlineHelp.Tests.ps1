@@ -26,12 +26,12 @@ Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
     foreach ($filePath in @("$PSScriptRoot\assets\HelpURI\V2Cmdlets.csv", "$PSScriptRoot\assets\HelpURI\V3Cmdlets.csv"))
     {
-        $cmdletList = Import-Csv $filePath -ea Stop
+        $cmdletList = Import-Csv $filePath -ErrorAction Stop
 
         foreach ($cmdlet in $cmdletList)
         {
             # If the cmdlet is not preset in CoreCLR, skip it.
-            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue)
+            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ErrorAction SilentlyContinue)
 
             # TopicTitle - is the cmdlet name in the csv file
             # HelpURI - is the expected help URI in the csv file

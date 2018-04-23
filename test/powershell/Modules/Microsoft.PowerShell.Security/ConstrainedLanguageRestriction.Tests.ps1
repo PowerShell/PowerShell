@@ -78,7 +78,7 @@ if ($IsWindows)
     }
 '@
 
-    if (-not (Get-Command Invoke-LanguageModeTestingSupportCmdlet -ea Ignore))
+    if (-not (Get-Command Invoke-LanguageModeTestingSupportCmdlet -ErrorAction Ignore))
     {
         $moduleName = Get-RandomFileName
         $moduleDirectory = join-path $TestDrive\Modules $moduleName

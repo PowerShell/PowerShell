@@ -580,7 +580,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         if ($null -ne $breakpoint3) { Remove-PSBreakpoint $breakpoint3 }
         if ($null -ne $breakpoint4) { Remove-PSBreakpoint $breakpoint4 }
         get-module $moduleName | remove-module
-        if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -r -force -ea silentlycontinue }
+        if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -r -force -ErrorAction silentlycontinue }
     }
 }
 

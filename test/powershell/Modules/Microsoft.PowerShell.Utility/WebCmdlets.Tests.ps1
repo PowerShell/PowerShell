@@ -48,12 +48,12 @@ function ExecuteRequestWithOutFile {
         } else {
             Invoke-RestMethod -Uri $uri -OutFile $filePath
         }
-        $result.Output = Get-Content $filePath -Raw -ea SilentlyContinue
+        $result.Output = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
     } catch {
         $result.Error = $_
     } finally {
         if (Test-Path $filePath) {
-            Remove-Item $filePath -Force -ea SilentlyContinue
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
         }
     }
     return $result
