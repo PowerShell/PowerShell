@@ -108,7 +108,6 @@
     <Compile Remove="namespaces\TransactedRegistry.cs" />
     <Compile Remove="namespaces\TransactedRegistryKey.cs" />
     <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Remove="security\wldpNativeMethods.cs" />
     <Compile Remove="singleshell\Commands\ConsoleCommands.cs" />
     <Compile Remove="singleshell\Commands\MshSnapinCommands.cs" />
     <Compile Remove="singleshell\config\RegistryStringResourceIndirect.cs" />

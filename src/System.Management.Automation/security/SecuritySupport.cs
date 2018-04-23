@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
+using System.Management.Automation.Security;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography;
@@ -416,7 +416,67 @@ namespace System.Management.Automation.Internal
 #endif
         }
 
-#if !CORECLR
+        /// <summary>
+        /// Returns the value of the Execution Policy as retrieved
+        /// from group policy.
+        /// </summary>
+        /// <returns>NULL if it is not defined at this level</returns>
+        private static string GetGroupPolicyValue(string shellId, ExecutionPolicyScope scope)
+        {
+            ConfigScope[] scopeKey = null;
+
+            switch (scope)
+            {
+                case ExecutionPolicyScope.MachinePolicy:
+                    scopeKey = Utils.SystemWideOnlyConfig;
+                    break;
+
+                case ExecutionPolicyScope.UserPolicy:
+                    scopeKey = Utils.CurrentUserOnlyConfig;
+                    break;
+            }
+
+            var scriptExecutionSetting = Utils.GetPolicySetting<ScriptExecution>(scopeKey);
+            if (scriptExecutionSetting != null)
+            {
+                if (scriptExecutionSetting.EnableScripts == false)
+                {
+                    // Script execution is explicitly disabled
+                    return "Restricted";
+                }
+                else if (scriptExecutionSetting.EnableScripts == true)
+                {
+                    // Script execution is explicitly enabled
+                    return scriptExecutionSetting.ExecutionPolicy;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the value of the Execution Policy as retrieved
+        /// from the local preference.
+        /// </summary>
+        /// <returns>NULL if it is not defined at this level</returns>
+        private static string GetLocalPreferenceValue(string shellId, ExecutionPolicyScope scope)
+        {
+            switch (scope)
+            {
+                // 1: Look up the current-user preference
+                case ExecutionPolicyScope.CurrentUser:
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.CurrentUser, shellId);
+
+                // 2: Look up the system-wide preference
+                case ExecutionPolicyScope.LocalMachine:
+                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.SystemWide, shellId);
+            }
+
+            return null;
+        }
+
+#endregion execution policy
+
         /// <summary>
         /// Get the pass / fail result of calling the SAFER API
         /// </summary>
@@ -500,67 +560,6 @@ namespace System.Management.Automation.Internal
 
             return status;
         }
-#endif
-        /// <summary>
-        /// Returns the value of the Execution Policy as retrieved
-        /// from group policy.
-        /// </summary>
-        /// <returns>NULL if it is not defined at this level</returns>
-        private static string GetGroupPolicyValue(string shellId, ExecutionPolicyScope scope)
-        {
-            ConfigScope[] scopeKey = null;
-
-            switch (scope)
-            {
-                case ExecutionPolicyScope.MachinePolicy:
-                    scopeKey = Utils.SystemWideOnlyConfig;
-                    break;
-
-                case ExecutionPolicyScope.UserPolicy:
-                    scopeKey = Utils.CurrentUserOnlyConfig;
-                    break;
-            }
-
-            var scriptExecutionSetting = Utils.GetPolicySetting<ScriptExecution>(scopeKey);
-            if (scriptExecutionSetting != null)
-            {
-                if (scriptExecutionSetting.EnableScripts == false)
-                {
-                    // Script execution is explicitly disabled
-                    return "Restricted";
-                }
-                else if (scriptExecutionSetting.EnableScripts == true)
-                {
-                    // Script execution is explicitly enabled
-                    return scriptExecutionSetting.ExecutionPolicy;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Returns the value of the Execution Policy as retrieved
-        /// from the local preference.
-        /// </summary>
-        /// <returns>NULL if it is not defined at this level</returns>
-        private static string GetLocalPreferenceValue(string shellId, ExecutionPolicyScope scope)
-        {
-            switch (scope)
-            {
-                // 1: Look up the current-user preference
-                case ExecutionPolicyScope.CurrentUser:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.CurrentUser, shellId);
-
-                // 2: Look up the system-wide preference
-                case ExecutionPolicyScope.LocalMachine:
-                    return PowerShellConfig.Instance.GetExecutionPolicy(ConfigScope.SystemWide, shellId);
-            }
-
-            return null;
-        }
-
-#endregion execution policy
 
         /// <summary>
         /// throw if file does not exist
@@ -1516,9 +1515,7 @@ namespace System.Management.Automation
                     hostname = string.Concat("PowerShell_", processPath, ".exe_0.0.0.0");
                 }
 
-#if !CORECLR
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-#endif
 
                 var hr = AmsiNativeMethods.AmsiInitialize(hostname, ref s_amsiContext);
                 if (!Utils.Succeeded(hr))
