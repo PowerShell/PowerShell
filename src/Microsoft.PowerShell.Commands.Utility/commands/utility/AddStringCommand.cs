@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 
-namespace Microsoft.PowerShell.Commands.Utility.commands.utility
+namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Implementation of the Add-String command
