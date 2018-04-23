@@ -5786,6 +5786,7 @@ namespace Microsoft.PowerShell.Commands
         private void ClearAnalysisCaches()
         {
             s_scriptAnalysisCache.Clear();
+            s_binaryAnalysisCache.Clear();
         }
 
         // Analyzes a binary module implementation for its cmdlets.
@@ -6407,7 +6408,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        string binaryPath = fileName;
+                       string binaryPath = fileName;
                         modulePath = fileName;
                         if (binaryPath == null)
                         {
