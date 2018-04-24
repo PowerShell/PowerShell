@@ -125,6 +125,45 @@ Describe "Start-Process" -Tags @("Feature") {
    }
 }
 
+Describe "Start-Process -Timeout" -Tags "Feature","Slow" {
+
+    BeforeAll {
+        if ($IsWindows) {
+            $pingParam = "-n 30 localhost"
+        }
+        elseif ($IsLinux -Or $IsMacOS) {
+            $pingParam = "-c 30 localhost"
+        }
+    }
+
+    It "Should work correctly if process completes before specified exit time-out" {
+        Start-Process ping -ArgumentList $pingParam -ExitTimeout 40000 -RedirectStandardOutput "$TESTDRIVE/output" | Should Be $null
+    }
+
+    It "Should give an error when the specified exit time-out is exceeded" {
+        { Start-Process ping -ArgumentList $pingParam -ExitTimeout 20000 -RedirectStandardOutput "$TESTDRIVE/output" } | ShouldBeErrorId "StartProcessExitTimeoutExceeded,Microsoft.PowerShell.Commands.StartProcessCommand"
+    }
+
+    It "Should use exit time-out value when both -ExitTimeout and -Wait are passed" {
+        { Start-Process ping -ArgumentList $pingParam -ExitTimeout 20000 -Wait -RedirectStandardOutput "$TESTDRIVE/output" } | ShouldBeErrorId "StartProcessExitTimeoutExceeded,Microsoft.PowerShell.Commands.StartProcessCommand"
+    }
+
+    # This is based on the test "Should kill native process tree" in
+    # test\powershell\Language\Scripting\NativeExecution\NativeCommandProcessor.Tests.ps1
+    It "Should stop any descendant processes when the specified exit time-out is exceeded" {
+        Get-Process testexe -ErrorAction SilentlyContinue | Stop-Process
+
+        { Start-Process testexe -ArgumentList "-createchildprocess 6" -ExitTimeout 10000 -RedirectStandardOutput "$TESTDRIVE/output" } | ShouldBeErrorId "StartProcessExitTimeoutExceeded,Microsoft.PowerShell.Commands.StartProcessCommand"
+
+        # Waiting for a second, as the $testexe processes may still be exiting
+        # and the Get-Process cmdlet will count them accidentally
+        Start-Sleep 1
+
+        $childprocesses = Get-Process testexe -ErrorAction SilentlyContinue
+        $childprocesses.count | Should Be 0
+    }
+}
+
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
 
     BeforeEach {
