@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal int activityId;
         private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
-        private string _defaultCulture = "en-US;
+        private string _defaultCulture = "en-US";
 
         #region Parameters
 
