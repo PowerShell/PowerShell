@@ -1526,12 +1526,17 @@ namespace System.Management.Automation.Remoting.Client
                 // config provider.
                 SetWSManSessionOption(WSManNativeApi.WSManSessionOption.WSMAN_OPTION_USE_SSL, 1);
             }
+
+#if UNIX
+            // NOTE: PSRP/Linux does not support encryption over HTTP and will fail if attempted.
             if (connectionInfo.NoEncryption ||
                 (connectionInfo.AuthenticationMechanism == AuthenticationMechanism.Basic && !isSSLSpecified)
             )
+#else
+            if (connectionInfo.NoEncryption)
+#endif
             {
                 // send unencrypted messages
-                // NOTE: PSRP/Linux does not support encryption over HTTP and will fail if attempted.
                 SetWSManSessionOption(WSManNativeApi.WSManSessionOption.WSMAN_OPTION_UNENCRYPTED_MESSAGES, 1);
             }
             // check if implicit credentials can be used for Negotiate
