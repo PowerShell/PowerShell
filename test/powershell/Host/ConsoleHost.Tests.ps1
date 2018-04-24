@@ -561,6 +561,44 @@ foo
             }
         }
     }
+
+    Context "-WorkingDirectory parameter" {
+        BeforeAll {
+            $folderName = (New-Guid).ToString() + " test";
+            New-Item -Path ~/$folderName -ItemType Directory
+            $ExitCodeBadCommandLineParameter = 64
+        }
+
+        AfterAll {
+            Remove-Item ~/$folderName -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Can set working directory to '<value>'" -TestCases @(
+            @{ value = "~"            ; expectedPath = $((Get-Item ~).FullName) },
+            @{ value = "~/$folderName"; expectedPath = $((Get-Item ~/$folderName).FullName) },
+            @{ value = "~\$folderName"; expectedPath = $((Get-Item ~\$folderName).FullName) }
+        ) {
+            param($value, $expectedPath)
+            $output = & $powershell -WorkingDirectory "$value" -Command "`$pwd.Path"
+            $output | Should -BeExactly $expectedPath
+        }
+
+        It "Can use '<parameter>' to set working directory" -TestCases @(
+            @{ parameter = '-workingdirectory' },
+            @{ parameter = '-wd' },
+            @{ parameter = '-wo' }
+        ) {
+            param($parameter)
+            $output = & $powershell $parameter ~ -Command "`$pwd.Path"
+            $output | Should -BeExactly $((Get-Item ~).FullName)
+        }
+
+        It "Error case if -WorkingDirectory isn't given argument as last on command line" {
+            $output = & $powershell -WorkingDirectory
+            $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+            $output | Should -Not -BeNullOrEmpty
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {

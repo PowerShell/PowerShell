@@ -187,7 +187,8 @@ namespace Microsoft.PowerShell
             "executionpolicy",
             "command",
             "settingsfile",
-            "help"
+            "help",
+            "workingdirectory"
         };
 
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
@@ -385,6 +386,11 @@ namespace Microsoft.PowerShell
         internal bool NonInteractive
         {
             get { return _noInteractive; }
+        }
+
+        internal string WorkingDirectory
+        {
+            get { return _workingDirectory; }
         }
 
         private void ShowHelp()
@@ -767,6 +773,18 @@ namespace Microsoft.PowerShell
                     _staMode = false;
                 }
 #endif
+                else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        WriteCommandLineError(
+                            CommandLineParameterParserStrings.MissingWorkingDirectoryArgument);
+                        break;
+                    }
+
+                    _workingDirectory = args[i];
+                }
                 else
                 {
                     // The first parameter we fail to recognize marks the beginning of the file string.
@@ -1223,6 +1241,7 @@ namespace Microsoft.PowerShell
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string _file;
         private string _executionPolicy;
+        private string _workingDirectory;
     }
 }   // namespace
 
