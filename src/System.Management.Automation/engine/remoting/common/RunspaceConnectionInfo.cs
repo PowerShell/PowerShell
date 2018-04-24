@@ -1913,6 +1913,24 @@ namespace System.Management.Automation.Runspaces
         /// <param name="computerName">Computer Name</param>
         /// <param name="keyFilePath">Key File Path</param>
         /// <param name="port">Port number for connection (default 22)</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port) : this(userName, computerName, keyFilePath)
+        {
+            ValidatePortInRange(port);
+
+            this.Port = (port != 0) ? port : DefaultPort;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userName">User Name</param>
+        /// <param name="computerName">Computer Name</param>
+        /// <param name="keyFilePath">Key File Path</param>
+        /// <param name="port">Port number for connection (default 22)</param>
         /// <param name="subsystem">Subsystem to use (default 'powershell')</param>
         public SSHConnectionInfo(
             string userName,
