@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using Microsoft.PowerShell.MarkdownRender;
+using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -99,10 +101,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, inputObj.GetType());
+                            string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
                             ErrorRecord errorRecord = new ErrorRecord(
                                 new InvalidDataException(errorMessage),
-                                "ConvertFromMarkdownInvalidInputObject",
+                                "InvalidInputObject",
                                 ErrorCategory.InvalidData,
                                 InputObject);
 
@@ -126,55 +128,31 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (var path in paths)
             {
+                // ResolvePath checks for file existence.
                 var resolvedPaths = ResolvePath(path, isLiteral);
 
                 foreach (var resolvedPath in resolvedPaths)
                 {
-                    if (File.Exists(resolvedPath))
-                    {
-                        WriteObject(
+                    WriteObject(
                             MarkdownConverter.Convert(
                                 ReadContentFromFile(resolvedPath).Result,
                                 conversionType,
                                 optionInfo)
                         );
-                    }
-                    else
-                    {
-                        string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InputFileNotFound, resolvedPath);
-                        var errorRecord = new ErrorRecord(
-                            new FileNotFoundException(errorMessage),
-                            "ConvertFromMarkdownFileNotFound",
-                            ErrorCategory.ResourceUnavailable,
-                            resolvedPath);
-
-                        WriteError(errorRecord);
-                    }
                 }
             }
         }
 
         private async Task<string> ReadContentFromFile(string filePath)
         {
-            if (File.Exists(filePath))
-            {
-                using (StreamReader reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
-                {
-                    string mdContent = await reader.ReadToEndAsync();
-                    return mdContent;
-                }
-            }
-            else
-            {
-                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InputFileNotFound, filePath);
-                var errorRecord = new ErrorRecord(
-                    new FileNotFoundException(errorMessage),
-                    "ConvertFromMarkdownFileNotFound",
-                    ErrorCategory.ResourceUnavailable,
-                    resolvedPath);
+            Dbg.Diagnostics.Assert(File.Exists(filePath), "Caller should make sure the file exists.");
 
-                WriteError(errorRecord);
+            using (StreamReader reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+            {
+                string mdContent = await reader.ReadToEndAsync();
+                return mdContent;
             }
+
         }
 
         private List<string> ResolvePath(string path, bool isLiteral)
@@ -183,20 +161,34 @@ namespace Microsoft.PowerShell.Commands
             PSDriveInfo drive = null;
             List<string> resolvedPaths = new List<string>();
 
-            if (isLiteral)
+            try
             {
-                resolvedPaths.Add(Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                if (isLiteral)
+                {
+                    resolvedPaths.Add(Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path, out provider, out drive));
+                }
+                else
+                {
+                    resolvedPaths.AddRange(Context.SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider));
+                }
             }
-            else
+            catch (ItemNotFoundException infe)
             {
-                resolvedPaths.AddRange(Context.SessionState.Path.GetResolvedProviderPathFromPSPath(path, out provider));
+                string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InputFileNotFound, path);
+                var errorRecord = new ErrorRecord(
+                    infe,
+                    "FileNotFound",
+                    ErrorCategory.ResourceUnavailable,
+                    path);
+
+                WriteError(errorRecord);
             }
 
             if (!provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase))
             {
                 string errorMessage = StringUtil.Format(ConvertMarkdownStrings.FileSystemPathsOnly, path);
                 ErrorRecord errorRecord = new ErrorRecord(new ArgumentException(),
-                                                                "ConvertFromMarkdownOnlySupportsFileSystemPaths",
+                                                                "OnlyFileSystemPathsSupported",
                                                                 ErrorCategory.InvalidArgument,
                                                                 path);
                 WriteError(errorRecord);

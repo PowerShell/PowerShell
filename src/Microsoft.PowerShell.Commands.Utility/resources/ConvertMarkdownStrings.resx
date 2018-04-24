@@ -126,7 +126,4 @@
   <data name="FileSystemPathsOnly" xml:space="preserve">
     <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
   </data>
-  <data name="FileSystemPathsOnly" xml:space="preserve">
-    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
-  </data>
 </root>
