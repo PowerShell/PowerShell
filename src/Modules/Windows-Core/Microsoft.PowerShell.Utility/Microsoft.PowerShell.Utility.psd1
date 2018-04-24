@@ -10,7 +10,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
     "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event", "New-Guid",
     "New-Event", "Add-Member", "Add-String", "Add-Type", "Compare-Object", "ConvertTo-Html", "ConvertFrom-StringData",
-    "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Invoke-Expression",
+    "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Format-String", "Invoke-Expression",
     "Get-Alias", "Get-Culture", "Get-Date", "Get-Host", "Get-Member", "Get-Random", "Get-UICulture",
     "Get-Unique", "Export-PSSession", "Import-PSSession", "Import-Alias", "Import-LocalizedData",
     "Select-String", "Measure-Object", "New-Alias", "New-TimeSpan", "Read-Host", "Set-Alias", "Set-Date",
@@ -25,7 +25,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "Get-Verb", "Format-Hex",
     "Test-Json", "Remove-Alias"
 FunctionsToExport= "ConvertFrom-SddlString"
-AliasesToExport= "fhx","wrap"
+AliasesToExport= "fhx","format","wrap"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855960'
 }
