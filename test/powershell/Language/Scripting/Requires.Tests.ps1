@@ -32,9 +32,12 @@ Describe "Requires tests" -Tags "CI" {
             $settings = [System.Management.Automation.PSInvocationSettings]::new()
             $settings.AddToHistory = $true
 
-            $ps = [powershell]::Create()
-            $ps.AddScript("#requires`n10")
-            $ps.Invoke(@(), $settings) | Should -BeExactly 10
+            {
+                $ps = [powershell]::Create()
+                $ps.AddScript("#requires")
+                $ps.Invoke(@(), $settings)
+                $ps.Dispose()
+            } | Should -Not -Throw
         }
     }
 }

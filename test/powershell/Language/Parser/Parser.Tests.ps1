@@ -924,6 +924,10 @@ foo``u{2195}abc
             $ps = [powershell]::Create()
         }
 
+        AfterAll {
+            $ps.Dispose()
+        }
+
         AfterEach {
             $ps.Commands.Clear()
         }
