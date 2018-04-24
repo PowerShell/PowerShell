@@ -249,8 +249,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private enum PreprocessingState { raw, processed, error }
 
-        const int defaultConsoleWidth = 120;
-        internal const int columnsThresHold = 120;
+        const int DefaultConsoleWidth = 120;
+        internal const int StackAllocThreshold = 120;
 
         /// <summary>
         /// test if an object coming from the pipeline needs to be
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (_noConsole)
                 {
-                    return defaultConsoleWidth;
+                    return DefaultConsoleWidth;
                 }
                 try
                 {
@@ -774,7 +774,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 catch
                 {
                     _noConsole = true;
-                    return defaultConsoleWidth;
+                    return DefaultConsoleWidth;
                 }
             }
             return columnNumber;
@@ -957,8 +957,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // create arrays for widths and alignment
-                Span<int> columnWidths = columns <= columnsThresHold ? stackalloc int[columns] : new int[columns];
-                Span<int> alignment = columns <= columnsThresHold ? stackalloc int[columns] : new int[columns];
+                Span<int> columnWidths = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
+                Span<int> alignment = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
 
                 int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // need to make sure we have matching counts: the header count will have to prevail
                 string[] values = new string[headerColumns];
-                Span<int> alignment = headerColumns <= columnsThresHold ? stackalloc int[headerColumns] : new int[headerColumns];
+                Span<int> alignment = headerColumns <= StackAllocThreshold ? stackalloc int[headerColumns] : new int[headerColumns];
 
                 int fieldCount = tre.formatPropertyFieldList.Count;
 
@@ -1170,8 +1170,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _buffer = new StringValuesBuffer(itemsPerRow);
 
                 // initialize the writer
-                Span<int> columnWidths = itemsPerRow <= columnsThresHold ? stackalloc int[itemsPerRow] : new int[itemsPerRow];
-                Span<int> alignment = itemsPerRow <= columnsThresHold ? stackalloc int[itemsPerRow] : new int[itemsPerRow];
+                Span<int> columnWidths = itemsPerRow <= StackAllocThreshold ? stackalloc int[itemsPerRow] : new int[itemsPerRow];
+                Span<int> alignment = itemsPerRow <= StackAllocThreshold ? stackalloc int[itemsPerRow] : new int[itemsPerRow];
 
                 for (int k = 0; k < itemsPerRow; k++)
                 {
