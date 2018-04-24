@@ -5835,10 +5835,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Tuple<BinaryAnalysisResult, Version> tuple = null;
 
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.TryGetValue(path, out tuple);
-            }
+            s_binaryAnalysisCache.TryGetValue(path, out tuple);
 
             if (tuple != null)
             {
@@ -5885,10 +5882,7 @@ namespace Microsoft.PowerShell.Commands
                 result.DetectedCmdlets = detectedCmdlets;
                 result.DetectedAliases = detectedAliases;
 
-                lock (s_lockObject)
-                {
-                    s_binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
-                }
+                s_binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
 
                 return result;
             }
@@ -5999,7 +5993,7 @@ namespace Microsoft.PowerShell.Commands
             TryGetFileLastWriteTimeUtc(filePath, out lastModuleWriteTimeUtc);
 
             // Return here if the cache is up to date
-            if (cacheEntry.ModuleInfo != null && lastModuleWriteTimeUtc == cacheEntry.LastFileWriteTimeUtc)
+            if (cacheEntry?.ModuleInfo != null && lastModuleWriteTimeUtc == cacheEntry.LastFileWriteTimeUtc)
             {
                 // We need to return a cloned version here.
                 // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
