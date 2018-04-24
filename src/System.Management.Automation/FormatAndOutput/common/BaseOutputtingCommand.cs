@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private enum PreprocessingState { raw, processed, error }
 
-        const int DefaultConsoleWidth = 120;
+        private const int DefaultConsoleWidth = 120;
         internal const int StackAllocThreshold = 120;
 
         /// <summary>
