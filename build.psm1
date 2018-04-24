@@ -1009,7 +1009,7 @@ No Pester module of version 4.2 and higher.
 Restore the required module version to '$Pester' by running:
     Restore-PSPester
 "@
-                return;
+        return;
     }
 
     if ($IncludeFailingTest.IsPresent)
