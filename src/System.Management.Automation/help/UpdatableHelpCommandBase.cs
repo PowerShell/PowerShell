@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal int activityId;
         private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
+        private string _defaultCulture = "en-US;
 
         #region Parameters
 
@@ -500,77 +501,19 @@ namespace Microsoft.PowerShell.Commands
             // running "update-help" still downs English help content.
             var cultures = _language ?? _helpSystem.GetCurrentUICulture();
 
+            bool helpPackageInstalled  = false;
             foreach (string culture in cultures)
             {
-                bool installed = true;
-
                 if (_stopping)
                 {
                     break;
                 }
 
-                try
+                bool installed = ProcessModuleWithSingleCulture(module, culture);
+                if (installed)
                 {
-                    ProcessModuleWithCulture(module, culture);
+                    helpPackageInstalled = true;
                 }
-                catch (IOException e)
-                {
-                    ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("FailedToCopyFile",
-                        e.Message, ErrorCategory.InvalidOperation, null, e));
-                }
-                catch (UnauthorizedAccessException e)
-                {
-                    ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("AccessIsDenied",
-                        e.Message, ErrorCategory.PermissionDenied, null, e));
-                }
-#if !CORECLR
-                catch (WebException e)
-                {
-                    if (e.InnerException != null && e.InnerException is UnauthorizedAccessException)
-                    {
-                        ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("AccessIsDenied",
-                            e.InnerException.Message, ErrorCategory.PermissionDenied, null, e));
-                    }
-                    else
-                    {
-                        ProcessException(module.ModuleName, culture, e);
-                    }
-                }
-#endif
-                catch (UpdatableHelpSystemException e)
-                {
-                    if (e.FullyQualifiedErrorId == "HelpCultureNotSupported")
-                    {
-                        installed = false;
-
-                        if (_language != null)
-                        {
-                            // Display the error message only if we are not using the fallback chain
-                            ProcessException(module.ModuleName, culture, e);
-                        }
-                    }
-                    else
-                    {
-                        ProcessException(module.ModuleName, culture, e);
-                    }
-                }
-                catch (Exception e)
-                {
-                    ProcessException(module.ModuleName, culture, e);
-                }
-                finally
-                {
-                    if (_helpSystem.Errors.Count != 0)
-                    {
-                        foreach (Exception error in _helpSystem.Errors)
-                        {
-                            ProcessException(module.ModuleName, culture, error);
-                        }
-
-                        _helpSystem.Errors.Clear();
-                    }
-                }
-
                 // If -Language is not specified, we only install
                 // one culture from the fallback chain
                 if (_language == null && installed)
@@ -578,6 +521,80 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
+            if (!helpPackageInstalled) {
+                // When help data for the requested culture is not available, we fallback to en-US culture.
+                ProcessModuleWithSingleCulture(module, _defaultCulture);
+            }
+        }
+
+        private bool ProcessModuleWithSingleCulture(UpdatableHelpModuleInfo module, string culture)
+        {
+            bool installed = true;
+
+            try
+            {
+                ProcessModuleWithCulture(module, culture);
+            }
+            catch (IOException e)
+            {
+                ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("FailedToCopyFile",
+                    e.Message, ErrorCategory.InvalidOperation, null, e));
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("AccessIsDenied",
+                    e.Message, ErrorCategory.PermissionDenied, null, e));
+            }
+#if !CORECLR
+            catch (WebException e)
+            {
+                if (e.InnerException != null && e.InnerException is UnauthorizedAccessException)
+                {
+                    ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("AccessIsDenied",
+                        e.InnerException.Message, ErrorCategory.PermissionDenied, null, e));
+                }
+                else
+                {
+                    ProcessException(module.ModuleName, culture, e);
+                }
+            }
+#endif
+            catch (UpdatableHelpSystemException e)
+            {
+                if (e.FullyQualifiedErrorId == "HelpCultureNotSupported")
+                {
+                    installed = false;
+
+                    if (_language != null)
+                    {
+                        // Display the error message only if we are not using the fallback chain
+                        ProcessException(module.ModuleName, culture, e);
+                    }
+                }
+                else
+                {
+                    ProcessException(module.ModuleName, culture, e);
+                }
+            }
+            catch (Exception e)
+            {
+                ProcessException(module.ModuleName, culture, e);
+            }
+            finally
+            {
+                if (_helpSystem.Errors.Count != 0)
+                {
+                    foreach (Exception error in _helpSystem.Errors)
+                    {
+                        ProcessException(module.ModuleName, culture, error);
+                    }
+
+                    _helpSystem.Errors.Clear();
+                }
+            }
+
+            return installed;
         }
 
         /// <summary>
