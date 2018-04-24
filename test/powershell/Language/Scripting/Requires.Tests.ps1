@@ -40,10 +40,8 @@ Describe "Requires tests" -Tags "CI" {
         It "Successfully does nothing when given '#requires' interactively" {
             $settings = [System.Management.Automation.PSInvocationSettings]::new()
             $settings.AddToHistory = $true
-            {
-                $ps.AddScript("#requires")
-                $ps.Invoke(@(), $settings)
-            } | Should -Not -Throw
+
+            { $ps.AddScript("#requires").Invoke(@(), $settings) } | Should -Not -Throw
         }
     }
 }
