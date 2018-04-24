@@ -120,14 +120,12 @@ Describe "New-Item" -Tags "CI" {
 
     It "Should create a file at the root of the drive while the current working directory is not the root" {
         try {
-            Push-Location -Path "TestDrive:\"
             New-Item -Name $testfolder -Path "TestDrive:\" -ItemType directory > $null
             Push-Location -Path "TestDrive:\$testfolder"
             New-Item -Name $testfile -Path "TestDrive:\" -ItemType file > $null
             $FullyQualifiedFile | Should -Exist
         }
         finally {
-            Pop-Location
             Pop-Location
         }
     }
@@ -137,14 +135,12 @@ Describe "New-Item" -Tags "CI" {
         $FullyQualifiedFolder2 = Join-Path -Path $tmpDirectory -ChildPath $testfolder2
 
         try {
-            Push-Location -Path "TestDrive:\"
             New-Item -Name $testfolder -Path "TestDrive:\" -ItemType directory > $null
             Push-Location -Path "TestDrive:\$testfolder"
             New-Item -Name $testfolder2 -Path "TestDrive:\" -ItemType directory > $null
             $FullyQualifiedFolder2 | Should -Exist
         }
         finally {
-            Pop-Location
             Pop-Location
         }
     }
