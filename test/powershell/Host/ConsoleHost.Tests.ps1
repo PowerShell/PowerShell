@@ -594,7 +594,7 @@ foo
         }
 
         It "Error case if -WorkingDirectory isn't given argument as last on command line" {
-            $output = & $powershell -WorkingDirectory
+            $output = & $powershell -WorkingDirectory 2>&1
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
             $output | Should -Not -BeNullOrEmpty
         }
