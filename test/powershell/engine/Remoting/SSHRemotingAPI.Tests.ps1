@@ -25,31 +25,27 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
         }
 
         It "SSHConnectionInfo should throw file not found exception for invalid key file path" -Skip:$skipTest {
+            $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
+                "UserName",
+                "localhost",
+                "NoValidKeyFilePath",
+                22)
 
-            $e = {
-                $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
-                    "UserName",
-                    "localhost",
-                    "NoValidKeyFilePath",
-                    22)
+            $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
 
-                $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
-                $rs.Open()
-            } | Should -Throw -PassThru
+            $e = { $rs.Open() } | Should -Throw -PassThru
             $e.Exception.InnerException.InnerException | Should -BeOfType "System.IO.FileNotFoundException"
         }
 
         It "SSHConnectionInfo should throw argument exception for invalid port (non 16bit uint)" {
-            $e = {
-                $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
-                    "UserName",
-                    "localhost",
-                    "ValidKeyFilePath",
-                    99999)
+            $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
+                "UserName",
+                "localhost",
+                "ValidKeyFilePath",
+                99999)
 
-                $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
-                $rs.Open()
-            } | Should -Throw -PassThru
+            $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
+            $e = { $rs.Open() } | Should -Throw -PassThru
             $e.Exception.InnerException | Should -BeOfType "System.ArgumentException"
         }
     }
