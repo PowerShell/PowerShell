@@ -5805,9 +5805,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Tuple<BinaryAnalysisResult, Version> tuple;
 
-            s_binaryAnalysisCache.TryGetValue(path, out tuple);
-
-            if (tuple != null)
+            if (s_binaryAnalysisCache.TryGetValue(path, out tuple))
             {
                 assemblyVersion = tuple.Item2;
                 return tuple.Item1;
@@ -5835,9 +5833,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Tuple<BinaryAnalysisResult, Version> tuple = null;
 
-            s_binaryAnalysisCache.TryGetValue(path, out tuple);
-
-            if (tuple != null)
+            if (s_binaryAnalysisCache.TryGetValue(path, out tuple))
             {
                 assemblyVersion = tuple.Item2;
                 return tuple.Item1;
@@ -5984,16 +5980,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private PSModuleInfo AnalyzeScriptFile(string filePath, bool force, ExecutionContext context)
         {
-            // Look up the module to see if we have it cached
-            ScriptModuleCacheEntry cacheEntry = null;
-            s_scriptAnalysisCache.TryGetValue(filePath, out cacheEntry);
+            // Find when the file backing the module last changed
+            DateTime lastModuleWriteTimeUtc = GetFileLastWriteTimeUtc(filePath);
 
-            // Now check the file to see if its changed since we cached it
-            DateTime lastModuleWriteTimeUtc;
-            TryGetFileLastWriteTimeUtc(filePath, out lastModuleWriteTimeUtc);
-
-            // Return here if the cache is up to date
-            if (cacheEntry?.ModuleInfo != null && lastModuleWriteTimeUtc == cacheEntry.LastFileWriteTimeUtc)
+            // If we have a cache entry and it's up to date, return that
+            if (s_scriptAnalysisCache.TryGetValue(filePath, out ScriptModuleCacheEntry cacheEntry) && lastModuleWriteTimeUtc == cacheEntry.LastFileWriteTimeUtc)
             {
                 // We need to return a cloned version here.
                 // This is because the Get-Module -List -All modifies the returned module info and we do not want the original one changed.
@@ -7245,24 +7236,21 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get the last (UTC) write time for the file at the given path if it exists and return true.
-        /// If the file does not exist, return false.
+        /// Get the last (UTC) write time for the file at the given path if it exists.
+        /// If the file does not exist, return DateTime.MinValue
         /// </summary>
         /// <param name="path">the path to the file with the last write time to check</param>
-        /// <param name="lastWriteTimeUtc">the last time the file was written to, as a UTC DateTime</param>
-        /// <returns>true if the file exists and the returned last write time is valid, false otherwise</returns>
-        internal static bool TryGetFileLastWriteTimeUtc(string path, out DateTime lastWriteTimeUtc)
+        /// <returns>the last UTC timestamp the file was written, or DateTime.MinValue if the file does not exist</returns>
+        internal static DateTime GetFileLastWriteTimeUtc(string path)
         {
             try
             {
-                lastWriteTimeUtc = File.GetLastAccessTimeUtc(path);
-                return true;
+                return File.GetLastAccessTimeUtc(path);
             }
             catch (Exception e)
             {
                 ModuleIntrinsics.Tracer.WriteLine("Exception checking LastWriteTimeUtc on module {0}: {1}", path, e.Message);
-                lastWriteTimeUtc = DateTime.MinValue;
-                return false;
+                return DateTime.MinValue;
             }
         }
 
