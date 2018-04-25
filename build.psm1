@@ -2190,9 +2190,6 @@ function Start-CrossGen {
         }
     }
 
-    Write-Verbose "Skipping crossgen"
-    return
-
     if (-not (Test-Path $PublishPath)) {
         throw "Path '$PublishPath' does not exist."
     }
