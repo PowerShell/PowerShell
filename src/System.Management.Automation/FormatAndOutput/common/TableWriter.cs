@@ -82,18 +82,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //Console.WriteLine("         1         2         3         4         5         6         7");
             //Console.WriteLine("01234567890123456789012345678901234567890123456789012345678901234567890123456789");
 
-            if (screenColumns == int.MaxValue)
-            {
-                try
-                {
-                    screenColumns = System.Console.WindowWidth;
-                }
-                catch
-                {
-                    screenColumns = 120;
-                }
-            }
-
             if (leftMarginIndent < 0)
             {
                 leftMarginIndent = 0;
@@ -194,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // build the current row alignment settings
             int cols = _si.columnInfo.Length;
-            Span<int> currentAlignment = stackalloc int[cols];
+            Span<int> currentAlignment = cols <= OutCommandInner.StackAllocThreshold ? stackalloc int[cols] : new int[cols];
 
             if (alignment == null)
             {
@@ -232,7 +220,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private string[] GenerateTableRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells ds)
         {
             // select the active columns (skip hidden ones)
-            Span<int> validColumnArray = stackalloc int[_si.columnInfo.Length];
+            Span<int> validColumnArray = _si.columnInfo.Length <= OutCommandInner.StackAllocThreshold ? stackalloc int[_si.columnInfo.Length] : new int[_si.columnInfo.Length];
             int validColumnCount = 0;
             for (int k = 0; k < _si.columnInfo.Length; k++)
             {
@@ -303,7 +291,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             //
             // To ensure we don't add whitespace to the end, we need to determine the last column in each row with content
 
-            System.Span<int> lastColWithContent = stackalloc int[screenRows];
+            System.Span<int> lastColWithContent = screenRows <= OutCommandInner.StackAllocThreshold ? stackalloc int[screenRows] : new int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
                 for (int col = scArray.Length - 1; col > 0; col--)
