@@ -402,7 +402,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("win7-x64",
                      "win7-x86",
-                     "osx.10.12-x64",
+                     "osx-x64",
                      "linux-x64",
                      "linux-arm",
                      "win-arm",
@@ -714,7 +714,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "win7-x86",
                      "win7-x64",
-                     "osx.10.12-x64",
+                     "osx-x64",
                      "linux-x64",
                      "linux-arm",
                      "win-arm",
@@ -792,6 +792,8 @@ function New-PSOptions {
                 # which supports all supported windows platforms.
                 # So we, will change the RID to win7-<arch>
                 $Runtime = $RID -replace "win\d+", "win7"
+            } elseif ($Environment.IsMacOS) {
+                $Runtime = "osx-x64"
             } else {
                 $Runtime = $RID
             }
@@ -2141,7 +2143,7 @@ function Start-CrossGen {
         [Parameter(Mandatory=$true)]
         [ValidateSet("win7-x86",
                      "win7-x64",
-                     "osx.10.12-x64",
+                     "osx-x64",
                      "linux-x64",
                      "linux-arm",
                      "win-arm",
@@ -2188,6 +2190,9 @@ function Start-CrossGen {
         }
     }
 
+    Write-Verbose "Skipping crossgen"
+    return
+
     if (-not (Test-Path $PublishPath)) {
         throw "Path '$PublishPath' does not exist."
     }
@@ -2216,9 +2221,12 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
+    $dotnetRuntimeVersion = $dotnetCLIRequiredVersion -match "(\d\.\d)\..*" | ForEach-Object { $matches[1] }
+
     # Get the CrossGen.exe for the correct runtime with the latest version
     $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
                         Where-Object { $_.FullName -match $crossGenRuntime } | `
+                        Where-Object { $_.FullName -match $dotnetRuntimeVersion } | `
                         Sort-Object -Property FullName -Descending | `
                         Select-Object -First 1 | `
                         ForEach-Object { $_.FullName }
