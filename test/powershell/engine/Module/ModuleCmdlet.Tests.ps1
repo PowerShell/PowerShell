@@ -19,7 +19,7 @@ function New-TestModule
 
     $null = $script:ModuleNames.Add($modName)
 
-    @{
+    return @{
         "BaseDir" = $modDir;
         "Name" = $modName;
         "Path" = $modPath
@@ -46,7 +46,7 @@ function New-TestModuleWithSubModule
 
     $null = $script:ModuleNames.Add($modName)
 
-    @{
+    return @{
         "BaseDir" = $modDir;
         "Name" = $modName;
         "SubName" = $subModName;
@@ -139,26 +139,26 @@ function Test-FirstModuleFunction
             $modData = New-TestModule -Content $simpleModContent
             $module = Import-Module $modData.Path -PassThru
 
-            $module.ExportedFunctions.Count                                    | Should -Be 1
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction")  | Should -BeTrue
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
+            $module.ExportedFunctions.Count | Should -Be 1
+            $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
+            $module.ExportedFunctions.Keys  | Should -Not -Contain "Test-SecondModuleFunction"
 
             $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
             Set-Content -Force -Path $modData.Path -Value $newModuleContent
 
             $module = Import-Module $modData.Path -PassThru -Force
-            $module.ExportedFunctions.Count                                    | Should -Be 2
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction")  | Should -BeTrue
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeTrue
+            $module.ExportedFunctions.Count | Should -Be 2
+            $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
+            $module.ExportedFunctions.Keys  | Should -Contain "Test-SecondModuleFunction"
         }
 
         It "Re-imports modules from file with new members when -Force is used with -AsCustomObject" {
             $modData = New-TestModule -Content $simpleModContent
             $module = Import-Module $modData.Path -PassThru
 
-            $module.ExportedFunctions.Count                                    | Should -Be 1
-            $module.ExportedFunctions.ContainsKey("Test-FirstModuleFunction")  | Should -BeTrue
-            $module.ExportedFunctions.ContainsKey("Test-SecondModuleFunction") | Should -BeFalse
+            $module.ExportedFunctions.Count | Should -Be 1
+            $module.ExportedFunctions.Keys  | Should -Contain "Test-FirstModuleFunction"
+            $module.ExportedFunctions.Keys  | Should -Contain "Test-SecondModuleFunction"
 
             $newModuleContent = (Get-Content $modData.Path | Out-String) + "`nfunction Test-SecondModuleFunction { Write-Output 'SECONDSTRING' }"
             Set-Content -Force -Path $modData.Path -Value $newModuleContent
