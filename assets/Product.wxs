@@ -201,7 +201,7 @@
                 <RegistryValue Type="string" Name="Icon" Value="[$(var.ProductDirectoryName)]assets\Powershell_black.ico"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open\command">
-                <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
+                <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -WorkingDirectory &quot;%V&quot; "/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas">
                 <RegistryValue Type="string" Name="MUIVerb" Value="$(var.ExplorerContextSubMenuElevatedDialogText)"/>
@@ -209,7 +209,7 @@
                 <RegistryValue Type="string" Value="" Name="HasLUAShield"/>
               </RegistryKey>
               <RegistryKey Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\runas\command">
-                <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -Command Set-Location -LiteralPath '%V'"/>
+                <RegistryValue Type="string" Value="[$(var.ProductDirectoryName)]pwsh.exe -NoExit -WorkingDirectory &quot;%V&quot; "/>
               </RegistryKey>
             </Component>
           </Directory>
