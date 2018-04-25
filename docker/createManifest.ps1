@@ -8,7 +8,7 @@ param(
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz-]+$')]
     [string]
-    $ManifestTag = 'lastest',
+    $ManifestTag = 'latest',
 
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[abcdefghijklmnopqrstuvwxyz-]+$')]
