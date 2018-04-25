@@ -480,8 +480,8 @@ Describe "TabCompletion" -Tags CI {
                 $beforeTab = 'filesystem::{0}\Wind' -f $env:SystemDrive
                 $afterTab = 'filesystem::{0}\Windows' -f $env:SystemDrive
             } else {
-                $beforeTab = 'filesystem::/us' -f $env:SystemDrive
-                $afterTab = 'filesystem::/usr' -f $env:SystemDrive
+                $beforeTab = 'filesystem::/sbi' -f $env:SystemDrive
+                $afterTab = 'filesystem::/sbin' -f $env:SystemDrive
             }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
