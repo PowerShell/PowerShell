@@ -776,7 +776,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #region Redirect tests
 
-    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -Pending -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
@@ -785,7 +785,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
     }
 
-    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -Pending -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest -Uri $uri -PreserveAuthorizationOnRedirect
@@ -794,7 +794,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
     }
 
-    It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -Pending -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest -Uri $uri
@@ -808,7 +808,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
-    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -Pending -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest -Uri $uri -Method 'POST'
@@ -2110,7 +2110,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #region Redirect tests
 
-    It "Validates Invoke-RestMethod with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -Pending -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri -PreserveAuthorizationOnRedirect
@@ -2120,7 +2120,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
     }
 
-    It "Validates Invoke-RestMethod preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod preserves the authorization header on multiple redirects: <redirectType>" -Pending -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue 3 -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri -PreserveAuthorizationOnRedirect
@@ -2130,7 +2130,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Headers."Authorization" | Should -BeExactly "test"
     }
 
-    It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -Pending -TestCases $redirectTests {
         param($redirectType)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri
@@ -2144,7 +2144,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
-    It "Validates Invoke-RestMethod strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -Pending -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
         $uri = Get-WebListenerUrl -Test 'Redirect' -Query @{type = $redirectType}
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri $uri -Method 'POST'
