@@ -51,8 +51,8 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(attributeType != null, "Semantic checks should have verified attribute type exists");
 
             Diagnostics.Assert(
-                attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(true) == null ||
-                (attributeType.GetTypeInfo().GetCustomAttribute<AttributeUsageAttribute>(true).ValidOn & attributeTargets) != 0, "Semantic checks should have verified attribute usage");
+                attributeType.GetCustomAttribute<AttributeUsageAttribute>(true) == null ||
+                (attributeType.GetCustomAttribute<AttributeUsageAttribute>(true).ValidOn & attributeTargets) != 0, "Semantic checks should have verified attribute usage");
 
             var positionalArgs = new object[attributeAst.PositionalArguments.Count];
             var cvv = new ConstantValueVisitor { AttributeArgument = false };
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Language
                         else
 
                         {
-                            if (baseClass.GetTypeInfo().IsSealed)
+                            if (baseClass.IsSealed)
                             {
                                 parser.ReportError(firstBaseTypeAst.Extent,
                                     nameof(ParserStrings.SealedBaseClass),
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Language
                                 // ignore base type if it's sealed.
                                 baseClass = null;
                             }
-                            else if (baseClass.GetTypeInfo().IsGenericType && !baseClass.IsConstructedGenericType)
+                            else if (baseClass.IsGenericType && !baseClass.IsConstructedGenericType)
                             {
                                 parser.ReportError(firstBaseTypeAst.Extent,
                                     nameof(ParserStrings.SubtypeUnclosedGeneric),
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Language
                                 // ignore base type, we cannot inherit from unclosed generic.
                                 baseClass = null;
                             }
-                            else if (baseClass.GetTypeInfo().IsInterface)
+                            else if (baseClass.IsInterface)
                             {
                                 // First Ast can represent interface as well as BaseClass.
                                 interfaces.Add(baseClass);
@@ -405,7 +405,7 @@ namespace System.Management.Automation.Language
                             }
                             else
                             {
-                                if (interfaceType.GetTypeInfo().IsInterface)
+                                if (interfaceType.IsInterface)
                                 {
                                     interfaces.Add(interfaceType);
                                 }
@@ -620,7 +620,7 @@ namespace System.Management.Automation.Language
                     setIlGen.Emit(OpCodes.Call, typeof(Type).GetMethod("GetTypeFromHandle")); // load current Type on stack
                     setIlGen.Emit(OpCodes.Ldstr, propertyMemberAst.Name); // load name of Property
                     setIlGen.Emit(propertyMemberAst.IsStatic ? OpCodes.Ldarg_0 : OpCodes.Ldarg_1); // load set value
-                    if (type.GetTypeInfo().IsValueType)
+                    if (type.IsValueType)
                     {
                         setIlGen.Emit(OpCodes.Box, type);
                     }
@@ -728,7 +728,7 @@ namespace System.Management.Automation.Language
                             typeConstraint.TypeName.FullName);
                         anyErrors = true;
                     }
-                    else if (paramType == typeof(void) || paramType.GetTypeInfo().IsGenericTypeDefinition)
+                    else if (paramType == typeof(void) || paramType.IsGenericTypeDefinition)
                     {
                         _parser.ReportError(typeConstraint.Extent,
                             nameof(ParserStrings.TypeNotAllowedForParameter),
@@ -900,7 +900,7 @@ namespace System.Management.Automation.Language
                         ilGenerator.Emit(OpCodes.Ldloc, local);           // load array
                         EmitLdc(ilGenerator, i);                          // index to save at
                         EmitLdarg(ilGenerator, j);                        // load argument (skipping this)
-                        if (parameterTypes[i].GetTypeInfo().IsValueType)  // value types must be boxed
+                        if (parameterTypes[i].IsValueType)  // value types must be boxed
                         {
                             ilGenerator.Emit(OpCodes.Box, parameterTypes[i]);
                         }

@@ -131,8 +131,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             string objectModelWrapperName = _cmdletizationMetadata.Class.CmdletAdapter ?? defaultObjectModelWrapper;
             _objectModelWrapper = (Type)LanguagePrimitives.ConvertTo(objectModelWrapperName, typeof(Type), CultureInfo.InvariantCulture);
-            TypeInfo objectModelWrapperTypeInfo = _objectModelWrapper.GetTypeInfo();
-            if (objectModelWrapperTypeInfo.IsGenericType)
+            if (_objectModelWrapper.IsGenericType)
             {
                 string message = string.Format(
                     CultureInfo.CurrentCulture,
@@ -141,10 +140,9 @@ namespace Microsoft.PowerShell.Cmdletization
                 throw new XmlException(message);
             }
             Type baseType = _objectModelWrapper;
-            TypeInfo baseTypeInfo = objectModelWrapperTypeInfo;
-            while ((!baseTypeInfo.IsGenericType) || baseTypeInfo.GetGenericTypeDefinition() != typeof(CmdletAdapter<>))
+            while ((!baseType.IsGenericType) || baseType.GetGenericTypeDefinition() != typeof(CmdletAdapter<>))
             {
-                baseType = baseTypeInfo.BaseType;
+                baseType = baseType.BaseType;
                 if (baseType == typeof(object))
                 {
                     string message = string.Format(
@@ -154,7 +152,6 @@ namespace Microsoft.PowerShell.Cmdletization
                         typeof(CmdletAdapter<>).FullName);
                     throw new XmlException(message);
                 }
-                baseTypeInfo = baseType.GetTypeInfo();
             }
             _objectInstanceType = baseType.GetGenericArguments()[0];
 

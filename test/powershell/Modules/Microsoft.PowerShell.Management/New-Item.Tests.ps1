@@ -117,6 +117,33 @@ Describe "New-Item" -Tags "CI" {
         $fileInfo.Target | Should -BeNullOrEmpty
         $fileInfo.LinkType | Should -BeExactly "HardLink"
     }
+
+    It "Should create a file at the root of the drive while the current working directory is not the root" {
+        try {
+            New-Item -Name $testfolder -Path "TestDrive:\" -ItemType directory > $null
+            Push-Location -Path "TestDrive:\$testfolder"
+            New-Item -Name $testfile -Path "TestDrive:\" -ItemType file > $null
+            $FullyQualifiedFile | Should -Exist
+        }
+        finally {
+            Pop-Location
+        }
+    }
+
+    It "Should create a folder at the root of the drive while the current working directory is not the root" {
+        $testfolder2 = "newDirectory2"
+        $FullyQualifiedFolder2 = Join-Path -Path $tmpDirectory -ChildPath $testfolder2
+
+        try {
+            New-Item -Name $testfolder -Path "TestDrive:\" -ItemType directory > $null
+            Push-Location -Path "TestDrive:\$testfolder"
+            New-Item -Name $testfolder2 -Path "TestDrive:\" -ItemType directory > $null
+            $FullyQualifiedFolder2 | Should -Exist
+        }
+        finally {
+            Pop-Location
+        }
+    }
 }
 
 # More precisely these tests require SeCreateSymbolicLinkPrivilege.
@@ -186,7 +213,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {
-        $folderName = [System.IO.Path]::GetRandomFileName()            
+        $folderName = [System.IO.Path]::GetRandomFileName()
         $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
         $symbolicLinkPath | Should -Not -BeNullOrEmpty
     }

@@ -8124,7 +8124,7 @@ namespace System.Management.Automation.Language
             {
                 Type generic = GetGenericType(TypeName.GetReflectionType());
 
-                if (generic != null && generic.GetTypeInfo().ContainsGenericParameters)
+                if (generic != null && generic.ContainsGenericParameters)
                 {
                     var argumentList = new List<Type>();
                     foreach (var arg in GenericArguments)
@@ -8171,7 +8171,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         internal Type GetGenericType(Type generic)
         {
-            if (generic == null || !generic.GetTypeInfo().ContainsGenericParameters)
+            if (generic == null || !generic.ContainsGenericParameters)
             {
                 if (TypeName.FullName.IndexOf("`", StringComparison.OrdinalIgnoreCase) == -1)
                 {
@@ -8198,21 +8198,19 @@ namespace System.Management.Automation.Language
             if (type == null)
             {
                 Type generic = TypeName.GetReflectionAttributeType();
-                TypeInfo genericTypeInfo = (generic != null) ? generic.GetTypeInfo() : null;
-                if (genericTypeInfo == null || !genericTypeInfo.ContainsGenericParameters)
+                if (generic == null || !generic.ContainsGenericParameters)
                 {
                     if (TypeName.FullName.IndexOf("`", StringComparison.OrdinalIgnoreCase) == -1)
                     {
                         var newTypeName = new TypeName(Extent,
                             string.Format(CultureInfo.InvariantCulture, "{0}Attribute`{1}", TypeName.FullName, GenericArguments.Count));
                         generic = newTypeName.GetReflectionType();
-                        genericTypeInfo = (generic != null) ? generic.GetTypeInfo() : null;
                     }
                 }
 
-                if (genericTypeInfo != null && genericTypeInfo.ContainsGenericParameters)
+                if (generic != null && generic.ContainsGenericParameters)
                 {
-                    type = genericTypeInfo.MakeGenericType((from arg in GenericArguments select arg.GetReflectionType()).ToArray());
+                    type = generic.MakeGenericType((from arg in GenericArguments select arg.GetReflectionType()).ToArray());
                     Interlocked.CompareExchange(ref _cachedType, type, null);
                 }
             }
@@ -8508,7 +8506,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly.
         /// </summary>
-        public string AssemblyName { get { return _type.GetTypeInfo().Assembly.FullName; } }
+        public string AssemblyName { get { return _type.Assembly.FullName; } }
 
         /// <summary>
         /// Returns true if the type is an array, false otherwise.
@@ -8518,7 +8516,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns true if the type is a generic, false otherwise.
         /// </summary>
-        public bool IsGeneric { get { return _type.GetTypeInfo().IsGenericType; } }
+        public bool IsGeneric { get { return _type.IsGenericType; } }
 
         /// <summary>
         /// The extent of the typename.

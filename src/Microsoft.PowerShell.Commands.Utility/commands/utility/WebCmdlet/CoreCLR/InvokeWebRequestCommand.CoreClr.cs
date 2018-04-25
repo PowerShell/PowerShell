@@ -9,7 +9,7 @@ using System.IO;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Invoke-RestMethod command
+    /// The Invoke-WebRequest command.
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035", DefaultParameterSetName = "StandardMethod")]

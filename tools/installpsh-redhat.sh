@@ -121,7 +121,7 @@ if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
     $SUDO yum install -y curl
 fi
-release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
+release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g`
 
 echo "*** Current version on git is: $release, repo version may differ slightly..."
 

@@ -14,7 +14,6 @@
  * ***************************************************************************/
 
 using System.Diagnostics;
-using System.Reflection;
 
 namespace System.Management.Automation.Interpreter
 {
@@ -141,7 +140,7 @@ namespace System.Management.Automation.Interpreter
 
         public static Instruction Create(Type type)
         {
-            Debug.Assert(!type.GetTypeInfo().IsEnum);
+            Debug.Assert(!type.IsEnum);
             switch (type.GetTypeCode())
             {
                 case TypeCode.SByte: return s_SByte ?? (s_SByte = new GreaterThanSByte());

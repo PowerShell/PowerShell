@@ -47,11 +47,12 @@ namespace System.Management.Automation
             // slow path
             MutableTuple nestedTuple = this;
             var accessPath = GetAccessPath(_size, index).ToArray();
-            for (int i = 0; i < accessPath.Length - 1; ++i)
+            int length = accessPath.Length;
+            for (int i = 0; i < length - 1; ++i)
             {
                 nestedTuple = (MutableTuple)nestedTuple.GetValueImpl(accessPath[i]);
             }
-            return nestedTuple._valuesSet[accessPath.Last()];
+            return nestedTuple._valuesSet[accessPath[length-1]];
         }
 
         internal void SetAutomaticVariable(AutomaticVariable auto, object value, ExecutionContext context)

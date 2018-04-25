@@ -1,6 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+//
+//  Application white listing policies such as AppLocker and DeviceGuard UMCI are only implemented on Windows OSs
+//
+#if !UNIX
+
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
@@ -578,3 +583,5 @@ namespace System.Management.Automation.Security
         }
     }
 }
+
+#endif

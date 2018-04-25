@@ -1,3 +1,9 @@
+resources:
+- repo: self
+  clean: true
+queue:
+  name: Hosted macOS Preview
+name: macOS_$(Build.SourceBranchName)_$(Build.BuildId)
 steps:
 #- task: <task type name>@<version>
 #  inputs:

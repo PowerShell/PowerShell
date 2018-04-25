@@ -12,6 +12,7 @@
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
     <Content Include="..\System.Management.Automation\powershell.config.json">
       <Link>powershell.config.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Include="..\Modules\Windows-Core\**\*;..\Modules\Windows-Core+Full\**\*;..\Modules\Shared\**\*">
@@ -19,7 +20,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="..\..\license_thirdparty_proprietary.txt;..\..\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1">
+    <Content Include="..\..\license_thirdparty_proprietary.txt;..\powershell-native\Install-PowerShellRemoting.ps1;..\PowerShell.Core.Instrumentation\PowerShell.Core.Instrumentation.man;..\PowerShell.Core.Instrumentation\RegisterManifest.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

@@ -782,7 +782,7 @@ namespace System.Management.Automation
 
         private static string GetOperatorDescription(string op)
         {
-            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly,
+            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
                                                           "System.Management.Automation.resources.TabCompletionStrings",
                                                           op + "OperatorDescription");
         }
@@ -1639,7 +1639,7 @@ namespace System.Management.Automation
                 parameterType = parameterType.GetElementType();
             }
 
-            if (parameterType.GetTypeInfo().IsEnum)
+            if (parameterType.IsEnum)
             {
                 RemoveLastNullCompletionResult(result);
 
@@ -5468,15 +5468,13 @@ namespace System.Management.Automation
 
             protected string GetTooltipPrefix()
             {
-                TypeInfo typeInfo = Type.GetTypeInfo();
-
                 if (typeof(Delegate).IsAssignableFrom(Type))
                     return "Delegate ";
-                if (typeInfo.IsInterface)
+                if (Type.IsInterface)
                     return "Interface ";
-                if (typeInfo.IsClass)
+                if (Type.IsClass)
                     return "Class ";
-                if (typeInfo.IsEnum)
+                if (Type.IsEnum)
                     return "Enum ";
                 if (typeof(ValueType).IsAssignableFrom(Type))
                     return "Struct ";
@@ -5919,7 +5917,20 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + StringLiterals.DefaultPathSeparator + CultureInfo.CurrentCulture.Name;
+            var searchPaths = new List<string>();
+            var currentCulture = CultureInfo.CurrentCulture.Name;
+
+            // Add the user scope path first, since it is searched in order.
+            var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
+
+            if(Directory.Exists(userHelpRoot))
+            {
+                searchPaths.Add(userHelpRoot);
+            }
+
+            var dirPath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), currentCulture);
+            searchPaths.Add(dirPath);
+
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
             List<string> files = new List<string>();
@@ -5928,11 +5939,14 @@ namespace System.Management.Automation
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
 
-                foreach(var file in Directory.GetFiles(dirPath))
+                foreach (var dir in searchPaths)
                 {
-                    if(wildcardPattern.IsMatch(Path.GetFileName(file)))
+                    foreach (var file in Directory.GetFiles(dir))
                     {
-                        files.Add(file);
+                        if (wildcardPattern.IsMatch(Path.GetFileName(file)))
+                        {
+                            files.Add(file);
+                        }
                     }
                 }
             }
@@ -6321,7 +6335,7 @@ namespace System.Management.Automation
                     if (strValue == null)
                     {
                         object baseObj = PSObject.Base(value);
-                        if (baseObj is string || baseObj.GetType().GetTypeInfo().IsPrimitive)
+                        if (baseObj is string || baseObj.GetType().IsPrimitive)
                         {
                             strValue = LanguagePrimitives.ConvertTo<string>(value);
                         }

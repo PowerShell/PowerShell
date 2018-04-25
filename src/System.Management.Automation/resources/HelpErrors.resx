@@ -175,7 +175,8 @@
     <value>Cannot get Help from a remote runspace, because the runspace has not been opened.  Open the runspace by running an implicit remoting command, and then try running the command to get Help again.</value>
   </data>
   <data name="UpdatableHelpRequiresElevation" xml:space="preserve">
-    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory. To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
+    <value>Access is denied. The command could not update Help topics for the PowerShell core modules, or for any modules in the $pshome\Modules directory.
+To update these Help topics, start PowerShell by using the "Run as Administrator" command, and try running Update-Help again.</value>
   </data>
   <data name="GraphicalHostAssemblyIsNotFound" xml:space="preserve">
     <value>To use the {0}, install Windows PowerShell ISE by using Server Manager, and then restart this application. ({1})</value>

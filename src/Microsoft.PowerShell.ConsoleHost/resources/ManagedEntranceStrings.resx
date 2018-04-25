@@ -132,6 +132,7 @@ Type 'help' to get help.</value>
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
                   [-OutputFormat {Text | XML}] [-Version] [-WindowStyle &lt;style&gt;]
+                  [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -249,6 +250,12 @@ All parameters are case-insensitive.</value>
 
 -WindowStyle | -w
     Sets the window style to Normal, Minimized, Maximized or Hidden.
+
+-WorkingDirectory | -wd
+    Sets the working directory at the start of PowerShell given a valid PowerShell directory path.
+    Executing `Set-Location -LiteralPath &lt;path&gt;` at startup.
+
+    Example: pwsh -WorkingDirectory ~
     </value>
   </data>
 </root>

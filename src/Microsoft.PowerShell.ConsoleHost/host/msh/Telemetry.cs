@@ -19,17 +19,8 @@ namespace Microsoft.PowerShell
     /// </summary>
     internal static class ApplicationInsightsTelemetry
     {
-        // The semaphore file which indicates whether telemetry should be sent
-        // This is temporary code waiting on the acceptance and implementation of the configuration spec
-        // The name of the file by when present in $PSHOME will enable telemetry.
-        // If this file is not present, no telemetry will be sent.
-        private const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
+        // If this env var is true, yes, or 1, telemetry will NOT be sent.
         private const string TelemetryOptoutEnvVar = "POWERSHELL_TELEMETRY_OPTOUT";
-
-        // The path to the semaphore file which enables telemetry
-        private static string TelemetrySemaphoreFilePath = Path.Combine(
-            Utils.DefaultPowerShellAppBase,
-            TelemetrySemaphoreFilename);
 
         // Telemetry client to be reused when we start sending more telemetry
         private static TelemetryClient _telemetryClient = null;
@@ -75,8 +66,7 @@ namespace Microsoft.PowerShell
         {
             try
             {
-                // if the semaphore file exists, try to send telemetry
-                var enabled = Utils.NativeFileExists(TelemetrySemaphoreFilePath) && !GetEnvironmentVariableAsBool(TelemetryOptoutEnvVar, false);
+                var enabled = !GetEnvironmentVariableAsBool(name : TelemetryOptoutEnvVar, defaultValue : false);
 
                 if (!enabled)
                 {

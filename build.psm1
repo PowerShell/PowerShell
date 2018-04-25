@@ -453,9 +453,6 @@ function Start-PSBuild {
         }
     }
 
-    # create the telemetry flag file
-    $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
-
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
@@ -629,41 +626,6 @@ Fix steps:
     # Restore the Pester module
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
-    }
-}
-
-function Restore-PSPackage
-{
-    param(
-        [ValidateNotNullOrEmpty()]
-        [Parameter()]
-        [string[]] $ProjectDirs,
-
-        [ValidateNotNullOrEmpty()]
-        [Parameter()]
-        $Options = (Get-PSOptions -DefaultToNew),
-
-        [switch] $Force
-    )
-
-    if (-not $ProjectDirs)
-    {
-        $ProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", "$PSScriptRoot/src/Modules")
-    }
-
-    if ($Force -or (-not (Test-Path "$($Options.Top)/obj/project.assets.json"))) {
-
-        $RestoreArguments = @("--runtime",$Options.Runtime,"--verbosity")
-        if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "detailed"
-        } else {
-            $RestoreArguments += "quiet"
-        }
-
-        $ProjectDirs | ForEach-Object {
-            Write-Log "Run dotnet restore $_ $RestoreArguments"
-            Start-NativeExecution { dotnet restore $_ $RestoreArguments }
-        }
     }
 }
 
@@ -1089,7 +1051,9 @@ Restore the module to '$Pester' by running:
     Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
-    $command = ""
+
+    # Disable telemetry for all startups of pwsh in tests
+    $command = "`$env:POWERSHELL_TELEMETRY_OPTOUT = 1;"
     if ($Terse)
     {
         $command += "`$ProgressPreference = 'silentlyContinue'; "
@@ -1190,6 +1154,8 @@ Restore the module to '$Pester' by running:
     # To ensure proper testing, the module path must not be inherited by the spawned process
     try {
         $originalModulePath = $env:PSModulePath
+        $originalTelemetry = $env:POWERSHELL_TELEMETRY_OPTOUT
+        $env:POWERSHELL_TELEMETRY_OPTOUT = 1
         if ($Unelevate)
         {
             Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
@@ -1266,6 +1232,7 @@ Restore the module to '$Pester' by running:
         }
     } finally {
         $env:PSModulePath = $originalModulePath
+        $env:POWERSHELL_TELEMETRY_OPTOUT = $originalTelemetry
         if ($Unelevate)
         {
             Remove-Item $outputBufferFilePath
@@ -1706,9 +1673,14 @@ function Start-PSBootstrap {
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
                 try {
-                    # We cannot guess if the user wants to run gem install as root
-                    Start-NativeExecution { gem install fpm -v 1.9.3 }
-                    Start-NativeExecution { gem install ronn -v 0.7.3 }
+                    # We cannot guess if the user wants to run gem install as root on linux and windows,
+                    # but macOs usually requires sudo
+                    $gemsudo = ''
+                    if($Environment.IsMacOS) {
+                        $gemsudo = $sudo
+                    }
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.9.3"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3"))
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }

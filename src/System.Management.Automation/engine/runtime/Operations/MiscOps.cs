@@ -2022,7 +2022,7 @@ namespace System.Management.Automation
 
                     try
                     {
-                        if (generic != null && generic.GetTypeInfo().ContainsGenericParameters)
+                        if (generic != null && generic.ContainsGenericParameters)
                             generic.MakeGenericType(typeArgs);
                     }
                     catch (Exception e)
@@ -2188,7 +2188,7 @@ namespace System.Management.Automation
                 if (t.IsClass)
                 {
                     var helperType =
-                        t.Type.GetTypeInfo().Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
+                        t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
                     Diagnostics.Assert(helperType != null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
                     foreach (var p in helperType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
                     {
@@ -2686,7 +2686,7 @@ namespace System.Management.Automation
                     }
 
                     // If it's a generic type then make sure it only has one type argument
-                    if (targetType.GetTypeInfo().IsGenericType)
+                    if (targetType.IsGenericType)
                     {
                         Type[] ta = targetType.GetGenericArguments();
                         if (ta.Length != 1)

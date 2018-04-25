@@ -1067,18 +1067,21 @@ namespace Microsoft.PowerShell.Commands
         {
             // Resolve all the machine names
             String[] resolvedComputerNames;
+
             ResolveComputerNames(HostName, out resolvedComputerNames);
-            ValidateComputerName(resolvedComputerNames);
 
             var remoteRunspaces = new List<RemoteRunspace>();
             int index = 0;
             foreach (var computerName in resolvedComputerNames)
             {
+                ParseSshHostName(computerName, out string host, out string userName, out int port);
+
                 var sshConnectionInfo = new SSHConnectionInfo(
-                    this.UserName,
-                    computerName,
+                    userName,
+                    host,
                     this.KeyFilePath,
-                    this.Port);
+                    port,
+                    Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
@@ -1103,7 +1106,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.UserName,
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
-                    sshConnection.Port);
+                    sshConnection.Port,
+                    sshConnection.Subsystem);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;

@@ -822,6 +822,27 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
+    It "Validates Invoke-WebRequest handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        # Skip relative test as it is not a valid response type.
+        if ($redirectType -eq 'relative') { return }
+
+        # When an Authorization request header is present,
+        # and -PreserveAuthorizationOnRedirect is not present,
+        # PowerShell should throw an HTTP Response Exception
+        # for a redirect response which does not contain a Location response header.
+        # The correct redirect status code should be included in the exception.
+
+        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+        $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
+        $response = ExecuteWebCommand -command $command
+
+        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
+        $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+    }
+
     #endregion Redirect tests
 
     Context "Invoke-WebRequest SkipHeaderVerification Tests" {
@@ -2137,6 +2158,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Method | Should -Be $redirectedMethod
     }
 
+    It "Validates Invoke-RestMethod handles responses without Location header for requests with Authorization header and redirect: <redirectType>" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+        # Skip relative test as it is not a valid response type.
+        if ($redirectType -eq 'relative') { return }
+
+        # When an Authorization request header is present,
+        # and -PreserveAuthorizationOnRedirect is not present,
+        # PowerShell should throw an HTTP Response Exception
+        # for a redirect response which does not contain a Location response header.
+        # The correct redirect status code should be included in the exception.
+
+        $StatusCode = [int][System.Net.HttpStatusCode]$redirectType
+        $uri = Get-WebListenerUrl -Test Response -Query @{statuscode = $StatusCode}
+        $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
+        $response = ExecuteWebCommand -command $command
+
+        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
+        $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
+    }
+
     #endregion Redirect tests
 
     Context "Invoke-RestMethod SkipHeaderVerification Tests" {
@@ -3025,6 +3067,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 }
 
 Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
+    BeforeAll {
+        $WebListener = Start-WebListener
+    }
+
     Context "InFile parameter negative tests" {
         BeforeAll {
             $uri = Get-WebListenerUrl -Test 'Post'

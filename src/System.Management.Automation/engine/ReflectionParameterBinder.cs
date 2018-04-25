@@ -242,7 +242,7 @@ namespace System.Management.Automation
                     var propertyExpr = GetPropertyOrFieldExpr(type, property, Expression.Convert(target, type));
 
                     Expression expr = Expression.Assign(propertyExpr, Expression.Convert(value, propertyExpr.Type));
-                    if (propertyExpr.Type.GetTypeInfo().IsValueType && Nullable.GetUnderlyingType(propertyExpr.Type) == null)
+                    if (propertyExpr.Type.IsValueType && Nullable.GetUnderlyingType(propertyExpr.Type) == null)
                     {
                         var throwInvalidCastExceptionExpr =
                             Expression.Call(Language.CachedReflectionInfo.LanguagePrimitives_ThrowInvalidCastException,

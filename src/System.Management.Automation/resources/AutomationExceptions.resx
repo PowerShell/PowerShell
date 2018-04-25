@@ -195,9 +195,6 @@
   <data name="CantConvertPipelineStartsWithExpression" xml:space="preserve">
     <value>Cannot generate a PowerShell object for a ScriptBlock that starts a pipeline with an expression.</value>
   </data>
-  <data name="WorkflowDoesNotSupportWOW64" xml:space="preserve">
-    <value>Windows PowerShell Workflow is not supported in a Windows PowerShell x86-based console. Open a Windows PowerShell x64-based console, and then try again.</value>
-  </data>
   <data name="UsingVariableIsUndefined" xml:space="preserve">
     <value>The value of the using variable '$using:{0}' cannot be retrieved because it has not been set in the local session.</value>
   </data>
