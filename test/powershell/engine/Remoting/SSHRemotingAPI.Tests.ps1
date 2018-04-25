@@ -38,15 +38,16 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
         }
 
         It "SSHConnectionInfo should throw argument exception for invalid port (non 16bit uint)" {
-            $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
+            {
+                $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                 "UserName",
                 "localhost",
                 "ValidKeyFilePath",
                 99999)
 
-            $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
-            $e = { $rs.Open() } | Should -Throw -PassThru
-            $e.Exception.InnerException | Should -BeOfType "System.ArgumentException"
+                $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
+                $rs.Open()
+            } | Should -Throw -ErrorId "ArgumentException" -PassThru
         }
     }
 }
