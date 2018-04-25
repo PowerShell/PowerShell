@@ -465,4 +465,209 @@ er
             $ps.HadErrors | Should -BeFalse
             $output.Replace("`r","").Replace(" ",".").Replace("`n","``") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","``")
         }
-}
+
+        It "Format-Table should correctly render rows: <variation>" -TestCases @(
+            @{ view = "Default"; widths = 4,7,5; variation = "narrow values"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $false; expectedTable = @"
+
+Long*Header2*Heade
+Long*********r3
+Head
+er
+----*-------*-----
+1**********2***3
+
+
+
+"@ },
+            @{ view = "Default"; widths = 4,7,5; variation = "narrow values with wrap"; values = [PSCustomObject]@{First=1;Second=2;Third=3}; wrap = $true; expectedTable = @"
+
+Long*Header2*Heade
+Long*********r3
+Head
+er
+----*-------*-----
+1**********2*3
+
+
+
+"@ },
+            @{ view = "Default"; widths = 4,7,5; variation = "wide values"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $false; expectedTable = @"
+
+Long*Header2*Heade
+Long*********r3
+Head
+er
+----*-------*-----
+1...*...5678*12...
+
+
+
+"@ },
+            @{ view = "One"; widths = 3,1,1; variation = "wide values, 1 column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $false; expectedTable = @"
+
+Lon
+gLo
+ngH
+ead
+er
+---
+123
+
+
+
+"@ },
+            @{ view = "Default"; widths = 4,8,6; variation = "wide values with wrap, 1st column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+Long**Header2*Header
+Long**********3
+Head
+er
+----**-------*------
+1234*12345678*123456
+5
+
+
+
+"@ },
+            @{ view = "Default"; widths = 5,7,6; variation = "wide values with wrap, 2nd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+LongL*Header2*Header
+ongHe*********3
+ader
+-----*-------*------
+12345*1234567*123456
+************8
+
+
+
+"@ },
+            @{ view = "Default"; widths = 5,8,5; variation = "wide values with wrap, 3rd column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+LongL**Header2*Heade
+ongHe**********r3
+ader
+-----**-------*-----
+12345*12345678*12345
+***************6
+
+
+
+"@ },
+            @{ view = "Default"; widths = 4,7,5; variation = "wide values with wrap, all 3 columns"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+Long*Header2*Heade
+Long*********r3
+Head
+er
+----*-------*-----
+1234*1234567*12345
+5**********8*6
+
+
+
+"@ },
+            @{ view = "One"; widths = 3,1,1; variation = "wide values with wrap, with 1 column"; values = [PSCustomObject]@{First="12345";Second="12345678";Third="123456"}; wrap = $true; expectedTable = @"
+
+Lon
+gLo
+ngH
+ead
+er
+---
+123
+45
+
+
+
+"@ }
+        ) {
+            param($view, $widths, $values, $wrap, $expectedTable)
+            $ps1xml = @"
+<Configuration>
+    <ViewDefinitions>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>Test.Format</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Alignment>left</Alignment>
+                        <Label>LongLongHeader</Label>
+                        <Width>{0}</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Alignment>right</Alignment>
+                        <Label>Header2</Label>
+                        <Width>{1}</Width>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Alignment>center</Alignment>
+                        <Label>Header3</Label>
+                        <Width>{2}</Width>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>First</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Second</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Third</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>One</Name>
+            <ViewSelectedBy>
+                <TypeName>Test.Format</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>LongLongHeader</Label>
+                        <Width>{0}</Width>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>First</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+    </ViewDefinitions>
+</Configuration>
+"@
+            $ps1xml = $ps1xml.Replace("{0}", $widths[0]).Replace("{1}", $widths[1]).Replace("{2}", $widths[2])
+            $ps1xmlPath = Join-Path -Path $TestDrive -ChildPath "test.format.ps1xml"
+            Set-Content -Path $ps1xmlPath -Value $ps1xml
+            # run in own runspace so not affect global sessionstate
+            $ps = [powershell]::Create()
+            $ps.AddScript( {
+                param($ps1xmlPath, $view, $values, $wrap)
+                Update-FormatData -AppendPath $ps1xmlPath
+                $values.PSObject.TypeNames.Insert(0,"Test.Format")
+                $values | Format-Table -View $view -Wrap:$wrap | Out-String
+            } ).AddArgument($ps1xmlPath).AddArgument($view).AddArgument($values).AddArgument($wrap) | Out-Null
+            $output = $ps.Invoke()
+            foreach ($e in $ps.Streams.Error)
+            {
+                Write-Verbose $e.ToString() -Verbose
+            }
+            $ps.HadErrors | Should -BeFalse
+            $output.Replace("`r","").Replace(" ","*").Replace("`n","``") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","``")
+        }
+    }
