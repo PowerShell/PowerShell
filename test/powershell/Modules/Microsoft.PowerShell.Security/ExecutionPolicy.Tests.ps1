@@ -84,7 +84,7 @@ try {
                 $testDirectory =  Join-Path $drive ("MultiMachineTestData\Commands\Cmdlets\Security_TestData\ExecutionPolicyTestData")
                 if(Test-Path $testDirectory)
                 {
-                    Remove-Item -Force -Recurse $testDirectory -ea SilentlyContinue
+                    Remove-Item -Force -Recurse $testDirectory -ErrorAction SilentlyContinue
                 }
                 $null = New-Item $testDirectory -ItemType Directory -Force
                 $remoteTestDirectory = $testDirectory
@@ -521,8 +521,8 @@ ZoneId=$FileType
                 #Clean up
                 $testDirectory = $remoteTestDirectory
 
-                Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
-                Remove-Item function:createTestFile -ea SilentlyContinue
+                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
             }
         }
 
@@ -597,8 +597,8 @@ ZoneId=$FileType
                 # Clean up
                 $testDirectory = $remoteTestDirectory
 
-                Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
-                Remove-Item function:createTestFile -ea SilentlyContinue
+                Remove-Item $testDirectory -Recurse -Force -ErrorAction SilentlyContinue
+                Remove-Item function:createTestFile -ErrorAction SilentlyContinue
             }
         }
         Context "Validate that 'Unrestricted' execution policy works on OneCore powershell" {

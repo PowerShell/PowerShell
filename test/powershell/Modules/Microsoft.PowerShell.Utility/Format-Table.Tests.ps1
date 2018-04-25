@@ -21,7 +21,7 @@ Describe "Format-Table" -Tags "CI" {
 
         It "Format-Table with not existing table with force should throw PipelineStoppedException"{
                 $obj = New-Object -typename PSObject
-                $e = { $obj | Format-Table -view bar -force -EA Stop } |
+                $e = { $obj | Format-Table -view bar -force -ErrorAction Stop } |
                     Should -Throw -ErrorId "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand" -PassThru
                 $e.CategoryInfo | Should -Match "PipelineStoppedException"
         }

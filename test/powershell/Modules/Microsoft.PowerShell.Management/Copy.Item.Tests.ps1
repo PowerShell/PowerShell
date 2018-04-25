@@ -455,7 +455,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             }
             finally
             {
-                Remove-Module $testAssembly.ModuleName -Force -ea SilentlyContinue
+                Remove-Module $testAssembly.ModuleName -Force -ErrorAction SilentlyContinue
             }
         }
 
@@ -539,7 +539,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $testFilePath = Join-Path "TestDrive:" "testfile.txt"
             if (test-path $testFilePath)
             {
-                Remove-Item $testFilePath -Force -ea SilentlyContinue
+                Remove-Item $testFilePath -Force -ErrorAction SilentlyContinue
             }
             "File test content" | Out-File $testFilePath -Force
         }
@@ -685,16 +685,16 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
             $testSessions[$languageMode] = $testSession
 
             # Remove the pssc file.
-            Remove-Item $configFilePath -Force -ea SilentlyContinue
+            Remove-Item $configFilePath -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterAll {
 
-        $testSessions.Values | Remove-PSSession -ea SilentlyContinue
+        $testSessions.Values | Remove-PSSession -ErrorAction SilentlyContinue
 
         $sessionToUnregister | ForEach-Object {
-            Unregister-PSSessionConfiguration -Name $_ -Force -ea SilentlyContinue
+            Unregister-PSSessionConfiguration -Name $_ -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -720,7 +720,7 @@ Describe "Copy-Item can use Recurse and Exclude together" -Tags "Feature" {
     Context "Local and Remote Tests" {
 
         BeforeAll {
-            $s = New-PSSession -ComputerName . -ea SilentlyContinue
+            $s = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
             if (-not $s)
             {
                 throw "Failed to create PSSession for remote copy operations."
@@ -801,7 +801,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             Copy-Item -Path "TestDrive:\Source\testFile1.txt" -Destination "$TestDrive\Destination\testFile1.txt" -ToSession $s
 
             # Validate the the file was overwritten
-            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ea SilentlyContinue -Raw
+            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ErrorAction SilentlyContinue -Raw
             $fileContent | Should -Match $newContent
         }
 
@@ -811,7 +811,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
             Copy-Item -Path "$TestDrive\Source\testFile1.txt" -Destination "TestDrive:\Destination\testFile1.txt" -FromSession $s
 
             # Validate the the file was overwritten
-            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ea SilentlyContinue -Raw
+            $fileContent = Get-Content "TestDrive:\Destination\testFile1.txt" -ErrorAction SilentlyContinue -Raw
             $fileContent | Should -Match $newContent
         }
     }
@@ -822,7 +822,7 @@ Describe "Copy-Item remotely bug fixes" -Tags "Feature" {
 
             if (Test-Path "TestDrive:\AnotherDestination")
             {
-                Remove-Item "TestDrive:\AnotherDestination" -Force -Recurse -ea SilentlyContinue
+                Remove-Item "TestDrive:\AnotherDestination" -Force -Recurse -ErrorAction SilentlyContinue
             }
             $null = New-Item -ItemType Directory -Path "TestDrive:\AnotherDestination"
 

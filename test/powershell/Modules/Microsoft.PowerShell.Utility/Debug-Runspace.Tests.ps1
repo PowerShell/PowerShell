@@ -15,21 +15,21 @@ Describe "Debug-Runspace" -tag "CI" {
     }
 
     It "Debugging a runspace should fail if the name is ambiguous" {
-        { Debug-Runspace -Name "My*" -ea stop } | Should -Throw -ErrorId "DebugRunspaceTooManyRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+        { Debug-Runspace -Name "My*" -ErrorAction stop } | Should -Throw -ErrorId "DebugRunspaceTooManyRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
 
     It "Debugging a runspace should fail if the name is not found" {
-        { Debug-Runspace -Name "dflkjsdkfjldkjssldfj" -ea stop } | Should -Throw -ErrorId "DebugRunspaceNoRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+        { Debug-Runspace -Name "dflkjsdkfjldkjssldfj" -ErrorAction stop } | Should -Throw -ErrorId "DebugRunspaceNoRunspaceFound,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
 
     It "Debugging a runspace should fail if the runspace is not open" {
         $rs2.Close()
-        { Debug-Runspace -runspace $rs2 -ea stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+        { Debug-Runspace -runspace $rs2 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
 
     It "Debugging a runspace should fail if the runspace has no debugger" {
         $rs1.Debugger.SetDebugMode("None")
-        { Debug-Runspace -runspace $rs1 -ea stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
+        { Debug-Runspace -runspace $rs1 -ErrorAction stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.DebugRunspaceCommand"
     }
 
 }
