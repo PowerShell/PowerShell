@@ -55,25 +55,24 @@ Describe "One is really one" {
 }
 ```
 
-If you are checking for proper errors, use the `ShouldBeErrorId` helper defined in HelpersCommon.psm1 module which is in your path if you import `build.psm1`.
-Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
+If you are checking for proper errors, use the `Should -Throw -ErrorId` Pester syntax.
+It checks against `FullyQualifiedErrorId` property, which is recommended because it does not change based on culture as an error message might.
 
 ```powershell
 ...
 It "Get-Item on a nonexisting file should have error PathNotFound" {
-    { Get-Item "ThisFileCannotPossiblyExist" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+    { Get-Item "ThisFileCannotPossiblyExist" -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
 }
 ```
 
-Note that if get-item were to succeed, a different FullyQualifiedErrorId would be thrown and the test will fail.
-This is the suggested path because Pester wants to check the error message, which will likely not work here because of localized builds, but the FullyQualifiedErrorId is constant regardless of the locale.
+Note that if Get-Item were to succeed, the test will fail.
 
-However, if you need to check the `InnerException` or other members of the ErrorRecord, the recommended pattern to use is:
+However, if you need to check the `InnerException` or other members of the ErrorRecord, you should use `-PassThru` parameter:
 
 ```powershell
 	It "InnerException sample" {
 
-	$e = { Invoke-WebRequest https://expired.badssl.com/ } | ShouldBeErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+	$e = { Invoke-WebRequest https://expired.badssl.com/ } | Should -Throw -ErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand" -PassThru
 	$e.Exception.InnerException.NativeErrorCode | Should Be 12175
     ...
 	}
