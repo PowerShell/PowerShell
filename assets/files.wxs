@@ -7,6 +7,9 @@
             <Component Id="cmp3CC027D3F160412C9F0044EBED3115DD" Guid="{8D7CAA67-8F28-422C-85FB-BDE04902E64F}">
                 <File Id="filFD2EF6BC74AF459D1BB52CA1E8C6E33B" KeyPath="yes" Source="$(env.ProductSourcePath)\NJsonSchema.dll" />
             </Component>
+            <Component Id="cmp98A11B3F71BACCA2DD0A4856577CD343" Guid="{4EFB61AC-361B-42D0-B9A1-C1FEE287CD13}">
+                <File Id="fil9286A659888A5C12030A9CF0B215D062" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.CodeAnalysis.VisualBasic.dll" />
+            </Component>
             <Component Id="cmp85032A09199C30E63F9F2CF55B6FA9B9" Guid="{D3414CD0-7366-4008-A406-DC9E69224F42}">
                 <File Id="fil85032A09199C30E63F9F2CF55B6FA9B9" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Memory.dll" />
             </Component>
@@ -1825,6 +1828,7 @@
     <Fragment>
         <ComponentGroup Id="$(var.ProductDirectoryName)">
             <ComponentRef Id="cmp3CC027D3F160412C9F0044EBED3115DD" />
+            <ComponentRef Id="cmp98A11B3F71BACCA2DD0A4856577CD343" />
             <ComponentRef Id="cmp85032A09199C30E63F9F2CF55B6FA9B9" />
             <ComponentRef Id="cmp12FFA2A71C4F95630792652F192DAAB3" />
             <ComponentRef Id="cmp3B130879A26D2E954251BB81E8948069" />
