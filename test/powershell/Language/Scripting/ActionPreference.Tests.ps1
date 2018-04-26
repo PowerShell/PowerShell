@@ -15,7 +15,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             $err = $null
             try
             {
-                get-childitem nosuchfile.nosuchextension -ErrorAction stop -ev err
+                get-childitem nosuchfile.nosuchextension -ErrorAction stop -ErrorVariable err
             }
             catch {}
 
