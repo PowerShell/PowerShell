@@ -13,7 +13,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Format-String", "Invoke-Expression",
     "Get-Alias", "Get-Culture", "Get-Date", "Get-Host", "Get-Member", "Get-Random", "Get-SubString", "Get-UICulture",
     "Get-Unique", "Export-PSSession", "Import-PSSession", "Import-Alias", "Import-LocalizedData", "Join-String",
-    "Select-String", "Measure-Object", "New-Alias", "New-TimeSpan", "Read-Host", "Set-Alias", "Set-Date", "Set-String",
+    "Select-String", "Measure-Object", "New-Alias", "New-TimeSpan", "Read-Host", "Set-Alias", "Set-Date", "Set-String", "Split-String",
     "Start-Sleep", "Tee-Object", "Measure-Command", "Update-TypeData", "Update-FormatData",
     "Remove-TypeData", "Get-TypeData", "Write-Host", "Write-Progress", "New-Object", "Select-Object",
     "Group-Object", "Sort-Object", "Get-Variable", "New-Variable", "Set-Variable", "Remove-Variable",
@@ -25,7 +25,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "Get-Verb", "Format-Hex",
     "Test-Json", "Remove-Alias"
 FunctionsToExport= "ConvertFrom-SddlString"
-AliasesToExport= "fhx", "format", "join", "replace", "wrap"
+AliasesToExport= "fhx", "format", "join", "replace", "split", "wrap"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855960'
 }
