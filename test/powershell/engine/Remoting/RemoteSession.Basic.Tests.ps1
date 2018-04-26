@@ -97,7 +97,8 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ( ! $IsWindows )
+        #if ( ! $IsWindows )
+        if ( $true )
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
