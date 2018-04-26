@@ -113,7 +113,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 
 		if ( $IsWindows )
 		{
-			attrib -r $fulltestpath
+			attrib -Recurse $fulltestpath
 		}
 		else
 		{
