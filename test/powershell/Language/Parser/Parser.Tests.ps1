@@ -931,4 +931,39 @@ foo``u{2195}abc
         $err = { ExecuteCommand "Function foo { [CmdletBinding()] param() DynamicParam {} " } | Should -Throw -ErrorId "IncompleteParseException" -PassThru
         $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBrace"
     }
+
+    Context "#requires nested scan tokenizer tests" {
+        BeforeAll {
+            $settings = [System.Management.Automation.PSInvocationSettings]::new()
+            $settings.AddToHistory = $true
+
+            $ps = [powershell]::Create()
+        }
+
+        AfterAll {
+            $ps.Dispose()
+        }
+
+        AfterEach {
+            $ps.Commands.Clear()
+        }
+
+        $testCases = @(
+            @{ script = "#requires"; firstToken = $null; lastToken = $null },
+            @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
+            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
+            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello"}
+        )
+
+        It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $testCases {
+            param($script, $firstToken, $lastToken)
+
+            $ps.AddScript($script)
+            $ps.AddScript("(`$^,`$`$)")
+            $tokens = $ps.Invoke(@(), $settings)
+
+            $tokens[0] | Should -BeExactly $firstToken
+            $tokens[1] | Should -BeExactly $lastToken
+        }
+    }
 }

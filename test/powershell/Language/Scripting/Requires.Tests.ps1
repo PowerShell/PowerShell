@@ -27,4 +27,21 @@ Describe "Requires tests" -Tags "CI" {
         }
     }
 
+    Context "Interactive requires" {
+
+        BeforeAll {
+            $ps = [powershell]::Create()
+        }
+
+        AfterAll {
+            $ps.Dispose()
+        }
+
+        It "Successfully does nothing when given '#requires' interactively" {
+            $settings = [System.Management.Automation.PSInvocationSettings]::new()
+            $settings.AddToHistory = $true
+
+            { $ps.AddScript("#requires").Invoke(@(), $settings) } | Should -Not -Throw
+        }
+    }
 }

@@ -62,19 +62,19 @@ namespace System.Management.Automation
         /// Compile a piece of text into a parse tree for later execution.
         /// </summary>
         /// <param name="script">The text to parse</param>
-        /// <param name="interactiveCommand"></param>
+        /// <param name="addToHistory">true iff the scriptblock will be added to history</param>
         /// <returns>The parse text as a parsetree node.</returns>
-        internal ScriptBlock ParseScriptBlock(string script, bool interactiveCommand)
+        internal ScriptBlock ParseScriptBlock(string script, bool addToHistory)
         {
-            return ParseScriptBlock(script, null, interactiveCommand);
+            return ParseScriptBlock(script, null, addToHistory);
         }
 
-        internal ScriptBlock ParseScriptBlock(string script, string fileName, bool interactiveCommand)
+        internal ScriptBlock ParseScriptBlock(string script, string fileName, bool addToHistory)
         {
             ParseError[] errors;
             var ast = EngineParser.Parse(fileName, script, null, out errors, ParseMode.Default);
 
-            if (interactiveCommand)
+            if (addToHistory)
             {
                 EngineParser.SetPreviousFirstLastToken(Context);
             }
