@@ -519,7 +519,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.FullyQualifiedErrorId | Should -Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
-    It "Validate Invoke-WebRequest error with environment proxy set - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-WebRequest error with environment proxy set - '<name>'" -Pending -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
@@ -1892,7 +1892,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.FullyQualifiedErrorId | Should -Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
-    It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -TestCases $testCase {
+    It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -Pending -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
         # Configure the environment variable.
