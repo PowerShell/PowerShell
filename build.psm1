@@ -559,8 +559,8 @@ Fix steps:
 
     # publish netcoreapp2.0 reference assemblies
     try {
-        Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path $incFileName | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
+        Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK/gen"
+        $refAssemblies = Get-Content -Path "RefAssemblyList.inc" | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -1927,33 +1927,12 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
-    $GetDependenciesTargetValue = @'
-<Project>
-    <Target Name="_GetDependencies"
-            DependsOnTargets="ResolveAssemblyReferencesDesignTime">
-        <ItemGroup>
-            <_RefAssemblyPath Include="%(_ReferencesFromRAR.ResolvedPath)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
-        </ItemGroup>
-        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
-    </Target>
-</Project>
-'@
-    Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
-
     Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/$IncFileName"
-        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
+        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:"Clean;TypeCatalogGen" "/property:DesignTimeBuild=true"
     } finally {
         Pop-Location
-    }
-
-    Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-    try {
-        dotnet run ../System.Management.Automation/CoreCLR/CorePsTypeCatalog.cs $IncFileName
-    } finally {
-        Pop-Location
+        log "Finish Start-TypeGen"
     }
 }
 

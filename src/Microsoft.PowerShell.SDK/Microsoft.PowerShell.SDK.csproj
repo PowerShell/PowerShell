@@ -33,4 +33,54 @@
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
   </ItemGroup>
 
+  <!-- TypeCatalogGen properties -->
+  <PropertyGroup>
+    <RefAssemblyRelPath>gen</RefAssemblyRelPath>
+    <RefAssemblyFileName>RefAssemblyList.inc</RefAssemblyFileName>
+    <RefAssemblyDirPath>$(MSBuildProjectDirectory)\$(RefAssemblyRelPath)</RefAssemblyDirPath>
+    <RefAssemblyFilePath>$(RefAssemblyDirPath)\$(RefAssemblyFileName)</RefAssemblyFilePath>
+
+    <CorePsTypeCatalogFilePath>$(MSBuildProjectDirectory)\..\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CorePsTypeCatalog.cs</CorePsTypeCatalogFilePath>
+    <TypeCatalogProjectFilePath>$(MSBuildProjectDirectory)\..\TypeCatalogGen\TypeCatalogGen.csproj</TypeCatalogProjectFilePath>
+  </PropertyGroup>
+
+  <!-- Create file with Assembly Reference list -->
+  <Target Name="ResolveAssemblyReferencesDesignTimeSDK"
+               DependsOnTargets="ResolveAssemblyReferencesDesignTime"
+               Condition=" '$(DesignTimeBuild)' == 'true' ">
+
+    <MakeDir Directories="$(RefAssemblyRelPath)" Condition=" !Exists('$(RefAssemblyRelPath)') "/>
+
+    <ItemGroup>
+        <_RefAssemblyPath Include="%(_ReferencesFromRAR.ResolvedPath)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
+    </ItemGroup>
+
+    <ReadLinesFromFile
+       File="$(RefAssemblyFilePath)" >
+       <Output
+          TaskParameter="Lines"
+          ItemName="ItemsFromFile"/>
+    </ReadLinesFromFile>
+
+    <WriteLinesToFile
+       Condition=" @(ItemsFromFile) != @(_RefAssemblyPath) "
+       File="$(RefAssemblyFilePath)"
+       Lines="@(_RefAssemblyPath)" Overwrite="true" />
+  </Target>
+
+  <!-- Used in standard Clean target -->
+  <ItemGroup>
+    <Clean Include="$(RefAssemblyDirPath)\**"/>
+  </ItemGroup>
+
+  <Target Name="TypeCatalogGen"
+               DependsOnTargets="ResolveAssemblyReferencesDesignTimeSDK"
+               Condition=" '$(DesignTimeBuild)' == 'true' "
+               Inputs="$(RefAssemblyFilePath)"
+               Outputs="$(CorePsTypeCatalogFilePath)">
+
+    <Message Text="Project File Name" />
+    <Exec Command="dotnet run --project $(TypeCatalogProjectFilePath) $(CorePsTypeCatalogFilePath) $(RefAssemblyFilePath) "/>
+  </Target>
+
 </Project>
